@@ -4,13 +4,13 @@ import { AppModule } from './app.module';
 import * as fs from 'fs';
 import { HttpsOptions } from '@nestjs/common/interfaces/external/https-options.interface';
 import { join } from 'path';
+import { config } from 'dotenv';
+config({ path: '.env' });
 
 async function bootstrap() {
   const httpsOptions: HttpsOptions = {
-    //cert: fs.readFileSync('C:/101/101.ci.dev.br-crt.pem'),
-    //key: fs.readFileSync('C:/101/101.ci.dev.br-key.pem'),
-    pfx: fs.readFileSync('C:\\domains\\br.com.plhx\\npm.plhx.com.br.pfx'),
-    passphrase: '485916273565123@#'
+    pfx: process.env.pfx ? fs.readFileSync(process.env.pfx) : undefined,
+    passphrase: process.env.passphrase ? process.env.passphrase : undefined
   };
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
