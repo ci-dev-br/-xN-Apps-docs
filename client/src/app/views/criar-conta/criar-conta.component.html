@@ -1,0 +1,37 @@
+<nav>
+  <ul>
+    <li><a routerLink="/">Início</a></li>
+  </ul>
+</nav>
+
+<header>
+  <form>
+    <h1>Crie sua conta para acesso</h1>
+    <mat-form-field>
+      <input matInput type="text" placeholder="Identificação" />
+      <mat-icon matPrefix>person</mat-icon>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="text" placeholder="E-mail" />
+      <mat-icon matPrefix>email</mat-icon>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="text" placeholder="Celular (Receber SMS)" />
+      <mat-icon matPrefix>phone</mat-icon>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="password" placeholder="Senha" />
+      <mat-icon matPrefix>password</mat-icon>
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="criarConta()">
+      Criar conta
+    </button>
+    <a routerLink="/acessar"> Já possui uma conta? Acessar conta</a>
+  </form>
+</header>
+
+<footer>
+  <div class="assinatura">
+    Portal do Cliente | plhx.com.br - Todos os direitos reservados
+  </div>
+</footer>

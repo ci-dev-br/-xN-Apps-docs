@@ -3,6 +3,8 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import * as fs from 'fs';
 import { HttpsOptions } from '@nestjs/common/interfaces/external/https-options.interface';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
 import { join } from 'path';
 import { config } from 'dotenv';
 config({ path: '.env' });
@@ -16,11 +18,22 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     httpsOptions,
   });
+  const options = new DocumentBuilder()
+    .setTitle('Portal Manager API')
+    .setDescription('API de Integração do Portal PLHX')
+    .setVersion('1.0')
+    .addTag('@portal')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api', app, document);
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
 
-  await app.listen(3090);
+  const PORT = Number(process.env.PORT || 3090);
+  await app.listen(PORT);
+  console.log(`Aplicação disponível em ${PORT}`)
 }
 bootstrap();

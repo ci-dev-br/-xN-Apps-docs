@@ -5,6 +5,7 @@ const routes: Routes = [
   { path: '', loadChildren: () => import('./views/homepage/homepage.module').then(m => m.HomepageModule) },
   { path: 'acessar', loadChildren: () => import('./views/acessar/acessar.module').then(m => m.AcessarModule) },
   { path: 'painel', loadChildren: () => import('./views/painel/painel.module').then(m => m.PainelModule) },
+  { path: 'criar-conta', loadChildren: () => import('./views/criar-conta/criar-conta.module').then(m => m.CriarContaModule) },
 ];
 
 @NgModule({

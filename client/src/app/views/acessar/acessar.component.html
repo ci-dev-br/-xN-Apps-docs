@@ -7,14 +7,15 @@
 
 <header>
   <form>
+    <h1>Bem-vinde novamente</h1>
+
     <mat-form-field>
       <input matInput type="text" placeholder="Identificação" />
       <mat-icon matPrefix>person</mat-icon>
     </mat-form-field>
-    <mat-form-field>
-      <input matInput type="password" placeholder="Senha" />
-      <mat-icon matPrefix>password</mat-icon>
-    </mat-form-field>
+
+    <button mat-raised-button color="primary">Acessar</button>
+    <a routerLink="/criar-conta">Não possui uma conta? Criar conta</a>
   </form>
 </header>
 

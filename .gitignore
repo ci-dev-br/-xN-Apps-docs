@@ -1,0 +1,7 @@
+client/src/app/api/api-configuration.ts
+client/src/app/api/api.module.ts
+client/src/app/api/base-service.ts
+client/src/app/api/models.ts
+client/src/app/api/request-builder.ts
+client/src/app/api/services.ts
+client/src/app/api/strict-http-response.ts
