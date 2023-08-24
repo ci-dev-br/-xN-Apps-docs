@@ -39,6 +39,7 @@ async function bootstrap() {
 
   const PORT = Number(process.env.PORT || 3090);
   await app.listen(PORT);
-  console.log(`Aplicação disponível em ${PORT}`)
+  
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
