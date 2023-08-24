@@ -5,22 +5,42 @@
 </nav>
 
 <header>
-  <form>
+  <form [formGroup]="form">
     <h1>Crie sua conta para acesso</h1>
     <mat-form-field>
-      <input matInput type="text" placeholder="Identificação" />
+      <input
+        matInput
+        type="text"
+        placeholder="Identificação"
+        formControlName="identificacao"
+      />
       <mat-icon matPrefix>person</mat-icon>
     </mat-form-field>
     <mat-form-field>
-      <input matInput type="text" placeholder="E-mail" />
+      <input
+        matInput
+        type="text"
+        placeholder="E-mail"
+        formControlName="email"
+      />
       <mat-icon matPrefix>email</mat-icon>
     </mat-form-field>
     <mat-form-field>
-      <input matInput type="text" placeholder="Celular (Receber SMS)" />
+      <input
+        matInput
+        type="text"
+        placeholder="Celular (Receber SMS)"
+        formControlName="phone"
+      />
       <mat-icon matPrefix>phone</mat-icon>
     </mat-form-field>
     <mat-form-field>
-      <input matInput type="password" placeholder="Senha" />
+      <input
+        matInput
+        type="password"
+        placeholder="Senha"
+        formControlName="password"
+      />
       <mat-icon matPrefix>password</mat-icon>
     </mat-form-field>
     <button mat-raised-button color="primary" (click)="criarConta()">

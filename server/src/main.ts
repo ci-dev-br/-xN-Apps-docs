@@ -16,8 +16,13 @@ async function bootstrap() {
   };
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    httpsOptions,
+    httpsOptions
   });
+  app.enableCors({
+    origin: [
+      'http://localhost:4293'
+    ]
+  })
   const options = new DocumentBuilder()
     .setTitle('Portal Manager API')
     .setDescription('API de Integração do Portal PLHX')
