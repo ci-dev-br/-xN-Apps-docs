@@ -20,3 +20,7 @@
     </ul>
   </ng-container>
 </nav>
+<div class="breadcrumbs" *ngIf="$user | async">
+  <div class="crumb">Painel</div>
+  <div class="crumb">Teste</div>
+</div>
