@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CoreModule } from 'src/app/core/core.module';
 import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
+import { LFooterModule } from 'src/app/components/l-footer/l-footer.module';
 
 
 @NgModule({
@@ -27,6 +28,7 @@ import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
     MatInputModule,
     ReactiveFormsModule,
     LNavModule,
+    LFooterModule,
   ]
 })
 export class CriarContaModule { }

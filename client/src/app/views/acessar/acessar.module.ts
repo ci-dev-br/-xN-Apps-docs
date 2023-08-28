@@ -10,6 +10,7 @@ import { AcessarComponent } from './acessar.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
 import { CoreModule } from 'src/app/core/core.module';
+import { LFooterModule } from 'src/app/components/l-footer/l-footer.module';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import { CoreModule } from 'src/app/core/core.module';
     MatInputModule,
     ReactiveFormsModule,
     LNavModule,
+    LFooterModule,
   ]
 })
 export class AcessarModule { }

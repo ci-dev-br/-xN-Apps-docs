@@ -1,6 +1,7 @@
 <nav>
   <ng-container *ngIf="$user | async">
     <span>
+      Bem-vinde,
       {{
         ($user | async)?.fullName ||
           ($user | async)?.username ||
@@ -8,14 +9,14 @@
       }}
     </span>
   </ng-container>
-  <ul>
-    <ng-container *ngIf="!($user | async)">
+  <ng-container *ngIf="$user | async">
+    <button mat-raised-button (click)="sair()">Sair</button>
+  </ng-container>
+  <ng-container *ngIf="!($user | async)">
+    <ul>
       <li><a routerLink="/">Início</a></li>
       <li><a routerLink="/criar-conta">Criar Conta</a></li>
       <li><a routerLink="/acessar">Entrar</a></li>
-    </ng-container>
-    <ng-container *ngIf="$user | async">
-      <li><a (click)="sair()">Sair</a></li>
-    </ng-container>
-  </ul>
+    </ul>
+  </ng-container>
 </nav>

@@ -1,0 +1,14 @@
+:host {
+  display: contents;
+}
+footer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: #111;
+  min-height: 70vh;
+  align-items: center;
+  justify-content: flex-end;
+  color: #999;
+  padding-bottom: 24px;
+}
