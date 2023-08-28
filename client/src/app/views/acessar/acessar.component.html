@@ -1,24 +1,42 @@
-<nav>
-  <ul>
-    <li><a routerLink="/">Início</a></li>
-    <li><a routerLink="/criar-conta">Criar Conta</a></li>
-  </ul>
-</nav>
-
+<ci-l-nav></ci-l-nav>
 <header>
-  <form>
-    <h1>Bem-vinde novamente</h1>
-
-    <mat-form-field>
-      <input matInput type="text" placeholder="Identificação" />
-      <mat-icon matPrefix>person</mat-icon>
-    </mat-form-field>
-
-    <button mat-raised-button color="primary">Acessar</button>
-    <a routerLink="/criar-conta">Não possui uma conta? Criar conta</a>
+  <form
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    *ngIf="form && stage !== 'authenticated'"
+  >
+    <ng-container *ngIf="stage === 'identification'">
+      <h1>Bem-vinde novamente</h1>
+      <mat-form-field>
+        <input
+          matInput
+          type="text"
+          focused
+          placeholder="Identificação"
+          formControlName="identification"
+        />
+        <mat-icon matPrefix>person</mat-icon>
+      </mat-form-field>
+      <button type="submit" mat-raised-button color="primary">Acessar</button>
+      <a routerLink="/criar-conta">Não possui uma conta? Criar conta</a>
+    </ng-container>
+    <ng-container *ngIf="stage === 'authentication'">
+      <mat-form-field>
+        <input
+          matInput
+          type="password"
+          focused
+          placeholder="Senha"
+          formControlName="password"
+        />
+        <mat-icon matPrefix>person</mat-icon>
+      </mat-form-field>
+      <button type="submit" mat-raised-button color="primary">
+        Confirmar senha
+      </button>
+    </ng-container>
   </form>
 </header>
-
 <footer>
   <div class="assinatura">
     Portal do Cliente | plhx.com.br - Todos os direitos reservados

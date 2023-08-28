@@ -9,6 +9,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CoreModule } from 'src/app/core/core.module';
+import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
 
 
 @NgModule({
@@ -16,7 +18,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     CriarContaComponent
   ],
   imports: [
-    CommonModule,
+    CoreModule,
     CriarContaRoutingModule,
     AcessarRoutingModule,
     MatButtonModule,
@@ -24,6 +26,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
+    LNavModule,
   ]
 })
 export class CriarContaModule { }

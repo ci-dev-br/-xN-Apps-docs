@@ -6,7 +6,7 @@ import { AuthService } from 'src/app/api/services';
 @Component({
   selector: 'ci-criar-conta',
   templateUrl: './criar-conta.component.html',
-  styleUrls: ['./criar-conta.component.scss']
+  styleUrls: ['../../../scss/landingpage.scss']
 })
 export class CriarContaComponent {
   form: FormGroup = this.fb.group({

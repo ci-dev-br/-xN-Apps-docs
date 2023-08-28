@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 
 import { HomepageRoutingModule } from './homepage-routing.module';
 import { HomepageComponent } from './homepage.component';
+import { CoreModule } from 'src/app/core/core.module';
+import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
 
 
 @NgModule({
@@ -10,8 +12,9 @@ import { HomepageComponent } from './homepage.component';
     HomepageComponent
   ],
   imports: [
-    CommonModule,
-    HomepageRoutingModule
+    CoreModule,
+    HomepageRoutingModule,
+    LNavModule,
   ]
 })
 export class HomepageModule { }

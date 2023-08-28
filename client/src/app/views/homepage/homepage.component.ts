@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'ci-homepage',
   templateUrl: './homepage.component.html',
-  styleUrls: ['./homepage.component.scss']
+  styleUrls: ['../../../scss/landingpage.scss']
 })
 export class HomepageComponent {
 

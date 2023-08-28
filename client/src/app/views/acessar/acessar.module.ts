@@ -7,7 +7,9 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { AcessarRoutingModule } from './acessar-routing.module';
 import { AcessarComponent } from './acessar.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
+import { CoreModule } from 'src/app/core/core.module';
 
 
 @NgModule({
@@ -15,13 +17,15 @@ import { ReactiveFormsModule } from '@angular/forms';
     AcessarComponent
   ],
   imports: [
-    CommonModule,
+    CoreModule,
+    FormsModule,
     AcessarRoutingModule,
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
+    LNavModule,
   ]
 })
 export class AcessarModule { }

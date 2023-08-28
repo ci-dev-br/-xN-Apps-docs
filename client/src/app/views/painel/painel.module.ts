@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 import { PainelRoutingModule } from './painel-routing.module';
 import { PainelComponent } from './painel.component';
+import { CoreModule } from 'src/app/core/core.module';
 
 
 @NgModule({
@@ -10,7 +10,7 @@ import { PainelComponent } from './painel.component';
     PainelComponent
   ],
   imports: [
-    CommonModule,
+    CoreModule,
     PainelRoutingModule
   ]
 })

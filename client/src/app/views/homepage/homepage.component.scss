@@ -4,31 +4,6 @@
   align-items: stretch;
 }
 
-nav {
-  background: linear-gradient(to top, #333 0%, #444 100%);
-  position: sticky;
-  top: 0;
-  z-index: 3;
-  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.7));
-
-  a,
-  a:link,
-  a:visited {
-    color: white;
-    text-decoration: none;
-    padding: 8px;
-  }
-
-  flex: auto;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-
-  ul,
-  li {
-    display: contents;
-  }
-}
 header {
   min-height: 80vh;
   margin-bottom: 24px;

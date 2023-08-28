@@ -1,0 +1,21 @@
+<nav>
+  <ng-container *ngIf="$user | async">
+    <span>
+      {{
+        ($user | async)?.fullName ||
+          ($user | async)?.username ||
+          ($user | async)?.email
+      }}
+    </span>
+  </ng-container>
+  <ul>
+    <ng-container *ngIf="!($user | async)">
+      <li><a routerLink="/">Início</a></li>
+      <li><a routerLink="/criar-conta">Criar Conta</a></li>
+      <li><a routerLink="/acessar">Entrar</a></li>
+    </ng-container>
+    <ng-container *ngIf="$user | async">
+      <li><a (click)="sair()">Sair</a></li>
+    </ng-container>
+  </ul>
+</nav>

@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { ApiModule } from './api/api.module';
 import { HttpClientModule } from '@angular/common/http';
+import { ServicesModule } from './services/services.module';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { HttpClientModule } from '@angular/common/http';
     }),
     HttpClientModule,
     ApiModule.forRoot({ rootUrl: isDevMode() ? 'https://npm.plhx.com.br:3090' : location.origin }),
+    ServicesModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
