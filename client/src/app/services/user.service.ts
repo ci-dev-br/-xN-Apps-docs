@@ -11,9 +11,8 @@ export class UserService {
     ) {
         this.$user.subscribe(v => {
             if (v) {
-                localStorage.setItem('CIUSR', btoa(JSON.stringify(v, null, 2)));
-                router.navigate(['/painel']);
-            } else { localStorage.removeItem('CIUSR'); router.navigate(['/']); }
+                sessionStorage.setItem('CIUSR', btoa(JSON.stringify(v, null, 2)));
+            } else { sessionStorage.removeItem('CIUSR'); router.navigate(['/']); }
         })
     }
     get user() { return this.$user; }
@@ -24,7 +23,7 @@ export class UserService {
         this.$user.next(undefined);
     }
     private getFromMemory() {
-        const cached = localStorage.getItem('CIUSR');
+        const cached = sessionStorage.getItem('CIUSR');
         if (cached) {
             return {
                 ...JSON.parse(atob(cached))

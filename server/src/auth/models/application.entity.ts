@@ -5,6 +5,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 export class Application {
     @PrimaryGeneratedColumn('uuid')
     id?: string;
+    @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })
     url?: string;
     @ApiProperty({ nullable: true, required: false })

@@ -4,7 +4,7 @@
       <mat-icon>apps</mat-icon>
     </button>
     <mat-menu #appsMenu>
-      <button mat-menu-item *ngFor="let item of apps">
+      <button mat-menu-item *ngFor="let item of apps" [routerLink]="[item.url]">
         <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
         {{ item.name }}
       </button>

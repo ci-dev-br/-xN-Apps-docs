@@ -6,6 +6,7 @@ import { AuthService } from 'src/app/api/services';
 import { SHA512 } from 'crypto-js';
 import { UserService } from 'src/app/services/user.service';
 import { StorageService } from 'src/app/core/storage.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'ci-acessar',
@@ -21,6 +22,7 @@ export class AcessarComponent {
     private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly storage: StorageService,
+    private readonly router: Router,
   ) {
     this.userService.user.subscribe(user => {
       if (user) this.stage = 'authenticated';
@@ -75,6 +77,7 @@ export class AcessarComponent {
       }));
       if (this.acesso_payload.user?.id) {
         this.userService.identificarUsuario(this.acesso_payload.user);
+        this.router.navigate(['/painel']);
         if (this.acesso_payload.bearer) this.storage.set('__access_token', { a: this.acesso_payload.bearer })
       }
     }
