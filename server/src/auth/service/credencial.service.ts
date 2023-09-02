@@ -3,6 +3,7 @@ import { Repository } from "typeorm";
 import { ChaveAcesso } from "../models/chave-acesso.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserService } from "./user.service";
+import { JwtService } from "@nestjs/jwt";
 
 
 @Injectable()
@@ -11,6 +12,7 @@ export class CredencialService {
         @InjectRepository(ChaveAcesso)
         private readonly chaveAcessoRepo: Repository<ChaveAcesso>,
         private readonly userService: UserService,
+        private readonly jwtService: JwtService,
     ) { }
     async solicitarCredencial(
         partials?: {

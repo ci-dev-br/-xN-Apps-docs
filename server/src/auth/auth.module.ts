@@ -11,8 +11,11 @@ import { APP_GUARD } from "@nestjs/core";
 import { AuthGuard } from "./auth.guard";
 import { CredencialService } from "./service/credencial.service";
 import { ChaveAcesso } from "./models/chave-acesso.entity";
-
+import { Policy } from "./models/policy.entity";
+import { ApplicationService } from "./service/application.service";
+import { ApplicationController } from "./controller/application.controller";
 export const Entities = [
+    Policy,
     User,
     Application,
     ChaveAcesso,
@@ -31,10 +34,12 @@ export const Entities = [
     ],
     controllers: [
         AuthController,
+        ApplicationController,
     ],
     providers: [
         UserService,
         CredencialService,
+        ApplicationService,
         {
             provide: APP_GUARD,
             useClass: AuthGuard,
@@ -45,3 +50,8 @@ export const Entities = [
     ]
 })
 export class AuthModule { }
+export {
+    UserService,
+    CredencialService,
+    ApplicationService,
+}

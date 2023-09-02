@@ -23,6 +23,8 @@ export class AcessoPayload {
     password?: string;
     @ApiProperty({ required: false })
     user?: User;
+    @ApiProperty({ required: false })
+    bearer?: string;
     constructor(chave?: ChaveAcesso) {
         if (chave instanceof ChaveAcesso) {
             this.chaveAcesso = chave.id;

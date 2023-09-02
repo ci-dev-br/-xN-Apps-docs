@@ -1,18 +1,18 @@
-import { Body, Controller, Get, Ip, Post, Request } from '@nestjs/common';
+import { Body, Controller, Get, Ip, Post, Request, UnauthorizedException } from '@nestjs/common';
 import { AcessoPayload, RegistrarInputDto } from './dto/dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../service/user.service';
 import { User } from '../models/user.entity';
 import { Public } from '../decorators/public.decorator';
 import { CredencialService } from '../service/credencial.service';
-import { IncomingMessage } from 'http';
-import { ChaveAcesso } from '../models/chave-acesso.entity';
+import { JwtService } from '@nestjs/jwt';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
   constructor(
     private readonly userService: UserService,
-    private readonly credencialService: CredencialService
+    private readonly credencialService: CredencialService,
+    private readonly jwtService: JwtService,
   ) { }
   @Public()
   @Post('Registrar')
@@ -55,17 +55,24 @@ export class AuthController {
     if (payload?.chaveAcesso && payload?.password) {
       let chave = await this.credencialService.obterChaveAcesso(payload.chaveAcesso);
       if (chave?.valid) {
-        let autenticated_user = await this.userService.verificarAssinaturaAutenticacao(
+        let authenticated_user = await this.userService.verificarAssinaturaAutenticacao(
           chave.identifiedUser, payload.password, chave.id
         );
+        if (!authenticated_user) {
+          throw new UnauthorizedException();
+        }
         chave.valid = false;
         chave.alive = true;
         await this.credencialService.atualizar(chave);
         return {
           user: {
-            ...autenticated_user,
+            ...authenticated_user,
             password: undefined,
           },
+          bearer: await this.jwtService.signAsync({
+            ...authenticated_user,
+            password: undefined,
+          }),
         } as AcessoPayload;
       }
     } else if (payload?.chaveAcesso) {
@@ -76,12 +83,11 @@ export class AuthController {
       chave = await this.credencialService.atualizar(chave);
       return new AcessoPayload({ ...chave, id: undefined });
     } else {
+      const chaveAcesso = (await this.credencialService.solicitarCredencial({
+        ip: ip
+      }));
       return {
-        chaveAcesso: {
-          ...(await this.credencialService.solicitarCredencial({
-            ip: ip
-          }))
-        }.id
+        chaveAcesso: chaveAcesso.id,
       };
     }
   }

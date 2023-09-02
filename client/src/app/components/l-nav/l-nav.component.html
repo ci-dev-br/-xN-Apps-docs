@@ -1,5 +1,15 @@
 <nav>
   <ng-container *ngIf="$user | async">
+    <button *ngIf="apps" mat-icon-button [matMenuTriggerFor]="appsMenu">
+      <mat-icon>apps</mat-icon>
+    </button>
+    <mat-menu #appsMenu>
+      <button mat-menu-item *ngFor="let item of apps">
+        <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+        {{ item.name }}
+      </button>
+    </mat-menu>
+    <span style="flex: auto"></span>
     <span>
       Bem-vinde,
       {{
@@ -8,8 +18,6 @@
           ($user | async)?.email
       }}
     </span>
-  </ng-container>
-  <ng-container *ngIf="$user | async">
     <button mat-raised-button (click)="sair()">Sair</button>
   </ng-container>
   <ng-container *ngIf="!($user | async)">

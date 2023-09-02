@@ -6,8 +6,8 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { ApiModule } from './api/api.module';
-import { HttpClientModule } from '@angular/common/http';
 import { ServicesModule } from './services/services.module';
+import { CoreModule } from './core/core.module';
 
 @NgModule({
   declarations: [
@@ -15,6 +15,7 @@ import { ServicesModule } from './services/services.module';
   ],
   imports: [
     BrowserModule,
+    CoreModule.forRoot(),
     AppRoutingModule,
     BrowserAnimationsModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
@@ -23,7 +24,6 @@ import { ServicesModule } from './services/services.module';
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000'
     }),
-    HttpClientModule,
     ApiModule.forRoot({ rootUrl: isDevMode() ? 'https://npm.plhx.com.br:3090' : location.origin }),
     ServicesModule,
   ],

@@ -1,5 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Policy } from "./policy.entity";
+import { Application } from "./application.entity";
 
 
 @Entity()
@@ -22,4 +24,10 @@ export class User {
     @Column({ nullable: true })
     @ApiProperty({ required: false, nullable: true })
     phone?: string;
+    // @ApiProperty({ required: false, nullable: true })
+    @Column({ nullable: true, type: 'varchar', array: true })
+    roles?: string[];
+    @ApiProperty({ required: false, nullable: true, isArray: true, type: Policy })
+    @ManyToMany(() => Policy) @JoinTable()
+    permission?: Policy[];
 }

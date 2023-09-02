@@ -5,6 +5,7 @@ import { AcessoPayload } from 'src/app/api/models';
 import { AuthService } from 'src/app/api/services';
 import { SHA512 } from 'crypto-js';
 import { UserService } from 'src/app/services/user.service';
+import { StorageService } from 'src/app/core/storage.service';
 
 @Component({
   selector: 'ci-acessar',
@@ -19,6 +20,7 @@ export class AcessarComponent {
     private readonly fb: FormBuilder,
     private readonly authService: AuthService,
     private readonly userService: UserService,
+    private readonly storage: StorageService,
   ) {
     this.userService.user.subscribe(user => {
       if (user) this.stage = 'authenticated';
@@ -73,6 +75,7 @@ export class AcessarComponent {
       }));
       if (this.acesso_payload.user?.id) {
         this.userService.identificarUsuario(this.acesso_payload.user);
+        if (this.acesso_payload.bearer) this.storage.set('__access_token', { a: this.acesso_payload.bearer })
       }
     }
   }
