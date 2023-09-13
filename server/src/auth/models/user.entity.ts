@@ -30,4 +30,7 @@ export class User {
     @ApiProperty({ required: false, nullable: true, isArray: true, type: Policy })
     @ManyToMany(() => Policy) @JoinTable()
     permission?: Policy[];
+    @ApiProperty({ nullable: true, required: false })
+    @Column({ nullable: true })
+    refreshToken?: string;
 }

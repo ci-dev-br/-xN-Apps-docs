@@ -25,6 +25,8 @@ export class AcessoPayload {
     user?: User;
     @ApiProperty({ required: false })
     bearer?: string;
+    @ApiProperty({ required: false })
+    refreshToken?: string;
     constructor(chave?: ChaveAcesso) {
         if (chave instanceof ChaveAcesso) {
             this.chaveAcesso = chave.id;

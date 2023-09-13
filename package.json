@@ -1,0 +1,16 @@
+{
+  "name": "notificacao",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://101.ci.dev.br:444/git/portal.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

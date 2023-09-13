@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Ip, Post, Request, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Get, Ip, Post, Req, Request, UnauthorizedException } from '@nestjs/common';
 import { AcessoPayload, RegistrarInputDto } from './dto/dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../service/user.service';
@@ -6,6 +6,7 @@ import { User } from '../models/user.entity';
 import { Public } from '../decorators/public.decorator';
 import { CredencialService } from '../service/credencial.service';
 import { JwtService } from '@nestjs/jwt';
+import { jwtConstants } from '../constants';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -64,6 +65,20 @@ export class AuthController {
         chave.valid = false;
         chave.alive = true;
         await this.credencialService.atualizar(chave);
+        const refresh_token = this.jwtService.signAsync(
+          {
+            user: {
+              id: authenticated_user.id,
+              permission: authenticated_user.permission,
+            }
+          },
+          {
+            // TODO: obter chave para criptografia do jwt para o usuário,
+            // secret: jwtConstants.secret,
+            expiresIn: '7d',
+          },
+        );
+        await this.userService.updateRefreshToken(authenticated_user.id, null);
         return {
           user: {
             ...authenticated_user,
@@ -90,5 +105,15 @@ export class AuthController {
         chaveAcesso: chaveAcesso.id,
       };
     }
+  }
+  @Post('Logout')
+  @ApiOperation({ operationId: 'Logout' })
+  async logout(@Req() req) {
+    this.userService.logout(null)
+  }
+  @Post('Refresh')
+  @ApiOperation({ operationId: 'Refresh' })
+  async refresh(@Req() req) {
+
   }
 }

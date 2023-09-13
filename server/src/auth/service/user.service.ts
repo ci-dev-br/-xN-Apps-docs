@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { User } from '../models/user.entity';
 import { ILike, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as argon2 from 'argon2';
 
 @Injectable()
 export class UserService {
@@ -33,5 +34,19 @@ export class UserService {
             .setParameter('ass_pass', assinaturaPassword)
             .setParameter('chave_acesso', chaveAcesso)
             .getOne()
+    }
+    hashData(data: string) {
+        return argon2.hash(data);
+    }
+    async logout(user: User) {
+        return await this.userRepo.update(user.id, {
+            refreshToken: null
+        })
+    }
+    async updateRefreshToken(userId: string, refreshToken: string) {
+        const hashedRefreshToken = await this.hashData(refreshToken);
+        await this.userRepo.update(userId, {
+            refreshToken: hashedRefreshToken
+        })
     }
 }
