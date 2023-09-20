@@ -1,0 +1,31 @@
+{
+    // Use o IntelliSense para saber mais sobre os atributos possíveis.
+    // Focalizar para exibir as descrições dos atributos existentes.
+    // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Iniciar o Chrome em relação a localhost",
+            "url": "http://localhost:4293",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "msedge",
+            "request": "launch",
+            "name": "Launch Microsoft Edge and open the Edge DevTools",
+            "url": "http://localhost:4293",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        }
+    ]
+}

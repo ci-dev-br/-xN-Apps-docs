@@ -7,6 +7,7 @@ import { Public } from '../decorators/public.decorator';
 import { CredencialService } from '../service/credencial.service';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from '../constants';
+import { randomUUID } from 'crypto';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -65,12 +66,12 @@ export class AuthController {
         chave.valid = false;
         chave.alive = true;
         await this.credencialService.atualizar(chave);
-        const refresh_token = this.jwtService.signAsync(
+        const permission_uuid = randomUUID();
+        const refresh_token = await this.jwtService.signAsync(
           {
-            user: {
-              id: authenticated_user.id,
-              permission: authenticated_user.permission,
-            }
+            try: btoa(JSON.stringify({
+              permission: permission_uuid
+            }, null, 2))
           },
           {
             // TODO: obter chave para criptografia do jwt para o usuário,
@@ -78,7 +79,7 @@ export class AuthController {
             expiresIn: '7d',
           },
         );
-        await this.userService.updateRefreshToken(authenticated_user.id, null);
+        await this.userService.updateRefreshToken(authenticated_user.id, permission_uuid);
         return {
           user: {
             ...authenticated_user,
@@ -88,11 +89,14 @@ export class AuthController {
             ...authenticated_user,
             password: undefined,
           }),
+          refresh_token
         } as AcessoPayload;
       }
     } else if (payload?.chaveAcesso) {
       let chave = await this.credencialService.obterChaveAcesso(payload.chaveAcesso);
       const identified_user = await this.userService.existsUserByIdentification(payload.identificacao, chave.id);
+      // if(!identified_user) throw ('')
+      // O que fazer quando o usuário não é identificado?
       await this.credencialService.eliminarChaves(identified_user.id);
       chave.identifiedUser = identified_user.id;
       chave = await this.credencialService.atualizar(chave);
