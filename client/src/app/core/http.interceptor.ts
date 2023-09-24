@@ -1,32 +1,60 @@
-import { HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from "@angular/common/http";
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-// import { StorageService } from './storage.service';
+import { Observable, throwError } from "rxjs";
+import { catchError, switchMap } from "rxjs/operators";
+import { TokenService } from "./token.service";
+import { AuthService } from "../api/services";
+@Injectable()
 export class AuthorizationHttpInterceptor implements HttpInterceptor {
+    private refreshing?: boolean;
     constructor(
-        // private readonly storage: StorageService,
-    ) {
-
-    }
-    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        let bearer = undefined;
-        const session_b64 = sessionStorage.getItem('SESSION[0]');
-        if (session_b64) {
-            const session = JSON.parse(atob(session_b64));
-            if (session) {
-                const info = JSON.parse(atob(session['__access_token']));
-                if (info?.a) {
-                    bearer = info?.a;
+        private readonly token: TokenService,
+        private readonly auth: AuthService,
+    ) { }
+    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        const { method, url } = request;
+        return next.handle(this.addTokenHeader(request)).pipe(catchError(error => {
+            if (error) {
+                if (error instanceof HttpErrorResponse && this.token.hasRefreshToken()) {
+                    return this.handlerUnauthorizedError(error, next, request);
                 }
             }
+            return throwError(error);
+        }));
+    }
+
+    private addTokenHeader(request: HttpRequest<any>) {
+        let bearer = undefined;
+        if (this.token.hasToken()) {
+            bearer = this.token.Token;
         }
-        const { method, url } = req;
-        return next.handle(
-            bearer ? req.clone({
-                headers: new HttpHeaders({
-                    'Authorization': `Bearer ${bearer}`
+        return bearer ? request.clone({
+            headers: new HttpHeaders({
+                'Authorization': `Bearer ${bearer}`
+            })
+        }) : request;
+    }
+
+    private handlerUnauthorizedError(error: HttpErrorResponse, next: HttpHandler, request: HttpRequest<any>) {
+        this.refreshing = true;
+        if (this.token.hasRefreshToken()) {
+            return this.auth.refresh({
+                body: {
+                    refreshToken: this.token.RefreshToken
+                }
+            }).pipe(
+                switchMap((token: any) => {
+                    this.refreshing = false;
+
+                    this.token.Token = token.authorization;
+                    return next.handle(this.addTokenHeader(request));
+                }), catchError(error => {
+                    this.refreshing = false;
+                    this.token.clear();
+                    return throwError(error);
                 })
-            }) : req
-        );
+            )
+        } else
+            return throwError(error);
     }
 }

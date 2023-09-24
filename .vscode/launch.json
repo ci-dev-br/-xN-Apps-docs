@@ -5,18 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "chrome",
+            "name": "Launch Chrome",
             "request": "launch",
-            "name": "Iniciar o Chrome em relação a localhost",
+            "type": "chrome",
+            "cleanUp": "onlyTab",
+            "sourceMaps": true,
             "url": "http://localhost:4293",
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}/client/"
         },
         {
             "type": "msedge",
             "request": "launch",
             "name": "Launch Microsoft Edge and open the Edge DevTools",
             "url": "http://localhost:4293",
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}/client/"
         },
         {
             "name": "Attach by Process ID",

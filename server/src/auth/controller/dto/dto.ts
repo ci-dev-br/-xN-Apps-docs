@@ -35,3 +35,13 @@ export class AcessoPayload {
         }
     }
 }
+
+export class RefreshPayloadInputDto {
+    @ApiProperty({ required: true, nullable: false })
+    refreshToken: string;
+}
+
+export class AuthorizationOutput {
+    @ApiProperty({ required: true, nullable: false })
+    authorization: string;
+}

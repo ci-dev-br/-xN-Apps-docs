@@ -14,6 +14,7 @@ import { Policy } from "./models/policy.entity";
 import { ApplicationService } from "./service/application.service";
 import { ApplicationController } from "./controller/application.controller";
 import { RefreshTokenStrategy } from "./service/refresh-token-strategy";
+import { AuthService } from "./service/auth.service";
 
 export const Entities = [
     Policy,
@@ -39,6 +40,7 @@ export const Entities = [
     ],
     providers: [
         UserService,
+        AuthService,
         CredencialService,
         ApplicationService,
         RefreshTokenStrategy,
@@ -56,4 +58,5 @@ export {
     UserService,
     CredencialService,
     ApplicationService,
+    AuthService,
 }

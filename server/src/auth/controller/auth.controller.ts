@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Ip, Post, Req, Request, UnauthorizedException } from '@nestjs/common';
-import { AcessoPayload, RegistrarInputDto } from './dto/dto';
+import { AcessoPayload, AuthorizationOutput, RefreshPayloadInputDto, RegistrarInputDto } from './dto/dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../service/user.service';
 import { User } from '../models/user.entity';
@@ -8,6 +8,8 @@ import { CredencialService } from '../service/credencial.service';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from '../constants';
 import { randomUUID } from 'crypto';
+import { AuthService } from '../service/auth.service';
+import { RefreshTokenStrategy } from '../service/refresh-token-strategy';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -15,6 +17,7 @@ export class AuthController {
     private readonly userService: UserService,
     private readonly credencialService: CredencialService,
     private readonly jwtService: JwtService,
+    private readonly authService: AuthService,
   ) { }
   @Public()
   @Post('Registrar')
@@ -57,9 +60,10 @@ export class AuthController {
     if (payload?.chaveAcesso && payload?.password) {
       let chave = await this.credencialService.obterChaveAcesso(payload.chaveAcesso);
       if (chave?.valid) {
-        let authenticated_user = await this.userService.verificarAssinaturaAutenticacao(
-          chave.identifiedUser, payload.password, chave.id
-        );
+        let { password, fullName, username, email, phone,
+          ...authenticated_user } = await this.userService.verificarAssinaturaAutenticacao(
+            chave.identifiedUser, payload.password, chave.id
+          );
         if (!authenticated_user) {
           throw new UnauthorizedException();
         }
@@ -79,17 +83,12 @@ export class AuthController {
             expiresIn: '7d',
           },
         );
+        authenticated_user.refreshToken = refresh_token;
         await this.userService.updateRefreshToken(authenticated_user.id, permission_uuid);
         return {
-          user: {
-            ...authenticated_user,
-            password: undefined,
-          },
-          bearer: await this.jwtService.signAsync({
-            ...authenticated_user,
-            password: undefined,
-          }),
-          refresh_token
+          user: authenticated_user,
+          bearer: await this.jwtService.signAsync(authenticated_user),
+          refreshToken: refresh_token
         } as AcessoPayload;
       }
     } else if (payload?.chaveAcesso) {
@@ -115,9 +114,19 @@ export class AuthController {
   async logout(@Req() req) {
     this.userService.logout(null)
   }
-  @Post('Refresh')
-  @ApiOperation({ operationId: 'Refresh' })
-  async refresh(@Req() req) {
 
+  @Public()
+  @Post('Refresh')
+  @ApiResponse({ type: AuthorizationOutput })
+  @ApiOperation({ operationId: 'Refresh' })
+  async refresh(
+    @Req() req: Request,
+    @Body() payload: RefreshPayloadInputDto,
+  ) {
+    // const userId = req.user['sub'];
+    // const refreshToken = req.user['refreshToken'];
+    return await this.authService.refreshToken(
+      null, payload.refreshToken, req
+    );
   }
 }

@@ -20,7 +20,10 @@ export class UserService {
     async existsUserByIdentification(identification: string, fator: string) {
         return await this.userRepo.createQueryBuilder('user')
             .where(`encode(sha512(concat(user.username,:fator::varchar)::bytea), 'hex') = :assinatura::varchar`)
-            .setParameters({ assinatura: identification, fator: fator })
+            .setParameters(
+                {
+                    assinatura: identification, fator: fator
+                })
             .getOne();
     }
     async verificarAssinaturaAutenticacao(
@@ -48,5 +51,10 @@ export class UserService {
         await this.userRepo.update(userId, {
             refreshToken: hashedRefreshToken
         })
+    }
+    async findById(userId: string) {
+        const user = await this.userRepo.findOne({ where: { id: userId } })
+
+        return user;
     }
 }

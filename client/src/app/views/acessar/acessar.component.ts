@@ -7,6 +7,7 @@ import { SHA512 } from 'crypto-js';
 import { UserService } from 'src/app/services/user.service';
 import { StorageService } from 'src/app/core/storage.service';
 import { Router } from '@angular/router';
+import { TokenService } from 'src/app/core/token.service';
 
 @Component({
   selector: 'ci-acessar',
@@ -23,6 +24,7 @@ export class AcessarComponent {
     private readonly userService: UserService,
     private readonly storage: StorageService,
     private readonly router: Router,
+    private readonly token: TokenService,
   ) {
     this.userService.user.subscribe(user => {
       if (user) this.stage = 'authenticated';
@@ -77,8 +79,9 @@ export class AcessarComponent {
       }));
       if (this.acesso_payload.user?.id) {
         this.userService.identificarUsuario(this.acesso_payload.user);
+        if (this.acesso_payload.bearer) this.token.Token = this.acesso_payload.bearer;
+        if (this.acesso_payload.refreshToken) this.token.RefreshToken = this.acesso_payload.refreshToken;
         this.router.navigate(['/painel']);
-        if (this.acesso_payload.bearer) this.storage.set('__access_token', { a: this.acesso_payload.bearer })
       }
     }
   }
