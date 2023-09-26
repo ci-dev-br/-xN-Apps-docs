@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Policy } from "./policy.entity";
-import { Application } from "./application.entity";
 
 
 @Entity()

@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Application } from 'src/app/api/models';
-import { ApplicationService } from 'src/app/api/services';
 import { UserService } from 'src/app/services/user.service';
 import { lastValueFrom } from 'rxjs';
+import { Application } from 'src/app/api/models';
+import { ApplicationService } from 'src/app/api/services';
 
 @Component({
   selector: 'ci-l-nav',
@@ -15,7 +15,7 @@ export class LNavComponent {
   $user = this.userService.user;
   constructor(
     private readonly userService: UserService,
-    private readonly applicationService: ApplicationService
+    private readonly applicationService: ApplicationService,
   ) {
     this.load();
   }

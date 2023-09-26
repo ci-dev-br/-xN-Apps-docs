@@ -5,6 +5,7 @@ import { Entities as NotificacaoEntities, NotificacaoModule } from './notificaca
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule, Entities as AuthEntities } from './auth/auth.module';
 import { config } from 'dotenv';
+import { ManagerEntities, ManagerModule } from './manager/manager.module';
 
 config({ path: '.env' });
 @Module({
@@ -22,10 +23,12 @@ config({ path: '.env' });
       entities: [
         ...NotificacaoEntities,
         ...AuthEntities,
+        ...ManagerEntities,
       ]
     }),
     NotificacaoModule,
     AuthModule,
+    ManagerModule,
   ],
   controllers: [
     AppController,

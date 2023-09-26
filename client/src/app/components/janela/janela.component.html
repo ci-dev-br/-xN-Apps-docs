@@ -1,0 +1,12 @@
+<mat-toolbar>
+
+    <span style="flex: auto;"></span>
+    <ng-container *ngFor="let item of menu">
+        <button mat-icon-button>
+            <mat-icon>{{item.icon}}</mat-icon>
+        </button>
+    </ng-container>
+</mat-toolbar>
+<ng-container *ngIf="component">
+    <ng-container #componentTmplate *ngComponentOutlet="component"></ng-container>
+</ng-container>

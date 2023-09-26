@@ -5,11 +5,57 @@
             <mat-icon>devices</mat-icon>
             Dispositivos
         </ng-template>
+        <mat-toolbar>
+            <button mat-raised-button
+                (click)="conectarDispositivo()">
+                <mat-icon>smartphone</mat-icon>
+                Conectar Dispositivo
+            </button>
+        </mat-toolbar>
+        <div style="display: flex; flex-direction: column;align-items: center;justify-content: center;">
+            <small>Nenhum dispositivo conectado...</small>
+            <ngx-qrcode [value]="token">
+            </ngx-qrcode>
+            <small>Leia o QRCode com o aplicativo para celular para conectar o aparelho aos serviços.</small>
+        </div>
     </mat-tab>
     <mat-tab mat-align-tabs="center">
         <ng-template mat-tab-label>
             <mat-icon>settings</mat-icon>
             Configurações
         </ng-template>
+    </mat-tab>
+    <mat-tab mat-align-tabs="center">
+        <ng-template mat-tab-label>
+            <mat-icon>apps</mat-icon>
+            Application Manager
+        </ng-template>
+        <mat-toolbar>
+            <button mat-raised-button
+                (click)="novoAplicativo()">
+                Novo
+            </button>
+        </mat-toolbar>
+        <ng-container *ngIf="apps">
+            <table mat-table
+                class="mat-elevation-z8"
+                [dataSource]="apps">
+                <ng-container *ngFor="let c of columns">
+                    <ng-container [matColumnDef]="c.headerName">
+                        <th mat-header-cell
+                            *matHeaderCellDef>{{c.headerName}}</th>
+                        <td mat-cell
+                            *matCellDef="let element">
+                            {{element[c.propertyName]}}
+                        </td>
+                    </ng-container>
+                </ng-container>
+                <tr mat-header-row
+                    *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row
+                    *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+        </ng-container>
+
     </mat-tab>
 </mat-tab-group>
