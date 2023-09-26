@@ -8,10 +8,11 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class JanelaComponent {
   menu = [
-    { icon: 'visibility' },
-    { icon: 'thumb_up' },
-    { icon: 'share' },
-    { icon: 'more_horiz' },
+    // { icon: 'visibility' },
+    // { icon: 'thumb_up' },
+    // { icon: 'share' },
+    // { icon: 'more_horiz' },
+    { icon: 'done_all' },
     { icon: 'close' },
   ];
   @Input()
