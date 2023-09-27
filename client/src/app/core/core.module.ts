@@ -34,6 +34,7 @@ export class CoreModule {
                 ...(ApiModule.forRoot({ rootUrl: isDevMode() ? 'https://npm.plhx.com.br:3090' : location.origin }).providers || []),
                 StorageService,
                 TokenService,
+                DaoService,
                 {
                     provide: HTTP_INTERCEPTORS, multi: true, useClass: AuthorizationHttpInterceptor
                 },
