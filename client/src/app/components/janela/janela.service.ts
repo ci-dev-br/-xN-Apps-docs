@@ -1,5 +1,5 @@
-import { Injectable, Type } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
+import { Injectable, Injector, Type } from "@angular/core";
+import { MAT_DIALOG_DATA, MatDialog } from "@angular/material/dialog";
 import { JanelaComponent } from "./janela.component";
 
 @Injectable()
@@ -7,13 +7,13 @@ export class JanelaService {
     constructor(
         private readonly dialog: MatDialog,
     ) { }
-    async open(component: Type<any>) {
+    async open(component: Type<any>, data: any) {
         const dialog = await this.dialog.open(JanelaComponent, {
             data: {
-                component: component
-            }
+                component: component,
+                data: data,
+            },
         });
-
         if (dialog.componentRef?.instance) {
             dialog.componentRef.instance.component = component;
         }

@@ -25,6 +25,9 @@ export class JanelaComponent {
   ];
   @Input()
   component?: Type<any>;
+  injector = Injector.create([
+    { provide: MAT_DIALOG_DATA, useValue: this.data.data }
+  ]);
   @ViewChild('componentTmplate')
   componentTmplate?: any;
   constructor(

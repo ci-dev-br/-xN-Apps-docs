@@ -1,5 +1,4 @@
 <mat-toolbar>
-
     <span style="flex: auto;"></span>
     <ng-container *ngFor="let item of menu">
         <ng-container *ngIf="!!item.onClick">
@@ -10,7 +9,7 @@
             </button>
         </ng-container>
         <ng-container *ngIf="!item.onClick">
-        <button mat-icon-button>
+            <button mat-icon-button>
                 <ng-container *ngTemplateOutlet="contentTmpl">
                 </ng-container>
             </button>
@@ -21,5 +20,6 @@
     </ng-container>
 </mat-toolbar>
 <ng-container *ngIf="component">
-    <ng-container #componentTmplate *ngComponentOutlet="component"></ng-container>
+    <ng-container #componentTmplate
+        *ngComponentOutlet="component; injector:injector"></ng-container>
 </ng-container>
