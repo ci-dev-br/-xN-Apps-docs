@@ -2,9 +2,22 @@
 
     <span style="flex: auto;"></span>
     <ng-container *ngFor="let item of menu">
+        <ng-container *ngIf="!!item.onClick">
+            <button mat-icon-button
+                (click)="item.onClick()">
+                <ng-container *ngTemplateOutlet="contentTmpl">
+                </ng-container>
+            </button>
+        </ng-container>
+        <ng-container *ngIf="!item.onClick">
         <button mat-icon-button>
+                <ng-container *ngTemplateOutlet="contentTmpl">
+                </ng-container>
+            </button>
+        </ng-container>
+        <ng-template #contentTmpl>
             <mat-icon>{{item.icon}}</mat-icon>
-        </button>
+        </ng-template>
     </ng-container>
 </mat-toolbar>
 <ng-container *ngIf="component">
