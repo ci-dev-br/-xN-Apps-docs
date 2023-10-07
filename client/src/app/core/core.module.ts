@@ -7,6 +7,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { AuthorizationHttpInterceptor } from "./http.interceptor";
 import { TokenService } from "./token.service";
 import { ApiModule } from "../api/api.module";
+import { DaoService } from "./dao/dao.service";
 
 @NgModule({
     imports: [

@@ -20,7 +20,7 @@ async function bootstrap() {
   });
   app.enableCors({
     origin: [
-      'http://localhost:4293'
+      'http://localhost:4293',
     ]
   })
   const options = new DocumentBuilder()
@@ -39,7 +39,7 @@ async function bootstrap() {
 
   const PORT = Number(process.env.PORT || 3090);
   await app.listen(PORT);
-  
+
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();

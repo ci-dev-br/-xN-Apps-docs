@@ -3,6 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Application {
+    @ApiProperty({ nullable: true, required: false, uniqueItems: true })
     @PrimaryGeneratedColumn('uuid')
     id?: string;
     @ApiProperty({ nullable: true, required: false })

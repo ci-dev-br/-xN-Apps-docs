@@ -15,6 +15,7 @@ import { LNavModule } from "src/app/components/l-nav/l-nav.module";
 import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo.component';
 import { GerencialComponent } from "./gerencial.component";
 import { JanelaModule } from "src/app/components/janela/janela.module";
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
     declarations: [
@@ -33,6 +34,7 @@ import { JanelaModule } from "src/app/components/janela/janela.module";
         LNavModule,
         ReactiveFormsModule,
         MatFormFieldModule,
+        MatTooltipModule,
         MatInputModule,
         JanelaModule,
         RouterModule.forChild([

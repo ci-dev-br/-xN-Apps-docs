@@ -1,6 +1,7 @@
 import { Injectable, Injector, Type } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialog } from "@angular/material/dialog";
 import { JanelaComponent } from "./janela.component";
+import { lastValueFrom } from "rxjs";
 
 @Injectable()
 export class JanelaService {
@@ -17,5 +18,6 @@ export class JanelaService {
         if (dialog.componentRef?.instance) {
             dialog.componentRef.instance.component = component;
         }
+        return await lastValueFrom(dialog.afterClosed());
     }
 }

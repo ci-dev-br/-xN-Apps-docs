@@ -14,13 +14,6 @@
             "webRoot": "${workspaceFolder}/client/"
         },
         {
-            "type": "msedge",
-            "request": "launch",
-            "name": "Launch Microsoft Edge and open the Edge DevTools",
-            "url": "http://localhost:4293",
-            "webRoot": "${workspaceFolder}/client/"
-        },
-        {
             "name": "Attach by Process ID",
             "processId": "${command:PickProcess}",
             "request": "attach",

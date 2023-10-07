@@ -19,7 +19,10 @@ config({ path: '.env' });
       database: process.env.DB_DATABASE,
       synchronize: Boolean(process.env.DB_SYNCHRONIZE || false),
       logger: 'debug',
-      loggerLevel: 'info',
+      loggerLevel: 'debug',
+      appname: '@CiDevBr/Portal',
+      maxQueryExecutionTime: 100,
+      verboseRetryLog: true,
       entities: [
         ...NotificacaoEntities,
         ...AuthEntities,

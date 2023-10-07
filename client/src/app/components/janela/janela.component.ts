@@ -1,5 +1,6 @@
-import { Component, Inject, Injector, Input, TemplateRef, Type, ViewChild } from '@angular/core';
+import { Component, Inject, Injector, Input, OnDestroy, OnInit, TemplateRef, Type, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DaoService } from 'src/app/core/dao/dao.service';
 
 export interface IItemMenu {
   icon?: string;
@@ -7,6 +8,7 @@ export interface IItemMenu {
   path?: string;
   children?: IItemMenu[];
   onClick?: () => void;
+  visible?: () => boolean;
 }
 
 @Component({
@@ -14,14 +16,11 @@ export interface IItemMenu {
   templateUrl: './janela.component.html',
   styleUrls: ['./janela.component.scss']
 })
-export class JanelaComponent {
+export class JanelaComponent implements OnInit, OnDestroy {
+  showing = false;
   menu: IItemMenu[] = [
-    // { icon: 'visibility' },
-    // { icon: 'thumb_up' },
-    // { icon: 'share' },
-    // { icon: 'more_horiz' },
-    { icon: 'done_all' },
-    { icon: 'close', onClick: () => this.close() },
+    { icon: 'done_all', label: 'Confirmar alterações', visible: () => this.changed, onClick: () => this.confirm() },
+    { icon: 'close', label: 'Fechar', onClick: () => this.close() },
   ];
   @Input()
   component?: Type<any>;
@@ -31,11 +30,26 @@ export class JanelaComponent {
   @ViewChild('componentTmplate')
   componentTmplate?: any;
   constructor(
+    private readonly daos: DaoService,
     private readonly ref: MatDialogRef<JanelaComponent>,
     @Inject(MAT_DIALOG_DATA)
     private data: any,
   ) { }
+  ngOnInit(): void {
+    this.showing = true;
+  }
+  ngOnDestroy(): void {
+    this.showing = false;
+  }
+  get changed() {
+    // if (!this.data?.data) return false;
+    return this.daos.haveChanges(this.data.data)
+  }
+  confirm() {
+    this.daos.confirmChanges(this.data.data)
+  }
   close() {
-    this.ref.close();
+    this.showing = false;
+    this.ref.close(this.data.data);
   }
 }
