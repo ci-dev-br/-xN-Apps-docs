@@ -5,13 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Chrome",
+            "type": "firefox",
             "request": "launch",
-            "type": "chrome",
-            "cleanUp": "onlyTab",
-            "sourceMaps": true,
+            "reAttach": true,
+            "name": "Launch localhost",
             "url": "http://localhost:4293",
-            "webRoot": "${workspaceFolder}/client/"
+            "webRoot": "${workspaceFolder}"
         },
         {
             "name": "Attach by Process ID",
