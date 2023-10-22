@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { InicioComponent } from './inicio.component';
 
 const routes: Routes = [
-  { path: '', loadChildren: () => import('./nav/nav.module').then(m => m.NavModule) },
+  { path: '', component: InicioComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class DevtoolsRoutingModule { }
+export class InicioRoutingModule { }
