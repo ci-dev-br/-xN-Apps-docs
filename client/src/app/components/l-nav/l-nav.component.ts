@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, ActivationEnd, ActivationStart, ChildActivationEnd, Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import { lastValueFrom } from 'rxjs';
 import { Application } from 'src/app/api/models';
@@ -25,8 +25,24 @@ export class LNavComponent {
     private readonly router: Router,
   ) {
     this.load();
-    router.events.subscribe(event => {
+    router.events.subscribe((event: any) => {
       console.log(event);
+      if (event instanceof ActivationStart) this.breadcrumb = [];
+      if (
+        (
+          event instanceof ActivationEnd ||
+          event instanceof ChildActivationEnd
+        )
+        && event && event.snapshot instanceof ActivatedRouteSnapshot &&
+        event?.snapshot?.data) {
+        const data: { name?: string } = event.snapshot.data;
+        if (data && 'name' in data) {
+          if (!this.breadcrumb) this.breadcrumb = [];
+          this.breadcrumb = [{
+            name: data.name
+          }, ...this.breadcrumb];
+        }
+      }
     })
   }
   load() {
