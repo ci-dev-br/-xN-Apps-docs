@@ -14,10 +14,12 @@ async function bootstrap() {
     pfx: process.env.pfx ? fs.readFileSync(process.env.pfx) : undefined,
     passphrase: process.env.passphrase ? process.env.passphrase : undefined
   };
-
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    httpsOptions
-  });
+  const app =
+    process.env.pfx ?
+      await NestFactory.create<NestExpressApplication>(AppModule, {
+        httpsOptions
+      }) :
+      await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
     origin: [
       'http://localhost:4293',
