@@ -1,0 +1,49 @@
+.card {
+    padding: 24px;
+    border: solid 1px #cecece;
+    border-radius: 4px;
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, .33);
+}
+
+.cards {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {}
+
+.card {
+    background: #229922;
+
+    &+.card {
+        background: #226688;
+
+        &+.card {
+            background: #91be13;
+
+            &+.card {
+                background: #bb79cf;
+
+                &+.card {
+                    background: #ca7423;
+
+                    &+.card {
+                        background: #e65fae;
+
+                        &+.card {
+                            background: #2eb7e0;
+
+                            &+.card {
+                                background: #b630b6;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

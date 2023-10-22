@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { InicioRoutingModule } from './inicio-routing.module';
 import { InicioComponent } from './inicio.component';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 
 @NgModule({
@@ -14,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
     CommonModule,
     InicioRoutingModule,
     MatIconModule,
+    MatButtonModule,
   ]
 })
 export class InicioModule { }

@@ -1,12 +1,15 @@
 :host {
   display: contents;
 }
+
 nav {
+  flex: 0;
   background: linear-gradient(to top, #333 0%, #444 100%);
   position: sticky;
   top: 0;
   z-index: 3;
   filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.7));
+
   &,
   a,
   a:link,
@@ -16,7 +19,6 @@ nav {
     padding: 8px;
   }
 
-  flex: auto;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -41,7 +43,8 @@ nav {
   padding: 3px;
   font-weight: bold;
   gap: 6px;
-  .crumb + .crumb {
+
+  .crumb+.crumb {
     &::before {
       content: " > ";
     }
