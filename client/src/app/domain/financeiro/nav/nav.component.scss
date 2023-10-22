@@ -1,0 +1,9 @@
+:host {
+    background: linear-gradient(to top, #666 0%, #222 100%);
+    display: block;
+    min-height: 100vh;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
