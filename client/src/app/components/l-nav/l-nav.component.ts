@@ -26,18 +26,18 @@ export class LNavComponent {
   ) {
     this.load();
     router.events.subscribe((event: any) => {
-      console.log(event);
-      if (event instanceof ActivationStart) this.breadcrumb = [];
       if (
         (
           event instanceof ActivationEnd ||
           event instanceof ChildActivationEnd
         )
+
         && event && event.snapshot instanceof ActivatedRouteSnapshot &&
         event?.snapshot?.data) {
         const data: { name?: string } = event.snapshot.data;
         if (data && 'name' in data) {
           if (!this.breadcrumb) this.breadcrumb = [];
+          if (!!this.breadcrumb.find(b => b.name === data.name)) return;
           this.breadcrumb = [{
             name: data.name
           }, ...this.breadcrumb];
