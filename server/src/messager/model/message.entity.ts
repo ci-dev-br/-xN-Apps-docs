@@ -8,7 +8,7 @@ export class Message {
     id?: string;
     @JoinTable()
     @ManyToOne(() => User)
-    from: User;
+    from?: User;
     @JoinTable()
     @ManyToOne(() => Conversation,)
     conversation?: Conversation;
