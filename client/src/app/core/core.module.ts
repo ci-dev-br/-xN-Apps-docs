@@ -8,6 +8,8 @@ import { AuthorizationHttpInterceptor } from "./http.interceptor";
 import { TokenService } from "./token.service";
 import { ApiModule } from "../api/api.module";
 import { DaoService } from "./dao/dao.service";
+import { ToolbarService } from "./services/toolbar.service";
+import { NotificationService } from "./services/notification.service";
 
 @NgModule({
     imports: [
@@ -36,6 +38,8 @@ export class CoreModule {
                 StorageService,
                 TokenService,
                 DaoService,
+                ToolbarService,
+                NotificationService,
                 {
                     provide: HTTP_INTERCEPTORS, multi: true, useClass: AuthorizationHttpInterceptor
                 },
