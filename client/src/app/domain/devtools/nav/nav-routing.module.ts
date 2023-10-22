@@ -6,7 +6,9 @@ const routes: Routes = [
   {
     path: '', component: NavComponent, children: [
       { path: '', loadChildren: () => import('./../inicio/inicio.module').then(m => m.InicioModule) },
-    ]
+    ], data: {
+      name: 'Ferramentas de Desenvolvimento'
+    }
   }
 ];
 
