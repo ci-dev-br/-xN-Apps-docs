@@ -7,6 +7,7 @@ import { AuthModule, Entities as AuthEntities } from './auth/auth.module';
 import { config } from 'dotenv';
 import { ManagerEntities, ManagerModule } from './manager/manager.module';
 import { MessagerModule, Entities as MessageEntities } from './messager/messager.module';
+import { ProdutoModule, Entities as ProdutoEntities } from './produto/produto.module';
 
 config({ path: '.env' });
 @Module({
@@ -29,12 +30,14 @@ config({ path: '.env' });
         ...AuthEntities,
         ...ManagerEntities,
         ...MessageEntities,
+        ...ProdutoEntities,
       ]
     }),
     NotificacaoModule,
     AuthModule,
     ManagerModule,
     MessagerModule,
+    ProdutoModule,
   ],
   controllers: [
     AppController,
