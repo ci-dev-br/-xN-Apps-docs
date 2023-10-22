@@ -17,6 +17,7 @@ interface IBreadcrumb {
 })
 export class LNavComponent {
   apps?: Application[];
+  title?: string;
   breadcrumb?: IBreadcrumb[];
   $user = this.userService.user;
   constructor(
@@ -41,6 +42,7 @@ export class LNavComponent {
           this.breadcrumb = [{
             name: data.name
           }, ...this.breadcrumb];
+          this.title = data.name;
         }
       }
     })

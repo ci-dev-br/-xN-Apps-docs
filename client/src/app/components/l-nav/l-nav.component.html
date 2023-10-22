@@ -9,6 +9,9 @@
         {{ item.name }}
       </button>
     </mat-menu>
+    <ng-container *ngIf="!!title">
+      {{title}}
+    </ng-container>
     <span style="flex: auto"></span>
     <button mat-button>Git</button>
     <span>
