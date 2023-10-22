@@ -1,8 +1,9 @@
 .card {
     padding: 24px;
-    border: solid 1px #cecece;
-    border-radius: 4px;
-    box-shadow: 2px 3px 5px rgba(0, 0, 0, .33);
+    border: solid 2px rgba(0, 0, 0, .33);
+    border-radius: 7px;
+    flex: auto;
+    box-shadow: 2px 3px 12px rgba(0, 0, 0, .33);
 }
 
 .cards {
@@ -11,10 +12,17 @@
     flex-wrap: wrap;
     gap: 24px;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
 }
 
-.container {}
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+
+    padding: 48px;
+}
 
 .card {
     background: #229922;
