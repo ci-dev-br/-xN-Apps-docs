@@ -23,3 +23,33 @@ form {
   box-shadow: 0 0 36px rgba(0, 0, 0, 0.7);
   width: 380px;
 }
+
+
+.apps {
+  padding: 48px;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: space-around;
+
+  gap: 12px;
+
+  .app {
+    flex: auto;
+    background: rgba(255, 255, 255, .5);
+    border-radius: 8px;
+    padding: 42px;
+  }
+
+}
+
+.container {
+  padding: 24px;
+}
+
+
+.color-1 {
+  background: linear-gradient(175deg, #558866 0%, #443377 100%);
+}
