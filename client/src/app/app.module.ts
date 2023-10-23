@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { ServicesModule } from './services/services.module';
 import { CoreModule } from './core/core.module';
+import { ContextmenuModule } from './components/contextmenu/contextmenu.module';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { CoreModule } from './core/core.module';
       registrationStrategy: 'registerWhenStable:30000'
     }),
     ServicesModule,
+    ContextmenuModule.forRoot(),
   ],
   providers: [
   ],

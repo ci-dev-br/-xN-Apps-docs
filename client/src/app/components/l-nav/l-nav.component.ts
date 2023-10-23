@@ -9,7 +9,6 @@ interface IBreadcrumb {
   name?: string;
 }
 
-
 @Component({
   selector: 'ci-l-nav',
   templateUrl: './l-nav.component.html',
@@ -17,6 +16,7 @@ interface IBreadcrumb {
 })
 export class LNavComponent {
   apps?: Application[];
+  icon?: string;
   title?: string;
   breadcrumb?: IBreadcrumb[];
   $user = this.userService.user;
@@ -35,14 +35,17 @@ export class LNavComponent {
 
         && event && event.snapshot instanceof ActivatedRouteSnapshot &&
         event?.snapshot?.data) {
-        const data: { name?: string } = event.snapshot.data;
+        const data: { name?: string, icon?: string } = event.snapshot.data;
         if (data && 'name' in data) {
           if (!this.breadcrumb) this.breadcrumb = [];
+
+          if (data.name) this.title = data.name;
+          if (data.icon) this.icon = data.icon;
+
           if (!!this.breadcrumb.find(b => b.name === data.name)) return;
           this.breadcrumb = [{
             name: data.name
           }, ...this.breadcrumb];
-          this.title = data.name;
         }
       }
     })

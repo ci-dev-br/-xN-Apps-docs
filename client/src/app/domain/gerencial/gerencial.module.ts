@@ -40,7 +40,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
         RouterModule.forChild([
             {
                 path: '', component: GerencialComponent, data: {
-                    name: 'Gerenciador de Aplicações e Políticas de Uso'
+                    name: 'Gerenciador de Aplicações e Usuários'
                 }
             }
         ])

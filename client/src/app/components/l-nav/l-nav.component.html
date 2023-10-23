@@ -1,7 +1,7 @@
 <nav>
   <ng-container *ngIf="$user | async">
     <button *ngIf="apps" mat-icon-button [matMenuTriggerFor]="appsMenu">
-      <mat-icon>apps</mat-icon>
+      <mat-icon>domain</mat-icon>
     </button>
     <mat-menu #appsMenu>
       <button mat-menu-item *ngFor="let item of apps" [routerLink]="[item.url]">
@@ -9,11 +9,16 @@
         {{ item.name }}
       </button>
     </mat-menu>
+    <ng-container *ngIf="!!icon">
+      <mat-icon>{{icon}}</mat-icon>
+    </ng-container>
     <ng-container *ngIf="!!title">
       {{title}}
     </ng-container>
     <span style="flex: auto"></span>
-    <button mat-button>Git</button>
+    <button mat-icon-button><mat-icon>print</mat-icon></button>
+    <button mat-icon-button><mat-icon>share</mat-icon></button>
+    <button mat-icon-button><mat-icon>mark_chat_unread</mat-icon></button>
     <span>
       Bem-vinde,
       {{

@@ -11,11 +11,13 @@ config({ path: '.env' });
 
 async function bootstrap() {
   const httpsOptions: HttpsOptions = {
+    // cert: process.env.cert ? fs.readFileSync(process.env.cert) : undefined,
+    // key: process.env.key ? fs.readFileSync(process.env.key) : undefined,
     pfx: process.env.pfx ? fs.readFileSync(process.env.pfx) : undefined,
     passphrase: process.env.passphrase ? process.env.passphrase : undefined
   };
   const app =
-    process.env.pfx ?
+    process.env.pfx || process.env.cert ?
       await NestFactory.create<NestExpressApplication>(AppModule, {
         httpsOptions
       }) :
@@ -26,10 +28,10 @@ async function bootstrap() {
     ]
   })
   const options = new DocumentBuilder()
-    .setTitle('Portal Manager API')
-    .setDescription('API de Integração do Portal PLHX')
-    .setVersion('1.0')
-    .addTag('@portal')
+    .setTitle('Apps CiDevBr')
+    .setDescription('Apps API')
+    .setVersion('1.0.0')
+    .addTag('@apps')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, options);
