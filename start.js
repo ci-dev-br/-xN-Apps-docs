@@ -1,4 +1,5 @@
 const { exec, spawn } = require('child_process');
+const http = require('http');
 
 const client_process = spawn('node', ['./node_modules/@angular/cli/bin/ng.js', 'serve'], { cwd: __dirname + '/client' })
     .on('data', m => console.log(m))
@@ -40,3 +41,8 @@ const print = () => {
     setTimeout(() => print(), 700);
 }
 print();
+
+const server = http.createServer((req, res) => {
+    res.end("Hello, World!");
+});
+server.listen(7684, console.log(`listening on PORT ${7684}`));
