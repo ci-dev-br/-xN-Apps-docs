@@ -6,7 +6,8 @@ const routes: Routes = [
     path: '',
     loadChildren: () => import('./nav/nav.module').then(m => m.NavModule),
     data: {
-      name: 'Infra Manager'
+      name: 'Infra Manager',
+      icon: 'domain',
     }
   },
 ];

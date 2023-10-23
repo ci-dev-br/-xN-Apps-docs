@@ -8,6 +8,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { ServicesModule } from './services/services.module';
 import { CoreModule } from './core/core.module';
 import { ContextmenuModule } from './components/contextmenu/contextmenu.module';
+import { MonacoEditorModule } from 'ngx-monaco-editor';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { ContextmenuModule } from './components/contextmenu/contextmenu.module';
     }),
     ServicesModule,
     ContextmenuModule.forRoot(),
+    MonacoEditorModule.forRoot(), // use forRoot() in main app module only.
   ],
   providers: [
   ],
