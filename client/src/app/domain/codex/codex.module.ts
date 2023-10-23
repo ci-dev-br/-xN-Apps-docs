@@ -6,6 +6,8 @@ import { CodeEditorComponent } from './code-editor/code-editor.component';
 import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -17,6 +19,8 @@ import { FormsModule } from '@angular/forms';
     LNavModule,
     FormsModule,
     MonacoEditorModule,
+    MatIconModule,
+    MatButtonModule,
   ]
 })
 export class CodexModule { }
