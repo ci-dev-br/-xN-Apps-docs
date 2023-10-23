@@ -8,6 +8,8 @@ import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { ModalModule } from 'src/app/components/modal/modal.module';
 
 @NgModule({
   declarations: [
@@ -21,6 +23,8 @@ import { MatButtonModule } from '@angular/material/button';
     MonacoEditorModule,
     MatIconModule,
     MatButtonModule,
+    MatToolbarModule,
+    ModalModule,
   ]
 })
 export class CodexModule { }

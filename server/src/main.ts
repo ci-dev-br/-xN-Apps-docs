@@ -19,7 +19,7 @@ async function bootstrap() {
   const app =
     process.env.pfx || process.env.cert ?
       await NestFactory.create<NestExpressApplication>(AppModule, {
-        httpsOptions
+        httpsOptions,
       }) :
       await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
