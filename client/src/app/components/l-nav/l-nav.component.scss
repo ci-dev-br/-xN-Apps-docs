@@ -10,6 +10,15 @@ nav {
   z-index: 3;
   filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.7));
 
+
+
+  .wrapper {
+    overflow: auto;
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+  }
+
   &,
   a,
   a:link,
