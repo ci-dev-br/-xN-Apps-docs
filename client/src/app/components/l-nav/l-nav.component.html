@@ -1,15 +1,15 @@
 <nav>
-  <button *ngIf="apps" mat-icon-button [matMenuTriggerFor]="appsMenu">
-    <mat-icon>domain</mat-icon>
-  </button>
-  <mat-menu #appsMenu>
-    <button mat-menu-item *ngFor="let item of apps" [routerLink]="[item.url]">
-      <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
-      {{ item.name }}
+  <ng-container *ngIf="$user | async">
+    <button *ngIf="apps" mat-icon-button [matMenuTriggerFor]="appsMenu">
+      <mat-icon>domain</mat-icon>
     </button>
-  </mat-menu>
-  <div class="wrapper">
-    <ng-container *ngIf="$user | async">
+    <mat-menu #appsMenu>
+      <button mat-menu-item *ngFor="let item of apps" [routerLink]="[item.url]">
+        <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+        {{ item.name }}
+      </button>
+    </mat-menu>
+    <div class="wrapper">
 
       <ng-container *ngIf="!!icon">
         <mat-icon>{{icon}}</mat-icon>
@@ -33,16 +33,16 @@
         ($user | async)?.email
         }}
       </span>
-      <button mat-icon-button (click)="sair()"><mat-icon>exit_to_app</mat-icon></button>
-    </ng-container>
-    <ng-container *ngIf="!($user | async)">
-      <ul>
-        <li><a routerLink="/">Início</a></li>
-        <li><a routerLink="/criar-conta">Criar Conta</a></li>
-        <li><a routerLink="/acessar">Entrar</a></li>
-      </ul>
-    </ng-container>
-  </div>
+    </div>
+    <button mat-icon-button (click)="sair()"><mat-icon>exit_to_app</mat-icon></button>
+  </ng-container>
+  <ng-container *ngIf="!($user | async)">
+    <ul>
+      <li><a routerLink="/">Início</a></li>
+      <li><a routerLink="/criar-conta">Criar Conta</a></li>
+      <li><a routerLink="/acessar">Entrar</a></li>
+    </ul>
+  </ng-container>
 </nav>
 <div class="breadcrumbs" *ngIf="$user | async">
   <div class="crumb" *ngFor="let crumb of breadcrumb">{{crumb.name || crumb}}</div>

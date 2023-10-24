@@ -11,6 +11,11 @@ header {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  background: url(/assets/inicio-bg.jpg);
+  background-position: center center;
+  background-size: cover;
+
 }
 
 form {
@@ -52,4 +57,14 @@ form {
 
 .color-1 {
   background: linear-gradient(175deg, #558866 0%, #443377 100%);
+}
+
+.banner-101 {
+  display: flex;
+
+  min-height: 70vh;
+  background: url(/assets/101-banner.jpg);
+  background-position: center center;
+  background-size: cover;
+  flex: 1;
 }
