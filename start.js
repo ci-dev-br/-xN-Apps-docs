@@ -42,7 +42,20 @@ const print = () => {
 }
 print();
 
-const server = http.createServer((req, res) => {
-    res.end("Hello, World!");
-});
-server.listen(7684, console.log(`listening on PORT ${7684}`));
+var express = require('express');
+var cors = require('cors');
+var app = express();
+var PORT = 7684;
+
+app.use(cors({
+    origin: 'http://localhost:4293'
+}));
+app.get('/json', function (req, res) {
+    res.json({
+        client: status_cliente,
+        service: status_service,
+    });
+})
+app.listen(PORT, function () {
+    console.log('Express is listening port:' + PORT + '!');
+})

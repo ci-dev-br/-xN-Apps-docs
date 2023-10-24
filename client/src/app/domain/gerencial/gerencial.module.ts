@@ -16,6 +16,7 @@ import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo
 import { GerencialComponent } from "./gerencial.component";
 import { JanelaModule } from "src/app/components/janela/janela.module";
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { DinamicFormsModule } from "src/app/components/dinamic-forms/dinamic-forms.module";
 
 @NgModule({
     declarations: [
@@ -37,6 +38,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
         MatTooltipModule,
         MatInputModule,
         JanelaModule,
+        DinamicFormsModule,
         RouterModule.forChild([
             {
                 path: '', component: GerencialComponent, data: {

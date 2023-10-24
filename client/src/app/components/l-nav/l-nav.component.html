@@ -16,6 +16,10 @@
       {{title}}
     </ng-container>
     <span style="flex: auto"></span>
+    <button mat-icon-button [matMenuTriggerFor]="servicosMenu">
+      <mat-icon>lan</mat-icon>
+    </button>
+    <mat-menu #servicosMenu>{{status_services | json}}</mat-menu>
     <button mat-icon-button><mat-icon>print</mat-icon></button>
     <button mat-icon-button><mat-icon>share</mat-icon></button>
     <button mat-icon-button><mat-icon>mark_chat_unread</mat-icon></button>

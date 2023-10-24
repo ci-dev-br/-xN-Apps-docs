@@ -4,6 +4,7 @@ import { UserService } from 'src/app/services/user.service';
 import { lastValueFrom } from 'rxjs';
 import { Application } from 'src/app/api/models';
 import { ApplicationService } from 'src/app/api/services';
+import { HttpClient } from '@angular/common/http';
 
 interface IBreadcrumb {
   name?: string;
@@ -24,6 +25,7 @@ export class LNavComponent {
     private readonly userService: UserService,
     private readonly applicationService: ApplicationService,
     private readonly router: Router,
+    private readonly http: HttpClient,
   ) {
     this.load();
     router.events.subscribe((event: any) => {
@@ -52,8 +54,16 @@ export class LNavComponent {
   }
   load() {
     (async () => { this.apps = await lastValueFrom(this.applicationService.get()) })();
+    this.loadStatus();
   }
   sair() {
     this.userService.sair();
+  }
+  status_services: any = {};
+  loadStatus() {
+    this.http.get('http://localhost:7684/json').subscribe(v => {
+      this.status_services = v;
+    });
+    setTimeout(() => this.loadStatus(), 500);
   }
 }
