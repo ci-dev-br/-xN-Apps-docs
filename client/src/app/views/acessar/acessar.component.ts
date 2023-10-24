@@ -56,7 +56,7 @@ export class AcessarComponent {
                 }
               }))
           } catch (error) {
-            this.snack.open('Falha 1.');
+            this.snack.open('Falha 1.', 'Ok');
           }
           if (result) this.acesso_payload = result;
           if (result) {
@@ -74,7 +74,7 @@ export class AcessarComponent {
                   }));
                   this.acesso_payload = payload;
                 } catch (error) {
-                  this.snack.open('Não foi possível localizar seu cadastro.');
+                  this.snack.open('Não foi possível localizar seu cadastro.', 'Ok');
                   this.acesso_payload = undefined;
                   return;
                 }
@@ -85,10 +85,10 @@ export class AcessarComponent {
                 this.stage = 'authentication';
               }
             } catch (error) {
-              this.snack.open('Falha 2.');
+              this.snack.open('Falha 2.', 'Ok');
             }
           } else {
-            this.snack.open('Falha 0.');
+            this.snack.open('Falha 0.', 'Ok');
           }
         }
       } else if (
