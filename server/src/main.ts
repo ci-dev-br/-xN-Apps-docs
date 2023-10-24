@@ -26,7 +26,7 @@ async function bootstrap() {
     origin: [
       'http://localhost:4293',
     ]
-  })
+  });
   const options = new DocumentBuilder()
     .setTitle('Apps CiDevBr')
     .setDescription('Apps API')
@@ -41,7 +41,6 @@ async function bootstrap() {
   app.setViewEngine('hbs');
   const PORT = Number(process.env.PORT || 3090);
   await app.listen(PORT);
-
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
