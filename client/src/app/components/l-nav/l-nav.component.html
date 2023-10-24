@@ -1,15 +1,16 @@
 <nav>
+  <button *ngIf="apps" mat-icon-button [matMenuTriggerFor]="appsMenu">
+    <mat-icon>domain</mat-icon>
+  </button>
+  <mat-menu #appsMenu>
+    <button mat-menu-item *ngFor="let item of apps" [routerLink]="[item.url]">
+      <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+      {{ item.name }}
+    </button>
+  </mat-menu>
   <div class="wrapper">
     <ng-container *ngIf="$user | async">
-      <button *ngIf="apps" mat-icon-button [matMenuTriggerFor]="appsMenu">
-        <mat-icon>domain</mat-icon>
-      </button>
-      <mat-menu #appsMenu>
-        <button mat-menu-item *ngFor="let item of apps" [routerLink]="[item.url]">
-          <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
-          {{ item.name }}
-        </button>
-      </mat-menu>
+
       <ng-container *ngIf="!!icon">
         <mat-icon>{{icon}}</mat-icon>
       </ng-container>
@@ -32,7 +33,7 @@
         ($user | async)?.email
         }}
       </span>
-      <button mat-raised-button (click)="sair()">Sair</button>
+      <button mat-icon-button (click)="sair()"><mat-icon>exit_to_app</mat-icon></button>
     </ng-container>
     <ng-container *ngIf="!($user | async)">
       <ul>

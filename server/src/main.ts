@@ -27,6 +27,7 @@ async function bootstrap() {
       'http://localhost:4293',
     ]
   })
+  
   const options = new DocumentBuilder()
     .setTitle('Apps CiDevBr')
     .setDescription('Apps API')
