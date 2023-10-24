@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "pwa-msedge",
+            "type": "msedge",
             "request": "launch",
             "reAttach": true,
             "name": "Launch localhost",

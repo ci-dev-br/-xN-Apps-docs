@@ -53,7 +53,13 @@ export class LNavComponent {
     })
   }
   load() {
-    (async () => { this.apps = await lastValueFrom(this.applicationService.get()) })();
+    (async () => {
+      try {
+        this.apps = await lastValueFrom(this.applicationService.get())
+      } catch (error) {
+        console.error(error);
+      }
+    })();
     this.loadStatus();
   }
   sair() {
@@ -64,6 +70,6 @@ export class LNavComponent {
     this.http.get('http://localhost:7684/json').subscribe(v => {
       this.status_services = v;
     });
-    setTimeout(() => this.loadStatus(), 500);
+    setTimeout(() => this.loadStatus(), 10000);
   }
 }
