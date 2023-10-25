@@ -5,3 +5,4 @@
 Gerenciador de aplicações web 
 
 ---
+Obrigado pela preferência em utilizar do meu código, fito com ♥
