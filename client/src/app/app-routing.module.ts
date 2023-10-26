@@ -6,7 +6,11 @@ const routes: Routes = [
   {
     path: 'painel',
     canActivate: [authGuard],
-    loadChildren: () => import('./views/painel/painel.module').then(m => m.PainelModule)
+    loadChildren: () => import('./views/painel/painel.module').then(m => m.PainelModule),
+    data: {
+      name: 'Dashboard',
+      icon: 'dashboard'
+    }
   },
   {
     path: `gerencial`,
