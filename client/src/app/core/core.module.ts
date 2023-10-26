@@ -7,6 +7,9 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { AuthorizationHttpInterceptor } from "./http.interceptor";
 import { TokenService } from "./token.service";
 import { ApiModule } from "../api/api.module";
+import { DaoService } from "./dao/dao.service";
+import { ToolbarService } from "./services/toolbar.service";
+import { NotificationService } from "./services/notification.service";
 
 @NgModule({
     imports: [
@@ -31,10 +34,12 @@ export class CoreModule {
         return {
             ngModule: CoreModule,
             providers: [
-                ...(ApiModule.forRoot({ rootUrl: isDevMode() ? 'https://npm.plhx.com.br:3090' : location.origin }).providers || []),
+                ...(ApiModule.forRoot({ rootUrl: isDevMode() ? 'https://apps.ci.dev.br:3232' : location.origin }).providers || []),
                 StorageService,
                 TokenService,
                 DaoService,
+                ToolbarService,
+                NotificationService,
                 {
                     provide: HTTP_INTERCEPTORS, multi: true, useClass: AuthorizationHttpInterceptor
                 },

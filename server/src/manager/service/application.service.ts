@@ -15,4 +15,16 @@ export class ApplicationService {
             where: {}
         })
     }
+
+    async sync(application: Application) {
+        let { id, ...changes } = application;
+        let ref = !!application.id ? await this.repo.findOneBy({ id: application.id }) : await this.repo.create(application);
+        Object.assign(ref, changes);
+        return await this.repo.save(ref);
+    }
+
+
+    async delete(applicationId: string) {
+        return this.repo.delete(applicationId)
+    }
 }

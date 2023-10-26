@@ -1,25 +1,29 @@
-<mat-toolbar>
-    <span style="flex: auto;"></span>
-    <ng-container *ngFor="let item of menu">
-        <ng-container *ngIf="!!item.onClick">
-            <button mat-icon-button
-                (click)="item.onClick()">
-                <ng-container *ngTemplateOutlet="contentTmpl">
+<ng-container *ngIf="showing">
+    <mat-toolbar>
+        <span style="flex: auto;"></span>
+        <ng-container *ngFor="let item of menu">
+            <ng-container *ngIf="!item.visible || (!!item.visible && item.visible())">
+                <ng-container *ngIf="!!item.onClick">
+                    <button mat-icon-button
+                        (click)="item.onClick()">
+                        <ng-container *ngTemplateOutlet="contentTmpl">
+                        </ng-container>
+                    </button>
                 </ng-container>
-            </button>
-        </ng-container>
-        <ng-container *ngIf="!item.onClick">
-            <button mat-icon-button>
-                <ng-container *ngTemplateOutlet="contentTmpl">
+                <ng-container *ngIf="!item.onClick">
+                    <button mat-icon-button>
+                        <ng-container *ngTemplateOutlet="contentTmpl">
+                        </ng-container>
+                    </button>
                 </ng-container>
-            </button>
+            </ng-container>
+            <ng-template #contentTmpl>
+                <mat-icon>{{item.icon}}</mat-icon>
+            </ng-template>
         </ng-container>
-        <ng-template #contentTmpl>
-            <mat-icon>{{item.icon}}</mat-icon>
-        </ng-template>
+    </mat-toolbar>
+    <ng-container *ngIf="component">
+        <ng-container #componentTmplate
+            *ngComponentOutlet="component; injector:injector"></ng-container>
     </ng-container>
-</mat-toolbar>
-<ng-container *ngIf="component">
-    <ng-container #componentTmplate
-        *ngComponentOutlet="component; injector:injector"></ng-container>
 </ng-container>

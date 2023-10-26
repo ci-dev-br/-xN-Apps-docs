@@ -3,7 +3,13 @@ import { CommonModule } from '@angular/common';
 
 import { CodexRoutingModule } from './codex-routing.module';
 import { CodeEditorComponent } from './code-editor/code-editor.component';
-
+import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
+import { MonacoEditorModule } from 'ngx-monaco-editor';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { ModalModule } from 'src/app/components/modal/modal.module';
 
 @NgModule({
   declarations: [
@@ -11,7 +17,14 @@ import { CodeEditorComponent } from './code-editor/code-editor.component';
   ],
   imports: [
     CommonModule,
-    CodexRoutingModule
+    CodexRoutingModule,
+    LNavModule,
+    FormsModule,
+    MonacoEditorModule,
+    MatIconModule,
+    MatButtonModule,
+    MatToolbarModule,
+    ModalModule,
   ]
 })
 export class CodexModule { }

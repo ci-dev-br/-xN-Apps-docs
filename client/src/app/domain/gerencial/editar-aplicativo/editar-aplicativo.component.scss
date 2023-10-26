@@ -3,6 +3,30 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 12px;
+    padding: 12px;
     flex-wrap: wrap;
+    max-width: 80vw;
+
+    >* {
+        flex: 1;
+    }
+}
+
+form {
+    display: contents;
+
+    mat-form-field {
+        flex: 1;
+        min-width: 150px;
+
+        &.small {
+            min-width: 80px;
+        }
+
+        &.auto {
+            flex: auto;
+        }
+
+    }
 }

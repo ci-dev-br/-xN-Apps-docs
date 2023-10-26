@@ -1,7 +1,7 @@
 <nav>
   <ng-container *ngIf="$user | async">
     <button *ngIf="apps" mat-icon-button [matMenuTriggerFor]="appsMenu">
-      <mat-icon>apps</mat-icon>
+      <mat-icon>domain</mat-icon>
     </button>
     <mat-menu #appsMenu>
       <button mat-menu-item *ngFor="let item of apps" [routerLink]="[item.url]">
@@ -9,16 +9,32 @@
         {{ item.name }}
       </button>
     </mat-menu>
-    <span style="flex: auto"></span>
-    <span>
-      Bem-vinde,
-      {{
+    <div class="wrapper">
+
+      <ng-container *ngIf="!!icon">
+        <mat-icon>{{icon}}</mat-icon>
+      </ng-container>
+      <ng-container *ngIf="!!title">
+        {{title}}
+      </ng-container>
+      <span style="flex: auto"></span>
+      <button mat-icon-button [matMenuTriggerFor]="servicosMenu">
+        <mat-icon>lan</mat-icon>
+      </button>
+      <mat-menu #servicosMenu>{{status_services | json}}</mat-menu>
+      <button mat-icon-button><mat-icon>print</mat-icon></button>
+      <button mat-icon-button><mat-icon>share</mat-icon></button>
+      <button mat-icon-button><mat-icon>mark_chat_unread</mat-icon></button>
+      <span>
+        Bem-vinde,
+        {{
         ($user | async)?.fullName ||
-          ($user | async)?.username ||
-          ($user | async)?.email
-      }}
-    </span>
-    <button mat-raised-button (click)="sair()">Sair</button>
+        ($user | async)?.username ||
+        ($user | async)?.email
+        }}
+      </span>
+    </div>
+    <button mat-icon-button (click)="sair()"><mat-icon>exit_to_app</mat-icon></button>
   </ng-container>
   <ng-container *ngIf="!($user | async)">
     <ul>
@@ -29,6 +45,6 @@
   </ng-container>
 </nav>
 <div class="breadcrumbs" *ngIf="$user | async">
-  <div class="crumb">Painel</div>
-  <div class="crumb">Teste</div>
+  <div class="crumb" *ngFor="let crumb of breadcrumb">{{crumb.name || crumb}}</div>
+  <!--  <div class="crumb">Teste</div> -->
 </div>

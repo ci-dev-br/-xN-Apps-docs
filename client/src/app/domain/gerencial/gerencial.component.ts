@@ -8,6 +8,11 @@ import { TokenService } from 'src/app/core/token.service';
 import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo.component';
 import { JanelaService } from 'src/app/components/janela/janela.service';
 
+export interface IItemAction<T> {
+  label?: string;
+  icon?: string;
+  onAction?: (item: T) => void;
+}
 
 export interface IColumns {
   headerName: string;
@@ -22,6 +27,18 @@ export interface IColumns {
 })
 export class GerencialComponent {
   apps?: Application[];
+  actions: IItemAction<Application>[] = [
+    {
+      icon: 'edit',
+      label: 'Editar',
+      onAction: (i) => this.editar(i)
+    },
+    {
+      icon: 'delete',
+      label: 'Remover',
+      onAction: (i) => this.remover(i)
+    },
+  ]
   columns: IColumns[] = [
     { headerName: 'ID', propertyName: 'id' },
     { headerName: 'Nome ', propertyName: 'name' },
@@ -30,7 +47,9 @@ export class GerencialComponent {
     { headerName: 'Descrição', propertyName: 'description' },
   ];
   get displayedColumns() {
-    return this.cache('displayedColumns', () => { return this.columns.map(c => c.headerName) });
+    return this.cache('displayedColumns', () => {
+      return [...this.columns.map(c => c.headerName), '_act']
+    });
   }
   constructor(
     private readonly dialog: MatDialog,
@@ -56,9 +75,17 @@ export class GerencialComponent {
     return this._cached_map.get(prop);
   }
   async novoAplicativo() {
-    const data = await this.editar({});
+    let app = {};
+    const data = await this.editar(app);
+    this.apps = [data, ...this.apps || []];
   }
   async editar(application: Application) {
-    return await this.janela.open(EditarAplicativoComponent)
+    return await this.janela.open(EditarAplicativoComponent, application)
+  }
+  async remover(application: Application) {
+    await lastValueFrom(this.applications.delete({ body: application }));
+    let app = this.apps || [];
+    app.splice(app.indexOf(application), 1);
+    this.apps = [...app];
   }
 }

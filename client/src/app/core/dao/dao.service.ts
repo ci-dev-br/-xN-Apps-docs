@@ -1,42 +1,46 @@
 import { Injectable } from "@angular/core";
 import { FormGroup } from "@angular/forms";
-export interface IChengeable {
+import { Observable, Subject } from "rxjs";
+export interface IChangeable {
     __pre: any;
     __binding_form?: FormGroup;
 }
 /*
     Mapeamento de entidade
     Objeto com meta informação para realizar o mapeamento do objeto
-
-
 */
 @Injectable()
 export class DaoService {
+    private states = new Map<any, any>();
     constructor(
     ) { }
     prepareToEdit(data: any) {
         if (data && typeof data === 'object' && !('__pre' in data)) {
-            data.__pre = { ...JSON.parse(JSON.stringify(data)) }
+            let { __pre, __binding_form, __confirmation_subject, ...o_data } = data;
+            data.__pre = { ...JSON.parse(JSON.stringify(o_data)) }
         }
-        return data as IChengeable;
+        return data as IChangeable;
     }
-    getChanges(data?: IChengeable, options?: {
+    getChanges(data?: IChangeable, options?: {
     }) {
-        const { __pre, __binding_form, ...__cleaned_data } = data as any;
+        const { __pre, __binding_form, __confirmation_subject, ...__cleaned_data } = data as any;
         const r = JSON.parse(JSON.stringify(__cleaned_data));
-        Object.keys(__pre).forEach(pn => {
-            if (JSON.stringify(r[pn]) !== JSON.stringify(__pre[pn])) {
-
-            } else {
-                r[pn] = undefined;
-            }
-        })
+        if (__pre) {
+            Object.keys(__pre).forEach(pn => {
+                if (r[pn] && JSON.stringify(r[pn]) !== JSON.stringify(__pre[pn])) {
+                } else {
+                    delete r[pn];
+                }
+            });
+        } else {
+            return {};
+        }
         return r;
     }
-    haveChanges(data?: IChengeable) {
+    haveChanges(data?: IChangeable) {
         return Object.keys(this.getChanges(data)).length > 0;
     }
-    bindDataForm(data: any, form: FormGroup, oldData?: IChengeable) {
+    bindDataForm(data: any, form: FormGroup, oldData?: IChangeable) {
         if (data && form) {
             form.reset(data);
             Object.keys(form.controls).forEach((v) => {
@@ -51,4 +55,17 @@ export class DaoService {
             data.__binding_form = form;
         }
     }
+    async confirmChanges(data: any,) {
+        if (data?.__confirmation_subject instanceof Subject) {
+            (data.__confirmation_subject as Subject<any>).next(this.getChanges(data));
+        }
+    }
+    confirmation<T>(data: T,) {
+        if (!(data as any).__confirmation_subject) (data as any).__confirmation_subject = new Subject();
+        return (data as any).__confirmation_subject as Subject<T>;
+    }
+    getObjectInternalStage(o: any){
+        
+    }
+
 }
