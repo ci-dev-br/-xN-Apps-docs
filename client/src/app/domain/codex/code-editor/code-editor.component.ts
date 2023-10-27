@@ -9,6 +9,7 @@ export class CodeEditorComponent {
   code: string = `(function x() {
     alert("Hello world!");
   })();`;
+  // agent: I;
   executar() {
     eval(this.code);
   }

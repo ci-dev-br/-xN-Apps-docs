@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ModalModule } from 'src/app/components/modal/modal.module';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { ModalModule } from 'src/app/components/modal/modal.module';
     MatButtonModule,
     MatToolbarModule,
     ModalModule,
+    MatSelectModule,
   ]
 })
 export class CodexModule { }
