@@ -2,3 +2,10 @@
   display: flex;
   flex-direction: column;
 }
+
+::ng-deep body {
+  background: url('/assets/bg-dashboard.png');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
