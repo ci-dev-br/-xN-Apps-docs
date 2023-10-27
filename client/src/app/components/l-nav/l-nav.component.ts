@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, ActivationEnd, ActivationStart, ChildActivationEnd, Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import { lastValueFrom } from 'rxjs';
@@ -73,5 +73,30 @@ export class LNavComponent {
       this.status_services = v;
     });
     setTimeout(() => this.loadStatus(), 10000);
+  }
+
+  @HostListener('window:wheel', ['$event'])
+  fixarAoTopo(event: WheelEvent) {
+    console.log(event)
+    if (event.offsetY === 0) {
+      this.of(document.getElementsByTagName('ci-l-nav')).forEach(e => {
+        e.style.position = 'unset';
+        e.style.top = 'unset';
+      })
+    } else {
+      this.of(document.getElementsByTagName('ci-l-nav')).forEach(e => {
+        e.style.position = 'sticky';
+        e.style.top = '0px';
+        e.style.zIndex = '99';
+      })
+    }
+  }
+  private of(el: HTMLCollectionOf<any>) {
+    const r = [];
+    for (let index = 0; index < el.length; index++) {
+      const element = el.item(index);
+      r.push(element);
+    }
+    return r;
   }
 }

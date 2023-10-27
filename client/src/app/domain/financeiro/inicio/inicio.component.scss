@@ -22,6 +22,8 @@
     justify-content: stretch;
 
     padding: 48px;
+
+    gap: 24px;
 }
 
 
@@ -66,7 +68,7 @@
     }
 
     .px-inner {
-        background: rgba(255, 255, 255, .44);
+        background: rgba(255, 255, 255, .11);
         mix-blend-mode: hard-light;
         padding: 24px;
     }
@@ -95,4 +97,12 @@
 .card.vendas {
     background: url('/assets/card-vendas.png');
     background-position: center center;
+}
+
+.banner {
+    flex: auto;
+    height: 400px;
+    background: url('/assets/The Writer.png');
+    border: solid 3px rgba(0, 0, 0, .77);
+    border-radius: 6px;
 }
