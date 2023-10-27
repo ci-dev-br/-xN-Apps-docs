@@ -10,6 +10,7 @@ import { ApiModule } from "../api/api.module";
 import { DaoService } from "./dao/dao.service";
 import { ToolbarService } from "./services/toolbar.service";
 import { NotificationService } from "./services/notification.service";
+import { ServicesService } from "./services/services.service";
 
 @NgModule({
     imports: [
@@ -40,6 +41,7 @@ export class CoreModule {
                 DaoService,
                 ToolbarService,
                 NotificationService,
+                ServicesService,
                 {
                     provide: HTTP_INTERCEPTORS, multi: true, useClass: AuthorizationHttpInterceptor
                 },

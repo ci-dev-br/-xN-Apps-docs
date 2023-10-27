@@ -5,6 +5,7 @@ import { lastValueFrom } from 'rxjs';
 import { Application } from 'src/app/api/models';
 import { ApplicationService } from 'src/app/api/services';
 import { HttpClient } from '@angular/common/http';
+import { ServicesService } from 'src/app/core/services/services.service';
 
 interface IBreadcrumb {
   name?: string;
@@ -22,10 +23,11 @@ export class LNavComponent {
   breadcrumb?: IBreadcrumb[];
   $user = this.userService.user;
   constructor(
+    private readonly router: Router,
     private readonly userService: UserService,
     private readonly applicationService: ApplicationService,
-    private readonly router: Router,
     private readonly http: HttpClient,
+    public readonly services: ServicesService,
   ) {
     this.load();
     router.events.subscribe((event: any) => {
