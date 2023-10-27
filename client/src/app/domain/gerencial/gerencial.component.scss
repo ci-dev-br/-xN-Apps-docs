@@ -1,9 +1,14 @@
-:host{
+:host {
     background: white;
 }
 
-tr{
-    &:hover{
+tr {
+    &:hover {
         background-color: #dedede;
     }
+}
+::ng-deep body {
+    background: url('/assets/The Writer.png');
+    background-position: center center;
+    background-repeat: no-repeat;
 }
