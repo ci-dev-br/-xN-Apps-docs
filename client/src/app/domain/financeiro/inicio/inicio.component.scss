@@ -24,29 +24,39 @@
     padding: 48px;
 }
 
+
 .card {
-    background: #229922;
+    cursor: pointer;
+    color: rgba(0, 0, 0, .88);
+
+    background-color: #229922;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    padding: 0;
+    margin: 0;
 
     &+.card {
-        background: #226688;
+        background-color: #226688;
 
         &+.card {
-            background: #91be13;
+            background-color: #91be13;
 
             &+.card {
-                background: #bb79cf;
+                background-color: #bb79cf;
 
                 &+.card {
-                    background: #ca7423;
+                    background-color: #ca7423;
 
                     &+.card {
-                        background: #e65fae;
+                        background-color: #e65fae;
 
                         &+.card {
-                            background: #2eb7e0;
+                            background-color: #2eb7e0;
 
                             &+.card {
-                                background: #b630b6;
+                                background-color: #b630b6;
                             }
                         }
                     }
@@ -54,4 +64,35 @@
             }
         }
     }
+
+    .px-inner {
+        background: rgba(255, 255, 255, .44);
+        mix-blend-mode: hard-light;
+        padding: 24px;
+    }
+}
+
+
+.card.clientes {
+    background: url('/assets/card-clientes.png');
+    background-position: center center;
+    background-size: cover;
+
+}
+
+.card.resumo {
+    background: url('/assets/card-resumo.png');
+    background-position: center center;
+    background-size: cover;
+}
+
+.card.saldo {
+    background: url('/assets/card-saldo.png');
+    background-position: center center;
+    background-size: cover;
+}
+
+.card.vendas {
+    background: url('/assets/card-vendas.png');
+    background-position: center center;
 }
