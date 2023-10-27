@@ -8,6 +8,7 @@ import { config } from 'dotenv';
 import { ManagerEntities, ManagerModule } from './manager/manager.module';
 import { MessagerModule, Entities as MessageEntities } from './messager/messager.module';
 import { ProdutoModule, Entities as ProdutoEntities } from './produto/produto.module';
+import { CodexModule, CodeXEntities } from './codex/codex.module';
 
 config({ path: '.env' });
 @Module({
@@ -31,6 +32,7 @@ config({ path: '.env' });
         ...ManagerEntities,
         ...MessageEntities,
         ...ProdutoEntities,
+        ...CodeXEntities,
       ]
     }),
     NotificacaoModule,
@@ -38,6 +40,7 @@ config({ path: '.env' });
     ManagerModule,
     MessagerModule,
     ProdutoModule,
+    CodexModule,
   ],
   controllers: [
     AppController,
