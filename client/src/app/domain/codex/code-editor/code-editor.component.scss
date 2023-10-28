@@ -1,3 +1,19 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    height: 100vh;
+}
+
 mat-toolbar {
     gap: 6px;
+}
+
+.container {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    align-items: stretch;
 }

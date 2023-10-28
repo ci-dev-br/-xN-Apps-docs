@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { PainelRoutingModule } from './painel-routing.module';
 import { PainelComponent } from './painel.component';
 import { CoreModule } from 'src/app/core/core.module';
@@ -13,6 +13,7 @@ import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
     CoreModule,
     PainelRoutingModule,
     LNavModule,
+    MatSidenavModule,
   ]
 })
 export class PainelModule { }

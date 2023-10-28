@@ -1,11 +1,21 @@
 :host {
   display: flex;
   flex-direction: column;
+
+  height: 100vh;
+  min-height: 100vh;
+  max-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
-::ng-deep body {
+mat-drawer-container {
   background: url('/assets/bg-dashboard.png');
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+mat-drawer-container {
+  flex: auto;
 }
