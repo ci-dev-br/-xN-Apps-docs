@@ -9,6 +9,7 @@ import { ManagerEntities, ManagerModule } from './manager/manager.module';
 import { MessagerModule, Entities as MessageEntities } from './messager/messager.module';
 import { ProdutoModule, Entities as ProdutoEntities } from './produto/produto.module';
 import { CodexModule, CodeXEntities } from './codex/codex.module';
+import { GlobalizationEntities, GlobalizationModule } from './globalization/globalization.module';
 
 config({ path: '.env' });
 @Module({
@@ -33,6 +34,7 @@ config({ path: '.env' });
         ...MessageEntities,
         ...ProdutoEntities,
         ...CodeXEntities,
+        ...GlobalizationEntities,
       ]
     }),
     NotificacaoModule,
@@ -41,6 +43,7 @@ config({ path: '.env' });
     MessagerModule,
     ProdutoModule,
     CodexModule,
+    GlobalizationModule,
   ],
   controllers: [
     AppController,

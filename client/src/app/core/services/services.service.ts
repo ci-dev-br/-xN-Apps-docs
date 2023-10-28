@@ -1,9 +1,15 @@
-import { Injectable, NgZone } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Inject, Injectable } from "@angular/core";
+import { ApiConfiguration } from "src/app/api/api-configuration";
 
 @Injectable()
 export class ServicesService {
     constructor(
+        private readonly http: HttpClient,
+        @Inject(ApiConfiguration)
+        private readonly apiConfig: ApiConfiguration,
     ) {
+        this.init();
         window.addEventListener('resize', () => {
             if (
                 (window.innerWidth + 150) < window.outerWidth ||
@@ -47,5 +53,9 @@ export class ServicesService {
     compartilhar() {
 
     }
-
+    private init() {
+        this.http.post(this.apiConfig.rootUrl + '/wakeUp', {}).subscribe(r => {
+                
+        });
+    }
 }
