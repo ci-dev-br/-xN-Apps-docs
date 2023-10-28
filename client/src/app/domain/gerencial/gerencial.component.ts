@@ -8,7 +8,7 @@ import { TokenService } from 'src/app/core/token.service';
 import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo.component';
 import { JanelaService } from 'src/app/components/janela/janela.service';
 import { MatIcon } from '@angular/material/icon';
-import { IColumns } from 'src/app/components/grid/cell-renderer/text-cell-renderer.component';
+import { IColumns } from 'src/app/components/grid/cell-renderer/cell-renderer.component';
 
 export interface IItemAction<T> {
   label?: string;
