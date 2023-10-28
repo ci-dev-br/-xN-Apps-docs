@@ -47,7 +47,9 @@
                     <ng-container [matColumnDef]="c.headerName">
                         <th mat-header-cell *matHeaderCellDef>{{c.headerName}}</th>
                         <td mat-cell *matCellDef="let element">
-                            {{element[c.propertyName]}}
+                            <px-text-cell-renderer [data]="element" [column]="c">
+
+                            </px-text-cell-renderer>
                         </td>
                     </ng-container>
                 </ng-container>

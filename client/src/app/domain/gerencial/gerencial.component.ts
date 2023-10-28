@@ -7,17 +7,13 @@ import { ApplicationService } from 'src/app/api/services';
 import { TokenService } from 'src/app/core/token.service';
 import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo.component';
 import { JanelaService } from 'src/app/components/janela/janela.service';
+import { MatIcon } from '@angular/material/icon';
+import { IColumns } from 'src/app/components/grid/cell-renderer/text-cell-renderer.component';
 
 export interface IItemAction<T> {
   label?: string;
   icon?: string;
   onAction?: (item: T) => void;
-}
-
-export interface IColumns {
-  headerName: string;
-  propertyName: string;
-  componentType?: Type<any>
 }
 
 @Component({
@@ -40,15 +36,15 @@ export class GerencialComponent {
     },
   ]
   columns: IColumns[] = [
-    { headerName: 'ID', propertyName: 'id' },
+    { headerName: 'ID', propertyName: 'id', hide: true },
     { headerName: 'Nome ', propertyName: 'name' },
-    { headerName: 'Ícone ', propertyName: 'icon' },
+    { headerName: 'Ícone ', propertyName: 'icon', component: MatIcon },
     { headerName: 'URL', propertyName: 'url' },
     { headerName: 'Descrição', propertyName: 'description' },
   ];
   get displayedColumns() {
     return this.cache('displayedColumns', () => {
-      return [...this.columns.map(c => c.headerName), '_act']
+      return [...this.columns.filter(i => !i.hide).map(c => c.headerName), '_act']
     });
   }
   constructor(

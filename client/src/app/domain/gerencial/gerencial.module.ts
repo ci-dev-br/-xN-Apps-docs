@@ -17,6 +17,7 @@ import { GerencialComponent } from "./gerencial.component";
 import { JanelaModule } from "src/app/components/janela/janela.module";
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DinamicFormsModule } from "src/app/components/dinamic-forms/dinamic-forms.module";
+import { GridModule } from "src/app/components/grid/grid.module";
 
 @NgModule({
     declarations: [
@@ -39,6 +40,7 @@ import { DinamicFormsModule } from "src/app/components/dinamic-forms/dinamic-for
         MatInputModule,
         JanelaModule,
         DinamicFormsModule,
+        GridModule,
         RouterModule.forChild([
             {
                 path: '', component: GerencialComponent, data: {
