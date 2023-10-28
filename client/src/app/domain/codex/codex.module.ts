@@ -11,10 +11,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ModalModule } from 'src/app/components/modal/modal.module';
 import { MatSelectModule } from '@angular/material/select';
+import { ProjetoComponent } from './projeto/projeto.component';
 
 @NgModule({
   declarations: [
-    CodeEditorComponent
+    CodeEditorComponent,
+    ProjetoComponent,
   ],
   imports: [
     CommonModule,

@@ -47,6 +47,11 @@ const routes: Routes = [
     canActivate: [authGuard],
     loadChildren: () => import(`./domain/threejs/threejs.module`).then(m => m.ThreejsModule)
   },
+  {
+    path: `docs`,
+    canActivate: [authGuard],
+    loadChildren: () => import(`./domain/threejs/threejs.module`).then(m => m.ThreejsModule)
+  },
   { path: '', loadChildren: () => import('./views/homepage/homepage.module').then(m => m.HomepageModule) },
   { path: 'acessar', loadChildren: () => import('./views/acessar/acessar.module').then(m => m.AcessarModule) },
   { path: 'criar-conta', loadChildren: () => import('./views/criar-conta/criar-conta.module').then(m => m.CriarContaModule) },
