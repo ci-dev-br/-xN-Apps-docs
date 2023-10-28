@@ -4,8 +4,7 @@
         <ng-container *ngFor="let item of menu">
             <ng-container *ngIf="!item.visible || (!!item.visible && item.visible())">
                 <ng-container *ngIf="!!item.onClick">
-                    <button mat-icon-button
-                        (click)="item.onClick()">
+                    <button mat-icon-button (click)="item.onClick()">
                         <ng-container *ngTemplateOutlet="contentTmpl">
                         </ng-container>
                     </button>
@@ -22,8 +21,9 @@
             </ng-template>
         </ng-container>
     </mat-toolbar>
-    <ng-container *ngIf="component">
-        <ng-container #componentTmplate
-            *ngComponentOutlet="component; injector:injector"></ng-container>
-    </ng-container>
+    <div class="content">
+        <ng-container *ngIf="component">
+            <ng-container #componentTmplate *ngComponentOutlet="component; injector:injector"></ng-container>
+        </ng-container>
+    </div>
 </ng-container>
