@@ -39,7 +39,7 @@ export class GerencialComponent {
     { headerName: 'ID', propertyName: 'id', hide: true },
     { headerName: 'Nome ', propertyName: 'name' },
     { headerName: 'Ícone ', propertyName: 'icon', component: MatIcon },
-    { headerName: 'URL', propertyName: 'url' },
+    { headerName: 'Rota', propertyName: 'url' },
     { headerName: 'Descrição', propertyName: 'description' },
   ];
   get displayedColumns() {
