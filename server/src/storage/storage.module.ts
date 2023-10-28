@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { Photo } from "./models/photo";
 
 export const StorageEntities = [
     Photo,
@@ -10,4 +11,4 @@ export const StorageEntities = [
         TypeOrmModule.forFeature()
     ]
 })
-export class StorageModule{}
+export class StorageModule { }
