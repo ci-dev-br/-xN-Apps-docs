@@ -32,14 +32,23 @@ service_process.stdout.on('data', (data) => {
     if (String(data).indexOf('running') > -1) status_service = 2;
 });
 
+
+let last = undefined;
 const print = () => {
-    console.clear();
-    console.log('[aplicação em execução]');
-    console.log(`   { c:${status_cliente} s:${status_service} }`);
+    let out =
+        `[aplicação em execução]
+{ c:${status_cliente} s:${status_service} }
+`;
     if (message)
-        console.log(`[client]: \n${String(message).trim()}`);
+        out += `[client]: \n${String(message).trim()}\n`;
     if (message_service)
-        console.log(`[service]: \n${String(message_service).trim()}`);
+        out += `[service]: \n${String(message_service).trim()}\n`;
+
+    if (out != last) {
+        last = out;
+        console.clear();
+        console.log(out);
+    }
     setTimeout(() => print(), 700);
 }
 print();
