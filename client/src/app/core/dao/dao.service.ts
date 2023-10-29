@@ -15,6 +15,7 @@ export class DaoService {
     constructor(
     ) { }
     prepareToEdit(data: any) {
+        if (!data) return undefined;
         if (data && typeof data === 'object' && !('__pre' in data)) {
             let { __pre, __binding_form, __confirmation_subject, ...o_data } = data;
             data.__pre = { ...JSON.parse(JSON.stringify(o_data)) }
@@ -23,6 +24,7 @@ export class DaoService {
     }
     getChanges(data?: IChangeable, options?: {
     }) {
+        if (!data) return undefined;
         const { __pre, __binding_form, __confirmation_subject, ...__cleaned_data } = data as any;
         const r = JSON.parse(JSON.stringify(__cleaned_data));
         if (__pre) {
@@ -56,16 +58,17 @@ export class DaoService {
         }
     }
     async confirmChanges(data: any,) {
-        if (data?.__confirmation_subject instanceof Subject) {
+        if (!!data && data?.__confirmation_subject instanceof Subject) {
             (data.__confirmation_subject as Subject<any>).next(this.getChanges(data));
         }
     }
-    confirmation<T>(data: T,) {
+    confirmation<T>(data: T) {
+        if (!data) return undefined;
         if (!(data as any).__confirmation_subject) (data as any).__confirmation_subject = new Subject();
         return (data as any).__confirmation_subject as Subject<T>;
     }
-    getObjectInternalStage(o: any){
-        
+    getObjectInternalStage(o: any) {
+
     }
 
 }

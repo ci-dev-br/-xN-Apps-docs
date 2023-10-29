@@ -32,7 +32,7 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.dao.prepareToEdit(this.data);
     this.dao.bindDataForm(this.data, this.form);
-    this.dao.confirmation(this.data).subscribe(async data => {
+    this.dao.confirmation(this.data)?.subscribe(async data => {
       if (this.data && data) {
         Object.assign(this.data,
           await lastValueFrom(this.applicationService.sync({ body: { ...data, id: this.data?.id } }))
@@ -41,7 +41,7 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
         this.dao.prepareToEdit(this.data);
         this.dao.bindDataForm(this.data, this.form);
       }
-    })
+    });
   }
   async findIcon() {
     const pesquisa = await prompt('Pesquisar ícone por...');

@@ -69,10 +69,12 @@ export class LNavComponent {
   }
   status_services: any = {};
   loadStatus() {
-    this.http.get(`${location.protocol}://${location.hostname}:7684/json`).subscribe(v => {
-      this.status_services = v;
-    });
-    setTimeout(() => this.loadStatus(), 10000);
+    // Ignorado até resolver https da aplicação de Check Health
+    
+    // this.http.get(`https://apps.ci.dev.br:7684/json`).subscribe(v => {
+    // this.status_services = v;
+    // });
+    // setTimeout(() => this.loadStatus(), 10000);
   }
 
   @HostListener('window:wheel', ['$event'])

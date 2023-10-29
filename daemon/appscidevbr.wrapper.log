@@ -1,0 +1,126 @@
+2023-10-29 18:16:34 - Starting C:\Program Files\nodejs\node.exe  --max_old_space_size=2046 C:\Users\paulo\projetos\apps-services\node_modules\.pnpm\node-windows@1.0.0-beta.8\node_modules\node-windows\lib\wrapper.js --file D:\projetos\br.dev.ci.apps\start.js --scriptoptions= --log "apps.ci.dev.br wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2023-10-29 18:16:34 - Started 8680
+2023-10-29 18:16:40 - Starting C:\Program Files\nodejs\node.exe  --max_old_space_size=2046 C:\Users\paulo\projetos\apps-services\node_modules\.pnpm\node-windows@1.0.0-beta.8\node_modules\node-windows\lib\wrapper.js --file D:\projetos\br.dev.ci.apps\start.js --scriptoptions= --log "apps.ci.dev.br wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2023-10-29 18:16:40 - Started 14112
+2023-10-29 18:18:23 - Starting C:\Program Files\nodejs\node.exe  --max_old_space_size=2046 C:\Users\paulo\projetos\apps-services\node_modules\.pnpm\node-windows@1.0.0-beta.8\node_modules\node-windows\lib\wrapper.js --file D:\projetos\br.dev.ci.apps\start.js --scriptoptions= --log "apps.ci.dev.br wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2023-10-29 18:18:23 - Started 4256
+2023-10-29 18:19:12 - Stopping appscidevbr.exe
+2023-10-29 18:19:12 - ProcessKill 4256
+2023-10-29 18:19:12 - Found child process: 6852 Name: conhost.exe
+2023-10-29 18:19:12 - Found child process: 11904 Name: node.exe
+2023-10-29 18:19:12 - Stopping process 6852
+2023-10-29 18:19:12 - Send SIGINT 6852
+2023-10-29 18:19:12 - SIGINT to 6852 failed - Killing as fallback
+2023-10-29 18:19:12 - Stopping process 11904
+2023-10-29 18:19:12 - Send SIGINT 11904
+2023-10-29 18:19:12 - SIGINT to 11904 failed - Killing as fallback
+2023-10-29 18:19:12 - Stopping process 4256
+2023-10-29 18:19:12 - Send SIGINT 4256
+2023-10-29 18:19:12 - SIGINT to 4256 failed - Killing as fallback
+2023-10-29 18:19:12 - Finished appscidevbr.exe
+2023-10-29 19:21:05 - Starting C:\Program Files\nodejs\node.exe  --max_old_space_size=2046 C:\Users\paulo\projetos\apps-services\node_modules\.pnpm\node-windows@1.0.0-beta.8\node_modules\node-windows\lib\wrapper.js --file D:\projetos\br.dev.ci.apps\start.js --scriptoptions= --log "apps.ci.dev.br wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2023-10-29 19:21:05 - Started 8060
+2023-10-29 19:21:31 - Stopping appscidevbr.exe
+2023-10-29 19:21:31 - ProcessKill 8060
+2023-10-29 19:21:31 - Shutdown exception
+Message:O sistema está sendo desligado.
+
+Stacktrace:   em System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   em System.Management.ManagementScope.InitializeGuts(Object o)
+   em System.Management.ManagementScope.Initialize()
+   em System.Management.ManagementObjectSearcher.Initialize()
+   em System.Management.ManagementObjectSearcher.Get()
+   em winsw.WrapperService.GetChildPids(Int32 pid)
+   em winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   em winsw.WrapperService.StopIt()
+   em winsw.WrapperService.OnShutdown()
+2023-10-29 19:22:00 - Starting C:\Program Files\nodejs\node.exe  --max_old_space_size=2046 C:\Users\paulo\projetos\apps-services\node_modules\.pnpm\node-windows@1.0.0-beta.8\node_modules\node-windows\lib\wrapper.js --file D:\projetos\br.dev.ci.apps\start.js --scriptoptions= --log "apps.ci.dev.br wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2023-10-29 19:22:00 - Started 6284
+2023-10-29 19:23:51 - Stopping appscidevbr.exe
+2023-10-29 19:23:51 - ProcessKill 6284
+2023-10-29 19:23:51 - Shutdown exception
+Message:O sistema está sendo desligado.
+
+Stacktrace:   em System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   em System.Management.ManagementScope.InitializeGuts(Object o)
+   em System.Management.ManagementScope.Initialize()
+   em System.Management.ManagementObjectSearcher.Initialize()
+   em System.Management.ManagementObjectSearcher.Get()
+   em winsw.WrapperService.GetChildPids(Int32 pid)
+   em winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   em winsw.WrapperService.StopIt()
+   em winsw.WrapperService.OnShutdown()
+2023-10-29 19:24:23 - Starting C:\Program Files\nodejs\node.exe  --max_old_space_size=2046 C:\Users\paulo\projetos\apps-services\node_modules\.pnpm\node-windows@1.0.0-beta.8\node_modules\node-windows\lib\wrapper.js --file D:\projetos\br.dev.ci.apps\start.js --scriptoptions= --log "apps.ci.dev.br wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2023-10-29 19:24:23 - Started 6572
+2023-10-29 19:27:29 - Stopping appscidevbr.exe
+2023-10-29 19:27:29 - ProcessKill 6572
+2023-10-29 19:27:29 - Found child process: 6584 Name: conhost.exe
+2023-10-29 19:27:29 - Found child process: 7392 Name: node.exe
+2023-10-29 19:27:29 - Stopping process 6584
+2023-10-29 19:27:29 - Send SIGINT 6584
+2023-10-29 19:27:29 - SIGINT to 6584 failed - Killing as fallback
+2023-10-29 19:27:29 - Found child process: 7636 Name: node.exe
+2023-10-29 19:27:29 - Found child process: 7648 Name: node.exe
+2023-10-29 19:27:29 - Found child process: 7692 Name: conhost.exe
+2023-10-29 19:27:29 - Stopping process 7692
+2023-10-29 19:27:29 - Send SIGINT 7692
+2023-10-29 19:27:29 - SIGINT to 7692 failed - Killing as fallback
+2023-10-29 19:27:29 - Stopping process 7636
+2023-10-29 19:27:29 - Send SIGINT 7636
+2023-10-29 19:27:29 - SIGINT to 7636 failed - Killing as fallback
+2023-10-29 19:27:29 - Found child process: 7676 Name: conhost.exe
+2023-10-29 19:27:29 - Stopping process 7676
+2023-10-29 19:27:29 - Send SIGINT 7676
+2023-10-29 19:27:29 - SIGINT to 7676 failed - Killing as fallback
+2023-10-29 19:27:29 - Stopping process 7648
+2023-10-29 19:27:29 - Send SIGINT 7648
+2023-10-29 19:27:29 - SIGINT to 7648 failed - Killing as fallback
+2023-10-29 19:27:29 - Stopping process 7392
+2023-10-29 19:27:29 - Send SIGINT 7392
+2023-10-29 19:27:29 - SIGINT to 7392 failed - Killing as fallback
+2023-10-29 19:27:29 - Stopping process 6572
+2023-10-29 19:27:29 - Send SIGINT 6572
+2023-10-29 19:27:29 - SIGINT to 6572 failed - Killing as fallback
+2023-10-29 19:27:29 - Finished appscidevbr.exe
+2023-10-29 19:36:19 - Starting C:\Program Files\nodejs\node.exe  --max_old_space_size=2046 C:\Users\paulo\projetos\apps-services\node_modules\.pnpm\node-windows@1.0.0-beta.8\node_modules\node-windows\lib\wrapper.js --file D:\projetos\br.dev.ci.apps\start.js --scriptoptions= --log "apps.ci.dev.br wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2023-10-29 19:36:19 - Started 19168
+2023-10-29 19:58:09 - Stopping appscidevbr.exe
+2023-10-29 19:58:09 - ProcessKill 19168
+2023-10-29 19:58:09 - Found child process: 13836 Name: conhost.exe
+2023-10-29 19:58:09 - Found child process: 16352 Name: node.exe
+2023-10-29 19:58:09 - Stopping process 13836
+2023-10-29 19:58:09 - Send SIGINT 13836
+2023-10-29 19:58:09 - SIGINT to 13836 failed - Killing as fallback
+2023-10-29 19:58:09 - Found child process: 8076 Name: node.exe
+2023-10-29 19:58:09 - Found child process: 14512 Name: node.exe
+2023-10-29 19:58:09 - Found child process: 8200 Name: conhost.exe
+2023-10-29 19:58:09 - Stopping process 8200
+2023-10-29 19:58:09 - Send SIGINT 8200
+2023-10-29 19:58:09 - SIGINT to 8200 failed - Killing as fallback
+2023-10-29 19:58:09 - Stopping process 8076
+2023-10-29 19:58:09 - Send SIGINT 8076
+2023-10-29 19:58:09 - SIGINT to 8076 failed - Killing as fallback
+2023-10-29 19:58:09 - Found child process: 19212 Name: conhost.exe
+2023-10-29 19:58:09 - Found child process: 16436 Name: cmd.exe
+2023-10-29 19:58:09 - Stopping process 19212
+2023-10-29 19:58:09 - Send SIGINT 19212
+2023-10-29 19:58:09 - SIGINT to 19212 failed - Killing as fallback
+2023-10-29 19:58:09 - Found child process: 16368 Name: node.exe
+2023-10-29 19:58:09 - Stopping process 16368
+2023-10-29 19:58:09 - Send SIGINT 16368
+2023-10-29 19:58:09 - SIGINT to 16368 failed - Killing as fallback
+2023-10-29 19:58:09 - Stopping process 16436
+2023-10-29 19:58:09 - Send SIGINT 16436
+2023-10-29 19:58:09 - SIGINT to 16436 failed - Killing as fallback
+2023-10-29 19:58:09 - Stopping process 14512
+2023-10-29 19:58:09 - Send SIGINT 14512
+2023-10-29 19:58:09 - SIGINT to 14512 failed - Killing as fallback
+2023-10-29 19:58:09 - Stopping process 16352
+2023-10-29 19:58:09 - Send SIGINT 16352
+2023-10-29 19:58:09 - SIGINT to 16352 failed - Killing as fallback
+2023-10-29 19:58:09 - Stopping process 19168
+2023-10-29 19:58:09 - Send SIGINT 19168
+2023-10-29 19:58:09 - SIGINT to 19168 failed - Killing as fallback
+2023-10-29 19:58:09 - Finished appscidevbr.exe
+2023-10-29 20:23:15 - Starting C:\Program Files\nodejs\node.exe  --max_old_space_size=2046 C:\Users\paulo\projetos\apps-services\node_modules\.pnpm\node-windows@1.0.0-beta.8\node_modules\node-windows\lib\wrapper.js --file D:\projetos\br.dev.ci.apps\start.js --scriptoptions= --log "apps.ci.dev.br wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2023-10-29 20:23:15 - Started 12052

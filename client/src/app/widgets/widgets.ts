@@ -9,5 +9,8 @@ export interface IWidget {
 }
 
 export const Widgets: IWidget[] = [
-    { title: "IFrame Widget", module: IFrameWidgetModule, component: IFrameWidget }
+    {
+        title: "IFrame Widget", description: 'Página externa a partir de uma URL.',
+        module: IFrameWidgetModule, component: IFrameWidget
+    }
 ]

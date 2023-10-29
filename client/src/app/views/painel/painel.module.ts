@@ -8,13 +8,15 @@ import { InicioComponent } from './inicio/inicio.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { WidgetModule } from 'src/app/widgets/widgets.module';
 import { MatMenuModule } from '@angular/material/menu';
+import { AdicionarWidgetComponent } from './inicio/adicionar-widget/adicionar-widget.component';
+import { JanelaModule } from 'src/app/components/janela/janela.module';
 
 @NgModule({
   declarations: [
     PainelComponent,
     InicioComponent,
+    AdicionarWidgetComponent,
   ],
   imports: [
     CoreModule,
@@ -24,7 +26,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatIconModule,
     MatButtonModule,
     MatTooltipModule,
-    // WidgetModule,
+    JanelaModule,
     MatMenuModule,
   ]
 })

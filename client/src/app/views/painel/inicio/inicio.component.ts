@@ -1,4 +1,6 @@
 import { Component } from "@angular/core";
+import { JanelaService } from "src/app/components/janela/janela.service";
+import { AdicionarWidgetComponent } from "./adicionar-widget/adicionar-widget.component";
 
 @Component({
     selector: 'px-inicio',
@@ -9,7 +11,7 @@ import { Component } from "@angular/core";
                 <div class="empty-card">
                     <button mat-icon-button matTooltip="Adicionar Visualização" [matMenuTriggerFor]="menu" ><mat-icon>add</mat-icon></button>
                     <mat-menu #menu>
-                        <button mat-menu-item >
+                        <button mat-menu-item (click)="adicionarCard()" >
                             Adicionar Widget
                         </button>
                         <button mat-menu-item >
@@ -27,4 +29,11 @@ import { Component } from "@angular/core";
         './inicio.component.scss'
     ]
 })
-export class InicioComponent { }
+export class InicioComponent {
+    constructor(
+        private janela: JanelaService,
+    ) { }
+    adicionarCard() {
+        this.janela.open(AdicionarWidgetComponent, null);
+    }
+}

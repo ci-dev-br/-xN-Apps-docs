@@ -10,6 +10,8 @@ import { MessagerModule, Entities as MessageEntities } from './messager/messager
 import { ProdutoModule, Entities as ProdutoEntities } from './produto/produto.module';
 import { CodexModule, CodeXEntities } from './codex/codex.module';
 import { GlobalizationEntities, GlobalizationModule } from './globalization/globalization.module';
+import { PranchetaEntities, PranchetaModule } from './prancheta/prancheta.module';
+import { IconEntities, IconsModule } from './icons/icons.module';
 
 config({ path: '.env' });
 @Module({
@@ -35,6 +37,8 @@ config({ path: '.env' });
         ...ProdutoEntities,
         ...CodeXEntities,
         ...GlobalizationEntities,
+        ...PranchetaEntities,
+        ...IconEntities,
       ]
     }),
     NotificacaoModule,
@@ -44,6 +48,8 @@ config({ path: '.env' });
     ProdutoModule,
     CodexModule,
     GlobalizationModule,
+    PranchetaModule,
+    IconsModule,
   ],
   controllers: [
     AppController,
