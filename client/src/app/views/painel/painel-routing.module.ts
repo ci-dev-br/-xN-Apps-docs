@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PainelComponent } from './painel.component';
+import { InicioComponent } from './inicio/inicio.component';
 
 const routes: Routes = [
   {
@@ -8,7 +9,10 @@ const routes: Routes = [
     data: {
       name: 'Pranchetas',
       icon: 'dashboard'
-    }
+    },
+    children: [
+      { path: '', component: InicioComponent }
+    ]
   },
 ];
 

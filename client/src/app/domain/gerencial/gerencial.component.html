@@ -56,7 +56,7 @@
                 <ng-container>
                     <ng-container matColumnDef="_act">
                         <th mat-header-cell *matHeaderCellDef>Ações</th>
-                        <td mat-cell *matCellDef="let element">
+                        <td mat-cell class="acoes" *matCellDef="let element">
                             <span class="row">
                                 <button mat-icon-button *ngFor="let act of actions" (click)="act?.onAction(element)"
                                     [matTooltip]="act?.label || ''">

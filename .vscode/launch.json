@@ -11,12 +11,6 @@
             "name": "Launch localhost",
             "url": "http://localhost:4293",
             "webRoot": "${workspaceFolder}",
-            "pathMappings": [
-                {
-                    "url": "webpack:///src",
-                    "path": "${workspaceFolder}/client/src"
-                }
-            ]
         },
         {
             "name": "Attach by Process ID",

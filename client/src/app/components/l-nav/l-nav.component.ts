@@ -69,7 +69,7 @@ export class LNavComponent {
   }
   status_services: any = {};
   loadStatus() {
-    this.http.get('http://localhost:7684/json').subscribe(v => {
+    this.http.get(`${location.protocol}://${location.hostname}:7684/json`).subscribe(v => {
       this.status_services = v;
     });
     setTimeout(() => this.loadStatus(), 10000);

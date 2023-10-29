@@ -8,9 +8,53 @@
     flex: auto;
 }
 
+mat-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+    scale: .6;
+}
+
+mat-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+    scale: .6;
+    transition: scale .45s;
+}
+
 tr {
+
+
+    .acoes {
+        opacity: .2;
+        transition: all .43s;
+
+    }
+
     &:hover {
         background-color: #dedede;
+
+        .acoes {
+            opacity: 1;
+
+            .row {
+                scale: 1;
+
+            }
+        }
     }
 }
 
@@ -35,17 +79,4 @@ mat-tab-group {
 
 
     mat-tab {}
-}
-
-mat-toolbar {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-}
-
-.row {
-    display: flex;
-    flex-direction: row;
-    gap: 3px;
-    scale: .6;
 }
