@@ -28,3 +28,8 @@ mat-drawer-container {
   position: absolute;
   right: 0;
 }
+
+mat-drawer {
+  background: rgba(white, .22);
+  backdrop-filter: blur(12px);
+}
