@@ -1,5 +1,8 @@
 {
     "vsicons.presets.angular": true,
     "jira-plugin.workingProject": "",
-    "cSpell.language": "en,pt-BR"
+    "cSpell.language": "en,pt-BR",
+    "cSpell.words": [
+        "visualizacao"
+    ]
 }

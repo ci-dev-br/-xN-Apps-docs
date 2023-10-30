@@ -22,6 +22,7 @@ export interface IItemAction<T> {
   styleUrls: ['./gerencial.component.scss']
 })
 export class GerencialComponent {
+  visualizacao: 'table' | 'list' = 'table';
   apps?: Application[];
   actions: IItemAction<Application>[] = [
     {

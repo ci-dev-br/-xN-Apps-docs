@@ -7,9 +7,10 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatDialogModule } from "@angular/material/dialog";
 import { NgxQRCodeModule } from '@jonyadamit/ngx-qrcode-ivy';
 import { MatTableModule } from '@angular/material/table';
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { CoreModule } from "src/app/core/core.module";
 import { LNavModule } from "src/app/components/l-nav/l-nav.module";
 import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo.component';
@@ -41,6 +42,8 @@ import { GridModule } from "src/app/components/grid/grid.module";
         JanelaModule,
         DinamicFormsModule,
         GridModule,
+        MatButtonToggleModule,
+        FormsModule,
         RouterModule.forChild([
             {
                 path: '', component: GerencialComponent, data: {

@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { User } from "./user.entity";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -8,10 +8,13 @@ export class DeviceAuthenticated {
     @PrimaryGeneratedColumn('uuid')
     id: string;
     @ApiProperty({})
-    @Column()
+    @UpdateDateColumn()
     lastAuthenticationHandshake?: Date;
     @ApiProperty({})
     @OneToOne(() => User)
     @JoinColumn()
     user?: User;
+    @ApiProperty({ nullable: true, required: false })
+    @Column({ nullable: true })
+    refreshToken?: string;
 }

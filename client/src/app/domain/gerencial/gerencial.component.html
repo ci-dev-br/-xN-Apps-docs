@@ -34,15 +34,19 @@
                 Novo
             </button>
             <span style="flex:auto"></span>
-            <button mat-icon-button matTooltip="Visualização em lista ">
+            <!-- <button mat-icon-button matTooltip="Visualização em lista ">
                 <mat-icon>view_list</mat-icon>
-            </button>
-            <button mat-icon-button matTooltip="Visualização em lista ">
+            </button> -->
+            <!-- <button mat-icon-button matTooltip="Visualização em lista ">
                 <mat-icon>grid_view</mat-icon>
-            </button>
+            </button> -->
+            <mat-button-toggle-group [(ngModel)]="visualizacao">
+                <mat-button-toggle value="table"><mat-icon>view_list</mat-icon>Tabela</mat-button-toggle>
+                <mat-button-toggle value="list"><mat-icon>grid_view</mat-icon>Lista</mat-button-toggle>
+            </mat-button-toggle-group>
         </mat-toolbar>
         <ng-container *ngIf="apps">
-            <table mat-table class="mat-elevation-z8" [dataSource]="apps">
+            <table *ngIf="visualizacao==='table'" mat-table class="mat-elevation-z8" [dataSource]="apps">
                 <ng-container *ngFor="let c of columns">
                     <ng-container [matColumnDef]="c.headerName">
                         <th mat-header-cell *matHeaderCellDef>{{c.headerName}}</th>
@@ -69,7 +73,26 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
             </table>
+            <div *ngIf="visualizacao==='list'" class="apps">
+                <ng-container *ngFor="let item of apps">
+                    <div class="card app">
+                        <ng-container *ngIf="item.icon">
+                            <mat-icon>{{item.icon}}</mat-icon>
+                        </ng-container>
+                        <ng-container *ngIf="item.name">
+                            {{item.name}}
+                        </ng-container>
+                        <div class="row">
+                            <button mat-icon-button (click)="editar(item)" matTooltip="Editar" >
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-icon-button (click)="remover(item)" matTooltip="Remover">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
         </ng-container>
-
     </mat-tab>
 </mat-tab-group>
