@@ -3,7 +3,7 @@ pipeline{
     stages{
         stage('Install'){
             step{
-                
+                bat('echo "Sucesso!"')
             }
         }
     }
