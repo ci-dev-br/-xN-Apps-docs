@@ -11,13 +11,15 @@ export class LayoutThumbComponent {
     return this._data;
   }
   @Input()
+  stage?: 'edit' | 'view';
+  @Input()
   public set data(value: string | undefined) {
     this._data = value;
     this.update();
   }
   layout?: any;
   @Input()
-  selecionado?:boolean;
+  selecionado?: boolean;
   constructor() { }
   update() {
     this.layout = this.data?.split('-').map(v => Array(Number(v)).fill(0));

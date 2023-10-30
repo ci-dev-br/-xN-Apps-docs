@@ -1,4 +1,4 @@
-<div class="widgets">
+<div class="widgets" *ngIf="!selecionado">
     <ng-container *ngFor="let item of widgets">
         <div class="widget-info">
             <div>
@@ -6,10 +6,17 @@
                 <p>{{item.description}}</p>
             </div>
             <div class="row">
-                <button mat-icon-button matTooltip="Adicionar à prancheta">
+                <button mat-icon-button matTooltip="Adicionar à prancheta" (click)="adicionar(item)">
                     <mat-icon>add</mat-icon>
                 </button>
             </div>
         </div>
     </ng-container>
+</div>
+<div class="configurar" *ngIf="!!selecionado">
+    <form>
+        <mat-form-field>
+            <input type="text" matInput>
+        </mat-form-field>
+    </form>
 </div>

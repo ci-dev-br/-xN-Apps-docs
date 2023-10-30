@@ -32,3 +32,23 @@
 
     }
 }
+
+button.add {
+    $layout-button-size: 24px;
+
+    display: block;
+    background-color: white; // TODO: mover para `.theming.ts`
+    border-radius: #{$layout-button-size/2};
+    width: $layout-button-size;
+    height: $layout-button-size;
+    border: unset;
+    justify-self: center;
+    align-self: center;
+
+    &:hover {
+        background-color: #dedede;
+    }
+    &:active {
+        background-color: #cecece;
+    }
+}

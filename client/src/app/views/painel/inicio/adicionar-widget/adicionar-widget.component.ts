@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
-import { Widgets } from "src/app/widgets/widgets";
+import { FormBuilder, FormGroup } from "@angular/forms";
+import { IWidget, Widgets } from "src/app/widgets/widgets";
 
 @Component({
     selector: 'px-adicionar-widget',
@@ -10,5 +11,20 @@ import { Widgets } from "src/app/widgets/widgets";
 })
 export class AdicionarWidgetComponent {
     widgets = Widgets;
-    constructor() { }
+    stage: 'find' | 'settings' = 'find';
+    selecionado?: IWidget;
+    formSettings?: FormGroup;
+    constructor(
+        private readonly fb: FormBuilder,
+    ) { }
+    adicionar(item: IWidget) {
+        this.selecionado = item;
+        if (item.settings) {
+            // Object.keys(item.settings)item.settings
+
+        }
+        this.formSettings = this.fb.group({
+
+        });
+    }
 }

@@ -13,6 +13,8 @@ import { AdicionarWidgetComponent } from './inicio/adicionar-widget/adicionar-wi
 import { JanelaModule } from 'src/app/components/janela/janela.module';
 import { LayoutComponent } from './inicio/layout/layout.component';
 import { LayoutThumbComponent } from './inicio/layout/layout-thumb/layout-thumb.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -31,6 +33,8 @@ import { LayoutThumbComponent } from './inicio/layout/layout-thumb/layout-thumb.
     MatButtonModule,
     MatTooltipModule,
     JanelaModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatMenuModule,
   ]
 })
