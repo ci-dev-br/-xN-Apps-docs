@@ -12,11 +12,13 @@ import { ChaveAcesso } from "./models/chave-acesso.entity";
 import { Policy } from "./models/policy.entity";
 import { RefreshTokenStrategy } from "./service/refresh-token-strategy";
 import { AuthService } from "./service/auth.service";
+import { DeviceAuthenticated } from "./models/device-autenticated.entity";
 
 export const Entities = [
     Policy,
     User,
     ChaveAcesso,
+    DeviceAuthenticated,
 ];
 
 @Module({
