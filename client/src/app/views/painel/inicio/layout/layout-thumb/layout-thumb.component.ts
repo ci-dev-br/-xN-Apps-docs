@@ -24,4 +24,24 @@ export class LayoutThumbComponent {
   update() {
     this.layout = this.data?.split('-').map(v => Array(Number(v)).fill(0));
   }
+  remove(pos: undefined | number = undefined) {
+    if (!this.data) return;
+    const g = this.data.split('-');
+    if (pos != undefined) {
+      g[pos] = String((Number(g[pos]) - 1) || 1);
+    } else {
+
+    }
+    this.data = g.join('-')
+  }
+  add(pos: undefined | number = undefined) {
+    if (!this.data) return;
+    const g = this.data.split('-');
+    if (pos != undefined) {
+      g[pos] = String((Number(g[pos]) + 1) || 1);
+    } else {
+
+    }
+    this.data = g.join('-')
+  }
 }

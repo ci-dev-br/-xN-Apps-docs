@@ -1,7 +1,9 @@
-<button class="add"><mat-icon>remove</mat-icon></button>
-<div class="row" [class.selecionado]="selecionado" *ngFor="let r of layout">
-    <button class="add"><mat-icon>remove</mat-icon></button>
+<div class="row" [class.selecionado]="selecionado" *ngFor="let r of layout; let i = index;">
     <div *ngFor="let i of r" class="card"></div>
-    <button class="add"><mat-icon>add</mat-icon></button>
+    <button class="add" (click)="remove(i)"><mat-icon>remove</mat-icon></button>
+    <button class="add" (click)="add(i)"><mat-icon>add</mat-icon></button>
 </div>
-<button class="add"><mat-icon>add</mat-icon></button>
+<div class="row">
+    <button class="add" (click)="remove()"><mat-icon>remove</mat-icon></button>
+    <button class="add" (click)="add()"><mat-icon>add</mat-icon></button>
+</div>
