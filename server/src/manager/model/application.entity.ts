@@ -18,4 +18,7 @@ export class Application {
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })
     description?: string;
+    @ApiProperty({ nullable: true, required: false })
+    @Column({ nullable: true, type: 'varchar', array: true })
+    roles?: string[];
 }

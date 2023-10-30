@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Request } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Application } from "../model/application.entity";
 import { ApplicationService } from "../service/application.service";
+import { User } from "src/auth/models/user.entity";
 
 @ApiTags('Application')
 @Controller('Application')
@@ -14,8 +15,11 @@ export class ApplicationController {
     @ApiOperation({
         operationId: 'Get'
     })
-    async get() {
-        return await this.service.find();
+    async get(
+        @Request() req: Request,
+    ) {
+        const user: User = (req as any).user;
+        return await this.service.find(user?.roles);
     }
     @Post('Sync')
     @ApiResponse({
