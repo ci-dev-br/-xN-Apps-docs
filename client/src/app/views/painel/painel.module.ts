@@ -11,12 +11,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { AdicionarWidgetComponent } from './inicio/adicionar-widget/adicionar-widget.component';
 import { JanelaModule } from 'src/app/components/janela/janela.module';
+import { LayoutComponent } from './inicio/layout/layout.component';
 
 @NgModule({
   declarations: [
     PainelComponent,
     InicioComponent,
     AdicionarWidgetComponent,
+    LayoutComponent,
   ],
   imports: [
     CoreModule,

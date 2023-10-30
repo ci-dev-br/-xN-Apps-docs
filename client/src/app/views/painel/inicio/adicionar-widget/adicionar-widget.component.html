@@ -1,0 +1,15 @@
+<div class="widgets">
+    <ng-container *ngFor="let item of widgets">
+        <div class="widget-info">
+            <div>
+                <h1>{{item.title}}</h1>
+                <p>{{item.description}}</p>
+            </div>
+            <div class="row">
+                <button mat-icon-button matTooltip="Adicionar à prancheta">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+        </div>
+    </ng-container>
+</div>

@@ -5,6 +5,7 @@ import { AdicionarWidgetComponent } from "./adicionar-widget/adicionar-widget.co
 @Component({
     selector: 'px-inicio',
     template: `
+        
         <div class="cards">
             <!-- <ng-container  ></ng-container> -->
             <!-- <ng-container> -->
@@ -12,13 +13,10 @@ import { AdicionarWidgetComponent } from "./adicionar-widget/adicionar-widget.co
                     <button mat-icon-button matTooltip="Adicionar Visualização" [matMenuTriggerFor]="menu" ><mat-icon>add</mat-icon></button>
                     <mat-menu #menu>
                         <button mat-menu-item (click)="adicionarCard()" >
-                            Adicionar Widget
+                            Pesquisar por Widget
                         </button>
                         <button mat-menu-item >
-                            Adicionar IFrame
-                        </button>
-                        <button mat-menu-item >
-                            Instalar Widget
+                            Instalar Widgets
                         </button>
                     </mat-menu>
                 </div>
@@ -34,6 +32,6 @@ export class InicioComponent {
         private janela: JanelaService,
     ) { }
     adicionarCard() {
-        this.janela.open(AdicionarWidgetComponent, null);
+        this.janela.open(AdicionarWidgetComponent, {});
     }
 }

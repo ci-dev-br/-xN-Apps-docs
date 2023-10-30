@@ -19,3 +19,12 @@ mat-drawer-container {
 mat-drawer-container {
   flex: auto;
 }
+
+.menu {
+  display: flex;
+  flex-direction: row-reverse;
+  position: sticky;
+  top: 0;
+  position: absolute;
+  right: 0;
+}

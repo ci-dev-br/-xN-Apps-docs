@@ -1,9 +1,14 @@
 <ci-l-nav></ci-l-nav>
-<mat-drawer-container class="example-container">
-    <mat-drawer mode="over" opened position="end">
-        
+<mat-drawer-container>
+    <mat-drawer #sideMenu mode="over" opened position="end">
+        <px-layout></px-layout>
     </mat-drawer>
     <mat-drawer-content>
+        <div class="menu">
+            <button mat-icon-button (click)="sideMenu.toggle()">
+                <mat-icon>settings</mat-icon>
+            </button>
+        </div>
         <router-outlet></router-outlet>
     </mat-drawer-content>
 </mat-drawer-container>
