@@ -3,6 +3,7 @@ import { IFrameWidget, IFrameWidgetModule } from "./iframe/iframe.widget";
 
 export interface IControl {
     type?: string;
+    maxLength?: number;
 }
 
 export interface IWidget {
@@ -20,7 +21,7 @@ export const Widgets: IWidget[] = [
         description: 'Página externa a partir de uma URL.',
         tags: ['Elementos'],
         settings: {
-            url: { type: 'text' }
+            url: { type: 'text', maxLength: 500 }
         },
         module: IFrameWidgetModule, component: IFrameWidget
     },
