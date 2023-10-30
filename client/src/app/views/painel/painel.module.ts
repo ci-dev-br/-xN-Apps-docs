@@ -12,6 +12,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { AdicionarWidgetComponent } from './inicio/adicionar-widget/adicionar-widget.component';
 import { JanelaModule } from 'src/app/components/janela/janela.module';
 import { LayoutComponent } from './inicio/layout/layout.component';
+import { LayoutThumbComponent } from './inicio/layout/layout-thumb/layout-thumb.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { LayoutComponent } from './inicio/layout/layout.component';
     InicioComponent,
     AdicionarWidgetComponent,
     LayoutComponent,
+    LayoutThumbComponent,
   ],
   imports: [
     CoreModule,
