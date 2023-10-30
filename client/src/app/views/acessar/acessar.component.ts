@@ -106,11 +106,13 @@ export class AcessarComponent {
             ,
           }
         }));
-        if (this.acesso_payload.user?.id) {
+        if (this.acesso_payload?.user?.id) {
           this.userService.identificarUsuario(this.acesso_payload.user);
           if (this.acesso_payload.bearer) this.token.Token = this.acesso_payload.bearer;
           if (this.acesso_payload.refreshToken) this.token.RefreshToken = this.acesso_payload.refreshToken;
           this.router.navigate(['/painel']);
+        } else {
+          this.snack.open('Falha 3.', 'Ok');
         }
       }
     } catch (error) {
