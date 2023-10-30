@@ -96,10 +96,14 @@ export class AuthController {
       const identified_user = await this.userService.existsUserByIdentification(payload.identificacao, chave.id);
       // if(!identified_user) throw ('')
       // O que fazer quando o usuário não é identificado?
-      await this.credencialService.eliminarChaves(identified_user.id);
-      chave.identifiedUser = identified_user.id;
-      chave = await this.credencialService.atualizar(chave);
-      return new AcessoPayload({ ...chave, id: undefined });
+      if (identified_user) {
+        await this.credencialService.eliminarChaves(identified_user.id);
+        chave.identifiedUser = identified_user.id;
+        chave = await this.credencialService.atualizar(chave);
+        return new AcessoPayload({ ...chave, id: undefined });
+      } else {
+        throw new Error('Falha ao localizar chave de acesso.');
+      }
     } else {
       const chaveAcesso = (await this.credencialService.solicitarCredencial({
         ip: ip
