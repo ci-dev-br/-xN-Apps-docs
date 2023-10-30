@@ -16,6 +16,8 @@ export class LayoutThumbComponent {
     this.update();
   }
   layout?: any;
+  @Input()
+  selecionado?:boolean;
   constructor() { }
   update() {
     this.layout = this.data?.split('-').map(v => Array(Number(v)).fill(0));

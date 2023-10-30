@@ -7,12 +7,13 @@ import { Component } from "@angular/core";
     <h4>Layout:</h4>
     <div class="layouts">
         <ng-container *ngFor="let layout of layouts">
-            <ci-layout-thumb [data]="layout"></ci-layout-thumb>
+            <ci-layout-thumb (click)="layoutSelecionado=layout" [data]="layout" [selecionado]="layoutSelecionado===layout" ></ci-layout-thumb>
         </ng-container>
     </div>
     `,
     styles: [
-        `.layouts{
+        `
+        .layouts{
             padding: 12px;
             display: flex;
             flex-direction: column;
@@ -27,4 +28,5 @@ export class LayoutComponent {
         '1-1-1',
         '4-1-2-2',
     ];
+    layoutSelecionado?: string;
 }
