@@ -7,7 +7,7 @@ import { Component } from "@angular/core";
     <h4>Layout:</h4>
     <div class="layouts">
         <ng-container *ngFor="let layout of layouts">
-            <ci-layout-thumb (click)="layoutSelecionado=layout" [data]="layout" [selecionado]="layoutSelecionado===layout" ></ci-layout-thumb>
+            <ci-layout-thumb (click)="layoutSelecionado=layout" [data]="layout" [(data)]="layoutSelecionado" ></ci-layout-thumb>
         </ng-container>
     </div>
     `,
