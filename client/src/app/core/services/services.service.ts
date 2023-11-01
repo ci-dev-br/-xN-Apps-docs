@@ -10,7 +10,7 @@ export class ServicesService {
         private readonly apiConfig: ApiConfiguration,
     ) {
         this.init();
-        window.addEventListener('resize', () => {
+        /* window.addEventListener('resize', () => {
             if (
                 (window.innerWidth + 150) < window.outerWidth ||
                 (window.innerHeight + 150) < window.outerHeight
@@ -48,7 +48,7 @@ export class ServicesService {
                 }
                 d.close();
             }
-        })
+        }) */
     }
     compartilhar() {
 
