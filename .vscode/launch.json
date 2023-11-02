@@ -12,6 +12,13 @@
             "webRoot": "${workspaceFolder}/client"
         },
         {
+            "type": "msedge",
+            "request": "launch",
+            "name": "prolabore, serve",
+            "url": "http://localhost:4295",
+            "webRoot": "${workspaceFolder}/client"
+        },
+        {
             "name": "Attach by Process ID",
             "processId": "${command:PickProcess}",
             "request": "attach",
