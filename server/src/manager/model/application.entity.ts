@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Domain } from "./domain.entity";
 
 @Entity()
 export class Application {
@@ -21,4 +22,7 @@ export class Application {
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true, type: 'varchar', array: true })
     roles?: string[];
+    @ApiProperty({ nullable: true, required: false })
+    @ManyToMany(() => Domain)
+    domain?: Domain;
 }

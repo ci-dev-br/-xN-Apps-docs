@@ -4,7 +4,7 @@ import { Injectable } from "@angular/core";
 export class TokenService {
     constructor() { }
     clear() {
-        localStorage.clear();
+        // localStorage.clear();
         // TODO: verificar chamada indevida que está derrubando a autenticação, foi removido o clear automático para retorno 401;
     }
     hasToken() {

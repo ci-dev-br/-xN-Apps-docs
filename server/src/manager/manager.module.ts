@@ -22,4 +22,3 @@ export const ManagerEntities = [
     ]
 })
 export class ManagerModule { }
-
