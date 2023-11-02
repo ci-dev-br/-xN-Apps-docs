@@ -3,7 +3,11 @@ import { RouterModule, Routes } from '@angular/router';
 import { CodeEditorComponent } from './code-editor/code-editor.component';
 const routes: Routes = [
   {
-    path: '', component: CodeEditorComponent
+    path: '', component: CodeEditorComponent,
+    data: {
+      name: 'CodeX',
+      icon: 'code'
+    }
   }
 ];
 @NgModule({
