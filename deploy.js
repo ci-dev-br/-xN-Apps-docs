@@ -1,0 +1,1 @@
+require('@plhx/ci').Deployer(process.argv);
