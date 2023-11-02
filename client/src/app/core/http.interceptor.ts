@@ -22,7 +22,6 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             return throwError(error);
         }));
     }
-
     private addTokenHeader(request: HttpRequest<any>) {
         let bearer = undefined;
         if (this.token.hasToken()) {
@@ -34,7 +33,6 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             })
         }) : request;
     }
-
     private handlerUnauthorizedError(error: HttpErrorResponse, next: HttpHandler, request: HttpRequest<any>) {
         this.refreshing = true;
         if (this.token.hasRefreshToken()) {

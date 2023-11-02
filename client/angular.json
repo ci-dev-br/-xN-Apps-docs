@@ -109,6 +109,104 @@
           }
         }
       }
+    },
+    "@plhx/prolabore": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/plhx/prolabore",
+      "sourceRoot": "projects/plhx/prolabore/src",
+      "prefix": "px",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/plhx/prolabore",
+            "index": "projects/plhx/prolabore/src/index.html",
+            "main": "projects/plhx/prolabore/src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "projects/plhx/prolabore/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/plhx/prolabore/src/favicon.ico",
+              "projects/plhx/prolabore/src/assets"
+            ],
+            "styles": [
+              "projects/plhx/prolabore/src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "@plhx/prolabore:build:production"
+            },
+            "development": {
+              "port": 4295,
+              "browserTarget": "@plhx/prolabore:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "@plhx/prolabore:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "projects/plhx/prolabore/tsconfig.spec.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/plhx/prolabore/src/favicon.ico",
+              "projects/plhx/prolabore/src/assets"
+            ],
+            "styles": [
+              "projects/plhx/prolabore/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        }
+      }
     }
   },
   "cli": {
