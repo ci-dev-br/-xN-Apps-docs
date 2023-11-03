@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Request } from "@nestjs/common";
+import { Body, Controller, Post, Request, Query } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Application } from "../model/application.entity";
 import { ApplicationService } from "../service/application.service";
@@ -17,6 +17,7 @@ export class ApplicationController {
     })
     async get(
         @Request() req: Request,
+        @Query('getAll') getAll?: boolean,
     ) {
         const user: User = (req as any).user;
         return await this.service.find(user?.roles);
