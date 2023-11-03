@@ -1,8 +1,9 @@
-import { Body, Controller, Post, Request, Query } from "@nestjs/common";
+import { Body, Controller, Post, Request, Query, Optional } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Application } from "../model/application.entity";
 import { ApplicationService } from "../service/application.service";
 import { User } from "src/auth/models/user.entity";
+import { GetInputDtos } from "../dto/input-dto";
 
 @ApiTags('Application')
 @Controller('Application')
@@ -17,10 +18,10 @@ export class ApplicationController {
     })
     async get(
         @Request() req: Request,
-        @Query('getAll') getAll?: boolean,
+        @Body() input: GetInputDtos,
     ) {
         const user: User = (req as any).user;
-        return await this.service.find(user?.roles);
+        return await this.service.find(!input.all ? user?.roles : undefined);
     }
     @Post('Sync')
     @ApiResponse({

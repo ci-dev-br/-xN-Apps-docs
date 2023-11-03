@@ -30,7 +30,7 @@ export class ApplicationService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `get()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
   get$Response(params: Get$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Application>>> {
     return get(this.http, this.rootUrl, params, context);
@@ -40,7 +40,7 @@ export class ApplicationService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `get$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
   get(params: Get$Params, context?: HttpContext): Observable<Array<Application>> {
     return this.get$Response(params, context).pipe(

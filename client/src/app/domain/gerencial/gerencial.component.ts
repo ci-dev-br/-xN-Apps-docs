@@ -62,7 +62,7 @@ export class GerencialComponent {
 
   }
   async carregarListaAplicativos() {
-    this.apps = await lastValueFrom(this.applications.get({ getAll: false }));
+    this.apps = await lastValueFrom(this.applications.get({ body: { all: true } }));
   }
   private _cached_map = new Map<string, any>();
   private cache(prop: string, value: () => any) {

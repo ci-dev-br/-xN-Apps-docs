@@ -7,15 +7,16 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import { Application } from '../../models/application';
+import { GetInputDtos } from '../../models/get-input-dtos';
 
 export interface Get$Params {
-  getAll: boolean;
+      body: GetInputDtos
 }
 
 export function get(http: HttpClient, rootUrl: string, params: Get$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Application>>> {
   const rb = new RequestBuilder(rootUrl, get.PATH, 'post');
   if (params) {
-    rb.query('getAll', params.getAll, {});
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(

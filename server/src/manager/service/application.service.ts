@@ -12,13 +12,14 @@ export class ApplicationService {
 
     async find(roles: string[]) {
         console.log(roles);
+
         return this.repo.find({
             where: [
-                ...roles.map(role => {
+                ...((roles?.map(role => {
                     return {
                         roles: ArrayContains([role])
                     }
-                })
+                })) || [])
             ],
         })
     }
