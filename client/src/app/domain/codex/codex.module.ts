@@ -13,6 +13,7 @@ import { ModalModule } from 'src/app/components/modal/modal.module';
 import { MatSelectModule } from '@angular/material/select';
 import { ProjetoComponent } from './projeto/projeto.component';
 import { JanelaModule } from 'src/app/components/janela/janela.module';
+import { AgentService } from './agent.service';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,9 @@ import { JanelaModule } from 'src/app/components/janela/janela.module';
     ModalModule,
     MatSelectModule,
     JanelaModule,
+  ],
+  providers: [
+    AgentService,
   ]
 })
 export class CodexModule { }

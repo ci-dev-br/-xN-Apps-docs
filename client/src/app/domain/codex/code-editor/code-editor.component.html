@@ -1,16 +1,13 @@
 <ci-l-nav></ci-l-nav>
 <mat-toolbar>
     <button mat-raised-button>
-        Adicionar Projeto
-    </button>
-    <button mat-raised-button>
-        Abrir Projeto
+        Procurar Agente
     </button>
     <!-- <button mat-raised-button>Procurar tarefa</button> -->
-    <mat-select>
-        <mat-option></mat-option>
+    <mat-select [(ngModel)]="executor">
+        <mat-option *ngFor="let executor of executores" [value]="executor.agentService" >{{executor.name}}</mat-option>
     </mat-select>
-    <button mat-raised-button (click)="executar()">Executar</button>
+    <button mat-raised-button color="primary" (click)="executar()">Executar</button>
 </mat-toolbar>
 <!-- <div #info1 class="presentation">
     <h1>Bem-vinde ao Codex!</h1>

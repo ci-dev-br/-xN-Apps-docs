@@ -1,45 +1,26 @@
 import { Component, Injector, Optional } from '@angular/core';
 import { JanelaService } from 'src/app/components/janela/janela.service';
 import { ProjetoComponent } from '../projeto/projeto.component';
+import { HttpClient } from '@angular/common/http';
+import { AgentService } from '../agent.service';
+import { IExcutorAgentMetadata } from '../i-executor';
 @Component({
   selector: 'ci-code-editor',
   templateUrl: './code-editor.component.html',
   styleUrls: ['./code-editor.component.scss']
 })
 export class CodeEditorComponent {
+  executores: IExcutorAgentMetadata[] = [
+    { name: "Current Agent", agentService: this.agent },
+  ];
   constructor(
-    private readonly injetor?: Injector,
-    @Optional()
-    private readonly janela?: JanelaService,
+    private agent?: AgentService,
   ) { }
+  executor?: AgentService = this.executores[0].agentService;
   editorOptions = { theme: 'vs-dark', language: 'javascript' };
-  code: string = ``;
-  // agent: I;
-  private santizeScript(text: string) {
-    return text
-      .replace(/(this)/g, '_internal_this')
-      .replace(/(undefined)/g, '__undefined__')
-      .replace(/(true)/g, '__true__')
-      .replace(/(false)/g, '__false__')
-      .replace(/(alert|document|window|console)/g, '__undefined__')
-  }
+  code: string = `return await 1+1;`;
   executar() {
-    try {
-      (() => {
-        const __undefined__ = undefined;
-        const __null__ = null;
-        const __true__ = true;
-        const __false__ = false;
-
-        const _internal_this = {
-          injetor: this.injetor,
-          janela: this.janela,
-        };
-        eval(this.santizeScript(this.code));
-      })();
-    } catch (error) {
-
-    }
+    if(this.executor) this.executor.exec(this.code);
   }
   criarProjeto() {
     // this.janela?.open(ProjetoComponent)
