@@ -1,5 +1,4 @@
-import { Token } from '@angular/compiler';
-import { Component, Type } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { lastValueFrom } from 'rxjs';
 import { Application } from '@portal/api';
@@ -63,7 +62,7 @@ export class GerencialComponent {
 
   }
   async carregarListaAplicativos() {
-    this.apps = await lastValueFrom(this.applications.get());
+    this.apps = await lastValueFrom(this.applications.get({ getAll: false }));
   }
   private _cached_map = new Map<string, any>();
   private cache(prop: string, value: () => any) {
