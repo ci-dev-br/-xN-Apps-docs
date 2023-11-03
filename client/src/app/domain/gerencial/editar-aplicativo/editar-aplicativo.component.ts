@@ -3,8 +3,8 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { lastValueFrom } from 'rxjs';
-import { Application } from 'src/app/api/models';
-import { ApplicationService } from 'src/app/api/services';
+import { Application } from '@portal/api';
+import { ApplicationService } from '@portal/api';
 import { IChangeable, DaoService } from 'src/app/core/dao/dao.service';
 
 @Component({

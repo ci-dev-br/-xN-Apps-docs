@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { lastValueFrom } from 'rxjs';
-import { AcessoPayload } from 'src/app/api/models';
-import { AuthService } from 'src/app/api/services';
+import { AcessoPayload } from '@portal/api';
+import { AuthService } from '@portal/api';
 import { SHA512 } from 'crypto-js';
 import { UserService } from 'src/app/services/user.service';
 import { StorageService } from 'src/app/core/storage.service';

@@ -1,5 +1,5 @@
 import { Injectable, OnInit } from "@angular/core";
-import { User } from "../api/models";
+import { User } from "@portal/api";
 import { BehaviorSubject } from "rxjs";
 import { Router } from "@angular/router";
 import { TokenService } from "../core/token.service";

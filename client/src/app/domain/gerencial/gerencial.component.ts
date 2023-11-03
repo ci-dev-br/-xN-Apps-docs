@@ -3,7 +3,7 @@ import { Component, Type } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { lastValueFrom } from 'rxjs';
 import { Application } from '@portal/api';
-import { ApplicationService } from 'src/app/api/services';
+import { ApplicationService } from '@portal/api';
 import { TokenService } from 'src/app/core/token.service';
 import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo.component';
 import { JanelaService } from 'src/app/components/janela/janela.service';
