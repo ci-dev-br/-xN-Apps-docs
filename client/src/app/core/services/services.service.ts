@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
-import { ApiConfiguration } from "src/app/api/api-configuration";
+import { ApiConfiguration } from "@portal/api";
 
 @Injectable()
 export class ServicesService {

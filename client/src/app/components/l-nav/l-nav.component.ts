@@ -2,8 +2,8 @@ import { Component, ElementRef, HostListener } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, ActivationEnd, ActivationStart, ChildActivationEnd, Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import { lastValueFrom } from 'rxjs';
-import { Application } from 'src/app/api/models';
-import { ApplicationService } from 'src/app/api/services';
+import { Application } from '@portal/api';
+import { ApplicationService } from '@portal/api';
 import { HttpClient } from '@angular/common/http';
 import { ServicesService } from 'src/app/core/services/services.service';
 
