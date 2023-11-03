@@ -2,7 +2,7 @@ import { Token } from '@angular/compiler';
 import { Component, Type } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { lastValueFrom } from 'rxjs';
-import { Application } from 'src/app/api/models';
+import { Application } from '@portal/api';
 import { ApplicationService } from 'src/app/api/services';
 import { TokenService } from 'src/app/core/token.service';
 import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo.component';

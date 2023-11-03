@@ -4,7 +4,8 @@
   "compilerOptions": {
     "paths": {
       "@portal/api": [
-        "dist/portal/api"
+        "dist/portal/api",
+        "projects/portal/api/src/public-api"
       ]
     },
     "baseUrl": "./",
