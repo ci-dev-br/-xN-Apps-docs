@@ -70,7 +70,7 @@ export class LNavComponent {
   status_services: any = {};
   loadStatus() {
     // Ignorado até resolver https da aplicação de Check Health
-    
+
     // this.http.get(`https://apps.ci.dev.br:7684/json`).subscribe(v => {
     // this.status_services = v;
     // });
@@ -100,5 +100,8 @@ export class LNavComponent {
       r.push(element);
     }
     return r;
+  }
+  action(crumb: any) {
+    console.log(crumb);
   }
 }

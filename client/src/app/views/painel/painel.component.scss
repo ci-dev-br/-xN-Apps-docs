@@ -14,6 +14,9 @@ mat-drawer-container {
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
+
+  height: 100dvh;
+  overflow: hidden;
 }
 
 mat-drawer-container {

@@ -45,6 +45,10 @@
   </ng-container>
 </nav>
 <div class="breadcrumbs" *ngIf="$user | async">
-  <div class="crumb" *ngFor="let crumb of breadcrumb">{{crumb.name || crumb}}</div>
+  <div (click)="action(crumb)" class="crumb" *ngFor="let crumb of breadcrumb">
+    <div class="el">
+      {{crumb.name || crumb}}
+    </div>
+  </div>
   <!--  <div class="crumb">Teste</div> -->
 </div>

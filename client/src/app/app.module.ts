@@ -12,7 +12,7 @@ import { MonacoEditorModule } from 'ngx-monaco-editor';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,

@@ -53,8 +53,8 @@ nav {
 }
 
 .breadcrumbs {
-  pointer-events: none;
-  user-select: none;
+  // pointer-events: none;
+  // user-select: none;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -67,7 +67,29 @@ nav {
 
   .crumb+.crumb {
     &::before {
-      content: " > ";
+      display: block;
+      width: 12px;
+      flex: unset;
+
+      margin: {
+        top: -3px;
+        bottom: -3px;
+      }
+
+      ;
+      justify-self: stretch;
+      align-self: stretch;
+      content: " ";
+      background: linear-gradient(to right, rgba(white, .0) 0%, rgba(white, .3) 100%);
     }
+  }
+
+  .el {
+    flex: unset;
+    cursor: pointer;
+  }
+
+  .crumb {
+    display: contents;
   }
 }
