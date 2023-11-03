@@ -16,7 +16,8 @@ const routes: Routes = [
     data: {
       name: 'IDE Integrada',
       menu: [
-        { label: 'Código', route: '', icon: 'code' }
+        { label: 'CodeX', route: '', icon: 'code' },
+        { label: 'Código Fonte (vscode)', route: '', icon: 'code' },
       ] as IMenu
     }
   }

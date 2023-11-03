@@ -69,7 +69,12 @@ form {
 }
 
 .color-1 {
-  background: linear-gradient(175deg, #558866 0%, #443377 100%);
+  background:
+    url(/assets/1000_F_611709293.jpg) //linear-gradient(175deg, #558866 0%, #443377 100%)
+  ;
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 .banner-101 {
