@@ -18,7 +18,7 @@ export class ApplicationController {
     })
     async get(
         @Request() req: Request,
-        @Body() input: GetInputDtos,
+        @Body() input?: GetInputDtos,
     ) {
         const user: User = (req as any).user;
         return await this.service.find(!input.all ? user?.roles : undefined);

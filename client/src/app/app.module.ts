@@ -9,6 +9,7 @@ import { ServicesModule } from './services/services.module';
 import { CoreModule } from './core/core.module';
 import { ContextmenuModule } from './components/contextmenu/contextmenu.module';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { MonacoEditorModule } from 'ngx-monaco-editor';
     }),
     ServicesModule,
     ContextmenuModule.forRoot(),
-    MonacoEditorModule.forRoot(), // use forRoot() in main app module only.
+    MonacoEditorModule.forRoot(),
+    FontAwesomeModule, // use forRoot() in main app module only.
   ],
   providers: [
   ],

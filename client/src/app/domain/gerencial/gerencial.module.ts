@@ -19,6 +19,8 @@ import { JanelaModule } from "src/app/components/janela/janela.module";
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DinamicFormsModule } from "src/app/components/dinamic-forms/dinamic-forms.module";
 import { GridModule } from "src/app/components/grid/grid.module";
+import { MatSelectModule } from "@angular/material/select";
+import { MatChipsModule } from "@angular/material/chips";
 
 @NgModule({
     declarations: [
@@ -44,6 +46,8 @@ import { GridModule } from "src/app/components/grid/grid.module";
         GridModule,
         MatButtonToggleModule,
         FormsModule,
+        MatSelectModule,
+        MatChipsModule,
         RouterModule.forChild([
             {
                 path: '', component: GerencialComponent, data: {

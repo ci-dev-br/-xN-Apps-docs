@@ -1,6 +1,6 @@
 :host {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 
     align-items: stretch;
     justify-content: center;
@@ -10,6 +10,7 @@
     padding: 12px;
     flex-wrap: wrap;
     max-width: 80vw;
+    max-height: 80vh;
 
     >* {
         flex: 1;

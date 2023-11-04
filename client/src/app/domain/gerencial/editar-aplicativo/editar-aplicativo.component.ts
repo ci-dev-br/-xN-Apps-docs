@@ -25,7 +25,8 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
     private readonly dao: DaoService,
     private readonly fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA)
-    private readonly data?: Application,
+    public readonly data?: Application,
+
   ) { }
   ngOnDestroy(): void {
   }
@@ -64,5 +65,12 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
 
   get changes() {
     return this.dao.getChanges(this.data as IChangeable);
+  }
+  addRole(e: any) {
+    if (e.value && e.value.length > 0) {
+      if (this.data && !this.data?.roles) this.data.roles = [];
+      this.data?.roles?.push(e.value);
+      (e.input as HTMLInputElement).value = '';
+    }
   }
 }
