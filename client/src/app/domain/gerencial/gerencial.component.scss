@@ -4,29 +4,25 @@
     flex-direction: column;
     align-items: stretch;
     justify-content: stretch;
-
     flex: auto;
 }
-
 mat-toolbar {
     position: sticky;
     top: 0;
     z-index: 50;
 }
-
 .row {
     display: flex;
     flex-direction: row;
     gap: 3px;
     /* scale: .6; */
+    overflow: hidden;
 }
-
 mat-toolbar {
     position: sticky;
     top: 0;
     z-index: 50;
 }
-
 .row {
     display: flex;
     flex-direction: row;
@@ -34,34 +30,31 @@ mat-toolbar {
     /* scale: .6; */
     /* transition: scale .45s; */
 }
-
 tr {
     .acoes {
-        opacity: .0;
-        transition: opacity .43s;
-
+        .row {
+            opacity: .0;
+            transition: opacity .43s;
+        }
     }
-
     &:hover {
-        background-color: #dedede;
-
+        // background-color: #dedede;
         .acoes {
-            opacity: 1;
-
             .row {
                 /* scale: 1; */
-
+                opacity: 1;
             }
         }
     }
+    td {
+        overflow: hidden;
+    }
 }
-
 ::ng-deep body {
     background: url('/assets/The Writer.png');
     background-position: center center;
     background-repeat: no-repeat;
 }
-
 mat-tab-group {
     background: rgba(255, 255, 255, .33);
     backdrop-filter: blur(12px);
@@ -74,18 +67,13 @@ mat-tab-group {
     padding-bottom: 12px;
     filter: drop-shadow(0 3px 6px rgba(black, .44));
     max-height: calc(100vh - 110px);
-
-
     mat-tab {}
 }
-
 .apps {
-
     display: flex;
     flex-direction: row;
     gap: 12px;
     margin: 24px;
-
     .card.app {
         border: solid 2px rgba(black, .11);
         border-radius: 7px;

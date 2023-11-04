@@ -22,8 +22,8 @@ export interface IColumns {
         </ng-container>
     </ng-container>
     `,
-    styles: [
-        `:host{display:contents}`
+    styleUrls: [
+        'cell-renderer.component.scss'
     ]
 })
 export class TextCellRenderer {
