@@ -31,16 +31,23 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
   }
   ngOnInit(): void {
+    const dao = this.dao;
+    const _data = this.data;
+    const form = this.form;
     this.dao.prepareToEdit(this.data);
     this.dao.bindDataForm(this.data, this.form);
     this.dao.confirmation(this.data)?.subscribe(async data => {
-      if (this.data && data) {
-        Object.assign(this.data,
-          await lastValueFrom(this.applicationService.sync({ body: { ...data, id: this.data?.id } }))
-        );
-        delete (this.data as IChangeable).__pre;
-        this.dao.prepareToEdit(this.data);
-        this.dao.bindDataForm(this.data, this.form);
+      try {
+        if (this.data && data) {
+          Object.assign(this.data,
+            await lastValueFrom(this.applicationService.sync({ body: { ...data, id: this.data?.id } }))
+          );
+          delete (_data as IChangeable).__pre;
+          dao.prepareToEdit(_data);
+          dao.bindDataForm(_data, form);
+        }
+      } catch (error) {
+
       }
     });
   }
