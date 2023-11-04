@@ -4,6 +4,7 @@
     border-radius: 7px;
     flex: auto;
     box-shadow: 2px 3px 12px rgba(0, 0, 0, .33);
+    position: relative;
 }
 
 .cards {
@@ -53,5 +54,17 @@
                 }
             }
         }
+    }
+}
+
+nav {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+
+    .actions {
+        display: flex;
+        flex-direction: row;
+        gap: 3px;
     }
 }
