@@ -33,6 +33,12 @@
             <button mat-raised-button (click)="novoAplicativo()">
                 Novo
             </button>
+            <mat-form-field>
+                <mat-label>Filtrar por Papel</mat-label>
+                <mat-select [(ngModel)]="filtrarPapel">
+                    <mat-option value="all">Todos os Papéis</mat-option>
+                </mat-select>
+            </mat-form-field>
             <span style="flex:auto"></span>
             <!-- <button mat-icon-button matTooltip="Visualização em lista ">
                 <mat-icon>view_list</mat-icon>

@@ -23,6 +23,7 @@ export interface IItemAction<T> {
 export class GerencialComponent {
   visualizacao: 'table' | 'list' = 'table';
   apps?: Application[];
+  filtrarPapel?: string = 'all';
   actions: IItemAction<Application>[] = [
     {
       icon: 'edit',

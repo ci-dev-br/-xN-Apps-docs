@@ -35,7 +35,7 @@ export class CoreModule {
         return {
             ngModule: CoreModule,
             providers: [
-                ...(ApiModule.forRoot({ rootUrl: isDevMode() ? 'https://apps.ci.dev.br:3232' : location.origin }).providers || []),
+                ...(ApiModule.forRoot({ rootUrl: isDevMode() ? 'https://apps.ci.dev.br:446' : location.origin }).providers || []),
                 StorageService,
                 TokenService,
                 DaoService,
