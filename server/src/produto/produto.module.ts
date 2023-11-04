@@ -1,9 +1,11 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Produto } from "./models/produto.entity";
+import { Product } from "./models/produto.entity";
+import { Offer } from "./models/offer.entity";
 
 export const Entities = [
-    Produto
+    Product,
+    Offer,
 ];
 
 @Module({

@@ -3,8 +3,8 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { lastValueFrom } from 'rxjs';
-import { Application } from 'src/app/api/models';
-import { ApplicationService } from 'src/app/api/services';
+import { Application } from '@portal/api';
+import { ApplicationService } from '@portal/api';
 import { IChangeable, DaoService } from 'src/app/core/dao/dao.service';
 
 @Component({
@@ -25,23 +25,31 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
     private readonly dao: DaoService,
     private readonly fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA)
-    private readonly data?: Application,
+    public readonly data?: Application,
+
   ) { }
   ngOnDestroy(): void {
   }
   ngOnInit(): void {
+    const dao = this.dao;
+    const _data = this.data;
+    const form = this.form;
     this.dao.prepareToEdit(this.data);
     this.dao.bindDataForm(this.data, this.form);
-    this.dao.confirmation(this.data).subscribe(async data => {
-      if (this.data && data) {
-        Object.assign(this.data,
-          await lastValueFrom(this.applicationService.sync({ body: { ...data, id: this.data?.id } }))
-        );
-        delete (this.data as IChangeable).__pre;
-        this.dao.prepareToEdit(this.data);
-        this.dao.bindDataForm(this.data, this.form);
+    this.dao.confirmation(this.data)?.subscribe(async data => {
+      try {
+        if (this.data && data) {
+          Object.assign(this.data,
+            await lastValueFrom(this.applicationService.sync({ body: { ...data, id: this.data?.id } }))
+          );
+          delete (_data as IChangeable).__pre;
+          dao.prepareToEdit(_data);
+          dao.bindDataForm(_data, form);
+        }
+      } catch (error) {
+
       }
-    })
+    });
   }
   async findIcon() {
     const pesquisa = await prompt('Pesquisar ícone por...');
@@ -64,5 +72,17 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
 
   get changes() {
     return this.dao.getChanges(this.data as IChangeable);
+  }
+  addRole(e: any) {
+    if (e.value && e.value.length > 0) {
+      if (this.data && !this.data?.roles) this.data.roles = [];
+      this.data?.roles?.push(e.value);
+      (e.input as HTMLInputElement).value = '';
+    }
+  }
+  removeRole(role: string) {
+    if (role && this.data?.roles && this.data.roles.indexOf(role) > -1) {
+      this.data?.roles?.splice(this.data?.roles.indexOf(role), 1);
+    }
   }
 }

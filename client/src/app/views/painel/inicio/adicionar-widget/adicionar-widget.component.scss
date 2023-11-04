@@ -1,0 +1,11 @@
+.widgets {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    .widget-info {
+        padding: 12px;
+        display: flex;
+        flex-direction: row;
+    }
+}

@@ -4,7 +4,8 @@ import { Injectable } from "@angular/core";
 export class TokenService {
     constructor() { }
     clear() {
-        localStorage.clear();
+        // localStorage.clear();
+        // TODO: verificar chamada indevida que está derrubando a autenticação, foi removido o clear automático para retorno 401;
     }
     hasToken() {
         return !!this.Token;
@@ -36,6 +37,7 @@ export class TokenService {
     private get storage() {
         const snapshot = JSON.stringify(this.__);
         setTimeout(() => {
+            // ~> retorno para análise console.log(this.__);
             if (snapshot !== JSON.stringify(this.__))
                 localStorage.setItem('0', btoa(JSON.stringify(this.__, null, 2)))
         }, 0);

@@ -1,16 +1,31 @@
-import { Component } from '@angular/core';
+import { Component, Injector, Optional } from '@angular/core';
+import { JanelaService } from 'src/app/components/janela/janela.service';
+import { ProjetoComponent } from '../projeto/projeto.component';
+import { HttpClient } from '@angular/common/http';
+import { AgentService } from '../agent.service';
+import { IExcutorAgentMetadata } from '../i-executor';
 @Component({
   selector: 'ci-code-editor',
   templateUrl: './code-editor.component.html',
   styleUrls: ['./code-editor.component.scss']
 })
 export class CodeEditorComponent {
+  executores: IExcutorAgentMetadata[] = [
+    { name: "Current Agent", agentService: this.agent },
+  ];
+  constructor(
+    private agent?: AgentService,
+  ) { }
+  executor?: AgentService = this.executores[0].agentService;
   editorOptions = { theme: 'vs-dark', language: 'javascript' };
-  code: string = `(function x() {
-    alert("Hello world!");
-  })();`;
-  // agent: I;
+  code: string = `return await 1+1;`;
   executar() {
-    eval(this.code);
+    if(this.executor) this.executor.exec(this.code);
+  }
+  criarProjeto() {
+    // this.janela?.open(ProjetoComponent)
+  }
+  abrirProjeto() {
+
   }
 }

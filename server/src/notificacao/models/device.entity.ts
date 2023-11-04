@@ -3,10 +3,13 @@ import { ApiProperty } from "@nestjs/swagger";
 
 @Entity()
 export class Device {
-    @ApiProperty({})
+    @ApiProperty({ nullable: true })
     @PrimaryGeneratedColumn('uuid')
     id?: string;
-    @ApiProperty({})
+    @ApiProperty({ nullable: true })
     @Column({ nullable: true, unique: true })
     mac?: string;
+    @ApiProperty({ nullable: true })
+    @Column({ nullable: true })
+    type?: string;
 }

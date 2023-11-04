@@ -2,8 +2,8 @@ import { Component, ElementRef, HostListener } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, ActivationEnd, ActivationStart, ChildActivationEnd, Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import { lastValueFrom } from 'rxjs';
-import { Application } from 'src/app/api/models';
-import { ApplicationService } from 'src/app/api/services';
+import { Application } from '@portal/api';
+import { ApplicationService } from '@portal/api';
 import { HttpClient } from '@angular/common/http';
 import { ServicesService } from 'src/app/core/services/services.service';
 
@@ -57,7 +57,7 @@ export class LNavComponent {
   load() {
     (async () => {
       try {
-        this.apps = await lastValueFrom(this.applicationService.get())
+        this.apps = await lastValueFrom(this.applicationService.get({ body: {} }))
       } catch (error) {
         console.error(error);
       }
@@ -69,10 +69,12 @@ export class LNavComponent {
   }
   status_services: any = {};
   loadStatus() {
-    this.http.get('http://localhost:7684/json').subscribe(v => {
-      this.status_services = v;
-    });
-    setTimeout(() => this.loadStatus(), 10000);
+    // Ignorado até resolver https da aplicação de Check Health
+
+    // this.http.get(`https://apps.ci.dev.br:7684/json`).subscribe(v => {
+    // this.status_services = v;
+    // });
+    // setTimeout(() => this.loadStatus(), 10000);
   }
 
   @HostListener('window:wheel', ['$event'])
@@ -98,5 +100,8 @@ export class LNavComponent {
       r.push(element);
     }
     return r;
+  }
+  action(crumb: any) {
+    console.log(crumb);
   }
 }

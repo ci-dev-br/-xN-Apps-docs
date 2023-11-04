@@ -1,0 +1,11 @@
+<div class="row" [class.selecionado]="selecionado" *ngFor="let r of layout; let i = index;">
+    <div *ngFor="let i of r" class="card"></div>
+    <ng-container *ngIf="stage==='edit'">
+        <button class="add" (click)="remove(i)"><mat-icon>remove</mat-icon></button>
+        <button class="add" (click)="add(i)"><mat-icon>add</mat-icon></button>
+    </ng-container>
+</div>
+<div *ngIf="stage==='edit'" class="row">
+    <button class="add" (click)="remove()"><mat-icon>remove</mat-icon></button>
+    <button class="add" (click)="add()"><mat-icon>add</mat-icon></button>
+</div>

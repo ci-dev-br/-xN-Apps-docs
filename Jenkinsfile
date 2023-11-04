@@ -1,9 +1,9 @@
 pipeline{
     agent any
     stages{
-        stage(''){
+        stage('Install'){
             step{
-                
+                bat('echo "Sucesso!"')
             }
         }
     }

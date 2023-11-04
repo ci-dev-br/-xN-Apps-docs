@@ -24,7 +24,7 @@ export class User {
     @ApiProperty({ required: false, nullable: true })
     phone?: string;
     // @ApiProperty({ required: false, nullable: true })
-    @Column({ nullable: true, type: 'varchar', array: true })
+    @Column({ nullable: true, type: 'varchar', array: true , default: ['USER']})
     roles?: string[];
     @ApiProperty({ required: false, nullable: true, isArray: true, type: Policy })
     @ManyToMany(() => Policy) @JoinTable()

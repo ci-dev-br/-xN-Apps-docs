@@ -14,8 +14,25 @@ mat-drawer-container {
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
+
+  height: 100dvh;
+  overflow: hidden;
 }
 
 mat-drawer-container {
   flex: auto;
+}
+
+.menu {
+  display: flex;
+  flex-direction: row-reverse;
+  position: sticky;
+  top: 0;
+  position: absolute;
+  right: 0;
+}
+
+mat-drawer {
+  background: rgba(white, .22);
+  backdrop-filter: blur(12px);
 }

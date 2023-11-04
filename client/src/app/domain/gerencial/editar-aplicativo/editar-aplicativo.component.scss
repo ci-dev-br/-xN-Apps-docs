@@ -1,8 +1,8 @@
 :host {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 
-    align-items: stretch;
+    align-items: flex-start;
     justify-content: center;
 
     gap: 12px;
@@ -10,9 +10,11 @@
     padding: 12px;
     flex-wrap: wrap;
     max-width: 80vw;
+    max-height: 80vh;
 
     >* {
-        flex: 1;
+        flex: unset;
+        min-width: 10px;
     }
 }
 

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Application } from "../model/application.entity";
-import { Repository } from "typeorm";
+import { ArrayContains, Repository } from "typeorm";
 
 @Injectable()
 export class ApplicationService {
@@ -10,9 +10,17 @@ export class ApplicationService {
         private readonly repo: Repository<Application>,
     ) { }
 
-    async find() {
+    async find(roles: string[]) {
+        console.log(roles);
+
         return this.repo.find({
-            where: {}
+            where: [
+                ...((roles?.map(role => {
+                    return {
+                        roles: ArrayContains([role])
+                    }
+                })) || [])
+            ],
         })
     }
 

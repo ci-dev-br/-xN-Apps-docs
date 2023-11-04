@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable, throwError } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
 import { TokenService } from "./token.service";
-import { AuthService } from "../api/services";
+import { AuthService } from "@portal/api";
 @Injectable()
 export class AuthorizationHttpInterceptor implements HttpInterceptor {
     private refreshing?: boolean;
@@ -22,7 +22,6 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             return throwError(error);
         }));
     }
-
     private addTokenHeader(request: HttpRequest<any>) {
         let bearer = undefined;
         if (this.token.hasToken()) {
@@ -34,7 +33,6 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             })
         }) : request;
     }
-
     private handlerUnauthorizedError(error: HttpErrorResponse, next: HttpHandler, request: HttpRequest<any>) {
         this.refreshing = true;
         if (this.token.hasRefreshToken()) {
@@ -50,7 +48,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                     return next.handle(this.addTokenHeader(request));
                 }), catchError(error => {
                     this.refreshing = false;
-                    this.token.clear();
+                    // this.token.clear();
                     return throwError(error);
                 })
             )

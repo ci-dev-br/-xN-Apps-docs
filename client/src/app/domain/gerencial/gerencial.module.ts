@@ -7,9 +7,10 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatDialogModule } from "@angular/material/dialog";
 import { NgxQRCodeModule } from '@jonyadamit/ngx-qrcode-ivy';
 import { MatTableModule } from '@angular/material/table';
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { CoreModule } from "src/app/core/core.module";
 import { LNavModule } from "src/app/components/l-nav/l-nav.module";
 import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo.component';
@@ -17,6 +18,9 @@ import { GerencialComponent } from "./gerencial.component";
 import { JanelaModule } from "src/app/components/janela/janela.module";
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DinamicFormsModule } from "src/app/components/dinamic-forms/dinamic-forms.module";
+import { GridModule } from "src/app/components/grid/grid.module";
+import { MatSelectModule } from "@angular/material/select";
+import { MatChipsModule } from "@angular/material/chips";
 
 @NgModule({
     declarations: [
@@ -39,6 +43,11 @@ import { DinamicFormsModule } from "src/app/components/dinamic-forms/dinamic-for
         MatInputModule,
         JanelaModule,
         DinamicFormsModule,
+        GridModule,
+        MatButtonToggleModule,
+        FormsModule,
+        MatSelectModule,
+        MatChipsModule,
         RouterModule.forChild([
             {
                 path: '', component: GerencialComponent, data: {

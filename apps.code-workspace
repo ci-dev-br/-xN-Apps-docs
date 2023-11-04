@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"name": "BaaS",
+			"path": "server"
+		},
+		{
+			"name": "Apps",
+			"path": "client/src"
+		}
+	],
+	"settings": {
+		"vsicons.presets.angular": true
+	}
+}

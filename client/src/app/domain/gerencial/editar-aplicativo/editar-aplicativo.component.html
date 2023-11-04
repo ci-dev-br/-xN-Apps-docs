@@ -1,47 +1,49 @@
 <form [formGroup]="form">
-    <mat-form-field style="flex: auto; min-width: 100%;">
+    <!-- <mat-form-field style="flex: auto; min-width: 100%;">
         <mat-label>ID</mat-label>
         <input matInput
             type="text"
             placeholder="ID"
             readonly
             formControlName="id">
-    </mat-form-field>
-    <mat-form-field>
+    </mat-form-field> -->
+    <mat-form-field style="flex: 40%;">
         <mat-label>Nome</mat-label>
-        <input matInput
-            type="text"
-            placeholder="Nome"
-            formControlName="name">
+        <input matInput type="text" placeholder="Nome" formControlName="name">
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field style="flex: 40%;">
         <mat-label>URL</mat-label>
-        <input matInput
-            type="text"
-            placeholder="URL"
-            formControlName="url">
+        <input matInput type="text" placeholder="URL" formControlName="url">
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field style="flex: 40%;">
         <mat-label>Ícone</mat-label>
-        <input matInput
-            type="text"
-            placeholder="Ícone"
-            formControlName="icon">
-        <mat-icon matPrefix
-            *ngIf="!!form?.controls?.icon?.value">{{form.controls.icon.value}}</mat-icon>
-        <button matSuffix
-            mat-icon-button
-            [attr.tabindex]="(!!form.controls.icon.value )? -1 : 0"
-            (click)="findIcon()">
+        <input matInput type="text" placeholder="Ícone" formControlName="icon">
+        <mat-icon matPrefix *ngIf="!!form?.controls?.icon?.value">{{form.controls.icon.value}}</mat-icon>
+        <button matSuffix mat-icon-button [attr.tabindex]="(!!form.controls.icon.value )? -1 : 0" (click)="findIcon()">
             <mat-icon>search</mat-icon>
         </button>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field style="flex: 40%;">
         <mat-label>Descrição</mat-label>
-        <input matInput
-            type="text"
-            placeholder="Descrição"
-            formControlName="description">
+        <input matInput type="text" placeholder="Descrição" formControlName="description">
+    </mat-form-field>
+    <!-- <mat-form-field>
+        <mat-select>
+            <mat-option></mat-option>
+        </mat-select>
+    </mat-form-field> -->
+    <mat-form-field style="flex: 50%;">
+        <mat-label>Papéis</mat-label>
+        <mat-chip-grid #chipGrid aria-label="Enter fruits">
+            <mat-chip-row *ngFor="let role of data?.roles" [editable]="true" (removed)="removeRole(role)">
+                {{role}}
+                <button matChipRemove>
+                    <mat-icon>cancel</mat-icon>
+                </button>
+            </mat-chip-row>
+            <input placeholder="Novo papel..." [matChipInputFor]="chipGrid" [matChipInputAddOnBlur]="true"
+                (matChipInputTokenEnd)="addRole($event)" />
+        </mat-chip-grid>
     </mat-form-field>
 </form>
 <!-- <div style="flex:auto;min-width:100%">

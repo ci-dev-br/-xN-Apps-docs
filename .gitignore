@@ -1,2 +1,5 @@
 client/src/app/api/*
 node_modules/*
+daemon/appscidevbr.err.log
+daemon/appscidevbr.wrapper.log
+daemon/appscidevbr.out.log

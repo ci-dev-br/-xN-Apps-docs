@@ -1,23 +1,18 @@
-import { Token } from '@angular/compiler';
-import { Component, Type } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { lastValueFrom } from 'rxjs';
-import { Application } from 'src/app/api/models';
-import { ApplicationService } from 'src/app/api/services';
+import { Application } from '@portal/api';
+import { ApplicationService } from '@portal/api';
 import { TokenService } from 'src/app/core/token.service';
 import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo.component';
 import { JanelaService } from 'src/app/components/janela/janela.service';
+import { MatIcon } from '@angular/material/icon';
+import { IColumns } from 'src/app/components/grid/cell-renderer/cell-renderer.component';
 
 export interface IItemAction<T> {
   label?: string;
   icon?: string;
   onAction?: (item: T) => void;
-}
-
-export interface IColumns {
-  headerName: string;
-  propertyName: string;
-  componentType?: Type<any>
 }
 
 @Component({
@@ -26,7 +21,9 @@ export interface IColumns {
   styleUrls: ['./gerencial.component.scss']
 })
 export class GerencialComponent {
+  visualizacao: 'table' | 'list' = 'table';
   apps?: Application[];
+  filtrarPapel?: string = 'all';
   actions: IItemAction<Application>[] = [
     {
       icon: 'edit',
@@ -40,15 +37,15 @@ export class GerencialComponent {
     },
   ]
   columns: IColumns[] = [
-    { headerName: 'ID', propertyName: 'id' },
+    { headerName: 'ID', propertyName: 'id', hide: true },
     { headerName: 'Nome ', propertyName: 'name' },
-    { headerName: 'Ícone ', propertyName: 'icon' },
-    { headerName: 'URL', propertyName: 'url' },
+    { headerName: 'Ícone ', propertyName: 'icon', component: MatIcon },
+    { headerName: 'Rota', propertyName: 'url' },
     { headerName: 'Descrição', propertyName: 'description' },
   ];
   get displayedColumns() {
     return this.cache('displayedColumns', () => {
-      return [...this.columns.map(c => c.headerName), '_act']
+      return [...this.columns.filter(i => !i.hide).map(c => c.headerName), '_act']
     });
   }
   constructor(
@@ -66,7 +63,7 @@ export class GerencialComponent {
 
   }
   async carregarListaAplicativos() {
-    this.apps = await lastValueFrom(this.applications.get());
+    this.apps = await lastValueFrom(this.applications.get({ body: { all: true } }));
   }
   private _cached_map = new Map<string, any>();
   private cache(prop: string, value: () => any) {
