@@ -80,4 +80,9 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
       (e.input as HTMLInputElement).value = '';
     }
   }
+  removeRole(role: string) {
+    if (role && this.data?.roles && this.data.roles.indexOf(role) > -1) {
+      this.data?.roles?.splice(this.data?.roles.indexOf(role), 1);
+    }
+  }
 }

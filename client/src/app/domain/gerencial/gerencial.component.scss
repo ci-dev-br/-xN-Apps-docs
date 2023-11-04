@@ -18,7 +18,7 @@ mat-toolbar {
     display: flex;
     flex-direction: row;
     gap: 3px;
-    scale: .6;
+    /* scale: .6; */
 }
 
 mat-toolbar {
@@ -31,14 +31,14 @@ mat-toolbar {
     display: flex;
     flex-direction: row;
     gap: 3px;
-    scale: .6;
-    transition: scale .45s;
+    /* scale: .6; */
+    /* transition: scale .45s; */
 }
 
 tr {
     .acoes {
-        opacity: .2;
-        transition: all .43s;
+        opacity: .0;
+        transition: opacity .43s;
 
     }
 
@@ -49,7 +49,7 @@ tr {
             opacity: 1;
 
             .row {
-                scale: 1;
+                /* scale: 1; */
 
             }
         }
