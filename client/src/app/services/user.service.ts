@@ -12,9 +12,13 @@ export class UserService {
         private readonly tokenService: TokenService,
     ) {
         this.$user.subscribe(v => {
-            if (v) {
-                localStorage.setItem('CIUSR', btoa(JSON.stringify(v, null, 2)));
-            } else { localStorage.removeItem('CIUSR'); router.navigate(['/']); }
+            try {
+                if (v) {
+                    localStorage.setItem('CIUSR', btoa(JSON.stringify(v, null, 2)));
+                } else { localStorage.removeItem('CIUSR'); router.navigate(['/']); }
+            } catch (error) {
+                console.error(error);
+            }
         })
     }
     get user() { return this.$user; }
