@@ -15,32 +15,38 @@ const routes: Routes = [
   {
     path: `gerencial`,
     canActivate: [authGuard],
-    loadChildren: () => import(`./domain/gerencial/gerencial.module`).then(m => m.GerencialModule)
+    loadChildren: () => import(`./domain/gerencial/gerencial.module`).then(m => m.GerencialModule),
+    data: { role: 'MASTER' }
   },
   {
     path: `codex`,
     canActivate: [authGuard],
-    loadChildren: () => import(`./domain/codex/codex.module`).then(m => m.CodexModule)
+    loadChildren: () => import(`./domain/codex/codex.module`).then(m => m.CodexModule),
+    data: { role: 'ADMIN' }
   },
   {
     path: `devtools`,
     canActivate: [authGuard],
-    loadChildren: () => import(`./domain/devtools/devtools.module`).then(m => m.DevtoolsModule)
+    loadChildren: () => import(`./domain/devtools/devtools.module`).then(m => m.DevtoolsModule),
+    data: { role: 'ADMIN' }
   },
   {
     path: `vendas`,
     canActivate: [authGuard],
-    loadChildren: () => import(`./domain/vendas/vendas.module`).then(m => m.VendasModule)
+    loadChildren: () => import(`./domain/vendas/vendas.module`).then(m => m.VendasModule),
+    data: { role: 'ADMIN' }
   },
   {
     path: `financeiro`,
     canActivate: [authGuard],
-    loadChildren: () => import(`./domain/financeiro/financeiro.module`).then(m => m.FinanceiroModule)
+    loadChildren: () => import(`./domain/financeiro/financeiro.module`).then(m => m.FinanceiroModule),
+    data: { role: 'ADMIN' }
   },
   {
     path: `infra`,
     canActivate: [authGuard],
-    loadChildren: () => import(`./domain/infra/infra.module`).then(m => m.InfraModule)
+    loadChildren: () => import(`./domain/infra/infra.module`).then(m => m.InfraModule),
+    data: { role: 'ADMIN' }
   },
   {
     path: `threejs`,
@@ -50,7 +56,8 @@ const routes: Routes = [
   {
     path: `docs`,
     canActivate: [authGuard],
-    loadChildren: () => import(`./domain/threejs/threejs.module`).then(m => m.ThreejsModule)
+    loadChildren: () => import(`./domain/threejs/threejs.module`).then(m => m.ThreejsModule),
+    data: { role: 'ADMIN' }
   },
   { path: '', loadChildren: () => import('./views/homepage/homepage.module').then(m => m.HomepageModule) },
   { path: 'acessar', loadChildren: () => import('./views/acessar/acessar.module').then(m => m.AcessarModule) },
