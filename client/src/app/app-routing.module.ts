@@ -16,7 +16,7 @@ const routes: Routes = [
     path: `gerencial`,
     canActivate: [authGuard],
     loadChildren: () => import(`./domain/gerencial/gerencial.module`).then(m => m.GerencialModule),
-    data: { role: 'MASTER' }
+    data: { role: 'MASTER', policy: 'br.com.plhx.manager' }
   },
   {
     path: `codex`,
@@ -34,6 +34,12 @@ const routes: Routes = [
     path: `vendas`,
     canActivate: [authGuard],
     loadChildren: () => import(`./domain/vendas/vendas.module`).then(m => m.VendasModule),
+    data: { role: 'ADMIN' }
+  },
+  {
+    path: `produtos`,
+    canActivate: [authGuard],
+    loadChildren: () => import(`./domain/produtos/produtos.module`).then(m => m.ProdutosModule),
     data: { role: 'ADMIN' }
   },
   {
