@@ -9,5 +9,6 @@ export interface User {
   permission?: Array<Policy> | null;
   phone?: string | null;
   refreshToken?: string | null;
+  roles?: Array<string> | null;
   username?: string | null;
 }

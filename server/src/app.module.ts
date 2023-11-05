@@ -12,6 +12,7 @@ import { CodexModule, CodeXEntities } from './codex/codex.module';
 import { GlobalizationEntities, GlobalizationModule } from './globalization/globalization.module';
 import { PranchetaEntities, PranchetaModule } from './prancheta/prancheta.module';
 import { IconEntities, IconsModule } from './icons/icons.module';
+import { MoreThanOrEqual } from 'typeorm';
 
 config({ path: '.env' });
 @Module({
@@ -26,7 +27,10 @@ config({ path: '.env' });
       synchronize: Boolean(process.env.DB_SYNCHRONIZE || false),
       logger: 'debug',
       loggerLevel: 'debug',
+      logging: true,
       appname: '@CiDevBr/Portal',
+      autoSave: true,
+      cache: true,
       maxQueryExecutionTime: 100,
       verboseRetryLog: true,
       entities: [

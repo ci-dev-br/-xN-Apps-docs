@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { JwtService } from "@nestjs/jwt";
 @Injectable()
@@ -26,12 +26,16 @@ export class AuthService {
             userId = old_authorization.id;
         }
         const user = await this.userService.findById(userId);
-        return {
-            authorization: await this.jwtService.signAsync({
-                id: user.id,
-                roles: user.roles,
-                permission: permission,
-            })
+        if (user) {
+            return {
+                authorization: await this.jwtService.signAsync({
+                    id: user?.id,
+                    roles: user?.roles,
+                    permission: permission,
+                })
+            }
+        } else {
+            throw new UnauthorizedException('Acesso Nagado');
         }
     }
 }

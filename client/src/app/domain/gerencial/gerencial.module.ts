@@ -50,8 +50,10 @@ import { MatChipsModule } from "@angular/material/chips";
         MatChipsModule,
         RouterModule.forChild([
             {
-                path: '', component: GerencialComponent, data: {
-                    name: 'Gerenciador de Aplicações e Usuários'
+                path: '', component: GerencialComponent,
+                data: {
+                    name: 'Gerenciador de Aplicações e Usuários',
+                    role: 'MASTER'
                 }
             }
         ])

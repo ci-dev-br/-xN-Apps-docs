@@ -10,10 +10,12 @@ import { CoreModule } from './core/core.module';
 import { ContextmenuModule } from './components/contextmenu/contextmenu.module';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { PaginaErroComponent } from './views/pagina-erro/pagina-erro.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    PaginaErroComponent,
   ],
   imports: [
     BrowserModule,

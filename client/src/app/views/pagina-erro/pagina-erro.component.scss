@@ -1,0 +1,25 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    overflow: auto;
+    padding: 80px;
+
+    background: url(/assets/restrito.png);
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+}
+
+.card {
+    position: fixed;
+    
+    background: rgba(255, 255, 255, .44);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, .33);
+    border-radius: 8px;
+    padding: 24px;
+}

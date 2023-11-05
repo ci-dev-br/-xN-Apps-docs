@@ -21,7 +21,9 @@ export class ApplicationController {
         @Body() input?: GetInputDtos,
     ) {
         const user: User = (req as any).user;
-        return await this.service.find(!input.all ? user?.roles : undefined);
+        return await this.service.find(
+            (user?.roles?.includes('ADMIN') && input.all) ?
+                undefined : (user?.roles || []));
     }
     @Post('Sync')
     @ApiResponse({
