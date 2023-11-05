@@ -13,6 +13,7 @@ import { GlobalizationEntities, GlobalizationModule } from './globalization/glob
 import { PranchetaEntities, PranchetaModule } from './prancheta/prancheta.module';
 import { IconEntities, IconsModule } from './icons/icons.module';
 import { MoreThanOrEqual } from 'typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 config({ path: '.env' });
 @Module({
@@ -32,6 +33,7 @@ config({ path: '.env' });
       autoSave: true,
       cache: true,
       maxQueryExecutionTime: 100,
+      namingStrategy: new SnakeNamingStrategy(),
       verboseRetryLog: true,
       entities: [
         ...NotificacaoEntities,
