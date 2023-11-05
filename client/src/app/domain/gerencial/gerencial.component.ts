@@ -74,7 +74,8 @@ export class GerencialComponent {
   async novoAplicativo() {
     let app = {};
     const data = await this.editar(app);
-    this.apps = [data, ...this.apps || []];
+    if(!!data?.id)
+      this.apps = [data, ...this.apps || []];
   }
   async editar(application: Application) {
     return await this.janela.open(EditarAplicativoComponent, application)
