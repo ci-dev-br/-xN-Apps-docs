@@ -79,7 +79,6 @@ export class LNavComponent {
 
   @HostListener('window:wheel', ['$event'])
   fixarAoTopo(event: WheelEvent) {
-    console.log(event)
     if (event.offsetY === 0) {
       this.of(document.getElementsByTagName('ci-l-nav')).forEach(e => {
         e.style.position = 'unset';
