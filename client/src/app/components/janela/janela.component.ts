@@ -42,7 +42,7 @@ export class JanelaComponent implements OnInit, OnDestroy {
     this.showing = false;
   }
   get changed() {
-    // if (!this.data?.data) return false;
+    if (!this.data?.data) return false;
     return this.daos.haveChanges(this.data.data)
   }
   confirm() {
