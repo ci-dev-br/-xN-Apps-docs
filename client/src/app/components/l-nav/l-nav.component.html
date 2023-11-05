@@ -26,15 +26,19 @@
       <!-- <button mat-icon-button (click)="services.compartilhar()"><mat-icon>share</mat-icon></button> -->
       <button mat-icon-button><mat-icon>mark_chat_unread</mat-icon></button>
       <span>
-        Bem-vinde,
         {{
         ($user | async)?.fullName ||
         ($user | async)?.username ||
-        ($user | async)?.email
+        ($user | async)?.email || 'Anônime'
         }}
       </span>
     </div>
-    <button mat-icon-button (click)="sair()"><mat-icon>exit_to_app</mat-icon></button>
+    <button mat-icon-button [matMenuTriggerFor]="userMenu">
+      <mat-icon>face</mat-icon>
+    </button>
+    <mat-menu #userMenu>
+      <button mat-menu-item (click)="sair()"><mat-icon>exit_to_app</mat-icon>Sair</button>
+    </mat-menu>
   </ng-container>
   <ng-container *ngIf="!($user | async)">
     <ul>

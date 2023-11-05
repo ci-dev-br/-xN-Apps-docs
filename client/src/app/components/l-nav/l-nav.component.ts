@@ -79,7 +79,7 @@ export class LNavComponent {
 
   @HostListener('window:wheel', ['$event'])
   fixarAoTopo(event: WheelEvent) {
-    if (event.offsetY === 0) {
+    /* if (event.offsetY === 0) {
       this.of(document.getElementsByTagName('ci-l-nav')).forEach(e => {
         e.style.position = 'unset';
         e.style.top = 'unset';
@@ -90,7 +90,7 @@ export class LNavComponent {
         e.style.top = '0px';
         e.style.zIndex = '99';
       })
-    }
+    } */
   }
   private of(el: HTMLCollectionOf<any>) {
     const r = [];
