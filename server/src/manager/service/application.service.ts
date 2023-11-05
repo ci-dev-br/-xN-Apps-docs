@@ -10,6 +10,7 @@ export class ApplicationService {
     ) { }
     async find(roles?: string[]) {
         return this.repo.find({
+            order: { name: 'ASC' },
             where: [
                 ...(roles ? roles.map(r => {
                     return {
