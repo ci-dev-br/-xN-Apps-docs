@@ -64,6 +64,12 @@ export class UserService {
      * @returns 
      */
     async sync(data: User) {
+        if (data) {
+            delete data.refreshToken;
+            delete data.tenants;
+            delete data.roles;
+            delete data.permission;
+        }
         let { id, ...changes } = data;
         let data_ref = !!data.id ? await this.userRepo.findOneBy({ id: data.id }) : await this.userRepo.create(data);
         Object.assign(data_ref, changes);
