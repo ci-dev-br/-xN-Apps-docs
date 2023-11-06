@@ -65,6 +65,7 @@ export class UserService {
      */
     async sync(data: User) {
         if (data) {
+            delete data.password;
             delete data.refreshToken;
             delete data.tenants;
             delete data.roles;
