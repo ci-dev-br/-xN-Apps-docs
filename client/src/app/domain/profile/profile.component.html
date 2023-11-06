@@ -1,1 +1,24 @@
-<p>profile works!</p>
+<ci-l-nav></ci-l-nav>
+<div class="wrapper">
+    <header>
+
+    </header>
+
+    <div class="cards">
+        <div class="card">
+            <div class="profile-thumb">
+                <div class="actions">
+                    <button mat-icon-button matTooltip="Tirar foto">
+                        <mat-icon>photo_camera</mat-icon>
+                    </button>
+                </div>
+            </div>
+            <h1 (click)="edit('fullName')" [contentEditable]="editingField==='fullName'"
+                (keydown.enter)="change($event,'fullName')" (blur)=" change($event,'fullName')">
+                {{(user | async)?.fullName || 'Usuário Anonimo'}}
+            </h1>
+            <small>aquele que deveria mas não deve!</small>
+        </div>
+        <div class="card"></div>
+    </div>
+</div>

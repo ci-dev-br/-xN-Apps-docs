@@ -1,0 +1,26 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background: linear-gradient(173deg, white 0%, pink 100%);
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+ci-l-nav {
+    align-self: stretch;
+}
+
+.nav {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+}
+
+
+.container {
+    flex: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+}

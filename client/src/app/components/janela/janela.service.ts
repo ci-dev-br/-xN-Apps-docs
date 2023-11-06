@@ -20,4 +20,5 @@ export class JanelaService {
         }
         return await lastValueFrom(dialog.afterClosed());
     }
+
 }

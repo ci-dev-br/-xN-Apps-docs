@@ -6,5 +6,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./produtos.component.scss']
 })
 export class ProdutosComponent {
+  constructor(
+    // private readonly 
+  ){}
+  cadastrarNovo() {
 
+  }
 }

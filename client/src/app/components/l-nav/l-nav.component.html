@@ -4,7 +4,7 @@
       <mat-icon>domain</mat-icon>
     </button>
     <mat-menu #appsMenu>
-      <button mat-menu-item *ngFor="let item of apps" [routerLink]="[item.url]">
+      <button mat-menu-item *ngFor="let item of appsGlobal" [routerLink]="[item.url]">
         <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
         {{ item.name }}
       </button>
@@ -37,6 +37,12 @@
       <mat-icon>face</mat-icon>
     </button>
     <mat-menu #userMenu>
+      <ng-container *ngFor="let item of appsUser">
+        <button mat-menu-item [routerLink]="[item.url]">
+          <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+          {{ item.name }}
+        </button>
+      </ng-container>
       <button mat-menu-item (click)="sair()"><mat-icon>exit_to_app</mat-icon>Sair</button>
     </mat-menu>
   </ng-container>

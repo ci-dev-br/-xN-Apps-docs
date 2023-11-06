@@ -22,6 +22,8 @@ export class LNavComponent {
   title?: string;
   breadcrumb?: IBreadcrumb[];
   $user = this.userService.user;
+  get appsGlobal() { return this.apps?.filter(i => i.menuGroupName === 'global') }
+  get appsUser() { return this.apps?.filter(i => i.menuGroupName === 'user') }
   constructor(
     private readonly router: Router,
     private readonly userService: UserService,

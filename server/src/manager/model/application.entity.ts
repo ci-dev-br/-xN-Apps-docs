@@ -25,4 +25,7 @@ export class Application {
     @ApiProperty({ nullable: true, required: false })
     @ManyToMany(() => Domain)
     domain?: Domain;
+    @ApiProperty({ nullable: true, required: false })
+    @Column({ default: 'global', length: 13 })
+    menuGroupName: string;
 }

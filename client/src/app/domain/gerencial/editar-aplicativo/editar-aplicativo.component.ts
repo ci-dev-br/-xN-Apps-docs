@@ -19,6 +19,7 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
     description: ['', []],
     icon: ['', []],
     url: ['', []],
+    menuGroupName: ['', []],
   });
   constructor(
     private readonly applicationService: ApplicationService,

@@ -19,15 +19,11 @@ $client-warn: mat.define-palette(mat.$red-palette);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
-$client-theme: mat.define-light-theme(
-  (
-    color: (
-      primary: $client-primary,
-      accent: $client-accent,
-      warn: $client-warn,
-    ),
-  )
-);
+$client-theme: mat.define-light-theme((color: (primary: $client-primary,
+        accent: $client-accent,
+        warn: $client-warn,
+      ),
+    ));
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
@@ -41,7 +37,12 @@ body {
   height: 100%;
   background: rgb(255, 255, 255);
 }
+
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+ci-root {
+  display: contents;
 }

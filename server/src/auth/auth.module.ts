@@ -13,8 +13,9 @@ import { Policy } from "./models/policy.entity";
 import { RefreshTokenStrategy } from "./service/refresh-token-strategy";
 import { AuthService } from "./service/auth.service";
 import { DeviceAuthenticated } from "./models/device-autenticated.entity";
+import { TenantModule } from "src/tenant/tenant.module";
 
-export const Entities = [
+export const AuthEntities = [
     Policy,
     User,
     ChaveAcesso,
@@ -24,13 +25,14 @@ export const Entities = [
 @Module({
     imports: [
         TypeOrmModule.forFeature([
-            ...Entities
+            ...AuthEntities
         ]),
         JwtModule.register({
             global: true,
             secret: jwtConstants.secret,
             signOptions: { expiresIn: '60s' },
         }),
+        TenantModule,
     ],
     controllers: [
         AuthController,

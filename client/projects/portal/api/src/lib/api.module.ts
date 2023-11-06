@@ -8,6 +8,7 @@ import { ApiService } from './services/api.service';
 import { DeviceService } from './services/device.service';
 import { AuthService } from './services/auth.service';
 import { ApplicationService } from './services/application.service';
+import { UserService } from './services/user.service';
 
 /**
  * Module that provides all services and configuration.
@@ -21,6 +22,7 @@ import { ApplicationService } from './services/application.service';
     DeviceService,
     AuthService,
     ApplicationService,
+    UserService,
     ApiConfiguration
   ],
 })

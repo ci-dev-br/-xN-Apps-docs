@@ -42,6 +42,8 @@ export class GerencialComponent {
     { headerName: 'Ícone ', propertyName: 'icon', component: MatIcon },
     { headerName: 'Rota', propertyName: 'url' },
     { headerName: 'Descrição', propertyName: 'description' },
+    { headerName: 'Grupo', propertyName: 'menuGroupName' },
+    { headerName: 'Papéis', propertyName: 'roles' },
   ];
   get displayedColumns() {
     return this.cache('displayedColumns', () => {
@@ -74,7 +76,7 @@ export class GerencialComponent {
   async novoAplicativo() {
     let app = {};
     const data = await this.editar(app);
-    if(!!data?.id)
+    if (!!data?.id)
       this.apps = [data, ...this.apps || []];
   }
   async editar(application: Application) {

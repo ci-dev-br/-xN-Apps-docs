@@ -6,6 +6,7 @@ export interface Application {
   domain?: Domain | null;
   icon?: string | null;
   id?: string | null;
+  menuGroupName?: string | null;
   name?: string | null;
   roles?: Array<string> | null;
   url?: string | null;

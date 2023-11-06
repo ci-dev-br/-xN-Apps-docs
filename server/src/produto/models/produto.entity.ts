@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Tenant } from "src/tenant/models/tenant.entity";
+import { Column, Entity, JoinTable, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Product {
@@ -13,5 +14,8 @@ export class Product {
     @Column({ nullable: true })
     shortDescription?: string;
     @Column({ nullable: true })
-    urlWebsite?: string;
+    urlWebsiteOficial?: string;
+    @ManyToOne(() => Tenant)
+    @JoinTable()
+    tenant: Tenant;
 }

@@ -60,7 +60,7 @@ export class AuthController {
     if (payload?.chaveAcesso && payload?.password) {
       let chave = await this.credencialService.obterChaveAcesso(payload.chaveAcesso);
       if (chave?.valid) {
-        let { password, fullName, username, email, phone,
+        let { password, /* fullName,  */ username, email, phone,
           ...authenticated_user } = await this.userService.verificarAssinaturaAutenticacao(
             chave.identifiedUser, payload.password, chave.id
           );

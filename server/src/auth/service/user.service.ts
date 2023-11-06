@@ -57,4 +57,16 @@ export class UserService {
 
         return user;
     }
+
+    /**
+     * Sincronizar objeto
+     * @param data 
+     * @returns 
+     */
+    async sync(data: User) {
+        let { id, ...changes } = data;
+        let data_ref = !!data.id ? await this.userRepo.findOneBy({ id: data.id }) : await this.userRepo.create(data);
+        Object.assign(data_ref, changes);
+        return await this.userRepo.save(data_ref);
+    }
 }

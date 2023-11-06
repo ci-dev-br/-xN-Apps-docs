@@ -2,8 +2,9 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Product } from "./models/produto.entity";
 import { Offer } from "./models/offer.entity";
+import { TenantModule } from "src/tenant/tenant.module";
 
-export const Entities = [
+export const ProcutEntities = [
     Product,
     Offer,
 ];
@@ -11,8 +12,9 @@ export const Entities = [
 @Module({
     imports: [
         TypeOrmModule.forFeature([
-            ...Entities,
-        ])
+            ...ProcutEntities,
+        ]),
+        TenantModule,
     ],
     providers: [
     ],
