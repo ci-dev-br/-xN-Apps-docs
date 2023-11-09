@@ -16,5 +16,10 @@ pipeline {
         bat'cd server/ && pnpm install'        
       }
     }
+    stage('build serve') {
+      steps {
+        bat'cd server/ && node node_modules/@nestjs/cli/nest build'        
+      }
+    }
   }
 }
