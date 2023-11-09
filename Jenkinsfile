@@ -1,9 +1,14 @@
 pipeline{
     agent any
     stages{
-        stage('Install'){
+        stage('Install Client'){
             step{
-                bat('echo "Sucesso!"')
+                bat 'cd client && pnpm i'
+            }
+        }
+        stage('Compilar cliente'){
+            step{
+                bat 'cd client && node node_modules/@angular/cli/bin/ng build -c production'
             }
         }
     }
