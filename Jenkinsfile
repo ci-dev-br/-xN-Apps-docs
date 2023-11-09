@@ -1,15 +1,20 @@
-pipeline{
-    agent any
-    stages{
-        stage('Install Client'){
-            step{
-                bat 'cd client && pnpm i'
-            }
-        }
-        stage('Compilar cliente'){
-            step{
-                bat 'cd client && node node_modules/@angular/cli/bin/ng build -c production'
-            }
-        }
+pipeline {
+  agent any 
+  stages {
+    stage('Install client dependencies') {
+      steps {
+        bat'cd client/ && pnpm install'        
+      }
     }
+    stage('build client') {
+      steps {
+        bat'cd client/ && node ./node_modules/@angular/cli/bin/ng build -c production'
+      }
+    }
+    stage('install serve dependencies') {
+      steps {
+        bat'cd server/ && pnpm install'        
+      }
+    }
+  }
 }
