@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Install client dependencies') {
       steps {
-        bat'cd client/ && pnpm install'        
+        bat'cd client/ && npm install'        
       }
     }
     stage('build client') {
@@ -13,7 +13,7 @@ pipeline {
     }
     stage('install serve dependencies') {
       steps {
-        bat'cd server/ && pnpm install'        
+        bat'cd server/ && npm install'        
       }
     }
     stage('build serve') {
