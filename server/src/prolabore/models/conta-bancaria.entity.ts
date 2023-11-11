@@ -12,21 +12,21 @@ export class ContaBancaria {
     @JoinTable()
     bank: Banco;
     @ApiProperty({ nullable: false, required: true})
-    @Column({ nullable: false})
+    @Column({ nullable: false, unique: true})
     agency: string;
-    @ApiProperty({ nullable: false, required: true})
+    @ApiProperty({ nullable: false})
     @Column({ nullable: false})
     ownerName: string;
-    @ApiProperty({ nullable: false, required: true})
+    @ApiProperty({ nullable: false})
     @Column({ nullable: false})
     cpfCnpj: string;
-    @ApiProperty({ nullable: false, required: true})
-    @Column({ nullable: false})
+    @ApiProperty({ nullable: false})
+    @Column({ nullable: false, unique: true})
     account: string;
-    @ApiProperty({ nullable: false, required: true})
-    @Column({ nullable: false})
+    @ApiProperty({ nullable: false})
+    @Column({ nullable: false, unique: true})
     accountDigit: string;
-    @ApiProperty({ nullable: false, required: true})
+    @ApiProperty({ nullable: false})
     @Column({ nullable: false})
     bankAccountType: "CONTA_CORRENTE" | "CONTA_POUPANCA";
 }

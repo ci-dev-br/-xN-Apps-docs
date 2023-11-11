@@ -16,7 +16,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { TenantEntities, TenantModule } from './tenant/tenant.module';
 import { UsersModule } from './users/users.module';
 import { StorageEntities, StorageModule } from './storage/storage.module';
-import { CoreModule } from './core/core.module';
+import { CoreEntities, CoreModule } from './core/core.module';
 
 config({ path: '.env' });
 @Module({
@@ -50,6 +50,7 @@ config({ path: '.env' });
         ...IconEntities,
         ...TenantEntities,
         ...StorageEntities,
+        ...CoreEntities,
       ]
     }),
     NotificacaoModule,

@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
+import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/auth/models/user.entity";
 import { Tenant } from "src/tenant/models/tenant.entity";
 import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, Repository, UpdateDateColumn } from "typeorm";
@@ -43,6 +44,7 @@ export abstract class FullAuditedEntity extends AuditedEntity {
 @Injectable()
 export class SnapshotService {
     constructor(
+        @InjectRepository(Snapshot)
         private readonly snapRepo: Repository<Snapshot>,
     ) { }
     async snapshot(entidade: FullAuditedEntity) {
