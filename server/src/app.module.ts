@@ -18,6 +18,7 @@ import { UsersModule } from './users/users.module';
 import { StorageEntities, StorageModule } from './storage/storage.module';
 import { CoreEntities, CoreModule } from './core/core.module';
 import { ProlaboreEntities } from './prolabore/prolabore.module';
+import { CadastroEntidades, CasdastroModule } from './cadastro/cadastro.module';
 
 config({ path: '.env' });
 @Module({
@@ -53,6 +54,7 @@ config({ path: '.env' });
         ...StorageEntities,
         ...CoreEntities,
         ...ProlaboreEntities,
+        ...CadastroEntidades,
       ]
     }),
     NotificacaoModule,
@@ -67,6 +69,7 @@ config({ path: '.env' });
     TenantModule,
     UsersModule,
     StorageModule,
+    CasdastroModule,
     CoreModule.forRoot({
       snapshot: true
     })

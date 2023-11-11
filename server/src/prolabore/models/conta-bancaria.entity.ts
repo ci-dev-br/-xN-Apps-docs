@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, JoinTable, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { Banco } from './banco.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -8,7 +8,7 @@ export class ContaBancaria {
     @PrimaryGeneratedColumn('uuid')
     id: string;
     @ApiProperty({ nullable: false, required: true})
-    @OneToOne(() => Banco)
+    @ManyToOne(() => Banco)
     @JoinTable()
     bank: Banco;
     @ApiProperty({ nullable: false, required: true})
