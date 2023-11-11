@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { User } from "src/auth/models/user.entity";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity()
@@ -8,7 +8,8 @@ export class Cliente {
     @PrimaryGeneratedColumn('uuid')
     id?: string;
     @ApiProperty()
-    @Column({})
+    @OneToOne(() => User)
+    @JoinTable()
     user?: User;
     @ApiProperty()
     @Column({})

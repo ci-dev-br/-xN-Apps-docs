@@ -17,6 +17,7 @@ import { TenantEntities, TenantModule } from './tenant/tenant.module';
 import { UsersModule } from './users/users.module';
 import { StorageEntities, StorageModule } from './storage/storage.module';
 import { CoreEntities, CoreModule } from './core/core.module';
+import { ProlaboreEntities } from './prolabore/prolabore.module';
 
 config({ path: '.env' });
 @Module({
@@ -51,6 +52,7 @@ config({ path: '.env' });
         ...TenantEntities,
         ...StorageEntities,
         ...CoreEntities,
+        ...ProlaboreEntities,
       ]
     }),
     NotificacaoModule,

@@ -1,13 +1,14 @@
 import { Column, Entity, JoinTable, OneToMany, OneToOne } from "typeorm";
 import { Cliente } from "./cliente.entity";
 import { ContaBancaria } from "./conta-bancaria.entity";
+import { FullAuditedEntity } from "src/core/dao";
 
 /**
  * 
  * https://docs.asaas.com/docs/criando-um-cliente
  */
 @Entity()
-export class ClienteAssas {
+export class ClienteAssas extends FullAuditedEntity {
     @OneToOne(() => Cliente, cliente => cliente.clienteAssas)
     cliente?: Cliente;
     customer?: string;
