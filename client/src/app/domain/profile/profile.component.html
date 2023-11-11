@@ -1,14 +1,14 @@
 <ci-l-nav></ci-l-nav>
 <div class="wrapper">
     <header>
-
     </header>
-
     <div class="cards">
         <div class="card">
             <div class="profile-thumb">
+                <img [src]="profilePhotoUser">
+                <video #profileVideo></video>
                 <div class="actions">
-                    <button mat-icon-button matTooltip="Tirar foto">
+                    <button mat-icon-button matTooltip="Tirar foto" (click)="takePhoto()">
                         <mat-icon>photo_camera</mat-icon>
                     </button>
                 </div>

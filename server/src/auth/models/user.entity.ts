@@ -1,7 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Policy } from "./policy.entity";
 import { Tenant } from "src/tenant/models/tenant.entity";
+import { Photo } from "src/storage/models/photo.entity";
 
 
 @Entity()
@@ -36,5 +37,9 @@ export class User {
     refreshToken?: string;
     @ManyToMany(() => Tenant)
     @JoinTable()
-    tenants?: Tenant[]
+    tenants?: Tenant[];
+    @ApiProperty({ nullable: true, required: false })
+    @ManyToOne(() => Photo)
+    @JoinColumn()
+    photo?: Photo;
 }

@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Funcionario } from "./models/funcionario.entity";
+import { Autonomo } from "./models/autonomo.entity";
 export const ProlaboreEntities = [
-    Funcionario,
+    Autonomo,
 ];
 @Module({
     imports: [

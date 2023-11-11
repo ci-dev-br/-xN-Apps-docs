@@ -15,6 +15,8 @@ import { IconEntities, IconsModule } from './icons/icons.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { TenantEntities, TenantModule } from './tenant/tenant.module';
 import { UsersModule } from './users/users.module';
+import { StorageEntities, StorageModule } from './storage/storage.module';
+import { CoreModule } from './core/core.module';
 
 config({ path: '.env' });
 @Module({
@@ -47,6 +49,7 @@ config({ path: '.env' });
         ...PranchetaEntities,
         ...IconEntities,
         ...TenantEntities,
+        ...StorageEntities,
       ]
     }),
     NotificacaoModule,
@@ -60,12 +63,17 @@ config({ path: '.env' });
     IconsModule,
     TenantModule,
     UsersModule,
+    StorageModule,
+    CoreModule.forRoot({
+      snapshot: true
+    })
   ],
   controllers: [
     AppController,
   ],
   providers: [
     AppService,
+
   ],
 })
 export class AppModule { }

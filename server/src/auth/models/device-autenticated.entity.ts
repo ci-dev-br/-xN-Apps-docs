@@ -2,6 +2,9 @@ import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDat
 import { User } from "./user.entity";
 import { ApiProperty } from "@nestjs/swagger";
 
+/**
+ * 
+ */
 @Entity()
 export class DeviceAuthenticated {
     @ApiProperty({})

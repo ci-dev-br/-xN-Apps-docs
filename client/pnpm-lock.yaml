@@ -39,7 +39,7 @@ dependencies:
     specifier: ^16.2.0
     version: 16.2.0(@angular/common@16.2.0)(@angular/core@16.2.0)
   '@fortawesome/angular-fontawesome':
-    specifier: 0.13.0
+    specifier: ' 0.13.0'
     version: 0.13.0(@angular/core@16.2.0)(@fortawesome/fontawesome-svg-core@6.4.2)
   '@fortawesome/fontawesome-svg-core':
     specifier: ^6.4.0

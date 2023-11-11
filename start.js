@@ -1,6 +1,6 @@
 const { spawn } = require('child_process');
 
-const client_process = spawn('node', ['./node_modules/@angular/cli/bin/ng.js', 'serve'], { cwd: __dirname + '/client' })
+/* const client_process = spawn('node', ['./node_modules/@angular/cli/bin/ng.js', 'serve'], { cwd: __dirname + '/client' })
     .on('data', m => console.log(m))
     .on('error', m => console.log(m))
     .on('message', m => console.log(m))
@@ -13,12 +13,11 @@ client_process.stdout.on('data', (data) => {
     status_cliente = 0;
     message = data;
     if (String(data).indexOf('Compiled successfully') > -1) status_cliente = 2;
-});
+}); */
 const service_process = spawn('node',
     [
-        'node_modules/@nestjs/cli/bin/nest.js',
-        'start',
-        '--watch'
+        '--openssl-legacy-provider',
+        './dist/main.js',
     ], { cwd: __dirname + '/server' })
     .on('data', m => console.log(m))
     .on('error', m => console.log(m))
@@ -37,10 +36,10 @@ let last = undefined;
 const print = () => {
     let out =
         `[aplicação em execução]
-{ c:${status_cliente} s:${status_service} }
+{ s:${status_service} }
 `;
-    if (message)
-        out += `[client]: \n${String(message).trim()}\n`;
+    // if (message)
+    //     out += `[client]: \n${String(message).trim()}\n`;
     if (message_service)
         out += `[service]: \n${String(message_service).trim()}\n`;
 
@@ -74,7 +73,7 @@ app.use(cors({
 }));
 app.get('/json', function (req, res) {
     res.json({
-        client: status_cliente,
+        // client: status_cliente,
         service: status_service,
     });
 })

@@ -6,19 +6,23 @@
     min-height: 100vh;
     overflow: hidden;
 }
+
 ci-l-nav {
     align-self: stretch;
 }
+
 .nav {
     display: flex;
     flex-direction: row;
     gap: 6px;
 }
+
 .container {
     flex: auto;
     overflow-x: hidden;
     overflow-y: auto;
 }
+
 .wrapper {
     flex: auto;
     display: flex;
@@ -28,6 +32,7 @@ ci-l-nav {
     justify-self: stretch;
     align-self: stretch;
     overflow: auto;
+
     header {
         background: url(/assets/profile-bg.png);
         background-position: center center;
@@ -37,6 +42,7 @@ ci-l-nav {
         margin-bottom: -280px;
     }
 }
+
 .cards {
     display: flex;
     gap: 48px;
@@ -46,6 +52,7 @@ ci-l-nav {
     align-self: stretch;
     align-items: stretch;
     justify-content: stretch;
+
     .card {
         padding: 24px;
         background: rgba(#FFFFFF, .80);
@@ -53,6 +60,7 @@ ci-l-nav {
         backdrop-filter: blur(12px);
         box-shadow: 0 10px 25px rgba(#000000, .44);
         border-radius: 4.8px;
+
         &:nth-child(1) {
             width: 350px;
             flex: unset;
@@ -62,9 +70,11 @@ ci-l-nav {
             justify-content: stretch;
             overflow: auto;
         }
+
         &:nth-child(2) {}
     }
 }
+
 .profile-thumb {
     $size: 140px;
     width: #{$size};
@@ -74,6 +84,17 @@ ci-l-nav {
     box-shadow: 0 3px 6px rgba(#000000, .44);
     position: relative;
     overflow: hidden;
+
+    video,
+    img {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        object-fit: cover;
+    }
+
     .actions {
         padding: 0 0px 0px;
         background-color: rgba(white, .44);
@@ -87,10 +108,12 @@ ci-l-nav {
         justify-content: center;
         bottom: -40px;
         transition: bottom ease-out .44s;
+
         >* {
             scale: .8;
         }
     }
+
     &:hover {
         .actions {
             bottom: 0;

@@ -32,6 +32,7 @@ export class UserService {
         chaveAcesso: string,
     ) {
         return await this.userRepo.createQueryBuilder('user')
+            .leftJoinAndSelect('user.photo', 'photo')
             .where(`"user".id::varchar = :user_id::varchar and encode(sha512(concat(encode(sha512("user".password::bytea),'hex'), :chave_acesso::varchar )::bytea),'hex') = :ass_pass::varchar`)
             .setParameter('user_id', userId)
             .setParameter('ass_pass', assinaturaPassword)
