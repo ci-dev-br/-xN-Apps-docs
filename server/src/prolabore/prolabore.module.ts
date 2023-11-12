@@ -13,17 +13,18 @@ import { ContaBancaria } from "./models/conta-bancaria.entity";
 import { Receipt } from "./models/receipt.entity";
 export const ProlaboreEntities = [
     Autonomo,
-    Account,
-    Banco,
     ClienteAssas,
     Cliente,
     Contrato,
     Order,
-    Payment,
     TransferenciaPix,
     ContaBancaria,
     Contrato,
+
+    Account,
     Receipt,    
+    Banco,
+    Payment,
 ];
 @Module({
     imports: [
