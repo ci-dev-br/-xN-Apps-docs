@@ -79,17 +79,22 @@ nav.status {
     overflow: hidden;
 
     .sidenav {
-        width: 240px;
+        width: 280px;
         background: #111;
-
         display: flex;
-        // flex-direction: column;
+        flex-wrap: wrap;
+        align-items: start;
+        justify-content: start;
         padding: 18px;
         gap: 12px;
-        button{
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        button {
             padding-top: 10px;
             padding-bottom: 10px;
             height: 48px;
+            flex: auto;
         }
     }
 
