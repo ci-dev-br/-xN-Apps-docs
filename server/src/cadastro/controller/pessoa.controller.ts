@@ -19,7 +19,7 @@ export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
     @Post('Sync')
     @ApiResponse({
         type:
-            SyncPayloadDao<Pessoa>
+            SyncPayloadDaoPessoa
     })
     @ApiOperation({
         operationId: 'PessoaSync'
