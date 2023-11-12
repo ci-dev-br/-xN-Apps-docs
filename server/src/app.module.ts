@@ -20,6 +20,7 @@ import { CoreEntities, CoreModule } from './core/core.module';
 import { ProlaboreEntities } from './prolabore/prolabore.module';
 import { CadastroEntidades, CasdastroModule } from './cadastro/cadastro.module';
 import { PaymentEntities, PaymentModule } from './payment/payment.module';
+import { FiscalEntities, FiscalModule } from './fiscal/fiscal.module';
 
 config({ path: '.env' });
 @Module({
@@ -57,6 +58,7 @@ config({ path: '.env' });
         ...ProlaboreEntities,
         ...CadastroEntidades,
         ...PaymentEntities,
+        ...FiscalEntities,
       ]
     }),
     NotificacaoModule,
@@ -73,6 +75,7 @@ config({ path: '.env' });
     StorageModule,
     CasdastroModule,
     PaymentModule,
+    FiscalModule,
     CoreModule.forRoot({
       snapshot: true
     })
