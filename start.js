@@ -69,7 +69,11 @@ var app = express();
 var PORT = 7684;
 
 app.use(cors({
-    origin: ['http://localhost:4293', 'https://apps.ci.dev.br:446', 'https://apps.ci.dev.br:7684']
+    origin: [
+        'http://localhost:4293',
+        'https://apps.ci.dev.br:446',
+        'https://apps.ci.dev.br:7684'
+    ]
 }));
 app.get('/json', function (req, res) {
     res.json({
