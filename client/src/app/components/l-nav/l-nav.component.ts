@@ -59,7 +59,7 @@ export class LNavComponent {
   load() {
     (async () => {
       try {
-        this.apps = await lastValueFrom(this.applicationService.get({ body: {} }))
+        this.apps = await lastValueFrom(this.applicationService.get({ body: { all: false } }))
       } catch (error) {
         console.error(error);
       }

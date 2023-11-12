@@ -88,7 +88,7 @@ export class AcessarComponent {
               this.snack.open('Falha 2.', 'Ok');
             }
           } else {
-            this.snack.open('Falha 0.', 'Ok');
+            this.snack.open('Não foi possível solicitar acesso.', 'Ok');
           }
         }
       } else if (

@@ -35,7 +35,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
     }
     private handlerUnauthorizedError(error: HttpErrorResponse, next: HttpHandler, request: HttpRequest<any>) {
         this.refreshing = true;
-        if (this.token.hasRefreshToken()) {
+        if (error?.status === 401 && this.token.hasRefreshToken()) {
             return this.auth.refresh({
                 body: {
                     refreshToken: this.token.RefreshToken
@@ -52,7 +52,12 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                     return throwError(error);
                 })
             )
-        } else
+        } else {
+            if (error?.status === 0) {
+                // this.token.clear();
+                // debugger;
+            }
             return throwError(error);
+        }
     }
 }

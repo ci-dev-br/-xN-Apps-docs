@@ -11,6 +11,7 @@ export class ApplicationController {
     constructor(
         private readonly service: ApplicationService
     ) { }
+    
     @Post('Get')
     @ApiResponse({ type: Application, isArray: true, description: 'Obter Aplicações' })
     @ApiOperation({
@@ -20,10 +21,14 @@ export class ApplicationController {
         @Request() req: Request,
         @Body() input?: GetInputDtos,
     ) {
-        const user: User = (req as any).user;
-        return await this.service.find(
-            (user?.roles?.includes('ADMIN') && input.all) ?
-                undefined : (user?.roles || []));
+        try {
+            const user: User = (req as any).user;
+            return await this.service.find(
+                (user?.roles && user?.roles?.includes('ADMIN') && input.all) ?
+                    undefined : (user?.roles || []));
+        } catch (error) {
+            console.error(error);
+        }
     }
     @Post('Sync')
     @ApiResponse({

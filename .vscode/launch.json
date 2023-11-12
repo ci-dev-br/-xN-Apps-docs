@@ -9,6 +9,7 @@
             "request": "launch",
             "name": "Web",
             "disableNetworkCache": true,
+            "cleanUp": "wholeBrowser",
             "url": "http://localhost:4293",
             "webRoot": "${workspaceFolder}/client"
         },
