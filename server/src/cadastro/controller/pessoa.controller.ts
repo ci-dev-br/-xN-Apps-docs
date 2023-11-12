@@ -6,6 +6,4 @@ export class PessoaController {
     constructor(
         private readonly pessoaService: PessoaService
     ) { }
-
-    // async
 }

@@ -90,8 +90,7 @@ export class SnapshotService {
 
 export abstract class DaoServiceBase<E extends FullAuditedEntity> {
     constructor(
-        // private readonly _userService: UserService,
-        @InjectRepository(Entity)
+        private readonly _snap: SnapshotService,
         private readonly _repo?: Repository<E>,
     ) {
     }
@@ -99,7 +98,7 @@ export abstract class DaoServiceBase<E extends FullAuditedEntity> {
     async sincronizar(data: E) {
         let ___receipt_data = data;
         let ___internal_data: E = null;
-        if (data instanceof FullAuditedEntity) {
+        if (data instanceof AuditedEntity) {
             if (!data.internalId) {
                 ___internal_data =
                     this._repo.create(data);
@@ -116,13 +115,16 @@ export abstract class DaoServiceBase<E extends FullAuditedEntity> {
                         Object.keys(___internal_data)
                             .filter(p => !['internalId', 'createdAt', 'createdBy'].includes(p))
                             .forEach(p => ___internal_data[p] = ___receipt_data[p]);
-
                         ___internal_data.lastModifiedAt = new Date();
+                        // TODO: adicionar usuário modificador
+
+                        if (___internal_data instanceof FullAuditedEntity) {
+                            await this._snap.snapshot(___internal_data);
+                        }
                     }
                 }
             }
-            this._repo.save(___internal_data);
+            return await this._repo.save(___internal_data);
         }
-
     }
 }  

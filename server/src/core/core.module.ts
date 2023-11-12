@@ -13,15 +13,13 @@ export const CoreEntities = [
  */
 @Module({
     imports: [
-        TypeOrmModule.forFeature([
-            ...CoreEntities,
-        ])
+        TypeOrmModule.forFeature(CoreEntities)
     ],
     providers: [
-
+        SnapshotService,
     ],
     exports: [
-
+        SnapshotService,
     ]
 })
 export class CoreModule {

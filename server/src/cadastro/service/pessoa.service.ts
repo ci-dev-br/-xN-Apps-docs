@@ -1,13 +1,14 @@
 import { Repository } from "typeorm";
 import { Pessoa } from "../model/pessoa.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DaoServiceBase } from "src/core/dao";
+import { DaoServiceBase, SnapshotService } from "src/core/dao";
 
 export class PessoaService extends DaoServiceBase<Pessoa> {
     constructor(
+        snap: SnapshotService,
         @InjectRepository(Pessoa)
-        private readonly repository: Repository<Pessoa>
+        repository: Repository<Pessoa>
     ) {
-        super(repository);
+        super(snap, repository);
     }
 }

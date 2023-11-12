@@ -4,6 +4,7 @@ import { Endereco } from "./model/endereco.entity";
 import { Pessoa } from "./model/pessoa.entity";
 import { PessoaService } from "./service/pessoa.service";
 import { EnderecoService } from "./service/endereco.service";
+import { CoreModule } from "src/core/core.module";
 
 export const CadastroEntidades = [
     Endereco,
@@ -12,7 +13,8 @@ export const CadastroEntidades = [
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature(CadastroEntidades)
+        CoreModule,
+        TypeOrmModule.forFeature(CadastroEntidades),
     ],
     providers: [
         PessoaService,
