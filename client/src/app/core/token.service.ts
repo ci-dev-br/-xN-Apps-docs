@@ -32,7 +32,12 @@ export class TokenService {
     }
 
     private getStorage() {
-        const storage_data = undefined; // localStorage.getItem('0');
+        let storage_data = undefined;
+        try {
+            storage_data = localStorage.getItem('0');
+        } catch (error) {
+
+        }
         if (!storage_data) return {};
         return JSON.parse(atob(storage_data));
     }
