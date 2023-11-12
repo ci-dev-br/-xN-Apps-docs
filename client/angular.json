@@ -73,11 +73,11 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "client:build:production"
+              "buildTarget": "client:build:production"
             },
             "development": {
               "port": 4293,
-              "browserTarget": "client:build:development"
+              "buildTarget": "client:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -85,7 +85,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "client:build"
+            "buildTarget": "client:build"
           }
         },
         "test": {
@@ -172,11 +172,11 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "@plhx/prolabore:build:production"
+              "buildTarget": "@plhx/prolabore:build:production"
             },
             "development": {
               "port": 4295,
-              "browserTarget": "@plhx/prolabore:build:development"
+              "buildTarget": "@plhx/prolabore:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -184,7 +184,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "@plhx/prolabore:build"
+            "buildTarget": "@plhx/prolabore:build"
           }
         },
         "test": {
