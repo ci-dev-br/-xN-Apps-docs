@@ -85,9 +85,10 @@ export class AuthController {
         );
         authenticated_user.refreshToken = refresh_token;
         await this.userService.updateRefreshToken(authenticated_user.id, permission_uuid);
+        const { photo, ...user_payload } = authenticated_user;
         return {
           user: authenticated_user,
-          bearer: await this.jwtService.signAsync(authenticated_user),
+          bearer: await this.jwtService.signAsync(user_payload),
           refreshToken: refresh_token
         } as AcessoPayload;
       }
