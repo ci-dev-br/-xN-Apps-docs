@@ -1,5 +1,5 @@
 import { NgModule, isDevMode } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -34,6 +34,8 @@ import { PaginaErroComponent } from './views/pagina-erro/pagina-erro.component';
     FontAwesomeModule, // use forRoot() in main app module only.
   ],
   providers: [
+  
+    provideClientHydration()
   ],
   bootstrap: [AppComponent]
 })
