@@ -5,10 +5,12 @@ import { Pessoa } from "./model/pessoa.entity";
 import { PessoaService } from "./service/pessoa.service";
 import { EnderecoService } from "./service/endereco.service";
 import { CoreModule } from "src/core/core.module";
+import { InformacaoContato } from "./model/informacao-contato.entity";
 
 export const CadastroEntidades = [
     Endereco,
     Pessoa,
+    InformacaoContato,
 ]
 
 @Module({
