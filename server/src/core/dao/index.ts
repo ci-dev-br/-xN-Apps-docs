@@ -6,9 +6,6 @@ import { User } from "src/auth/models/user.entity";
 import { Tenant } from "src/tenant/models/tenant.entity";
 
 import { createHash } from 'crypto';
-import sha256 from 'sha256';
-import { json } from "stream/consumers";
-import { UserService } from "src/auth/auth.module";
 
 export abstract class AuditedEntity {
     @ApiProperty({ nullable: true, required: false, uniqueItems: true })
@@ -127,4 +124,19 @@ export abstract class DaoServiceBase<E extends FullAuditedEntity> {
             return await this._repo.save(___internal_data);
         }
     }
-}  
+}
+
+export class SyncPayloadDao<Entity>{
+    @ApiProperty()
+    data?: Entity;
+}
+
+export abstract class ControllerDaoBase<Service extends DaoServiceBase<any>, E> {
+    constructor(
+        private _service: Service,
+    ) { }
+
+    async sync(entity: SyncPayloadDao<E>) {
+        return await this._service.sincronizar(entity.data);
+    }
+} 

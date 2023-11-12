@@ -9,6 +9,7 @@ import { DeviceService } from './services/device.service';
 import { AuthService } from './services/auth.service';
 import { ApplicationService } from './services/application.service';
 import { UserService } from './services/user.service';
+import { PessoaService } from './services/pessoa.service';
 
 /**
  * Module that provides all services and configuration.
@@ -23,6 +24,7 @@ import { UserService } from './services/user.service';
     AuthService,
     ApplicationService,
     UserService,
+    PessoaService,
     ApiConfiguration
   ],
 })
