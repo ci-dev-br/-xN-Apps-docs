@@ -1,14 +1,16 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { FullAuditedEntity } from "src/core/dao";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Attachment } from "./attachment.entity";
 
 @Entity()
-export class Document {
-    @ApiProperty() @PrimaryGeneratedColumn('uuid')
-    id?: string;
+export class Document extends FullAuditedEntity {
     @ApiProperty({ nullable: true }) @Column({ nullable: true })
     title?: string;
     @ApiProperty({ nullable: true }) @Column({ nullable: true })
     description?: string;
     @ApiProperty({ nullable: true }) @Column({ nullable: true, length: 2048 })
-    checkSun?: string;
+    hash?: string;
+    @ManyToMany(() => Attachment)
+    attachements?: Attachment[];
 }
