@@ -1,7 +1,8 @@
-import { Column, Entity, JoinTable, OneToMany, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Cliente } from "./cliente.entity";
 import { ContaBancaria } from "./conta-bancaria.entity";
 import { FullAuditedEntity } from "src/core/dao";
+import { ApiProperty } from "@nestjs/swagger";
 
 /**
  * 
@@ -9,20 +10,25 @@ import { FullAuditedEntity } from "src/core/dao";
  */
 @Entity()
 export class ClienteAssas extends FullAuditedEntity {
+    @ApiProperty({ nullable: true })
     @OneToOne(() => Cliente, cliente => cliente.clienteAssas)
     cliente?: Cliente;
     customer?: string;
     /*
      * informações de pessoa
-     */
+    */
+    @ApiProperty({ nullable: true })
     @Column({})
     name?: string;
+    @ApiProperty({ nullable: true })
     @Column({})
     cpfCnpj?: string;
+    @ApiProperty({ nullable: true })
     @Column({})
     mobilePhone?: string;
 
-    @OneToMany(() => ContaBancaria, contaBancaria => contaBancaria.id)
+    @ApiProperty({ nullable: true })
+    @ManyToOne(() => ContaBancaria)
     @JoinTable()
     contaBancaria?: ContaBancaria[];
 }

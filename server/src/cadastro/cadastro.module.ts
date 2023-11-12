@@ -2,6 +2,8 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Endereco } from "./model/endereco.entity";
 import { Pessoa } from "./model/pessoa.entity";
+import { PessoaService } from "./service/pessoa.service";
+import { EnderecoService } from "./service/endereco.service";
 
 export const CadastroEntidades = [
     Endereco,
@@ -11,6 +13,10 @@ export const CadastroEntidades = [
 @Module({
     imports: [
         TypeOrmModule.forFeature(CadastroEntidades)
+    ],
+    providers: [
+        PessoaService,
+        EnderecoService,
     ]
 })
 export class CasdastroModule { }
