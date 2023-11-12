@@ -1,0 +1,23 @@
+.icon {
+
+    &.--cadastro-pessoa {
+        background: url(/assets/i-kit/3289565_family_group_person_persons_icon.svg);
+    }
+
+    &.--endereco {
+        background: url(/assets/i-kit/285679_book_address_icon.svg);
+    }
+
+    &.--imagens {
+        background: url(/assets/i-kit/299066_camera_icon.svg);
+    }
+
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    overflow: hidden;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+}

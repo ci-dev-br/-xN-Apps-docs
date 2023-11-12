@@ -20,8 +20,8 @@ $client-warn: mat.define-palette(mat.$red-palette);
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
 $client-theme: mat.define-light-theme((color: (primary: $client-primary,
-        accent: $client-accent,
-        warn: $client-warn,
+accent: $client-accent,
+warn: $client-warn,
       ),
     ));
 
@@ -46,3 +46,5 @@ body {
 ci-root {
   display: contents;
 }
+
+@import "./scss/icons";

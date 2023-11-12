@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { CadastrosRoutingModule } from './cadastros-routing.module';
 import { CadastrosComponent } from './cadastros.component';
+import { MatButtonModule } from '@angular/material/button';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { CadastrosComponent } from './cadastros.component';
   ],
   imports: [
     CommonModule,
-    CadastrosRoutingModule
+    CadastrosRoutingModule,
+    MatButtonModule,
   ]
 })
 export class CadastrosModule { }
