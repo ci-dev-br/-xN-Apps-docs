@@ -41,8 +41,12 @@ export class TokenService {
         const snapshot = JSON.stringify(this.__);
         setTimeout(() => {
             // ~> retorno para análise console.log(this.__);
-            // if (snapshot !== JSON.stringify(this.__))
-            //     localStorage.setItem('0', btoa(JSON.stringify(this.__, null, 2)))
+            try {
+                if (snapshot !== JSON.stringify(this.__))
+                    localStorage.setItem('0', btoa(JSON.stringify(this.__, null, 2)))
+            } catch (error) {
+
+            }
         }, 0);
         return this.__;
     }

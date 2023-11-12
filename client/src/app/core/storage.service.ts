@@ -15,7 +15,12 @@ export class StorageService {
         return JSON.parse(atob(this.session[key]));
     }
     private SESSION() {
-        const session_b64 = undefined;// localStorage.getItem('SESSION[0]');
+        let session_b64 = undefined;
+        try {
+            session_b64 = localStorage.getItem('SESSION[0]');
+        } catch (error) {
+
+        }
         if (session_b64) {
             const session = JSON.parse(atob(session_b64));
             return session;

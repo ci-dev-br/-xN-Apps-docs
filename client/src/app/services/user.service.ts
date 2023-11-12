@@ -14,9 +14,15 @@ export class UserService {
         this.$user.subscribe(v => {
             try {
                 if (v) {
-                    // localStorage.setItem('CIUSR', btoa(JSON.stringify(v, null, 2)));
+                    try {
+                        localStorage.setItem('CIUSR', btoa(JSON.stringify(v, null, 2)));
+                    } catch (error) {
+                    }
                 } else {
-                    // localStorage.removeItem('CIUSR'); router.navigate(['/']);
+                    try {
+                        localStorage.removeItem('CIUSR'); router.navigate(['/']);
+                    } catch (error) {
+                    }
                 }
             } catch (error) {
                 console.error(error);
@@ -32,7 +38,11 @@ export class UserService {
         this.$user.next(undefined);
     }
     private getFromMemory() {
-        const cached = undefined; //localStorage.getItem('CIUSR');
+        let cached = undefined;
+        try {
+            cached = localStorage.getItem('CIUSR');
+        } catch (error) {
+        }
         if (cached) {
             return {
                 ...JSON.parse(atob(cached))

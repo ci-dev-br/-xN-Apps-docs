@@ -1,0 +1,18 @@
+:host {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+
+    overflow: auto;
+}
+
+header {
+    background: url(/assets/1000_F_306938279_ezPVDtcNE0Q2Z1JOFPfYowmvFbzp1T4W.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    color: white;
+    height: 480px;
+}
