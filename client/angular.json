@@ -158,7 +158,7 @@
             },
             "development": {
               "browserTarget": "client:build:development",
-              "serverTarget": "client:server:development"
+              "serverTarget": "client:server:development",
             }
           },
           "defaultConfiguration": "production"

@@ -25,6 +25,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:4293',
+      'http://localhost:4200',
     ]
   });
   const options = new DocumentBuilder()

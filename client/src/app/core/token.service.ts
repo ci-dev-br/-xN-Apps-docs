@@ -32,7 +32,7 @@ export class TokenService {
     }
 
     private getStorage() {
-        const storage_data = localStorage.getItem('0');
+        const storage_data = undefined; // localStorage.getItem('0');
         if (!storage_data) return {};
         return JSON.parse(atob(storage_data));
     }
@@ -41,8 +41,8 @@ export class TokenService {
         const snapshot = JSON.stringify(this.__);
         setTimeout(() => {
             // ~> retorno para análise console.log(this.__);
-            if (snapshot !== JSON.stringify(this.__))
-                localStorage.setItem('0', btoa(JSON.stringify(this.__, null, 2)))
+            // if (snapshot !== JSON.stringify(this.__))
+            //     localStorage.setItem('0', btoa(JSON.stringify(this.__, null, 2)))
         }, 0);
         return this.__;
     }

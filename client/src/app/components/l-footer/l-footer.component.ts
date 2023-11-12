@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./l-footer.component.scss']
 })
 export class LFooterComponent {
-  plhxLink = `https://plhx.com.br/?from=${btoa(location.href)}`;
+  plhxLink = `https://plhx.com.br/?from=Portal`;
 }
