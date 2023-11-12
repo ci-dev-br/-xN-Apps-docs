@@ -4,7 +4,7 @@ import { Endereco } from "./endereco.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { InformacaoContato } from "./informacao-contato.entity";
 
-@Entity()
+@Entity({ schema: 'cadastro' })
 export class Pessoa extends FullAuditedEntity {
     @ApiProperty()
     @Column({})
@@ -13,16 +13,22 @@ export class Pessoa extends FullAuditedEntity {
     @Column({})
     nomeFantasia?: string;
     @ApiProperty()
-    @Column({})
+    @Column({
+        comment: 'Registro Geral',
+        nullable: true
+    })
     rg?: string;
     @ApiProperty()
-    @Column({})
+    @Column({
+        comment: 'Registro Geral Órgão Emissor',
+        nullable: true
+    })
     rgOrgaoEmissor?: string;
     @ApiProperty()
-    @Column({})
+    @Column({ nullable: true })
     emailPessoal?: string;
     @ApiProperty()
-    @Column({})
+    @Column({ nullable: true })
     empresa?: string;
     @ApiProperty()
     @ManyToMany(() => Endereco)
@@ -33,4 +39,7 @@ export class Pessoa extends FullAuditedEntity {
     @ManyToMany(() => InformacaoContato)
     @JoinTable()
     informacoesContato: InformacaoContato[];
+
+    @Column({ nullable: true })
+    site: string;
 }

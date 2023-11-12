@@ -1,7 +1,7 @@
 import { FullAuditedEntity } from "src/core/dao";
 import { Entity } from "typeorm";
 
-@Entity()
+@Entity({schema: 'cadastro'})
 export class Endereco extends FullAuditedEntity {
     /**
      * Logradouro
