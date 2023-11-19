@@ -8,7 +8,7 @@ import { ApiProperty } from "@nestjs/swagger";
  * 
  * https://docs.asaas.com/docs/criando-um-cliente
  */
-@Entity()
+@Entity({ schema: 'prolabore' })
 export class ClienteAssas extends FullAuditedEntity {
     @ApiProperty({ nullable: true })
     @OneToOne(() => Cliente, cliente => cliente.clienteAssas)

@@ -2,7 +2,7 @@ import { Column, Entity, JoinTable, ManyToOne, OneToOne, PrimaryGeneratedColumn 
 import { Banco } from './banco.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
-@Entity()
+@Entity({ schema: 'prolabore' })
 export class ContaBancaria {
     @ApiProperty({ nullable: false })
     @PrimaryGeneratedColumn('uuid')

@@ -3,7 +3,7 @@ import { User } from "src/auth/models/user.entity";
 import { Column, Entity, JoinTable, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
-@Entity()
+@Entity({ schema: 'prolabore' })
 export class Cliente {
     @PrimaryGeneratedColumn('uuid')
     id?: string;
