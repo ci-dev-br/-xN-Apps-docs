@@ -15,8 +15,11 @@ import { AdicionarWidgetComponent } from "./adicionar-widget/adicionar-widget.co
                         <button mat-menu-item (click)="adicionarCard()" >
                             Pesquisar por Widget
                         </button>
-                        <button mat-menu-item >
+                        <button mat-menu-item (click)="instalarWidget()" >
                             Instalar Widgets
+                        </button>
+                        <button mat-menu-item (click)="criarWidget()" >
+                            Criar Widget
                         </button>
                     </mat-menu>
                 </div>
@@ -33,5 +36,11 @@ export class InicioComponent {
     ) { }
     adicionarCard() {
         this.janela.open(AdicionarWidgetComponent, {});
+    }
+    criarWidget() {
+        
+    }
+    instalarWidget() {
+
     }
 }

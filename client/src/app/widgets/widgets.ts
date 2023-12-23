@@ -3,7 +3,9 @@ import { IFrameWidget, IFrameWidgetModule } from "./iframe/iframe.widget";
 
 export interface IControl {
     type?: string;
+    label?: string;
     maxLength?: number;
+    getValue?: () => number;
 }
 
 export interface IWidget {
@@ -22,6 +24,15 @@ export const Widgets: IWidget[] = [
         tags: ['Elementos'],
         settings: {
             url: { type: 'text', maxLength: 500 }
+        },
+        module: IFrameWidgetModule, component: IFrameWidget
+    },
+    {
+        title: "Total",
+        description: 'Visualizar valor Total.',
+        tags: ['Valores'],
+        settings: {
+            value: { type: 'text', label: "Valor total" }
         },
         module: IFrameWidgetModule, component: IFrameWidget
     },

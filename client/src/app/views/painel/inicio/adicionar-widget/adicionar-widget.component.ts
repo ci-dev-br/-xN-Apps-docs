@@ -20,11 +20,14 @@ export class AdicionarWidgetComponent {
     adicionar(item: IWidget) {
         this.selecionado = item;
         if (item.settings) {
-            // Object.keys(item.settings)item.settings
-
+            const group: any = {
+            };
+            Object.entries(item.settings).forEach(kv => {
+                kv[1]
+                group[kv[0]] = [];
+            })
+            this.formSettings = this.fb.group(group);
         }
-        this.formSettings = this.fb.group({
 
-        });
     }
 }

@@ -21,6 +21,8 @@ import { DinamicFormsModule } from "src/app/components/dinamic-forms/dinamic-for
 import { GridModule } from "src/app/components/grid/grid.module";
 import { MatSelectModule } from "@angular/material/select";
 import { MatChipsModule } from "@angular/material/chips";
+import { MobFakeComponent } from "./mob-fake/mob-fake.component";
+import { MobFakeModule } from "./mob-fake/mob-fake.module";
 
 @NgModule({
     declarations: [
@@ -48,6 +50,7 @@ import { MatChipsModule } from "@angular/material/chips";
         FormsModule,
         MatSelectModule,
         MatChipsModule,
+        MobFakeModule,
         RouterModule.forChild([
             {
                 path: '', component: GerencialComponent,
@@ -55,6 +58,10 @@ import { MatChipsModule } from "@angular/material/chips";
                     name: 'Gerenciador de Aplicações e Usuários',
                     role: 'MASTER'
                 }
+            },
+            {
+                path: 'mob-fake',
+                component: MobFakeComponent,
             }
         ])
     ]

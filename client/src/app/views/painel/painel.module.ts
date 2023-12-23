@@ -15,6 +15,7 @@ import { LayoutComponent } from './inicio/layout/layout.component';
 import { LayoutThumbComponent } from './inicio/layout/layout-thumb/layout-thumb.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     MatInputModule,
     MatMenuModule,
+    ReactiveFormsModule,
   ]
 })
 export class PainelModule { }

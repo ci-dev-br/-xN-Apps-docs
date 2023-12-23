@@ -14,9 +14,20 @@
     </ng-container>
 </div>
 <div class="configurar" *ngIf="!!selecionado">
-    <form>
-        <mat-form-field>
-            <input type="text" matInput>
-        </mat-form-field>
+    <form *ngIf="formSettings" [formGroup]="formSettings">
+        <ng-container *ngFor="let kv of selecionado.settings | keyvalue">
+            <ng-container>
+                <mat-form-field>
+                    <mat-label>{{kv.value.label}}</mat-label>
+                    <input type="text" matInput [formControlName]="kv.key">
+                </mat-form-field>
+            </ng-container>
+        </ng-container>
     </form>
+</div>
+
+<div class="row">
+    <button mat-button color="primary">
+        Adicionar
+    </button>
 </div>
