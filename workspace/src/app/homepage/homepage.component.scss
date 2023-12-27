@@ -1,10 +1,68 @@
 :host {
-    background: linear-gradient(to top, #eee 0%, #ccc 100%);
+    background: linear-gradient(to top, #ffffff 0%, #ccc 100%);
     min-height: 100vh;
     overflow: auto;
+    overflow-x: hidden;
     display: flex;
 
     align-items: center;
 
     flex-direction: column;
+}
+
+div.row {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+footer {
+    padding: 24px;
+    width: auto;
+    align-self: stretch;
+    background: #000;
+    color: #999;
+    font-weight: bold;
+
+    .assinatura {
+        font-size: 12px;
+        display: flex;
+        flex-direction: row;
+
+
+        a {
+            padding: 0 12px;
+
+            &,
+            &:link,
+            &:visited {
+                color: #999;
+                text-decoration: none;
+            }
+        }
+    }
+}
+
+nav {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    align-self: stretch;
+    background: #dedede;
+    align-items: center;
+
+    padding: {
+        left: 15px;
+    }
+
+    .logo {
+        font-weight: bold;
+        font-size: 1.3rem;
+
+        .sub {
+
+            font-weight: lighter;
+            font-size: 1.3rem;
+        }
+    }
 }
