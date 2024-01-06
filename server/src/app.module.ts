@@ -21,8 +21,9 @@ import { ProlaboreEntities } from './prolabore/prolabore.module';
 import { CadastroEntidades, CasdastroModule } from './cadastro/cadastro.module';
 import { PaymentEntities, PaymentModule } from './payment/payment.module';
 import { FiscalEntities, FiscalModule } from './fiscal/fiscal.module';
-
-config({ path: '.env' });
+import { InfraEntities, InfraModule } from './core/infra/infra.module';
+const is_production = !!process.execArgv.find(arg => arg === '--prod');
+config({ path: is_production ? '.env' : '.env.dev' });
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -58,6 +59,7 @@ config({ path: '.env' });
         ...CadastroEntidades,
         ...PaymentEntities,
         ...FiscalEntities,
+        ...InfraEntities,
       ]
     }),
     NotificacaoModule,
@@ -75,6 +77,7 @@ config({ path: '.env' });
     CasdastroModule,
     PaymentModule,
     FiscalModule,
+    InfraModule,
     CoreModule.forRoot({
       snapshot: true
     })

@@ -18,6 +18,7 @@ const service_process = spawn('node',
     [
         '--openssl-legacy-provider',
         './dist/main.js',
+        '--prod',
     ], { cwd: __dirname + '/server' })
     .on('data', m => console.log(m))
     .on('error', m => console.log(m))

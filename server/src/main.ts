@@ -4,11 +4,11 @@ import { AppModule } from './app.module';
 import * as fs from 'fs';
 import { HttpsOptions } from '@nestjs/common/interfaces/external/https-options.interface';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
 import { join } from 'path';
 import { config } from 'dotenv';
-config({ path: '.env' });
-
+console.clear();
+const is_production = !!process.execArgv.find(arg => arg === '--prod');
+config({ path: is_production ? '.env' : '.env.dev' });
 async function bootstrap() {
   const httpsOptions: HttpsOptions = {
     // cert: process.env.cert ? fs.readFileSync(process.env.cert) : undefined,
@@ -23,7 +23,7 @@ async function bootstrap() {
       }) :
       await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
-    origin: [
+    origin: is_production ? [] : [
       'http://localhost:4293',
       'http://localhost:4200',
     ]

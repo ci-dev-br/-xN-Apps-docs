@@ -11,7 +11,7 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { pessoaSync } from '../fn/pessoa/pessoa-sync';
 import { PessoaSync$Params } from '../fn/pessoa/pessoa-sync';
-import { SyncPayloadDao } from '../models/sync-payload-dao';
+import { SyncPayloadDaoPessoa } from '../models/sync-payload-dao-pessoa';
 
 @Injectable({ providedIn: 'root' })
 export class PessoaService extends BaseService {
@@ -28,7 +28,7 @@ export class PessoaService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  pessoaSync$Response(params: PessoaSync$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDao>> {
+  pessoaSync$Response(params: PessoaSync$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoPessoa>> {
     return pessoaSync(this.http, this.rootUrl, params, context);
   }
 
@@ -38,9 +38,9 @@ export class PessoaService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  pessoaSync(params: PessoaSync$Params, context?: HttpContext): Observable<SyncPayloadDao> {
+  pessoaSync(params: PessoaSync$Params, context?: HttpContext): Observable<SyncPayloadDaoPessoa> {
     return this.pessoaSync$Response(params, context).pipe(
-      map((r: StrictHttpResponse<SyncPayloadDao>): SyncPayloadDao => r.body)
+      map((r: StrictHttpResponse<SyncPayloadDaoPessoa>): SyncPayloadDaoPessoa => r.body)
     );
   }
 

@@ -6,14 +6,13 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { SyncPayloadDao } from '../../models/sync-payload-dao';
 import { SyncPayloadDaoPessoa } from '../../models/sync-payload-dao-pessoa';
 
 export interface PessoaSync$Params {
       body: SyncPayloadDaoPessoa
 }
 
-export function pessoaSync(http: HttpClient, rootUrl: string, params: PessoaSync$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDao>> {
+export function pessoaSync(http: HttpClient, rootUrl: string, params: PessoaSync$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoPessoa>> {
   const rb = new RequestBuilder(rootUrl, pessoaSync.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -24,7 +23,7 @@ export function pessoaSync(http: HttpClient, rootUrl: string, params: PessoaSync
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SyncPayloadDao>;
+      return r as StrictHttpResponse<SyncPayloadDaoPessoa>;
     })
   );
 }

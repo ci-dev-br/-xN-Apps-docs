@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, isDevMode } from '@angular/core';
 import { ChildActivationStart, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { UserService } from './services/user.service';
@@ -20,14 +20,16 @@ export class AppComponent {
     router.events.subscribe(v => {
       try {
         if (!!(v as any)?.snapshot?.data?.name) {
-          document.title = this._original_title + ' - ' + (v as any)?.snapshot?.data?.name;
+          document.title =
+            `${isDevMode() ? '[dev] ' : ''}` +
+            this._original_title + ' - ' + (v as any)?.snapshot?.data?.name;
         }
       } catch (error) { }
       if (!!(v as any)?.snapshot && !!(v as any).snapshot?.data) {
         if ('role' in (v as any).snapshot.data) {
           try {
             const role = ((v as any).snapshot.data as any).role
-          const granted = this.userService.user.value?.roles?.find(v => v === role);
+            const granted = this.userService.user.value?.roles?.find(v => v === role);
             if (granted) {
             } else {
               throw new Error('Acesso Restrito');
