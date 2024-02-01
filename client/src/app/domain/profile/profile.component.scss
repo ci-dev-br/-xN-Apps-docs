@@ -54,6 +54,7 @@ ci-l-nav {
     justify-content: stretch;
 
     .card {
+        min-width: 420px;
         padding: 24px;
         background: rgba(#FFFFFF, .80);
         flex: auto;

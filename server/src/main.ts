@@ -35,7 +35,7 @@ async function bootstrap() {
     .addTag('@apps')
     .addBearerAuth()
     .build();
-  const document = SwaggerModule.createDocument(app, options);
+  const document = SwaggerModule.createDocument(app, options); 
   SwaggerModule.setup('api', app, document);
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));

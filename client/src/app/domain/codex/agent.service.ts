@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, Injector, Optional } from "@angular/core";
-import { JanelaService } from "src/app/components/janela/janela.service";
+import { JanelaService } from "src/app/components/window/window.service";
 
 @Injectable()
 export class AgentService {

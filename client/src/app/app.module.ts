@@ -34,9 +34,10 @@ import { PaginaErroComponent } from './views/pagina-erro/pagina-erro.component';
     FontAwesomeModule, // use forRoot() in main app module only.
   ],
   providers: [
-  
     provideClientHydration()
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [
+    AppComponent,
+  ]
 })
 export class AppModule { }

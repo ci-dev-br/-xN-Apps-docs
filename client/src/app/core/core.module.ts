@@ -37,7 +37,7 @@ export class CoreModule {
             providers: [
                 ...(ApiModule.forRoot({
                     rootUrl: isDevMode() ?
-                        'https://apps.ci.dev.br:447' : location.origin
+                        'https://apps.ci.dev.br:446' : location.origin
                 }).providers || []),
                 StorageService,
                 TokenService,

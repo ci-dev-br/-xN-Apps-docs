@@ -10,6 +10,6 @@ export class Message {
     @ManyToOne(() => User)
     from?: User;
     @JoinTable()
-    @ManyToOne(() => Conversation,)
+    @ManyToOne(() => Conversation)
     conversation?: Conversation;
 }

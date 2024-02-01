@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { JanelaService } from "src/app/components/janela/janela.service";
+import { JanelaService } from "src/app/components/window/window.service";
 import { AdicionarWidgetComponent } from "./adicionar-widget/adicionar-widget.component";
 
 @Component({
