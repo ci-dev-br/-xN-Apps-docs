@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
-import { JanelaComponent } from './janela.component';
-import { JanelaService } from './janela.service';
+import { WindowComponent } from './window.component';
+import { WindowService } from './window.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -10,7 +10,7 @@ import { CoreModule } from 'src/app/core/core.module';
 
 @NgModule({
   declarations: [
-    JanelaComponent
+    WindowComponent
   ],
   imports: [
     CoreModule,
@@ -21,10 +21,10 @@ import { CoreModule } from 'src/app/core/core.module';
     MatProgressBarModule,
   ],
   providers: [
-    JanelaService,
+    WindowService,
   ],
   exports: [
-    JanelaComponent,
+    WindowComponent,
   ]
 })
-export class JanelaModule { }
+export class WindowModule { }

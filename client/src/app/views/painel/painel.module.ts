@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { AdicionarWidgetComponent } from './inicio/adicionar-widget/adicionar-widget.component';
-import { JanelaModule } from 'src/app/components/window/window.module';
+import { WindowModule } from 'src/app/components/window/window.module';
 import { LayoutComponent } from './inicio/layout/layout.component';
 import { LayoutThumbComponent } from './inicio/layout/layout-thumb/layout-thumb.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -33,7 +33,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatIconModule,
     MatButtonModule,
     MatTooltipModule,
-    JanelaModule,
+    WindowModule,
     MatFormFieldModule,
     MatInputModule,
     MatMenuModule,

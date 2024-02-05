@@ -9,6 +9,7 @@ import { DeviceService } from './services/device.service';
 import { AuthService } from './services/auth.service';
 import { ApplicationService } from './services/application.service';
 import { UserService } from './services/user.service';
+import { CadastroService } from './services/cadastro.service';
 import { PessoaService } from './services/pessoa.service';
 
 /**
@@ -24,6 +25,7 @@ import { PessoaService } from './services/pessoa.service';
     AuthService,
     ApplicationService,
     UserService,
+    CadastroService,
     PessoaService,
     ApiConfiguration
   ],

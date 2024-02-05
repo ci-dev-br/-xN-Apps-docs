@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, Injector, Optional } from "@angular/core";
-import { JanelaService } from "src/app/components/window/window.service";
+import { WindowService } from "src/app/components/window/window.service";
 
 @Injectable()
 export class AgentService {
@@ -8,7 +8,7 @@ export class AgentService {
         private readonly http: HttpClient,
         private readonly injetor?: Injector,
         @Optional()
-        private readonly janela?: JanelaService,
+        private readonly janela?: WindowService,
     ) { }
     private santizeScript(text: string) {
         return text

@@ -15,7 +15,7 @@ import { CoreModule } from "src/app/core/core.module";
 import { LNavModule } from "src/app/components/l-nav/l-nav.module";
 import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo.component';
 import { GerencialComponent } from "./gerencial.component";
-import { JanelaModule } from "src/app/components/window/window.module";
+import { WindowModule } from "src/app/components/window/window.module";
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DinamicFormsModule } from "src/app/components/dinamic-forms/dinamic-forms.module";
 import { GridModule } from "src/app/components/grid/grid.module";
@@ -43,7 +43,7 @@ import { MobFakeModule } from "./mob-fake/mob-fake.module";
         MatFormFieldModule,
         MatTooltipModule,
         MatInputModule,
-        JanelaModule,
+        WindowModule,
         DinamicFormsModule,
         GridModule,
         MatButtonToggleModule,

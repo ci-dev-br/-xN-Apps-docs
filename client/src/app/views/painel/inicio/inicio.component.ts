@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { JanelaService } from "src/app/components/window/window.service";
+import { WindowService } from "src/app/components/window/window.service";
 import { AdicionarWidgetComponent } from "./adicionar-widget/adicionar-widget.component";
 
 @Component({
@@ -32,13 +32,13 @@ import { AdicionarWidgetComponent } from "./adicionar-widget/adicionar-widget.co
 })
 export class InicioComponent {
     constructor(
-        private janela: JanelaService,
+        private window: WindowService,
     ) { }
     adicionarCard() {
-        this.janela.open(AdicionarWidgetComponent, {});
+        this.window.open(AdicionarWidgetComponent, {});
     }
     criarWidget() {
-        
+
     }
     instalarWidget() {
 

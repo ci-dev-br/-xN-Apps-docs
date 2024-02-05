@@ -5,7 +5,7 @@ import { Application } from '@portal/api';
 import { ApplicationService } from '@portal/api';
 import { TokenService } from 'src/app/core/token.service';
 import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo.component';
-import { JanelaService } from 'src/app/components/window/window.service';
+import { WindowService } from 'src/app/components/window/window.service';
 import { MatIcon } from '@angular/material/icon';
 import { IColumns } from 'src/app/components/grid/cell-renderer/cell-renderer.component';
 
@@ -54,7 +54,7 @@ export class GerencialComponent {
     private readonly dialog: MatDialog,
     private readonly tokenS: TokenService,
     private readonly applications: ApplicationService,
-    private readonly janela: JanelaService,
+    private readonly janela: WindowService,
   ) {
     this.carregarListaAplicativos();
   }

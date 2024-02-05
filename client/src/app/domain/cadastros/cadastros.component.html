@@ -10,22 +10,28 @@
 </mat-toolbar>
 <div class="draw">
     <div class="sidenav">
-        <button mat-raised-button>
+        <ng-container *ngFor="let item of menu">
+            <button mat-raised-button>
+                <!-- <div class="icon --cadastro-pessoa"></div> -->
+                {{item.title}}
+            </button>
+        </ng-container>
+        <!-- <button mat-raised-button>
             <div class="icon --cadastro-pessoa"></div>
             Contatos
-        </button>
-        <button mat-raised-button>
+        </button> -->
+        <!-- <button mat-raised-button>
             <div class="icon --endereco"></div>
             Endereços
-        </button>
-        <button mat-raised-button>
+        </button> -->
+        <!--  <button mat-raised-button>
             <div class="icon --imagens"></div>
             Fotos
-        </button>
-        <button mat-raised-button>
+        </button> -->
+        <!--  <button mat-raised-button>
             <div class="icon --cliente"></div>
             Clientes
-        </button>
+        </button> -->
     </div>
     <div class="container">
         <header>

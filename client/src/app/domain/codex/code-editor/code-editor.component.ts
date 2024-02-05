@@ -1,5 +1,5 @@
 import { Component, Injector, Optional } from '@angular/core';
-import { JanelaService } from 'src/app/components/window/window.service';
+import { WindowService } from 'src/app/components/window/window.service';
 import { ProjetoComponent } from '../projeto/projeto.component';
 import { HttpClient } from '@angular/common/http';
 import { AgentService } from '../agent.service';

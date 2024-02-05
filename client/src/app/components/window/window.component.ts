@@ -10,13 +10,16 @@ export interface IItemMenu {
   onClick?: () => void;
   visible?: () => boolean;
 }
-
+/**
+ * Window Component
+ * 
+ */
 @Component({
-  selector: 'ci-janela',
-  templateUrl: './janela.component.html',
-  styleUrls: ['./janela.component.scss']
+  selector: 'ci-window',
+  templateUrl: './window.component.html',
+  styleUrls: ['./window.component.scss']
 })
-export class JanelaComponent implements OnInit, OnDestroy {
+export class WindowComponent implements OnInit, OnDestroy {
   showing = false;
   menu: IItemMenu[] = [
     { icon: 'done_all', label: 'Confirmar alterações', visible: () => this.changed, onClick: () => this.confirm() },
@@ -31,7 +34,7 @@ export class JanelaComponent implements OnInit, OnDestroy {
   componentTmplate?: any;
   constructor(
     private readonly daos: DaoService,
-    private readonly ref: MatDialogRef<JanelaComponent>,
+    private readonly ref: MatDialogRef<WindowComponent>,
     @Inject(MAT_DIALOG_DATA)
     private data: any,
   ) { }

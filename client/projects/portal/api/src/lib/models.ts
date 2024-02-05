@@ -7,6 +7,8 @@ export { DevicePayload } from './models/device-payload';
 export { DocumentoIdentificacao } from './models/documento-identificacao';
 export { Domain } from './models/domain';
 export { GetInputDtos } from './models/get-input-dtos';
+export { IDynamicForm } from './models/i-dynamic-form';
+export { Payload } from './models/payload';
 export { Pessoa } from './models/pessoa';
 export { Photo } from './models/photo';
 export { Policy } from './models/policy';
