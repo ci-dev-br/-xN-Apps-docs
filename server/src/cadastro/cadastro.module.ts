@@ -13,12 +13,14 @@ import { CadastroController } from "./controller/cadastro.controller";
 import { CadastroBase } from "./service/CadastroBase";
 import { CadastroPessoaForm } from "./service/cadastros/cadastro-pessoa.form";
 import { CadastroEnderecoForm } from "./service/cadastros/cadastro-endereco.form";
+import { CadastroImagensForm } from "./service/cadastros/cadastro-imagens.form";
 
 
 
 const FORM_PROVIDERS = [
     CadastroPessoaForm,
     CadastroEnderecoForm,
+    CadastroImagensForm,
 ]
 
 export const CadastroEntidades = [
