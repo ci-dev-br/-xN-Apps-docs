@@ -6,6 +6,7 @@ import { CadastrosComponent } from './cadastros.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { CadastroModule } from './cadastro/cadastro.module';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatIconModule,
     MatToolbarModule,
     MatButtonModule,
+    CadastroModule,
   ]
 })
 export class CadastrosModule { }

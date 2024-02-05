@@ -29,15 +29,23 @@ export class CadastroController {
     async getAll(
         @Body()
         input?: Payload<void>) {
-        return this.services.map(s => {
-            if (input && !!input.fields) {
-                const out: any = {};
-                for (let field of input.fields) {
-                    out[field] = s.view[field];
+        return this.services
+            .filter(s => {
+                if (input.by && input.equals) {
+                    if (s.view[input.by] === input.equals) return true;
+                    return false;
                 }
-                return out;
-            }
-            return s.view
-        });
+                return true;
+            })
+            .map(s => {
+                if (input && !!input.fields) {
+                    const out: any = {};
+                    for (let field of input.fields) {
+                        out[field] = s.view[field];
+                    }
+                    return out;
+                }
+                return s.view
+            });
     }
 }

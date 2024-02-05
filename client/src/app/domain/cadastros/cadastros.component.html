@@ -11,7 +11,7 @@
 <div class="draw">
     <div class="sidenav">
         <ng-container *ngFor="let item of menu">
-            <button mat-raised-button>
+            <button mat-raised-button (click)="abrirItemMenu(item.title ||'')">
                 <!-- <div class="icon --cadastro-pessoa"></div> -->
                 {{item.title}}
             </button>
@@ -34,17 +34,20 @@
         </button> -->
     </div>
     <div class="container">
-        <header>
+        <!--  <header>
             <h1>
                 Cadastros
             </h1>
             <div class="row">
                 <p></p>
             </div>
-        </header>
+        </header> -->
         <!--  <section>
             <p>cadastros works!</p>
         </section> -->
+        <ng-container *ngIf="currentForm">
+            <ci-cadastro [dynamicForm]="currentForm" />
+        </ng-container>
     </div>
 </div>
 <nav class="status">

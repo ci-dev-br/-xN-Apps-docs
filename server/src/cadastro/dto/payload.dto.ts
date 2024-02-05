@@ -8,4 +8,8 @@ export class Payload<T> {
     data?: T;
     @ApiProperty({ nullable: true, required: false })
     fields?: string[];
+    @ApiProperty({ nullable: true, required: false })
+    by?: string;
+    @ApiProperty({ nullable: true, required: false })
+    equals?: string;
 }
