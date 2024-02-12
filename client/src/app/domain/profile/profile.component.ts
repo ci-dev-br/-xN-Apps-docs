@@ -48,9 +48,8 @@ export class ProfileComponent implements OnDestroy {
       if (_user) {
         _user.fullName = el.innerText;
         this.editingField = undefined;
-
         this.userService.identificarUsuario(
-          await lastValueFrom(this.userApiService.syncUser({ body: _user }))
+          { ...await lastValueFrom(this.userApiService.syncUser({ body: _user })), photo }
         );
       }
     }
