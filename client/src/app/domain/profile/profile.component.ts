@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
-import { PhotoService, UserService as UserApiService } from '@portal/api';
+import { PhotoService, User, UserService as UserApiService } from '@portal/api';
 import { lastValueFrom } from 'rxjs';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
@@ -44,7 +44,7 @@ export class ProfileComponent implements OnDestroy {
   async change(event: FocusEvent | Event, propertyName: string) {
     if (event.target instanceof HTMLElement) {
       const el: HTMLElement = event.target;
-      const _user = this.user.value;
+      const { photo, ..._user } = this.user.value as User;
       if (_user) {
         _user.fullName = el.innerText;
         this.editingField = undefined;
