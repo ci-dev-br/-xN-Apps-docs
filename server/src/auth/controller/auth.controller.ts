@@ -45,7 +45,8 @@ export class AuthController {
   async profile(
     @Request() req: Request,
   ) {
-    return (req as any).user
+    let { refreshToken, password, ...user } = await this.userService.findById((req as any).user.id);
+    return user;
   }
   @Public()
   @Post('Acessar')

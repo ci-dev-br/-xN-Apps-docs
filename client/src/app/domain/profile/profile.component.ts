@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
 import { PhotoService, UserService as UserApiService } from '@portal/api';
 import { lastValueFrom } from 'rxjs';
@@ -9,7 +9,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnDestroy {
   profilePhotoUser?: SafeResourceUrl;
   obtendoFoto = false;
   @ViewChild('profileVideo')
@@ -22,8 +22,14 @@ export class ProfileComponent {
     private readonly sanitizer: DomSanitizer,
     private readonly photoService: PhotoService,
   ) {
+    this.user.subscribe(
+      () =>
+        this.loadPhoto()
+    );
+  }
 
-    this.loadPhoto();
+  ngOnDestroy(): void {
+    this.mediaStream?.getTracks()?.map(t => t.stop());
   }
 
   edit(toEdit: string) {
@@ -78,11 +84,13 @@ export class ProfileComponent {
           context.fillStyle = ''
           context.fillRect(w, h, canvas.width, canvas.height);
           context.drawImage(video, 0, 0, w, h);
+          this.mediaStream?.getTracks()?.map(t => t.stop());
           const data = canvas.toDataURL("image/jpg");
           this.profilePhotoUser = this.sanitizer.bypassSecurityTrustResourceUrl(data);
           if (this.profilePhotoUser) this.saveProfilePhotoUser(data.split(',')[1]);
         }
-        video.src = '';
+        video.pause();
+        video.srcObject = null;
         this.obtendoFoto = false;
       }
     }
@@ -94,7 +102,6 @@ export class ProfileComponent {
     }
   }
   private async saveProfilePhotoUser(data: string) {
-
     if (this.user.value) {
       if (!this.user?.value?.photo) this.user.value.photo = {};
       (this.user.value?.photo as any).originalFile = data;
@@ -102,12 +109,3 @@ export class ProfileComponent {
     }
   }
 }
-/* email
-fullName
-id
-password
-permission
-phone
-refreshToken
-roles
-username */

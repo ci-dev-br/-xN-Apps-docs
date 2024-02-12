@@ -55,8 +55,7 @@ export class UserService {
         })
     }
     async findById(userId: string) {
-        const user = await this.userRepo.findOne({ where: { id: userId } })
-
+        const user = await this.userRepo.findOne({ where: { id: userId }, relations: ['photo'] })
         return user;
     }
 

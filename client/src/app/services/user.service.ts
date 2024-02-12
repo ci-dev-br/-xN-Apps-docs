@@ -1,6 +1,6 @@
 import { Injectable, OnInit } from "@angular/core";
-import { User } from "@portal/api";
-import { BehaviorSubject } from "rxjs";
+import { AuthService, User, UserService as UserApiService } from "@portal/api";
+import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
 import { TokenService } from "../core/token.service";
 
@@ -10,6 +10,8 @@ export class UserService {
     constructor(
         private readonly router: Router,
         private readonly tokenService: TokenService,
+        private readonly userApiService: UserApiService,
+        private readonly authService: AuthService,
     ) {
         this.$user.subscribe(v => {
             try {
@@ -44,6 +46,11 @@ export class UserService {
         } catch (error) {
         }
         if (cached) {
+            setTimeout(async () => {
+                this.$user.next(await lastValueFrom(
+                    this.authService.profile()
+                ));
+            }, 0);
             return {
                 ...JSON.parse(atob(cached))
             } as User;
