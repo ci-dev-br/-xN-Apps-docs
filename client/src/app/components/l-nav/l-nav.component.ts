@@ -6,6 +6,7 @@ import { Application } from '@portal/api';
 import { ApplicationService } from '@portal/api';
 import { HttpClient } from '@angular/common/http';
 import { ServicesService } from 'src/app/core/services/services.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 interface IBreadcrumb {
   name?: string;
@@ -24,12 +25,14 @@ export class LNavComponent {
   $user = this.userService.user;
   get appsGlobal() { return this.apps?.filter(i => i.menuGroupName === 'global') }
   get appsUser() { return this.apps?.filter(i => i.menuGroupName === 'user') }
+  userPhoto?: SafeResourceUrl;
   constructor(
     private readonly router: Router,
     private readonly userService: UserService,
     private readonly applicationService: ApplicationService,
     private readonly http: HttpClient,
     public readonly services: ServicesService,
+    private readonly sanitizer: DomSanitizer,
   ) {
     this.load();
     router.events.subscribe((event: any) => {
@@ -54,6 +57,10 @@ export class LNavComponent {
           }, ...this.breadcrumb];
         }
       }
+    });
+    userService.user.subscribe(user => {
+      if (user?.photo?.originalFile)
+        this.userPhoto = this.sanitizer.bypassSecurityTrustResourceUrl('data:image;base64,' + btoa(String.fromCharCode(...new Uint8Array((user?.photo?.originalFile as any).data))));
     })
   }
   load() {

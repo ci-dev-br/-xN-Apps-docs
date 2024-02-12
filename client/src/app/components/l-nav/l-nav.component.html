@@ -33,8 +33,9 @@
         }}
       </span>
     </div>
-    <button mat-icon-button [matMenuTriggerFor]="userMenu">
-      <mat-icon>face</mat-icon>
+    <button class="user-menu" mat-icon-button [matMenuTriggerFor]="userMenu">
+      <img [src]="userPhoto">
+      <!-- <mat-icon>face</mat-icon> -->
     </button>
     <mat-menu #userMenu>
       <ng-container *ngFor="let item of appsUser">

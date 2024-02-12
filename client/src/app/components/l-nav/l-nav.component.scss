@@ -94,3 +94,19 @@ nav {
     display: contents;
   }
 }
+
+button.user-menu {
+  // width: 48px;
+  // height: 48px;
+  // padding: 0;
+  // margin: 0;
+
+  img {
+    // width: 48px;
+    // height: 48px;
+    border-radius: 50%;
+    // border: solid 2px white;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.7);
+    object-fit: cover;
+  }
+}
