@@ -3,6 +3,7 @@
 export { AcessoPayload } from './models/acesso-payload';
 export { Application } from './models/application';
 export { AuthorizationOutput } from './models/authorization-output';
+export { Buffer } from './models/buffer';
 export { DevicePayload } from './models/device-payload';
 export { DocumentoIdentificacao } from './models/documento-identificacao';
 export { Domain } from './models/domain';

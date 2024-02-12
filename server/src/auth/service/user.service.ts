@@ -9,6 +9,7 @@ export class UserService {
     constructor(
         @InjectRepository(User)
         private readonly userRepo: Repository<User>,
+
     ) { }
     async registrar(registro: User) {
         const new_user = this.userRepo.create(registro);

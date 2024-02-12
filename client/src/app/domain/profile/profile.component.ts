@@ -1,8 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
-import { UserService as UserApiService } from '@portal/api';
+import { PhotoService, UserService as UserApiService } from '@portal/api';
 import { lastValueFrom } from 'rxjs';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'ci-profile',
@@ -10,7 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent {
-  profilePhotoUser?: any;
+  profilePhotoUser?: SafeResourceUrl;
   obtendoFoto = false;
   @ViewChild('profileVideo')
   profileVideo?: ElementRef<HTMLVideoElement>;
@@ -20,7 +20,11 @@ export class ProfileComponent {
     private readonly userService: UserService,
     private readonly userApiService: UserApiService,
     private readonly sanitizer: DomSanitizer,
-  ) { }
+    private readonly photoService: PhotoService,
+  ) {
+
+    this.loadPhoto();
+  }
 
   edit(toEdit: string) {
     if (!this.editingField) {
@@ -54,8 +58,8 @@ export class ProfileComponent {
         if (video) {
           this.obtendoFoto = true;
           video.srcObject = this.mediaStream;
-          video.width = 140;
-          video.height = 140;
+          // video.width = 140;
+          // video.height = 140;
           video.play();
         }
       } catch (error) {
@@ -65,20 +69,36 @@ export class ProfileComponent {
       const video = this.profileVideo?.nativeElement;
       if (video) {
         const canvas = document.createElement('canvas');
-        canvas.width = 140;
-        canvas.height = 140;
+        const w = video.videoWidth / 3;
+        const h = video.videoHeight / 3;
+        canvas.width = w;
+        canvas.height = h;
         const context = canvas.getContext('2d');
         if (context) {
           context.fillStyle = ''
-          context.fillRect(140, 140, canvas.width, canvas.height);
-          context.drawImage(video, 0, 0, 140, 140);
-          const data = canvas.toDataURL("image/png");
-          // console.log(data);
+          context.fillRect(w, h, canvas.width, canvas.height);
+          context.drawImage(video, 0, 0, w, h);
+          const data = canvas.toDataURL("image/jpg");
           this.profilePhotoUser = this.sanitizer.bypassSecurityTrustResourceUrl(data);
+          if (this.profilePhotoUser) this.saveProfilePhotoUser(data.split(',')[1]);
         }
         video.src = '';
         this.obtendoFoto = false;
       }
+    }
+  }
+  private async loadPhoto() {
+    if (this.user?.value?.photo?.originalFile) {
+      const a: any = this.user?.value?.photo?.originalFile;
+      this.profilePhotoUser = this.sanitizer.bypassSecurityTrustResourceUrl('data:image;base64,' + btoa(String.fromCharCode(...new Uint8Array(a.data))));
+    }
+  }
+  private async saveProfilePhotoUser(data: string) {
+
+    if (this.user.value) {
+      if (!this.user?.value?.photo) this.user.value.photo = {};
+      (this.user.value?.photo as any).originalFile = data;
+      await lastValueFrom(this.photoService.syncPhoto({ body: this.user.value.photo }));
     }
   }
 }

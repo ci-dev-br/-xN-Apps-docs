@@ -38,7 +38,7 @@ export class User {
     @ManyToMany(() => Tenant)
     @JoinTable()
     tenants?: Tenant[];
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({ nullable: true, required: false, type: Photo })
     @ManyToOne(() => Photo)
     @JoinColumn()
     photo?: Photo;
