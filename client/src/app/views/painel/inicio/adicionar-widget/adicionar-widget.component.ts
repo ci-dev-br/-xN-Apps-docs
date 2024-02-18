@@ -22,7 +22,7 @@ export class AdicionarWidgetComponent implements OnInit {
     ngOnInit() {
         this.pesquisaControl.valueChanges.subscribe((v: string) => this.pesquisar(v))
     }
-    adicionar(item: IWidget) {
+    configurarWidget(item: IWidget) {
         this.selecionado = item;
         if (item.settings) {
             const group: any = {
@@ -33,7 +33,12 @@ export class AdicionarWidgetComponent implements OnInit {
             })
             this.formSettings = this.fb.group(group);
         }
-
+    }
+    adicionarWidget() {
+        const settings = this.formSettings?.getRawValue();
+        const widget_info = this.selecionado;
+        
+        this.selecionado = undefined;
     }
     pesquisar(value: string) {
         this.widgets = Widgets.filter((w: IWidget) => value && value.length > 0 && (

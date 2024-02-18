@@ -14,7 +14,7 @@
                     <p>{{item.description}}</p>
                 </div>
                 <div class="row">
-                    <button mat-icon-button matTooltip="Adicionar à prancheta" (click)="adicionar(item)">
+                    <button mat-icon-button matTooltip="Adicionar à prancheta" (click)="configurarWidget(item)">
                         <mat-icon>add</mat-icon>
                     </button>
                 </div>
@@ -39,7 +39,7 @@
         <button mat-raised-button>
             Salvar Modelo
         </button>
-        <button mat-raised-button color="primary">
+        <button mat-raised-button color="primary" (click)="adicionarWidget()">
             Adicionar
         </button>
     </div>
