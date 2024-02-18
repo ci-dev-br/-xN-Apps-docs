@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { IWidget } from "src/app/widgets/i-widget";
 import { Widgets } from "src/app/widgets/widgets";
+import { WidgetService } from "../widget.service";
 
 @Component({
     selector: 'px-adicionar-widget',
@@ -17,6 +18,7 @@ export class AdicionarWidgetComponent implements OnInit {
     formSettings?: FormGroup;
     pesquisaControl: FormControl = this.fb.control('');
     constructor(
+        private readonly widgetServices: WidgetService,
         private readonly fb: FormBuilder,
     ) { }
     ngOnInit() {
@@ -37,7 +39,8 @@ export class AdicionarWidgetComponent implements OnInit {
     adicionarWidget() {
         const settings = this.formSettings?.getRawValue();
         const widget_info = this.selecionado;
-        
+        if (widget_info)
+            this.widgetServices.adicionarWidget(settings, widget_info);
         this.selecionado = undefined;
     }
     pesquisar(value: string) {

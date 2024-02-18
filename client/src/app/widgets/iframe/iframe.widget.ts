@@ -29,5 +29,6 @@ export const IFrameWidgetInfo: IWidget = {
         title: { type: 'text', maxLength: 80, label: 'Título' },
         url: { type: 'text', maxLength: 1024, label: 'Endereço URL' },
     },
-    module: IFrameWidgetModule, component: IFrameWidget,
-}
+    module: IFrameWidgetModule,
+    component: IFrameWidget,
+};

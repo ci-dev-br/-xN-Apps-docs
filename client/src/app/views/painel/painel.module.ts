@@ -16,6 +16,7 @@ import { LayoutThumbComponent } from './inicio/layout/layout-thumb/layout-thumb.
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
+import { WidgetService } from './inicio/widget.service';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatInputModule,
     MatMenuModule,
     ReactiveFormsModule,
+  ],
+  providers: [
+    WidgetService,
   ]
 })
 export class PainelModule { }
