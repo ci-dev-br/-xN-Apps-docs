@@ -3,7 +3,10 @@ import { IWidget } from "../i-widget";
 
 @Component({
     selector: 'px-iframe-widget',
-    template: ``,
+    template: `
+        <h1>{{title}}</h1>
+        <p>{{url}}</p>
+    `,
     styles: [``]
 })
 export class IFrameWidget {

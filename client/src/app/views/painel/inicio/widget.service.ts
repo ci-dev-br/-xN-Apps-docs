@@ -10,6 +10,6 @@ export class WidgetService {
         settings: any,
         widget: IWidget,
     ) {
-        this.widgets.push({ settings, widget });
+        this.widgets.push({ settings, widget })
     }
 }

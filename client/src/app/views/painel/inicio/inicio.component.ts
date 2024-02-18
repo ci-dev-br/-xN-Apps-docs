@@ -14,7 +14,7 @@ import { WidgetService } from "./widget.service";
             <ng-container *ngFor="let widget_g of widgets" >
                 <ng-container *ngIf="!!widget_g.widget.component">
                     <div class="card-wrapper"  >
-                        <ng-container  *ngComponentOutlet="widget_g.widget.component" ></ng-container>
+                        <ng-container  *ngComponentOutlet="widget_g.widget.component;inputs:widget_g.settings" ></ng-container>
                     </div>
                 </ng-container>
             </ng-container>
