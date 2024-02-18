@@ -1,4 +1,4 @@
-import { Component, NgModule } from "@angular/core";
+import { Component, Input, NgModule } from "@angular/core";
 import { IWidget } from "../i-widget";
 
 @Component({
@@ -7,7 +7,10 @@ import { IWidget } from "../i-widget";
     styles: [``]
 })
 export class IFrameWidget {
-    constructor() { }
+    @Input()
+    title?: string;
+    @Input()
+    url?: string;
 }
 @NgModule({
     declarations: [
