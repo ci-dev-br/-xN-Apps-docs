@@ -1,33 +1,46 @@
-<div class="widgets" *ngIf="!selecionado">
-    <ng-container *ngFor="let item of widgets">
-        <div class="widget-info">
-            <div>
-                <h1>{{item.title}}</h1>
-                <p>{{item.description}}</p>
+<div class="row" *ngIf="!selecionado">
+    <div class="search">
+        <mat-form-field>
+            <mat-label>Pesquisa</mat-label>
+            <input [formControl]="pesquisaControl" matInput type="text"
+                placeholder="Descreva o componente ou localize por nome ou id">
+        </mat-form-field>
+    </div>
+    <div class="widgets">
+        <ng-container *ngFor="let item of widgets">
+            <div class="widget-info">
+                <div>
+                    <h4>{{item.title}}</h4>
+                    <p>{{item.description}}</p>
+                </div>
+                <div class="row">
+                    <button mat-icon-button matTooltip="Adicionar à prancheta" (click)="adicionar(item)">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </div>
             </div>
-            <div class="row">
-                <button mat-icon-button matTooltip="Adicionar à prancheta" (click)="adicionar(item)">
-                    <mat-icon>add</mat-icon>
-                </button>
-            </div>
-        </div>
-    </ng-container>
+        </ng-container>
+    </div>
 </div>
 <div class="configurar" *ngIf="!!selecionado">
     <form *ngIf="formSettings" [formGroup]="formSettings">
         <ng-container *ngFor="let kv of selecionado.settings | keyvalue">
             <ng-container>
                 <mat-form-field>
-                    <mat-label>{{kv.value.label}}</mat-label>
+                    <mat-label>{{kv?.value?.label}}</mat-label>
                     <input type="text" matInput [formControlName]="kv.key">
                 </mat-form-field>
             </ng-container>
         </ng-container>
     </form>
 </div>
-
-<div class="row">
-    <button mat-button color="primary">
-        Adicionar
-    </button>
-</div>
+<ng-container *ngIf="!!selecionado">
+    <div class="row" style="justify-content: flex-end;">
+        <button mat-raised-button>
+            Salvar Modelo
+        </button>
+        <button mat-raised-button color="primary">
+            Adicionar
+        </button>
+    </div>
+</ng-container>

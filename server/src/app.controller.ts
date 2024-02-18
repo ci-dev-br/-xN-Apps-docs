@@ -6,7 +6,9 @@ import { resolve } from 'path';
 
 @Controller('*')
 export class AppController {
-  constructor(private readonly appService: AppService) { }
+  constructor(private readonly appService: AppService) {
+    console.log('[Hello]');
+  }
   @Get()
   @Public()
   root(@Req() req: Request, @Res() res: Response) {

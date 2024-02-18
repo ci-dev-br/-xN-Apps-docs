@@ -6,9 +6,23 @@ import { HttpsOptions } from '@nestjs/common/interfaces/external/https-options.i
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
 import { config } from 'dotenv';
+import { spawnSync } from 'child_process';
 console.clear();
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
+
+async function start(app: NestExpressApplication, port: number) {
+  try {
+    await app.listen(port);
+  } catch (error) {
+    if (error.code === 'EADDRINUSE') {
+      console.error(error);
+      const out = spawnSync('powershell', ['Stop-Service -DisplayName apps.ci.dev.br']);
+      await start(app, port);
+    }
+  }
+}
+
 async function bootstrap() {
   const httpsOptions: HttpsOptions = {
     // cert: process.env.cert ? fs.readFileSync(process.env.cert) : undefined,
@@ -35,13 +49,13 @@ async function bootstrap() {
     .addTag('@apps')
     .addBearerAuth()
     .build();
-  const document = SwaggerModule.createDocument(app, options); 
+  const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
   const PORT = Number(process.env.PORT);
-  await app.listen(PORT);
+  await start(app, PORT);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();

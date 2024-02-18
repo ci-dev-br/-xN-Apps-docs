@@ -38,6 +38,7 @@
     "@swimlane/ngx-charts": "^20.4.1",
     "crypto-js": "^4.1.1",
     "express": "^4.18.2",
+    "firebase": "^10.8.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.2"

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Column, CreateDateColumn, Entity, Equal, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, Repository, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, OneToOne, PrimaryGeneratedColumn, Repository, UpdateDateColumn } from "typeorm";
 import { User } from "src/auth/models/user.entity";
 import { Tenant } from "src/tenant/models/tenant.entity";
 
@@ -12,19 +12,22 @@ export abstract class AuditedEntity {
     @PrimaryGeneratedColumn('uuid')
     internalId: string;
     @ApiProperty({ nullable: true, required: false })
-    @ManyToMany(() => User)
+    @ManyToMany(() => Tenant)
+    @JoinTable()
     tenants: Tenant[];
     @ApiProperty({ nullable: true, required: false })
     @CreateDateColumn({})
     createdAt?: Date;
     @ApiProperty({ nullable: true, required: false })
-    @ManyToMany(() => User)
+    @OneToOne(() => User)
+    @JoinColumn()
     createdBy?: User;
     @ApiProperty({ nullable: true, required: false })
     @UpdateDateColumn()
     lastModifiedAt?: Date;
     @ApiProperty({ nullable: true, required: false })
-    @ManyToMany(() => User)
+    @OneToOne(() => User)
+    @JoinColumn()
     lastModifiedBy?: User;
 }
 

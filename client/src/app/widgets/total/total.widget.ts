@@ -19,3 +19,12 @@ export class TotalWidget {
     ]
 })
 export class TotalWidgetModule { }
+export const TotalWidgetInfo = {
+    title: "Total",
+    description: 'Visualizar valor Total.',
+    tags: ['Valores'],
+    settings: {
+        value: { type: 'text', label: "Valor total" }
+    },
+    module: TotalWidgetModule, component: TotalWidget
+};

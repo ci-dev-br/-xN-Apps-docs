@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
-import { IWidget, Widgets } from "src/app/widgets/widgets";
+import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
+import { IWidget } from "src/app/widgets/i-widget";
+import { Widgets } from "src/app/widgets/widgets";
 
 @Component({
     selector: 'px-adicionar-widget',
@@ -14,6 +15,7 @@ export class AdicionarWidgetComponent {
     stage: 'find' | 'settings' = 'find';
     selecionado?: IWidget;
     formSettings?: FormGroup;
+    pesquisaControl: FormControl = this.fb.control('');
     constructor(
         private readonly fb: FormBuilder,
     ) { }

@@ -77,6 +77,12 @@ const routes: Routes = [
     loadChildren: () => import(`./domain/cadastros/cadastros.module`).then(m => m.CadastrosModule),
     data: { role: 'ADMIN', data: 'Cadastros', icon: 'menu_books' }
   },
+  {
+    path: `mensagens`,
+    canActivate: [authGuard],
+    loadChildren: () => import(`./domain/mensagens/mensagens.module`).then(m => m.MensagensModule),
+    data: { role: 'ADMIN', data: 'Mensagens', icon: 'menu_books' }
+  },
   { path: '', loadChildren: () => import('./views/homepage/homepage.module').then(m => m.HomepageModule) },
   { path: 'acessar', loadChildren: () => import('./views/acessar/acessar.module').then(m => m.AcessarModule) },
   { path: 'criar-conta', loadChildren: () => import('./views/criar-conta/criar-conta.module').then(m => m.CriarContaModule) },

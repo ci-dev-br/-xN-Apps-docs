@@ -22,6 +22,7 @@ import { CadastroEntidades, CasdastroModule } from './cadastro/cadastro.module';
 import { PaymentEntities, PaymentModule } from './payment/payment.module';
 import { FiscalEntities, FiscalModule } from './fiscal/fiscal.module';
 import { InfraEntities, InfraModule } from './core/infra/infra.module';
+import { SystemEntities } from './core/system/system.module';
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
 @Module({
@@ -60,6 +61,7 @@ config({ path: is_production ? '.env' : '.env.dev' });
         ...PaymentEntities,
         ...FiscalEntities,
         ...InfraEntities,
+        ...SystemEntities,
       ]
     }),
     NotificacaoModule,

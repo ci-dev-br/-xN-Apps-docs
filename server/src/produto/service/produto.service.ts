@@ -16,10 +16,10 @@ export class ProdutoService {
      * @returns 
      */
     async sync(data: Product) {
-        let { id, ...changes } = data;
-        let data_ref = !!data.id ? await this.repo.findOneBy({ id: data.id }) : await this.repo.create(data);
-        Object.assign(data_ref, changes);
-        return await this.repo.save(data_ref);
+        // let { id, ...changes } = data;
+        // let data_ref = !!data.id ? await this.repo.findOneBy({ id: data.id }) : await this.repo.create(data);
+        // Object.assign(data_ref, changes);
+        // return await this.repo.save(data_ref);
     }
 
     async listar(
