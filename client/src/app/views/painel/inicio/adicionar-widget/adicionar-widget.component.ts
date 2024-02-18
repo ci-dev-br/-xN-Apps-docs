@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { IWidget } from "src/app/widgets/i-widget";
 import { Widgets } from "src/app/widgets/widgets";
@@ -10,8 +10,8 @@ import { Widgets } from "src/app/widgets/widgets";
         'adicionar-widget.component.scss'
     ]
 })
-export class AdicionarWidgetComponent {
-    widgets = Widgets;
+export class AdicionarWidgetComponent implements OnInit {
+    widgets: IWidget[] = [];
     stage: 'find' | 'settings' = 'find';
     selecionado?: IWidget;
     formSettings?: FormGroup;
@@ -19,6 +19,9 @@ export class AdicionarWidgetComponent {
     constructor(
         private readonly fb: FormBuilder,
     ) { }
+    ngOnInit() {
+        this.pesquisaControl.valueChanges.subscribe((v: string) => this.pesquisar(v))
+    }
     adicionar(item: IWidget) {
         this.selecionado = item;
         if (item.settings) {
@@ -31,5 +34,12 @@ export class AdicionarWidgetComponent {
             this.formSettings = this.fb.group(group);
         }
 
+    }
+    pesquisar(value: string) {
+        console.log(value);
+        this.widgets = Widgets.filter((w: IWidget) => value && value.length > 0 && (
+            (w?.description && w?.description.toLocaleLowerCase().indexOf(value.toLocaleLowerCase()) > -1) ||
+            (w?.title && w?.title.toLocaleLowerCase().indexOf(value.toLocaleLowerCase()) > -1))
+        );
     }
 }
