@@ -36,7 +36,6 @@ export class AdicionarWidgetComponent implements OnInit {
 
     }
     pesquisar(value: string) {
-        console.log(value);
         this.widgets = Widgets.filter((w: IWidget) => value && value.length > 0 && (
             (w?.description && w?.description.toLocaleLowerCase().indexOf(value.toLocaleLowerCase()) > -1) ||
             (w?.title && w?.title.toLocaleLowerCase().indexOf(value.toLocaleLowerCase()) > -1))
