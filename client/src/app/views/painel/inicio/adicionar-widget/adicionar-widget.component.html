@@ -36,6 +36,9 @@
 </div>
 <ng-container *ngIf="!!selecionado">
     <div class="row" style="justify-content: flex-end; padding: 24px; gap: 12px;">
+        <button mat-raised-button (click)="selecionado = undefined">
+            Cancelar
+        </button>
         <button mat-raised-button>
             Salvar Modelo
         </button>
