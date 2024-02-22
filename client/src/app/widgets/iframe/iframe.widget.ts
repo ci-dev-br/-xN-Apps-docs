@@ -1,19 +1,31 @@
-import { Component, Input, NgModule } from "@angular/core";
+import { Component, Input, NgModule, SecurityContext } from "@angular/core";
 import { IWidget } from "../i-widget";
+import { DomSanitizer } from "@angular/platform-browser";
 
 @Component({
     selector: 'px-iframe-widget',
     template: `
-        <h1>{{title}}</h1>
-        <p>{{url}}</p>
+        <div *ngIf="title" class="card-title">{{title}}</div>
+        <iframe class="card-content-full" [src]="url"  >
+        </iframe>
     `,
     styles: [``]
 })
 export class IFrameWidget {
     @Input()
     title?: string;
+    private _url?: any;
+    public get url() {
+        return this._url;
+    }
     @Input()
-    url?: string;
+    public set url(value) {
+        console.log(value);
+        this._url = this.domSanitize.bypassSecurityTrustResourceUrl(value as string);
+    }
+    constructor(
+        private readonly domSanitize: DomSanitizer,
+    ) { }
 }
 @NgModule({
     declarations: [

@@ -6,7 +6,6 @@ export const PranchetaEntities = [
     Prancheta,
     PranchetaItemMetadata
 ];
-
 @Module({
     imports: [
         TypeOrmModule.forFeature(PranchetaEntities)
