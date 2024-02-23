@@ -4,6 +4,7 @@
     align-items: center;
     background: linear-gradient(173deg, #ffffff 0%, #444 100%);
     min-height: 100vh;
+    max-height: 100vh;
     overflow: hidden;
 }
 
@@ -45,22 +46,27 @@ ci-l-nav {
 
 .cards {
     display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
     gap: 48px;
     padding: 48px;
     flex: auto;
+
     justify-self: stretch;
     align-self: stretch;
     align-items: stretch;
     justify-content: stretch;
 
     .card {
-        min-width: 420px;
+        /// min-width: 420px;
         padding: 24px;
         background: rgba(#FFFFFF, .80);
         flex: auto;
         backdrop-filter: blur(12px);
         box-shadow: 0 10px 25px rgba(#000000, .44);
         border-radius: 4.8px;
+        width: auto;
 
         &:nth-child(1) {
             width: 350px;

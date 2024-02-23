@@ -142,4 +142,7 @@ export abstract class ControllerDaoBase<Service extends DaoServiceBase<any>, E> 
     async sync(entity: SyncPayloadDao<E>) {
         return await this._service.sincronizar(entity.data);
     }
+    async get(query: string) {
+        return await this._service.sincronizar(entity.data);
+    }
 } 

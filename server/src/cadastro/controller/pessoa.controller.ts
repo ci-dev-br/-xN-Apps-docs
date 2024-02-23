@@ -8,6 +8,14 @@ export class SyncPayloadDaoPessoa extends SyncPayloadDao<Pessoa>{
     @ApiProperty({ type: Pessoa })
     override data?: Pessoa;
 }
+
+export class PessoaCotrollerGetInputDto {
+    @ApiProperty({ nullable: true, required: false })
+    query?: string;
+    @ApiProperty({ nullable: true, required: false })
+    limit?: number;
+}
+
 /**
  * Pessoa Controller
  * 
@@ -28,5 +36,19 @@ export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
         @Body() body: SyncPayloadDaoPessoa,
     ) {
         return await super.sync(body)
+    }
+
+    @Post('Get')
+    @ApiResponse({
+        type:
+            SyncPayloadDaoPessoa
+    })
+    @ApiOperation({
+        operationId: 'PessoaSync'
+    })
+    async get(
+        @Body() input: PessoaCotrollerGetInputDto,
+    ) {
+        return await super.get(input)
     }
 }

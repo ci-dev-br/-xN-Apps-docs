@@ -9,8 +9,8 @@ import { CadastroBase, IDynamicForm } from "../CadastroBase";
 @Injectable()
 export class CadastroImagensForm extends CadastroBase {
     view: IDynamicForm = {
-        title: 'Imagens',
-        description: 'Cadastro de Imagens',
+        title: 'Arquivos',
+        description: 'Cadastro de Arquivos',
         controls: {
         }
     }
