@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { Prancheta } from "../models/prancheta.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-
 @Injectable()
 export class PranchetaService {
     constructor(
