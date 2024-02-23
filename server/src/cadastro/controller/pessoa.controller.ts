@@ -46,9 +46,9 @@ export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
     @ApiOperation({
         operationId: 'PessoaSync'
     })
-    async get(
-        @Body() input: PessoaCotrollerGetInputDto,
+    override async get(
+       //  @Body() input: PessoaCotrollerGetInputDto,
     ) {
-        return await super.get(input)
+        // return await super.get(input)
     }
 }
