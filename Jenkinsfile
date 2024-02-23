@@ -8,7 +8,7 @@ pipeline {
     }
     stage('build client') {
       steps {
-        bat'cd client/ && node ./node_modules/@angular/cli/bin/ng build -c production'
+        bat'node deploy.js'
       }
     }
     stage('install serve dependencies') {
