@@ -4,6 +4,11 @@ import { ApiProperty } from "@nestjs/swagger";
 export class IDynamicFormControl {
     label?: string;
     placeholder?: string;
+    maxLenght?: number;
+    minLenght?: number;
+    max?: number | Date;
+    min?: number | Date;
+    options?: string[];
 }
 
 export class IDynamicForm {

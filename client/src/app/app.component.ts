@@ -1,9 +1,10 @@
-import { Component, Inject, isDevMode } from '@angular/core';
+import { Component, Inject, Optional, isDevMode } from '@angular/core';
 import { ChildActivationStart, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { UserService } from './services/user.service';
 import { PaginaErroComponent } from './views/pagina-erro/pagina-erro.component';
 import { DOCUMENT } from '@angular/common';
+import { LocalizationService } from './core/services/localization.service';
 @Component({
   selector: 'ci-root',
   templateUrl: './app.component.html',
@@ -16,7 +17,10 @@ export class AppComponent {
     private readonly userService: UserService,
     @Inject(DOCUMENT)
     private readonly document: Document,
+    @Optional()
+    localizacao: LocalizationService,
   ) {
+    setTimeout(() => localizacao.init(), 0);
     router.events.subscribe(v => {
       try {
         if (!!(v as any)?.snapshot?.data?.name) {

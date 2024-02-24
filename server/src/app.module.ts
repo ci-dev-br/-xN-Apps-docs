@@ -23,6 +23,7 @@ import { PaymentEntities, PaymentModule } from './payment/payment.module';
 import { FiscalEntities, FiscalModule } from './fiscal/fiscal.module';
 import { InfraEntities, InfraModule } from './core/infra/infra.module';
 import { SystemEntities } from './core/system/system.module';
+import { FinanceiroEntities, FinanceiroModule } from './financeiro/financeiro.module';
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
 @Module({
@@ -62,6 +63,7 @@ config({ path: is_production ? '.env' : '.env.dev' });
         ...FiscalEntities,
         ...InfraEntities,
         ...SystemEntities,
+        ...FinanceiroEntities,
       ]
     }),
     NotificacaoModule,
@@ -80,6 +82,7 @@ config({ path: is_production ? '.env' : '.env.dev' });
     PaymentModule,
     FiscalModule,
     InfraModule,
+    FinanceiroModule,
     CoreModule.forRoot({
       snapshot: true
     })

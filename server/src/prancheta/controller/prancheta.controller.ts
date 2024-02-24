@@ -4,8 +4,8 @@ import { ApiProperty, ApiTags } from "@nestjs/swagger";
 import { Prancheta } from "../models/prancheta.entity";
 
 export class PranchetaSyncPayloadDto {
-    @ApiProperty({ type: Prancheta })
-    pranchta: Prancheta
+    @ApiProperty({ type: Prancheta, nullable: true, required: false })
+    pranchta?: Prancheta
 }
 @ApiTags('Prancheta')
 @Controller('Prancheta')
