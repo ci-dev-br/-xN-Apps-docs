@@ -28,4 +28,7 @@ export class Application {
     @ApiProperty({ nullable: true, required: false })
     @Column({ default: 'global', length: 13 })
     menuGroupName: string;
+    @ApiProperty({ nullable: true, required: false })
+    @Column({ length: 30, nullable: true })
+    categoria: string;
 }
