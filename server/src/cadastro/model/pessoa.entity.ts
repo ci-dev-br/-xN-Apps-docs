@@ -85,5 +85,5 @@ export class Pessoa extends FullAuditedEntity {
         required: false,
     })
     @ManyToMany(() => DocumentoIdentificacao)
-    documentos: DocumentoIdentificacao;
+    documentos?: DocumentoIdentificacao;
 }

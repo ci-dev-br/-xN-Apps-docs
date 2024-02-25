@@ -14,12 +14,15 @@ import { RefreshTokenStrategy } from "./service/refresh-token-strategy";
 import { AuthService } from "./service/auth.service";
 import { DeviceAuthenticated } from "./models/device-autenticated.entity";
 import { TenantModule } from "src/tenant/tenant.module";
+import { AccessCredential } from "./models/user-credential.entity";
+import { UserCredentialService } from "./service/user-credential.service";
 
 export const AuthEntities = [
     Policy,
     User,
     ChaveAcesso,
     DeviceAuthenticated,
+    AccessCredential,
 ];
 
 @Module({
@@ -41,6 +44,7 @@ export const AuthEntities = [
         UserService,
         AuthService,
         CredencialService,
+        UserCredentialService,
         RefreshTokenStrategy,
         {
             provide: APP_GUARD,

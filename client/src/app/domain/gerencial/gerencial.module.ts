@@ -23,6 +23,8 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatChipsModule } from "@angular/material/chips";
 import { MobFakeComponent } from "./mob-fake/mob-fake.component";
 import { MobFakeModule } from "./mob-fake/mob-fake.module";
+import { ApplicationManagerComponent } from "./views/application-manager/application-manager.component";
+import { GerecialSettingsComponent } from "./views/settings/gerecial-settigns.component";
 
 @NgModule({
     declarations: [
@@ -30,6 +32,8 @@ import { MobFakeModule } from "./mob-fake/mob-fake.module";
         EditarAplicativoComponent,
     ],
     imports: [
+        ApplicationManagerComponent,
+        GerecialSettingsComponent,
         CoreModule,
         NgxQRCodeModule,
         MatTabsModule,

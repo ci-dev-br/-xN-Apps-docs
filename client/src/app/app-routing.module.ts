@@ -81,6 +81,12 @@ const routes: Routes = [
     path: `mensagens`,
     canActivate: [authGuard],
     loadChildren: () => import(`./domain/mensagens/mensagens.module`).then(m => m.MensagensModule),
+    data: { role: 'USER', data: 'Mensagens', icon: 'menu_books' }
+  },
+  {
+    path: `arquivos`,
+    canActivate: [authGuard],
+    loadChildren: () => import(`./domain/arquivos/arquivos.module`).then(m => m.ArquivosModule),
     data: { role: 'ADMIN', data: 'Mensagens', icon: 'menu_books' }
   },
   { path: '', loadChildren: () => import('./views/homepage/homepage.module').then(m => m.HomepageModule) },

@@ -2,33 +2,33 @@ import { Injectable } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, OneToOne, PrimaryGeneratedColumn, Repository, UpdateDateColumn } from "typeorm";
-import { User } from "src/auth/models/user.entity";
 import { Tenant } from "src/tenant/models/tenant.entity";
 
 import { createHash } from 'crypto';
+import { AccessCredential } from "src/auth/models/user-credential.entity";
 
 export abstract class AuditedEntity {
     @ApiProperty({ nullable: true, required: false, uniqueItems: true })
     @PrimaryGeneratedColumn('uuid')
-    internalId: string;
+    internalId?: string;
     @ApiProperty({ nullable: true, required: false })
     @ManyToMany(() => Tenant)
     @JoinTable()
-    tenants: Tenant[];
+    tenants?: Tenant[];
     @ApiProperty({ nullable: true, required: false })
     @CreateDateColumn({})
     createdAt?: Date;
     @ApiProperty({ nullable: true, required: false })
-    @OneToOne(() => User)
+    @OneToOne(() => AccessCredential)
     @JoinColumn()
-    createdBy?: User;
+    createdBy?: AccessCredential;
     @ApiProperty({ nullable: true, required: false })
     @UpdateDateColumn()
     lastModifiedAt?: Date;
     @ApiProperty({ nullable: true, required: false })
-    @OneToOne(() => User)
+    @OneToOne(() => AccessCredential)
     @JoinColumn()
-    lastModifiedBy?: User;
+    lastModifiedBy?: AccessCredential;
 }
 
 @Entity({ schema: 'snapshot' })

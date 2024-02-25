@@ -1,10 +1,12 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { JwtService } from "@nestjs/jwt";
+import { UserCredentialService } from "./user-credential.service";
 @Injectable()
 export class AuthService {
     constructor(
         private readonly userService: UserService,
+        private readonly userCredentialService: UserCredentialService,
         private jwtService: JwtService,
     ) { }
     async refreshToken(
@@ -26,6 +28,10 @@ export class AuthService {
             userId = old_authorization.id;
         }
         const user = await this.userService.findById(userId);
+
+        this.userCredentialService.credenciar(user.id);
+
+
         if (user) {
             return {
                 authorization: await this.jwtService.signAsync({
