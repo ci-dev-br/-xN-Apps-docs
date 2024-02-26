@@ -8,7 +8,9 @@ export class AuthService {
         private readonly userService: UserService,
         private readonly userCredentialService: UserCredentialService,
         private jwtService: JwtService,
-    ) { }
+    ) {
+        console.log('[Authenticantion service created]')
+    }
     async refreshToken(
         userId?: string,
         refreshToken?: string,

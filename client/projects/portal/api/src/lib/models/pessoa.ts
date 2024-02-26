@@ -1,25 +1,25 @@
 /* tslint:disable */
 /* eslint-disable */
+import { AccessCredential } from '../models/access-credential';
 import { DocumentoIdentificacao } from '../models/documento-identificacao';
-import { User } from '../models/user';
 export interface Pessoa {
   createdAt?: string | null;
-  createdBy?: User | null;
-  documentos: DocumentoIdentificacao;
-  emailPessoal: string;
+  createdBy?: AccessCredential | null;
+  documentos?: Array<DocumentoIdentificacao> | null;
+  emailPessoal?: string | null;
   empresa?: string | null;
   endereco?: Array<string> | null;
-  informacoesContato: Array<string>;
+  informacoesContato?: Array<string> | null;
   internalId?: string | null;
   lastModifiedAt?: string | null;
-  lastModifiedBy?: User | null;
+  lastModifiedBy?: AccessCredential | null;
 
   /**
    * Nome
    */
   nome?: string | null;
-  nomeFantasia: string;
-  razaoSocial: string;
+  nomeFantasia?: string | null;
+  razaoSocial?: string | null;
   registroGeralRepublicaBrasileira?: string | null;
   registroGeralRepublicaBrasileiraOrgaoEmissorOrgaoEmissor: string;
   site?: string | null;

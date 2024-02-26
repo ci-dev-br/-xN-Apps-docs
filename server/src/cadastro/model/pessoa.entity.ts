@@ -1,5 +1,5 @@
 import { FullAuditedEntity } from "src/core/dao";
-import { Column, Entity, JoinTable, ManyToMany } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 import { Endereco } from "./endereco.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { InformacaoContato } from "./informacao-contato.entity";
@@ -83,7 +83,10 @@ export class Pessoa extends FullAuditedEntity {
     @ApiProperty({
         nullable: true,
         required: false,
+        type: DocumentoIdentificacao,
+        isArray: true,
     })
-    @ManyToMany(() => DocumentoIdentificacao)
-    documentos?: DocumentoIdentificacao;
+    @OneToMany(() => DocumentoIdentificacao, documento => documento.pessoa)
+    @JoinTable()
+    documentos?: DocumentoIdentificacao[];
 }

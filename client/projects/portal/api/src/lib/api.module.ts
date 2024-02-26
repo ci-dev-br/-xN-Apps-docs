@@ -8,10 +8,12 @@ import { ApiService } from './services/api.service';
 import { DeviceService } from './services/device.service';
 import { AuthService } from './services/auth.service';
 import { ApplicationService } from './services/application.service';
+import { PranchetaService } from './services/prancheta.service';
 import { UserService } from './services/user.service';
 import { PhotoService } from './services/photo.service';
 import { CadastroService } from './services/cadastro.service';
 import { PessoaService } from './services/pessoa.service';
+import { OrganizacaoService } from './services/organizacao.service';
 
 /**
  * Module that provides all services and configuration.
@@ -25,10 +27,12 @@ import { PessoaService } from './services/pessoa.service';
     DeviceService,
     AuthService,
     ApplicationService,
+    PranchetaService,
     UserService,
     PhotoService,
     CadastroService,
     PessoaService,
+    OrganizacaoService,
     ApiConfiguration
   ],
 })

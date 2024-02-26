@@ -10,7 +10,7 @@ import { WidgetService } from "./widget.service";
         <header>
             <h1>Bem-vinde de volta, {{(user$ | async)?.fullName}}!</h1>
         </header>
-        <div class="cards">
+        <div class="cards container layout-container">
             <ng-container *ngFor="let widget_g of widgets" >
                 <ng-container *ngIf="!!widget_g.widget.component">
                     <div class="card-wrapper"  >
@@ -44,10 +44,23 @@ export class InicioComponent {
     user$ = this.user_service.user;
     widgets = this.widgetServices.widgets;
     constructor(
-        private window: WindowService,
+        private readonly window: WindowService,
         private readonly user_service: UserService,
         private readonly widgetServices: WidgetService,
-    ) { }
+    ) {
+        document.oncontextmenu = (event: MouseEvent) => this.contextMenuHandler(event);
+    }
+    contextMenuHandler(event: MouseEvent) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        event.stopPropagation();
+    }
+    editWidgetCard() {
+
+    }
+    confirmEditingWidgetCard() {
+
+    }
     adicionarCard() {
         this.window.open(AdicionarWidgetComponent, {});
     }

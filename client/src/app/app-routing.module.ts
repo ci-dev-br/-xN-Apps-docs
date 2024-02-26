@@ -89,6 +89,12 @@ const routes: Routes = [
     loadChildren: () => import(`./domain/arquivos/arquivos.module`).then(m => m.ArquivosModule),
     data: { role: 'ADMIN', data: 'Mensagens', icon: 'menu_books' }
   },
+  {
+    path: `organizacao`,
+    canActivate: [authGuard],
+    loadChildren: () => import(`./domain/organizacao/organizacao.module`).then(m => m.OrganizacaoModule),
+    data: { role: 'ADMIN', data: 'Organização', icon: 'corporate_fare' }
+  },
   { path: '', loadChildren: () => import('./views/homepage/homepage.module').then(m => m.HomepageModule) },
   { path: 'acessar', loadChildren: () => import('./views/acessar/acessar.module').then(m => m.AcessarModule) },
   { path: 'criar-conta', loadChildren: () => import('./views/criar-conta/criar-conta.module').then(m => m.CriarContaModule) },

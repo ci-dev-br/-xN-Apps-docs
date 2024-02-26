@@ -5,28 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "msedge",
+            "name": "Launch Chrome",
             "request": "launch",
-            "name": "Web",
-            "disableNetworkCache": true,
-            "cleanUp": "wholeBrowser",
+            "type": "chrome",
             "url": "http://localhost:4293",
             "webRoot": "${workspaceFolder}/client"
-        },
-        {
-            "type": "msedge",
-            "request": "launch",
-            "name": "prolabore, serve",
-            "url": "http://localhost:4295",
-            "webRoot": "${workspaceFolder}/client"
-        },
-        {
-            "type": "firefox",
-            "request": "launch",
-            "reAttach": true,
-            "name": "Launch localhost",
-            "url": "http://localhost:4293",
-            "webRoot": "${workspaceFolder}"
         },
         {
             "name": "Attach by Process ID",

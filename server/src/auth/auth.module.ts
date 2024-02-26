@@ -40,7 +40,7 @@ export const AuthEntities = [
     controllers: [
         AuthController,
     ],
-    providers: [
+    providers: [ 
         UserService,
         AuthService,
         CredencialService,
@@ -53,6 +53,7 @@ export const AuthEntities = [
     ],
     exports: [
         UserService,
+        AuthService,
     ]
 })
 export class AuthModule { }

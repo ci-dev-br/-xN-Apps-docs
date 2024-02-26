@@ -1,13 +1,14 @@
 /* tslint:disable */
 /* eslint-disable */
+import { AccessCredential } from '../models/access-credential';
 import { TipoDocumentoIdentificacao } from '../models/tipo-documento-identificacao';
-import { User } from '../models/user';
 export interface DocumentoIdentificacao {
   createdAt?: string | null;
-  createdBy?: User | null;
+  createdBy?: AccessCredential | null;
   internalId?: string | null;
   lastModifiedAt?: string | null;
-  lastModifiedBy?: User | null;
+  lastModifiedBy?: AccessCredential | null;
+  numeroDocumento?: string | null;
   tenants?: Array<string> | null;
   tipo?: TipoDocumentoIdentificacao | null;
 }

@@ -1,9 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
-import { User } from '../models/user';
+import { AccessCredential } from '../models/access-credential';
 export interface TipoDocumentoIdentificacao {
   createdAt?: string | null;
-  createdBy?: User | null;
+  createdBy?: AccessCredential | null;
 
   /**
    * Descrição
@@ -11,6 +11,6 @@ export interface TipoDocumentoIdentificacao {
   description: string | null;
   internalId?: string | null;
   lastModifiedAt?: string | null;
-  lastModifiedBy?: User | null;
+  lastModifiedBy?: AccessCredential | null;
   tenants?: Array<string> | null;
 }

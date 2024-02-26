@@ -2,6 +2,7 @@
 /* eslint-disable */
 import { Domain } from '../models/domain';
 export interface Application {
+  categoria?: string | null;
   description?: string | null;
   domain?: Domain | null;
   icon?: string | null;

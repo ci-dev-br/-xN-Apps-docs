@@ -9,6 +9,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { getPhoto } from '../fn/photo/get-photo';
+import { GetPhoto$Params } from '../fn/photo/get-photo';
 import { Photo } from '../models/photo';
 import { syncPhoto } from '../fn/photo/sync-photo';
 import { SyncPhoto$Params } from '../fn/photo/sync-photo';
@@ -41,6 +43,31 @@ export class PhotoService extends BaseService {
   syncPhoto(params: SyncPhoto$Params, context?: HttpContext): Observable<Photo> {
     return this.syncPhoto$Response(params, context).pipe(
       map((r: StrictHttpResponse<Photo>): Photo => r.body)
+    );
+  }
+
+  /** Path part for operation `getPhoto()` */
+  static readonly GetPhotoPath = '/Photo/Get';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getPhoto()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getPhoto$Response(params: GetPhoto$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Photo>>> {
+    return getPhoto(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getPhoto$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getPhoto(params: GetPhoto$Params, context?: HttpContext): Observable<Array<Photo>> {
+    return this.getPhoto$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<Photo>>): Array<Photo> => r.body)
     );
   }
 

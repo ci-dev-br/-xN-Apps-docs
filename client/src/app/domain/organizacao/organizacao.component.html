@@ -1,1 +1,29 @@
-<p>organizacao works!</p>
+<ci-l-nav></ci-l-nav>
+
+
+@if(!current){
+<div class="criar-organizacao">
+    <h1>Bem-vinde</h1>
+    <p>Parece que seu Usuário ainda não pertence a nenhuma Organização. Podemos te ajudar e localizar sua Organização ou
+        você pode cadastrar sua Organização caso ainda não esteja cadastrada no Sistema de Aplicativos</p>
+
+    <form [formGroup]="cadastroOrganizacaoform">
+        <mat-form-field>
+            <mat-label>Nome da Organização</mat-label>
+            <input type="text" matInput placeholder="Procurar sua Organização por nome ou informação de Registro..."
+                formControlName="organizatioName" />
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>CNPJ/CPF</mat-label>
+            <input type="text" matInput placeholder="CNPJ/CPF" formControlName="cnpjCpf" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="procurar()">Procurar</button>
+    </form>
+
+    @for (org of organizacoesLocalizadas; track $index) {
+    <mat-card>
+        <mat-card-header>{{org.organizatioName}}</mat-card-header>
+    </mat-card>
+    }
+</div>
+}@else {}
