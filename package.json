@@ -17,6 +17,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/sha256": "^0.2.2",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.3.1",

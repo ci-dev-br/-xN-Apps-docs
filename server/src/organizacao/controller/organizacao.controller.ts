@@ -2,6 +2,9 @@ import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { OrganizacaoService } from "../service/organizacao.service";
 import { Organizacao } from "../model/organizacao.entity";
+import { Status } from "src/core/system/model/status";
+import { Tenant } from "src/tenant/models/tenant.entity";
+import { UserService } from "src/auth/auth.module";
 
 export class OrganizacaoSyncPayload {
     @ApiProperty({ type: Organizacao })
@@ -29,6 +32,7 @@ export class OrganizacaoFindResult {
 export class OrganizacaoController {
     constructor(
         private readonly organizacaoService: OrganizacaoService,
+        private readonly userService: UserService,
     ) { }
     @Post('Sync')
     @ApiOperation({ operationId: 'OrganizacaoSync' })
@@ -39,13 +43,16 @@ export class OrganizacaoController {
         return await this.organizacaoService.syncronizar(input.data);
     }
     @Post('GetCurrent')
+    @ApiResponse({
+        type: Tenant, isArray: true
+    })
     @ApiOperation({ operationId: 'OrganizacaoGetCurrent' })
     async GetCurrent(
         @Req() req: any,
     ) {
-        return await this.organizacaoService.current(req.user.id);
+        let current_user = await this.userService.findById(req.user.id);
+        return current_user?.tenants || undefined;
     }
-
     @ApiResponse({
         type: OrganizacaoFindResult,
     })

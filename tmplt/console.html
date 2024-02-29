@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Console</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wrapper {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+
+        }
+
+        .console {
+            flex: auto;
+
+            overflow-x: hidden;
+            overflow-y: auto;
+
+            background-color: black;
+            color: white;
+        }
+    </style>
+</head>
+
+<body class="wrapper">
+    <div id="80-q3cnty49" class="console" contenteditable="true">
+
+    </div>
+    <script>
+        (async () => {
+            const el__ = document.getElementById('80-q3cnty49');
+            const _x32 = {
+                onkeydown: (e) => {
+                    if (e.keyCode === 13) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        fetch('/', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                text:
+                                    el__.innerText
+                            }),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                        }).then(async r => {
+                            try {
+                                let data = await r.json();
+                                el__.innerText = String(data.result);
+                            } catch (error) {
+                            }
+                        })
+                    }
+                },
+                onkeyup: (e) => { },
+            }
+            Object.keys(_x32).forEach(p => el__[p] = _x32[p]);
+        })();
+    </script>
+</body>
+
+</html>

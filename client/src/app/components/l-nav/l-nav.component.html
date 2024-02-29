@@ -33,6 +33,16 @@
         }}
       </span>
     </div>
+    <button mat-icon-button [mat-menu-trigger-for]="TenantsMenu">
+      <mat-icon>corporate_fare</mat-icon>
+    </button>
+    <mat-menu #TenantsMenu>
+      @for(tenant of tenants; track tenant){
+      <button mat-menu-item>
+        {{tenant.name}}
+      </button>
+      }
+    </mat-menu>
     <button class="user-menu" mat-icon-button [matMenuTriggerFor]="userMenu">
       <img [src]="userPhoto">
       <!-- <mat-icon>face</mat-icon> -->

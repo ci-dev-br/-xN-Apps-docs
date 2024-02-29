@@ -11,6 +11,7 @@ import { ContextmenuModule } from './components/contextmenu/contextmenu.module';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PaginaErroComponent } from './views/pagina-erro/pagina-erro.component';
+import { OrganizacaoService } from './services/organizacao.service';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { PaginaErroComponent } from './views/pagina-erro/pagina-erro.component';
     FontAwesomeModule, // use forRoot() in main app module only.
   ],
   providers: [
-    provideClientHydration()
+    provideClientHydration(),
+    OrganizacaoService,
   ],
   bootstrap: [
     AppComponent,

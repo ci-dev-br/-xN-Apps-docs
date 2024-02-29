@@ -6,13 +6,13 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Tenant } from '../../models/tenant';
+import { Status } from '../../models/status';
 
-export interface OrganizacaoGetCurrent$Params {
+export interface Leitura$Params {
 }
 
-export function organizacaoGetCurrent(http: HttpClient, rootUrl: string, params?: OrganizacaoGetCurrent$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Tenant>>> {
-  const rb = new RequestBuilder(rootUrl, organizacaoGetCurrent.PATH, 'post');
+export function leitura(http: HttpClient, rootUrl: string, params?: Leitura$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Status>>> {
+  const rb = new RequestBuilder(rootUrl, leitura.PATH, 'post');
   if (params) {
   }
 
@@ -21,9 +21,9 @@ export function organizacaoGetCurrent(http: HttpClient, rootUrl: string, params?
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<Tenant>>;
+      return r as StrictHttpResponse<Array<Status>>;
     })
   );
 }
 
-organizacaoGetCurrent.PATH = '/Organizacao/GetCurrent';
+leitura.PATH = '/System/Leitura';

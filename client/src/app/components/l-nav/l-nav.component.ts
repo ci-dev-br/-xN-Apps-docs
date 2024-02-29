@@ -1,12 +1,13 @@
-import { Component, ElementRef, HostListener } from '@angular/core';
+import { Component, ElementRef, HostListener, Optional } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, ActivationEnd, ActivationStart, ChildActivationEnd, Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import { lastValueFrom } from 'rxjs';
-import { Application } from '@portal/api';
+import { Application, Tenant } from '@portal/api';
 import { ApplicationService } from '@portal/api';
 import { HttpClient } from '@angular/common/http';
 import { ServicesService } from 'src/app/core/services/services.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { OrganizacaoService } from 'src/app/services/organizacao.service';
 
 interface IBreadcrumb {
   name?: string;
@@ -23,6 +24,7 @@ export class LNavComponent {
   title?: string;
   breadcrumb?: IBreadcrumb[];
   $user = this.userService.user;
+  tenants?: Tenant[];
   get appsGlobal() { return this.apps?.filter(i => i.menuGroupName === 'global') }
   get appsUser() { return this.apps?.filter(i => i.menuGroupName === 'user') }
   userPhoto?: SafeResourceUrl;
@@ -33,6 +35,8 @@ export class LNavComponent {
     private readonly http: HttpClient,
     public readonly services: ServicesService,
     private readonly sanitizer: DomSanitizer,
+    @Optional()
+    private readonly organizacaoService?: OrganizacaoService,
   ) {
     this.load();
     router.events.subscribe((event: any) => {
@@ -73,6 +77,7 @@ export class LNavComponent {
       //}
     })();
     this.loadStatus();
+    if (this.$user.value?.tenants) this.tenants = this.$user.value?.tenants;
   }
   sair() {
     this.userService.sair();

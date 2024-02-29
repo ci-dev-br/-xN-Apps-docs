@@ -1,7 +1,19 @@
 <ci-l-nav></ci-l-nav>
-
-
-@if(!current){
+@if(!!tenants){
+@for (tenant of tenants; track $index) {
+<div class="cards">
+    <mat-card>
+        <mat-card-title>{{tenant.name}}</mat-card-title>
+        <mat-card-content>
+            <button mat-raised-button>Criar Usuário</button>
+            <button mat-raised-button (click)="enviarConvite()">Enviar convite</button>
+            <button mat-raised-button>Revogar acesso</button>
+        </mat-card-content>
+    </mat-card>
+</div>
+}
+}
+@if(!current && !tenants){
 <div class="criar-organizacao">
     <h1>Bem-vinde</h1>
     <p>Parece que seu Usuário ainda não pertence a nenhuma Organização. Podemos te ajudar e localizar sua Organização ou
@@ -27,3 +39,12 @@
     }
 </div>
 }@else {}
+<ng-template #EnviarConvite>
+    <form [formGroup]="conviteform">
+        <mat-form-field>
+            <mat-label>E-mail</mat-label>
+            <input type="text" matInput placeholder="E-mail do usuário" formControlName="email" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="send()">Enviar convite</button>
+    </form>
+</ng-template>

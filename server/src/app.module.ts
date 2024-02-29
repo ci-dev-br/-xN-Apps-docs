@@ -22,7 +22,7 @@ import { CadastroEntidades, CasdastroModule } from './cadastro/cadastro.module';
 import { PaymentEntities, PaymentModule } from './payment/payment.module';
 import { FiscalEntities, FiscalModule } from './fiscal/fiscal.module';
 import { InfraEntities, InfraModule } from './core/infra/infra.module';
-import { SystemEntities } from './core/system/system.module';
+import { SystemEntities, SystemModule } from './core/system/system.module';
 import { FinanceiroEntities, FinanceiroModule } from './financeiro/financeiro.module';
 import { OrganizacaoEntities, OrganizacaoModule } from './organizacao/organizacao.module';
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
@@ -68,6 +68,7 @@ config({ path: is_production ? '.env' : '.env.dev' });
         ...OrganizacaoEntities,
       ]
     }),
+    SystemModule,
     NotificacaoModule,
     AuthModule,
     ManagerModule,

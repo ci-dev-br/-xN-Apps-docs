@@ -16,6 +16,7 @@ import { organizacaoGetCurrent } from '../fn/organizacao/organizacao-get-current
 import { OrganizacaoGetCurrent$Params } from '../fn/organizacao/organizacao-get-current';
 import { organizacaoSync } from '../fn/organizacao/organizacao-sync';
 import { OrganizacaoSync$Params } from '../fn/organizacao/organizacao-sync';
+import { Tenant } from '../models/tenant';
 
 @Injectable({ providedIn: 'root' })
 export class OrganizacaoService extends BaseService {
@@ -57,7 +58,7 @@ export class OrganizacaoService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  organizacaoGetCurrent$Response(params?: OrganizacaoGetCurrent$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  organizacaoGetCurrent$Response(params?: OrganizacaoGetCurrent$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Tenant>>> {
     return organizacaoGetCurrent(this.http, this.rootUrl, params, context);
   }
 
@@ -67,9 +68,9 @@ export class OrganizacaoService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  organizacaoGetCurrent(params?: OrganizacaoGetCurrent$Params, context?: HttpContext): Observable<void> {
+  organizacaoGetCurrent(params?: OrganizacaoGetCurrent$Params, context?: HttpContext): Observable<Array<Tenant>> {
     return this.organizacaoGetCurrent$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<Array<Tenant>>): Array<Tenant> => r.body)
     );
   }
 

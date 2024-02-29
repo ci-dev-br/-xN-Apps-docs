@@ -1,4 +1,6 @@
 import { Component, NgModule } from "@angular/core";
+import { ApiModule, SystemService } from "@portal/api";
+import { lastValueFrom } from "rxjs";
 
 @Component({
     selector: 'px-iframe-widget',
@@ -6,11 +8,23 @@ import { Component, NgModule } from "@angular/core";
     styles: [``]
 })
 export class CPUWidget {
-
+    constructor(
+        private readonly service: SystemService,
+    ) {
+        this.load();
+    }
+    async load() {
+        await lastValueFrom(
+            this.service.leitura()
+        );
+    }
 }
 @NgModule({
     declarations: [
         CPUWidget,
+    ],
+    imports: [
+        ApiModule,
     ],
     exports: [
         CPUWidget,

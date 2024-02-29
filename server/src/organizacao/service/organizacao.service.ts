@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Organizacao } from "../model/organizacao.entity";
-import { ILike, Repository } from "typeorm";
+import { Equal, ILike, In, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { AuthService } from "src/auth/auth.module";
 
@@ -29,9 +29,6 @@ export class OrganizacaoService {
     }
     async get(query: string) {
 
-    }
-    async current(userId: string) {
-        return null;// this.repo.
     }
     async Find(query: string) {
         return await this.repo.findAndCount({

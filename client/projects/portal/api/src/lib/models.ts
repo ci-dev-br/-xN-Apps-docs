@@ -21,6 +21,7 @@ export { PhotoGetPaylodInputDto } from './models/photo-get-paylod-input-dto';
 export { Policy } from './models/policy';
 export { RefreshPayloadInputDto } from './models/refresh-payload-input-dto';
 export { RegistrarInputDto } from './models/registrar-input-dto';
+export { Status } from './models/status';
 export { SyncPayloadDaoPessoa } from './models/sync-payload-dao-pessoa';
 export { Tenant } from './models/tenant';
 export { TipoDocumentoIdentificacao } from './models/tipo-documento-identificacao';

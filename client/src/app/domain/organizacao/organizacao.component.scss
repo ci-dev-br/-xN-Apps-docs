@@ -7,3 +7,21 @@
         display: contents;
     }
 }
+
+mat-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+.cards {
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 12px;
+    height: auto;
+
+    background: url('/assets/1000_F_306938279_ezPVDtcNE0Q2Z1JOFPfYowmvFbzp1T4W.jpg');
+}

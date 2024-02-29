@@ -35,6 +35,7 @@ export class User {
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })
     refreshToken?: string;
+    @ApiProperty({ nullable: true, required: false, type: Tenant, isArray: true })
     @ManyToMany(() => Tenant)
     @JoinTable()
     tenants?: Tenant[];
