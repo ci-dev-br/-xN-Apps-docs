@@ -11,7 +11,7 @@ export class PhotoService {
     ) { }
 
     async Sync(photo: Photo) {
-        console.log(photo);
+        // console.log(photo);
         if (photo?.internalId) {
             const photo_exists = await this.userRepo.findOne({ where: { internalId: photo.internalId } });
 

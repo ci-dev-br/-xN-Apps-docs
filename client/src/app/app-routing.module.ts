@@ -95,6 +95,18 @@ const routes: Routes = [
     loadChildren: () => import(`./domain/organizacao/organizacao.module`).then(m => m.OrganizacaoModule),
     data: { role: 'ADMIN', data: 'Organização', icon: 'corporate_fare' }
   },
+  {
+    path: `novo`,
+    canActivate: [authGuard],
+    loadChildren: () => import(`./domain/novo/novo.module`).then(m => m.NovoModule),
+    data: { role: 'ADMIN', data: 'Nova criação', icon: 'new' }
+  },
+  {
+    path: `novo`,
+    canActivate: [authGuard],
+    loadChildren: () => import(`./domain/imersao/imersao.module`).then(m => m.ImersaoModule),
+    data: { role: 'ADMIN', data: 'Nova criação', icon: 'new' }
+  },
   { path: '', loadChildren: () => import('./views/homepage/homepage.module').then(m => m.HomepageModule) },
   { path: 'acessar', loadChildren: () => import('./views/acessar/acessar.module').then(m => m.AcessarModule) },
   { path: 'criar-conta', loadChildren: () => import('./views/criar-conta/criar-conta.module').then(m => m.CriarContaModule) },

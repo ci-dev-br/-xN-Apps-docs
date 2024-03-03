@@ -5,7 +5,7 @@ import { Cliente } from "./cliente.entity";
 import { ApiProperty } from "@nestjs/swagger";
 
 @Entity({ schema: 'prolabore' })
-export class Payment extends FullAuditedEntity {
+export class ProlaborePayment extends FullAuditedEntity {
     @ApiProperty({ nullable: true })
     @OneToOne(() => Cliente)
     @JoinTable()
