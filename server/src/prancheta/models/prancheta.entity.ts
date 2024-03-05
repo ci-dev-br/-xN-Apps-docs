@@ -2,9 +2,17 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { FullAuditedEntity } from "src/core/dao";
 
+export class CardOption {
+    [option: string]: any;
+}
+
 export class Card {
     @ApiProperty({ nullable: true, required: false })
-    template?: string;
+    componentName?: string;
+    @ApiProperty({ nullable: true, required: false })
+    componentVersion?: string;
+    @ApiProperty({ nullable: true, required: false, type: CardOption })
+    settings: CardOption;
 }
 
 @Entity()

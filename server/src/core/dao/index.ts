@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, OneToOne, PrimaryGeneratedColumn, Repository, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn, Repository, UpdateDateColumn } from "typeorm";
 import { Tenant } from "src/tenant/models/tenant.entity";
 
 import { createHash } from 'crypto';
@@ -19,15 +19,13 @@ export abstract class AuditedEntity {
     @CreateDateColumn({})
     createdAt?: Date;
     @ApiProperty({ nullable: true, required: false })
-    @OneToOne(() => AccessCredential)
-    @JoinColumn()
+    // @ManyToOne(() => AccessCredential, c => { })
     createdBy?: AccessCredential;
     @ApiProperty({ nullable: true, required: false })
     @UpdateDateColumn()
     lastModifiedAt?: Date;
     @ApiProperty({ nullable: true, required: false })
-    @OneToOne(() => AccessCredential)
-    @JoinColumn()
+    // @ManyToOne(() => AccessCredential, c => { })
     lastModifiedBy?: AccessCredential;
 }
 

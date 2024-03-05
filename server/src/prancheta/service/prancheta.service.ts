@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Prancheta } from "../models/prancheta.entity";
-import { Repository } from "typeorm";
+import { Equal, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 @Injectable()
 export class PranchetaService {
@@ -21,5 +21,20 @@ export class PranchetaService {
             } catch (error) { }
             return await this.prancheta_reppository.save(prancheta_current);
         }
+    }
+    async Get(
+        options: {
+            userId?: string,
+            tenant?: string,
+        }
+    ) {
+        return await this.prancheta_reppository.findAndCount({
+            where:
+            {
+                createdBy: {
+                    userIdentification: Equal(options.userId)
+                }
+            },
+        });
     }
 }

@@ -2,21 +2,7 @@ import { Component } from "@angular/core";
 
 @Component({
     selector: 'px-layout',
-    template: `
-    <div class="title">
-        Configurações da Prancheta
-    </div>
-    <div class="wrapper">
-        <h4>Layout:</h4>
-        <div class="layouts">
-            <ng-container *ngFor="let layout of layouts">
-                <ci-layout-thumb
-                    (click)="layoutSelecionado=layout" 
-                    [data]="layout" ></ci-layout-thumb>
-            </ng-container>
-        </div>
-    </div>
-    `,
+    templateUrl: 'layout.component.html',
     styles: [
         `
         .title{
