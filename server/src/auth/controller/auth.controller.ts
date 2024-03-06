@@ -89,7 +89,10 @@ export class AuthController {
         const { photo, ...user_payload } = authenticated_user;
         return {
           user: authenticated_user,
-          bearer: await this.jwtService.signAsync(user_payload),
+          bearer: await this.jwtService.signAsync({
+            id: user_payload.id,
+            chaveAcesso: chave.id
+          }),
           refreshToken: refresh_token
         } as AcessoPayload;
       }

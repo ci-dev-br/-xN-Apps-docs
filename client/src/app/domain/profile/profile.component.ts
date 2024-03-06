@@ -104,7 +104,8 @@ export class ProfileComponent implements OnDestroy {
     if (this.user.value) {
       if (!this.user?.value?.photo) this.user.value.photo = {};
       (this.user.value?.photo as any).originalFile = data;
-      await lastValueFrom(this.photoService.syncPhoto({ body: this.user.value.photo }));
+      const photo = await lastValueFrom(this.photoService.syncPhoto({ body: this.user.value.photo }));
+      await lastValueFrom(this.userApiService.syncUser({ body: { id: this.user.value.id, photo: { internalId: photo.internalId } } }));
     }
   }
 }

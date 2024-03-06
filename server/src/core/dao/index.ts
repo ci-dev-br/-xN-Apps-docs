@@ -6,7 +6,7 @@ import { Tenant } from "src/tenant/models/tenant.entity";
 
 import { createHash } from 'crypto';
 // import { AccessCredential } from "src/auth/models/user-credential.entity";
-import { ChaveAcesso } from "src/auth/models/chave-acesso.entity";
+import { ChaveAcesso } from "src/core/audt/chave-acesso.entity";
 
 export abstract class AuditedEntity {
     @ApiProperty({ nullable: true, required: false, uniqueItems: true })

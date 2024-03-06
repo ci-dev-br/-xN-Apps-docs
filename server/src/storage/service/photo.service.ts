@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Photo } from "../models/photo.entity";
 import { Repository } from "typeorm";
+import { AudtService } from "src/core/audt/audt.service";
 
 @Injectable()
 export class PhotoService {
@@ -9,19 +10,19 @@ export class PhotoService {
         @InjectRepository(Photo)
         private readonly userRepo: Repository<Photo>,
     ) { }
-
     async Sync(photo: Photo) {
-        // console.log(photo);
+        console.log(photo);
         if (photo?.internalId) {
             const photo_exists = await this.userRepo.findOne({ where: { internalId: photo.internalId } });
-
             if (photo_exists) {
                 photo_exists.originalFile = Buffer.from(photo.originalFile as any, 'base64');
+                photo_exists.lastModifiedBy = photo.lastModifiedBy;
                 return await this.userRepo.save(photo_exists);
             }
         } else {
             const nova_photo = await this.userRepo.create();
             nova_photo.originalFile = Buffer.from(photo.originalFile as any, 'base64');
+            nova_photo.createdBy = photo.createdBy;
             return await this.userRepo.save(nova_photo);
         }
     }

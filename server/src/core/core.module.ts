@@ -1,6 +1,7 @@
 import { DynamicModule, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Snapshot, SnapshotService } from "./dao";
+import { AudtService } from "./audt/audt.service";
 // mport { SystemService } from "./system/system.service";
 
 export const CoreEntities = [
@@ -18,9 +19,11 @@ export const CoreEntities = [
     ],
     providers: [
         SnapshotService,
+        AudtService,
     ],
     exports: [
         SnapshotService,
+        AudtService,
     ]
 })
 export class CoreModule {
