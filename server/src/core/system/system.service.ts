@@ -13,7 +13,7 @@ export class SystemService {
     async leitura() {
         let processo = await import('process');
 
-        console.log(processo);
+        // console.log(processo);
         return null;
     }
 }

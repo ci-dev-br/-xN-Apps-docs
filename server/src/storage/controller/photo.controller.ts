@@ -26,8 +26,8 @@ export class PhotoController {
         type: Photo,
     })
     async Sync(
-        @Req() req: Request,
-        @Body() payload: Photo) {
+    @Req() req: Request,
+    @Body() payload: Photo) {
         //if (!payload.internalId) {
         //    // const user_id = (req as any).user.id;
         //    // console.log(user_id);

@@ -9,7 +9,7 @@ export class PranchetaService {
         private readonly prancheta_reppository: Repository<Prancheta>,
     ) { }
     async sincronize(prancheta_untastemented: Prancheta) {
-        if (!(prancheta_untastemented instanceof Prancheta)) throw new Error("Bloqueio por elevação de contexto.");
+        // if (!(prancheta_untastemented instanceof Prancheta)) throw new Error("Bloqueio por elevação de contexto.");
         if (prancheta_untastemented.id) {
             let prancheta_current = await this.prancheta_reppository.findOne({ where: { id: prancheta_untastemented.id } });
             try {
@@ -20,6 +20,11 @@ export class PranchetaService {
                 });
             } catch (error) { }
             return await this.prancheta_reppository.save(prancheta_current);
+        } else {
+            let prancheta_current = await this.prancheta_reppository.create({
+                ...prancheta_untastemented,
+            })
+            return await this.prancheta_reppository.save(prancheta_current);
         }
     }
     async Get(
@@ -28,11 +33,12 @@ export class PranchetaService {
             tenant?: string,
         }
     ) {
-        return await this.prancheta_reppository.findAndCount({
+        return await this.prancheta_reppository.find({
             where:
             {
                 createdBy: {
                     identifiedUser: Equal(options.userId)
+                    // userIdentification: Equal(options.userId)
                 }
             },
         });

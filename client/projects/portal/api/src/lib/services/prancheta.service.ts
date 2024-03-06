@@ -9,6 +9,7 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { Prancheta } from '../models/prancheta';
 import { pranchetaControllerGet } from '../fn/prancheta/prancheta-controller-get';
 import { PranchetaControllerGet$Params } from '../fn/prancheta/prancheta-controller-get';
 import { pranchetaControllerSync } from '../fn/prancheta/prancheta-controller-sync';
@@ -27,9 +28,9 @@ export class PranchetaService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `pranchetaControllerSync()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  pranchetaControllerSync$Response(params?: PranchetaControllerSync$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  pranchetaControllerSync$Response(params: PranchetaControllerSync$Params, context?: HttpContext): Observable<StrictHttpResponse<Prancheta>> {
     return pranchetaControllerSync(this.http, this.rootUrl, params, context);
   }
 
@@ -37,11 +38,11 @@ export class PranchetaService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `pranchetaControllerSync$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  pranchetaControllerSync(params?: PranchetaControllerSync$Params, context?: HttpContext): Observable<void> {
+  pranchetaControllerSync(params: PranchetaControllerSync$Params, context?: HttpContext): Observable<Prancheta> {
     return this.pranchetaControllerSync$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<Prancheta>): Prancheta => r.body)
     );
   }
 
@@ -52,9 +53,9 @@ export class PranchetaService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `pranchetaControllerGet()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  pranchetaControllerGet$Response(params?: PranchetaControllerGet$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  pranchetaControllerGet$Response(params: PranchetaControllerGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Prancheta>>> {
     return pranchetaControllerGet(this.http, this.rootUrl, params, context);
   }
 
@@ -62,11 +63,11 @@ export class PranchetaService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `pranchetaControllerGet$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  pranchetaControllerGet(params?: PranchetaControllerGet$Params, context?: HttpContext): Observable<void> {
+  pranchetaControllerGet(params: PranchetaControllerGet$Params, context?: HttpContext): Observable<Array<Prancheta>> {
     return this.pranchetaControllerGet$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<Array<Prancheta>>): Array<Prancheta> => r.body)
     );
   }
 

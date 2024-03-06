@@ -1,16 +1,16 @@
 /* tslint:disable */
 /* eslint-disable */
-import { AccessCredential } from '../models/access-credential';
+import { ChaveAcesso } from '../models/chave-acesso';
 import { Pessoa } from '../models/pessoa';
 import { Photo } from '../models/photo';
 import { Tenant } from '../models/tenant';
 export interface Organizacao {
   cadastroPessoa?: Pessoa | null;
   createdAt?: string | null;
-  createdBy?: AccessCredential | null;
+  createdBy?: ChaveAcesso | null;
   internalId?: string | null;
   lastModifiedAt?: string | null;
-  lastModifiedBy?: AccessCredential | null;
+  lastModifiedBy?: ChaveAcesso | null;
 
   /**
    * Logomarca da Organização

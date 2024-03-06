@@ -17,6 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { WidgetService } from './inicio/widget.service';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { WidgetService } from './inicio/widget.service';
     MatInputModule,
     MatMenuModule,
     ReactiveFormsModule,
+    MatTabsModule,
   ],
   providers: [
     WidgetService,

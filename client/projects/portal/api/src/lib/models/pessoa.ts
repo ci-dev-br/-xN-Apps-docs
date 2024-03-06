@@ -1,10 +1,10 @@
 /* tslint:disable */
 /* eslint-disable */
-import { AccessCredential } from '../models/access-credential';
+import { ChaveAcesso } from '../models/chave-acesso';
 import { DocumentoIdentificacao } from '../models/documento-identificacao';
 export interface Pessoa {
   createdAt?: string | null;
-  createdBy?: AccessCredential | null;
+  createdBy?: ChaveAcesso | null;
   documentos?: Array<DocumentoIdentificacao> | null;
   emailPessoal?: string | null;
   empresa?: string | null;
@@ -12,7 +12,7 @@ export interface Pessoa {
   informacoesContato?: Array<string> | null;
   internalId?: string | null;
   lastModifiedAt?: string | null;
-  lastModifiedBy?: AccessCredential | null;
+  lastModifiedBy?: ChaveAcesso | null;
 
   /**
    * Nome

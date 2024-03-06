@@ -1,7 +1,8 @@
-import { Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Req } from "@nestjs/common";
 import { PranchetaService } from "../service/prancheta.service";
-import { ApiProperty, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Prancheta } from "../models/prancheta.entity";
+import { AudtService } from "src/core/audt/audt.service";
 
 export class PranchetaSyncPayloadDto {
     @ApiProperty({ type: Prancheta, nullable: true, required: false })
@@ -12,13 +13,28 @@ export class PranchetaSyncPayloadDto {
 export class PranchetaController {
     constructor(
         private readonly service: PranchetaService,
+        private readonly audt: AudtService,
     ) { }
+
+    @ApiResponse({
+        type: Prancheta
+    })
     @Post('Sync')
-    async Sync(input: PranchetaSyncPayloadDto) {
-        return await this.service.sincronize(input.pranchta);
+    async Sync(
+        @Req() req: Request,
+        @Body() input: PranchetaSyncPayloadDto
+    ) {
+        return await this.service.sincronize(this.audt.doSync(input.pranchta, req, !!input?.pranchta?.id));
     }
+    @ApiResponse({
+        type: Prancheta, isArray: true
+    })
     @Post('Get')
-    async Get(input: PranchetaSyncPayloadDto) {
-        return await this.service.sincronize(input.pranchta);
+    async Get(
+        @Req() req: any,
+        @Body() input: PranchetaSyncPayloadDto) {
+        return await this.service.Get({
+            userId: req.user.id
+        })
     }
 }
