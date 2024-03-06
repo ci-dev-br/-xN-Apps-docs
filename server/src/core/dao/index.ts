@@ -5,7 +5,8 @@ import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, Ma
 import { Tenant } from "src/tenant/models/tenant.entity";
 
 import { createHash } from 'crypto';
-import { AccessCredential } from "src/auth/models/user-credential.entity";
+// import { AccessCredential } from "src/auth/models/user-credential.entity";
+import { ChaveAcesso } from "src/auth/models/chave-acesso.entity";
 
 export abstract class AuditedEntity {
     @ApiProperty({ nullable: true, required: false, uniqueItems: true })
@@ -19,14 +20,16 @@ export abstract class AuditedEntity {
     @CreateDateColumn({})
     createdAt?: Date;
     @ApiProperty({ nullable: true, required: false })
-    // @ManyToOne(() => AccessCredential, c => { })
-    createdBy?: AccessCredential;
+    @ManyToOne(() => ChaveAcesso, { nullable: true })
+    @JoinTable()
+    createdBy?: ChaveAcesso;
     @ApiProperty({ nullable: true, required: false })
     @UpdateDateColumn()
     lastModifiedAt?: Date;
     @ApiProperty({ nullable: true, required: false })
-    // @ManyToOne(() => AccessCredential, c => { })
-    lastModifiedBy?: AccessCredential;
+    @ManyToOne(() => ChaveAcesso, { nullable: true })
+    @JoinTable()
+    lastModifiedBy?: ChaveAcesso;
 }
 
 @Entity({ schema: 'snapshot' })

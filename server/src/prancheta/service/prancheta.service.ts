@@ -32,7 +32,7 @@ export class PranchetaService {
             where:
             {
                 createdBy: {
-                    userIdentification: Equal(options.userId)
+                    identifiedUser: Equal(options.userId)
                 }
             },
         });
