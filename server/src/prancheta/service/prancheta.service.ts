@@ -38,7 +38,6 @@ export class PranchetaService {
             {
                 createdBy: {
                     identifiedUser: Equal(options.userId)
-                    // userIdentification: Equal(options.userId)
                 }
             },
         });

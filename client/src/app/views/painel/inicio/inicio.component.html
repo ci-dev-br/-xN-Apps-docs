@@ -5,7 +5,7 @@
 <!-- <ng-container *ngTemplateOutlet="pranchetaTemplate;context:{widgets:loadWidgets(prancheta)}"></ng-container> -->
 }
 @else{
-<mat-tab-group>
+<mat-tab-group [selectedIndex]="tabIndex" (selectedIndexChange)="tabIndex = $event">
     @for (prancheta of pranchetas; track $index) {
     <mat-tab [label]="prancheta.title || 'Inominada'">
         <ng-container *ngTemplateOutlet="pranchetaTemplate;context:{widgets:loadWidgets(prancheta) }"></ng-container>

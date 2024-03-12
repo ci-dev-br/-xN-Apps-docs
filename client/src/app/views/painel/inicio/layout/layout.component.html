@@ -2,6 +2,10 @@
     Configurações da Prancheta
 </div>
 <div class="wrapper">
+    <mat-form-field>
+        <mat-label>Título</mat-label>
+        <input type="text" matInput [(ngModel)]="title">
+    </mat-form-field>
     <h4>Layout:</h4>
     <div class="layouts">
         <ng-container *ngFor="let layout of layouts">

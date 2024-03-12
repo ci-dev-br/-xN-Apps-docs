@@ -16,10 +16,10 @@ export class WidgetService {
         await lastValueFrom(
             this.pranchetaApiService.pranchetaControllerSync({
                 body: {
-                    pranchta: {
-                        // cards:
-                        title: 'Teste'
-                    }
+                    // pranchta: {
+                    //     // cards:
+                    //     title: 'Teste'
+                    // }
                 }
             })
         );

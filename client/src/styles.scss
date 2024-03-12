@@ -1,6 +1,6 @@
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
-@use "@angular/material" as mat;
+@use "@angular/material"as mat;
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -11,8 +11,8 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$client-primary: mat.define-palette(mat.$grey-palette, 900);
-$client-accent: mat.define-palette(mat.$grey-palette, A200, A100, A400);
+$client-primary: mat.define-palette(mat.$teal-palette);
+$client-accent: mat.define-palette(mat.$teal-palette, 900);
 
 // The warn palette is optional (defaults to red).
 $client-warn: mat.define-palette(mat.$red-palette);
@@ -20,10 +20,10 @@ $client-warn: mat.define-palette(mat.$red-palette);
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
 $client-theme: mat.define-light-theme((color: (primary: $client-primary,
-accent: $client-accent,
-warn: $client-warn,
-      ),
-    ));
+      accent: $client-accent,
+      warn: $client-warn,
+    ),
+  ));
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
@@ -48,3 +48,8 @@ ci-root {
 }
 
 @import "./scss/icons";
+
+.mat-mdc-tab-list {
+  background: rgba(255, 255, 255, .10);
+  backdrop-filter: blur(12px);
+}

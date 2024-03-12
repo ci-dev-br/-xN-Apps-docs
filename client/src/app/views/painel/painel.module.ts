@@ -9,15 +9,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
-import { AdicionarWidgetComponent } from './inicio/adicionar-widget/adicionar-widget.component';
-import { WindowModule } from 'src/app/components/window/window.module';
-import { LayoutComponent } from './inicio/layout/layout.component';
-import { LayoutThumbComponent } from './inicio/layout/layout-thumb/layout-thumb.component';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { WidgetService } from './inicio/widget.service';
-import { MatTabsModule } from '@angular/material/tabs';
+import { AdicionarWidgetComponent } from './inicio/adicionar-widget/adicionar-widget.component';
+import { WindowModule } from 'src/app/components/window/window.module';
+import { LayoutThumbComponent } from './inicio/layout/layout-thumb/layout-thumb.component';
+import { LayoutComponent } from './inicio/layout/layout.component';
+import { PranchetaService } from './config.service';
 
 @NgModule({
   declarations: [
@@ -41,9 +43,11 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatMenuModule,
     ReactiveFormsModule,
     MatTabsModule,
+    FormsModule,
   ],
   providers: [
     WidgetService,
+    PranchetaService,
   ]
 })
 export class PainelModule { }

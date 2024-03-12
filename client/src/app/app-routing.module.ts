@@ -107,6 +107,12 @@ const routes: Routes = [
     loadChildren: () => import(`./domain/imersao/imersao.module`).then(m => m.ImersaoModule),
     data: { role: 'ADMIN', data: 'Nova criação', icon: 'new' }
   },
+  {
+    path: `low-code`,
+    canActivate: [authGuard],
+    loadChildren: () => import(`./domain/low-code/low-code.module`).then(m => m.LowCodeModule),
+    data: { role: 'ADMIN', data: 'Nova criação', icon: 'new' }
+  },
   { path: '', loadChildren: () => import('./views/homepage/homepage.module').then(m => m.HomepageModule) },
   { path: 'acessar', loadChildren: () => import('./views/acessar/acessar.module').then(m => m.AcessarModule) },
   { path: 'criar-conta', loadChildren: () => import('./views/criar-conta/criar-conta.module').then(m => m.CriarContaModule) },

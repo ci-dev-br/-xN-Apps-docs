@@ -15,6 +15,7 @@
             "name": "Attach by Process ID",
             "processId": "${command:PickProcess}",
             "request": "attach",
+            "localRoot": "${workspaceFolder}/server",
             "skipFiles": [
                 "<node_internals>/**"
             ],
