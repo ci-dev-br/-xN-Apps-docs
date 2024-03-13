@@ -10,8 +10,8 @@ export class PranchetaService {
     ) { }
     async sincronize(prancheta_untastemented: Prancheta) {
         // if (!(prancheta_untastemented instanceof Prancheta)) throw new Error("Bloqueio por elevação de contexto.");
-        if (prancheta_untastemented.id) {
-            let prancheta_current = await this.prancheta_reppository.findOne({ where: { id: prancheta_untastemented.id } });
+        if (prancheta_untastemented.internalId) {
+            let prancheta_current = await this.prancheta_reppository.findOne({ where: { internalId: prancheta_untastemented.internalId } });
             try {
                 Object.keys(prancheta_untastemented).forEach((p, i) => {
                     if (i > 1000) return;

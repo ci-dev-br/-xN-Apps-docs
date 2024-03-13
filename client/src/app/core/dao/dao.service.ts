@@ -1,9 +1,12 @@
-import { Injectable } from "@angular/core";
+import { EventEmitter, Injectable, SimpleChange, SimpleChanges } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { Observable, Subject } from "rxjs";
 export interface IChangeable {
     __pre: any;
     __binding_form?: FormGroup;
+}
+
+export class SerializedObjectData {
 }
 /*
     Mapeamento de entidade
@@ -14,29 +17,56 @@ export class DaoService {
     private states = new Map<any, any>();
     constructor(
     ) { }
-    prepareToEdit(data: any) {
+    prepareToEdit(data: any, options: { fieldsId?: string[] } = { fieldsId: ['id', 'internalId'] }): any | SerializedObjectData {
         if (!data) return undefined;
+        if (Array.isArray(data)) {
+            return data.map(data_child => this.prepareToEdit(data_child, options));
+        }
+        if (data instanceof SerializedObjectData) return data;
         if (data && typeof data === 'object' && !('__pre' in data)) {
             let { __pre, __binding_form, __confirmation_subject, ...o_data } = data;
-            data.__pre = { ...JSON.parse(JSON.stringify(o_data)) }
-        }
-        return data as IChangeable;
-    }
-    getChanges(data?: IChangeable, options?: {
-    }) {
-        if (!data) return undefined;
-        const { __pre, __binding_form, __confirmation_subject, ...__cleaned_data } = data as any;
-        const r = JSON.parse(JSON.stringify(__cleaned_data));
-        if (__pre) {
-            Object.keys(__pre).forEach(pn => {
-                if (r[pn] && JSON.stringify(r[pn]) !== JSON.stringify(__pre[pn])) {
-                } else {
-                    delete r[pn];
+            const pre = { ...JSON.parse(JSON.stringify(o_data)) };
+            const emitter = new EventEmitter<SimpleChanges>();
+            Object.keys(o_data).forEach(p => {
+                delete data[p];
+                Object.defineProperty(data, p, {
+                    get: () => { return o_data[p]; },
+                    set: (value: any) => {
+                        if (o_data[p] === value) return;
+                        const old_vale = o_data[p];
+                        o_data[p] = value;
+                        emitter.emit({
+                            p: new SimpleChange(old_vale, value, false),
+                        });
+                    },
+                });
+            })
+            Object.defineProperty(data, 'toJSON', {
+                value: () => {
+                    const out: any = {
+                        ...this.getChanges(data, { pre })
+                    };
+                    (options.fieldsId || []).forEach(p => {
+                        out[p] = data[p];
+                    })
+                    return out;
                 }
             });
-        } else {
-            return {};
+            Object.setPrototypeOf(data, new SerializedObjectData());
         }
+        return data;
+    }
+    getChanges(data?: IChangeable, options?: {
+        pre: any
+    }) {
+        if (!data) return undefined;
+        const r: any = {};
+        Object.getOwnPropertyNames(data).forEach(p => {
+            if (p.indexOf('_') === 0) return;
+            if (JSON.stringify((data as any)[p]) !== JSON.stringify(options?.pre[p])) {
+                r[p] = (data as any)[p];
+            }
+        })
         return r;
     }
     haveChanges(data?: IChangeable) {
@@ -67,8 +97,4 @@ export class DaoService {
         if (!(data as any).__confirmation_subject) (data as any).__confirmation_subject = new Subject();
         return (data as any).__confirmation_subject as Subject<T>;
     }
-    getObjectInternalStage(o: any) {
-
-    }
-
 }

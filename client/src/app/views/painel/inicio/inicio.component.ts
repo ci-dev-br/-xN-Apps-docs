@@ -18,10 +18,10 @@ export class InicioComponent {
     // widgets = this.widgetServices.widgets;
     pranchetas?: Prancheta[];
     private _tabIndex?: number | undefined;
-    public get tabIndex(): number | undefined {
+    get tabIndex(): number | undefined {
         return this._tabIndex;
     }
-    public set tabIndex(value: number | undefined) {
+    set tabIndex(value: number | undefined) {
         if (this._tabIndex === value) return;
         this._tabIndex = value;
         if (this.pranchetas && value !== undefined && this.pranchetas[value])

@@ -18,9 +18,6 @@ export class Card {
 @Entity()
 export class Prancheta extends FullAuditedEntity {
     @ApiProperty({ nullable: true, required: false })
-    @PrimaryGeneratedColumn('uuid')
-    id?: string;
-    @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })
     title?: string;
     @ApiProperty({ nullable: true, required: false })

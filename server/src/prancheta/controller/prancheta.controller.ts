@@ -24,7 +24,7 @@ export class PranchetaController {
         @Req() req: Request,
         @Body() input: PranchetaSyncPayloadDto
     ) {
-        return await this.service.sincronize(this.audt.doSync(input.pranchta, req, !!input?.pranchta?.id));
+        return await this.service.sincronize(this.audt.doSync(input.pranchta, req, !!input?.pranchta?.internalId));
     }
     @ApiResponse({
         type: Prancheta, isArray: true

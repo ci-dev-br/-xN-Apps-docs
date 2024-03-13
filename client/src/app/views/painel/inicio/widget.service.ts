@@ -1,28 +1,31 @@
 import { Injectable } from "@angular/core";
-import { Prancheta, PranchetaService } from "@portal/api";
+import { Prancheta, PranchetaService as PranchetaApiService } from "@portal/api";
 import { lastValueFrom } from "rxjs";
+import { DaoService } from "src/app/core/dao/dao.service";
 import { IWidget } from "src/app/widgets/i-widget";
 
 @Injectable()
 export class WidgetService {
     widgets: { widget: IWidget, settings: any }[] = [];
     constructor(
-        private readonly pranchetaApiService: PranchetaService,
+        private readonly pranchetaApiService: PranchetaApiService,
+        private readonly daoService: DaoService,
 
     ) {
         this.pranchetas();
     }
     async sync() {
-        await lastValueFrom(
-            this.pranchetaApiService.pranchetaControllerSync({
-                body: {
-                    // pranchta: {
-                    //     // cards:
-                    //     title: 'Teste'
-                    // }
-                }
-            })
-        );
+
+        // await lastValueFrom(
+        //     this.pranchetaApiService.pranchetaControllerSync({
+        //         body: {
+        //             // pranchta: {
+        //             //     // cards:
+        //             //     title: 'Teste'
+        //             // }
+        //         }
+        //     })
+        // );
     }
     async adicionarWidget(
         settings: any,
@@ -35,6 +38,10 @@ export class WidgetService {
         let pranchetas: Prancheta[] = await lastValueFrom(
             this.pranchetaApiService.pranchetaControllerGet({ body: {} })
         )
+        this.daoService.prepareToEdit(pranchetas, {
+            fieldsId: ['internalId'],
+            
+        });
         return pranchetas;
     }
 }
