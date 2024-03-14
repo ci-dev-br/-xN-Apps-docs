@@ -1,11 +1,12 @@
 import { EventEmitter, Injectable, SimpleChange, SimpleChanges } from "@angular/core";
 import { FormGroup } from "@angular/forms";
-import { Subject } from "rxjs";
+import { Subject, concat, concatAll, debounceTime } from "rxjs";
 export interface IChangeable {
     __pre: any;
     __binding_form?: FormGroup;
 }
 export class SerializedObjectData {
+    complete() { }
 }
 /*
     Mapeamento de entidade
@@ -16,17 +17,38 @@ export class DaoService {
     private states = new Map<any, any>();
     constructor(
     ) { }
-    prepareToEdit(data: any, options: { fieldsId?: string[] } = { fieldsId: ['id', 'internalId'] }): any | SerializedObjectData {
+    prepareToEdit(data: any, options?: { fieldsId?: string[], onChange?: (changes: SimpleChanges) => void, debounceTime?: number }): any | SerializedObjectData {
         if (!data) return undefined;
         if (Array.isArray(data)) {
             return data.map(data_child => this.prepareToEdit(data_child, options));
         }
+        if (data instanceof Date) return data;
         if (data instanceof SerializedObjectData) return data;
         if (data && typeof data === 'object' && !('__pre' in data)) {
             let { __pre, __binding_form, __confirmation_subject, ...o_data } = data;
-            const pre = { ...JSON.parse(JSON.stringify(o_data)) };
-            const emitter = new EventEmitter<SimpleChanges>();
-            Object.keys(o_data).forEach(p => {
+            let pre = { ...JSON.parse(JSON.stringify(o_data)) };
+            const emitter = !!options?.onChange ? new EventEmitter<SimpleChanges>() : undefined;
+            let ___changes_on_changing: SimpleChanges[] | undefined;
+            if (!!emitter) emitter.subscribe(r => {
+                if (!___changes_on_changing) ___changes_on_changing = [];
+                ___changes_on_changing.push(r);
+                const _current_length = ___changes_on_changing?.length || 0;
+                setTimeout(() => {
+                    if (_current_length === ___changes_on_changing?.length) {
+                        const changes = ___changes_on_changing;
+                        ___changes_on_changing = undefined;
+                        if (options?.onChange) options.onChange(
+                            changes.reduce((change_a, change_b) => {
+                                return {
+                                    ...change_a,
+                                    ...change_b,
+                                } as SimpleChanges;
+                            })
+                        )
+                    }
+                }, options?.debounceTime || 500);
+            });
+            Object.keys(o_data).forEach(p => {  // {a:1 , b: 2, c: function(){}} ['a', 'b', 'c']
                 delete data[p];
                 Object.defineProperty(data, p, {
                     get: () => { return o_data[p]; },
@@ -34,8 +56,8 @@ export class DaoService {
                         if (o_data[p] === value) return;
                         const old_vale = o_data[p];
                         o_data[p] = value;
-                        emitter.emit({
-                            p: new SimpleChange(old_vale, value, false),
+                        if (!!emitter) emitter.emit({
+                            [p]: new SimpleChange(old_vale, value, false),
                         });
                     },
                 });
@@ -45,12 +67,13 @@ export class DaoService {
                     const out: any = {
                         ...this.getChanges(data, { pre })
                     };
-                    (options.fieldsId || []).forEach(p => {
+                    (options?.fieldsId || ['id', 'internalId']).forEach(p => {
                         out[p] = data[p];
                     })
                     return out;
                 }
             });
+            data.complete = () => pre = { ...JSON.parse(JSON.stringify(o_data)) };
             Object.setPrototypeOf(data, new SerializedObjectData());
         }
         return data;
@@ -68,7 +91,7 @@ export class DaoService {
         })
         return r;
     }
-    haveChanges(data?: IChangeable) {
+    haveChanges(data?: IChangeable | any) {
         return Object.keys(this.getChanges(data)).length > 0;
     }
     bindDataForm(data: any, form: FormGroup, oldData?: IChangeable) {
