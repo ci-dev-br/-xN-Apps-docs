@@ -2,5 +2,5 @@
 /* eslint-disable */
 import { Prancheta } from '../models/prancheta';
 export interface PranchetaSyncPayloadDto {
-  pranchta?: Prancheta | null;
+  prancheta?: Prancheta | null;
 }

@@ -6,7 +6,7 @@ import { AudtService } from "src/core/audt/audt.service";
 
 export class PranchetaSyncPayloadDto {
     @ApiProperty({ type: Prancheta, nullable: true, required: false })
-    pranchta?: Prancheta
+    prancheta?: Prancheta
 }
 @ApiTags('Prancheta')
 @Controller('Prancheta')
@@ -24,7 +24,7 @@ export class PranchetaController {
         @Req() req: Request,
         @Body() input: PranchetaSyncPayloadDto
     ) {
-        return await this.service.sincronize(this.audt.doSync(input.pranchta, req, !!input?.pranchta?.internalId));
+        return await this.service.sincronize(this.audt.doSync(input.prancheta, req, !!input?.prancheta?.internalId));
     }
     @ApiResponse({
         type: Prancheta, isArray: true
