@@ -23,6 +23,6 @@
         })
     }
     await sh('node -v');
-    await sh('ng build -c production --watch', __dirname + '\\client');
+    await sh('ng build -c production', __dirname + '\\client');
     // await sh('xcopy .\\dist\\client\\browser\\ .\\..\\server\\public /I', __dirname + '\\client');
 })();
