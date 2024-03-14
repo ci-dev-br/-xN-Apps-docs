@@ -26,7 +26,6 @@ mat-drawer-container {
 .menu {
   display: flex;
   flex-direction: row-reverse;
-  position: sticky;
   top: 0;
   position: absolute;
   right: 0;
@@ -34,6 +33,19 @@ mat-drawer-container {
 }
 
 mat-drawer {
-  background: rgba(white, .22);
+  background: rgba(white, .51);
   backdrop-filter: blur(12px);
+}
+
+::ng-deep .mat-mdc-tab-list {
+  //   backdrop-filter: blur(12px);
+  // margin-right: 48px;
+}
+
+
+
+::ng-deep .mat-mdc-tab-header {
+  background: rgba(255, 255, 255, .51);
+  backdrop-filter: blur(12px);
+  padding-right: 48px;
 }

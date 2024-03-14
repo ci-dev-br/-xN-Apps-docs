@@ -15,13 +15,18 @@ export class LayoutComponent {
         '1-1-1',
         '4-1-2-2',
     ];
-    layoutSelecionado?: string;
-
+    // layoutSelecionado?: string;
     get title(): string {
         return this.prancheta?.title || '';
     }
     set title(value: string) {
         if (this.prancheta) this.prancheta.title = value;
+    }
+    get layout(): string {
+        return this.prancheta?.layout || '';
+    }
+    set layout(value: string) {
+        if (this.prancheta) this.prancheta.layout = value;
     }
     constructor(
         private readonly prachetaService: PranchetaService,

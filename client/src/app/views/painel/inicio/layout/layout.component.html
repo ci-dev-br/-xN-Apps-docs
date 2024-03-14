@@ -6,11 +6,11 @@
         <mat-label>Título</mat-label>
         <input type="text" matInput [(ngModel)]="title">
     </mat-form-field>
-    <!--  {{prancheta | json}} -->
     <h4>Layout:</h4>
     <div class="layouts">
-        <ng-container *ngFor="let layout of layouts">
-            <ci-layout-thumb (click)="layoutSelecionado=layout" [data]="layout"></ci-layout-thumb>
+        <ng-container *ngFor="let l of layouts">
+            <ci-layout-thumb [selecionado]="layout===l" (click)="layout=l" [data]="l"></ci-layout-thumb>
         </ng-container>
     </div>
+    <!--  {{prancheta | json}} -->
 </div>
