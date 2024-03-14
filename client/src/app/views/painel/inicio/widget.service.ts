@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Prancheta, PranchetaService as PranchetaApiService } from "@portal/api";
 import { lastValueFrom } from "rxjs";
-import { DaoService } from "src/app/core/dao/dao.service";
+import { DaoService, SerializedObjectData } from "src/app/core/dao/dao.service";
 import { IWidget } from "src/app/widgets/i-widget";
 
 @Injectable()
@@ -39,8 +39,15 @@ export class WidgetService {
             this.pranchetaApiService.pranchetaControllerGet({ body: {} })
         )
         this.daoService.prepareToEdit(pranchetas, {
-            fieldsId: ['internalId'],
-            
+            onChange: async (changes) => {
+                pranchetas.filter(p => this.daoService.haveChanges(p)).forEach(async prancheta => {
+                    await lastValueFrom(this.pranchetaApiService.pranchetaControllerSync({
+                        body: { prancheta },
+                    }));
+                    if (prancheta instanceof SerializedObjectData) prancheta.complete();
+                })
+            },
+            debounceTime: 1000,
         });
         return pranchetas;
     }
