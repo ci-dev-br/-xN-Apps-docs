@@ -1,8 +1,9 @@
 import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
-import { PhotoService, User, UserService as UserApiService } from '@portal/api';
+import { Photo, PhotoService, User, UserService as UserApiService } from '@portal/api';
 import { lastValueFrom } from 'rxjs';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { MD5 } from 'crypto-js';
 
 @Component({
   selector: 'ci-profile',
@@ -74,17 +75,18 @@ export class ProfileComponent implements OnDestroy {
       const video = this.profileVideo?.nativeElement;
       if (video) {
         const canvas = document.createElement('canvas');
-        const w = video.videoWidth / 3;
-        const h = video.videoHeight / 3;
+        let w = video.videoWidth;
+        let h = video.videoHeight;
+
         canvas.width = w;
         canvas.height = h;
         const context = canvas.getContext('2d');
         if (context) {
-          context.fillStyle = ''
+          context.fillStyle = '';
           context.fillRect(w, h, canvas.width, canvas.height);
           context.drawImage(video, 0, 0, w, h);
           this.mediaStream?.getTracks()?.map(t => t.stop());
-          const data = canvas.toDataURL("image/jpg");
+          const data = canvas.toDataURL("image/jpeg", 1.0);
           this.profilePhotoUser = this.sanitizer.bypassSecurityTrustResourceUrl(data);
           if (this.profilePhotoUser) this.saveProfilePhotoUser(data.split(',')[1]);
         }
@@ -97,15 +99,33 @@ export class ProfileComponent implements OnDestroy {
   private async loadPhoto() {
     if (this.user?.value?.photo?.originalFile) {
       const a: any = this.user?.value?.photo?.originalFile;
-      this.profilePhotoUser = this.sanitizer.bypassSecurityTrustResourceUrl('data:image;base64,' + btoa(String.fromCharCode(...new Uint8Array(a.data))));
+      this.profilePhotoUser = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpeg;base64,' + btoa(String.fromCharCode(...new Uint8Array(a.data))));
     }
   }
   private async saveProfilePhotoUser(data: string) {
     if (this.user.value) {
-      if (!this.user?.value?.photo) this.user.value.photo = {};
-      (this.user.value?.photo as any).originalFile = data;
-      const photo = await lastValueFrom(this.photoService.syncPhoto({ body: this.user.value.photo }));
-      await lastValueFrom(this.userApiService.syncUser({ body: { id: this.user.value.id, photo: { internalId: photo.internalId } } }));
+      // data;
+      const buffer_size = 100000;
+      const data_hash_md5 = MD5(data).toString();
+      const total_parts = Math.ceil(data.length / buffer_size);
+      let photo_result: Photo | undefined;
+      for (let index = 0; index < total_parts; index++) {
+        const data_part = data.substring(index * buffer_size, index * buffer_size + buffer_size);
+        const data_part_md5 = MD5(data_part).toString();
+        const part = index;
+
+        const r = await lastValueFrom(this.photoService.sendPartPhoto({
+          body: {
+            currentPart: part,
+            md5Part: data_part_md5,
+            md5Full: data_hash_md5,
+            TotalParts: total_parts,
+            partialBase64: data_part
+          }
+        }));
+        if (!!r) photo_result = r;
+      }
+      if (photo_result !== undefined) await lastValueFrom(this.userApiService.syncUser({ body: { id: this.user.value.id, photo: { internalId: photo_result.internalId } } }));
     }
   }
 }

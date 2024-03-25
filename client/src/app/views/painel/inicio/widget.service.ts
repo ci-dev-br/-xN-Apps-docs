@@ -32,7 +32,6 @@ export class WidgetService {
         widget: IWidget,
     ) {
         this.widgets.push({ settings, widget });
-        this.sync();
     }
     async pranchetas() {
         let pranchetas: Prancheta[] = await lastValueFrom(

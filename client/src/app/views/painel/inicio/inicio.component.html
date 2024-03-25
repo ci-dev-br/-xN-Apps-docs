@@ -15,15 +15,13 @@
 }
 <ng-template #pranchetaTemplate let-widgets="widgets">
     <div class="cards container layout-container">
-        <ng-container *ngFor="let widget_g of widgets">
-            <ng-container *ngIf="!!widget_g.widget.component">
-                <div class="card-wrapper">
-                    <ng-container
-                        *ngComponentOutlet="widget_g.widget.component;inputs:widget_g.settings"></ng-container>
-                </div>
-            </ng-container>
+        @for (widget_g of widgets; track $index) {
+        <ng-container *ngIf="!!widget_g.widget.component">
+            <div class="card-wrapper">
+                <ng-container *ngComponentOutlet="widget_g.widget.component;inputs:widget_g.settings"></ng-container>
+            </div>
         </ng-container>
-        <!-- <ng-container> -->
+        }
         <div class="empty-card">
             <button mat-icon-button matTooltip="Adicionar Visualização"
                 [matMenuTriggerFor]="menu"><mat-icon>add</mat-icon></button>
@@ -39,6 +37,5 @@
                 </button>
             </mat-menu>
         </div>
-        <!-- </ng-container> -->
     </div>
 </ng-template>

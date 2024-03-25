@@ -16,6 +16,7 @@ export { Organizacao } from './models/organizacao';
 export { OrganizacaoFindPayload } from './models/organizacao-find-payload';
 export { OrganizacaoFindResult } from './models/organizacao-find-result';
 export { OrganizacaoSyncPayload } from './models/organizacao-sync-payload';
+export { PartPayloadDto } from './models/part-payload-dto';
 export { Payload } from './models/payload';
 export { Pessoa } from './models/pessoa';
 export { Photo } from './models/photo';

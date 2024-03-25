@@ -1,0 +1,7 @@
+{
+    "verbose": true,
+    "watch": [
+        "start.js"
+    ],
+    "exec": "node start"
+}

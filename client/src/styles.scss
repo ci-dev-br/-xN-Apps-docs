@@ -40,7 +40,12 @@ body {
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  // font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+* {
+  // font-family: "Aubrey", system-ui;
+  font-family: "DM Sans", sans-serif;
 }
 
 ci-root {
@@ -48,3 +53,7 @@ ci-root {
 }
 
 @import "./scss/icons";
+
+
+// @import url('https://fonts.googleapis.com/css2?family=Aubrey&family=Francois+One&family=Instrument+Serif:ital@0;1&display=swap')
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap')
