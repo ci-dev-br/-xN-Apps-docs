@@ -6,13 +6,13 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Status } from '../../models/status';
+import { CpuInfo } from '../../models/cpu-info';
 
-export interface Leitura$Params {
+export interface SystemLeitura$Params {
 }
 
-export function leitura(http: HttpClient, rootUrl: string, params?: Leitura$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Status>>> {
-  const rb = new RequestBuilder(rootUrl, leitura.PATH, 'post');
+export function systemLeitura(http: HttpClient, rootUrl: string, params?: SystemLeitura$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<CpuInfo>>> {
+  const rb = new RequestBuilder(rootUrl, systemLeitura.PATH, 'post');
   if (params) {
   }
 
@@ -21,9 +21,9 @@ export function leitura(http: HttpClient, rootUrl: string, params?: Leitura$Para
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<Status>>;
+      return r as StrictHttpResponse<Array<CpuInfo>>;
     })
   );
 }
 
-leitura.PATH = '/System/Leitura';
+systemLeitura.PATH = '/System/Leitura';

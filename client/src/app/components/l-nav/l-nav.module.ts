@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatBadgeModule } from '@angular/material/badge';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { MatBadgeModule } from '@angular/material/badge';
     MatIconModule,
     MatMenuModule,
     MatBadgeModule,
+    NgxChartsModule,
   ],
   exports: [
     LNavComponent

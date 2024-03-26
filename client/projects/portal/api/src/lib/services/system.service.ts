@@ -9,9 +9,9 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { leitura } from '../fn/system/leitura';
-import { Leitura$Params } from '../fn/system/leitura';
-import { Status } from '../models/status';
+import { CpuInfo } from '../models/cpu-info';
+import { systemLeitura } from '../fn/system/system-leitura';
+import { SystemLeitura$Params } from '../fn/system/system-leitura';
 
 @Injectable({ providedIn: 'root' })
 export class SystemService extends BaseService {
@@ -19,28 +19,28 @@ export class SystemService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `leitura()` */
-  static readonly LeituraPath = '/System/Leitura';
+  /** Path part for operation `systemLeitura()` */
+  static readonly SystemLeituraPath = '/System/Leitura';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `leitura()` instead.
+   * To access only the response body, use `systemLeitura()` instead.
    *
    * This method doesn't expect any request body.
    */
-  leitura$Response(params?: Leitura$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Status>>> {
-    return leitura(this.http, this.rootUrl, params, context);
+  systemLeitura$Response(params?: SystemLeitura$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<CpuInfo>>> {
+    return systemLeitura(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `leitura$Response()` instead.
+   * To access the full response (for headers, for example), `systemLeitura$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  leitura(params?: Leitura$Params, context?: HttpContext): Observable<Array<Status>> {
-    return this.leitura$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<Status>>): Array<Status> => r.body)
+  systemLeitura(params?: SystemLeitura$Params, context?: HttpContext): Observable<Array<CpuInfo>> {
+    return this.systemLeitura$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<CpuInfo>>): Array<CpuInfo> => r.body)
     );
   }
 

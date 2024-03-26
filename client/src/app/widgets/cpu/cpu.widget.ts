@@ -15,7 +15,7 @@ export class CPUWidget {
     }
     async load() {
         await lastValueFrom(
-            this.service.leitura()
+            this.service.systemLeitura()
         );
     }
 }

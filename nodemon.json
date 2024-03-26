@@ -1,7 +1,7 @@
 {
     "verbose": true,
     "watch": [
-        "start.js"
+        "start.ts"
     ],
     "exec": "node start"
 }

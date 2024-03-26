@@ -59,7 +59,21 @@ export class ProfileComponent implements OnDestroy {
   async takePhoto() {
     if (!this.obtendoFoto) {
       try {
-        this.mediaStream = await navigator.mediaDevices.getUserMedia({ video: true })
+        this.mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            autoGainControl: true,
+            advanced: [
+              { width: { ideal: 2560 } },
+              { width: { ideal: 1920 } },
+              { width: { ideal: 1280 } },
+              { width: { ideal: 1024 } },
+              { width: { ideal: 900 } },
+              { width: { ideal: 800 } },
+              { width: { ideal: 640 } },
+              { width: { ideal: 320 } }
+            ]
+          }
+        })
         const video = this.profileVideo?.nativeElement;
         if (video) {
           this.obtendoFoto = true;

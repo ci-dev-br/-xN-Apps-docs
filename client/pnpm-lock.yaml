@@ -68,6 +68,9 @@ dependencies:
   crypto-js:
     specifier: ^4.1.1
     version: 4.2.0
+  d3-shape:
+    specifier: ^3.2.0
+    version: 3.2.0
   express:
     specifier: ^4.18.2
     version: 4.18.2
@@ -97,6 +100,9 @@ devDependencies:
   '@types/crypto-js':
     specifier: ^4.1.1
     version: 4.2.1
+  '@types/d3-shape':
+    specifier: ^3.1.6
+    version: 3.1.6
   '@types/express':
     specifier: ^4.17.17
     version: 4.17.21
@@ -3942,6 +3948,16 @@ packages:
 
   /@types/crypto-js@4.2.1:
     resolution: {integrity: sha512-FSPGd9+OcSok3RsM0UZ/9fcvMOXJ1ENE/ZbLfOPlBWj7BgXtEAM8VYfTtT760GiLbQIMoVozwVuisjvsVwqYWw==}
+    dev: true
+
+  /@types/d3-path@3.1.0:
+    resolution: {integrity: sha512-P2dlU/q51fkOc/Gfl3Ul9kicV7l+ra934qBFXCFhrZMOL6du1TM0pm1ThYvENukyOn5h9v+yMJ9Fn5JK4QozrQ==}
+    dev: true
+
+  /@types/d3-shape@3.1.6:
+    resolution: {integrity: sha512-5KKk5aKGu2I+O6SONMYSNflgiP0WfZIQvVUMan50wHsLG1G94JlxEVnCpQARfTtzytuY0p/9PXXZb3I7giofIA==}
+    dependencies:
+      '@types/d3-path': 3.1.0
     dev: true
 
   /@types/eslint-scope@3.7.7:
