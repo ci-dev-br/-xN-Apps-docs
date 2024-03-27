@@ -11,7 +11,6 @@ import { WindowService } from "src/app/components/window/window.service";
 import { lastValueFrom } from "rxjs";
 import { IItemAction } from "../../gerencial.component";
 import { GridModule } from "src/app/components/grid/grid.module";
-import { DinamicFormsModule } from "src/app/components/dinamic-forms/dinamic-forms.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -100,7 +99,6 @@ import { FormsModule } from "@angular/forms";
         MatButtonModule,
         MatTableModule,
         GridModule,
-        DinamicFormsModule,
         MatTooltipModule,
         MatButtonToggleModule,
         MatFormFieldModule,

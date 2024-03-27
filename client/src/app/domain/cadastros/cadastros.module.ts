@@ -9,7 +9,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { CadastroModule } from './cadastro/cadastro.module';
 import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
 
-
 @NgModule({
   declarations: [
     CadastrosComponent

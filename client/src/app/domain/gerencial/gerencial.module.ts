@@ -17,7 +17,6 @@ import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo
 import { GerencialComponent } from "./gerencial.component";
 import { WindowModule } from "src/app/components/window/window.module";
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DinamicFormsModule } from "src/app/components/dinamic-forms/dinamic-forms.module";
 import { GridModule } from "src/app/components/grid/grid.module";
 import { MatSelectModule } from "@angular/material/select";
 import { MatChipsModule } from "@angular/material/chips";
@@ -48,7 +47,6 @@ import { GerecialSettingsComponent } from "./views/settings/gerecial-settigns.co
         MatTooltipModule,
         MatInputModule,
         WindowModule,
-        DinamicFormsModule,
         GridModule,
         MatButtonToggleModule,
         FormsModule,
