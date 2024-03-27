@@ -38,6 +38,6 @@ export class SystemService {
         setTimeout(() => this.readCpu(), 1000);
     }
     async leitura() {
-        return await (this._cpu_cached_history = this._cpu_cached_history.slice(-15));
+        return await (this._cpu_cached_history = this._cpu_cached_history.slice(-400));
     }
 }
