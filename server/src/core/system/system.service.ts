@@ -4,7 +4,6 @@ import { Repository } from "typeorm";
 import { Status } from "./model/status";
 import { cpuUsage, memoryUsage } from 'process';
 import { ApiProperty } from "@nestjs/swagger";
-import { copyFileSync } from "fs";
 
 export class CPUInfo {
     @ApiProperty({ nullable: true, required: false }) system?: number;
