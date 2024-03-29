@@ -5,7 +5,7 @@
 <!-- <ng-container *ngTemplateOutlet="pranchetaTemplate;context:{widgets:loadWidgets(prancheta)}"></ng-container> -->
 }
 @else{
-<mat-tab-group [selectedIndex]="tabIndex" (selectedIndexChange)="tabIndex = $event">
+<mat-tab-group #tabGroup [selectedIndex]="tabIndex" (selectedIndexChange)="tabIndex = $event">
     @for (prancheta of pranchetas; track $index) {
     <mat-tab [label]="prancheta.title || 'Inominada'">
         <ng-container *ngTemplateOutlet="pranchetaTemplate;context:{widgets:loadWidgets(prancheta) }"></ng-container>
@@ -15,27 +15,27 @@
 }
 <ng-template #pranchetaTemplate let-widgets="widgets">
     <div class="cards container layout-container">
-        @for (widget_g of widgets; track $index) {
-        <ng-container *ngIf="!!widget_g.widget.component">
+        @for (widget of widgets; track $index) {
+        <ng-container *ngIf="!!widget.widget_info.component">
             <div class="card-wrapper">
-                <ng-container *ngComponentOutlet="widget_g.widget.component;inputs:widget_g.settings"></ng-container>
+                <ng-container *ngComponentOutlet="widget.widget_info.component;inputs:widget.settings"></ng-container>
             </div>
         </ng-container>
         }
-        <div class="empty-card">
-            <button mat-icon-button matTooltip="Adicionar Visualização"
-                [matMenuTriggerFor]="menu"><mat-icon>add</mat-icon></button>
-            <mat-menu #menu>
-                <button mat-menu-item (click)="adicionarCard()">
-                    Pesquisar por Widget
-                </button>
-                <button mat-menu-item (click)="instalarWidget()">
-                    Instalar Widgets
-                </button>
-                <button mat-menu-item (click)="criarWidget()">
-                    Criar Widget
-                </button>
-            </mat-menu>
-        </div>
+        <!--  <div class="empty-card"> -->
+        <button mat-icon-button matTooltip="Adicionar Visualização"
+            [matMenuTriggerFor]="menu"><mat-icon>add</mat-icon></button>
+        <mat-menu #menu>
+            <button mat-menu-item (click)="adicionarCard()">
+                Pesquisar por Widget
+            </button>
+            <button mat-menu-item (click)="instalarWidget()">
+                Instalar Widgets
+            </button>
+            <button mat-menu-item (click)="criarWidget()">
+                Criar Widget
+            </button>
+        </mat-menu>
+        <!--  </div> -->
     </div>
 </ng-template>

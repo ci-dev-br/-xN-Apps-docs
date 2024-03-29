@@ -22,6 +22,12 @@ export class LayoutComponent {
     set title(value: string) {
         if (this.prancheta) this.prancheta.title = value;
     }
+    get order(): number {
+        return this.prancheta?.order || 0;
+    }
+    set order(value: number) {
+        if (this.prancheta) this.prancheta.order = value;
+    }
     get layout(): string {
         return this.prancheta?.layout || '';
     }
@@ -31,7 +37,7 @@ export class LayoutComponent {
     constructor(
         private readonly prachetaService: PranchetaService,
     ) {
-        prachetaService.pranchetaAtual$.subscribe(v => {
+        prachetaService.currentPrancheta$.subscribe(v => {
             this.prancheta = v;
         });
     }

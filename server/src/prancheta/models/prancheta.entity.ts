@@ -23,9 +23,12 @@ export class Prancheta extends FullAuditedEntity {
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })
     layout?: string;
-    @ApiProperty({ type: Card, nullable: true, required: false })
+    @ApiProperty({ type: Card, nullable: true, required: false, isArray: true })
     @Column({ type: 'jsonb', nullable: true })
     cards?: Card[];
+    @ApiProperty({ nullable: true, required: false })
+    @Column({ nullable: true })
+    order?: number;
     /* @OneToMany(() => PranchetaItemMetadata, item => item.prnahceta)
     items?: PranchetaItemMetadata[]; */
 }

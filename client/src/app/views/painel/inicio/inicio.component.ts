@@ -25,7 +25,7 @@ export class InicioComponent {
         if (this._tabIndex === value) return;
         this._tabIndex = value;
         if (this.pranchetas && value !== undefined && this.pranchetas[value])
-            this.pranchetaService.pranchetaAtual = this.pranchetas[value];
+            this.pranchetaService.currentPrancheta = this.pranchetas[value];
     }
     constructor(
         private readonly window: WindowService,
@@ -34,7 +34,8 @@ export class InicioComponent {
         private readonly pranchetaService: PranchetaService,
     ) {
         (async () => {
-            this.pranchetas = await this.widgetServices.pranchetas();
+            this.pranchetas = (await this.widgetServices.pranchetas())
+                .sort((pa, pb) => (pa.order || 0) > (pb.order || 0) ? 1 : (pa.order || 0) < (pb.order || 0) ? -1 : 0);
             this.tabIndex = 0;
         })();
         document.oncontextmenu = (event: MouseEvent) => this.contextMenuHandler(event);
@@ -60,13 +61,6 @@ export class InicioComponent {
 
     }
     loadWidgets(prancheta: Prancheta) {
-        if (!!(prancheta as any)._widgets) return (prancheta as any)._widgets;
-        if (prancheta.cards) {
-            // prancheta.cards
-
-            // (prancheta as any)._widgets = 
-        } else {
-            return (prancheta as any)._widgets = []
-        }
+        return this.pranchetaService.loadWidgets(prancheta);
     }
 }

@@ -3,13 +3,15 @@ import { Prancheta, PranchetaService as PranchetaApiService } from "@portal/api"
 import { lastValueFrom } from "rxjs";
 import { DaoService, SerializedObjectData } from "src/app/core/dao/dao.service";
 import { IWidget } from "src/app/widgets/i-widget";
+import { PranchetaService } from "../config.service";
 
 @Injectable()
 export class WidgetService {
-    widgets: { widget: IWidget, settings: any }[] = [];
+    // widgets: { widget: IWidget, settings: any }[] = [];
     constructor(
         private readonly pranchetaApiService: PranchetaApiService,
         private readonly daoService: DaoService,
+        private readonly prancheta: PranchetaService,
 
     ) {
         this.pranchetas();
@@ -27,11 +29,9 @@ export class WidgetService {
         //     })
         // );
     }
-    async adicionarWidget(
-        settings: any,
-        widget: IWidget,
+    async adicionarWidget(settings: any, widget_info: IWidget,
     ) {
-        this.widgets.push({ settings, widget });
+        this.prancheta.addWidgetOnPrancheta(settings, widget_info);
     }
     async pranchetas() {
         let pranchetas: Prancheta[] = await lastValueFrom(

@@ -3,13 +3,14 @@
 import { Card } from '../models/card';
 import { ChaveAcesso } from '../models/chave-acesso';
 export interface Prancheta {
-  cards?: Card | null;
+  cards?: Array<Card> | null;
   createdAt?: string | null;
   createdBy?: ChaveAcesso | null;
   internalId?: string | null;
   lastModifiedAt?: string | null;
   lastModifiedBy?: ChaveAcesso | null;
   layout?: string | null;
+  order?: number | null;
   tenants?: Array<string> | null;
   title?: string | null;
 }

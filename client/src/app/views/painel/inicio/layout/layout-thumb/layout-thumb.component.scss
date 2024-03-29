@@ -33,6 +33,11 @@
     }
 }
 
+.wrapper{
+    display: flex;
+    flex-direction: column;
+}
+
 button.add {
     $layout-button-size: 24px;
 
