@@ -7,6 +7,7 @@ import { Widgets } from "src/app/widgets/widgets";
 export interface IWidgetLoadedData {
     widget_info?: IWidget;
     settings?: any;
+    _onConfig?: boolean;
 }
 
 @Injectable()
@@ -49,6 +50,9 @@ export class PranchetaService {
     }
     addWidgetOnPrancheta(settings: any, widget_info: IWidget,) {
         this.currentWidgets?.push({ settings, widget_info });
+        this.updateCards();
+    }
+    updateCards() {
         if (this.currentPrancheta)
             this.currentPrancheta.cards = this.currentWidgets?.map(w => {
                 return {

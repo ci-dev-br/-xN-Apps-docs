@@ -4,7 +4,7 @@ import { AdicionarWidgetComponent } from "./adicionar-widget/adicionar-widget.co
 import { UserService } from "src/app/services/user.service";
 import { WidgetService } from "./widget.service";
 import { Prancheta } from "@portal/api";
-import { PranchetaService } from "../config.service";
+import { IWidgetLoadedData, PranchetaService } from "../config.service";
 
 @Component({
     selector: 'px-inicio',
@@ -62,5 +62,16 @@ export class InicioComponent {
     }
     loadWidgets(prancheta: Prancheta) {
         return this.pranchetaService.loadWidgets(prancheta);
+    }
+    contextmenuHandler(event: PointerEvent | MouseEvent, widget: IWidgetLoadedData) {
+        event.preventDefault();
+        widget._onConfig = !widget._onConfig;
+    }
+    removeWidget(widget: IWidgetLoadedData) {
+        if (!this.pranchetaService.currentWidgets) return;
+        const pos = this.pranchetaService.currentWidgets.indexOf(widget);
+        if (pos > -1)
+            this.pranchetaService.currentWidgets.splice(pos, 1);
+        this.pranchetaService.updateCards();
     }
 }

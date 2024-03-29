@@ -17,9 +17,38 @@
     <div class="cards container layout-container">
         @for (widget of widgets; track $index) {
         <ng-container *ngIf="!!widget.widget_info.component">
-            <div class="card-wrapper">
+            <div class="card-wrapper" (contextmenu)="contextmenuHandler($event,widget)">
                 <ng-container *ngComponentOutlet="widget.widget_info.component;inputs:widget.settings"></ng-container>
+                <div class="widget-settings" [class.--config]="widget._onConfig">
+
+
+                    Configurações
+                    <!-- <form *ngIf="widget.settings" [formGroup]="formSettings">
+                        <ng-container *ngFor="let kv of selecionado.settings | keyvalue">
+                            <ng-container>
+                                <mat-form-field>
+                                    <mat-label>{{kv?.value?.label}}</mat-label>
+                                    <input type="text" matInput [formControlName]="kv.key">
+                                </mat-form-field>
+                            </ng-container>
+                        </ng-container>
+                    </form> -->
+
+                    <button mat-button (click)="widget._onConfig = undefined">
+                        Sair
+                    </button>
+                    <div class="menu">
+                        <button mat-icon-button [matMenuTriggerFor]="menu_">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #menu_>
+                            <button mat-menu-item (click)="removeWidget(widget)"><mat-icon>delete</mat-icon> Remover
+                                Widget da Prancheta</button>
+                        </mat-menu>
+                    </div>
+                </div>
             </div>
+
         </ng-container>
         }
         <!--  <div class="empty-card"> -->

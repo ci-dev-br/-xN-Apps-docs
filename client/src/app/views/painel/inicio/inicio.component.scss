@@ -59,6 +59,36 @@
                 z-index: 200;
             }
         }
+
+        .widget-settings {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background-color: white;
+            z-index: 10000;
+            transform: rotateY(90deg);
+            transition: transform ease .45s;
+
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+
+            &.--config {
+
+                transform: rotateY(0);
+            }
+
+            .menu {
+                position: absolute;
+                right: 5px;
+                top: 0;
+                display: flex;
+                flex-direction: row;
+            }
+        }
+
     }
 }
 

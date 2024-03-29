@@ -8,5 +8,5 @@ import { Component } from '@angular/core';
   styleUrl: './prancheta.component.scss'
 })
 export class PranchetaComponent {
-
+  
 }
