@@ -1,14 +1,19 @@
-import { Component, NgModule } from "@angular/core";
+import { Component, Input, NgModule } from "@angular/core";
 
 @Component({
     selector: 'px-iframe-widget',
     template: `
-    {{value}}
-    `,
+    <div [style.font-size]="fontSize">
+        {{value}}
+    </div>
+`,
     styles: [``]
 })
 export class TotalWidget {
+    @Input()
     value?: number;
+    @Input()
+    fontSize?: number;
 }
 @NgModule({
     declarations: [
@@ -24,7 +29,8 @@ export const TotalWidgetInfo = {
     description: 'Visualizar valor Total.',
     tags: ['Valores'],
     settings: {
-        value: { type: 'text', label: "Valor total" }
+        value: { type: 'text', label: "Valor total" },
+        fontSize: { type: 'number', label: "Font Size" },
     },
     module: TotalWidgetModule, component: TotalWidget
 };
