@@ -30,7 +30,7 @@ export const TotalWidgetInfo = {
     tags: ['Valores'],
     settings: {
         value: { type: 'text', label: "Valor total" },
-        fontSize: { type: 'number', label: "Font Size" },
+        fontSize: { type: 'text', label: "Font Size" },
     },
     module: TotalWidgetModule, component: TotalWidget
 };

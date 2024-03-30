@@ -7,7 +7,6 @@ import { PranchetaService } from "../config.service";
 
 @Injectable()
 export class WidgetService {
-    // widgets: { widget: IWidget, settings: any }[] = [];
     constructor(
         private readonly pranchetaApiService: PranchetaApiService,
         private readonly daoService: DaoService,
@@ -17,17 +16,6 @@ export class WidgetService {
         this.pranchetas();
     }
     async sync() {
-
-        // await lastValueFrom(
-        //     this.pranchetaApiService.pranchetaControllerSync({
-        //         body: {
-        //             // pranchta: {
-        //             //     // cards:
-        //             //     title: 'Teste'
-        //             // }
-        //         }
-        //     })
-        // );
     }
     async adicionarWidget(settings: any, widget_info: IWidget,
     ) {

@@ -133,7 +133,7 @@ export class LNavComponent {
     })();
     this.loadStatus();
     if (this.$user.value?.tenants) this.tenants = this.$user.value?.tenants;
-    this.updateCpuInfo();
+    // this.updateCpuInfo();
   }
   sair() {
     this.userService.sair();

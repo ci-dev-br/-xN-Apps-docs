@@ -5,6 +5,7 @@ import { UserService } from "src/app/services/user.service";
 import { WidgetService } from "./widget.service";
 import { Prancheta } from "@portal/api";
 import { IWidgetLoadedData, PranchetaService } from "../config.service";
+import { FormBuilder } from "@angular/forms";
 
 @Component({
     selector: 'px-inicio',
@@ -65,6 +66,7 @@ export class InicioComponent {
     }
     contextmenuHandler(event: PointerEvent | MouseEvent, widget: IWidgetLoadedData) {
         event.preventDefault();
+        if (widget._onConfig) this.updateCards();
         widget._onConfig = !widget._onConfig;
     }
     removeWidget(widget: IWidgetLoadedData) {
@@ -72,6 +74,10 @@ export class InicioComponent {
         const pos = this.pranchetaService.currentWidgets.indexOf(widget);
         if (pos > -1)
             this.pranchetaService.currentWidgets.splice(pos, 1);
+        this.updateCards();
+    }
+    updateCards() {
         this.pranchetaService.updateCards();
     }
+
 }

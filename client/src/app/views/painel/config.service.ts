@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { FormBuilder, FormGroup } from "@angular/forms";
 import { Card, Prancheta } from "@portal/api";
 import { BehaviorSubject } from "rxjs";
 import { IWidget } from "src/app/widgets/i-widget";
@@ -8,11 +9,14 @@ export interface IWidgetLoadedData {
     widget_info?: IWidget;
     settings?: any;
     _onConfig?: boolean;
+    _form?: FormGroup;
 }
 
 @Injectable()
 export class PranchetaService {
-    constructor() {
+    constructor(
+        private readonly fb: FormBuilder,
+    ) {
         this.currentPrancheta$.subscribe(v => {
             if (v) this.currentWidgets = this.loadWidgets(v);
         });
@@ -40,10 +44,21 @@ export class PranchetaService {
         if (this._loaded_widgets.has(prancheta)) return this._loaded_widgets.get(prancheta);
         const loaded_widgets: IWidgetLoadedData[] = [];
         prancheta.cards?.forEach(card => {
-            loaded_widgets.push({
+            const a = {
                 settings: card.settings,
                 widget_info: Widgets.find(w => w.title === card.componentName),
-            } as IWidgetLoadedData);
+            } as IWidgetLoadedData;
+
+            a._form = this.getForm(a);
+            a._form?.reset(a.settings);
+
+            if (a._form) {
+                a._form.valueChanges.subscribe(values => {
+                    a.settings = values;
+                })
+            }
+
+            loaded_widgets.push(a);
         })
         this._loaded_widgets.set(prancheta, loaded_widgets);
         return loaded_widgets;
@@ -60,5 +75,18 @@ export class PranchetaService {
                     settings: w.settings
                 } as Card
             }) as Card[] || undefined;
+    }
+
+    getForm(widget: IWidgetLoadedData) {
+        if (widget.widget_info?.settings) {
+            const group: any = {
+            };
+            Object.entries(widget.widget_info?.settings).forEach(kv => {
+                kv[1]
+                group[kv[0]] = [];
+            })
+            return this.fb.group(group);
+        }
+        return undefined;
     }
 }
