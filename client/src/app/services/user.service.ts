@@ -17,12 +17,14 @@ export class UserService {
             try {
                 if (v) {
                     try {
-                        localStorage.setItem('CIUSR', btoa(JSON.stringify(v, null, 2)));
+                        const { photo, ...user_info } = v;
+                        localStorage.setItem('CIUSR', btoa(JSON.stringify(user_info, null, 2)));
                     } catch (error) {
                     }
                 } else {
                     try {
-                        localStorage.removeItem('CIUSR'); router.navigate(['/']);
+                        localStorage.removeItem('CIUSR');
+                        router.navigate(['/']);
                     } catch (error) {
                     }
                 }
