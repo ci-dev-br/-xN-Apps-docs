@@ -11,6 +11,8 @@ import { CPUWidgetModule } from "./cpu/cpu.widget";
     ],
     exports: [
         IFrameWidgetModule,
+        TotalWidgetModule,
+        CPUWidgetModule,
     ]
 })
 export class WidgetModule { }

@@ -10,6 +10,7 @@ export interface IWidgetLoadedData {
     settings?: any;
     _onConfig?: boolean;
     _form?: FormGroup;
+    __grid_template?: string;
 }
 
 @Injectable()

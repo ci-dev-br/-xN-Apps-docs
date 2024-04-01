@@ -1,1 +1,101 @@
-<p>prancheta works!</p>
+@if(!!layout && !!widgets){
+<div class="cards col">
+    @for (row of _rows;let ri = $index; track ri) {
+    <div class="row ">
+        @for (col of row.cols; let ci = $index; track ci) {
+        <div class="col">
+            @if(col?.widgets){
+            @for (widget of col.widgets; track $index) {
+            @if(widget?.widget_info && widget?.widget_info?.component && widget?.settings){
+            <div class="card-wrapper" (contextmenu)="contextmenuHandler($event,widget)">
+                <ng-container *ngComponentOutlet="widget.widget_info.component;inputs:widget.settings"></ng-container>
+
+               <!--  <div class="widget-settings" [class.--config]="widget._onConfig">
+                    <h3>Configurações</h3>
+                    <form *ngIf="widget.settings && widget._form" [formGroup]="widget._form">
+                        <ng-container *ngFor="let kv of widget.widget_info?.settings | keyvalue">
+                            <ng-container>
+                                <mat-form-field>
+                                    <mat-label>{{kv?.value?.label}}</mat-label>
+                                    <input [type]="kv?.value?.type||'text'" matInput [formControlName]="kv.key">
+                                </mat-form-field>
+                            </ng-container>
+                        </ng-container>
+                    </form>
+                    <button mat-button (click)="widget._onConfig = undefined;updateCards()">
+                        Sair
+                    </button>
+                    <div class="menu">
+                        <button mat-icon-button [matMenuTriggerFor]="menu_">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #menu_>
+                            <button mat-menu-item (click)="removeWidget(widget)"><mat-icon>delete</mat-icon> Remover
+                                Widget da Prancheta</button>
+                        </mat-menu>
+                    </div>
+                </div> -->
+            </div>
+            }
+            }
+            }
+        </div>
+        }
+    </div>
+    }
+</div>
+}
+<!-- '1'
+<div class="cards container layout-container" style="display: grid;"
+            [style.grid-template]="getTemplate(prancheta.layout || '')">
+            @for (widget of loadWidgets(prancheta); track wi; let wi = $index) {
+            <ng-container *ngIf="!!widget?.widget_info?.component">
+                <div class="card-wrapper" (contextmenu)="contextmenuHandler($event,widget)" [style.grid-area]="'w'+wi">
+                    @if(widget.widget_info && !!widget.widget_info.component){
+                    <ng-container
+                        *ngComponentOutlet="widget.widget_info.component;inputs:widget.settings"></ng-container>
+                    }
+                    <div class="widget-settings" [class.--config]="widget._onConfig">
+                        <h3>Configurações</h3>
+                        <form *ngIf="widget.settings && widget._form" [formGroup]="widget._form">
+                            <ng-container *ngFor="let kv of widget.widget_info?.settings | keyvalue">
+                                <ng-container>
+                                    <mat-form-field>
+                                        <mat-label>{{kv?.value?.label}}</mat-label>
+                                        <input [type]="kv?.value?.type||'text'" matInput [formControlName]="kv.key">
+                                    </mat-form-field>
+                                </ng-container>
+                            </ng-container>
+                        </form>
+                        <button mat-button (click)="widget._onConfig = undefined;updateCards()">
+                            Sair
+                        </button>
+                        <div class="menu">
+                            <button mat-icon-button [matMenuTriggerFor]="menu_">
+                                <mat-icon>more_vert</mat-icon>
+                            </button>
+                            <mat-menu #menu_>
+                                <button mat-menu-item (click)="removeWidget(widget)"><mat-icon>delete</mat-icon> Remover
+                                    Widget da Prancheta</button>
+                            </mat-menu>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            }
+              <div class="empty-card"> -->
+<!-- <button mat-icon-button matTooltip="Adicionar Visualização" [matMenuTriggerFor]="menu"><mat-icon>add</mat-icon></button>
+<mat-menu #menu>
+    <button mat-menu-item (click)="adicionarCard()">
+        Pesquisar por Widget
+    </button>
+    <button mat-menu-item (click)="instalarWidget()">
+        Instalar Widgets
+    </button>
+    <button mat-menu-item (click)="criarWidget()">
+        Criar Widget
+    </button>
+</mat-menu> -->
+<!--  </div> -->
+<!-- </div> -->
+<!-- <ng-container *ngTemplateOutlet="pranchetaTemplate;context:{widgets:loadWidgets(prancheta) }"></ng-container> -->

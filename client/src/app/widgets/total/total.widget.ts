@@ -4,7 +4,7 @@ import { Component, Input, NgModule } from "@angular/core";
     selector: 'px-iframe-widget',
     template: `
     @if(title){<h6 style="padding: 0;margin: 0;">{{title}}</h6>}
-    <div [style.font-size]="fontSize">
+    <div [style.font-size]="fontSize" style="text-align: center;">
         {{value}}
     </div>
 `,

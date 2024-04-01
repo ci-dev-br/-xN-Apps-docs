@@ -69,15 +69,20 @@ export class InicioComponent {
         if (widget._onConfig) this.updateCards();
         widget._onConfig = !widget._onConfig;
     }
-    removeWidget(widget: IWidgetLoadedData) {
-        if (!this.pranchetaService.currentWidgets) return;
-        const pos = this.pranchetaService.currentWidgets.indexOf(widget);
-        if (pos > -1)
-            this.pranchetaService.currentWidgets.splice(pos, 1);
-        this.updateCards();
-    }
+    // removeWidget(widget: IWidgetLoadedData) {
+    //     if (!this.pranchetaService.currentWidgets) return;
+    //     const pos = this.pranchetaService.currentWidgets.indexOf(widget);
+    //     if (pos > -1)
+    //         this.pranchetaService.currentWidgets.splice(pos, 1);
+    //     this.updateCards();
+    // }
     updateCards() {
         this.pranchetaService.updateCards();
+    }
+
+    getTemplate(structure: string) {
+        let cnt = 0;
+        return structure.split('-').map(v => Array(Number(v)).fill('').map(c => 'w' + cnt++)).map(a => a.join(' ')).map(l => `"${l}"`).join('\n');
     }
 
 }

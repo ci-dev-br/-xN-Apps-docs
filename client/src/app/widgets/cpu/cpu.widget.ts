@@ -5,8 +5,19 @@ import { lastValueFrom } from "rxjs";
 
 @Component({
     selector: 'px-cpu-widget',
-    template: `<ngx-charts-line-chart [results]="cpuStatus"></ngx-charts-line-chart>`,
-    styles: [``]
+    template: `
+    <div #contentRef class="content">
+        <ngx-charts-line-chart [view]="[contentRef.getBoundingClientRect().width,contentRef.getBoundingClientRect().height]" [results]="cpuStatus"></ngx-charts-line-chart>
+    </div>
+    `,
+    styles: [`
+    :host{
+        display: contents;
+    }
+    .content{
+        position: absolute; left: 0; right: 0; top:0 ; bottom: 0;
+    }
+    `]
 })
 export class CPUWidget implements OnDestroy {
     alive? = true;

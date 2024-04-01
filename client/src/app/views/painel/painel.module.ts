@@ -20,6 +20,7 @@ import { WindowModule } from 'src/app/components/window/window.module';
 import { LayoutThumbComponent } from './inicio/layout/layout-thumb/layout-thumb.component';
 import { LayoutComponent } from './inicio/layout/layout.component';
 import { PranchetaService } from './config.service';
+import { PranchetaComponent } from './inicio/prancheta/prancheta.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,9 @@ import { PranchetaService } from './config.service';
     ReactiveFormsModule,
     MatTabsModule,
     FormsModule,
+
+    PranchetaComponent,
+    
   ],
   providers: [
     WidgetService,
