@@ -8,7 +8,7 @@ import { ComponentWidgetInfo } from "./component/component.widget";
 /** */
 
 export const Widgets: IWidget[] = [
-    /** =Imports */
+    /** =Widgets */
     IFrameWidgetInfo,
     TotalWidgetInfo,
     CPUWidgetInfo,

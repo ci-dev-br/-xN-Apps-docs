@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { EventEmitter, Injectable } from "@angular/core";
 import { Prancheta, PranchetaService as PranchetaApiService } from "@portal/api";
 import { lastValueFrom } from "rxjs";
 import { DaoService, SerializedObjectData } from "src/app/core/dao/dao.service";
@@ -7,6 +7,8 @@ import { PranchetaService } from "../config.service";
 
 @Injectable()
 export class WidgetService {
+    private _$update = new EventEmitter<void>();
+    get $update() { return this._$update; }
     constructor(
         private readonly pranchetaApiService: PranchetaApiService,
         private readonly daoService: DaoService,
@@ -20,6 +22,7 @@ export class WidgetService {
     async adicionarWidget(settings: any, widget_info: IWidget,
     ) {
         this.prancheta.addWidgetOnPrancheta(settings, widget_info);
+        this._$update.emit();
     }
     async pranchetas() {
         let pranchetas: Prancheta[] = await lastValueFrom(

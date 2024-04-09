@@ -1,9 +1,8 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ToolbarComponent } from './toolbar.component';
 import { CoreModule } from 'src/app/core/core.module';
 import { MatButtonModule } from '@angular/material/button';
-
+import { ToolbarService } from './toolbar.service';
 
 
 @NgModule({
@@ -14,8 +13,11 @@ import { MatButtonModule } from '@angular/material/button';
     CoreModule,
     MatButtonModule,
   ],
-   exports: [
+  exports: [
     ToolbarComponent,
+  ],
+  providers: [
+    ToolbarService,
   ]
 })
 export class ToolbarModule { }

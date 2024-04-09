@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, EventEmitter } from "@angular/core";
 import { WindowService } from "src/app/components/window/window.service";
 import { AdicionarWidgetComponent } from "./adicionar-widget/adicionar-widget.component";
 import { UserService } from "src/app/services/user.service";
@@ -6,6 +6,7 @@ import { WidgetService } from "./widget.service";
 import { Prancheta } from "@portal/api";
 import { IWidgetLoadedData, PranchetaService } from "../config.service";
 import { FormBuilder } from "@angular/forms";
+import { Subject } from "rxjs";
 
 @Component({
     selector: 'px-inicio',

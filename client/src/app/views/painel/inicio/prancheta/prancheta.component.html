@@ -8,9 +8,10 @@
             @for (widget of col.widgets; track $index) {
             @if(widget?.widget_info && widget?.widget_info?.component && widget?.settings){
             <div class="card-wrapper" (contextmenu)="contextmenuHandler($event,widget)">
+                @if(widget && widget.widget_info && widget.widget_info.component ){
                 <ng-container *ngComponentOutlet="widget.widget_info.component;inputs:widget.settings"></ng-container>
-
-               <!--  <div class="widget-settings" [class.--config]="widget._onConfig">
+                <div class="widget-settings" [class.--config]="widget._onConfig"></div>
+                <div class="widget-settings" [class.--config]="widget._onConfig">
                     <h3>Configurações</h3>
                     <form *ngIf="widget.settings && widget._form" [formGroup]="widget._form">
                         <ng-container *ngFor="let kv of widget.widget_info?.settings | keyvalue">
@@ -34,7 +35,8 @@
                                 Widget da Prancheta</button>
                         </mat-menu>
                     </div>
-                </div> -->
+                </div>
+                }
             </div>
             }
             }
@@ -84,7 +86,7 @@
             </ng-container>
             }
               <div class="empty-card"> -->
-<!-- <button mat-icon-button matTooltip="Adicionar Visualização" [matMenuTriggerFor]="menu"><mat-icon>add</mat-icon></button>
+<button mat-icon-button matTooltip="Adicionar Visualização" [matMenuTriggerFor]="menu"><mat-icon>add</mat-icon></button>
 <mat-menu #menu>
     <button mat-menu-item (click)="adicionarCard()">
         Pesquisar por Widget
@@ -95,7 +97,7 @@
     <button mat-menu-item (click)="criarWidget()">
         Criar Widget
     </button>
-</mat-menu> -->
+</mat-menu>
 <!--  </div> -->
 <!-- </div> -->
 <!-- <ng-container *ngTemplateOutlet="pranchetaTemplate;context:{widgets:loadWidgets(prancheta) }"></ng-container> -->

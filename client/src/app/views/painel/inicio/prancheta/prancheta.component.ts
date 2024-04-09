@@ -7,6 +7,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { WindowService } from 'src/app/components/window/window.service';
+import { AdicionarWidgetComponent } from '../adicionar-widget/adicionar-widget.component';
+import { WidgetService } from '../widget.service';
 // import { WidgetModule } from 'src/app/widgets/widgets.module';
 
 @Component({
@@ -46,7 +49,15 @@ export class PranchetaComponent {
     this._widgets = value;
     if (this._layout && this.widgets) this.update();
   }
-  _rows?: any[];
+  _rows?: { cols?: { widgets?: IWidgetLoadedData[] }[] }[];
+  constructor(
+    private readonly window: WindowService,
+    private readonly widgetServices: WidgetService,
+  ) {
+    widgetServices.$update.subscribe(() =>
+      this.update()
+    );
+  }
   update() {
     let cnt = 0;
     this._rows = this.layout?.split('-').map(n => new Array(Number(n)).fill('').map((e, i) => i)).map(e => {
@@ -60,10 +71,16 @@ export class PranchetaComponent {
     });
     this._rows;
   }
-
   contextmenuHandler(event: PointerEvent | MouseEvent, widget: IWidgetLoadedData) {
     event.preventDefault();
     // if (widget._onConfig) this.updateCards();
     widget._onConfig = !widget._onConfig;
   }
+  updateCards() { }
+  removeWidget(widget: IWidgetLoadedData) { }
+  async adicionarCard() {
+    await this.window.open(AdicionarWidgetComponent, {});
+  }
+  instalarWidget() { }
+  criarWidget() { }
 }
