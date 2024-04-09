@@ -9,9 +9,9 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { pessoaGet } from '../fn/pessoa/pessoa-get';
+import { PessoaGet$Params } from '../fn/pessoa/pessoa-get';
 import { pessoaSync } from '../fn/pessoa/pessoa-sync';
-import { pessoaSync_1 } from '../fn/pessoa/pessoa-sync-1';
-import { PessoaSync_1$Params } from '../fn/pessoa/pessoa-sync-1';
 import { PessoaSync$Params } from '../fn/pessoa/pessoa-sync';
 import { SyncPayloadDaoPessoa } from '../models/sync-payload-dao-pessoa';
 
@@ -46,27 +46,27 @@ export class PessoaService extends BaseService {
     );
   }
 
-  /** Path part for operation `pessoaSync_1()` */
-  static readonly PessoaSync_1Path = '/Pessoa/Get';
+  /** Path part for operation `pessoaGet()` */
+  static readonly PessoaGetPath = '/Pessoa/Get';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `pessoaSync_1()` instead.
+   * To access only the response body, use `pessoaGet()` instead.
    *
    * This method doesn't expect any request body.
    */
-  pessoaSync_1$Response(params?: PessoaSync_1$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoPessoa>> {
-    return pessoaSync_1(this.http, this.rootUrl, params, context);
+  pessoaGet$Response(params?: PessoaGet$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoPessoa>> {
+    return pessoaGet(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `pessoaSync_1$Response()` instead.
+   * To access the full response (for headers, for example), `pessoaGet$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  pessoaSync_1(params?: PessoaSync_1$Params, context?: HttpContext): Observable<SyncPayloadDaoPessoa> {
-    return this.pessoaSync_1$Response(params, context).pipe(
+  pessoaGet(params?: PessoaGet$Params, context?: HttpContext): Observable<SyncPayloadDaoPessoa> {
+    return this.pessoaGet$Response(params, context).pipe(
       map((r: StrictHttpResponse<SyncPayloadDaoPessoa>): SyncPayloadDaoPessoa => r.body)
     );
   }

@@ -9,6 +9,7 @@ import { SystemService } from './services/system.service';
 import { DeviceService } from './services/device.service';
 import { AuthService } from './services/auth.service';
 import { ApplicationService } from './services/application.service';
+import { DomainService } from './services/domain.service';
 import { PranchetaService } from './services/prancheta.service';
 import { UserService } from './services/user.service';
 import { PhotoService } from './services/photo.service';
@@ -29,6 +30,7 @@ import { OrganizacaoService } from './services/organizacao.service';
     DeviceService,
     AuthService,
     ApplicationService,
+    DomainService,
     PranchetaService,
     UserService,
     PhotoService,

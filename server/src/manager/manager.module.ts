@@ -6,6 +6,8 @@ import { ApplicationService } from "./service/application.service";
 import { Domain } from "./model/domain.entity";
 import { Painel } from "./model/painel.entity";
 import { Server } from "./model/server.entity";
+import { DomainService } from "./service/domain.service";
+import { DomainController } from "./controller/domain.controller";
 export const ManagerEntities = [
     Application,
     Domain,
@@ -20,9 +22,11 @@ export const ManagerEntities = [
     ],
     controllers: [
         ApplicationController,
+        DomainController,
     ],
     providers: [
         ApplicationService,
+        DomainService,
     ]
 })
 export class ManagerModule { }

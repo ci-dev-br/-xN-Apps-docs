@@ -6,14 +6,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { SyncPayloadDaoPessoa } from '../../models/sync-payload-dao-pessoa';
+import { Domain } from '../../models/domain';
 
-export interface PessoaSync_1$Params {
+export interface DomainSync$Params {
+      body: Domain
 }
 
-export function pessoaSync_1(http: HttpClient, rootUrl: string, params?: PessoaSync_1$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoPessoa>> {
-  const rb = new RequestBuilder(rootUrl, pessoaSync_1.PATH, 'post');
+export function domainSync(http: HttpClient, rootUrl: string, params: DomainSync$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
+  const rb = new RequestBuilder(rootUrl, domainSync.PATH, 'post');
   if (params) {
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -21,9 +23,9 @@ export function pessoaSync_1(http: HttpClient, rootUrl: string, params?: PessoaS
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SyncPayloadDaoPessoa>;
+      return r as StrictHttpResponse<Domain>;
     })
   );
 }
 
-pessoaSync_1.PATH = '/Pessoa/Get';
+domainSync.PATH = '/Domain/Sync';

@@ -4,7 +4,7 @@ import { ControllerDaoBase, SyncPayloadDao } from "src/core/dao";
 import { Pessoa } from "../model/pessoa.entity";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 
-export class SyncPayloadDaoPessoa extends SyncPayloadDao<Pessoa>{
+export class SyncPayloadDaoPessoa extends SyncPayloadDao<Pessoa> {
     @ApiProperty({ type: Pessoa })
     override data?: Pessoa;
 }
@@ -44,10 +44,10 @@ export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
             SyncPayloadDaoPessoa
     })
     @ApiOperation({
-        operationId: 'PessoaSync'
+        operationId: 'PessoaGet'
     })
     override async get(
-       //  @Body() input: PessoaCotrollerGetInputDto,
+        //  @Body() input: PessoaCotrollerGetInputDto,
     ) {
         // return await super.get(input)
     }
