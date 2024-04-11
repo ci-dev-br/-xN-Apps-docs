@@ -6,6 +6,7 @@ import { InicioComponent } from './inicio.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { WindowModule } from 'src/app/components/window/window.module';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatIconModule,
     MatButtonModule,
     MatTooltipModule,
+    WindowModule,
   ]
 })
 export class InicioModule { }

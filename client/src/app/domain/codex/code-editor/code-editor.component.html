@@ -1,28 +1,39 @@
 <ci-l-nav></ci-l-nav>
-<mat-toolbar>
-    <button mat-raised-button>
-        Procurar Agente
-    </button>
-    <!-- <button mat-raised-button>Procurar tarefa</button> -->
-    <mat-select [(ngModel)]="executor">
-        <mat-option *ngFor="let executor of executores" [value]="executor.agentService" >{{executor.name}}</mat-option>
-    </mat-select>
-    <button mat-raised-button color="primary" (click)="executar()">Executar</button>
-</mat-toolbar>
-<!-- <div #info1 class="presentation">
+<mat-tab-group>
+    <mat-tab>
+
+        <mat-toolbar>
+            <button mat-raised-button>
+                Procurar Agente
+            </button>
+            <!-- <button mat-raised-button>Procurar tarefa</button> -->
+            <mat-select [(ngModel)]="executor">
+                <mat-option *ngFor="let executor of executores"
+                    [value]="executor.agentService">{{executor.name}}</mat-option>
+            </mat-select>
+            <button mat-raised-button color="primary" (click)="executar()">Executar</button>
+        </mat-toolbar>
+        <!-- <div #info1 class="presentation">
     <h1>Bem-vinde ao Codex!</h1>
     <p>
         Para iniciar selecione uma tarefa para resolver um problema.
     </p>
 </div> -->
-<div style="display: flex; flex-direction: row; ">
-    <div class="nav">
-        
-    </div>
-    <div class="container" style="flex: auto;">
-        <ng-container>
-            <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="code"></ngx-monaco-editor>
-        </ng-container>
-    </div>
-    <router-outlet></router-outlet>
-</div>
+        <div style="display: flex; flex-direction: row; ">
+            <div class="nav">
+
+            </div>
+            <div class="container" style="flex: auto;">
+                <ng-container>
+                    <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="code"></ngx-monaco-editor>
+                </ng-container>
+            </div>
+            <router-outlet></router-outlet>
+        </div>
+    </mat-tab>
+    <mat-tab>
+        <iframe
+            src="https://prod.liveshare.vsengsaas.visualstudio.com/join?CE19477ED205D1525AB6423C473565BF411D"></iframe>
+    </mat-tab>
+
+</mat-tab-group>

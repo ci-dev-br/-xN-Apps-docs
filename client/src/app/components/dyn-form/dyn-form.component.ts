@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./dyn-form.component.scss']
 })
 export class DynFormComponent {
-
+  
 }

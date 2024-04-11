@@ -14,6 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ProjetoComponent } from './projeto/projeto.component';
 import { WindowModule } from 'src/app/components/window/window.module';
 import { AgentService } from './agent.service';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { AgentService } from './agent.service';
     ModalModule,
     MatSelectModule,
     WindowModule,
+    MatTabsModule,
   ],
   providers: [
     AgentService,

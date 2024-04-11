@@ -1,5 +1,9 @@
 import { Injectable } from "@angular/core";
+import { Domain, DomainService } from "@portal/api";
 import { BehaviorSubject } from "rxjs";
+import { WindowService } from "src/app/components/window/window.service";
+import { DaoService } from "src/app/core/dao/dao.service";
+import { DomainComponent } from "../inicio/casdastros/domain/domain.component";
 
 @Injectable()
 export class InfraService {
@@ -12,9 +16,14 @@ export class InfraService {
     get paineis() { return this._paineis; }
 
     constructor(
+        public readonly window: WindowService,
+        public readonly dao: DaoService,
+        public readonly domainService: DomainService,
 
     ) { }
-    adicionarDominio() { }
+    adicionarDominio() {
+        this.window.open(DomainComponent, this.dao.prepareToEdit({} as Domain));
+    }
     adicionarServidor() { }
     adicionarPainel() { }
 }
