@@ -10,7 +10,7 @@ interface PartialData {
 
 @Injectable()
 export class PhotoService {
-    private static sendingData = new Map<string, PartialData>();
+    private static partialDataSendingBook = new Map<string, PartialData>();
     constructor(
         @InjectRepository(Photo)
         private readonly userRepo: Repository<Photo>,
@@ -45,17 +45,17 @@ export class PhotoService {
         TotalParts?: number,
     ) {
         let data: PartialData;
-        if (PhotoService.sendingData.has(md5Full)) {
-            data = PhotoService.sendingData.get(md5Full);
+        if (PhotoService.partialDataSendingBook.has(md5Full)) {
+            data = PhotoService.partialDataSendingBook.get(md5Full);
         } else {
             data = {
                 parts: Array(TotalParts).fill(undefined)
             };
-            PhotoService.sendingData.set(md5Full, data);
+            PhotoService.partialDataSendingBook.set(md5Full, data);
         }
         data.parts[currentPart] = partialBase64;
         if (data.parts.filter(d => d === undefined).length === 0) {
-            PhotoService.sendingData.delete(md5Full);
+            PhotoService.partialDataSendingBook.delete(md5Full);
             const result_data = Buffer.from(data.parts.reduce((a, b) => a + b), 'base64');
             return result_data;
         }
