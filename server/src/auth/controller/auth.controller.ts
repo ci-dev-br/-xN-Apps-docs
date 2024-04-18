@@ -6,10 +6,8 @@ import { User } from '../models/user.entity';
 import { Public } from '../decorators/public.decorator';
 import { CredencialService } from '../service/credencial.service';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from '../constants';
 import { randomUUID } from 'crypto';
 import { AuthService } from '../service/auth.service';
-import { RefreshTokenStrategy } from '../service/refresh-token-strategy';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -123,7 +121,6 @@ export class AuthController {
   async logout(@Req() req) {
     this.userService.logout(null)
   }
-
   @Public()
   @Post('Refresh')
   @ApiResponse({ type: AuthorizationOutput })
@@ -131,11 +128,11 @@ export class AuthController {
   async refresh(
     @Req() req: Request,
     @Body() payload: RefreshPayloadInputDto,
+    @Ip() ip,
   ) {
-    // const userId = req.user['sub'];
-    // const refreshToken = req.user['refreshToken'];
+
     return await this.authService.refreshToken(
-      null, payload.refreshToken, req
+      null, payload.refreshToken, req, ip
     );
   }
 }

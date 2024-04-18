@@ -4,6 +4,7 @@ import { lastValueFrom } from "rxjs";
 import { DaoService, SerializedObjectData } from "src/app/core/dao/dao.service";
 import { IWidget } from "src/app/widgets/i-widget";
 import { PranchetaService } from "../config.service";
+import { StringOrNumberOrDate } from "@swimlane/ngx-charts";
 
 @Injectable()
 export class WidgetService {
@@ -27,7 +28,7 @@ export class WidgetService {
     async pranchetas() {
         let pranchetas: Prancheta[] = await lastValueFrom(
             this.pranchetaApiService.pranchetaControllerGet({ body: {} })
-        )
+        ) || [];
         this.daoService.prepareToEdit(pranchetas, {
             onChange: async (changes) => {
                 pranchetas.filter(p => this.daoService.haveChanges(p)).forEach(async prancheta => {
@@ -37,8 +38,31 @@ export class WidgetService {
                     if (prancheta instanceof SerializedObjectData) prancheta.complete();
                 })
             },
-            debounceTime: 1000,
+            debounceTime: 350,
         });
         return pranchetas;
+    }
+    async adicionarPrancheta(prancheta: { title: string, structure: string }) {
+        let _prancheta = await lastValueFrom(this.pranchetaApiService.pranchetaControllerSync({
+            body: {
+                prancheta: {
+                    title: prancheta.title,
+                    layout: prancheta.structure
+                }
+            }
+        }));
+        this.daoService.prepareToEdit(_prancheta, {
+            onChange: async (changes) => {
+                console.log(changes)
+                // _prancheta.filter(p => this.daoService.haveChanges(p)).forEach(async prancheta => {
+                //     await lastValueFrom(this.pranchetaApiService.pranchetaControllerSync({
+                //         body: { prancheta },
+                //     }));
+                //     if (prancheta instanceof SerializedObjectData) prancheta.complete();
+                // })
+            },
+            debounceTime: 350,
+        });
+        return _prancheta;
     }
 }

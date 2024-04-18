@@ -38,7 +38,6 @@ export class CredencialService {
             .setParameter('id', assinatura)
             .getOne();
     }
-    
     async atualizar(
         chave: ChaveAcesso
     ) {

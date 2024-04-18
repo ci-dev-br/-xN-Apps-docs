@@ -45,7 +45,7 @@ import { PranchetaComponent } from './inicio/prancheta/prancheta.component';
     ReactiveFormsModule,
     MatTabsModule,
     FormsModule,
-
+    ReactiveFormsModule,
     PranchetaComponent,
     
   ],

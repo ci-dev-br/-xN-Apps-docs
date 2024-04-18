@@ -10,8 +10,16 @@
         <ci-prancheta [layout]="prancheta.layout || undefined" [widgets]="loadWidgets(prancheta)"></ci-prancheta>
     </mat-tab>
     }
+    <mat-tab label="+">
+        <form [formGroup]="adicionarPranchetaForm">
+            <mat-form-field>
+                <input type="text" matInput placeholder="Título" formControlName="title">
+            </mat-form-field>
+            <mat-form-field>
+                <input type="text" matInput placeholder="Estrutura" formControlName="structure">
+            </mat-form-field>
+            <button mat-raised-button (click)="adicionarPrancheta()">Adicionar</button>
+        </form>
+    </mat-tab>
 </mat-tab-group>
 }
-<!-- <ng-template #pranchetaTemplate let-widgets="widgets">
-    
-</ng-template> -->

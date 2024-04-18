@@ -8,7 +8,10 @@ export class PranchetaService {
         @InjectRepository(Prancheta)
         private readonly prancheta_reppository: Repository<Prancheta>,
     ) { }
-    async sincronize(prancheta_untastemented: Prancheta) {
+    async sincronize(prancheta_untastemented: Prancheta, options: {
+        tenant?: string,
+        req?: any,
+    }) {
         // if (!(prancheta_untastemented instanceof Prancheta)) throw new Error("Bloqueio por elevação de contexto.");
         if (prancheta_untastemented.internalId) {
             let prancheta_current = await this.prancheta_reppository.findOne({ where: { internalId: prancheta_untastemented.internalId } });
@@ -21,8 +24,11 @@ export class PranchetaService {
             } catch (error) { }
             return await this.prancheta_reppository.save(prancheta_current);
         } else {
+            if (!!options?.req) console.log(options.req.user);
             let prancheta_current = await this.prancheta_reppository.create({
                 ...prancheta_untastemented,
+                createdBy: { id: options.req.chaveAcesso },
+                tenants: options.tenant ? [{ id: options.tenant }] : undefined
             })
             return await this.prancheta_reppository.save(prancheta_current);
         }

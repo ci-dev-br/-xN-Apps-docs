@@ -7,6 +7,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
 import { config } from 'dotenv';
 import { spawnSync } from 'child_process';
+import { LoggingInterceptor } from './core/logging.interceptor';
 console.clear();
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
@@ -42,6 +43,7 @@ async function bootstrap() {
       'http://localhost:4200',
     ]
   });
+  app.useGlobalInterceptors(new LoggingInterceptor());
   const options = new DocumentBuilder()
     .setTitle('Apps CiDevBr')
     .setDescription('Apps API')

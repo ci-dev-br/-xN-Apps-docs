@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Req } from "@nestjs/common";
 import { PranchetaService } from "../service/prancheta.service";
-import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Prancheta } from "../models/prancheta.entity";
 import { AudtService } from "src/core/audt/audt.service";
 
@@ -21,10 +21,12 @@ export class PranchetaController {
     })
     @Post('Sync')
     async Sync(
-        @Req() req: Request,
+        @Req() req: any,
         @Body() input: PranchetaSyncPayloadDto
     ) {
-        return await this.service.sincronize(this.audt.doSync(input.prancheta, req, !!input?.prancheta?.internalId));
+        return await this.service.sincronize(
+            this.audt.doSync(input.prancheta, req, !!input?.prancheta?.internalId),
+            { req });
     }
     @ApiResponse({
         type: Prancheta, isArray: true

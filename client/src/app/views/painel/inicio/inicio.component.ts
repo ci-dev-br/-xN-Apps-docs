@@ -5,8 +5,7 @@ import { UserService } from "src/app/services/user.service";
 import { WidgetService } from "./widget.service";
 import { Prancheta } from "@portal/api";
 import { IWidgetLoadedData, PranchetaService } from "../config.service";
-import { FormBuilder } from "@angular/forms";
-import { Subject } from "rxjs";
+import { FormBuilder, Validators } from "@angular/forms";
 
 @Component({
     selector: 'px-inicio',
@@ -34,6 +33,7 @@ export class InicioComponent {
         private readonly user_service: UserService,
         private readonly widgetServices: WidgetService,
         private readonly pranchetaService: PranchetaService,
+        private readonly fb: FormBuilder,
     ) {
         (async () => {
             this.pranchetas = (await this.widgetServices.pranchetas())
@@ -85,5 +85,23 @@ export class InicioComponent {
         let cnt = 0;
         return structure.split('-').map(v => Array(Number(v)).fill('').map(c => 'w' + cnt++)).map(a => a.join(' ')).map(l => `"${l}"`).join('\n');
     }
+    adicionarPranchetaForm = this.fb.group({
+        title: [, [Validators.required]],
+        structure: [, [Validators.required]],
+    });
+    async adicionarPrancheta() {
+        if (this.adicionarPranchetaForm.invalid) {
+            this.adicionarPranchetaForm.markAllAsTouched();
+            return;
+        }
+        let a = this.adicionarPranchetaForm.getRawValue();
+        this.adicionarPranchetaForm.reset();
+        let prancheta = await this.widgetServices.adicionarPrancheta({
+            title: a.title || '',
+            structure: a.structure || ''
+        })
 
+        if (!this.pranchetas) this.pranchetas = []
+        this.pranchetas.push(prancheta);
+    }
 }

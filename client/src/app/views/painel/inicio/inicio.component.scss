@@ -9,3 +9,11 @@ header {
     background: #fefefe;
     border-bottom: solid 1px #cecece;
 }
+
+form {
+    display: flex;
+    flex-direction: column;
+
+
+    padding: 12px;
+}
