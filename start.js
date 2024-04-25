@@ -109,6 +109,13 @@ app.post('/', async (req, res) => {
 });
 app.listen(PORT, function () {
     console.log('Express is listening:' + PORT + '');
+},).addListener('error', (e) => {
+    console.log('Erro!', e);
+    if (e.message.indexOf('EADDRINUSE') > -1) {
+        console.log('Parar aplicação!');
+        let c = spawn('powershell', ['-ExecutionPolicy', 'ByPass']);
+
+    }
 });
 function syncUpAll() {
 }

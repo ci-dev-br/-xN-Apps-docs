@@ -1,5 +1,5 @@
 import { Component, Inject, Optional, isDevMode } from '@angular/core';
-import { ChildActivationStart, Router } from '@angular/router';
+import { ChildActivationStart, NavigationError, Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { map } from 'rxjs';
 import { UserService } from './services/user.service';
@@ -23,6 +23,10 @@ export class AppComponent {
     setTimeout(() => localizacao.init(), 0);
     router.events.subscribe(v => {
       try {
+        if (v instanceof NavigationError) {
+          router.navigate(['/']);
+        }
+        console.log(v.constructor.name);
         if (!!(v as any)?.snapshot?.data?.name) {
           document.title =
             `${isDevMode() ? '[dev] ' : ''}` +

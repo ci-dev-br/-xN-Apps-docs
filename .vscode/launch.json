@@ -9,6 +9,11 @@
             "request": "launch",
             "type": "msedge",
             "url": "http://localhost:4293",
+            "cleanUp": "wholeBrowser",
+            "runtimeArgs": [
+            ],
+            "disableNetworkCache": true,
+            "profileStartup": true,
             "webRoot": "${workspaceFolder}"
         },
         {

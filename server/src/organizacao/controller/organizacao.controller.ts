@@ -63,4 +63,6 @@ export class OrganizacaoController {
     ) {
         return await this.organizacaoService.Find(input.query);
     }
+
+
 }

@@ -1,7 +1,6 @@
 import { Controller, Post } from "@nestjs/common";
 import { CPUInfo, SystemService } from "./system.service";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { Status } from "./model/status";
 @Controller('System')
 @ApiTags('System')
 export class SystemController {

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CadastroComponent } from './cadastro.component';
-import { DinamicModule } from '../../dinamic/dinamic.module';
+import { DynamicModule } from '../../dynamic/dynamic.module';
 
 
 
@@ -11,7 +11,7 @@ import { DinamicModule } from '../../dinamic/dinamic.module';
   ],
   imports: [
     CommonModule,
-    DinamicModule,
+    DynamicModule,
   ],
   exports: [
     CadastroComponent,

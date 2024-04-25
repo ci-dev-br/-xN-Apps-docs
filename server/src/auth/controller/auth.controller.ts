@@ -89,7 +89,8 @@ export class AuthController {
           user: authenticated_user,
           bearer: await this.jwtService.signAsync({
             id: user_payload.id,
-            chaveAcesso: chave.id
+            chaveAcesso: chave.id,
+            tenants: user_payload.tenants,
           }),
           refreshToken: refresh_token
         } as AcessoPayload;

@@ -4,6 +4,7 @@ import { ILike, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
 import { Tenant } from 'src/tenant/models/tenant.entity';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -79,5 +80,16 @@ export class UserService {
         let data_ref = !!data.id ? await this.userRepo.findOneBy({ id: data.id }) : await this.userRepo.create(data);
         Object.assign(data_ref, changes);
         return await this.userRepo.save(data_ref);
+    }
+    async find(
+        tenants?: string[],
+
+    ): Promise<User[] | undefined> {
+        return await this.userRepo.find({
+            where: {
+                // tenants:
+                // id: ''
+            }
+        }) || undefined;
     }
 }

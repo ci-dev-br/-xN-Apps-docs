@@ -7,14 +7,14 @@ import { DeviceService } from "../services/device.service";
 @ApiTags('Device')
 export class DeviceController {
     constructor(
-        private readonly devceService: DeviceService,
+        private readonly deviceService: DeviceService,
     ) { }
 
     @ApiOperation({ operationId: 'Connect' })
     @Post('Connect')
     @ApiResponse({ type: DevicePayload })
     async connectDevice(input: DevicePayload) {
-        return this.devceService.connect({
+        return this.deviceService.connect({
             mac: 'not undetached'
         });
     }

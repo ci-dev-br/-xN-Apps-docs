@@ -24,7 +24,7 @@ export interface IColumns {
     `,
     styleUrls: [
         'cell-renderer.component.scss'
-    ]
+    ] 
 })
 export class TextCellRenderer {
     constructor(
@@ -38,7 +38,7 @@ export class TextCellRenderer {
     public set teste(value: TemplateRef<any>) {
         this._teste = value;
         this.componentContent = [
-            this.vcr.createEmbeddedView(this.teste).rootNodes,
+            this.vcr?.createEmbeddedView(this.teste)?.rootNodes,
         ];
     }
     @Input()

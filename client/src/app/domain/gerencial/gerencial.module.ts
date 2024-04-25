@@ -24,6 +24,7 @@ import { MobFakeComponent } from "./mob-fake/mob-fake.component";
 import { MobFakeModule } from "./mob-fake/mob-fake.module";
 import { ApplicationManagerComponent } from "./views/application-manager/application-manager.component";
 import { GerecialSettingsComponent } from "./views/settings/gerecial-settigns.component";
+import { UsersComponent } from "./views/users/users.component";
 
 @NgModule({
     declarations: [
@@ -33,6 +34,7 @@ import { GerecialSettingsComponent } from "./views/settings/gerecial-settigns.co
     imports: [
         ApplicationManagerComponent,
         GerecialSettingsComponent,
+        UsersComponent,
         CoreModule,
         NgxQRCodeModule,
         MatTabsModule,

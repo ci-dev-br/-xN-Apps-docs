@@ -22,12 +22,12 @@ export class DynamicComponent {
         DynamicComponent,
     ],
 })
-export class DinamicModule {
+export class DynamicModule {
     static forChild(s: {
         providers?: Provider[]
-    }): ModuleWithProviders<DinamicModule> {
+    }): ModuleWithProviders<DynamicModule> {
         return {
-            ngModule: DinamicModule,
+            ngModule: DynamicModule,
             providers: [
                 ...(s.providers || []),
             ]
