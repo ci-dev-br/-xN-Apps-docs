@@ -59,5 +59,6 @@ async function bootstrap() {
   const PORT = Number(process.env.PORT);
   await start(app, PORT);
   console.log(`Application is running on: ${await app.getUrl()}`);
+  console.log(__dirname);
 }
 bootstrap();

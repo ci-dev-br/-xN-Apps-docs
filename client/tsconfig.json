@@ -3,6 +3,9 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
+      "@plhx/core": [
+        "./dist/plhx/core"
+      ],
       "@portal/api": [
         "dist/portal/api",
         "projects/portal/api/src/public-api"
