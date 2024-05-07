@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
 import { WindowModule } from 'src/app/components/window/window.module';
+import { MarcaService } from './services/marca.service';
 
 
 @NgModule({
@@ -20,6 +21,9 @@ import { WindowModule } from 'src/app/components/window/window.module';
     MatButtonModule,
     MatIconModule,
     LNavModule,
+  ],
+  providers: [
+    MarcaService,
   ]
 })
 export class ProdutosModule { }

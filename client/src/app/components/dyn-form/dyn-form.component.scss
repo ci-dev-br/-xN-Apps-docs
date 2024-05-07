@@ -1,0 +1,13 @@
+form {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 24px;
+    justify-content: stretch;
+    align-items: stretch;
+
+    mat-form-field {
+        flex: auto;
+    }
+}

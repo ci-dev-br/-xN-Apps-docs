@@ -5,6 +5,7 @@ import { FORM_OPTIONS, IFormOptions } from './i-form-options';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -17,17 +18,18 @@ import { MatIconModule } from '@angular/material/icon';
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
+    ReactiveFormsModule,
   ],
   exports: [
     DynFormComponent
   ]
 })
 export class DynFormModule {
-  public static forForm(forms: IFormOptions[]): ModuleWithProviders<DynFormModule> {
+  public static forForm(form: IFormOptions): ModuleWithProviders<DynFormModule> {
     return {
       ngModule: DynFormModule,
       providers: [
-        { provide: FORM_OPTIONS, useValue: forms },
+        { provide: FORM_OPTIONS, useValue: form },
       ]
     }
   }

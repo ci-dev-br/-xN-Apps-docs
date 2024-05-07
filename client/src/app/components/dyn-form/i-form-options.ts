@@ -1,7 +1,7 @@
 import { InjectionToken } from "@angular/core";
 
 
-export class DataService { }
+export abstract class DataServiceBase { }
 
 export type TypeFormField = 'text' | 'number' | 'option' | 'date' | 'date-time' | 'time' | 'multi-option';
 
@@ -16,7 +16,7 @@ export interface IFormFieldDefinition {
     label?: string;
     type?: TypeFormField;
     property?: string;
-    dataService?: DataService;
+    dataService?: DataServiceBase;
 }
 
-export const FORM_OPTIONS = new InjectionToken<IFormOptions[]>('PX_FORM_OPTIONS');
+export const FORM_OPTIONS = new InjectionToken<IFormOptions>('PX_FORM_OPTIONS');

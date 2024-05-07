@@ -1,6 +1,15 @@
-<mat-form-field>
-    <ng-container *ngTemplateOutlet="inputTmpl"></ng-container>
-</mat-form-field>
-<ng-template #inputTmpl>
-    <input matInput placeholder="Field" />
-</ng-template>
+@if(!!source){
+
+@if(source.fields){
+<form>
+    @for (field of source.fields; track $index) {
+    <mat-form-field>
+        <ng-container *ngTemplateOutlet="inputTmpl"></ng-container>
+        <ng-template #inputTmpl>
+            <input matInput [placeholder]="field?.label || ''" />
+        </ng-template>
+    </mat-form-field>
+    }
+</form>
+}
+}
