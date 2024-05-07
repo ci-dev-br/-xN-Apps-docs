@@ -1,22 +1,24 @@
-import { Component } from "@angular/core";
-import { DynamicModule } from "../../dynamic/dynamic.module";
-import { IFormOptions } from "src/app/components/dyn-form/i-form-options";
+import { Component, Inject, Optional } from "@angular/core";
+import { FormOptionsBuilder, IFormOptions } from "src/app/components/dyn-form/i-form-options";
 import { DynFormModule } from "src/app/components/dyn-form/dyn-form.module";
 import { MarcaService } from "../services/marca.service";
+import { DaoService } from "src/app/core/dao/dao.service";
+import { Product } from "@portal/api";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { FormGroup } from "@angular/forms";
+import { CoreModule } from "src/app/core/core.module";
 
 @Component({
     selector: 'ci-editar-produto',
-    template: `<ci-dyn-form [source]="form" ></ci-dyn-form>`,
+    template: `<ci-dyn-form [source]="formOptions" [formGroup]="form" ></ci-dyn-form> {{data | json}}`,
     imports: [
-        DynFormModule
+        CoreModule,
+        DynFormModule,
     ],
     standalone: true,
 })
 export class EditarProdutoComponent {
-    constructor(
-        // private readonly service: Produto
-    ) { }
-    form?: IFormOptions = {
+    formOptions?: IFormOptions = {
         title: 'Produto',
         description: 'Cadastramento do Produto',
         fields: [
@@ -24,11 +26,12 @@ export class EditarProdutoComponent {
             { label: 'Código do Fabricanete', property: 'codigoFabricanete', type: 'text' },
             { label: 'Descrição', property: 'description', type: 'text' },
             { label: 'GTIN', property: 'gtin', type: 'text', },
-            { label: 'Marca', property: 'marca', dataService: MarcaService },
+            // { label: 'Marca', property: 'marca', dataService: this.marcaService },
             { label: 'Nosso Codigo', property: 'nossoCodigo', type: 'text' },
             { label: 'Descrição curta', property: 'shortDescription', type: 'text' },
-            { label: 'Sub Grupo', property: 'subGrupo', type: 'text' },
+            // { label: 'Sub Grupo', property: 'subGrupo', type: 'text' },
             { label: 'URL Site Oficial', property: 'urlWebsiteOficial', type: 'text' },
+
             // { label: 'createdAt', property: 'createdAt', },
             // { label: 'createdBy', property: 'createdBy', },
             // { label: 'internalId', property: 'internalId', },
@@ -37,4 +40,18 @@ export class EditarProdutoComponent {
             // { label: 'tenants', property: 'tenants', },
         ]
     };
+    form?: FormGroup;
+    constructor(
+        private readonly marcaService: MarcaService,
+        private readonly dao: DaoService,
+        @Optional()
+        @Inject(MAT_DIALOG_DATA)
+        public readonly data: Product,
+        private readonly fob: FormOptionsBuilder,
+    ) {
+        this.dao.prepareToEdit(data);
+        if (this.formOptions) this.form = fob.options(this.formOptions);
+        if (this.form) this.dao.bindDataForm(data, this.form);
+    }
+
 }
