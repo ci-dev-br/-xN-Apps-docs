@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ILike, In, Repository } from "typeorm";
-import { Product } from "../models/produto.entity";
+import { Product } from "../models/product.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { IAutentication } from "src/core/auth/auth";
 

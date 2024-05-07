@@ -5,18 +5,7 @@
             <mat-icon>devices</mat-icon>
             Dispositivos
         </ng-template>
-        <mat-toolbar>
-            <button mat-raised-button (click)="conectarDispositivo()">
-                <mat-icon>smartphone</mat-icon>
-                Conectar Dispositivo
-            </button>
-        </mat-toolbar>
-        <div style="display: flex; flex-direction: column;align-items: center;justify-content: center;">
-            <small>Nenhum dispositivo conectado...</small>
-            <ngx-qrcode [value]="token">
-            </ngx-qrcode>
-            <small>Leia o QRCode com o aplicativo para celular para conectar o aparelho aos serviços.</small>
-        </div>
+        <ci-devices></ci-devices>
     </mat-tab>
     <mat-tab mat-align-tabs="center">
         <ng-template mat-tab-label>

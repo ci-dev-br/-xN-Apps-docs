@@ -2,6 +2,9 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DynFormComponent } from './dyn-form.component';
 import { FORM_OPTIONS, IFormOptions } from './i-form-options';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 
 
 
@@ -10,7 +13,10 @@ import { FORM_OPTIONS, IFormOptions } from './i-form-options';
     DynFormComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
   ],
   exports: [
     DynFormComponent

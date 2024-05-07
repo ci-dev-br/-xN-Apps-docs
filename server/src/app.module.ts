@@ -7,7 +7,7 @@ import { AuthModule, AuthEntities as AuthEntities } from './auth/auth.module';
 import { config } from 'dotenv';
 import { ManagerEntities, ManagerModule } from './manager/manager.module';
 import { MessagerModule, Entities as MessageEntities } from './messager/messager.module';
-import { ProdutoModule, ProcutEntities as ProdutoEntities } from './produto/produto.module';
+import { ProdutoModule, ProductEntities } from './produto/produto.module';
 import { CodexModule, CodeXEntities } from './codex/codex.module';
 import { GlobalizationEntities, GlobalizationModule } from './globalization/globalization.module';
 import { PranchetaEntities, PranchetaModule } from './prancheta/prancheta.module';
@@ -25,6 +25,7 @@ import { InfraEntities, InfraModule } from './core/infra/infra.module';
 import { SystemEntities, SystemModule } from './core/system/system.module';
 import { FinanceiroEntities, FinanceiroModule } from './financeiro/financeiro.module';
 import { OrganizacaoEntities, OrganizacaoModule } from './organizacao/organizacao.module';
+import { INPIEntities, INPIModule } from './inpi/inpi.module';
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
 @Module({
@@ -50,7 +51,7 @@ config({ path: is_production ? '.env' : '.env.dev' });
         ...AuthEntities,
         ...ManagerEntities,
         ...MessageEntities,
-        ...ProdutoEntities,
+        ...ProductEntities,
         ...CodeXEntities,
         ...GlobalizationEntities,
         ...PranchetaEntities,
@@ -66,6 +67,7 @@ config({ path: is_production ? '.env' : '.env.dev' });
         ...SystemEntities,
         ...FinanceiroEntities,
         ...OrganizacaoEntities,
+        ...INPIEntities,
       ]
     }),
     SystemModule,
@@ -87,6 +89,7 @@ config({ path: is_production ? '.env' : '.env.dev' });
     InfraModule,
     FinanceiroModule,
     OrganizacaoModule,
+    INPIModule,
     CoreModule.forRoot({
       snapshot: true
     })

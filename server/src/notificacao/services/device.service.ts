@@ -10,8 +10,7 @@ export class DeviceService {
         private readonly repo: Repository<Device>,
     ) { }
     async connect(device?: Device) {
-        await this.createAndSave(device)
-        return device;
+        return await this.createAndSave(device)
     }
     async createAndSave(device?: Device) {
         if (!device) return;

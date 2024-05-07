@@ -1,1 +1,6 @@
-<p>dyn-form works!</p>
+<mat-form-field>
+    <ng-container *ngTemplateOutlet="inputTmpl"></ng-container>
+</mat-form-field>
+<ng-template #inputTmpl>
+    <input matInput placeholder="Field" />
+</ng-template>

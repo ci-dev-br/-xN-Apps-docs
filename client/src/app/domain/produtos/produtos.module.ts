@@ -6,6 +6,7 @@ import { ProdutosComponent } from './produtos.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
+import { WindowModule } from 'src/app/components/window/window.module';
 
 
 @NgModule({
@@ -14,6 +15,7 @@ import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
   ],
   imports: [
     CommonModule,
+    WindowModule,
     ProdutosRoutingModule,
     MatButtonModule,
     MatIconModule,

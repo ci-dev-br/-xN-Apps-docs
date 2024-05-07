@@ -1,0 +1,38 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex: auto;
+}
+
+.services {
+    display: flex;
+    flex-direction: column;
+
+    .service {
+        background: #cecece;
+        padding: 6px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        &.online {
+            background: #6fff6f;
+        }
+
+        &.offline {
+            background: #ee3655;
+        }
+    }
+}
+
+
+.inbox {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    flex: auto;
+
+    .contact {}
+}

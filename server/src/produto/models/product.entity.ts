@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Tenant } from "src/tenant/models/tenant.entity";
-import { Column, Entity, JoinTable, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { FullAuditedEntity } from "src/core/dao";
+import { Marca } from "src/inpi/model/marca.entity";
 
 @Entity()
 export class Product extends FullAuditedEntity {
@@ -13,6 +13,12 @@ export class Product extends FullAuditedEntity {
     codigoBarras?: string;
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })
+    nossoCodigo?: string;
+    @ApiProperty({ nullable: true, required: false })
+    @Column({ nullable: true })
+    codigoFabricanete?: string;
+    @ApiProperty({ nullable: true, required: false })
+    @Column({ nullable: true })
     description?: string;
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })
@@ -20,6 +26,12 @@ export class Product extends FullAuditedEntity {
     @ApiProperty({ nullable: true, required: false, description: 'URL do site' })
     @Column({ nullable: true })
     urlWebsiteOficial?: string;
+    @ApiProperty({ type: Marca, nullable: true, required: false, })
+    @ManyToOne(type => Marca)
+    @JoinTable()
+    marca?: Marca;
+    @ApiProperty({ nullable: true, required: false, })
+    subGrupo: string;
     /* @ApiProperty({ nullable: true, required: false })
     @ManyToOne(() => Tenant)
     @JoinTable()

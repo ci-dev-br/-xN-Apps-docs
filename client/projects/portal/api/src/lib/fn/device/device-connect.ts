@@ -8,12 +8,14 @@ import { RequestBuilder } from '../../request-builder';
 
 import { DevicePayload } from '../../models/device-payload';
 
-export interface Connect$Params {
+export interface DeviceConnect$Params {
+      body: DevicePayload
 }
 
-export function connect(http: HttpClient, rootUrl: string, params?: Connect$Params, context?: HttpContext): Observable<StrictHttpResponse<DevicePayload>> {
-  const rb = new RequestBuilder(rootUrl, connect.PATH, 'post');
+export function deviceConnect(http: HttpClient, rootUrl: string, params: DeviceConnect$Params, context?: HttpContext): Observable<StrictHttpResponse<DevicePayload>> {
+  const rb = new RequestBuilder(rootUrl, deviceConnect.PATH, 'post');
   if (params) {
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -26,4 +28,4 @@ export function connect(http: HttpClient, rootUrl: string, params?: Connect$Para
   );
 }
 
-connect.PATH = '/Device/Connect';
+deviceConnect.PATH = '/Device/Connect';
