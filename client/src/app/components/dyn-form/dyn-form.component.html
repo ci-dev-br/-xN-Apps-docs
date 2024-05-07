@@ -1,15 +1,17 @@
 @if(!!source){
 
 @if(source.fields){
-<form>
+@if(formGroup){
+<form [formGroup]="formGroup ">
     @for (field of source.fields; track $index) {
     <mat-form-field>
         <ng-container *ngTemplateOutlet="inputTmpl"></ng-container>
         <ng-template #inputTmpl>
-            <input matInput [placeholder]="field?.label || ''" />
+            <input matInput [placeholder]="field?.label || ''" [formControlName]="field?.property || null" />
         </ng-template>
     </mat-form-field>
     }
 </form>
+}
 }
 }
