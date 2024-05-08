@@ -2,11 +2,12 @@ import { Component, Inject, Optional } from "@angular/core";
 import { FormOptionsBuilder, IFormOptions } from "src/app/components/dyn-form/i-form-options";
 import { DynFormModule } from "src/app/components/dyn-form/dyn-form.module";
 import { MarcaService } from "../services/marca.service";
-import { DaoService } from "src/app/core/dao/dao.service";
-import { Product } from "@portal/api";
+import { DaoService, IChangeable } from "src/app/core/dao/dao.service";
+import { Product, ProductService } from "@portal/api";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { FormGroup } from "@angular/forms";
 import { CoreModule } from "src/app/core/core.module";
+import { lastValueFrom } from "rxjs";
 
 @Component({
     selector: 'ci-editar-produto',
@@ -42,6 +43,7 @@ export class EditarProdutoComponent {
     };
     form?: FormGroup;
     constructor(
+        private readonly productService: ProductService,
         private readonly marcaService: MarcaService,
         private readonly dao: DaoService,
         @Optional()
@@ -52,6 +54,20 @@ export class EditarProdutoComponent {
         this.dao.prepareToEdit(data);
         if (this.formOptions) this.form = fob.options(this.formOptions);
         if (this.form) this.dao.bindDataForm(data, this.form);
+        this.dao.confirmation(data)?.subscribe(async _data => {
+            try {
+                if (_data && data) {
+                    Object.assign(data,
+                        await lastValueFrom(this.productService.productSync({ body: { data: { ..._data, internalId: data.internalId } } }))
+                    );
+                    delete (this.data as IChangeable).__pre;
+                    dao.prepareToEdit(this.data);
+                    if (this.form) dao.bindDataForm(this.data, this.form);
+                }
+            } catch (error) {
+
+            }
+        });
     }
 
 }

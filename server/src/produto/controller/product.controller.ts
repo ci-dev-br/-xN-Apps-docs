@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ControllerDaoBase, SyncPayloadDao } from "src/core/dao";
 import { Product } from "../models/product.entity";
@@ -17,6 +17,9 @@ export class ProductCotrollerGetInputDto {
 @ApiTags('Product')
 @Controller('Product')
 export class ProductController extends ControllerDaoBase<ProductService, Product> {
+    constructor(service: ProductService) {
+        super(service);
+    }
     @Post('Sync')
     @ApiResponse({
         type:
@@ -26,9 +29,10 @@ export class ProductController extends ControllerDaoBase<ProductService, Product
         operationId: 'ProductSync'
     })
     override async sync(
-        @Body() body: SyncPayloadDaoProduct,
+        @Body() input: SyncPayloadDaoProduct,
+        @Req() req?: any,
     ) {
-        return await super.sync(body)
+        return await super.sync(input, req);
     }
 
     @Post('Get')

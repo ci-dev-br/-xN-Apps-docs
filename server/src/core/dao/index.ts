@@ -96,41 +96,52 @@ export abstract class DaoServiceBase<E extends FullAuditedEntity> {
     ) {
     }
 
-    async sincronizar(data: E) {
+    async sincronizar(data: E, request?: any) {
         let ___receipt_data = data;
         let ___internal_data: E = null;
-        if (data instanceof AuditedEntity) {
-            if (!data.internalId) {
-                ___internal_data =
-                    this._repo.create(data);
-            } else {
-                if (data && !!data.internalId) {
-                    ___internal_data = await this._repo.findOne({
-                        where: {
-                            internalId: ___receipt_data.internalId
-                        } as any
-                    });
-                    if (___internal_data) {
-                        // TODO: verificar policy
-                        // const { internalId, } = ___receipt_data
-                        Object.keys(___internal_data)
-                            .filter(p => !['internalId', 'createdAt', 'createdBy'].includes(p))
-                            .forEach(p => ___internal_data[p] = ___receipt_data[p]);
-                        ___internal_data.lastModifiedAt = new Date();
-                        // TODO: adicionar usuário modificador
+        /// if (data instanceof AuditedEntity) {
+        if (!data.internalId) {
+            ___internal_data =
+                this._repo.create(data);
+            if (request) {
+                if (request.chaveAcesso) {
+                    ___internal_data.createdBy = { id: request.chaveAcesso };
+                }
+            }
+        } else {
+            if (data && !!data.internalId) {
+                ___internal_data = await this._repo.findOne({
+                    where: {
+                        internalId: ___receipt_data.internalId
+                    } as any
+                });
+                if (___internal_data) {
+                    // TODO: verificar policy
+                    // const { internalId, } = ___receipt_data
+                    Object.keys(___internal_data)
+                        .filter(p => !['internalId', 'createdAt', 'createdBy'].includes(p))
+                        .forEach(p => ___internal_data[p] = ___receipt_data[p]);
+                    ___internal_data.lastModifiedAt = new Date();
 
-                        if (___internal_data instanceof FullAuditedEntity) {
-                            await this._snap.snapshot(___internal_data);
+                    if (request) {
+                        if (request.chaveAcesso) {
+                            ___internal_data.lastModifiedBy = { id: request.chaveAcesso };
                         }
+                    }
+                    // TODO: adicionar usuário modificador
+
+                    if (___internal_data instanceof FullAuditedEntity) {
+                        await this._snap.snapshot(___internal_data);
                     }
                 }
             }
-            return await this._repo.save(___internal_data);
         }
+        return await this._repo.save(___internal_data);
+        /// }
     }
 }
 
-export class SyncPayloadDao<Entity>{
+export class SyncPayloadDao<Entity> {
     @ApiProperty()
     data?: Entity;
 }
@@ -140,8 +151,8 @@ export abstract class ControllerDaoBase<Service extends DaoServiceBase<any>, E> 
         private _service: Service,
     ) { }
 
-    async sync(entity: SyncPayloadDao<E>) {
-        return await this._service.sincronizar(entity.data);
+    async sync(entity: SyncPayloadDao<E>, request?: any) {
+        return await this._service.sincronizar(entity.data, request);
     }
     async get(query: string) {
         // return await this._service.sincronizar(entity.data);
