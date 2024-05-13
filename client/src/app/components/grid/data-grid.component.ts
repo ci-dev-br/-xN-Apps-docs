@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { DataGridOptions, IColumnOption } from "./data-grid.options";
+import { ReturnStatement } from "@angular/compiler";
 
 
 @Component({
@@ -9,11 +10,15 @@ import { DataGridOptions, IColumnOption } from "./data-grid.options";
 })
 export class DataGridComponent<I> {
     @Output()
-    select = new EventEmitter<I>();
+    select = new EventEmitter<I | I[]>();
     @Input()
     selectionMode?: 'cell' | 'row' | 'multi-cell' | 'multi-row' | 'multi' = 'row';
     @Input()
     source?: I[];
+
+    selectedItem?: I;
+    selectedItems?: I[];
+
     private _options?: DataGridOptions | undefined;
     public get options(): DataGridOptions | undefined {
         return this._options;
@@ -31,7 +36,15 @@ export class DataGridComponent<I> {
 
     rowSelectionHandler(event: MouseEvent, row: I) {
         if (this.selectionMode === 'row') {
+            if (event.ctrlKey) {
+                if (row === this.selectedItem) {
+                    this.select.emit(undefined);
+                    this.selectedItem = undefined;
+                    return;
+                }
+            }
             this.select.emit(row);
+            this.selectedItem = row;
         }
     }
 }

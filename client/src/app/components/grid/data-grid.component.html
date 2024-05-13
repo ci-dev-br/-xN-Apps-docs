@@ -12,7 +12,8 @@
         </ng-container>
         }
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowSelectionHandler($event, row)" ></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowSelectionHandler($event, row)"
+            [class.--selected-item]="selectedItem === row"></tr>
     </table>
     }
 </div>

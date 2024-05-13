@@ -39,3 +39,7 @@
         }
     }
 }
+
+[mat-table] tr.--selected-item {
+    background-color: rgba(0, 0, 200, .15);
+}
