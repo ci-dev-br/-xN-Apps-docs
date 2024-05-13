@@ -27,3 +27,16 @@ ci-l-nav {
     overflow-x: hidden;
     overflow-y: auto;
 }
+
+.row {
+    display: flex;
+    flex-direction: row;
+    flex: auto;
+    overflow: auto;
+    align-items: stretch;
+    justify-content: stretch;
+
+    >* {
+        flex: 1;
+    }
+}

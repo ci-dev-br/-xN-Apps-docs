@@ -13,6 +13,13 @@
         </button>
     </div>
 </header>
-<ci-data-grid [source]="lista" [options]="grid">
-    <div vazio>Nenhum produto listado.</div>
-</ci-data-grid>
+<div class="row">
+    <ci-data-grid [source]="lista" [options]="grid" (select)="itemSelecionado=$event">
+        <div vazio>Nenhum produto listado.</div>
+    </ci-data-grid>
+    @if(itemSelecionado){
+    <div>
+        {{itemSelecionado | json}}
+    </div>
+    }
+</div>

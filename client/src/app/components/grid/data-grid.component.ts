@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { DataGridOptions, IColumnOption } from "./data-grid.options";
 
 
@@ -8,6 +8,8 @@ import { DataGridOptions, IColumnOption } from "./data-grid.options";
     styleUrls: ['data-grid.component.scss'],
 })
 export class DataGridComponent<I> {
+    @Output()
+    select = new EventEmitter<I>();
     @Input()
     selectionMode?: 'cell' | 'row' | 'multi-cell' | 'multi-row' | 'multi' = 'row';
     @Input()
@@ -26,4 +28,10 @@ export class DataGridComponent<I> {
     columns?: IColumnOption[];
     displayedColumns?: string[];
     constructor() { }
+
+    rowSelectionHandler(event: MouseEvent, row: I) {
+        if (this.selectionMode === 'row') {
+            this.select.emit(row);
+        }
+    }
 }

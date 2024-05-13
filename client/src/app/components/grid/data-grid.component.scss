@@ -18,12 +18,24 @@
     filter: drop-shadow(1px 3px 6px rgba(0, 0, 0, .66));
 }
 
-
-
 .--selection-mode_row ::ng-deep {
     tr {
+        position: relative;
+
         &:hover {
             background-color: rgba(0, 0, 11, .05);
+
+            // &::before {
+            //     content: "";
+            //     position: absolute;
+            //     left: 0;
+            //     right: 0;
+            //     top: 0;
+            //     
+            //     bottom: 0;
+            //     display: table-caption;
+            //     background-color: rgba(0, 0, 11, .05);
+            // }
         }
     }
 }

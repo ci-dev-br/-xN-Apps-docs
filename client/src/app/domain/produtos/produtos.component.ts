@@ -13,6 +13,7 @@ import { t } from 'src/app/core/i18n/t.service';
 })
 export class ProdutosComponent implements OnInit {
   lista?: Product[] = [];
+  itemSelecionado?: Product;
   grid: DataGridOptions = {
     colums: [
 
