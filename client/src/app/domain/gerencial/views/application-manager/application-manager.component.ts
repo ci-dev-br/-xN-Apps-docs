@@ -4,7 +4,6 @@ import { MatIcon, MatIconModule } from "@angular/material/icon";
 import { MatTableModule } from "@angular/material/table";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { Application, ApplicationService } from "@portal/api";
-import { IColumns } from "src/app/components/grid/cell-renderer/cell-renderer.component";
 import { CoreModule } from "src/app/core/core.module";
 import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplicativo.component";
 import { WindowService } from "src/app/components/window/window.service";
@@ -16,6 +15,7 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { FormsModule } from "@angular/forms";
+import { IColumnOption } from "src/app/components/grid/data-grid.options";
 @Component({
     selector: 'ci-application-manager',
     template: `
@@ -44,7 +44,7 @@ import { FormsModule } from "@angular/forms";
         <ng-container *ngIf="apps">
             <table *ngIf="visualizacao==='table'" mat-table class="mat-elevation-z8" [dataSource]="apps">
                 <ng-container *ngFor="let c of columns">
-                    <ng-container [matColumnDef]="c.headerName">
+                    <ng-container [matColumnDef]="c.fieldName || ''">
                         <th mat-header-cell *matHeaderCellDef>{{c.headerName}}</th>
                         <td mat-cell *matCellDef="let element">
                             <px-cell-renderer [data]="element" [column]="c">
@@ -116,14 +116,14 @@ import { FormsModule } from "@angular/forms";
             return [...this.columns.filter(i => !i.hide).map(c => c.headerName), '_act']
         });
     }
-    columns: IColumns[] = [
-        { headerName: 'ID', propertyName: 'id', hide: true },
-        { headerName: 'Nome ', propertyName: 'name' },
-        { headerName: 'Ícone ', propertyName: 'icon', component: MatIcon },
-        { headerName: 'Rota', propertyName: 'url' },
-        { headerName: 'Descrição', propertyName: 'description' },
-        { headerName: 'Grupo', propertyName: 'menuGroupName' },
-        { headerName: 'Papéis', propertyName: 'roles' },
+    columns: IColumnOption[] = [
+        { headerName: 'ID', fieldName: 'id', hide: true },
+        { headerName: 'Nome ', fieldName: 'name' },
+        { headerName: 'Ícone ', fieldName: 'icon', component: MatIcon },
+        { headerName: 'Rota', fieldName: 'url' },
+        { headerName: 'Descrição', fieldName: 'description' },
+        { headerName: 'Grupo', fieldName: 'menuGroupName' },
+        { headerName: 'Papéis', fieldName: 'roles' },
     ];
     actions: IItemAction<Application>[] = [
         {

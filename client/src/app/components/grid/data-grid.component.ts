@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { DataGridOptions } from "./data-grid.options";
+import { DataGridOptions, IColumnOption } from "./data-grid.options";
 
 
 @Component({
@@ -9,7 +9,18 @@ import { DataGridOptions } from "./data-grid.options";
 export class DataGridComponent<I> {
     @Input()
     source?: I[];
+    private _options?: DataGridOptions | undefined;
+    public get options(): DataGridOptions | undefined {
+        return this._options;
+    }
     @Input()
-    options?: DataGridOptions;
+    public set options(value: DataGridOptions | undefined) {
+        if (this._options === value) return;
+        this._options = value;
+        this.columns = this._options?.colums;
+        this.displayedColumns = this.columns?.map((c, i) => c.fieldName || '')
+    }
+    columns?: IColumnOption[];
+    displayedColumns?: string[];
     constructor() { }
 }

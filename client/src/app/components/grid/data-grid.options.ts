@@ -7,8 +7,9 @@ export interface IColumnOption {
     type?: any;
     template?: any;
     component?: any;
+    hide?: boolean;
 }
 
 export interface DataGridOptions {
-    colums: any[];
+    colums: IColumnOption[];
 }
