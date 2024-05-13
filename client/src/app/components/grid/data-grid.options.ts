@@ -8,6 +8,7 @@ export interface IColumnOption {
     template?: any;
     component?: any;
     hide?: boolean;
+    defaultVisible?: boolean;
 }
 
 export interface DataGridOptions {

@@ -9,6 +9,8 @@ import { DataGridOptions, IColumnOption } from "./data-grid.options";
 })
 export class DataGridComponent<I> {
     @Input()
+    selectionMode?: 'cell' | 'row' | 'multi-cell' | 'multi-row' | 'multi' = 'row';
+    @Input()
     source?: I[];
     private _options?: DataGridOptions | undefined;
     public get options(): DataGridOptions | undefined {
@@ -19,7 +21,7 @@ export class DataGridComponent<I> {
         if (this._options === value) return;
         this._options = value;
         this.columns = this._options?.colums;
-        this.displayedColumns = this.columns?.map((c, i) => c.fieldName || '')
+        this.displayedColumns = this.columns?.filter(c => !c.hide && c.defaultVisible !== false)?.map((c, i) => c.fieldName || '')
     }
     columns?: IColumnOption[];
     displayedColumns?: string[];
