@@ -9,6 +9,7 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { Product } from '../models/product';
 import { productGet } from '../fn/product/product-get';
 import { ProductGet$Params } from '../fn/product/product-get';
 import { productSync } from '../fn/product/product-sync';
@@ -53,9 +54,9 @@ export class ProductService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `productGet()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  productGet$Response(params?: ProductGet$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoProduct>> {
+  productGet$Response(params: ProductGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Product>>> {
     return productGet(this.http, this.rootUrl, params, context);
   }
 
@@ -63,11 +64,11 @@ export class ProductService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `productGet$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  productGet(params?: ProductGet$Params, context?: HttpContext): Observable<SyncPayloadDaoProduct> {
+  productGet(params: ProductGet$Params, context?: HttpContext): Observable<Array<Product>> {
     return this.productGet$Response(params, context).pipe(
-      map((r: StrictHttpResponse<SyncPayloadDaoProduct>): SyncPayloadDaoProduct => r.body)
+      map((r: StrictHttpResponse<Array<Product>>): Array<Product> => r.body)
     );
   }
 

@@ -3,14 +3,16 @@
     <h1>Produtos</h1>
     <p>Cadastro de Produtos</p>
     <div class="nav">
-
         <button mat-raised-button (click)="cadastrarNovo()">
-            <mat-icon >add</mat-icon>
+            <mat-icon>add</mat-icon>
             Cadastrar
         </button>
-        <button mat-raised-button>
+        <button mat-raised-button (click)="getAll()">
             <mat-icon>search</mat-icon>
             Procurar
         </button>
     </div>
 </header>
+<ci-data-grid [source]="lista">
+    <div vazio>Nenhum produto listado.</div>
+</ci-data-grid>

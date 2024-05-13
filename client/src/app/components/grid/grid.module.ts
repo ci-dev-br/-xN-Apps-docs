@@ -3,6 +3,7 @@ import { NgModule } from "@angular/core"
 import { TextCellRenderer } from "./cell-renderer/cell-renderer.component";
 import { ContainerModule } from "../container/container.module";
 import { DataGridComponent } from "./data-grid.component";
+import { MatTableModule } from "@angular/material/table";
 
 @NgModule({
     declarations: [
@@ -12,6 +13,7 @@ import { DataGridComponent } from "./data-grid.component";
     imports: [
         CommonModule,
         ContainerModule,
+        MatTableModule,
     ],
     exports: [
         TextCellRenderer,

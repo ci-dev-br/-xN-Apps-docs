@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn, Repository, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Equal, FindOneOptions, FindOptionsWhere, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn, Repository, UpdateDateColumn } from "typeorm";
 import { Tenant } from "src/tenant/models/tenant.entity";
 
 import { createHash } from 'crypto';
@@ -139,6 +139,19 @@ export abstract class DaoServiceBase<E extends FullAuditedEntity> {
         return await this._repo.save(___internal_data);
         /// }
     }
+
+    async obterLista(options?: { skip?: number, take?: number, where?: FindOptionsWhere<E>[] | FindOptionsWhere<E> }, request?: any) {
+
+        let _where: FindOptionsWhere<E>[] | FindOptionsWhere<E> = options.where;
+
+        // if (Array.isArray(_where)) {
+        //     _where.forEach(w => {
+        //         w.createdBy = { identifiedUser: Equal('') };
+        //     })
+        // }
+
+        return await this._repo.find({ skip: options.skip, take: options.take, where: _where });
+    }
 }
 
 export class SyncPayloadDao<Entity> {
@@ -146,7 +159,7 @@ export class SyncPayloadDao<Entity> {
     data?: Entity;
 }
 
-export abstract class ControllerDaoBase<Service extends DaoServiceBase<any>, E> {
+export abstract class ControllerDaoBase<Service extends DaoServiceBase<E>, E> {
     constructor(
         private _service: Service,
     ) { }
@@ -154,7 +167,7 @@ export abstract class ControllerDaoBase<Service extends DaoServiceBase<any>, E> 
     async sync(entity: SyncPayloadDao<E>, request?: any) {
         return await this._service.sincronizar(entity.data, request);
     }
-    async get(query: string) {
-        // return await this._service.sincronizar(entity.data);
+    async get(options?: { skip?: number, take?: number, where?: any }, request?: any) {
+        return await this._service.obterLista(options);
     }
 } 

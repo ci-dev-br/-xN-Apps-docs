@@ -10,9 +10,11 @@ export class SyncPayloadDaoProduct extends SyncPayloadDao<Product> {
 }
 export class ProductCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
-    query?: string;
+    where?: any;
     @ApiProperty({ nullable: true, required: false })
-    limit?: number;
+    take?: number;
+    @ApiProperty({ nullable: true, required: false })
+    skip?: number;
 }
 @ApiTags('Product')
 @Controller('Product')
@@ -38,14 +40,17 @@ export class ProductController extends ControllerDaoBase<ProductService, Product
     @Post('Get')
     @ApiResponse({
         type:
-            SyncPayloadDaoProduct
+            Product,
+        isArray: true
     })
     @ApiOperation({
-        operationId: 'ProductGet'
+        operationId: 'ProductGet',
+
     })
     override async get(
-        //@Body() input: ProductCotrollerGetInputDto,
+        @Body() input: ProductCotrollerGetInputDto,
+        @Req() req,
     ) {
-        // return await super.get(input)
+        return await super.get(input, req);
     }
 }

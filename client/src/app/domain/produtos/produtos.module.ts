@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
 import { WindowModule } from 'src/app/components/window/window.module';
 import { MarcaService } from './services/marca.service';
+import { GridModule } from 'src/app/components/grid/grid.module';
 
 
 @NgModule({
@@ -21,7 +22,7 @@ import { MarcaService } from './services/marca.service';
     MatButtonModule,
     MatIconModule,
     LNavModule,
-    
+    GridModule,
   ],
   providers: [
     MarcaService,

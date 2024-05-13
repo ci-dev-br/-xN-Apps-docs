@@ -3,10 +3,20 @@ import { PessoaService } from "../service/pessoa.service";
 import { ControllerDaoBase, SyncPayloadDao } from "src/core/dao";
 import { Pessoa } from "../model/pessoa.entity";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { FindOptionsWhere } from "typeorm";
 
 export class SyncPayloadDaoPessoa extends SyncPayloadDao<Pessoa> {
     @ApiProperty({ type: Pessoa })
     override data?: Pessoa;
+}
+export class ObterListaPessoa {
+    // override data?: Pessoa;
+    @ApiProperty({})
+    skip?: number;
+    @ApiProperty({})
+    take?: number;
+    @ApiProperty({})
+    where?: FindOptionsWhere<Pessoa>[] | FindOptionsWhere<Pessoa>;
 }
 
 export class PessoaCotrollerGetInputDto {
@@ -47,8 +57,8 @@ export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
         operationId: 'PessoaGet'
     })
     override async get(
-        //  @Body() input: PessoaCotrollerGetInputDto,
+        @Body() input: ObterListaPessoa,
     ) {
-        // return await super.get(input)
+        return super.get(input);
     }
 }

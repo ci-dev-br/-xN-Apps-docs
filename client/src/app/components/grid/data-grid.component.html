@@ -1,3 +1,7 @@
-<table>
+@if(!source || source.length === 0){
+<ng-content select="[vazio]"></ng-content>
+}@else{
+<table mat-table [dataSource]="source || []">
 
 </table>
+}

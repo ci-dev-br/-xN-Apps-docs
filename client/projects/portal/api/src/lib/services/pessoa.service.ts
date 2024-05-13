@@ -53,9 +53,9 @@ export class PessoaService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `pessoaGet()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  pessoaGet$Response(params?: PessoaGet$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoPessoa>> {
+  pessoaGet$Response(params: PessoaGet$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoPessoa>> {
     return pessoaGet(this.http, this.rootUrl, params, context);
   }
 
@@ -63,9 +63,9 @@ export class PessoaService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `pessoaGet$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  pessoaGet(params?: PessoaGet$Params, context?: HttpContext): Observable<SyncPayloadDaoPessoa> {
+  pessoaGet(params: PessoaGet$Params, context?: HttpContext): Observable<SyncPayloadDaoPessoa> {
     return this.pessoaGet$Response(params, context).pipe(
       map((r: StrictHttpResponse<SyncPayloadDaoPessoa>): SyncPayloadDaoPessoa => r.body)
     );
