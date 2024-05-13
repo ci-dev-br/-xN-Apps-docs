@@ -5,7 +5,7 @@
     <table mat-table [dataSource]="source || []">
         @for (column of columns; track $index;) {
         <ng-container [matColumnDef]="column.fieldName || ''">
-            <th mat-header-cell *matHeaderCellDef> {{column.headerName}} </th>
+            <th mat-header-cell *matHeaderCellDef><px-header-cell [column]="column"> </px-header-cell></th>
             <td mat-cell *matCellDef="let element">
                 <px-cell-renderer [data]="element" [column]="column"></px-cell-renderer>
             </td>
