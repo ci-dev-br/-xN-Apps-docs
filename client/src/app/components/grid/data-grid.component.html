@@ -2,7 +2,7 @@
     @if(!source || source.length === 0){
     <ng-content select="[vazio]"></ng-content>
     }@else{
-    <table mat-table [dataSource]="source || []">
+    <table mat-table [dataSource]="source || []" [class.--selection-mode_row]="selectionMode === 'row'">
         @for (column of columns; track $index;) {
         <ng-container [matColumnDef]="column.fieldName || ''">
             <th mat-header-cell *matHeaderCellDef><px-header-cell [column]="column"> </px-header-cell></th>
