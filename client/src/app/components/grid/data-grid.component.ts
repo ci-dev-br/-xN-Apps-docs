@@ -5,6 +5,7 @@ import { DataGridOptions, IColumnOption } from "./data-grid.options";
 @Component({
     selector: 'ci-data-grid',
     templateUrl: 'data-grid.component.html',
+    styleUrls: ['data-grid.component.scss'],
 })
 export class DataGridComponent<I> {
     @Input()

@@ -1,11 +1,14 @@
 :host {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
+    justify-content: stretch;
 
     background: linear-gradient(173deg, white 0%, pink 100%);
-    min-height: 100vh;
-    overflow: hidden;
+    // min-height: 100vh;
+    overflow: auto;
+    height: 100vh;
+    width: 100vw;
 }
 
 ci-l-nav {
