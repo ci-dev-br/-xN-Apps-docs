@@ -6,4 +6,12 @@
     // flex: auto;
     // overflow: auto;
     font-weight: bold;
+    cursor: pointer;    
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    align-items: center;
 }

@@ -14,7 +14,7 @@
     </div>
 </header>
 <div class="row">
-    <ci-data-grid [source]="lista" [options]="grid" (select)="itemSelecionado=$event">
+    <ci-data-grid [source]="lista" [options]="grid" (select)="itemSelecionado=$event" (sorted)="sort = $event" >
         <div vazio>Nenhum produto listado.</div>
     </ci-data-grid>
     @if(itemSelecionado){

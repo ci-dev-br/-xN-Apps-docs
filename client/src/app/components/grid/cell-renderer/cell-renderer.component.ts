@@ -1,5 +1,6 @@
 import { Component, Input, TemplateRef, ViewChild, ViewContainerRef } from "@angular/core";
 import { IColumnOption } from "../data-grid.options";
+import { DataGridService } from "../data-grid.service";
 
 /*export interface IColumns {
     headerName: string;
@@ -30,27 +31,13 @@ import { IColumnOption } from "../data-grid.options";
 export class TextCellRenderer {
     constructor(
         private readonly vcr: ViewContainerRef,
+        private readonly services: DataGridService,
     ) { }
-    // private _teste!: TemplateRef<any>;
-    // public get teste(): TemplateRef<any> {
-    //     return this._teste;
-    // }
-    // @ViewChild('teste', { static: false })
-    // public set teste(value: TemplateRef<any>) {
-    //     // this._teste = value;
-    //     // this.componentContent = [
-    //     //     this.vcr?.createEmbeddedView(this.teste)?.rootNodes,
-    //     // ];
-    // }
     @Input()
     data?: any;
     @Input()
     column?: IColumnOption;
     componentContent?: any[][];
-    ngOnInit() {
-
-    }
-
     get value() {
         if (this.column?.fieldName && this.data)
             return this.data[this.column?.fieldName]

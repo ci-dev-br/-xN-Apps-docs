@@ -1,14 +1,18 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { DataGridOptions, IColumnOption } from "./data-grid.options";
 import { ReturnStatement } from "@angular/compiler";
+import { DataGridService } from "./data-grid.service";
 
 
 @Component({
     selector: 'ci-data-grid',
     templateUrl: 'data-grid.component.html',
     styleUrls: ['data-grid.component.scss'],
+    providers: [DataGridService]
 })
 export class DataGridComponent<I> {
+    @Output()
+    sorted = new EventEmitter<any>();
     @Output()
     select = new EventEmitter<I | I[]>();
     @Input()
@@ -32,7 +36,11 @@ export class DataGridComponent<I> {
     }
     columns?: IColumnOption[];
     displayedColumns?: string[];
-    constructor() { }
+    constructor(
+        services: DataGridService,
+    ) { 
+        services.grid = this;
+    }
 
     rowSelectionHandler(event: MouseEvent, row: I) {
         if (this.selectionMode === 'row') {

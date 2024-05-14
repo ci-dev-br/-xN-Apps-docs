@@ -5,6 +5,9 @@ import { ContainerModule } from "../container/container.module";
 import { DataGridComponent } from "./data-grid.component";
 import { MatTableModule } from "@angular/material/table";
 import { HeaderCellRenderer } from "./header-cell/header-cell.component";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
+import { DataGridService } from "./data-grid.service";
 
 @NgModule({
     declarations: [
@@ -16,10 +19,15 @@ import { HeaderCellRenderer } from "./header-cell/header-cell.component";
         CommonModule,
         ContainerModule,
         MatTableModule,
+        MatIconModule,
+        MatButtonModule,
     ],
     exports: [
         TextCellRenderer,
         DataGridComponent,
+    ],
+    providers: [
+
     ]
 })
 export class GridModule { }

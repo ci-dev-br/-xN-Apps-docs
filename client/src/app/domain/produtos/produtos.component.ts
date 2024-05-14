@@ -35,6 +35,11 @@ export class ProdutosComponent implements OnInit {
       { fieldName: 'urlWebsiteOficial', headerName: t`urlWebsiteOficial` },
     ]
   };
+  private _sort?: any;
+  set sort(value: any) {
+    this._sort = value;
+    this.getAll();
+  }
   constructor(
     private readonly products: ProductService,
     private readonly window: WindowService
@@ -48,7 +53,7 @@ export class ProdutosComponent implements OnInit {
   async getAll() {
     return this.lista = await lastValueFrom(this.products.productGet({
       body: {
-        skip: 0, take: 0, orderBy: { sku: 'ASC' }
+        skip: 0, take: 0, orderBy: this._sort ? { ...this._sort } : undefined
       }
     }));
   }
