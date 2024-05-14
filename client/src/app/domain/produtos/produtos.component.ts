@@ -14,6 +14,9 @@ import { t } from 'src/app/core/i18n/t.service';
 export class ProdutosComponent implements OnInit {
   lista?: Product[] = [];
   itemSelecionado?: Product | Product[];
+  get _itemSelecionado() {
+    return !Array.isArray(this.itemSelecionado) ? this.itemSelecionado : this.itemSelecionado[0];
+  }
   grid: DataGridOptions = {
     colums: [
 

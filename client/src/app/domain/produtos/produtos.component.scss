@@ -36,7 +36,12 @@ ci-l-nav {
     align-items: stretch;
     justify-content: stretch;
 
+    padding: 12px;
+    gap: 12px;
+    filter: drop-shadow(1px 3px 2px rgba(0, 0, 0, .11));
+
     >* {
         flex: 1;
+
     }
 }

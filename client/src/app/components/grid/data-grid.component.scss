@@ -7,7 +7,7 @@
 .grid-container {
     flex: auto;
     border-radius: 8px;
-    margin: 6px;
+    // margin: 6px;
 
     overflow: auto;
     display: flex;
@@ -15,7 +15,6 @@
     align-items: stretch;
     justify-content: stretch;
 
-    filter: drop-shadow(1px 3px 6px rgba(0, 0, 0, .66));
 }
 
 [mat-table]::ng-deep tbody {

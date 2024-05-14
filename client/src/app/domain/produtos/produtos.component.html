@@ -25,8 +25,24 @@
         <div vazio>Nenhum produto listado.</div>
     </ci-data-grid>
     @if(itemSelecionado){
-    <div>
-        {{itemSelecionado | json}}
-    </div>
+
+    <mat-card class="example-card">
+        <mat-card-header>
+            <div mat-card-avatar class="example-header-image"></div>
+            <mat-card-title>{{_itemSelecionado?.shortDescription || _itemSelecionado?.description}}</mat-card-title>
+            <mat-card-subtitle>{{_itemSelecionado?.codigoBarras}}</mat-card-subtitle>
+        </mat-card-header>
+        <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
+        <mat-card-content>
+            <p>
+                {{_itemSelecionado?.description || _itemSelecionado?.shortDescription }}
+            </p>
+        </mat-card-content>
+        <mat-card-actions>
+        </mat-card-actions>
+    </mat-card>
+    <!--  <div> -->
+    <!--   {{itemSelecionado | json}} -->
+    <!--  </div> -->
     }
 </div>
