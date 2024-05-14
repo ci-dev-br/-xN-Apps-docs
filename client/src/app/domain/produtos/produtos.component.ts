@@ -57,4 +57,15 @@ export class ProdutosComponent implements OnInit {
       }
     }));
   }
+  async delete(item: Product | Product[]) {
+    if (item && !Array.isArray(item)) {
+      await lastValueFrom(
+        this.products.productSync({ body: { data: { internalId: item.internalId, deleted: true } as any } })
+      )
+      let pos = this.lista?.indexOf(item);
+      if (pos !== undefined && pos > -1) this.lista?.splice(pos, 1);
+      this.lista = [...(this.lista || [])];
+      this.itemSelecionado = undefined;
+    }
+  }
 }

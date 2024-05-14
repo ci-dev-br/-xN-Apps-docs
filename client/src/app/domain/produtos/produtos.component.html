@@ -11,10 +11,17 @@
             <mat-icon>search</mat-icon>
             Procurar
         </button>
+
+        @if(!!itemSelecionado){
+        <button mat-raised-button (click)="delete(itemSelecionado)">
+            <mat-icon>delete</mat-icon>
+            Excluir
+        </button>
+        }
     </div>
 </header>
 <div class="row">
-    <ci-data-grid [source]="lista" [options]="grid" (select)="itemSelecionado=$event" (sorted)="sort = $event" >
+    <ci-data-grid [source]="lista" [options]="grid" (select)="itemSelecionado=$event" (sorted)="sort = $event">
         <div vazio>Nenhum produto listado.</div>
     </ci-data-grid>
     @if(itemSelecionado){

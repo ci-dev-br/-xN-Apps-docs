@@ -1,12 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Column, CreateDateColumn, Entity, Equal, FindOneOptions, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn, Repository, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Equal, FindOneOptions, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, IsNull, JoinColumn, JoinTable, ManyToMany, ManyToOne, Not, OneToOne, PrimaryGeneratedColumn, Repository, UpdateDateColumn } from "typeorm";
 import { Tenant } from "src/tenant/models/tenant.entity";
 
 import { createHash } from 'crypto';
 // import { AccessCredential } from "src/auth/models/user-credential.entity";
 import { ChaveAcesso } from "src/core/audt/chave-acesso.entity";
+import { identity } from "rxjs";
 
 export abstract class AuditedEntity {
     @ApiProperty({ nullable: true, required: false, uniqueItems: true })
@@ -30,6 +31,8 @@ export abstract class AuditedEntity {
     @ManyToOne(() => ChaveAcesso, { nullable: true })
     @JoinColumn()
     lastModifiedBy?: ChaveAcesso;
+    @Column({ nullable: true })
+    deleted?: boolean;
 }
 
 @Entity({ schema: 'snapshot' })
@@ -141,16 +144,17 @@ export abstract class DaoServiceBase<E extends FullAuditedEntity> {
     }
 
     async obterLista(options?: { skip?: number, take?: number, where?: FindOptionsWhere<E>[] | FindOptionsWhere<E>, relations?: FindOptionsRelations<E> | FindOptionsRelationByString, orderBy?: any }, request?: any) {
+        let _where: FindOptionsWhere<E>[] | FindOptionsWhere<E> = options.where || {};
 
-        let _where: FindOptionsWhere<E>[] | FindOptionsWhere<E> = options.where;
+        if (_where)
+            (Array.isArray(_where) ? _where : [_where]).forEach((w: any) => {
+                w.createdBy = { identifiedUser: Equal(request.user.id) };
+                w.deleted = false;
 
-        // if (Array.isArray(_where)) {
-        //     _where.forEach(w => {
-        //         w.createdBy = { identifiedUser: Equal('') };
-        //     })
-        // }
-
-        return await this._repo.find({ skip: options.skip, take: options.take, where: _where, relations: { createdBy: true, lastModifiedBy: true } as any, order: options.orderBy });
+                if (!Array.isArray(_where)) _where = [_where];
+                if (Array.isArray(_where)) _where.push({ ...w, deleted: IsNull() })
+            });
+        return ((await this._repo.find({ skip: options.skip, take: options.take, where: _where, relations: { createdBy: true, lastModifiedBy: true } as any, order: options.orderBy })) || [])
     }
 }
 
@@ -168,6 +172,10 @@ export abstract class ControllerDaoBase<Service extends DaoServiceBase<E>, E> {
         return await this._service.sincronizar(entity.data, request);
     }
     async get(options?: { skip?: number, take?: number, where?: any, relations?: FindOptionsRelations<E> | FindOptionsRelationByString, orderBy?: any }, request?: any) {
-        return await this._service.obterLista(options);
+        return await this._service.obterLista(options, request);
+    }
+
+    async delete(item: E, request?: any) {
+
     }
 } 
