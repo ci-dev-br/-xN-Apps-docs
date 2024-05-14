@@ -19,6 +19,9 @@ export class Product extends FullAuditedEntity {
     codigoFabricanete?: string;
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })
+    sku?: string;
+    @ApiProperty({ nullable: true, required: false })
+    @Column({ nullable: true })
     description?: string;
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })

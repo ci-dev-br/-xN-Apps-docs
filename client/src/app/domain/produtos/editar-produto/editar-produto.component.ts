@@ -27,6 +27,7 @@ export class EditarProdutoComponent {
             { label: 'Código do Fabricanete', property: 'codigoFabricanete', type: 'text' },
             { label: 'Descrição', property: 'description', type: 'text' },
             { label: 'GTIN', property: 'gtin', type: 'text', },
+            { label: 'SKU', property: 'sku', type: 'text', },
             // { label: 'Marca', property: 'marca', dataService: this.marcaService },
             { label: 'Nosso Codigo', property: 'nossoCodigo', type: 'text' },
             { label: 'Descrição curta', property: 'shortDescription', type: 'text' },

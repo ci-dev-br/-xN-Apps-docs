@@ -17,21 +17,22 @@ export class ProdutosComponent implements OnInit {
   grid: DataGridOptions = {
     colums: [
 
-      { fieldName: t`codigoBarras`, headerName: 'codigoBarras' },
-      { fieldName: t`codigoFabricanete`, headerName: 'codigoFabricanete' },
-      { fieldName: t`createdAt`, headerName: 'createdAt', defaultVisible: false },
-      { fieldName: t`createdBy`, headerName: 'createdBy', defaultVisible: false },
-      { fieldName: t`description`, headerName: 'description' },
-      { fieldName: t`gtin`, headerName: 'gtin' },
-      { fieldName: t`internalId`, headerName: 'internalId', hide: true },
-      { fieldName: t`lastModifiedAt`, headerName: 'lastModifiedAt', defaultVisible: false },
-      { fieldName: t`lastModifiedBy`, headerName: 'lastModifiedBy', defaultVisible: false },
-      { fieldName: t`marca`, headerName: 'marca' },
-      { fieldName: t`nossoCodigo`, headerName: 'nossoCodigo' },
-      { fieldName: t`shortDescription`, headerName: 'shortDescription' },
-      { fieldName: t`subGrupo`, headerName: 'subGrupo' },
-      { fieldName: t`tenants`, headerName: 'tenants', defaultVisible: false },
-      { fieldName: t`urlWebsiteOficial`, headerName: 'urlWebsiteOficial' },
+      { fieldName: 'sku', headerName: t`SKU` },
+      { fieldName: 'codigoBarras', headerName: t`codigoBarras` },
+      { fieldName: 'codigoFabricanete', headerName: t`codigoFabricanete` },
+      { fieldName: 'createdAt', headerName: t`createdAt`, defaultVisible: false },
+      { fieldName: 'createdBy', headerName: t`createdBy`, defaultVisible: false },
+      { fieldName: 'description', headerName: t`description` },
+      { fieldName: 'gtin', headerName: t`gtin` },
+      { fieldName: 'internalId', headerName: t`internalId`, hide: true },
+      { fieldName: 'lastModifiedAt', headerName: t`lastModifiedAt`, defaultVisible: false },
+      { fieldName: 'lastModifiedBy', headerName: t`lastModifiedBy`, defaultVisible: false },
+      { fieldName: 'marca', headerName: t`marca` },
+      { fieldName: 'nossoCodigo', headerName: t`nossoCodigo` },
+      { fieldName: 'shortDescription', headerName: t`shortDescription` },
+      { fieldName: 'subGrupo', headerName: t`subGrupo` },
+      { fieldName: 'tenants', headerName: t`tenants`, defaultVisible: false },
+      { fieldName: 'urlWebsiteOficial', headerName: t`urlWebsiteOficial` },
     ]
   };
   constructor(

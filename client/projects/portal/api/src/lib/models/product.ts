@@ -15,6 +15,7 @@ export interface Product {
   marca?: Marca | null;
   nossoCodigo?: string | null;
   shortDescription?: string | null;
+  sku?: string | null;
   subGrupo?: string | null;
   tenants?: Array<string> | null;
 
