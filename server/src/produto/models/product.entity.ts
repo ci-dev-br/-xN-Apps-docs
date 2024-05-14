@@ -6,7 +6,7 @@ import { Marca } from "src/inpi/model/marca.entity";
 @Entity()
 export class Product extends FullAuditedEntity {
     @ApiProperty({ nullable: true, required: false })
-    @Column({ unique: true, nullable: true })
+    @Column({ nullable: true })
     gtin?: string;
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })
