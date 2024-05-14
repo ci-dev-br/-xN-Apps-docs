@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Column, CreateDateColumn, Entity, Equal, FindOneOptions, FindOptionsWhere, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn, Repository, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Equal, FindOneOptions, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn, Repository, UpdateDateColumn } from "typeorm";
 import { Tenant } from "src/tenant/models/tenant.entity";
 
 import { createHash } from 'crypto';
@@ -21,14 +21,14 @@ export abstract class AuditedEntity {
     createdAt?: Date;
     @ApiProperty({ nullable: true, required: false })
     @ManyToOne(() => ChaveAcesso, { nullable: true })
-    @JoinTable()
+    @JoinColumn()
     createdBy?: ChaveAcesso;
     @ApiProperty({ nullable: true, required: false })
     @UpdateDateColumn()
     lastModifiedAt?: Date;
     @ApiProperty({ nullable: true, required: false })
     @ManyToOne(() => ChaveAcesso, { nullable: true })
-    @JoinTable()
+    @JoinColumn()
     lastModifiedBy?: ChaveAcesso;
 }
 
@@ -140,7 +140,7 @@ export abstract class DaoServiceBase<E extends FullAuditedEntity> {
         /// }
     }
 
-    async obterLista(options?: { skip?: number, take?: number, where?: FindOptionsWhere<E>[] | FindOptionsWhere<E> }, request?: any) {
+    async obterLista(options?: { skip?: number, take?: number, where?: FindOptionsWhere<E>[] | FindOptionsWhere<E>, relations?: FindOptionsRelations<E> | FindOptionsRelationByString }, request?: any) {
 
         let _where: FindOptionsWhere<E>[] | FindOptionsWhere<E> = options.where;
 
@@ -150,7 +150,7 @@ export abstract class DaoServiceBase<E extends FullAuditedEntity> {
         //     })
         // }
 
-        return await this._repo.find({ skip: options.skip, take: options.take, where: _where });
+        return await this._repo.find({ skip: options.skip, take: options.take, where: _where, relations: { createdBy: true, lastModifiedBy: true } as any });
     }
 }
 
@@ -167,7 +167,7 @@ export abstract class ControllerDaoBase<Service extends DaoServiceBase<E>, E> {
     async sync(entity: SyncPayloadDao<E>, request?: any) {
         return await this._service.sincronizar(entity.data, request);
     }
-    async get(options?: { skip?: number, take?: number, where?: any }, request?: any) {
+    async get(options?: { skip?: number, take?: number, where?: any, relations?: FindOptionsRelations<E> | FindOptionsRelationByString }, request?: any) {
         return await this._service.obterLista(options);
     }
 } 

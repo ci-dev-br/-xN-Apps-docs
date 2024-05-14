@@ -11,4 +11,5 @@ export class ChaveAcesso {
     @ApiProperty({ required: false }) @Column({ nullable: true }) createdFromIp?: string;
     @Column({ nullable: true, default: false }) valid?: boolean;
     @Column({ nullable: true, default: false }) alive?: boolean;
+
 }
