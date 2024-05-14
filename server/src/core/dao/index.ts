@@ -140,7 +140,7 @@ export abstract class DaoServiceBase<E extends FullAuditedEntity> {
         /// }
     }
 
-    async obterLista(options?: { skip?: number, take?: number, where?: FindOptionsWhere<E>[] | FindOptionsWhere<E>, relations?: FindOptionsRelations<E> | FindOptionsRelationByString }, request?: any) {
+    async obterLista(options?: { skip?: number, take?: number, where?: FindOptionsWhere<E>[] | FindOptionsWhere<E>, relations?: FindOptionsRelations<E> | FindOptionsRelationByString, orderBy?: any }, request?: any) {
 
         let _where: FindOptionsWhere<E>[] | FindOptionsWhere<E> = options.where;
 
@@ -150,7 +150,7 @@ export abstract class DaoServiceBase<E extends FullAuditedEntity> {
         //     })
         // }
 
-        return await this._repo.find({ skip: options.skip, take: options.take, where: _where, relations: { createdBy: true, lastModifiedBy: true } as any });
+        return await this._repo.find({ skip: options.skip, take: options.take, where: _where, relations: { createdBy: true, lastModifiedBy: true } as any, order: options.orderBy });
     }
 }
 
@@ -167,7 +167,7 @@ export abstract class ControllerDaoBase<Service extends DaoServiceBase<E>, E> {
     async sync(entity: SyncPayloadDao<E>, request?: any) {
         return await this._service.sincronizar(entity.data, request);
     }
-    async get(options?: { skip?: number, take?: number, where?: any, relations?: FindOptionsRelations<E> | FindOptionsRelationByString }, request?: any) {
+    async get(options?: { skip?: number, take?: number, where?: any, relations?: FindOptionsRelations<E> | FindOptionsRelationByString, orderBy?: any }, request?: any) {
         return await this._service.obterLista(options);
     }
 } 

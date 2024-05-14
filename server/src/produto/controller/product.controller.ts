@@ -15,6 +15,8 @@ export class ProductCotrollerGetInputDto {
     take?: number;
     @ApiProperty({ nullable: true, required: false })
     skip?: number;
+    @ApiProperty({ nullable: true, required: false })
+    orderBy?: any;
 }
 @ApiTags('Product')
 @Controller('Product')

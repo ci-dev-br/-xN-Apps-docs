@@ -48,7 +48,7 @@ export class ProdutosComponent implements OnInit {
   async getAll() {
     return this.lista = await lastValueFrom(this.products.productGet({
       body: {
-        skip: 0, take: 0
+        skip: 0, take: 0, orderBy: { sku: 'ASC' }
       }
     }));
   }
