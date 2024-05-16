@@ -32,7 +32,7 @@ ci-l-nav {
     display: flex;
     flex-direction: row;
     flex: auto;
-    overflow: auto;
+    overflow: hidden;
     align-items: stretch;
     justify-content: stretch;
 
@@ -44,4 +44,13 @@ ci-l-nav {
         flex: 1;
 
     }
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: auto;
+
+   
 }

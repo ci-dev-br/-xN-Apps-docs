@@ -16,6 +16,8 @@
       <ng-container *ngIf="!!title">
         {{title}}
       </ng-container>
+
+      <input placeholder="Do que precisas?" />
       <span style="flex: auto"></span>
       <!-- <button mat-icon-button [matMenuTriggerFor]="servicosMenu">
         <mat-icon>lan</mat-icon>
@@ -45,6 +47,9 @@
       </button>
       }
     </mat-menu>
+    <button mat-icon-button [matTooltip]="'Configurações'" (click)="settings()" >
+      <mat-icon>settings</mat-icon>
+    </button>
     <button class="user-menu" mat-icon-button [matMenuTriggerFor]="userMenu">
       <img [src]="userPhoto">
       <!-- <mat-icon>face</mat-icon> -->

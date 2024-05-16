@@ -7,6 +7,10 @@ import { ApplicationService } from '@portal/api';
 import { ServicesService } from 'src/app/core/services/services.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { OrganizacaoService } from 'src/app/services/organizacao.service';
+import { WindowService } from '../window/window.service';
+import { SettingsComponent } from 'src/app/views/settings/settings.component';
+// import { WindowService } from '../window/window.service';
+// import { SettingsComponent } from 'src/app/views/settings/settings.component';
 
 interface IBreadcrumb {
   name?: string;
@@ -38,6 +42,9 @@ export class LNavComponent {
     private readonly system: SystemService,
     @Optional()
     private readonly organizacaoService?: OrganizacaoService,
+
+
+    private readonly window?: WindowService,
   ) {
     this.load();
     router.events.subscribe((event: any) => {
@@ -173,5 +180,8 @@ export class LNavComponent {
   }
   action(crumb: any) {
     console.log(crumb);
+  }
+  async settings() {
+    this.window?.open(SettingsComponent, null);
   }
 }
