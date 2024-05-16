@@ -1,5 +1,8 @@
 <ng-container *ngIf="showing">
     <mat-toolbar>
+        <span class="ci-window--title">
+            @if(title){ {{title}} }
+        </span>
         <span style="flex: auto;"></span>
         <ng-container *ngFor="let item of menu">
             <ng-container *ngIf="!item.visible || (!!item.visible && item.visible())">
@@ -24,7 +27,7 @@
     <mat-progress-bar></mat-progress-bar>
     <div class="content">
         <ng-container *ngIf="component">
-            <ng-container #componentTmplate *ngComponentOutlet="component; injector:injector"></ng-container>
+            <ng-container *ngComponentOutlet="component; injector:injector"></ng-container>
         </ng-container>
     </div>
 </ng-container>

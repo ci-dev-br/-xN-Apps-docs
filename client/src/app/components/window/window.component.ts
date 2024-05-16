@@ -20,6 +20,8 @@ export interface IItemMenu {
   styleUrls: ['./window.component.scss']
 })
 export class WindowComponent implements OnInit, OnDestroy {
+  @Input()
+  title?: string;
   showing = false;
   menu: IItemMenu[] = [
     { icon: 'done_all', label: 'Confirmar alterações', visible: () => this.changed, onClick: () => this.confirm() },
@@ -30,8 +32,6 @@ export class WindowComponent implements OnInit, OnDestroy {
   injector = Injector.create([
     { provide: MAT_DIALOG_DATA, useValue: this.data.data }
   ]);
-  @ViewChild('componentTmplate')
-  componentTmplate?: any;
   constructor(
     private readonly daos: DaoService,
     private readonly ref: MatDialogRef<WindowComponent>,
