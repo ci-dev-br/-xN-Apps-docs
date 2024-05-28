@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Exclude, Expose } from "class-transformer";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Policy } from "./policy.entity";
 import { Tenant } from "src/tenant/models/tenant.entity";
@@ -17,7 +18,7 @@ export class User {
     @Column({ nullable: true })
     fullName?: string;
     @Column({ nullable: true })
-    @ApiProperty({ required: false, nullable: true })
+    @Exclude({ toPlainOnly: true })
     password?: string;
     @Column({ nullable: true, unique: true })
     @ApiProperty({ required: false, nullable: true })
