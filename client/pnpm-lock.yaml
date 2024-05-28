@@ -68,6 +68,12 @@ dependencies:
   crypto-js:
     specifier: ^4.1.1
     version: 4.2.0
+  d3-scale:
+    specifier: ^4.0.2
+    version: 4.0.2
+  d3-selection:
+    specifier: ^3.0.0
+    version: 3.0.0
   d3-shape:
     specifier: ^3.2.0
     version: 3.2.0
@@ -100,6 +106,12 @@ devDependencies:
   '@types/crypto-js':
     specifier: ^4.1.1
     version: 4.2.1
+  '@types/d3-scale':
+    specifier: ^4.0.8
+    version: 4.0.8
+  '@types/d3-selection':
+    specifier: ^3.0.10
+    version: 3.0.10
   '@types/d3-shape':
     specifier: ^3.1.6
     version: 3.1.6
@@ -3954,10 +3966,24 @@ packages:
     resolution: {integrity: sha512-P2dlU/q51fkOc/Gfl3Ul9kicV7l+ra934qBFXCFhrZMOL6du1TM0pm1ThYvENukyOn5h9v+yMJ9Fn5JK4QozrQ==}
     dev: true
 
+  /@types/d3-scale@4.0.8:
+    resolution: {integrity: sha512-gkK1VVTr5iNiYJ7vWDI+yUFFlszhNMtVeneJ6lUTKPjprsvLLI9/tgEGiXJOnlINJA8FyA88gfnQsHbybVZrYQ==}
+    dependencies:
+      '@types/d3-time': 3.0.3
+    dev: true
+
+  /@types/d3-selection@3.0.10:
+    resolution: {integrity: sha512-cuHoUgS/V3hLdjJOLTT691+G2QoqAjCVLmr4kJXR4ha56w1Zdu8UUQ5TxLRqudgNjwXeQxKMq4j+lyf9sWuslg==}
+    dev: true
+
   /@types/d3-shape@3.1.6:
     resolution: {integrity: sha512-5KKk5aKGu2I+O6SONMYSNflgiP0WfZIQvVUMan50wHsLG1G94JlxEVnCpQARfTtzytuY0p/9PXXZb3I7giofIA==}
     dependencies:
       '@types/d3-path': 3.1.0
+    dev: true
+
+  /@types/d3-time@3.0.3:
+    resolution: {integrity: sha512-2p6olUZ4w3s+07q3Tm2dbiMZy5pCDfYwtLXXHUnVzXgQlZ/OyPtUz6OL382BkOuGlLXqfT+wqv8Fw2v8/0geBw==}
     dev: true
 
   /@types/eslint-scope@3.7.7:
@@ -6845,8 +6871,6 @@ packages:
       webpack: '*'
     peerDependenciesMeta:
       webpack:
-        optional: true
-      webpack-sources:
         optional: true
     dependencies:
       webpack: 5.89.0(esbuild@0.19.5)

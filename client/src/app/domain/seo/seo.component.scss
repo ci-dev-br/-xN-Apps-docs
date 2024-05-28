@@ -1,0 +1,56 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+
+    background: linear-gradient(173deg, white 0%, pink 100%);
+    // min-height: 100vh;
+    overflow: auto;
+    height: 100vh;
+    width: 100vw;
+}
+
+ci-l-nav {
+    align-self: stretch;
+}
+
+.nav {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+}
+
+
+.container {
+    flex: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    flex: auto;
+    overflow: hidden;
+    align-items: stretch;
+    justify-content: stretch;
+
+    padding: 12px;
+    gap: 12px;
+    filter: drop-shadow(1px 3px 2px rgba(0, 0, 0, .11));
+
+    >* {
+        flex: 1;
+
+    }
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: auto;
+
+   
+}
