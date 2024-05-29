@@ -10,6 +10,7 @@ import { WindowModule } from 'src/app/components/window/window.module';
 import { MarcaService } from './services/marca.service';
 import { GridModule } from 'src/app/components/grid/grid.module';
 import { MatCardModule } from '@angular/material/card';
+import { CardActionsComponent } from 'src/app/components/card/card-actions.component';
 
 
 @NgModule({
@@ -25,6 +26,7 @@ import { MatCardModule } from '@angular/material/card';
     LNavModule,
     GridModule,
     MatCardModule,
+    CardActionsComponent,
   ],
   providers: [
     MarcaService,

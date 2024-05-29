@@ -12,11 +12,13 @@ import { ToolbarService } from "./services/toolbar.service";
 import { NotificationService } from "./services/notification.service";
 import { ServicesService } from "./services/services.service";
 import { LocalizationService } from "./services/localization.service";
+import { TranslateDirective } from "./i18n/translate.directive";
 
 @NgModule({
     imports: [
         CommonModule,
         HttpClientModule,
+        TranslateDirective,
     ],
     declarations: [
         PurePipe,
@@ -29,6 +31,7 @@ import { LocalizationService } from "./services/localization.service";
         CommonModule,
         HttpClientModule,
         AutoFocusDirective,
+        TranslateDirective,
     ]
 })
 export class CoreModule {

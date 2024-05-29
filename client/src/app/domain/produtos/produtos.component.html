@@ -35,6 +35,9 @@
                 <div mat-card-avatar class="example-header-image"></div>
                 <mat-card-title>{{_itemSelecionado?.shortDescription || _itemSelecionado?.description}}</mat-card-title>
                 <mat-card-subtitle>{{_itemSelecionado?.codigoBarras}}</mat-card-subtitle>
+                <ci-card-actions>
+                    <button mat-icon-button><mat-icon>more_vert</mat-icon></button>
+                </ci-card-actions>
             </mat-card-header>
             <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg"
                 alt="Photo of a Shiba Inu">
