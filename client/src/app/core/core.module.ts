@@ -1,6 +1,6 @@
 import { ModuleWithProviders, NgModule, isDevMode } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 import { ApiModule } from "@portal/api";
 import { AutoFocusDirective } from "./auto-focus.directive";
 import { StorageService } from "./storage.service";
@@ -14,17 +14,9 @@ import { ServicesService } from "./services/services.service";
 import { LocalizationService } from "./services/localization.service";
 import { TranslateDirective } from "./i18n/translate.directive";
 
-@NgModule({
-    imports: [
-        CommonModule,
-        HttpClientModule,
-        TranslateDirective,
-    ],
-    declarations: [
+@NgModule({ declarations: [
         PurePipe,
         AutoFocusDirective,
-    ],
-    providers: [
     ],
     exports: [
         PurePipe,
@@ -32,8 +24,10 @@ import { TranslateDirective } from "./i18n/translate.directive";
         HttpClientModule,
         AutoFocusDirective,
         TranslateDirective,
-    ]
-})
+    ], imports: [CommonModule,
+        TranslateDirective], providers: [
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class CoreModule {
     public static forRoot(): ModuleWithProviders<CoreModule> {
         return {

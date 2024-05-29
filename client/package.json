@@ -8,11 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "api": "ng-openapi-gen",
-    "dev:ssr": "ng run client:serve-ssr",
-    "serve:ssr": "node dist/client/server/main.js",
-    "build:ssr": "ng build && ng run client:server",
-    "prerender": "ng run client:prerender",
-    "serve:ssr:@plhx/xx": "node dist/plhx/xx/server/server.mjs"
+    "serve:ssr:@plhx/xx": "node dist/plhx/xx/server/server.mjs",
+    "serve:ssr:client": "node dist/client/server/server.mjs"
   },
   "private": true,
   "dependencies": {

@@ -15,11 +15,12 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/client/browser",
+            "outputPath": {
+              "base": "dist/client"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -39,8 +40,13 @@
               "src/styles.scss"
             ],
             "scripts": [],
-            "serviceWorker": true,
-            "ngswConfigPath": "ngsw-config.json"
+            "serviceWorker": "ngsw-config.json",
+            "browser": "src/main.ts",
+            "server": "src/main.server.ts",
+            "prerender": true,
+            "ssr": {
+              "entry": "server.ts"
+            }
           },
           "configurations": {
             "production": {
@@ -59,9 +65,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -107,61 +111,6 @@
             ],
             "scripts": []
           }
-        },
-        "server": {
-          "builder": "@angular-devkit/build-angular:server",
-          "options": {
-            "outputPath": "dist/client/server",
-            "main": "server.ts",
-            "tsConfig": "tsconfig.server.json",
-            "inlineStyleLanguage": "scss"
-          },
-          "configurations": {
-            "production": {
-              "outputHashing": "media"
-            },
-            "development": {
-              "buildOptimizer": false,
-              "optimization": false,
-              "sourceMap": true,
-              "extractLicenses": false,
-              "vendorChunk": true
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "serve-ssr": {
-          "builder": "@angular-devkit/build-angular:ssr-dev-server",
-          "configurations": {
-            "development": {
-              "browserTarget": "client:build:development",
-              "serverTarget": "client:server:development"
-            },
-            "production": {
-              "browserTarget": "client:build:production",
-              "serverTarget": "client:server:production"
-            }
-          },
-          "defaultConfiguration": "development"
-        },
-        "prerender": {
-          "builder": "@angular-devkit/build-angular:prerender",
-          "options": {
-            "routes": [
-              "/"
-            ]
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "client:build:production",
-              "serverTarget": "client:server:production"
-            },
-            "development": {
-              "browserTarget": "client:build:development",
-              "serverTarget": "client:server:development",
-            }
-          },
-          "defaultConfiguration": "production"
         }
       }
     },
@@ -177,11 +126,12 @@
       "prefix": "px",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/plhx/prolabore",
+            "outputPath": {
+              "base": "dist/plhx/prolabore"
+            },
             "index": "projects/plhx/prolabore/src/index.html",
-            "main": "projects/plhx/prolabore/src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -194,7 +144,8 @@
             "styles": [
               "projects/plhx/prolabore/src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "browser": "projects/plhx/prolabore/src/main.ts"
           },
           "configurations": {
             "production": {
@@ -213,9 +164,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
