@@ -12,5 +12,6 @@ import { Component } from '@angular/core';
   styles: ``
 })
 export class DataGridComponent {
-
+  @Input()
+  options?: 
 }
