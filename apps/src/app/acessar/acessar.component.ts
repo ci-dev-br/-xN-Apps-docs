@@ -14,5 +14,5 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './acessar.component.scss'
 })
 export class AcessarComponent {
-
+  stage?: 'identification' | 'loading' | 'captcha' | 'authentication';
 }
