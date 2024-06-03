@@ -1,14 +1,33 @@
-<div class="container">
-    <form>
-        <p>Acesse a partir de sua identificação dentro da Plataforma. Caso não lembre, tente seu e-mail de cadastro.</p>
+<header>
+    <div class="destaque" >
+        <img class="logo" src="logo-colorida.svg" alt="">
+        <p>Acesse o Apps com sua conta ci.dev.br</p>
+        <button mat-raised-button>Criar conta</button>
+    </div>
+    @if(form){
+    <form [formGroup]="form" (ngSubmit)="submit()">
+        <h1>Entrar</h1>
+        <p>Acesse a partir de sua identificação dentro da Plataforma. Caso não lembre, tente seu e-mail de cadastro.
+        </p>
+        @if(stage === 'identification'){
         <mat-form-field>
             <mat-label>Identificação</mat-label>
-            <input matInput type="text" placeholder="Apelido ou E-mail">
+            <input matInput type="text" placeholder="Apelido ou E-mail" formControlName="identification">
         </mat-form-field>
-        <button mat-raised-button>Entrar</button>
-        <a href="/registrar">Não possuo conta ci.dev.br</a>
+        }
+        @else if(stage === 'authentication'){
+        <mat-form-field>
+            <mat-label>Identificação</mat-label>
+            <input matInput type="text" placeholder="Senha" formControlName="password">
+        </mat-form-field>
+        }
+        <button mat-raised-button type="submit">Entrar</button>
+        <small style="margin-top: 12px;">
+            Não possuo conta ci.dev.br <a href="/registrar">Criar conta</a>
+        </small>
     </form>
-</div>
+    }
+</header>
 <footer>
 
     <div class="assinatura">
