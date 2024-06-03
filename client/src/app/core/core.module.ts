@@ -1,6 +1,6 @@
 import { ModuleWithProviders, NgModule, isDevMode } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi, HttpClientModule } from "@angular/common/http";
 import { ApiModule } from "@portal/api";
 import { AutoFocusDirective } from "./auto-focus.directive";
 import { StorageService } from "./storage.service";

@@ -15,7 +15,7 @@ import { DataGridService } from "../data-grid.service";
     template: `<ng-container *ngIf="column">
 <div class="row">
     <span class="text-content">
-        {{column?.headerName || ''}}
+        {{(column?.headerName || '')}}
     </span>
 @if(sort === 'ASC'){
     <button mat-icon-button >

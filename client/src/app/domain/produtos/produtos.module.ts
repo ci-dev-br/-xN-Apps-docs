@@ -11,6 +11,7 @@ import { MarcaService } from './services/marca.service';
 import { GridModule } from 'src/app/components/grid/grid.module';
 import { MatCardModule } from '@angular/material/card';
 import { CardActionsComponent } from 'src/app/components/card/card-actions.component';
+import { CoreModule } from 'src/app/core/core.module';
 
 
 @NgModule({
@@ -18,7 +19,7 @@ import { CardActionsComponent } from 'src/app/components/card/card-actions.compo
     ProdutosComponent
   ],
   imports: [
-    CommonModule,
+    CoreModule,
     WindowModule,
     ProdutosRoutingModule,
     MatButtonModule,

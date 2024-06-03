@@ -18,8 +18,8 @@ export class TranslateDirective implements OnInit {
     ) {
     }
     ngOnInit(): void {
-        if (!this.translationCode) {
-            console.log((this._el.nativeElement as HTMLElement).innerText);
+        if (!this.translationCode || this.translationCode === '') {
+            console.log(this._el.nativeElement?.innerText);
         }
     }
 }
