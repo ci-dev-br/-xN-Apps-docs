@@ -1,0 +1,63 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    //  text-align: center;
+    height: 100vh;
+    overflow: auto;
+}
+
+.logo {
+    width: 250px;
+    object-fit: cover;
+}
+
+header {
+    position: relative;
+
+    nav {
+        display: flex;
+        flex-direction: row;
+        position: absolute;
+        right: 10px;
+        top: 0px;
+        gap: 8px;
+
+        ul,
+        li {
+            display: contents;
+        }
+
+        a {
+            padding: 12px;
+            color: white;
+            background-color: black;
+            border-radius: 12px;
+        }
+    }
+}
+
+.container {
+    max-width: 900px;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-self: center;
+    padding: 24px;
+}
+
+footer {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    flex: auto;
+
+    color: white;
+    background: rgba(0, 0, 0, .99);
+
+    .assinatura {
+        font-weight: 100;
+        font-size: 10px;
+    }
+}
