@@ -8,11 +8,13 @@ import { lastValueFrom } from 'rxjs';
 import { AcessoPayload, AuthService, UserService } from '@ci/portal-api';
 import { SHA512 } from 'crypto-js';
 import { Router, RouterModule } from '@angular/router';
+import { CoreModule, StorageService } from '@ci/core';
 
 @Component({
   selector: 'ci-acessar',
   standalone: true,
   imports: [
+    CoreModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
@@ -33,6 +35,7 @@ export class AcessarComponent {
     );
   }
   constructor(
+    private readonly storageService: StorageService,
     private readonly userService: UserService,
     private readonly authService: AuthService,
     private readonly snack: MatSnackBar,
@@ -119,6 +122,9 @@ export class AcessarComponent {
           }
         }));
         if (this.acesso_payload?.user?.id) {
+          this.storageService.store('apps.ci.dev.br.store.User', {
+            authentication: this.acesso_payload
+          });
           // this.userService.identificarUsuario(this.acesso_payload.user);
           // if (this.acesso_payload.bearer) this.token.Token = this.acesso_payload.bearer;
           // if (this.acesso_payload.refreshToken) this.token.RefreshToken = this.acesso_payload.refreshToken;

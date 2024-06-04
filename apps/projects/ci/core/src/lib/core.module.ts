@@ -1,13 +1,17 @@
 import { EnvironmentProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HydrationFeature, HydrationFeatureKind } from '@angular/platform-browser';
-
-
+import { StorageService } from './storage/storage.service';
 
 @NgModule({
   declarations: [],
   imports: [
-    CommonModule
+    CommonModule,
   ],
+  providers: [
+    StorageService,
+  ],
+  exports: [
+    CommonModule,
+  ]
 })
 export class CoreModule { }
