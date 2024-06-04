@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,6 +25,12 @@ export class AcessarComponent {
   private acesso_payload?: AcessoPayload;
   stage?: 'identification' | 'loading' | 'captcha' | 'authentication' = 'identification';
   form?: FormGroup;
+  @ViewChild('first')
+  set first(input: ElementRef<HTMLInputElement>) {
+    setTimeout(() =>
+      input.nativeElement.focus()
+    );
+  }
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,

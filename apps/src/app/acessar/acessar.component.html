@@ -12,7 +12,7 @@
         </p>
         <mat-form-field>
             <mat-label>Identificação</mat-label>
-            <input matInput type="text" placeholder="Apelido ou E-mail" formControlName="identification">
+            <input #first matInput type="text" placeholder="Apelido ou E-mail" formControlName="identification">
         </mat-form-field>
         }
         @else if(stage === 'authentication'){
@@ -20,7 +20,7 @@
         <p>Precisamos da sua senha para prosseguir</p>
         <mat-form-field>
             <mat-label>Senha</mat-label>
-            <input matInput type="password" placeholder="Senha" formControlName="password">
+            <input #first matInput type="password" placeholder="Senha" formControlName="password">
         </mat-form-field>
         }
         <button mat-raised-button type="submit">Entrar</button>
