@@ -5,29 +5,33 @@
         <button mat-raised-button>Criar conta</button>
     </div>
     @if(form){
-    <form [formGroup]="form" (ngSubmit)="submit()">
-        @if(stage === 'identification'){
-        <h1>Entrar</h1>
-        <p>Acesse a partir de sua identificação dentro da Plataforma. Caso não lembre, tente seu e-mail de cadastro.
-        </p>
-        <mat-form-field>
-            <mat-label>Identificação</mat-label>
-            <input #first matInput type="text" placeholder="Apelido ou E-mail" formControlName="identification">
-        </mat-form-field>
-        }
-        @else if(stage === 'authentication'){
-        Olá,
-        <p>Precisamos da sua senha para prosseguir</p>
-        <mat-form-field>
-            <mat-label>Senha</mat-label>
-            <input #first matInput type="password" placeholder="Senha" formControlName="password">
-        </mat-form-field>
-        }
-        <button mat-raised-button type="submit">Entrar</button>
+    <div class="col">
+        <form [formGroup]="form" (ngSubmit)="submit()">
+            @if(stage === 'identification'){
+            <h1>Entrar</h1>
+            <p>Acesse a partir de sua identificação dentro da Plataforma. Caso não se lembre, tente seu e-mail de
+                cadastramento.
+            </p>
+            <mat-form-field>
+                <mat-label>Identificação</mat-label>
+                <input #first matInput type="text" placeholder="Apelido ou E-mail" formControlName="identification">
+            </mat-form-field>
+            }
+            @else if(stage === 'authentication'){
+            Olá,
+            <p>Precisamos da sua senha para prosseguir</p>
+            <mat-form-field>
+                <mat-label>Senha</mat-label>
+                <input #first matInput type="password" placeholder="Senha" formControlName="password">
+            </mat-form-field>
+            }
+            <button mat-raised-button type="submit">Entrar</button>
+
+        </form>
         <small style="margin-top: 12px;">
-            Não possuo conta ci.dev.br <a href="/registrar">Criar conta</a>
+            Ainda não possui uma conta ci.dev.br? <a href="/registrar">Criar conta</a>
         </small>
-    </form>
+    </div>
     }
 </header>
 <footer>

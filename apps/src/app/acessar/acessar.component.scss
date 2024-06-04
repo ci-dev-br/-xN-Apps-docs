@@ -79,3 +79,10 @@ footer {
         font-size: 10px;
     }
 }
+
+.col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
