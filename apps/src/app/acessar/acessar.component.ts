@@ -54,7 +54,7 @@ export class AcessarComponent {
   async submit() {
     try {
       if (this.form?.invalid) {
-        this.snack.open('Nome inválido.');
+        this.snack.open('Identificador inválido.');
         this.form?.markAllAsTouched();
         return;
       }
@@ -68,7 +68,7 @@ export class AcessarComponent {
                 }
               }))
           } catch (error) {
-            this.snack.open('Falha 1.', 'Ok');
+            this.snack.open('Acesso indisponível.', 'Ok');
           }
           if (result) this.acesso_payload = result;
           if (result) {
@@ -86,7 +86,9 @@ export class AcessarComponent {
                   }));
                   this.acesso_payload = payload;
                 } catch (error) {
-                  this.snack.open('Não foi possível localizar seu cadastro.', 'Ok');
+                  this.snack.open('Não identificamos seu cadastro.', 'Criar conta').onAction().subscribe(() => {
+                    this.router.navigate(['/registrar'])
+                  });
                   this.acesso_payload = undefined;
                   return;
                 }
