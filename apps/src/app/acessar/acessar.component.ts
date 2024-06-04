@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { lastValueFrom } from 'rxjs';
 import { AcessoPayload, AuthService, UserService } from '@ci/portal-api';
 import { SHA512 } from 'crypto-js';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'ci-acessar',
@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
     MatInputModule,
     MatButtonModule,
     ReactiveFormsModule,
+    RouterModule,
   ],
   templateUrl: './acessar.component.html',
   styleUrl: './acessar.component.scss'

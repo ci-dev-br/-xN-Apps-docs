@@ -2,7 +2,7 @@
     <div class="destaque">
         <img class="logo" src="logo-colorida.svg" alt="">
         <p>Acesse o Apps com sua conta ci.dev.br</p>
-        <button mat-raised-button>Criar conta</button>
+        <button mat-raised-button routerLink="/registrar">Criar conta</button>
     </div>
     @if(form){
     <div class="col">
@@ -29,7 +29,7 @@
 
         </form>
         <small style="margin-top: 12px;">
-            Ainda não possui uma conta ci.dev.br? <a href="/registrar">Criar conta</a>
+            Ainda não possui uma conta ci.dev.br? <a routerLink="/registrar" href="#">Criar conta</a>
         </small>
     </div>
     }

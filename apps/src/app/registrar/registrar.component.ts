@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'ci-registrar',
@@ -14,6 +15,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatButtonModule,
     ReactiveFormsModule,
     MatCheckboxModule,
+    RouterModule,
   ],
   templateUrl: './registrar.component.html',
   styleUrl: './registrar.component.scss'
