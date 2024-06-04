@@ -122,8 +122,11 @@ export class AcessarComponent {
           }
         }));
         if (this.acesso_payload?.user?.id) {
-          this.storageService.store('apps.ci.dev.br.store.User', {
-            authentication: this.acesso_payload
+          this.storageService.store('appsci.dev.br.store.User', {
+            authentication: {
+              ...this.acesso_payload,
+              user: { ...this.acesso_payload.user, photo: null }
+            }
           });
           // this.userService.identificarUsuario(this.acesso_payload.user);
           // if (this.acesso_payload.bearer) this.token.Token = this.acesso_payload.bearer;
