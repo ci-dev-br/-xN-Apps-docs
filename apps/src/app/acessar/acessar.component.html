@@ -1,24 +1,26 @@
 <header>
-    <div class="destaque" >
+    <div class="destaque">
         <img class="logo" src="logo-colorida.svg" alt="">
         <p>Acesse o Apps com sua conta ci.dev.br</p>
         <button mat-raised-button>Criar conta</button>
     </div>
     @if(form){
     <form [formGroup]="form" (ngSubmit)="submit()">
+        @if(stage === 'identification'){
         <h1>Entrar</h1>
         <p>Acesse a partir de sua identificação dentro da Plataforma. Caso não lembre, tente seu e-mail de cadastro.
         </p>
-        @if(stage === 'identification'){
         <mat-form-field>
             <mat-label>Identificação</mat-label>
             <input matInput type="text" placeholder="Apelido ou E-mail" formControlName="identification">
         </mat-form-field>
         }
         @else if(stage === 'authentication'){
+        Olá,
+        <p>Precisamos da sua senha para prosseguir</p>
         <mat-form-field>
-            <mat-label>Identificação</mat-label>
-            <input matInput type="text" placeholder="Senha" formControlName="password">
+            <mat-label>Senha</mat-label>
+            <input matInput type="password" placeholder="Senha" formControlName="password">
         </mat-form-field>
         }
         <button mat-raised-button type="submit">Entrar</button>

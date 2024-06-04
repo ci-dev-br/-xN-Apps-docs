@@ -7,6 +7,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideServiceWorker } from '@angular/service-worker';
 import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
 import { AuthorizationHttpInterceptor } from '@ci/core';
+import { ApiModule } from '@ci/portal-api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,5 +23,7 @@ export const appConfig: ApplicationConfig = {
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
-    })]
+    }),
+    ...(ApiModule.forRoot({ rootUrl: 'https://apps.ci.dev.br:446' }).providers as []),
+  ],
 };
