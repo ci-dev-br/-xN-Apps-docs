@@ -4,7 +4,7 @@
     // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        {
+        /*  {
             "name": "Launch Edge",
             "request": "launch",
             "type": "msedge",
@@ -15,14 +15,14 @@
             "disableNetworkCache": true,
             "profileStartup": true,
             "webRoot": "${workspaceFolder}"
-        },
-        {
+        }, */
+        /* {
             "name": "Launch Chrome",
             "request": "launch",
             "type": "chrome",
             "url": "http://localhost:4293",
             "webRoot": "${workspaceFolder}/client"
-        },
+        }, */
         {
             "name": "Launch new Apps on Chrome",
             "request": "launch",
