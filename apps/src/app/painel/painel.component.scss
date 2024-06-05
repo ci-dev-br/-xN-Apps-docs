@@ -1,0 +1,46 @@
+:host {
+    height: 100vh;
+    overflow: auto;
+    overflow-x: hidden;
+
+    display: flex;
+    flex-direction: column;
+
+}
+
+mat-toolbar {
+    flex: unset;
+    overflow: hidden;
+
+    mat-form-field {
+        margin-bottom: -20px;
+        flex: auto;
+
+        ::ng-deep {
+            * {}
+
+            div {}
+
+            label {
+                --mat-form-field-container-height: 40px;
+            }
+
+            --mat-form-field-container-vertical-padding: 10px;
+
+            .mdc-text-field--outlined {
+                height: 40px;
+            }
+        }
+    }
+}
+
+.wrapper {
+    flex: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: auto;
+    overflow-x: hidden;
+    position: relative;
+}

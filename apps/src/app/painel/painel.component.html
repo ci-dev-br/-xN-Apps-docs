@@ -1,1 +1,42 @@
-<p>painel works!</p>
+<mat-toolbar>
+    <span style="flex: auto;"></span>
+    <button mat-button>
+        Meus Apps
+    </button>
+    <button mat-button>
+        Dashboard
+    </button>
+    <button mat-button>
+        Blog
+    </button>
+    <mat-form-field appearance="outline" #pesquisaField>
+        <mat-label>Pesquisar...</mat-label>
+        <input type="text" matInput placeholder="Pesquisar...">
+        <button matSuffix mat-icon-button>
+            <mat-icon>clean</mat-icon>
+        </button>
+        <button matSuffix mat-icon-button>
+            <mat-icon>search</mat-icon>
+        </button>
+    </mat-form-field>
+
+    <span style="flex: auto;"></span>
+    <button mat-button [matMenuTriggerFor]="userMenu">
+        Plhx.
+    </button>
+    <mat-menu #userMenu>
+        <button mat-menu-item>
+            <mat-icon>exit_to_app</mat-icon>
+            Sair
+        </button>
+    </mat-menu>
+</mat-toolbar>
+<!-- 
+<div class="wrapper"> -->
+    <mat-drawer-container class="example-container">
+        <mat-drawer mode="side" opened>Drawer content</mat-drawer>
+        <mat-drawer-content>
+            <router-outlet></router-outlet>
+        </mat-drawer-content>
+    </mat-drawer-container>
+<!-- </div> -->
