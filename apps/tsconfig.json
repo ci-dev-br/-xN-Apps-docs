@@ -6,6 +6,69 @@
       "@ci-apps/Arquivos": [
         "./dist/ci-apps/arquivos"
       ],
+      "@ci-apps/Cadastros": [
+        "./dist/ci-apps/cadastros"
+      ],
+      "@ci-apps/Codex": [
+        "./dist/ci-apps/codex"
+      ],
+      "@ci-apps/DevTools": [
+        "./dist/ci-apps/dev-tools"
+      ],
+      "@ci-apps/Dynamic": [
+        "./dist/ci-apps/dynamic"
+      ],
+      "@ci-apps/Financeiro": [
+        "./dist/ci-apps/financeiro"
+      ],
+      "@ci-apps/Formularios": [
+        "./dist/ci-apps/formularios"
+      ],
+      "@ci-apps/Gerencial": [
+        "./dist/ci-apps/gerencial"
+      ],
+      "@ci-apps/Icons": [
+        "./dist/ci-apps/icons"
+      ],
+      "@ci-apps/Imersao": [
+        "./dist/ci-apps/imersao"
+      ],
+      "@ci-apps/Infra": [
+        "./dist/ci-apps/infra"
+      ],
+      "@ci-apps/Instalacao": [
+        "./dist/ci-apps/instalacao"
+      ],
+      "@ci-apps/LowCode": [
+        "./dist/ci-apps/low-code"
+      ],
+      "@ci-apps/Mensagens": [
+        "./dist/ci-apps/mensagens"
+      ],
+      "@ci-apps/Organizacao": [
+        "./dist/ci-apps/organizacao"
+      ],
+      "@ci-apps/Produtos": [
+        "./dist/ci-apps/produtos"
+      ],
+      "@ci-apps/Profile": [
+        "./dist/ci-apps/profile"
+      ],
+      "@ci-apps/Projetos": [
+        "./dist/ci-apps/projetos"
+      ],
+      "@ci-apps/SEO": [
+        "./dist/ci-apps/seo"
+      ],
+      "@ci-apps/Threejs": [
+        "./dist/ci-apps/threejs"
+      ],
+      "@ci-apps/Treinamento": [
+        "./dist/ci-apps/treinamento"
+      ],
+      "@ci-apps/Vendas": [
+        "./dist/ci-apps/vendas"
+      ],
       "@ci/components": [
         "./dist/ci/components"
       ],

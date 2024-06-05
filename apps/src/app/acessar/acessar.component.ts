@@ -134,9 +134,9 @@ export class AcessarComponent {
           // this.userService.identificarUsuario(this.acesso_payload.user);
           // if (this.acesso_payload.bearer) this.token.Token = this.acesso_payload.bearer;
           // if (this.acesso_payload.refreshToken) this.token.RefreshToken = this.acesso_payload.refreshToken;
-          this.router.navigate(['/painel']);
+          this.router.navigate(['/apps']);
         } else {
-          this.snack.open('Falha 3.', 'Ok');
+          this.snack.open('Acesso negado!', 'Ok');
         }
       }
     } catch (error) {

@@ -268,6 +268,699 @@
           }
         }
       }
+    },
+    "@ci-apps/Cadastros": {
+      "projectType": "library",
+      "root": "projects/ci-apps/cadastros",
+      "sourceRoot": "projects/ci-apps/cadastros/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/cadastros/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/cadastros/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/cadastros/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/cadastros/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Codex": {
+      "projectType": "library",
+      "root": "projects/ci-apps/codex",
+      "sourceRoot": "projects/ci-apps/codex/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/codex/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/codex/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/codex/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/codex/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/DevTools": {
+      "projectType": "library",
+      "root": "projects/ci-apps/dev-tools",
+      "sourceRoot": "projects/ci-apps/dev-tools/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/dev-tools/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/dev-tools/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/dev-tools/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/dev-tools/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Dynamic": {
+      "projectType": "library",
+      "root": "projects/ci-apps/dynamic",
+      "sourceRoot": "projects/ci-apps/dynamic/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/dynamic/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/dynamic/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/dynamic/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/dynamic/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Financeiro": {
+      "projectType": "library",
+      "root": "projects/ci-apps/financeiro",
+      "sourceRoot": "projects/ci-apps/financeiro/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/financeiro/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/financeiro/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/financeiro/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/financeiro/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Formularios": {
+      "projectType": "library",
+      "root": "projects/ci-apps/formularios",
+      "sourceRoot": "projects/ci-apps/formularios/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/formularios/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/formularios/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/formularios/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/formularios/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Icons": {
+      "projectType": "library",
+      "root": "projects/ci-apps/icons",
+      "sourceRoot": "projects/ci-apps/icons/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/icons/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/icons/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/icons/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/icons/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Imersao": {
+      "projectType": "library",
+      "root": "projects/ci-apps/imersao",
+      "sourceRoot": "projects/ci-apps/imersao/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/imersao/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/imersao/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/imersao/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/imersao/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Infra": {
+      "projectType": "library",
+      "root": "projects/ci-apps/infra",
+      "sourceRoot": "projects/ci-apps/infra/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/infra/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/infra/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/infra/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/infra/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Instalacao": {
+      "projectType": "library",
+      "root": "projects/ci-apps/instalacao",
+      "sourceRoot": "projects/ci-apps/instalacao/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/instalacao/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/instalacao/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/instalacao/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/instalacao/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/LowCode": {
+      "projectType": "library",
+      "root": "projects/ci-apps/low-code",
+      "sourceRoot": "projects/ci-apps/low-code/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/low-code/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/low-code/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/low-code/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/low-code/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Mensagens": {
+      "projectType": "library",
+      "root": "projects/ci-apps/mensagens",
+      "sourceRoot": "projects/ci-apps/mensagens/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/mensagens/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/mensagens/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/mensagens/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/mensagens/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Organizacao": {
+      "projectType": "library",
+      "root": "projects/ci-apps/organizacao",
+      "sourceRoot": "projects/ci-apps/organizacao/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/organizacao/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/organizacao/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/organizacao/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/organizacao/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Produtos": {
+      "projectType": "library",
+      "root": "projects/ci-apps/produtos",
+      "sourceRoot": "projects/ci-apps/produtos/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/produtos/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/produtos/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/produtos/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/produtos/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Profile": {
+      "projectType": "library",
+      "root": "projects/ci-apps/profile",
+      "sourceRoot": "projects/ci-apps/profile/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/profile/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/profile/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/profile/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/profile/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Projetos": {
+      "projectType": "library",
+      "root": "projects/ci-apps/projetos",
+      "sourceRoot": "projects/ci-apps/projetos/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/projetos/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/projetos/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/projetos/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/projetos/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/SEO": {
+      "projectType": "library",
+      "root": "projects/ci-apps/seo",
+      "sourceRoot": "projects/ci-apps/seo/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/seo/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/seo/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/seo/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/seo/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Threejs": {
+      "projectType": "library",
+      "root": "projects/ci-apps/threejs",
+      "sourceRoot": "projects/ci-apps/threejs/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/threejs/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/threejs/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/threejs/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/threejs/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Treinamento": {
+      "projectType": "library",
+      "root": "projects/ci-apps/treinamento",
+      "sourceRoot": "projects/ci-apps/treinamento/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/treinamento/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/treinamento/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/treinamento/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/treinamento/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Vendas": {
+      "projectType": "library",
+      "root": "projects/ci-apps/vendas",
+      "sourceRoot": "projects/ci-apps/vendas/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/vendas/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/vendas/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/vendas/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/vendas/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/Gerencial": {
+      "projectType": "library",
+      "root": "projects/ci-apps/gerencial",
+      "sourceRoot": "projects/ci-apps/gerencial/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/gerencial/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/gerencial/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/gerencial/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/gerencial/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {
