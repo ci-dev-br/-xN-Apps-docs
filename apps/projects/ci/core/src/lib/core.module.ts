@@ -1,6 +1,7 @@
 import { EnvironmentProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StorageService } from './storage/storage.service';
+import { CoreService } from './core.service';
 
 @NgModule({
   declarations: [],
@@ -9,6 +10,7 @@ import { StorageService } from './storage/storage.service';
   ],
   providers: [
     StorageService,
+    CoreService,
   ],
   exports: [
     CommonModule,

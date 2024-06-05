@@ -5,17 +5,12 @@ import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideServiceWorker } from '@angular/service-worker';
-import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
-import { AuthorizationHttpInterceptor } from '@ci/core';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { AuthorizationHttpInterceptor, CoreModule, StorageService } from '@ci/core';
 import { ApiModule } from '@ci/portal-api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(
-      // DI-based interceptors must be explicitly enabled.
-      // withInterceptorsFromDi(),
-    ),
-    { provide: HTTP_INTERCEPTORS, useClass: AuthorizationHttpInterceptor, multi: true },
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideClientHydration(),
@@ -25,5 +20,10 @@ export const appConfig: ApplicationConfig = {
       registrationStrategy: 'registerWhenStable:30000'
     }),
     ...(ApiModule.forRoot({ rootUrl: 'https://apps.ci.dev.br:446' }).providers as []),
+    StorageService,
+    provideHttpClient(
+      withInterceptorsFromDi(),
+    ),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthorizationHttpInterceptor, multi: true },
   ],
 };

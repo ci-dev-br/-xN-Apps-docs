@@ -73,6 +73,7 @@ export class AcessarComponent {
               }))
           } catch (error) {
             this.snack.open('Acesso indisponível.', 'Ok');
+            console.error(error);
           }
           if (result) this.acesso_payload = result;
           if (result) {
@@ -93,6 +94,7 @@ export class AcessarComponent {
                   this.snack.open('Não identificamos seu cadastro.', 'Criar conta').onAction().subscribe(() => {
                     this.router.navigate(['/registrar'])
                   });
+                  console.error(error);
                   this.acesso_payload = undefined;
                   return;
                 }
@@ -101,6 +103,7 @@ export class AcessarComponent {
               }
             } catch (error) {
               this.snack.open('Falha 2.', 'Ok');
+              console.error(error);
             }
           } else {
             this.snack.open('Não foi possível solicitar acesso.', 'Ok');
@@ -122,7 +125,7 @@ export class AcessarComponent {
           }
         }));
         if (this.acesso_payload?.user?.id) {
-          this.storageService.store('appsci.dev.br.store.User', {
+          this.storageService.store('apps.ci.dev.br.store.User', {
             authentication: {
               ...this.acesso_payload,
               user: { ...this.acesso_payload.user, photo: null }
