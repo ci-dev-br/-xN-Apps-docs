@@ -17,6 +17,7 @@ export class WindowService {
         });
         if (dialog.componentRef?.instance) {
             dialog.componentRef.instance.component = component;
+            //  dialog.componentRef.instance.title = 
         }
         return await lastValueFrom(dialog.afterClosed());
     }

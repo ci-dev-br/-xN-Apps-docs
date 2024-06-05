@@ -1,34 +1,77 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$default-theme: mat.define-theme((color: (theme-type: light,
+        primary: mat.$violet-palette,
+      ),
+    ));
+$default-dark-theme: mat.define-theme((color: (theme-type: dark,
+        primary: mat.$violet-palette,
+      ),
+    ));
+
+html {
+  // Emit theme-dependent styles for common features used across multiple components.
+  // @include mat.core-theme($default-theme);
+
+  // Emit styles for MatButton based on `$default-theme`. Because the configuration
+  // passed to `define-theme` omits typography, `button-theme` will not
+  // emit any typography styles.
+  // @include mat.button-theme($default-theme);
+
+  // Include the theme mixins for other components you use here.
+  @media (prefers-color-scheme: light) {
+    @include mat.all-component-themes($default-theme);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    @include mat.all-component-themes($default-dark-theme);
+  }
+}
+
+
+
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
-@use "@angular/material" as mat;
+/* @use '@angular/material' as mat; */
+
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
-@include mat.core();
+/* @include mat.core(); */
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$client-primary: mat.define-palette(mat.$grey-palette, 900);
-$client-accent: mat.define-palette(mat.$grey-palette, A200, A100, A400);
+// $client-primary: mat.define-palette(mat.$teal-palette);
+// $client-accent: mat.define-palette(mat.$teal-palette, 900);
 
 // The warn palette is optional (defaults to red).
-$client-warn: mat.define-palette(mat.$red-palette);
+// $client-warn: mat.define-palette(mat.$red-palette);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
-$client-theme: mat.define-light-theme((color: (primary: $client-primary,
-accent: $client-accent,
-warn: $client-warn,
+/* $client-theme: mat.define-theme((color: (theme-type: light,
+        primary: mat.$violet-palette,
       ),
-    ));
+      typography: (brand-family: 'Comic Sans',
+        bold-weight: 900),
+      density: (scale: -1))); */
+
+
+/* mat.define-light-theme((color: (primary: $client-primary,
+      accent: $client-accent,
+      warn: $client-warn,
+    ),
+  )); */
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-@include mat.all-component-themes($client-theme);
+/* @include mat.all-component-themes($client-theme); */
 
 /* You can add global styles to this file, and also import other style files */
 
@@ -40,11 +83,24 @@ body {
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  // font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+* {
+  // font-family: "Aubrey", system-ui;
+  font-family: "DM Sans", sans-serif;
 }
 
 ci-root {
   display: contents;
 }
 
+mat-toolbar {
+  gap: 6px;
+}
+
 @import "./scss/icons";
+
+
+// @import url('https://fonts.googleapis.com/css2?family=Aubrey&family=Francois+One&family=Instrument+Serif:ital@0;1&display=swap')
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap')

@@ -15,6 +15,9 @@ header {
   background-position: center center;
   background-size: cover;
   background-attachment: fixed;
+
+  background: linear-gradient(80deg, #0d7bbb 0%, #28a0e6 100%);
+  color: white;
 }
 
 form {
@@ -26,6 +29,7 @@ form {
   background: white;
   box-shadow: 0 0 36px rgba(0, 0, 0, 0.7);
   width: 380px;
+  max-width: 80vw;
 }
 
 .apps {

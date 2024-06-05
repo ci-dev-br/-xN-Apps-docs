@@ -16,11 +16,11 @@ export class CodeEditorComponent {
   constructor(
     private agent?: AgentService,
   ) { }
-  executor?: AgentService = this.executores[0].agentService;
+  executor?: AgentService = this.executores[0]?.agentService;
   editorOptions = { theme: 'vs-dark', language: 'javascript' };
   code: string = `return await 1+1;`;
   executar() {
-    if(this.executor) this.executor.exec(this.code);
+    if (this.executor) this.executor.exec(this.code);
   }
   criarProjeto() {
     // this.janela?.open(ProjetoComponent)

@@ -7,7 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CadastroModule } from './cadastro/cadastro.module';
-
+import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
 
 @NgModule({
   declarations: [
@@ -21,6 +21,7 @@ import { CadastroModule } from './cadastro/cadastro.module';
     MatToolbarModule,
     MatButtonModule,
     CadastroModule,
+    LNavModule,
   ]
 })
 export class CadastrosModule { }

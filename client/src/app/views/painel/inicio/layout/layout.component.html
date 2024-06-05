@@ -1,0 +1,24 @@
+<div class="title">
+    Configurações da Prancheta
+</div>
+<div class="wrapper">
+    <mat-form-field [appearance]="'outline'">
+        <mat-label>Título</mat-label>
+        <input type="text" matInput [(ngModel)]="title">
+    </mat-form-field>
+    <mat-form-field [appearance]="'outline'">
+        <mat-label>Sequência</mat-label>
+        <input type="number" matInput [(ngModel)]="order">
+    </mat-form-field>
+    <h4>Layout:</h4>
+    <div class="layouts">
+        <ng-container *ngFor="let l of layouts">
+            <ci-layout-thumb [selecionado]="layout===l" (click)="layout=l" [data]="l"></ci-layout-thumb>
+        </ng-container>
+    </div>
+    <div class="row">
+        <button mat-icon-button>
+            <mat-icon>share</mat-icon>
+        </button>
+    </div>
+</div>

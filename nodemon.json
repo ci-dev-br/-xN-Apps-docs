@@ -1,0 +1,8 @@
+{
+    "verbose": true,
+    "watch": [
+        "start.js",
+        "src/**"
+    ],
+    "exec": "node start --inspect"
+}

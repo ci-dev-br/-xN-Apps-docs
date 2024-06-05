@@ -7,7 +7,7 @@ import { AuthModule, AuthEntities as AuthEntities } from './auth/auth.module';
 import { config } from 'dotenv';
 import { ManagerEntities, ManagerModule } from './manager/manager.module';
 import { MessagerModule, Entities as MessageEntities } from './messager/messager.module';
-import { ProdutoModule, ProcutEntities as ProdutoEntities } from './produto/produto.module';
+import { ProdutoModule, ProductEntities } from './produto/produto.module';
 import { CodexModule, CodeXEntities } from './codex/codex.module';
 import { GlobalizationEntities, GlobalizationModule } from './globalization/globalization.module';
 import { PranchetaEntities, PranchetaModule } from './prancheta/prancheta.module';
@@ -22,9 +22,65 @@ import { CadastroEntidades, CasdastroModule } from './cadastro/cadastro.module';
 import { PaymentEntities, PaymentModule } from './payment/payment.module';
 import { FiscalEntities, FiscalModule } from './fiscal/fiscal.module';
 import { InfraEntities, InfraModule } from './core/infra/infra.module';
-import { SystemEntities } from './core/system/system.module';
+import { SystemEntities, SystemModule } from './core/system/system.module';
+import { FinanceiroEntities, FinanceiroModule } from './financeiro/financeiro.module';
+import { OrganizacaoEntities, OrganizacaoModule } from './organizacao/organizacao.module';
+import { INPIEntities, INPIModule } from './inpi/inpi.module';
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
+const LoadedEntities = [
+];
+const LoadedModules = [
+]
+const _entities_name = {
+  Notificacao: NotificacaoEntities,
+  Auth: AuthEntities,
+  Manager: ManagerEntities,
+  Message: MessageEntities,
+  Product: ProductEntities,
+  CodeX: CodeXEntities,
+  Globalization: GlobalizationEntities,
+  Prancheta: PranchetaEntities,
+  Icons: IconEntities,
+  Tenant: TenantEntities,
+  Storage: StorageEntities,
+  Core: CoreEntities,
+  Prolabore: ProlaboreEntities,
+  Cadastro: CadastroEntidades,
+  Payment: PaymentEntities,
+  Fiscal: FiscalEntities,
+  Infra: InfraEntities,
+  System: SystemEntities,
+  Financeiro: FinanceiroEntities,
+  Organizacao: OrganizacaoEntities,
+  INPI: INPIEntities,
+}
+const _modules_name = {
+  System: SystemModule,
+  Notificacao: NotificacaoModule,
+  Auth: AuthModule,
+  Manager: ManagerModule,
+  Messager: MessagerModule,
+  Produto: ProdutoModule,
+  Codex: CodexModule,
+  Globalization: GlobalizationModule,
+  Prancheta: PranchetaModule,
+  Icons: IconsModule,
+  Tenant: TenantModule,
+  Users: UsersModule,
+  Storage: StorageModule,
+  Casdastro: CasdastroModule,
+  Payment: PaymentModule,
+  Fiscal: FiscalModule,
+  Infra: InfraModule,
+  Financeiro: FinanceiroModule,
+  Organizacao: OrganizacaoModule,
+  INPI: INPIModule,
+}
+process.env.MODULES.split(',').forEach(e => {
+  if (_entities_name[e]) LoadedEntities.push(..._entities_name[e]);
+  if (_modules_name[e]) LoadedModules.push(_modules_name[e]);
+})
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -44,52 +100,19 @@ config({ path: is_production ? '.env' : '.env.dev' });
       namingStrategy: new SnakeNamingStrategy(),
       verboseRetryLog: true,
       entities: [
-        ...NotificacaoEntities,
-        ...AuthEntities,
-        ...ManagerEntities,
-        ...MessageEntities,
-        ...ProdutoEntities,
-        ...CodeXEntities,
-        ...GlobalizationEntities,
-        ...PranchetaEntities,
-        ...IconEntities,
-        ...TenantEntities,
-        ...StorageEntities,
-        ...CoreEntities,
-        ...ProlaboreEntities,
-        ...CadastroEntidades,
-        ...PaymentEntities,
-        ...FiscalEntities,
-        ...InfraEntities,
-        ...SystemEntities,
+        ...LoadedEntities
       ]
     }),
-    NotificacaoModule,
-    AuthModule,
-    ManagerModule,
-    MessagerModule,
-    ProdutoModule,
-    CodexModule,
-    GlobalizationModule,
-    PranchetaModule,
-    IconsModule,
-    TenantModule,
-    UsersModule,
-    StorageModule,
-    CasdastroModule,
-    PaymentModule,
-    FiscalModule,
-    InfraModule,
     CoreModule.forRoot({
       snapshot: true
-    })
+    }),
+    ...LoadedModules,
   ],
   controllers: [
     AppController,
   ],
   providers: [
     AppService,
-
   ],
 })
 export class AppModule { }

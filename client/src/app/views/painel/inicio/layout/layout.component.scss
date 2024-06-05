@@ -1,0 +1,34 @@
+.title {
+  background:
+    linear-gradient(137deg,
+      rgba(255, 255, 255, .02) 0%,
+      rgba(255, 255, 255, .44) 100%);
+}
+
+.layouts {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wrapper,
+.title {
+  padding: 10px;
+}
+
+.wrapper{
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  padding: 0;
+  margin: 0;
+  font-weight: normal;
+}

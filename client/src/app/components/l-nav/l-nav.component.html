@@ -16,11 +16,15 @@
       <ng-container *ngIf="!!title">
         {{title}}
       </ng-container>
+
+      <input placeholder="Do que precisas?" />
       <span style="flex: auto"></span>
-      <button mat-icon-button [matMenuTriggerFor]="servicosMenu">
+      <!-- <button mat-icon-button [matMenuTriggerFor]="servicosMenu">
         <mat-icon>lan</mat-icon>
-      </button>
-      <mat-menu #servicosMenu>{{status_services | json}}</mat-menu>
+      </button> -->
+      <!-- <mat-menu #servicosMenu>
+        <ngx-charts-line-chart [view]="[250,150]" [results]="cpuStatus"></ngx-charts-line-chart>
+      </mat-menu> -->
       <button mat-icon-button routerLink="/painel"><mat-icon>dashboard</mat-icon></button>
       <!-- <button mat-icon-button><mat-icon>print</mat-icon></button> -->
       <!-- <button mat-icon-button (click)="services.compartilhar()"><mat-icon>share</mat-icon></button> -->
@@ -33,6 +37,19 @@
         }}
       </span>
     </div>
+    <button mat-icon-button [mat-menu-trigger-for]="TenantsMenu">
+      <mat-icon>corporate_fare</mat-icon>
+    </button>
+    <mat-menu #TenantsMenu>
+      @for(tenant of tenants; track tenant){
+      <button mat-menu-item>
+        {{tenant.name}}
+      </button>
+      }
+    </mat-menu>
+    <button mat-icon-button [matTooltip]="'Configurações'" (click)="settings()" >
+      <mat-icon>settings</mat-icon>
+    </button>
     <button class="user-menu" mat-icon-button [matMenuTriggerFor]="userMenu">
       <img [src]="userPhoto">
       <!-- <mat-icon>face</mat-icon> -->
@@ -50,8 +67,8 @@
   <ng-container *ngIf="!($user | async)">
     <ul>
       <li><a routerLink="/">Início</a></li>
-      <li><a routerLink="/criar-conta">Criar Conta</a></li>
-      <li><a routerLink="/acessar">Entrar</a></li>
+      <li><a routerLink="/criar-conta">Registrar</a></li>
+      <li><a routerLink="/acessar">Portal</a></li>
     </ul>
   </ng-container>
 </nav>

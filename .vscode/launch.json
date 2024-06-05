@@ -5,33 +5,36 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "msedge",
+            "name": "Launch Edge",
             "request": "launch",
-            "name": "Web",
-            "disableNetworkCache": true,
+            "type": "msedge",
+            "url": "http://localhost:4293",
             "cleanUp": "wholeBrowser",
-            "url": "http://localhost:4293",
-            "webRoot": "${workspaceFolder}/client"
-        },
-        {
-            "type": "msedge",
-            "request": "launch",
-            "name": "prolabore, serve",
-            "url": "http://localhost:4295",
-            "webRoot": "${workspaceFolder}/client"
-        },
-        {
-            "type": "firefox",
-            "request": "launch",
-            "reAttach": true,
-            "name": "Launch localhost",
-            "url": "http://localhost:4293",
+            "runtimeArgs": [
+            ],
+            "disableNetworkCache": true,
+            "profileStartup": true,
             "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:4293",
+            "webRoot": "${workspaceFolder}/client"
+        },
+        {
+            "name": "Launch new Apps on Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:4200",
+            "webRoot": "${workspaceFolder}/client"
         },
         {
             "name": "Attach by Process ID",
             "processId": "${command:PickProcess}",
             "request": "attach",
+            "localRoot": "${workspaceFolder}/server",
             "skipFiles": [
                 "<node_internals>/**"
             ],

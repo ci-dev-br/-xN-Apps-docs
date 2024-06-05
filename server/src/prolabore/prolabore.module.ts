@@ -7,7 +7,7 @@ import { ClienteAssas } from "./models/cliente-assas.entity";
 import { Cliente } from "./models/cliente.entity";
 import { Contrato } from "./models/contrato.entity";
 import { Order } from "./models/order.entity";
-import { Payment } from "./models/payment.entity";
+import { ProlaborePayment } from "./models/prolabore-payment.entity";
 import { TransferenciaPix } from "./models/transferencia-pix.entity";
 import { ContaBancaria } from "./models/conta-bancaria.entity";
 import { Receipt } from "./models/receipt.entity";
@@ -24,7 +24,7 @@ export const ProlaboreEntities = [
     Account,
     Receipt,    
     Banco,
-    Payment,
+    ProlaborePayment,
 ];
 @Module({
     imports: [

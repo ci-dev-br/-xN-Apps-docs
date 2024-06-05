@@ -22,4 +22,16 @@ export class UserController {
             return await this.user.sync(user);
         }
     }
+
+    @Post('GetList')
+    @ApiOperation({ operationId: 'UserGetList' })
+    @ApiResponse({
+        type: User,
+        isArray: true
+    })
+    async getList(
+        @Req() req: any
+    ) {
+        return await this.user.find();
+    }
 }

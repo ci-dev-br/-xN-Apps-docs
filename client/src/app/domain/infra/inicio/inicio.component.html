@@ -7,35 +7,44 @@
         <div class="card">
             <h1>Domínios</h1>
             <nav class="actions">
-                <button mat-icon-button matTooltip="Adicionar Domínio">
+                <button mat-icon-button matTooltip="Adicionar Domínio" (click)="service.adicionarDominio()">
                     <mat-icon>add</mat-icon>
                 </button>
                 <button mat-icon-button>
                     <mat-icon>edit</mat-icon>
                 </button>
             </nav>
+            <div class="domain">
+                <mat-icon>domain</mat-icon>
+            </div>
         </div>
         <div class="card">
             <h1>Servidores</h1>
             <nav class="actions">
-                <button mat-icon-button matTooltip="Adicionar Servidor">
+                <button mat-icon-button matTooltip="Adicionar Servidor" (click)="service.adicionarServidor()">
                     <mat-icon>add</mat-icon>
                 </button>
                 <button mat-icon-button>
                     <mat-icon>edit</mat-icon>
                 </button>
             </nav>
+            <div class="list server">
+                <mat-icon>dns</mat-icon>
+            </div>
         </div>
         <div class="card">
             <h1>Paineis</h1>
             <nav class="actions">
-                <button mat-icon-button matTooltip="Adicionar Painel">
+                <button mat-icon-button matTooltip="Adicionar Painel" (click)="service.adicionarPainel()">
                     <mat-icon>add</mat-icon>
                 </button>
                 <button mat-icon-button>
                     <mat-icon>edit</mat-icon>
                 </button>
             </nav>
+            <div class="list admin-panel">
+                <mat-icon>admin_panel_settings</mat-icon>
+            </div>
         </div>
     </div>
 </div>

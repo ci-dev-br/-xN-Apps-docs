@@ -1,10 +1,14 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Product } from "./models/produto.entity";
+import { Product } from "./models/product.entity";
 import { Offer } from "./models/offer.entity";
 import { TenantModule } from "src/tenant/tenant.module";
+import { INPIModule } from "src/inpi/inpi.module";
+import { ProductController } from "./controller/product.controller";
+import { ProductService } from "./service/product.service";
+import { CoreModule } from "src/core/core.module";
 
-export const ProcutEntities = [
+export const ProductEntities = [
     Product,
     Offer,
 ];
@@ -12,13 +16,17 @@ export const ProcutEntities = [
 @Module({
     imports: [
         TypeOrmModule.forFeature([
-            ...ProcutEntities,
+            ...ProductEntities,
         ]),
         TenantModule,
+        INPIModule,
+        CoreModule,
     ],
     providers: [
+        ProductService,
     ],
     controllers: [
+        ProductController,
     ],
 })
 export class ProdutoModule { }

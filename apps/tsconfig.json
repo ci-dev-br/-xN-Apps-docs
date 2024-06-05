@@ -1,0 +1,120 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "paths": {
+      "@ci-apps/Arquivos": [
+        "./projects/ci-apps/arquivos"
+      ],
+      "@ci-apps/Cadastros": [
+        "./projects/ci-apps/cadastros"
+      ],
+      "@ci-apps/Codex": [
+        "./projects/ci-apps/codex"
+      ],
+      "@ci-apps/DevTools": [
+        "./projects/ci-apps/dev-tools"
+      ],
+      "@ci-apps/Dynamic": [
+        "./projects/ci-apps/dynamic"
+      ],
+      "@ci-apps/Financeiro": [
+        "./projects/ci-apps/financeiro"
+      ],
+      "@ci-apps/Formularios": [
+        "./projects/ci-apps/formularios"
+      ],
+      "@ci-apps/Gerencial": [
+        "./projects/ci-apps/gerencial"
+      ],
+      "@ci-apps/Grencial": [
+        "./projects/ci-apps/grencial"
+      ],
+      "@ci-apps/Icons": [
+        "./projects/ci-apps/icons"
+      ],
+      "@ci-apps/Imersao": [
+        "./projects/ci-apps/imersao"
+      ],
+      "@ci-apps/Infra": [
+        "./projects/ci-apps/infra"
+      ],
+      "@ci-apps/Instalacao": [
+        "./projects/ci-apps/instalacao"
+      ],
+      "@ci-apps/LowCode": [
+        "./projects/ci-apps/low-code"
+      ],
+      "@ci-apps/Mensagens": [
+        "./projects/ci-apps/mensagens"
+      ],
+      "@ci-apps/Organizacao": [
+        "./projects/ci-apps/organizacao"
+      ],
+      "@ci-apps/Produtos": [
+        "./projects/ci-apps/produtos"
+      ],
+      "@ci-apps/Profile": [
+        "./projects/ci-apps/profile"
+      ],
+      "@ci-apps/Projetos": [
+        "./projects/ci-apps/projetos"
+      ],
+      "@ci-apps/SEO": [
+        "./projects/ci-apps/seo"
+      ],
+      "@ci-apps/Threejs": [
+        "./projects/ci-apps/threejs"
+      ],
+      "@ci-apps/Treinamento": [
+        "./projects/ci-apps/treinamento"
+      ],
+      "@ci-apps/Vendas": [
+        "./projects/ci-apps/vendas"
+      ],
+      "@ci/components": [
+        "./projects/ci/components"
+      ],
+      "@ci/core": [
+        "./projects/ci/core"
+      ],
+      "@ci/data-grid": [
+        "./projects/ci/data-grid"
+      ],
+      "@ci/portal-api": [
+        "./projects/ci/portal-api"
+      ]
+    },
+    "outDir": "./dist/out-tsc",
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "moduleResolution": "bundler",
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "useDefineForClassFields": false,
+    "lib": [
+      "ES2022",
+      "dom"
+    ],
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  },
+  "exclude": [
+    "./dist/**/**",
+    ".../../../dist/**/**",
+    "./projects/**/**"
+  ]
+}

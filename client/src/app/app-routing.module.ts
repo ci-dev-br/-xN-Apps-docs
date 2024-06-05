@@ -81,7 +81,43 @@ const routes: Routes = [
     path: `mensagens`,
     canActivate: [authGuard],
     loadChildren: () => import(`./domain/mensagens/mensagens.module`).then(m => m.MensagensModule),
+    data: { role: 'USER', data: 'Mensagens', icon: 'menu_books' }
+  },
+  {
+    path: `arquivos`,
+    canActivate: [authGuard],
+    loadChildren: () => import(`./domain/arquivos/arquivos.module`).then(m => m.ArquivosModule),
     data: { role: 'ADMIN', data: 'Mensagens', icon: 'menu_books' }
+  },
+  {
+    path: `organizacao`,
+    canActivate: [authGuard],
+    loadChildren: () => import(`./domain/organizacao/organizacao.module`).then(m => m.OrganizacaoModule),
+    data: { role: 'ADMIN', data: 'Organização', icon: 'corporate_fare' }
+  },
+  {
+    path: `novo`,
+    canActivate: [authGuard],
+    loadChildren: () => import(`./domain/novo/novo.module`).then(m => m.NovoModule),
+    data: { role: 'ADMIN', data: 'Nova criação', icon: 'new' }
+  },
+  {
+    path: `novo`,
+    canActivate: [authGuard],
+    loadChildren: () => import(`./domain/imersao/imersao.module`).then(m => m.ImersaoModule),
+    data: { role: 'ADMIN', data: 'Nova criação', icon: 'new' }
+  },
+  {
+    path: `low-code`,
+    canActivate: [authGuard],
+    loadChildren: () => import(`./domain/low-code/low-code.module`).then(m => m.LowCodeModule),
+    data: { role: 'ADMIN', data: 'Nova criação', icon: 'new' }
+  },
+  {
+    path: `seo`,
+    canActivate: [authGuard],
+    loadChildren: () => import(`./domain/seo/seo.module`).then(m => m.SeoModule),
+    data: { role: 'ADMIN', data: 'SEO', icon: 'travel_explore' }
   },
   { path: '', loadChildren: () => import('./views/homepage/homepage.module').then(m => m.HomepageModule) },
   { path: 'acessar', loadChildren: () => import('./views/acessar/acessar.module').then(m => m.AcessarModule) },

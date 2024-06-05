@@ -39,8 +39,7 @@ export class AdicionarWidgetComponent implements OnInit {
     adicionarWidget() {
         const settings = this.formSettings?.getRawValue();
         const widget_info = this.selecionado;
-        if (widget_info)
-            this.widgetServices.adicionarWidget(settings, widget_info);
+        if (widget_info) this.widgetServices.adicionarWidget(settings, widget_info);
         this.selecionado = undefined;
     }
     pesquisar(value: string) {

@@ -1,21 +1,12 @@
 <ci-l-nav></ci-l-nav>
 <header>
-  <form
-    [formGroup]="form"
-    (ngSubmit)="submit()"
-    *ngIf="form && stage !== 'authenticated'"
-  >
+  <form [formGroup]="form" (ngSubmit)="submit()" *ngIf="form && stage !== 'authenticated'">
     <ng-container *ngIf="stage === 'identification'">
       <h1>Olá,</h1>
       <p>Para prosseguirmos, precisamos que se identifique</p>
       <mat-form-field>
-        <input
-          matInput
-          type="text"
-          focused
-          placeholder="Identificação"
-          formControlName="identification"
-        />
+        <input matInput type="text" inputmode="latin-name" focused name="username" placeholder="Identificação"
+          formControlName="identification" />
         <mat-icon matPrefix>person</mat-icon>
       </mat-form-field>
       <button type="submit" mat-raised-button color="primary">Acessar</button>
@@ -23,13 +14,7 @@
     </ng-container>
     <ng-container *ngIf="stage === 'authentication'">
       <mat-form-field>
-        <input
-          matInput
-          type="password"
-          focused
-          placeholder="Senha"
-          formControlName="password"
-        />
+        <input matInput type="password" name="password" focused placeholder="Senha" formControlName="password" />
         <mat-icon matPrefix>person</mat-icon>
       </mat-form-field>
       <button type="submit" mat-raised-button color="primary">

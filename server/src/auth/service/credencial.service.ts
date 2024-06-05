@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
-import { ChaveAcesso } from "../models/chave-acesso.entity";
+import { ChaveAcesso } from "../../core/audt/chave-acesso.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserService } from "./user.service";
 import { JwtService } from "@nestjs/jwt";
@@ -32,12 +32,12 @@ export class CredencialService {
     async obterChaveAcesso(
         assinatura?: string,
     ) {
+        //  console.log(assinatura)
         return await this.chaveAcessoRepo.createQueryBuilder('chave_acesso')
             .where(`encode(sha512(chave_acesso.id::varchar::bytea), 'hex') = :id`)
             .setParameter('id', assinatura)
             .getOne();
     }
-
     async atualizar(
         chave: ChaveAcesso
     ) {

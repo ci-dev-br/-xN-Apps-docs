@@ -17,12 +17,15 @@ import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo
 import { GerencialComponent } from "./gerencial.component";
 import { WindowModule } from "src/app/components/window/window.module";
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DinamicFormsModule } from "src/app/components/dinamic-forms/dinamic-forms.module";
 import { GridModule } from "src/app/components/grid/grid.module";
 import { MatSelectModule } from "@angular/material/select";
 import { MatChipsModule } from "@angular/material/chips";
 import { MobFakeComponent } from "./mob-fake/mob-fake.component";
 import { MobFakeModule } from "./mob-fake/mob-fake.module";
+import { ApplicationManagerComponent } from "./views/application-manager/application-manager.component";
+import { GerecialSettingsComponent } from "./views/settings/gerecial-settigns.component";
+import { UsersComponent } from "./views/users/users.component";
+import { DevicesComponent } from "./views/devices/devices.component";
 
 @NgModule({
     declarations: [
@@ -30,6 +33,10 @@ import { MobFakeModule } from "./mob-fake/mob-fake.module";
         EditarAplicativoComponent,
     ],
     imports: [
+        ApplicationManagerComponent,
+        GerecialSettingsComponent,
+        DevicesComponent,
+        UsersComponent,
         CoreModule,
         NgxQRCodeModule,
         MatTabsModule,
@@ -44,7 +51,6 @@ import { MobFakeModule } from "./mob-fake/mob-fake.module";
         MatTooltipModule,
         MatInputModule,
         WindowModule,
-        DinamicFormsModule,
         GridModule,
         MatButtonToggleModule,
         FormsModule,

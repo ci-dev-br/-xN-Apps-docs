@@ -1,54 +1,44 @@
 import { Component } from "@angular/core";
+import { Prancheta } from "@portal/api";
+import { PranchetaService } from "../../config.service";
 
 @Component({
     selector: 'px-layout',
-    template: `
-    <div class="title">
-        Configurações da Prancheta
-    </div>
-    <div class="wrapper">
-        <h4>Layout:</h4>
-        <div class="layouts">
-            <ng-container *ngFor="let layout of layouts">
-                <ci-layout-thumb
-                    (click)="layoutSelecionado=layout" 
-                    [data]="layout" ></ci-layout-thumb>
-            </ng-container>
-        </div>
-    </div>
-    `,
-    styles: [
-        `
-        .title{
-            background: 
-                linear-gradient(
-                    137deg,
-                    rgba(255,255,255,.02) 0%, 
-                    rgba(255,255,255,.44) 100%);
-        }
-        .layouts{
-            padding: 0 ;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .wrapper,.title{
-            padding: 10px ;
-        }
-        h1,h2,h3,h4,h5,h6{
-            padding: 0;
-            margin: 0;
-            text-weight: normal;
-        }
-        `
-    ]
+    templateUrl: 'layout.component.html',
+    styleUrls: ['layout.component.scss']
 })
 export class LayoutComponent {
+    prancheta?: Prancheta;
     layouts = [
         '1-3-1',
         '2-2-2',
         '1-1-1',
         '4-1-2-2',
     ];
-    layoutSelecionado?: string;
+    // layoutSelecionado?: string;
+    get title(): string {
+        return this.prancheta?.title || '';
+    }
+    set title(value: string) {
+        if (this.prancheta) this.prancheta.title = value;
+    }
+    get order(): number {
+        return this.prancheta?.order || 0;
+    }
+    set order(value: number) {
+        if (this.prancheta) this.prancheta.order = value;
+    }
+    get layout(): string {
+        return this.prancheta?.layout || '';
+    }
+    set layout(value: string) {
+        if (this.prancheta) this.prancheta.layout = value;
+    }
+    constructor(
+        private readonly prachetaService: PranchetaService,
+    ) {
+        prachetaService.currentPrancheta$.subscribe(v => {
+            this.prancheta = v;
+        });
+    }
 }

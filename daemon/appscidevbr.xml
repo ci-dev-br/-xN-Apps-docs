@@ -6,7 +6,7 @@
 	<argument>--max_old_space_size=2046</argument>
 	<argument>C:\Users\paulo\projetos\apps-services\node_modules\.pnpm\node-windows@1.0.0-beta.8\node_modules\node-windows\lib\wrapper.js</argument>
 	<argument>--file</argument>
-	<argument>D:\projetos\br.dev.ci.apps\start.js</argument>
+	<argument>c:\projetos\br.dev.ci.apps\start.js</argument>
 	<argument>--scriptoptions=</argument>
 	<argument>--log</argument>
 	<argument>apps.ci.dev.br wrapper</argument>

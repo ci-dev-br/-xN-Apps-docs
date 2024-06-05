@@ -47,8 +47,8 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                     this.token.Token = token.authorization;
                     return next.handle(this.addTokenHeader(request));
                 }), catchError(error => {
-                    this.refreshing = false;
-                    this.token.clear();
+                    // this.refreshing = false;
+                    // this.token.clear();
                     return throwError(error);
                 })
             )

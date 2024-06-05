@@ -3,13 +3,14 @@ import { User } from '../models/user.entity';
 import { ILike, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
+import { Tenant } from 'src/tenant/models/tenant.entity';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User)
         private readonly userRepo: Repository<User>,
-
     ) { }
     async registrar(registro: User) {
         const new_user = this.userRepo.create(registro);
@@ -25,7 +26,9 @@ export class UserService {
                 {
                     assinatura: identification, fator: fator
                 })
-            .getOne();
+            .getOne()
+
+            ;
     }
     async verificarAssinaturaAutenticacao(
         userId: string,
@@ -34,6 +37,7 @@ export class UserService {
     ) {
         return await this.userRepo.createQueryBuilder('user')
             .leftJoinAndSelect('user.photo', 'photo')
+            .leftJoinAndSelect('user.tenants', 'tenant')
             .where(`"user".id::varchar = :user_id::varchar and encode(sha512(concat(encode(sha512("user".password::bytea),'hex'), :chave_acesso::varchar )::bytea),'hex') = :ass_pass::varchar`)
             .setParameter('user_id', userId)
             .setParameter('ass_pass', assinaturaPassword)
@@ -55,7 +59,7 @@ export class UserService {
         })
     }
     async findById(userId: string) {
-        const user = await this.userRepo.findOne({ where: { id: userId }, relations: ['photo'] })
+        const user = await this.userRepo.findOne({ where: { id: userId }, relations: ['photo', 'tenants'] })
         return user;
     }
 
@@ -76,5 +80,16 @@ export class UserService {
         let data_ref = !!data.id ? await this.userRepo.findOneBy({ id: data.id }) : await this.userRepo.create(data);
         Object.assign(data_ref, changes);
         return await this.userRepo.save(data_ref);
+    }
+    async find(
+        tenants?: string[],
+
+    ): Promise<User[] | undefined> {
+        return await this.userRepo.find({
+            where: {
+                // tenants:
+                // id: ''
+            }
+        }) || undefined;
     }
 }

@@ -1,0 +1,42 @@
+<header>
+    <div class="destaque">
+        <img class="logo" src="logo-colorida.svg" alt="">
+        <p>Acesse o Apps com sua conta ci.dev.br</p>
+        <button mat-raised-button routerLink="/registrar">Criar conta</button>
+    </div>
+    @if(form){
+    <div class="col">
+        <form [formGroup]="form" (ngSubmit)="submit()">
+            @if(stage === 'identification'){
+            <h1>Entrar</h1>
+            <p>Acesse a partir de sua identificação dentro da Plataforma. Caso não se lembre, tente seu e-mail de
+                cadastramento.
+            </p>
+            <mat-form-field>
+                <mat-label>Identificação</mat-label>
+                <input #first matInput type="text" placeholder="Apelido ou E-mail" formControlName="identification">
+            </mat-form-field>
+            }
+            @else if(stage === 'authentication'){
+            Olá,
+            <p>Precisamos da sua senha para prosseguir</p>
+            <mat-form-field>
+                <mat-label>Senha</mat-label>
+                <input #first matInput type="password" placeholder="Senha" formControlName="password">
+            </mat-form-field>
+            }
+            <button mat-raised-button type="submit">Entrar</button>
+
+        </form>
+        <small style="margin-top: 12px;">
+            Ainda não possui uma conta ci.dev.br? <a routerLink="/registrar" href="#">Criar conta</a>
+        </small>
+    </div>
+    }
+</header>
+<footer>
+
+    <div class="assinatura">
+        ci.dev.br 2024. Todos os direitos reservados.
+    </div>
+</footer>

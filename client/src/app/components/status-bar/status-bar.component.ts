@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./status-bar.component.scss']
 })
 export class StatusBarComponent {
-
+  status?: string = 'OK';
 }

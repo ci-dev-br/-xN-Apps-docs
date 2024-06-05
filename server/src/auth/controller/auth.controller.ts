@@ -6,10 +6,8 @@ import { User } from '../models/user.entity';
 import { Public } from '../decorators/public.decorator';
 import { CredencialService } from '../service/credencial.service';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from '../constants';
 import { randomUUID } from 'crypto';
 import { AuthService } from '../service/auth.service';
-import { RefreshTokenStrategy } from '../service/refresh-token-strategy';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -89,7 +87,11 @@ export class AuthController {
         const { photo, ...user_payload } = authenticated_user;
         return {
           user: authenticated_user,
-          bearer: await this.jwtService.signAsync(user_payload),
+          bearer: await this.jwtService.signAsync({
+            id: user_payload.id,
+            chaveAcesso: chave.id,
+            tenants: user_payload.tenants,
+          }),
           refreshToken: refresh_token
         } as AcessoPayload;
       }
@@ -120,7 +122,6 @@ export class AuthController {
   async logout(@Req() req) {
     this.userService.logout(null)
   }
-
   @Public()
   @Post('Refresh')
   @ApiResponse({ type: AuthorizationOutput })
@@ -128,11 +129,11 @@ export class AuthController {
   async refresh(
     @Req() req: Request,
     @Body() payload: RefreshPayloadInputDto,
+    @Ip() ip,
   ) {
-    // const userId = req.user['sub'];
-    // const refreshToken = req.user['refreshToken'];
+
     return await this.authService.refreshToken(
-      null, payload.refreshToken, req
+      null, payload.refreshToken, req, ip
     );
   }
 }

@@ -25,7 +25,7 @@ nav {
 
   .wrapper {
     flex: auto;
-    overflow: auto;
+    overflow: hidden;
     display: flex;
     flex-direction: row;
     gap: 6px;
@@ -109,4 +109,10 @@ button.user-menu {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.7);
     object-fit: cover;
   }
+}
+
+input {
+  padding: 8px 12px;
+  border-radius: 6px;
+  flex: auto;
 }

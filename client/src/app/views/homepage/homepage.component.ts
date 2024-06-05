@@ -6,5 +6,9 @@ import { Component } from '@angular/core';
   styleUrls: ['../../../scss/landingpage.scss']
 })
 export class HomepageComponent {
+  vibrate?: string = '';
 
+  vibrar() {
+    navigator.vibrate(JSON.parse(String(this.vibrate)))
+  }
 }
