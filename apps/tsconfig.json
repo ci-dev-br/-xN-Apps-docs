@@ -3,6 +3,9 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
+      "@ci-apps/Arquivos": [
+        "./dist/ci-apps/arquivos"
+      ],
       "@ci/components": [
         "./dist/ci/components"
       ],
