@@ -6,6 +6,9 @@ import { PainelComponent } from './painel.component';
 const routes: Routes = [
   {
     path: '', component: PainelComponent, children: [
+      { path: 'meus-apps', loadChildren: () => import('./apps/apps.module').then(m => m.AppsModule) },
+
+
       { path: 'Arquivos', loadChildren: () => import('@ci-apps/Arquivos').then(m => m.CiApplicationModule) },
       { path: 'Cadastros', loadChildren: () => import('@ci-apps/Cadastros').then(m => m.CiApplicationModule) },
       { path: 'Codex', loadChildren: () => import('@ci-apps/Codex').then(m => m.CiApplicationModule) },
