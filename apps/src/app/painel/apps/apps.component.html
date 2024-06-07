@@ -1,8 +1,10 @@
 <h3>Aplicativos</h3>
-
-
 <div class="apps container">
-    <div class="app">
 
+    @for (app of apps; track $index) {
+    <div class="app" [routerLink]="app.url">
+        @if(app.icon){<mat-icon>{{app.icon}}</mat-icon>}
+        {{app.name}}
     </div>
+    }
 </div>
