@@ -2,8 +2,8 @@
 <div class="apps container">
 
     @for (app of apps; track $index) {
-    <div class="app" [routerLink]="app.url">
-        @if(app.icon){<mat-icon>{{app.icon}}</mat-icon>}
+    <div class="app" [routerLink]="app.url" [style.background]="app.color">
+        @if(app.icon){<mat-icon [inline]="true">{{app.icon}}</mat-icon>}
         {{app.name}}
     </div>
     }
