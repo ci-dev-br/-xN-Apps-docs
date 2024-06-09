@@ -33,15 +33,14 @@
 </mat-toolbar>
 <!-- 
 <div class="wrapper"> -->
-<mat-drawer-container class="example-container">
+<mat-drawer-container class="container">
     <mat-drawer mode="side" opened>
         @for (app of apps; track $index) {
-        <button mat-menu-item (click)="appClickHandler($event, app)">
+        <button mat-icon-button [matTooltip]="app.name" [matTooltipPosition]="'right'" (click)="appClickHandler($event, app)">
             @if(app.icon){<mat-icon>{{app.icon}}</mat-icon>}
-            {{app.name}}
+            <!-- {{app.name}} -->
         </button>
         }
-
     </mat-drawer>
     <mat-drawer-content>
         <router-outlet></router-outlet>

@@ -1,11 +1,12 @@
 :host {
-    height: 100vh;
     overflow: auto;
     overflow-x: hidden;
 
     display: flex;
     flex-direction: column;
 
+    height: 100vh;
+    min-height: 100vh;
 }
 
 mat-toolbar {
@@ -31,7 +32,7 @@ mat-toolbar {
             }
         }
 
-        mat-icon{
+        mat-icon {
             font-size: 20px;
             width: 20px;
             height: 20px;
@@ -50,4 +51,11 @@ mat-toolbar {
     overflow: auto;
     overflow-x: hidden;
     position: relative;
+}
+
+.container {
+    overflow: auto;
+    flex: auto;
+
+    --mat-sidenav-container-width: 65px;
 }

@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { APPS } from './apps/apps';
 @Component({
@@ -22,6 +23,7 @@ import { APPS } from './apps/apps';
     MatMenuModule,
     MatSidenavModule,
     RouterModule,
+    MatTooltipModule,
   ],
   templateUrl: './painel.component.html',
   styleUrl: './painel.component.scss'
