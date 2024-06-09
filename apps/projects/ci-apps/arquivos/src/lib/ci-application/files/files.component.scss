@@ -1,0 +1,34 @@
+.folders,
+.files {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    .folder,
+    .file {
+        display: flex;
+        flex-direction: column;
+
+        align-items: center;
+        justify-content: center;
+
+        mat-icon {
+            width: 120px;
+            height: 120px;
+            font-size: 120px;
+        }
+
+        gap: 6px;
+
+        border: solid 1px #cecece;
+        padding: 12px;
+
+        border-radius: 8px;
+
+        &:hover {
+            background: rgba(0, 0, 0, .2);
+        }
+    }
+}
