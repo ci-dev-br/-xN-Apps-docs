@@ -54,7 +54,7 @@
         "**/package-lock.json": true,
         "*.json": true,
         "package-lock.json": true,
-        "**/*.json": true,
+        "**/*.json": false,
         "**/src": false,
         "src": true,
         "thyrdpart": true,

@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
+import { APPS } from './apps/apps';
 @Component({
   selector: 'ci-painel',
   standalone: true,
@@ -26,5 +27,5 @@ import { RouterModule } from '@angular/router';
   styleUrl: './painel.component.scss'
 })
 export class PainelComponent {
-
+  apps?: any[] = APPS;
 }

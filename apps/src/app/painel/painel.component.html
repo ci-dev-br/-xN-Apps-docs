@@ -34,7 +34,15 @@
 <!-- 
 <div class="wrapper"> -->
 <mat-drawer-container class="example-container">
-    <mat-drawer mode="side" opened>Drawer content</mat-drawer>
+    <mat-drawer mode="side" opened>
+        @for (app of apps; track $index) {
+        <button mat-menu-item>
+            @if(app.icon){<mat-icon>{{app.icon}}</mat-icon>}
+            {{app.name}}
+        </button>
+        }
+
+    </mat-drawer>
     <mat-drawer-content>
         <router-outlet></router-outlet>
     </mat-drawer-content>
