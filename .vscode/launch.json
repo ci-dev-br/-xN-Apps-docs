@@ -28,7 +28,7 @@
             "request": "launch",
             "type": "chrome",
             "url": "http://localhost:4200",
-            "webRoot": "${workspaceFolder}/client"
+            "webRoot": "${workspaceFolder}/apps"
         },
         {
             "name": "Attach by Process ID",

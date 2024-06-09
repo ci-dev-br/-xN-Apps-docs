@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CoreModule } from '@ci/core';
 import { Application } from '@ci/portal-api';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'ci-apps',
@@ -47,9 +48,20 @@ export class AppsComponent {
     { color: this.getColor(), url: '../Treinamento', name: 'Treinamento', roles: ['MASTER'], icon: 'school' },
     { color: this.getColor(), url: '../Vendas', name: 'Vendas', roles: ['MASTER'], icon: 'store' },
   ]
-
+  constructor(
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
+  ) { }
   getColor() {
     const hex = () => (13 + Math.floor(Math.random() * 3)).toString(16);
     return `#${hex()}${hex()}${hex()}${hex()}${hex()}${hex()}`.toUpperCase()
+  }
+
+  async appClickHandler(event: MouseEvent, app: any) {
+    if (event.ctrlKey) {
+      window.open(location.href + '/' + app.url, '')
+    } else {
+      this.router.navigate([app.url], { relativeTo: this.route });
+    }
   }
 }
