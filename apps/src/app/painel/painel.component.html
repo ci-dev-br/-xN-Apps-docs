@@ -36,7 +36,7 @@
 <mat-drawer-container class="example-container">
     <mat-drawer mode="side" opened>
         @for (app of apps; track $index) {
-        <button mat-menu-item>
+        <button mat-menu-item (click)="appClickHandler($event, app)">
             @if(app.icon){<mat-icon>{{app.icon}}</mat-icon>}
             {{app.name}}
         </button>

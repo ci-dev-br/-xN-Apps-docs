@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { APPS } from './apps/apps';
 @Component({
   selector: 'ci-painel',
@@ -28,4 +28,16 @@ import { APPS } from './apps/apps';
 })
 export class PainelComponent {
   apps?: any[] = APPS;
+  constructor(
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
+  ) { }
+
+  async appClickHandler(event: MouseEvent, app: any) {
+    if (event.ctrlKey) {
+      window.open(location.href + '/' + app.url, '')
+    } else {
+      this.router.navigate(['apps/' + app.url.replace('..', '')], { relativeTo: this.route.root });
+    }
+  }
 }
