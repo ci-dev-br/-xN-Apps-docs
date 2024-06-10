@@ -4,6 +4,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { IFile } from './i-file';
 
 @Component({
   selector: 'ci-files',
@@ -19,5 +20,5 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './files.component.scss'
 })
 export class FilesComponent {
-
+  files?: IFile[];
 }
