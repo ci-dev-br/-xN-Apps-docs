@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable, throwError } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
 import { StorageService } from "../storage/storage.service";
+import { AuthService } from "@ci/portal-api";
 // import { AuthService } from "@ci/portal-api";
 @Injectable()
 export class AuthorizationHttpInterceptor implements HttpInterceptor {
@@ -10,7 +11,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
     constructor(
         private readonly storage: StorageService,
         // private readonly token: TokenService,
-        // private readonly auth: AuthService,
+        private readonly auth: AuthService,
     ) {
         console.log('[SEC.v-2.3.33401.2]');
     }
@@ -18,9 +19,9 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         const { method, url } = request;
         return next.handle(this.addTokenHeader(request)).pipe(catchError(error => {
             if (error) {
-                /// if (error instanceof HttpErrorResponse /* && this.token.hasRefreshToken() */) {
-                ///     return this.handlerUnauthorizedError(error, next, request);
-                /// }
+                if (error instanceof HttpErrorResponse /* && this.token.hasRefreshToken() */) {
+                    return this.handlerUnauthorizedError(error, next, request);
+                }
             }
             return throwError(error);
         }));
@@ -37,27 +38,27 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             })
         }) : request;
     }
-    // private handlerUnauthorizedError(error: HttpErrorResponse, next: HttpHandler, request: HttpRequest<any>) {
-    //     this.refreshing = true;
-    //     if (error?.status === 401) {
-    //         return this.auth.refresh({
-    //             body: {
-    //                 refreshToken: this.token.RefreshToken
-    //             }
-    //         }).pipe(
-    //             switchMap((token: any) => {
-    //                 this.refreshing = false;
-    // 
-    //                 this.token.Token = token.authorization;
-    //                 return next.handle(this.addTokenHeader(request));
-    //             }), catchError(error => {
-    //                 // this.refreshing = false;
-    //                 // this.token.clear();
-    //                 return throwError(error);
-    //             })
-    //         )
-    //     } else {
-    //         return throwError(error);
-    //     }
-    // }
+    private handlerUnauthorizedError(error: HttpErrorResponse, next: HttpHandler, request: HttpRequest<any>) {
+        this.refreshing = true;
+        if (error?.status === 401) {
+            let user: { authentication: { bearer: string, refreshToken: string } } = this.storage.restore('apps.ci.dev.br.store.User');
+            user;
+            return this.auth.refresh({
+                body: {
+                    refreshToken: user.authentication.refreshToken
+                }
+            }).pipe(
+                switchMap((token: { authorization: string }) => {
+                    this.refreshing = false;
+                    user.authentication.bearer = token.authorization;
+                    this.storage.store('apps.ci.dev.br.store.User', user);
+                    return next.handle(this.addTokenHeader(request));
+                }), catchError(error => {
+                    return throwError(error);
+                })
+            )
+        } else {
+            return throwError(error);
+        }
+    }
 }
