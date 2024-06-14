@@ -29,7 +29,7 @@ export class AppsComponent {
     if (event.ctrlKey) {
       window.open(location.href + '/' + app.url, '')
     } else {
-      this.router.navigate([app.url], { relativeTo: this.route });
+      this.router.navigate([app.url], {/*  relativeTo: this.route */ });
     }
   }
 }

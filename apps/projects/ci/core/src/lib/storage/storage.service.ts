@@ -30,4 +30,10 @@ export class StorageService implements OnInit {
         } catch (error) {
         }
     }
+    clean() {
+        try {
+            localStorage.clear();
+        } catch (error) {
+        }
+    }
 }

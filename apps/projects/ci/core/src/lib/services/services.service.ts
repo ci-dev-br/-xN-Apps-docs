@@ -54,8 +54,8 @@ export class ServicesService {
 
     }
     private init() {
-        this.http.post(this.apiConfig.rootUrl + '/wakeUp', {}).subscribe(r => {
-
-        });
+        // this.http.post(this.apiConfig.rootUrl + '/wakeUp', {}).subscribe(r => {
+        // 
+        // });
     }
 }

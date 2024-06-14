@@ -14,9 +14,7 @@ import { DataGridService } from "../data-grid.service";
     selector: 'px-header-cell',
     template: `<ng-container *ngIf="column">
 <div class="row">
-    <span class="text-content">
-        {{(column?.headerName || '')}}
-    </span>
+@if(!!column.headerName){  <span class="text-content">{{column.headerName}} </span> }
 @if(sort === 'ASC'){
     <button mat-icon-button >
         <mat-icon>arrow_upward</mat-icon>

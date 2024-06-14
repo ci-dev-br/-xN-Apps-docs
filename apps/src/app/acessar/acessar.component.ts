@@ -134,7 +134,7 @@ export class AcessarComponent {
           // this.userService.identificarUsuario(this.acesso_payload.user);
           // if (this.acesso_payload.bearer) this.token.Token = this.acesso_payload.bearer;
           // if (this.acesso_payload.refreshToken) this.token.RefreshToken = this.acesso_payload.refreshToken;
-          this.router.navigate(['/apps']);
+          this.router.navigate(['/']);
         } else {
           this.snack.open('Acesso negado!', 'Ok');
         }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CoreModule } from '@ci/core';
+import { CoreModule, StorageService } from '@ci/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,6 +10,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { APPS } from './apps/apps';
+import { AuthModule, UserService } from '@ci/auth';
 @Component({
   selector: 'ci-painel',
   standalone: true,
@@ -23,6 +24,7 @@ import { APPS } from './apps/apps';
     MatMenuModule,
     MatSidenavModule,
     RouterModule,
+    AuthModule,
     MatTooltipModule,
   ],
   templateUrl: './painel.component.html',
@@ -32,6 +34,7 @@ export class PainelComponent {
   apps?: any[] = APPS;
   constructor(
     private readonly router: Router,
+    private readonly userService: UserService,
     private readonly route: ActivatedRoute,
   ) { }
 
@@ -41,5 +44,12 @@ export class PainelComponent {
     } else {
       this.router.navigate(['apps/' + app.url.replace('..', '')], { relativeTo: this.route.root });
     }
+  }
+
+  async sair() {
+    this.userService.sair();
+    // setTimeout(() =>
+    //   this.router.navigate(['/'])
+    // );
   }
 }

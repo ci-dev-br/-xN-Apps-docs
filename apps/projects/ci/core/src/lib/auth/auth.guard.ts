@@ -7,7 +7,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   if (!!session_stored) {
     return true;
   } else {
-    inject(Router).navigate(['/acessar']);
+    // inject(Router).navigate(['/acessar']);
     return false;
   }
 };
