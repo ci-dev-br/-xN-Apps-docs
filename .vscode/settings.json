@@ -35,7 +35,7 @@
         ".readthedocs.yaml": true,
         "**/*.yaml": true,
         "**/apps": false,
-        "apps": false,
+        "apps": true,
         "**/colboradores": true,
         "colboradores": true,
         "**/console": true,

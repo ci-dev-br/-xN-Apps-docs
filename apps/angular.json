@@ -961,6 +961,72 @@
           }
         }
       }
+    },
+    "@ci/auth": {
+      "projectType": "library",
+      "root": "projects/ci/auth",
+      "sourceRoot": "projects/ci/auth/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci/auth/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci/auth/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci/auth/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci/auth/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci/organizacao": {
+      "projectType": "library",
+      "root": "projects/ci/organizacao",
+      "sourceRoot": "projects/ci/organizacao/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci/organizacao/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci/organizacao/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci/organizacao/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci/organizacao/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {

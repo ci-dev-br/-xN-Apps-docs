@@ -1,0 +1,16 @@
+.content {
+    max-height: 70vh;
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    align-items: stretch;
+    justify-content: stretch;
+    // position: relative;
+}
+
+::ng-deep {
+    .mat-mdc-dialog-surface {
+        background-color: rgba(255, 255, 255, .7);
+    }
+}

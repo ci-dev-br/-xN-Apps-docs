@@ -1,0 +1,82 @@
+<nav>
+  <ng-container *ngIf="$user | async">
+    <button *ngIf="apps" mat-icon-button [matMenuTriggerFor]="appsMenu">
+      <mat-icon>domain</mat-icon>
+    </button>
+    <mat-menu #appsMenu>
+      <button mat-menu-item *ngFor="let item of appsGlobal" [routerLink]="[item.url]">
+        <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+        {{ item.name }}
+      </button>
+    </mat-menu>
+    <div class="wrapper">
+      <ng-container *ngIf="!!icon">
+        <mat-icon>{{icon}}</mat-icon>
+      </ng-container>
+      <ng-container *ngIf="!!title">
+        {{title}}
+      </ng-container>
+
+      <input placeholder="Do que precisas?" />
+      <span style="flex: auto"></span>
+      <!-- <button mat-icon-button [matMenuTriggerFor]="servicosMenu">
+        <mat-icon>lan</mat-icon>
+      </button> -->
+      <!-- <mat-menu #servicosMenu>
+        <ngx-charts-line-chart [view]="[250,150]" [results]="cpuStatus"></ngx-charts-line-chart>
+      </mat-menu> -->
+      <button mat-icon-button routerLink="/painel"><mat-icon>dashboard</mat-icon></button>
+      <!-- <button mat-icon-button><mat-icon>print</mat-icon></button> -->
+      <!-- <button mat-icon-button (click)="services.compartilhar()"><mat-icon>share</mat-icon></button> -->
+      <button mat-icon-button><mat-icon>mark_chat_unread</mat-icon></button>
+      <span>
+        {{
+        ($user | async)?.fullName ||
+        ($user | async)?.username ||
+        ($user | async)?.email || 'Anônime'
+        }}
+      </span>
+    </div>
+    <button mat-icon-button [mat-menu-trigger-for]="TenantsMenu">
+      <mat-icon>corporate_fare</mat-icon>
+    </button>
+    <mat-menu #TenantsMenu>
+      @for(tenant of tenants; track tenant){
+      <button mat-menu-item>
+        {{tenant.name}}
+      </button>
+      }
+    </mat-menu>
+    <button mat-icon-button [matTooltip]="'Configurações'" (click)="settings()" >
+      <mat-icon>settings</mat-icon>
+    </button>
+    <button class="user-menu" mat-icon-button [matMenuTriggerFor]="userMenu">
+      <img [src]="userPhoto">
+      <!-- <mat-icon>face</mat-icon> -->
+    </button>
+    <mat-menu #userMenu>
+      <ng-container *ngFor="let item of appsUser">
+        <button mat-menu-item [routerLink]="[item.url]">
+          <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+          {{ item.name }}
+        </button>
+      </ng-container>
+      <button mat-menu-item (click)="sair()"><mat-icon>exit_to_app</mat-icon>Sair</button>
+    </mat-menu>
+  </ng-container>
+  <ng-container *ngIf="!($user | async)">
+    <ul>
+      <li><a routerLink="/">Início</a></li>
+      <li><a routerLink="/criar-conta">Registrar</a></li>
+      <li><a routerLink="/acessar">Portal</a></li>
+    </ul>
+  </ng-container>
+</nav>
+<div class="breadcrumbs" *ngIf="$user | async">
+  <div (click)="action(crumb)" class="crumb" *ngFor="let crumb of breadcrumb">
+    <div class="el">
+      {{crumb.name || crumb}}
+    </div>
+  </div>
+  <!--  <div class="crumb">Teste</div> -->
+</div>

@@ -1,0 +1,46 @@
+:host {
+    display: contents;
+    // overflow: auto;
+    // flex: auto;
+}
+
+.grid-container {
+    flex: 2;
+    border-radius: 8px;
+    // margin: 6px;
+
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+
+}
+
+[mat-table]::ng-deep tbody {
+    .--selection-mode_row ::ng-deep {
+        tr {
+            position: relative;
+
+            &:hover {
+                background-color: rgba(0, 0, 11, .05);
+
+                // &::before {
+                //     content: "";
+                //     position: absolute;
+                //     left: 0;
+                //     right: 0;
+                //     top: 0;
+                //     
+                //     bottom: 0;
+                //     display: table-caption;
+                //     background-color: rgba(0, 0, 11, .05);
+                // }
+            }
+        }
+    }
+
+    tr.--selected-item {
+        background-color: rgba(0, 0, 200, .15);
+    }
+}

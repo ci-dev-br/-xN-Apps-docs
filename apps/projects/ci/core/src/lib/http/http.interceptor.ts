@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable, throwError } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
 import { StorageService } from "../storage/storage.service";
-// import { AuthService } from "@portal/api";
+// import { AuthService } from "@ci/portal-api";
 @Injectable()
 export class AuthorizationHttpInterceptor implements HttpInterceptor {
     private refreshing?: boolean;
