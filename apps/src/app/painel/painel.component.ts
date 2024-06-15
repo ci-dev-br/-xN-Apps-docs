@@ -42,7 +42,7 @@ export class PainelComponent {
     if (event.ctrlKey) {
       window.open(location.href + '/' + app.url, '')
     } else {
-      this.router.navigate(['apps/' + app.url.replace('..', '')], { relativeTo: this.route.root });
+      this.router.navigate(['/' + app.url], { relativeTo: this.route.root });
     }
   }
 
