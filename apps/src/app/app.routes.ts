@@ -6,5 +6,5 @@ export const routes: Routes = [
     { path: 'registrar', loadChildren: () => import('./registrar/registrar.module').then(m => m.RegistrarModule) },
     { path: '', canMatch: [authGuard], loadChildren: () => import('./painel/painel.module').then(m => m.PainelModule), },
     { path: '', loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule) },
-    { path: '**', redirectTo: '/acessar', pathMatch: 'full' },
+    // { path: '**', redirectTo: '/acessar', pathMatch: 'full' },
 ];

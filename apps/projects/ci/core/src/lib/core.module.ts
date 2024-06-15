@@ -6,6 +6,7 @@ import { AutoFocusDirective } from './directives/auto-focus.directive';
 import { DaoService, IChangeable } from './dao/dao.service';
 import { ServicesService } from './services/services.service';
 import { Localizacao } from './models/localozacao';
+import { DAN } from './services/dan.service';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,7 @@ import { Localizacao } from './models/localozacao';
     CoreService,
     DaoService,
     ServicesService,
-
+    DAN,
   ],
   exports: [
     CommonModule,

@@ -28,6 +28,26 @@ import { GerecialSettingsComponent } from "./views/settings/gerecial-settigns.co
 import { DevicesComponent } from "./views/devices/devices.component";
 import { UsersComponent } from "./views/users/users.component";
 
+const route: Routes = [
+    {
+        path: '', component: GerencialComponent,
+        data: {
+            name: 'Gerenciador de Aplicações e Usuários',
+            role: 'MASTER',
+        },
+        children: [
+            { path: 'devices', component: DevicesComponent, data: { title: 'Dispositivos', icon: 'edit' } },
+            // { path: 'settings', component: undefined },
+            { path: 'applications', component: ApplicationManagerComponent, data: { title: 'Apps', icon: 'edit' } },
+            { path: 'user-manager', component: UsersComponent, data: { title: 'Gestão de Usuários', icon: 'edit' } },
+        ]
+    },
+    {
+        path: 'mob-fake',
+        component: MobFakeComponent,
+    }
+];
+
 @NgModule({
     declarations: [
         GerencialComponent,
@@ -58,25 +78,7 @@ import { UsersComponent } from "./views/users/users.component";
         MatSelectModule,
         MatChipsModule,
         MobFakeModule,
-        RouterModule.forChild([
-            {
-                path: '', component: GerencialComponent,
-                data: {
-                    name: 'Gerenciador de Aplicações e Usuários',
-                    role: 'MASTER',
-                },
-                children: [
-                    { path: 'devices', component: DevicesComponent, data: { title: 'Dispositivos', icon: 'edit' } },
-                    // { path: 'settings', component: undefined },
-                    { path: 'applications', component: ApplicationManagerComponent, data: { title: 'Apps', icon: 'edit' } },
-                    { path: 'user-manager', component: UsersComponent, data: { title: 'Gestão de Usuários', icon: 'edit' } },
-                ]
-            },
-            {
-                path: 'mob-fake',
-                component: MobFakeComponent,
-            }
-        ])
+        RouterModule.forChild(route)
     ]
 })
 export class GerencialModule { }

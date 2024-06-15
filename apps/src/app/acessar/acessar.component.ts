@@ -42,6 +42,7 @@ export class AcessarComponent {
     private readonly fb: FormBuilder,
     private readonly router: Router,
   ) {
+    if (!!this.storageService.restore('apps.ci.dev.br.store.User')) router.navigate(['/']);
     if (this.stage) this.criarFormulario(this.stage)
   }
   private criarFormulario(stage: 'identification' | 'loading' | 'captcha' | 'authentication') {
