@@ -1,30 +1,15 @@
-<!-- <ci-l-nav></ci-l-nav> -->
-<mat-tab-group>
-    <mat-tab mat-align-tabs="center">
-        <ng-template mat-tab-label>
-            <mat-icon>devices</mat-icon>
-            Dispositivos
-        </ng-template>
-        <ci-devices></ci-devices>
-    </mat-tab>
-    <mat-tab mat-align-tabs="center">
-        <ng-template mat-tab-label>
-            <mat-icon>settings</mat-icon>
-            Configurações
-        </ng-template>
-    </mat-tab>
-    <mat-tab mat-align-tabs="center">
-        <ng-template mat-tab-label>
-            <mat-icon>apps</mat-icon>
-            Application Manager
-        </ng-template>
-        <ci-application-manager></ci-application-manager>
-    </mat-tab>
-    <mat-tab mat-align-tabs="center">
-        <ng-template mat-tab-label>
-            <mat-icon>apps</mat-icon>
-            Usuários
-        </ng-template>
-        <ci-users-view></ci-users-view>
-    </mat-tab>
-</mat-tab-group>
+<nav mat-tab-nav-bar [tabPanel]="tabPanel">
+    @if(abas){
+    @for (aba of abas; track aba) {
+    <a mat-tab-link [routerLink]="aba.path">
+        @if(aba.icon){<mat-icon>
+            {{aba.icon}}
+        </mat-icon>}
+        {{aba.label}}</a>
+    }
+    }
+    <a mat-tab-link disabled>Disabled Link</a>
+</nav>
+<mat-tab-nav-panel #tabPanel>
+    <router-outlet></router-outlet>
+</mat-tab-nav-panel>

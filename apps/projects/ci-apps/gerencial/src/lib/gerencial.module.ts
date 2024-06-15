@@ -24,8 +24,9 @@ import { MobFakeComponent } from "./mob-fake/mob-fake.component";
 import { MobFakeModule } from "./mob-fake/mob-fake.module";
 import { ApplicationManagerComponent } from "./views/application-manager/application-manager.component";
 import { GerecialSettingsComponent } from "./views/settings/gerecial-settigns.component";
-import { UsersComponent } from "./views/users/users.component";
+
 import { DevicesComponent } from "./views/devices/devices.component";
+import { UsersComponent } from "./views/users/users.component";
 
 @NgModule({
     declarations: [
@@ -62,8 +63,14 @@ import { DevicesComponent } from "./views/devices/devices.component";
                 path: '', component: GerencialComponent,
                 data: {
                     name: 'Gerenciador de Aplicações e Usuários',
-                    role: 'MASTER'
-                }
+                    role: 'MASTER',
+                },
+                children: [
+                    { path: 'devices', component: DevicesComponent, data: { title: 'Dispositivos', icon: 'edit' } },
+                    // { path: 'settings', component: undefined },
+                    { path: 'applications', component: ApplicationManagerComponent, data: { title: 'Apps', icon: 'edit' } },
+                    { path: 'user-manager', component: UsersComponent, data: { title: 'Gestão de Usuários', icon: 'edit' } },
+                ]
             },
             {
                 path: 'mob-fake',
