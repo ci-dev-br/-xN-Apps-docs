@@ -42,7 +42,7 @@ import { IColumnOption } from "@ci/components";
             </mat-button-toggle-group>
         </mat-toolbar>
         <ng-container *ngIf="apps">
-            <table *ngIf="visualizacao==='table'" mat-table class="mat-elevation-z8" [dataSource]="apps">
+            <!-- <table *ngIf="visualizacao==='table'" mat-table class="mat-elevation-z8" [dataSource]="apps">
                 <ng-container *ngFor="let c of columns">
                     <ng-container [matColumnDef]="c.fieldName || ''">
                         <th mat-header-cell *matHeaderCellDef>{{c.headerName}}</th>
@@ -68,7 +68,7 @@ import { IColumnOption } from "@ci/components";
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-            </table>
+            </table> -->
             <div *ngIf="visualizacao==='list'" class="apps">
                 <ng-container *ngFor="let item of apps">
                     <div class="card app">

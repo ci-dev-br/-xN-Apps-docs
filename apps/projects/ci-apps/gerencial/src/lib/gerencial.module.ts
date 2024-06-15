@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { RouterModule } from "@angular/router";
+import { RouterModule, Routes } from "@angular/router";
 import { MatTabsModule } from '@angular/material/tabs'
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
@@ -28,7 +28,7 @@ import { GerecialSettingsComponent } from "./views/settings/gerecial-settigns.co
 import { DevicesComponent } from "./views/devices/devices.component";
 import { UsersComponent } from "./views/users/users.component";
 
-const route: Routes = [
+const routes: Routes = [
     {
         path: '', component: GerencialComponent,
         data: {
@@ -78,7 +78,7 @@ const route: Routes = [
         MatSelectModule,
         MatChipsModule,
         MobFakeModule,
-        RouterModule.forChild(route)
+        RouterModule.forChild(routes)
     ]
 })
 export class GerencialModule { }

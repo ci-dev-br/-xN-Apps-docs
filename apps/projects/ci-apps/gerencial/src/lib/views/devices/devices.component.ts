@@ -41,6 +41,6 @@ import { CoreModule } from '@ci/core';
     conectarDispositivo() { }
     token = 'n2n34u5ifbn2uio34bhf2u34ybf2uy4b5fouy2b45f';
     async openFakeMobileService() {
-        window.open(location.origin + '/Gerencial/gerencial/mob-fake', 'teste' + Math.random().toString(32).substring(5).toUpperCase(), 'scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=350,height=600,left=-1000,top=-1000');
+        window.open(location.origin + '/Gerencial/Painel/mob-fake', 'teste' + Math.random().toString(32).substring(5).toUpperCase(), 'scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=350,height=600,left=-1000,top=-1000');
     }
 }
