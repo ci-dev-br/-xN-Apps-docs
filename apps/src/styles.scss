@@ -7,9 +7,11 @@ $apps-theme: mat.define-theme((color: (theme-type: light,
       density: (scale: 0,
       )));
 @import url('https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&display=swap');
+
 :root {
   @include mat.all-component-themes($apps-theme);
 }
+
 html,
 body {
   height: 100%;
@@ -21,6 +23,27 @@ body {
   font-family: "Bitter", serif;
   font-optical-sizing: auto;
   font-style: normal;
+
+  background: linear-gradient(170deg, #224488 0%, #227798 100%);
 }
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+:root {
+  --mat-sidenav-content-background-color: rgba(240, 240, 255, .6);
+  --mat-toolbar-container-background-color: rgba(240, 240, 255, .6);
+
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+mat-toolbar {
+  gap: 8px;
+  overflow: hidden;
+}

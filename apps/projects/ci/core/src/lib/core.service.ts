@@ -8,14 +8,24 @@ export class CoreService {
     @Optional() private readonly router: Router,
     @Optional() private readonly ar: ActivatedRoute,
   ) {
+    if (!!router) // setTimeout(() =>
+      this.initRouterFixings()
+    // );
     setTimeout(() => inject.get(DAN));
-    if (!!router) this.initRouterFixings();
   }
   async initRouterFixings() {
     let navigation_start: string | undefined = undefined;
     let u = this.router.events.subscribe(next => {
       if (next instanceof NavigationStart && !navigation_start) navigation_start = next.url;
-      if (next instanceof NavigationEnd)/*  setTimeout(() => {  */if (next.url !== navigation_start) { this.router.navigate([navigation_start]); u.unsubscribe() } /* }, 0) */
+      if (next instanceof NavigationEnd) setTimeout(() => {
+        if (next.url !== navigation_start) {
+          try {
+            this.router.navigate([navigation_start]); u.unsubscribe()
+          } catch (error) {
+            ///  this.router.navigate(['/']); u.unsubscribe()
+          }
+        }
+      }, 0)
     })
   }
 }
