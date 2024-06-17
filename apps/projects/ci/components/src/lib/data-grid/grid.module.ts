@@ -8,7 +8,8 @@ import { HeaderCellRenderer } from "./header-cell/header-cell.component";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { DataGridService } from "./data-grid.service";
-import { DataGridOptions, IColumnOption } from "./data-grid.options";
+import { IColumnOption } from "../models/i-column-options";
+import { DataGridOptions } from "../models/i-data-grid-options";
 
 @NgModule({
     declarations: [
