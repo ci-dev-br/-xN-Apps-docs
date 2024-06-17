@@ -1,6 +1,6 @@
 import { Component, Input, TemplateRef, ViewChild, ViewContainerRef } from "@angular/core";
-import { IColumnOption } from "../data-grid.options";
 import { DataGridService } from "../data-grid.service";
+import { IColumnOption } from "../../models/i-column-options";
 
 /*export interface IColumns {
     headerName: string;
@@ -28,7 +28,7 @@ import { DataGridService } from "../data-grid.service";
         'cell-renderer.component.scss'
     ]
 })
-export class TextCellRenderer {
+export class TextCellRenderer<T> {
     constructor(
         private readonly vcr: ViewContainerRef,
         private readonly services: DataGridService,
@@ -36,7 +36,7 @@ export class TextCellRenderer {
     @Input()
     data?: any;
     @Input()
-    column?: IColumnOption;
+    column?: IColumnOption<T>;
     componentContent?: any[][];
     get value() {
         if (this.column?.fieldName && this.data)
