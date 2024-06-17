@@ -10,8 +10,8 @@ describe('DataListComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [DataListComponent]
     })
-    .compileComponents();
-    
+      .compileComponents();
+
     fixture = TestBed.createComponent(DataListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -40,21 +40,22 @@ import { IItemAction } from "../../gerencial.component";
     visualizacao: 'table' | 'list' = 'table';
     filtrarPapel?: string = 'all';
     apps?: Application[];
-    get displayedColumns() {
+    // grid: 
+    /* get displayedColumns() {
         return this.cache('displayedColumns', () => {
             return [...this.columns.filter(i => !i.hide).map(c => c.headerName), '_act']
         });
-    }
-    columns: IColumnOption[] = [
-        { headerName: 'ID', fieldName: 'id', hide: true },
-        { headerName: 'Nome ', fieldName: 'name' },
-        { headerName: 'Ícone ', fieldName: 'icon', component: MatIcon },
-        { headerName: 'Rota', fieldName: 'url' },
-        { headerName: 'Descrição', fieldName: 'description' },
-        { headerName: 'Grupo', fieldName: 'menuGroupName' },
-        { headerName: 'Papéis', fieldName: 'roles' },
-    ];
-    actions: IItemAction<Application>[] = [
+    } */
+    /*  columns: IColumnOption[] = [
+         { headerName: 'ID', fieldName: 'id', hide: true },
+         { headerName: 'Nome ', fieldName: 'name' },
+         { headerName: 'Ícone ', fieldName: 'icon', component: MatIcon },
+         { headerName: 'Rota', fieldName: 'url' },
+         { headerName: 'Descrição', fieldName: 'description' },
+         { headerName: 'Grupo', fieldName: 'menuGroupName' },
+         { headerName: 'Papéis', fieldName: 'roles' },
+     ]; */
+    /* actions: IItemAction<Application>[] = [
         {
             icon: 'edit',
             label: 'Editar',
@@ -65,10 +66,11 @@ import { IItemAction } from "../../gerencial.component";
             label: 'Remover',
             onAction: (i) => this.remover(i)
         },
-    ]
+    ] */
     constructor(
         private readonly applications: ApplicationService,
         private readonly janela: WindowService,
+        // private readonly liust: 
     ) {
         (async () => this.carregarListaAplicativos())();
     }
