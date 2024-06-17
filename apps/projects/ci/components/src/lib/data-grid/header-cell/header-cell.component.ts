@@ -1,6 +1,6 @@
 import { Component, HostListener, Input, TemplateRef, ViewChild, ViewContainerRef } from "@angular/core";
-import { IColumnOption } from "../data-grid.options";
 import { DataGridService } from "../data-grid.service";
+import { IColumnOption } from "../../models/i-column-options";
 
 /*export interface IColumns {
     headerName: string;
@@ -31,14 +31,14 @@ import { DataGridService } from "../data-grid.service";
         'header-cell.component.scss'
     ]
 })
-export class HeaderCellRenderer {
+export class HeaderCellRenderer<T> {
     sort?: 'ASC' | 'DESC';
     constructor(
         private readonly vcr: ViewContainerRef,
         private readonly services: DataGridService,
     ) { }
     @Input()
-    column?: IColumnOption;
+    column?: IColumnOption<T>;
 
     @HostListener('click')
     clickHandler() {

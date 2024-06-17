@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { DataGridOptions, IColumnOption } from "./data-grid.options";
 import { ReturnStatement } from "@angular/compiler";
 import { DataGridService } from "./data-grid.service";
+import { DataGridOptions } from "../models/i-data-grid-options";
+import { IColumnOption } from "../models/i-column-options";
 
 
 @Component({
@@ -23,22 +24,22 @@ export class DataGridComponent<I> {
     selectedItem?: I;
     selectedItems?: I[];
 
-    private _options?: DataGridOptions | undefined;
-    public get options(): DataGridOptions | undefined {
+    private _options?: DataGridOptions<I> | undefined;
+    public get options(): DataGridOptions<I> | undefined {
         return this._options;
     }
     @Input()
-    public set options(value: DataGridOptions | undefined) {
+    public set options(value: DataGridOptions<I> | undefined) {
         if (this._options === value) return;
         this._options = value;
         this.columns = this._options?.colums;
         this.displayedColumns = this.columns?.filter(c => !c.hide && c.defaultVisible !== false)?.map((c, i) => c.fieldName || '')
     }
-    columns?: IColumnOption[];
+    columns?: IColumnOption<I>[];
     displayedColumns?: string[];
     constructor(
         services: DataGridService,
-    ) { 
+    ) {
         services.grid = this;
     }
 

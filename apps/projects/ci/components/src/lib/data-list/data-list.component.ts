@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IListOptions } from './list-options';
+import { IListOptions } from '../models/i-list-options';
 
 @Component({
   selector: 'ci-data-list',
