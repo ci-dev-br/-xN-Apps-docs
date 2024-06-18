@@ -29,17 +29,35 @@ import { IColumnOption } from "../../models/i-column-options";
     ]
 })
 export class TextCellRenderer<T> {
-    constructor(
-        private readonly vcr: ViewContainerRef,
-        private readonly services: DataGridService,
-    ) { }
+    private _column?: IColumnOption<T> | undefined;
+    public get column(): IColumnOption<T> | undefined {
+        return this._column;
+    }
     @Input()
-    data?: any;
+    public set column(value: IColumnOption<T> | undefined) {
+        if (this._column === value) return;
+        this._column = value;
+        if (this.data && this.column && this.column.component)
+            this.componentContent = [[document.createTextNode(this.value)]];
+    }
+    private _data?: any;
+    public get data(): any {
+        return this._data;
+    }
     @Input()
-    column?: IColumnOption<T>;
+    public set data(value: any) {
+        if (this._data === value) return;
+        this._data = value;
+        if (this.data && this.column && this.column.component)
+            this.componentContent = [[document.createTextNode(this.value)]];
+    }
     componentContent?: any[][];
     get value() {
         if (this.column?.fieldName && this.data)
             return this.data[this.column?.fieldName]
     }
+    constructor(
+        private readonly vcr: ViewContainerRef,
+        private readonly services: DataGridService,
+    ) { }
 }
