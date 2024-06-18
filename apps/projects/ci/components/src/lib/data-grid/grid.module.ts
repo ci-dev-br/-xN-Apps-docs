@@ -9,7 +9,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { DataGridService } from "./data-grid.service";
 import { IColumnOption } from "../models/i-column-options";
-import { DataGridOptions } from "../models/i-data-grid-options";
+import { IDataGridOptions } from "../models/i-data-grid-options";
 
 @NgModule({
     declarations: [
@@ -39,5 +39,5 @@ export {
     TextCellRenderer,
     HeaderCellRenderer,
     IColumnOption,
-    DataGridOptions,
+    IDataGridOptions,
 }

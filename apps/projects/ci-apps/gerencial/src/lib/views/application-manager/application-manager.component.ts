@@ -5,17 +5,14 @@ import { MatTableModule } from "@angular/material/table";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { Application, ApplicationService } from "@ci/portal-api";
 import { CoreModule } from "@ci/core";
-import { WindowService } from "@ci/components";
+import { DataListModule, WindowService, GridModule, IDataGridOptions } from "@ci/components";
 import { lastValueFrom } from "rxjs";
-import { GridModule } from "@ci/components";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { FormsModule } from "@angular/forms";
-import { IColumnOption } from "@ci/components";
 import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplicativo.component";
-import { IItemAction } from "../../gerencial.component";
 @Component({
     selector: 'ci-application-manager',
     templateUrl: 'application-manager.component.html',
@@ -27,46 +24,31 @@ import { IItemAction } from "../../gerencial.component";
         MatToolbarModule,
         MatButtonModule,
         MatTableModule,
-        GridModule,
         MatTooltipModule,
         MatButtonToggleModule,
         MatFormFieldModule,
         MatSelectModule,
         MatIconModule,
         FormsModule,
+        GridModule,
+        DataListModule,
     ]
 }) export class ApplicationManagerComponent {
     private _cached_map = new Map<string, any>();
     visualizacao: 'table' | 'list' = 'table';
     filtrarPapel?: string = 'all';
     apps?: Application[];
-    // grid: 
-    /* get displayedColumns() {
-        return this.cache('displayedColumns', () => {
-            return [...this.columns.filter(i => !i.hide).map(c => c.headerName), '_act']
-        });
-    } */
-    /*  columns: IColumnOption[] = [
-         { headerName: 'ID', fieldName: 'id', hide: true },
-         { headerName: 'Nome ', fieldName: 'name' },
-         { headerName: 'Ícone ', fieldName: 'icon', component: MatIcon },
-         { headerName: 'Rota', fieldName: 'url' },
-         { headerName: 'Descrição', fieldName: 'description' },
-         { headerName: 'Grupo', fieldName: 'menuGroupName' },
-         { headerName: 'Papéis', fieldName: 'roles' },
-     ]; */
-    /* actions: IItemAction<Application>[] = [
-        {
-            icon: 'edit',
-            label: 'Editar',
-            onAction: (i) => this.editar(i)
-        },
-        {
-            icon: 'delete',
-            label: 'Remover',
-            onAction: (i) => this.remover(i)
-        },
-    ] */
+    gridOptions?: IDataGridOptions<Application> = {
+        columns: [
+            { headerName: 'ID', fieldName: 'id', hide: true },
+            { headerName: 'Nome ', fieldName: 'name' },
+            { headerName: 'Ícone ', fieldName: 'icon', component: MatIcon },
+            { headerName: 'Rota', fieldName: 'url' },
+            { headerName: 'Descrição', fieldName: 'description' },
+            { headerName: 'Grupo', fieldName: 'menuGroupName' },
+            { headerName: 'Papéis', fieldName: 'roles' },
+        ]
+    };
     constructor(
         private readonly applications: ApplicationService,
         private readonly janela: WindowService,

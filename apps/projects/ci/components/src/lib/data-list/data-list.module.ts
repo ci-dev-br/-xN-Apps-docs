@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { DataListComponent } from './data-list.component';
 import { IListOptions } from '../models/i-list-options';
 import { IListFieldOptions } from '../models/i-list-field-options';
+import { CoreModule } from '@ci/core';
 @NgModule({
   declarations: [
     DataListComponent
   ],
   imports: [
-    CommonModule
+    CoreModule,
   ],
   exports: [
     DataListComponent

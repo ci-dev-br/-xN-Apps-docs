@@ -22,10 +22,10 @@
 </mat-toolbar>
 <ng-container *ngIf="apps">
     @if(visualizacao==='list'){
-
+    <ci-data-list [source]="apps"></ci-data-list>
     }
     @else{
-
+    <ci-data-grid [options]="gridOptions" [source]="apps"></ci-data-grid>
     }
     <!-- <table *ngIf="visualizacao==='table'" mat-table class="mat-elevation-z8" [dataSource]="apps">
         <ng-container *ngFor="let c of columns">
