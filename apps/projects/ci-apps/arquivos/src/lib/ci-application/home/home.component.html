@@ -1,1 +1,23 @@
-<p>home works!</p>
+<mat-drawer-container class="container">
+    <mat-drawer mode="side" opened>
+        <button mat-menu-item>
+            <mat-icon>home</mat-icon>
+            Home
+        </button>
+        <button mat-menu-item>
+            <mat-icon>home</mat-icon>
+            Acesso rápido
+        </button>
+        <button mat-menu-item>
+            <mat-icon>home</mat-icon>
+            Este PC
+        </button>
+        <button mat-menu-item>
+            <mat-icon>home</mat-icon>
+            REDE
+        </button>
+    </mat-drawer>
+    <mat-drawer-content>
+        <router-outlet></router-outlet>
+    </mat-drawer-content>
+</mat-drawer-container>

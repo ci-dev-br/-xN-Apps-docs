@@ -1,0 +1,33 @@
+<ng-container *ngIf="showing">
+    <mat-toolbar>
+        <span class="ci-window--title">
+            @if(title){ {{title}} }
+        </span>
+        <span style="flex: auto;"></span>
+        <ng-container *ngFor="let item of menu">
+            <ng-container *ngIf="!item.visible || (!!item.visible && item.visible())">
+                <ng-container *ngIf="!!item.onClick">
+                    <button mat-icon-button (click)="item.onClick()">
+                        <ng-container *ngTemplateOutlet="contentTmpl">
+                        </ng-container>
+                    </button>
+                </ng-container>
+                <ng-container *ngIf="!item.onClick">
+                    <button mat-icon-button>
+                        <ng-container *ngTemplateOutlet="contentTmpl">
+                        </ng-container>
+                    </button>
+                </ng-container>
+            </ng-container>
+            <ng-template #contentTmpl>
+                <mat-icon>{{item.icon}}</mat-icon>
+            </ng-template>
+        </ng-container>
+    </mat-toolbar>
+    <mat-progress-bar></mat-progress-bar>
+    <div class="content">
+        <ng-container *ngIf="component">
+            <ng-container *ngComponentOutlet="component; injector:injector"></ng-container>
+        </ng-container>
+    </div>
+</ng-container>

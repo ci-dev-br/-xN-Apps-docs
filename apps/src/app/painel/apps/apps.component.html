@@ -1,8 +1,9 @@
-<h1>Meus Apps</h1>
-
-
+<h3>Aplicativos</h3>
 <div class="apps container">
-    <div class="app">
-
+    @for (app of apps; track $index) {
+    <div class="app" (click)="appClickHandler($event, app)" [style.background]="app.color">
+        @if(app.icon){<mat-icon [inline]="true">{{app.icon}}</mat-icon>}
+        {{app.name}}
     </div>
+    }
 </div>

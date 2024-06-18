@@ -1,0 +1,10 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container {
+    min-width: 800px;
+    padding: 48px;
+}

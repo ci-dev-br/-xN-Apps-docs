@@ -3,16 +3,17 @@ const { spawn } = require('child_process');
 /**
  * Cliente da Aplicação
  */
-const cliente_processo = spawn('node', ['./node_modules/@angular/cli/bin/ng.js', 'serve'], { cwd: __dirname + '/../client' })
-    .on('data', m => console.log(m))
-    .on('error', m => console.log(m))
-    .on('message', m => console.log(m))
-    ;
+const cliente_processo = null;
+//  spawn('node', ['./node_modules/@angular/cli/bin/ng.js', 'serve'], { cwd: __dirname + '/../client' })
+//     .on('data', m => console.log(m))
+//     .on('error', m => console.log(m))
+//     .on('message', m => console.log(m))
+//     ;
 
 let processos = [];
 let cliente_status = 0;
 let cliente_message = null;
-cliente_processo.stdout.on('data', (data) => {
+cliente_processo?.stdout.on('data', (data) => {
     cliente_status = 0;
     cliente_message = data;
     if (String(data).indexOf('Compiled successfully') > -1) cliente_status = 2;

@@ -1,0 +1,21 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    flex: auto;
+    overflow: auto;
+}
+
+mat-tab-nav-panel {
+    flex: auto;
+    overflow: auto;
+
+    display: flex;
+    flex-direction: column;
+}
+
+::ng-deep body {
+    background-position: center center;
+    background-repeat: no-repeat;
+}

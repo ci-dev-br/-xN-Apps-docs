@@ -42,6 +42,7 @@ export class AcessarComponent {
     private readonly fb: FormBuilder,
     private readonly router: Router,
   ) {
+    if (!!this.storageService.restore('apps.ci.dev.br.store.User')) router.navigate(['/']);
     if (this.stage) this.criarFormulario(this.stage)
   }
   private criarFormulario(stage: 'identification' | 'loading' | 'captcha' | 'authentication') {
@@ -134,7 +135,7 @@ export class AcessarComponent {
           // this.userService.identificarUsuario(this.acesso_payload.user);
           // if (this.acesso_payload.bearer) this.token.Token = this.acesso_payload.bearer;
           // if (this.acesso_payload.refreshToken) this.token.RefreshToken = this.acesso_payload.refreshToken;
-          this.router.navigate(['/apps']);
+          this.router.navigate(['/']);
         } else {
           this.snack.open('Acesso negado!', 'Ok');
         }

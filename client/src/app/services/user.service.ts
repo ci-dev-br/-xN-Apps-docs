@@ -2,14 +2,15 @@ import { Injectable, OnInit } from "@angular/core";
 import { AuthService, User, UserService as UserApiService } from "@portal/api";
 import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
-import { TokenService } from "../core/token.service";
+import { StorageService } from "../core/storage.service";
+// import { TokenService } from "../core/token.service";
 
 @Injectable()
 export class UserService {
     private $user = new BehaviorSubject<User | undefined>(this.getFromMemory());
     constructor(
         private readonly router: Router,
-        private readonly tokenService: TokenService,
+        private readonly storage: StorageService,
         private readonly userApiService: UserApiService,
         private readonly authService: AuthService,
     ) {
@@ -38,7 +39,7 @@ export class UserService {
         this.$user.next(user);
     }
     async sair() {
-        this.tokenService.clear();
+        // this.storage.clear(); // TODO: limpar cache
         this.$user.next(undefined);
     }
     private getFromMemory() {

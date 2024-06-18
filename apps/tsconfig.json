@@ -72,6 +72,9 @@
       "@ci-apps/Vendas": [
         "./projects/ci-apps/vendas"
       ],
+      "@ci/auth": [
+        "./projects/ci/auth"
+      ],
       "@ci/components": [
         "./projects/ci/components"
       ],
@@ -80,6 +83,9 @@
       ],
       "@ci/data-grid": [
         "./projects/ci/data-grid"
+      ],
+      "@ci/organizacao": [
+        "./projects/ci/organizacao"
       ],
       "@ci/portal-api": [
         "./projects/ci/portal-api"
@@ -113,8 +119,8 @@
     "strictTemplates": true
   },
   "exclude": [
-    "./dist/**/**",
-    ".../../../dist/**/**",
-    "./projects/**/**"
+    // "./dist/**/**",
+    // "../../",
+    // "**/**/projects/**/**"
   ]
 }

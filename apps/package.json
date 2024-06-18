@@ -48,6 +48,7 @@
     "@angular/router": "^18.0.0",
     "@angular/service-worker": "^18.0.0",
     "@angular/ssr": "^18.0.2",
+    "@jonyadamit/ngx-qrcode-ivy": "^16.0.0",
     "@swimlane/ngx-charts": "^20.5.0",
     "crypto-js": "^4.2.0",
     "d3-scale": "^4.0.2",

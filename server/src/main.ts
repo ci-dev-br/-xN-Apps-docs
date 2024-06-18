@@ -41,6 +41,7 @@ async function bootstrap() {
     origin: is_production ? [] : [
       'http://localhost:4293',
       'http://localhost:4200',
+      'http://192.168.0.119:99',
     ]
   });
   app.useGlobalInterceptors(new LoggingInterceptor());

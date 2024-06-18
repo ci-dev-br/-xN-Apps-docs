@@ -6,6 +6,7 @@
   "scripts": {
     "build:client": "cd client && ng build -c production",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "node deploy",
     "sync": "git push --all origin && git push --all azure && git pull --all"
   },
   "repository": {

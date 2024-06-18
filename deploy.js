@@ -9,8 +9,8 @@
                 if (String(r).indexOf('todos') > -1) {
                     console.log(c.stdin.write('t'));
                 }
-                if (String(r).indexOf('Build at') > -1) {
-                    await sh('xcopy .\\dist\\client\\browser\\ .\\..\\server\\public /I', __dirname + '\\client');
+                if (String(r).indexOf('Application bundle generation complete') > -1) {
+                    await sh('xcopy .\\dist\\apps\\browser\\ .\\..\\server\\public /I', __dirname + '\\apps');
                 }
             });
             c.stderr.on('data', (data) => {
@@ -23,6 +23,6 @@
         })
     }
     await sh('node -v');
-    await sh('ng build -c production', __dirname + '\\client');
-    // await sh('xcopy .\\dist\\client\\browser\\ .\\..\\server\\public /I', __dirname + '\\client');
+    await sh('ng build -c production', __dirname + '\\apps');
+    //  await sh('xcopy .\\dist\\client\\browser\\ .\\..\\server\\public /I', __dirname + '\\client');
 })();

@@ -1,0 +1,36 @@
+<mat-toolbar>
+    <ng-container [formGroup]="form">
+        <mat-form-field [appearance]="'outline'">
+            <input type="text" matInput formControlName="url">
+        </mat-form-field>
+    </ng-container>
+    <span style="flex: auto;"></span>
+    <button mat-raised-button color="primary" (click)="conectar()">
+        Conectar
+    </button>
+</mat-toolbar>
+<div class="content">
+    <div class="services">
+        @for (service of services; track $index) {
+        <div class="service" [class.online]="service.status==='online'" [class.offline]="service.status==='offline'">
+            {{service.status}}
+            <button mat-raised-button color="primary" (click)="remove(service)">
+                Remover
+            </button>
+            @if(service.status==='online'){
+            <button mat-raised-button color="primary" (click)="disconnect(service)">
+                Desconectar
+            </button>
+            }
+            @if(service.status==='offline'){
+            <button mat-raised-button color="primary" (click)="connect(service)">
+                Conectar
+            </button>
+            }
+        </div>
+        }
+    </div>
+    <div class="inbox">
+        <div class="contact"></div>
+    </div>
+</div>
