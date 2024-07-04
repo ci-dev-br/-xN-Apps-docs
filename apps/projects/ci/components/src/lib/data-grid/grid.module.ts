@@ -7,6 +7,7 @@ import { MatTableModule } from "@angular/material/table";
 import { HeaderCellRenderer } from "./header-cell/header-cell.component";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
+import { DragDropModule } from "@angular/cdk/drag-drop";
 import { DataGridService } from "./data-grid.service";
 import { IColumnOption } from "../models/i-column-options";
 import { IDataGridOptions } from "../models/i-data-grid-options";
@@ -23,6 +24,7 @@ import { IDataGridOptions } from "../models/i-data-grid-options";
         MatTableModule,
         MatIconModule,
         MatButtonModule,
+        DragDropModule,
     ],
     exports: [
         TextCellRenderer,

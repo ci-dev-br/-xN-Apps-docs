@@ -1,0 +1,56 @@
+<ci-l-nav></ci-l-nav>
+<mat-toolbar color="primary">
+    <button mat-icon-button>
+        <mat-icon>menu</mat-icon>
+    </button>
+    Cadastros do Sistema
+    <span style="flex: auto;"></span>
+    <button mat-icon-button>
+        <mat-icon>menu</mat-icon>
+    </button>
+</mat-toolbar>
+<div class="draw">
+    <div class="sidenav">
+        <ng-container *ngFor="let item of menu">
+            <button mat-raised-button (click)="abrirItemMenu(item.title ||'')">
+                <!-- <div class="icon --cadastro-pessoa"></div> -->
+                {{item.title}}
+            </button>
+        </ng-container>
+        <!-- <button mat-raised-button>
+            <div class="icon --cadastro-pessoa"></div>
+            Contatos
+        </button> -->
+        <!-- <button mat-raised-button>
+            <div class="icon --endereco"></div>
+            Endereços
+        </button> -->
+        <!--  <button mat-raised-button>
+            <div class="icon --imagens"></div>
+            Fotos
+        </button> -->
+        <!--  <button mat-raised-button>
+            <div class="icon --cliente"></div>
+            Clientes
+        </button> -->
+    </div>
+    <div class="container">
+        <!--  <header>
+            <h1>
+                Cadastros
+            </h1>
+            <div class="row">
+                <p></p>
+            </div>
+        </header> -->
+        <!--  <section>
+            <p>cadastros works!</p>
+        </section> -->
+        <ng-container *ngIf="currentForm">
+            <ci-cadastro [dynamicForm]="currentForm" />
+        </ng-container>
+    </div>
+</div>
+<nav class="status">
+    Status OK
+</nav>

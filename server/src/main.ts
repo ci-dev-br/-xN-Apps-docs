@@ -18,7 +18,9 @@ async function start(app: NestExpressApplication, port: number) {
   } catch (error) {
     if (error.code === 'EADDRINUSE') {
       console.error(error);
-      const out = spawnSync('powershell', ['Stop-Service -DisplayName apps.ci.dev.br']);
+      console.error("stop services");
+      const out = spawnSync('powershell', ['Stop-Service', 'apps.ci.dev.br']);
+      console.log(out.error)
       await start(app, port);
     }
   }

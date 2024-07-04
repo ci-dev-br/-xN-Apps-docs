@@ -72,6 +72,9 @@
       "@ci-apps/Vendas": [
         "./projects/ci-apps/vendas"
       ],
+      "@ci-apps/blog": [
+        "./projects/ci-apps/blog/src/public-api"
+      ],
       "@ci/auth": [
         "./projects/ci/auth"
       ],
