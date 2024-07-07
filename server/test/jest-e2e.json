@@ -30,6 +30,8 @@
     "@ci/espazio/(.*)": "<rootDir>/../libs/espazio/src/$1",
     "@ci/espazio": "<rootDir>/../libs/espazio/src",
     "@ci/farmacia/(.*)": "<rootDir>/../libs/farmacia/src/$1",
-    "@ci/farmacia": "<rootDir>/../libs/farmacia/src"
+    "@ci/farmacia": "<rootDir>/../libs/farmacia/src",
+    "@ci/financeiro/(.*)": "<rootDir>/../libs/financeiro/src/$1",
+    "@ci/financeiro": "<rootDir>/../libs/financeiro/src"
   }
 }

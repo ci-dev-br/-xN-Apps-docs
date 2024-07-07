@@ -96,6 +96,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/farmacia/tsconfig.lib.json"
       }
+    },
+    "financeiro": {
+      "type": "library",
+      "root": "libs/financeiro",
+      "entryFile": "index",
+      "sourceRoot": "libs/financeiro/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/financeiro/tsconfig.lib.json"
+      }
     }
   }
 }

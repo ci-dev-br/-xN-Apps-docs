@@ -78,6 +78,12 @@
       ],
       "@ci/farmacia/*": [
         "libs/farmacia/src/*"
+      ],
+      "@ci/financeiro": [
+        "libs/financeiro/src"
+      ],
+      "@ci/financeiro/*": [
+        "libs/financeiro/src/*"
       ]
     }
   }

@@ -23,7 +23,7 @@ import { PaymentEntities, PaymentModule } from './payment/payment.module';
 import { FiscalEntities, FiscalModule } from './fiscal/fiscal.module';
 import { InfraEntities, InfraModule } from '@ci/core/infra/infra.module';
 import { SystemEntities, SystemModule } from '@ci/core/system/system.module';
-import { FinanceiroEntities, FinanceiroModule } from './financeiro/financeiro.module';
+import { FinanceiroEntities, FinanceiroModule } from '../libs/financeiro/src/financeiro.module';
 import { OrganizacaoEntities, OrganizacaoModule } from './organizacao/organizacao.module';
 import { INPIEntities, INPIModule } from './inpi/inpi.module';
 import { SeoMarketingEntities, SeoMarketingModule } from '@ci/seo-marketing';
