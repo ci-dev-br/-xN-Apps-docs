@@ -36,6 +36,26 @@
     "@ci/estoque/(.*)": "<rootDir>/../libs/estoque/src/$1",
     "@ci/estoque": "<rootDir>/../libs/estoque/src",
     "@ci/fiscal/(.*)": "<rootDir>/../libs/fiscal/src/$1",
-    "@ci/fiscal": "<rootDir>/../libs/fiscal/src"
+    "@ci/fiscal": "<rootDir>/../libs/fiscal/src",
+    "@ci/g11n/(.*)": "<rootDir>/../libs/g11n/src/$1",
+    "@ci/g11n": "<rootDir>/../libs/g11n/src",
+    "@ci/icons/(.*)": "<rootDir>/../libs/icons/src/$1",
+    "@ci/icons": "<rootDir>/../libs/icons/src",
+    "@ci/inpi/(.*)": "<rootDir>/../libs/inpi/src/$1",
+    "@ci/inpi": "<rootDir>/../libs/inpi/src",
+    "@ci/messager/(.*)": "<rootDir>/../libs/messager/src/$1",
+    "@ci/messager": "<rootDir>/../libs/messager/src",
+    "@ci/notification/(.*)": "<rootDir>/../libs/notification/src/$1",
+    "@ci/notification": "<rootDir>/../libs/notification/src",
+    "@ci/payment/(.*)": "<rootDir>/../libs/payment/src/$1",
+    "@ci/payment": "<rootDir>/../libs/payment/src",
+    "@ci/user/(.*)": "<rootDir>/../libs/user/src/$1",
+    "@ci/user": "<rootDir>/../libs/user/src",
+    "@ci/organizacao/(.*)": "<rootDir>/../libs/organizacao/src/$1",
+    "@ci/organizacao": "<rootDir>/../libs/organizacao/src",
+    "@ci/produto/(.*)": "<rootDir>/../libs/produto/src/$1",
+    "@ci/produto": "<rootDir>/../libs/produto/src",
+    "@ci/prancheta/(.*)": "<rootDir>/../libs/prancheta/src/$1",
+    "@ci/prancheta": "<rootDir>/../libs/prancheta/src"
   }
 }
