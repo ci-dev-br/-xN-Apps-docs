@@ -22,3 +22,7 @@ export const PranchetaEntities = [
     ]
 })
 export class PranchetaModule { }
+export {
+    Prancheta,
+    PranchetaItemMetadata,
+}
