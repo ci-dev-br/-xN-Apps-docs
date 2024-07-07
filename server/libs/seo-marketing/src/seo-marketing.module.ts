@@ -1,9 +1,17 @@
 import { Module } from '@nestjs/common';
 import { SeoMarketingService } from './seo-marketing.service';
-import { KeyWord } from './models/key-word';
+import { KeyWord } from './models/key-word.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoreModule } from '@ci/core/core.module';
-export const SeoMarketingEntities = [KeyWord,]
+import { Page } from './models/page.entity';
+import { BackLink } from './models/back-link.entity';
+import { Campanha } from './models/campanha.entity';
+export const SeoMarketingEntities = [
+  KeyWord,
+  Page,
+  BackLink,
+  Campanha,
+];
 @Module({
   imports: [
     CoreModule,
@@ -17,5 +25,9 @@ export const SeoMarketingEntities = [KeyWord,]
 })
 export class SeoMarketingModule { }
 export {
-  SeoMarketingService
+  SeoMarketingService,
+  KeyWord,
+  Page,
+  BackLink,
+  Campanha,
 }
