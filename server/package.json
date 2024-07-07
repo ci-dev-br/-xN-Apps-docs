@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "node node_modules/@nestjs/cli/bin/nest  build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:dev": "node node_modules/@nestjs/cli/bin/nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -73,7 +73,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": ".",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -81,7 +81,15 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "coverageDirectory": "./coverage",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/src/",
+      "<rootDir>/libs/"
+    ],
+    "moduleNameMapper": {
+      "^@ci/seo-marketing(|/.*)$": "<rootDir>/libs/seo-marketing/src/$1",
+      "^@ci/core(|/.*)$": "<rootDir>/libs/core/src/$1"
+    }
   }
 }

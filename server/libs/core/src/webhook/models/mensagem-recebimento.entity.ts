@@ -1,4 +1,4 @@
-import { FullAuditedEntity } from "src/core/dao";
+import { FullAuditedEntity } from "@ci/core";
 import { Column, Entity } from "typeorm";
 
 @Entity()

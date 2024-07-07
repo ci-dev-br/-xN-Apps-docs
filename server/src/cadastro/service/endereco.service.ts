@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DaoServiceBase, SnapshotService } from "src/core/dao";
+import { DaoServiceBase, SnapshotService } from "@ci/core";
 import { Endereco } from "../model/endereco.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";

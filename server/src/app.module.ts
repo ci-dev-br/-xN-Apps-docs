@@ -16,16 +16,17 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { TenantEntities, TenantModule } from './tenant/tenant.module';
 import { UsersModule } from './users/users.module';
 import { StorageEntities, StorageModule } from './storage/storage.module';
-import { CoreEntities, CoreModule } from './core/core.module';
+import { CoreEntities, CoreModule } from '../libs/core/src/core.module';
 import { ProlaboreEntities } from './prolabore/prolabore.module';
 import { CadastroEntidades, CasdastroModule } from './cadastro/cadastro.module';
 import { PaymentEntities, PaymentModule } from './payment/payment.module';
 import { FiscalEntities, FiscalModule } from './fiscal/fiscal.module';
-import { InfraEntities, InfraModule } from './core/infra/infra.module';
-import { SystemEntities, SystemModule } from './core/system/system.module';
+import { InfraEntities, InfraModule } from '@ci/core/infra/infra.module';
+import { SystemEntities, SystemModule } from '@ci/core/system/system.module';
 import { FinanceiroEntities, FinanceiroModule } from './financeiro/financeiro.module';
 import { OrganizacaoEntities, OrganizacaoModule } from './organizacao/organizacao.module';
 import { INPIEntities, INPIModule } from './inpi/inpi.module';
+import { SeoMarketingEntities, SeoMarketingModule } from '@ci/seo-marketing';
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
 const LoadedEntities = [
@@ -54,6 +55,7 @@ const _entities_name = {
   Financeiro: FinanceiroEntities,
   Organizacao: OrganizacaoEntities,
   INPI: INPIEntities,
+  SeoMarketing: SeoMarketingEntities,
 }
 const _modules_name = {
   System: SystemModule,
@@ -76,6 +78,7 @@ const _modules_name = {
   Financeiro: FinanceiroModule,
   Organizacao: OrganizacaoModule,
   INPI: INPIModule,
+  SeoMarketing: SeoMarketingModule,
 }
 process.env.MODULES.split(',').forEach(e => {
   if (_entities_name[e]) LoadedEntities.push(..._entities_name[e]);

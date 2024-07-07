@@ -17,6 +17,20 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@ci/seo-marketing": [
+        "libs/seo-marketing/src"
+      ],
+      "@ci/seo-marketing/*": [
+        "libs/seo-marketing/src/*"
+      ],
+      "@ci/core": [
+        "libs/core/src"
+      ],
+      "@ci/core/*": [
+        "libs/core/src/*"
+      ]
+    }
   }
 }

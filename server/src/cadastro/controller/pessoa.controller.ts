@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { PessoaService } from "../service/pessoa.service";
-import { ControllerDaoBase, SyncPayloadDao } from "src/core/dao";
+import { ControllerDaoBase, SyncPayloadDao } from "@ci/core";
 import { Pessoa } from "../model/pessoa.entity";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { FindOptionsWhere } from "typeorm";

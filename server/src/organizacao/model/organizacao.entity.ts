@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Pessoa } from "src/cadastro/model/pessoa.entity";
-import { FullAuditedEntity } from "src/core/dao";
+import { FullAuditedEntity } from "@ci/core";
 import { Photo } from "src/storage/models/photo.entity";
 import { Tenant } from "src/tenant/models/tenant.entity";
 import { Column, Entity, JoinTable, ManyToOne, } from "typeorm";

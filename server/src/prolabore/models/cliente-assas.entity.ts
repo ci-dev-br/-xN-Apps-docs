@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Cliente } from "./cliente.entity";
 import { ContaBancaria } from "./conta-bancaria.entity";
-import { FullAuditedEntity } from "src/core/dao";
+import { FullAuditedEntity } from "@ci/core";
 import { ApiProperty } from "@nestjs/swagger";
 
 /**

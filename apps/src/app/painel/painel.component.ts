@@ -11,6 +11,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { APPS } from './apps/apps';
 import { AuthModule, UserService } from '@ci/auth';
+import { LogoComponent } from '@ci/components';
 @Component({
   selector: 'ci-painel',
   standalone: true,
@@ -26,6 +27,7 @@ import { AuthModule, UserService } from '@ci/auth';
     RouterModule,
     AuthModule,
     MatTooltipModule,
+    LogoComponent,
   ],
   templateUrl: './painel.component.html',
   styleUrl: './painel.component.scss'

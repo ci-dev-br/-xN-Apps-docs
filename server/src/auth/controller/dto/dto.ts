@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { ChaveAcesso } from "src/core/audt/chave-acesso.entity";
+import { ChaveAcesso } from "@ci/core";
 import { User } from "src/auth/models/user.entity";
 
 export class RegistrarInputDto {

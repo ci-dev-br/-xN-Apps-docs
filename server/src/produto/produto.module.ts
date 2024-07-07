@@ -6,7 +6,7 @@ import { TenantModule } from "src/tenant/tenant.module";
 import { INPIModule } from "src/inpi/inpi.module";
 import { ProductController } from "./controller/product.controller";
 import { ProductService } from "./service/product.service";
-import { CoreModule } from "src/core/core.module";
+import { CoreModule } from "@ci/core/core.module";
 
 export const ProductEntities = [
     Product,

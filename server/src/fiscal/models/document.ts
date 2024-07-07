@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { FullAuditedEntity } from "src/core/dao";
+import { FullAuditedEntity } from "@ci/core";
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Attachment } from "./attachment.entity";
 

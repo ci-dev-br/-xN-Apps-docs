@@ -7,7 +7,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
 import { config } from 'dotenv';
 import { spawnSync } from 'child_process';
-import { LoggingInterceptor } from './core/logging.interceptor';
+import { LoggingInterceptor } from '../libs/core/src/logging.interceptor';
 console.clear();
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
@@ -43,6 +43,7 @@ async function bootstrap() {
     origin: is_production ? [] : [
       'http://localhost:4293',
       'http://localhost:4200',
+      'http://localhost:4000',
       'http://192.168.0.119:99',
     ]
   });

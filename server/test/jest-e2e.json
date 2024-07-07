@@ -1,9 +1,19 @@
 {
-  "moduleFileExtensions": ["js", "json", "ts"],
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
   "rootDir": ".",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "@ci/seo-marketing/(.*)": "<rootDir>/../libs/seo-marketing/src/$1",
+    "@ci/seo-marketing": "<rootDir>/../libs/seo-marketing/src",
+    "@ci/core/(.*)": "<rootDir>/../libs/core/src/$1",
+    "@ci/core": "<rootDir>/../libs/core/src"
   }
 }

@@ -3,7 +3,7 @@ import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger
 import { PhotoService } from "../service/photo.service";
 import { Photo } from "../models/photo.entity";
 import { UserService } from "src/auth/auth.module";
-import { AudtService } from "src/core/audt/audt.service";
+import { AudtService } from "@ci/core";
 
 export class PhotoGetPaylodInputDto {
     @ApiProperty({ nullable: true, required: false }) query: string;

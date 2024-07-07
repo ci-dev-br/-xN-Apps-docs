@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { ControllerDaoBase, SyncPayloadDao } from "src/core/dao";
+import { ControllerDaoBase, SyncPayloadDao } from "@ci/core";
 import { Product } from "../models/product.entity";
 import { ProductService } from "../service/product.service";
 

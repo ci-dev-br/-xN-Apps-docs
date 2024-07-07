@@ -8,7 +8,7 @@ import { User } from "./models/user.entity";
 import { jwtConstants } from "./constants";
 import { AuthGuard } from "./auth.guard";
 import { CredencialService } from "./service/credencial.service";
-import { ChaveAcesso } from "../core/audt/chave-acesso.entity";
+import { ChaveAcesso } from "@ci/core";
 import { Policy } from "./models/policy.entity";
 import { RefreshTokenStrategy } from "./service/refresh-token-strategy";
 import { AuthService } from "./service/auth.service";
@@ -16,7 +16,7 @@ import { DeviceAuthenticated } from "./models/device-autenticated.entity";
 import { TenantModule } from "src/tenant/tenant.module";
 import { AccessCredential } from "./models/user-credential.entity";
 import { UserCredentialService } from "./service/user-credential.service";
-import { CoreModule } from "src/core/core.module";
+import { CoreModule } from "@ci/core/core.module";
 
 export const AuthEntities = [
     Policy,

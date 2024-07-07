@@ -2,7 +2,7 @@ import { Body, Controller, Post, Req } from "@nestjs/common";
 import { PranchetaService } from "../service/prancheta.service";
 import { ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Prancheta } from "../models/prancheta.entity";
-import { AudtService } from "src/core/audt/audt.service";
+import { AudtService } from "@ci/core";
 
 export class PranchetaSyncPayloadDto {
     @ApiProperty({ type: Prancheta, nullable: true, required: false })

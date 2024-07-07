@@ -2,7 +2,7 @@ import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { OrganizacaoService } from "../service/organizacao.service";
 import { Organizacao } from "../model/organizacao.entity";
-import { Status } from "src/core/system/model/status";
+import { Status } from "@ci/core";
 import { Tenant } from "src/tenant/models/tenant.entity";
 import { UserService } from "src/auth/auth.module";
 

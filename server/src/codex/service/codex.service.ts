@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { CodeBlock } from "../models/code-block.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DaoServiceBase, SnapshotService } from "src/core/dao";
+import { DaoServiceBase, SnapshotService } from "@ci/core";
 
 @Injectable()
 export class CodexService extends DaoServiceBase<CodeBlock> {

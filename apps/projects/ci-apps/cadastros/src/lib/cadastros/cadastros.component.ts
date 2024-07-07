@@ -1,9 +1,14 @@
 import { Component } from '@angular/core';
-import { CadastroService, IDynamicForm } from '@portal/api';
+import { CoreModule } from '@ci/core';
+import { CadastroService, IDynamicForm } from '@ci/portal-api';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'ci-cadastros',
+  standalone: true,
+  imports: [
+    CoreModule,
+  ],
   templateUrl: './cadastros.component.html',
   styleUrls: ['./cadastros.component.scss']
 })

@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { FullAuditedEntity } from "src/core/dao";
+import { FullAuditedEntity } from "@ci/core";
 import { Marca } from "src/inpi/model/marca.entity";
 
 @Entity()

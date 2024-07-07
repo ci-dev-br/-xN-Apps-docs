@@ -4,7 +4,7 @@ import { Endereco } from "./model/endereco.entity";
 import { Pessoa } from "./model/pessoa.entity";
 import { PessoaService } from "./service/pessoa.service";
 import { EnderecoService } from "./service/endereco.service";
-import { CoreModule } from "src/core/core.module";
+import { CoreModule } from "@ci/core/core.module";
 import { InformacaoContato } from "./model/informacao-contato.entity";
 import { PessoaController } from "./controller/pessoa.controller";
 import { DocumentoIdentificacao } from "./model/documento-identificacao.entity";

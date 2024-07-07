@@ -2,10 +2,13 @@ import { DynamicModule, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Snapshot, SnapshotService } from "./dao";
 import { AudtService } from "./audt/audt.service";
+import { ChaveAcesso } from "./audt/chave-acesso.entity";
+import { t } from "./i18n/t";
 // mport { SystemService } from "./system/system.service";
 
 export const CoreEntities = [
     Snapshot,
+    ChaveAcesso,
 ]
 
 /**
@@ -41,4 +44,11 @@ export class CoreModule {
             ]
         }
     }
+}
+export {
+    Snapshot,
+    SnapshotService,
+    AudtService,
+    ChaveAcesso,
+    t,
 }

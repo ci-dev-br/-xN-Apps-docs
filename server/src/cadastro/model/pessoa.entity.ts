@@ -1,10 +1,10 @@
-import { FullAuditedEntity } from "src/core/dao";
+import { FullAuditedEntity } from "@ci/core";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 import { Endereco } from "./endereco.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { InformacaoContato } from "./informacao-contato.entity";
 import { DocumentoIdentificacao } from "./documento-identificacao.entity";
-import { t } from "src/core/i18n/t";
+import { t } from "@ci/core";
 
 /**
  * Cadastro de Pessoa, Entidade Física ou Jurídica, representada, ou não por instituição de outrem

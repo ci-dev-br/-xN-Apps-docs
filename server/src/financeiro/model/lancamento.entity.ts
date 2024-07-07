@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { FullAuditedEntity } from "src/core/dao";
+import { FullAuditedEntity } from "@ci/core";
 import { ContaBancaria } from "src/prolabore/models/conta-bancaria.entity";
 import { Column, Entity } from "typeorm";
 

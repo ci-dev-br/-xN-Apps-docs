@@ -6,7 +6,7 @@ import { Tenant } from "src/tenant/models/tenant.entity";
 
 import { createHash } from 'crypto';
 // import { AccessCredential } from "src/auth/models/user-credential.entity";
-import { ChaveAcesso } from "src/core/audt/chave-acesso.entity";
+import { ChaveAcesso } from @ci/core";
 import { identity } from "rxjs";
 
 export abstract class AuditedEntity {

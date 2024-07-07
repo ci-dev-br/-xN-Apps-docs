@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { FullAuditedEntity } from "src/core/dao";
+import { FullAuditedEntity } from "@ci/core";
 import { Column, Entity } from "typeorm";
-import { t } from "src/core/i18n/t";
+import { t } from "@ci/core";
 
 @Entity({ schema: 'cadastro' })
 export class TipoDocumentoIdentificacao extends FullAuditedEntity {

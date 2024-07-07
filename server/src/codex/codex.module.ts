@@ -4,10 +4,12 @@ import { Agent } from "./models/agent";
 import { CodexService } from "./service/codex.service";
 import { CodexController } from "./controller/codex.controller";
 import { CodeBlock } from "./models/code-block.entity";
-import { CoreModule } from "src/core/core.module";
+import { CoreModule } from "@ci/core/core.module";
+import { Termo } from "./models/termo";
 export const CodeXEntities = [
     Agent,
     CodeBlock,
+    Termo,
 ];
 @Module({
     imports: [
