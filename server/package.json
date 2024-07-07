@@ -91,7 +91,13 @@
       "^@ci/seo-marketing(|/.*)$": "<rootDir>/libs/seo-marketing/src/$1",
       "^@ci/core(|/.*)$": "<rootDir>/libs/core/src/$1",
       "^@ci/manager(|/.*)$": "<rootDir>/libs/manager/src/$1",
-      "^@ci/tenant(|/.*)$": "<rootDir>/libs/tenant/src/$1"
+      "^@ci/tenant(|/.*)$": "<rootDir>/libs/tenant/src/$1",
+      "^@ci/auth(|/.*)$": "<rootDir>/libs/auth/src/$1",
+      "^@ci/cadastro(|/.*)$": "<rootDir>/libs/cadastro/src/$1",
+      "^@ci/cms(|/.*)$": "<rootDir>/libs/cms/src/$1",
+      "^@ci/codex(|/.*)$": "<rootDir>/libs/codex/src/$1",
+      "^@ci/espazio(|/.*)$": "<rootDir>/libs/espazio/src/$1",
+      "^@ci/farmacia(|/.*)$": "<rootDir>/libs/farmacia/src/$1"
     }
   }
 }

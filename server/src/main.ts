@@ -41,10 +41,10 @@ async function bootstrap() {
       await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
     origin: is_production ? [] : [
-      'http://localhost:4293',
-      'http://localhost:4200',
-      'http://localhost:4000',
-      'http://192.168.0.119:99',
+      'http://apps.ci.dev.br:4200',
+      // 'http://localhost:4200',
+      // 'http://localhost:4000',
+      // 'http://192.168.0.119:99',
     ]
   });
   app.useGlobalInterceptors(new LoggingInterceptor());

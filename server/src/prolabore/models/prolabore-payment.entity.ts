@@ -1,4 +1,4 @@
-import { User } from "src/auth/models/user.entity";
+import { User } from "@ci/auth/models/user.entity";
 import { FullAuditedEntity } from "@ci/core";
 import { Column, Entity, JoinTable, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Cliente } from "./cliente.entity";

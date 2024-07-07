@@ -42,6 +42,42 @@
       ],
       "@ci/tenant/*": [
         "libs/tenant/src/*"
+      ],
+      "@ci/auth": [
+        "libs/auth/src"
+      ],
+      "@ci/auth/*": [
+        "libs/auth/src/*"
+      ],
+      "@ci/cadastro": [
+        "libs/cadastro/src"
+      ],
+      "@ci/cadastro/*": [
+        "libs/cadastro/src/*"
+      ],
+      "@ci/cms": [
+        "libs/cms/src"
+      ],
+      "@ci/cms/*": [
+        "libs/cms/src/*"
+      ],
+      "@ci/codex": [
+        "libs/codex/src"
+      ],
+      "@ci/codex/*": [
+        "libs/codex/src/*"
+      ],
+      "@ci/espazio": [
+        "libs/espazio/src"
+      ],
+      "@ci/espazio/*": [
+        "libs/espazio/src/*"
+      ],
+      "@ci/farmacia": [
+        "libs/farmacia/src"
+      ],
+      "@ci/farmacia/*": [
+        "libs/farmacia/src/*"
       ]
     }
   }

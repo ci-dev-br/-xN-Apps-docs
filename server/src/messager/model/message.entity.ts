@@ -1,4 +1,4 @@
-import { User } from "src/auth/models/user.entity";
+import { User } from "@ci/auth/models/user.entity";
 import { Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Conversation } from "./conversation.entity";
 

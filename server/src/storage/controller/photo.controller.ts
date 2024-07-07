@@ -2,7 +2,7 @@ import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { PhotoService } from "../service/photo.service";
 import { Photo } from "../models/photo.entity";
-import { UserService } from "src/auth/auth.module";
+import { UserService } from "@ci/auth/auth.module";
 import { AudtService } from "@ci/core";
 
 export class PhotoGetPaylodInputDto {

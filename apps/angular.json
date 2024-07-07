@@ -73,6 +73,7 @@
               "buildTarget": "apps:build:production"
             },
             "development": {
+              "host": "apps.ci.dev.br",
               "buildTarget": "apps:build:development"
             }
           },

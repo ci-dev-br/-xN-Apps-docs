@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Organizacao } from "../model/organizacao.entity";
 import { Equal, ILike, In, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import { AuthService } from "src/auth/auth.module";
+import { AuthService } from "@ci/auth/auth.module";
 
 @Injectable()
 export class OrganizacaoService {

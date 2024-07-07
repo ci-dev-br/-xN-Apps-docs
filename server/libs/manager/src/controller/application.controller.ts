@@ -2,7 +2,7 @@ import { Body, Controller, Post, Request, Query, Optional } from "@nestjs/common
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Application } from "../model/application.entity";
 import { ApplicationService } from "../service/application.service";
-import { User } from "src/auth/models/user.entity";
+import { User } from "@ci/auth/models/user.entity";
 import { GetInputDtos } from "../dto/input-dto";
 
 @ApiTags('Application')

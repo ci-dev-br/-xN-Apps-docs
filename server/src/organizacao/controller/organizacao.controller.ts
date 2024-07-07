@@ -4,7 +4,7 @@ import { OrganizacaoService } from "../service/organizacao.service";
 import { Organizacao } from "../model/organizacao.entity";
 import { Status } from "@ci/core";
 import { Tenant } from "@ci/tenant/models/tenant.entity";
-import { UserService } from "src/auth/auth.module";
+import { UserService } from "@ci/auth/auth.module";
 
 export class OrganizacaoSyncPayload {
     @ApiProperty({ type: Organizacao })

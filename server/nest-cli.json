@@ -42,6 +42,60 @@
       "compilerOptions": {
         "tsConfigPath": "libs/tenant/tsconfig.lib.json"
       }
+    },
+    "auth": {
+      "type": "library",
+      "root": "libs/auth",
+      "entryFile": "index",
+      "sourceRoot": "libs/auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/auth/tsconfig.lib.json"
+      }
+    },
+    "cadastro": {
+      "type": "library",
+      "root": "libs/cadastro",
+      "entryFile": "index",
+      "sourceRoot": "libs/cadastro/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/cadastro/tsconfig.lib.json"
+      }
+    },
+    "cms": {
+      "type": "library",
+      "root": "libs/cms",
+      "entryFile": "index",
+      "sourceRoot": "libs/cms/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/cms/tsconfig.lib.json"
+      }
+    },
+    "codex": {
+      "type": "library",
+      "root": "libs/codex",
+      "entryFile": "index",
+      "sourceRoot": "libs/codex/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/codex/tsconfig.lib.json"
+      }
+    },
+    "espazio": {
+      "type": "library",
+      "root": "libs/espazio",
+      "entryFile": "index",
+      "sourceRoot": "libs/espazio/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/espazio/tsconfig.lib.json"
+      }
+    },
+    "farmacia": {
+      "type": "library",
+      "root": "libs/farmacia",
+      "entryFile": "index",
+      "sourceRoot": "libs/farmacia/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/farmacia/tsconfig.lib.json"
+      }
     }
   }
 }

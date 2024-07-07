@@ -2,7 +2,7 @@ import { Body, Controller, Post } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { DevicePayload } from "./dto/device-payload";
 import { DeviceService } from "../services/device.service";
-import { Public } from "src/auth/decorators/public.decorator";
+import { Public } from "@ci/auth/decorators/public.decorator";
 import { PoolDto } from "./dto/pool.dto";
 
 @Controller('Device')

@@ -1,4 +1,4 @@
-import { User } from "src/auth/models/user.entity";
+import { User } from "@ci/auth/models/user.entity";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ schema: 'prolabore' })
