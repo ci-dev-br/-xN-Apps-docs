@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Currency } from "src/globalization/models/currency.entity";
+import { Currency } from "@ci/g11n/models/currency.entity";
 import { Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
