@@ -20,3 +20,7 @@ export const Entities = [
     ],
 })
 export class MessagerModule { }
+export {
+    Conversation,
+    Message,
+}
