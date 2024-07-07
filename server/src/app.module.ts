@@ -20,7 +20,7 @@ import { CoreEntities, CoreModule } from '../libs/core/src/core.module';
 import { ProlaboreEntities } from '../libs/prolabore/src/prolabore.module';
 import { CadastroEntidades, CasdastroModule } from '../libs/cadastro/src/cadastro.module';
 import { PaymentEntities, PaymentModule } from '../libs/payment/src/payment.module';
-import { FiscalEntities, FiscalModule } from './fiscal/fiscal.module';
+import { FiscalEntities, FiscalModule } from '@ci/fiscal';
 import { InfraEntities, InfraModule } from '@ci/core/infra/infra.module';
 import { SystemEntities, SystemModule } from '@ci/core/system/system.module';
 import { FinanceiroEntities, FinanceiroModule } from '../libs/financeiro/src/financeiro.module';
