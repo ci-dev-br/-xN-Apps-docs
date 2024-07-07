@@ -14,3 +14,7 @@ export const INPIEntities = [
     ],
 })
 export class INPIModule { }
+export {
+    Marca,
+    Patente,
+}
