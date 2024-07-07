@@ -20,9 +20,8 @@ export const ProlaboreEntities = [
     TransferenciaPix,
     ContaBancaria,
     Contrato,
-
     Account,
-    Receipt,    
+    Receipt,
     Banco,
     ProlaborePayment,
 ];
