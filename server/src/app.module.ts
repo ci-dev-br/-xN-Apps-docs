@@ -5,7 +5,7 @@ import { Entities as NotificacaoEntities, NotificacaoModule } from './notificaca
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule, AuthEntities as AuthEntities } from './auth/auth.module';
 import { config } from 'dotenv';
-import { ManagerEntities, ManagerModule } from './manager/manager.module';
+import { ManagerEntities, ManagerModule } from '../libs/manager/src/manager.module';
 import { MessagerModule, Entities as MessageEntities } from './messager/messager.module';
 import { ProdutoModule, ProductEntities } from './produto/produto.module';
 import { CodexModule, CodeXEntities } from './codex/codex.module';

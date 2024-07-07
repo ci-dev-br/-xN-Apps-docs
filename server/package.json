@@ -89,7 +89,8 @@
     ],
     "moduleNameMapper": {
       "^@ci/seo-marketing(|/.*)$": "<rootDir>/libs/seo-marketing/src/$1",
-      "^@ci/core(|/.*)$": "<rootDir>/libs/core/src/$1"
+      "^@ci/core(|/.*)$": "<rootDir>/libs/core/src/$1",
+      "^@ci/manager(|/.*)$": "<rootDir>/libs/manager/src/$1"
     }
   }
 }

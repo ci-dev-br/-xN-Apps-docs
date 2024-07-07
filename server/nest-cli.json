@@ -24,6 +24,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/core/tsconfig.lib.json"
       }
+    },
+    "manager": {
+      "type": "library",
+      "root": "libs/manager",
+      "entryFile": "index",
+      "sourceRoot": "libs/manager/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/manager/tsconfig.lib.json"
+      }
     }
   }
 }

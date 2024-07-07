@@ -30,6 +30,12 @@
       ],
       "@ci/core/*": [
         "libs/core/src/*"
+      ],
+      "@ci/manager": [
+        "libs/manager/src"
+      ],
+      "@ci/manager/*": [
+        "libs/manager/src/*"
       ]
     }
   }
