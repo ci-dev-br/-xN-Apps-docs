@@ -2,12 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Column, CreateDateColumn, Entity, Equal, FindOneOptions, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, IsNull, JoinColumn, JoinTable, ManyToMany, ManyToOne, Not, OneToOne, PrimaryGeneratedColumn, Repository, UpdateDateColumn } from "typeorm";
-import { Tenant } from "@ci/tenant/models/tenant.entity";
+import { Tenant } from "@ci/tenant";
 
 import { createHash } from 'crypto';
-// import { AccessCredential } from "src/auth/models/user-credential.entity";
-import { identity } from "rxjs";
-import { ChaveAcesso } from "../audt/chave-acesso.entity";
+import { ChaveAcesso } from "@ci/core";
 
 export abstract class AuditedEntity {
     @ApiProperty({ nullable: true, required: false, uniqueItems: true })

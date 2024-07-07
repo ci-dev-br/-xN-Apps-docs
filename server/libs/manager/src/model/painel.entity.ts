@@ -1,9 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { FullAuditedEntity } from "@ci/core";
-import { Column, Entity } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Painel extends FullAuditedEntity {
+export class Painel {
+    @ApiProperty({ nullable: true, required: false, uniqueItems: true })
+    @PrimaryGeneratedColumn('uuid')
+    internalId?: string;
+
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })
     endpoint?: string;

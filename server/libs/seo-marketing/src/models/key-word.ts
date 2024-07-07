@@ -1,4 +1,4 @@
-import { FullAuditedEntity } from "@ci/core/dao";
+import { FullAuditedEntity } from "@ci/manager/dao";
 import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity } from "typeorm";
 

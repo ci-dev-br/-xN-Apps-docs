@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { FullAuditedEntity } from "../dao";
+import { FullAuditedEntity } from "../../../manager/src/dao";
 
 @Injectable()
 export class AudtService {
