@@ -12,3 +12,6 @@ export const IconEntities = [
     ]
 })
 export class IconsModule { }
+export {
+    Icon,
+}
