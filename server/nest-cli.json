@@ -33,6 +33,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/manager/tsconfig.lib.json"
       }
+    },
+    "tenant": {
+      "type": "library",
+      "root": "libs/tenant",
+      "entryFile": "index",
+      "sourceRoot": "libs/tenant/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/tenant/tsconfig.lib.json"
+      }
     }
   }
 }

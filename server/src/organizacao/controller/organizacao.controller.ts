@@ -3,7 +3,7 @@ import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger
 import { OrganizacaoService } from "../service/organizacao.service";
 import { Organizacao } from "../model/organizacao.entity";
 import { Status } from "@ci/core";
-import { Tenant } from "src/tenant/models/tenant.entity";
+import { Tenant } from "@ci/tenant/models/tenant.entity";
 import { UserService } from "src/auth/auth.module";
 
 export class OrganizacaoSyncPayload {

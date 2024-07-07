@@ -13,7 +13,7 @@ import { GlobalizationEntities, GlobalizationModule } from './globalization/glob
 import { PranchetaEntities, PranchetaModule } from './prancheta/prancheta.module';
 import { IconEntities, IconsModule } from './icons/icons.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { TenantEntities, TenantModule } from './tenant/tenant.module';
+import { TenantEntities, TenantModule } from '../libs/tenant/src/tenant.module';
 import { UsersModule } from './users/users.module';
 import { StorageEntities, StorageModule } from './storage/storage.module';
 import { CoreEntities, CoreModule } from '../libs/core/src/core.module';

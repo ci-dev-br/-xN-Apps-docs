@@ -16,6 +16,8 @@
     "@ci/core/(.*)": "<rootDir>/../libs/core/src/$1",
     "@ci/core": "<rootDir>/../libs/core/src",
     "@ci/manager/(.*)": "<rootDir>/../libs/manager/src/$1",
-    "@ci/manager": "<rootDir>/../libs/manager/src"
+    "@ci/manager": "<rootDir>/../libs/manager/src",
+    "@ci/tenant/(.*)": "<rootDir>/../libs/tenant/src/$1",
+    "@ci/tenant": "<rootDir>/../libs/tenant/src"
   }
 }

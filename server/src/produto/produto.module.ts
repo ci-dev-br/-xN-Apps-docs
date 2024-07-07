@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Product } from "./models/product.entity";
 import { Offer } from "./models/offer.entity";
-import { TenantModule } from "src/tenant/tenant.module";
+import { TenantModule } from "@ci/tenant/tenant.module";
 import { INPIModule } from "src/inpi/inpi.module";
 import { ProductController } from "./controller/product.controller";
 import { ProductService } from "./service/product.service";

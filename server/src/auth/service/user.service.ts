@@ -3,7 +3,7 @@ import { User } from '../models/user.entity';
 import { ILike, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
-import { Tenant } from 'src/tenant/models/tenant.entity';
+import { Tenant } from '@ci/tenant/models/tenant.entity';
 import { lastValueFrom } from 'rxjs';
 
 @Injectable()

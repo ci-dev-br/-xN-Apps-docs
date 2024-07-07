@@ -3,7 +3,7 @@ import { Organizacao } from "./model/organizacao.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { CasdastroModule } from "src/cadastro/cadastro.module";
 import { StorageModule } from "src/storage/storage.module";
-import { TenantModule } from "src/tenant/tenant.module";
+import { TenantModule } from "@ci/tenant/tenant.module";
 import { OrganizacaoController } from "./controller/organizacao.controller";
 import { OrganizacaoService } from "./service/organizacao.service";
 import { AuthModule } from "src/auth/auth.module";

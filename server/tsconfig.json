@@ -36,6 +36,12 @@
       ],
       "@ci/manager/*": [
         "libs/manager/src/*"
+      ],
+      "@ci/tenant": [
+        "libs/tenant/src"
+      ],
+      "@ci/tenant/*": [
+        "libs/tenant/src/*"
       ]
     }
   }

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Column, CreateDateColumn, Entity, Equal, FindOneOptions, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, IsNull, JoinColumn, JoinTable, ManyToMany, ManyToOne, Not, OneToOne, PrimaryGeneratedColumn, Repository, UpdateDateColumn } from "typeorm";
-import { Tenant } from "src/tenant/models/tenant.entity";
+import { Tenant } from "@ci/tenant/models/tenant.entity";
 
 import { createHash } from 'crypto';
 // import { AccessCredential } from "src/auth/models/user-credential.entity";
