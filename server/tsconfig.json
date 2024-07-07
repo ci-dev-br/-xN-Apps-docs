@@ -90,6 +90,12 @@
       ],
       "@ci/estoque/*": [
         "libs/estoque/src/*"
+      ],
+      "@ci/fiscal": [
+        "libs/fiscal/src"
+      ],
+      "@ci/fiscal/*": [
+        "libs/fiscal/src/*"
       ]
     }
   }

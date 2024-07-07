@@ -15,3 +15,7 @@ export const FiscalEntities = [
     ],
 })
 export class FiscalModule { }
+export {
+    Document,
+    Attachment,
+}

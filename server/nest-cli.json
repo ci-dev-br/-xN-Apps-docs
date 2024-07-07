@@ -114,6 +114,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/estoque/tsconfig.lib.json"
       }
+    },
+    "fiscal": {
+      "type": "library",
+      "root": "libs/fiscal",
+      "entryFile": "index",
+      "sourceRoot": "libs/fiscal/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/fiscal/tsconfig.lib.json"
+      }
     }
   }
 }

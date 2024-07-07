@@ -99,7 +99,8 @@
       "^@ci/espazio(|/.*)$": "<rootDir>/libs/espazio/src/$1",
       "^@ci/farmacia(|/.*)$": "<rootDir>/libs/farmacia/src/$1",
       "^@ci/financeiro(|/.*)$": "<rootDir>/libs/financeiro/src/$1",
-      "^@ci/estoque(|/.*)$": "<rootDir>/libs/estoque/src/$1"
+      "^@ci/estoque(|/.*)$": "<rootDir>/libs/estoque/src/$1",
+      "^@ci/fiscal(|/.*)$": "<rootDir>/libs/fiscal/src/$1"
     }
   }
 }
