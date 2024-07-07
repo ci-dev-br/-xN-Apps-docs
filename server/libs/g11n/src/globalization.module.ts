@@ -12,3 +12,7 @@ export const GlobalizationEntities = [
     ]
 })
 export class GlobalizationModule { }
+export {
+    Currency,
+
+}
