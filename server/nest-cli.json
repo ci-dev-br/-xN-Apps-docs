@@ -105,6 +105,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/financeiro/tsconfig.lib.json"
       }
+    },
+    "estoque": {
+      "type": "library",
+      "root": "libs/estoque",
+      "entryFile": "index",
+      "sourceRoot": "libs/estoque/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/estoque/tsconfig.lib.json"
+      }
     }
   }
 }

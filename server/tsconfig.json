@@ -84,6 +84,12 @@
       ],
       "@ci/financeiro/*": [
         "libs/financeiro/src/*"
+      ],
+      "@ci/estoque": [
+        "libs/estoque/src"
+      ],
+      "@ci/estoque/*": [
+        "libs/estoque/src/*"
       ]
     }
   }
