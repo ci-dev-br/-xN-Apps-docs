@@ -213,6 +213,24 @@
       "compilerOptions": {
         "tsConfigPath": "libs/prancheta/tsconfig.lib.json"
       }
+    },
+    "storage": {
+      "type": "library",
+      "root": "libs/storage",
+      "entryFile": "index",
+      "sourceRoot": "libs/storage/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/storage/tsconfig.lib.json"
+      }
+    },
+    "prolabore": {
+      "type": "library",
+      "root": "libs/prolabore",
+      "entryFile": "index",
+      "sourceRoot": "libs/prolabore/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/prolabore/tsconfig.lib.json"
+      }
     }
   }
 }

@@ -156,6 +156,18 @@
       ],
       "@ci/prancheta/*": [
         "libs/prancheta/src/*"
+      ],
+      "@ci/storage": [
+        "libs/storage/src"
+      ],
+      "@ci/storage/*": [
+        "libs/storage/src/*"
+      ],
+      "@ci/prolabore": [
+        "libs/prolabore/src"
+      ],
+      "@ci/prolabore/*": [
+        "libs/prolabore/src/*"
       ]
     }
   }

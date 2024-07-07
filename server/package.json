@@ -110,7 +110,9 @@
       "^@ci/user(|/.*)$": "<rootDir>/libs/user/src/$1",
       "^@ci/organizacao(|/.*)$": "<rootDir>/libs/organizacao/src/$1",
       "^@ci/produto(|/.*)$": "<rootDir>/libs/produto/src/$1",
-      "^@ci/prancheta(|/.*)$": "<rootDir>/libs/prancheta/src/$1"
+      "^@ci/prancheta(|/.*)$": "<rootDir>/libs/prancheta/src/$1",
+      "^@ci/storage(|/.*)$": "<rootDir>/libs/storage/src/$1",
+      "^@ci/prolabore(|/.*)$": "<rootDir>/libs/prolabore/src/$1"
     }
   }
 }
