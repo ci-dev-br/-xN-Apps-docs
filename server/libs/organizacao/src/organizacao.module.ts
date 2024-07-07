@@ -7,11 +7,9 @@ import { TenantModule } from "@ci/tenant/tenant.module";
 import { OrganizacaoController } from "./controller/organizacao.controller";
 import { OrganizacaoService } from "./service/organizacao.service";
 import { AuthModule } from "@ci/auth/auth.module";
-
 export const OrganizacaoEntities = [
     Organizacao,
 ];
-
 @Module({
     imports: [
         TypeOrmModule.forFeature([
@@ -30,3 +28,6 @@ export const OrganizacaoEntities = [
     ]
 })
 export class OrganizacaoModule { }
+export {
+    Organizacao,
+}
