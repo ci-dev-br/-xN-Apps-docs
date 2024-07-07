@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { CadastroBase, IDynamicForm } from "../CadastroBase";
-import { L } from "src/globalization/default";
+import { L } from "@ci/g11n/default";
 
 /**
  * Cadastramento de Pessoa Física e Jurídica
