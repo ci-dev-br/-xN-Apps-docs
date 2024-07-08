@@ -7,7 +7,7 @@
     <button mat-button routerLink="/prancheta" routerLinkActive="ativo">
         Dashboard
     </button>
-    <button mat-button routerLink="/blog"  routerLinkActive="ativo">
+    <button mat-button routerLink="/blog" routerLinkActive="ativo">
         Blog
     </button>
     <mat-form-field appearance="outline" #pesquisaField>
@@ -23,7 +23,7 @@
 
     <span style="flex: auto;"></span>
     <button mat-button [matMenuTriggerFor]="userMenu">
-        {{(user | async)?.fullName || (user | async)?.username || (user | async)?.email }}
+        {{(user | async)?.username}}
     </button>
     <mat-menu #userMenu>
         <button mat-menu-item (click)="sair()">

@@ -7,10 +7,12 @@ import { DaoService, IChangeable } from './dao/dao.service';
 import { ServicesService } from './services/services.service';
 import { Localizacao } from './models/localozacao';
 import { DAN } from './services/dan.service';
+import { AutoScollDirective } from './directives/auto-scroll.directive';
 
 @NgModule({
   declarations: [
     AutoFocusDirective,
+    AutoScollDirective,
   ],
   imports: [
     CommonModule,
@@ -25,6 +27,7 @@ import { DAN } from './services/dan.service';
   exports: [
     CommonModule,
     AutoFocusDirective,
+    AutoScollDirective,
   ]
 })
 export class CoreModule { }
