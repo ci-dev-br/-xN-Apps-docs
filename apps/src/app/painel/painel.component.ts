@@ -34,12 +34,18 @@ import { LogoComponent } from '@ci/components';
 })
 export class PainelComponent {
   user = this.userService.user
-  apps?: any[] = APPS;
+  apps?: any[];
   constructor(
     private readonly router: Router,
     private readonly userService: UserService,
     private readonly route: ActivatedRoute,
-  ) { }
+  ) {
+    this.userService.user.subscribe(user => {
+      if (!!user) {
+        this.apps = APPS.filter(app => !!app.roles.find(role => !!user.roles?.find(r => r === role)))
+      }
+    })
+  }
 
   async appClickHandler(event: MouseEvent, app: any) {
     if (event.ctrlKey) {

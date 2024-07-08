@@ -35,7 +35,7 @@
 <!-- 
 <div class="wrapper"> -->
 <mat-drawer-container class="container">
-    <mat-drawer mode="side" opened>
+    @if(!!apps){<mat-drawer mode="side" opened>
         @for (app of apps; track $index) {
         <button mat-icon-button [matTooltip]="app.name" [matTooltipPosition]="'right'"
             (click)="appClickHandler($event, app)">
@@ -43,7 +43,7 @@
             <!-- {{app.name}} -->
         </button>
         }
-    </mat-drawer>
+    </mat-drawer>}
     <mat-drawer-content>
         <router-outlet></router-outlet>
     </mat-drawer-content>
