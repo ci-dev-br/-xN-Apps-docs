@@ -39,8 +39,8 @@ export class UserService {
     }
     async sair() {
         this.storage.clean();
+        setTimeout(() => this.router.navigate(['/']));
         this.$user.next(undefined);
-        this.router.navigate(['/']);
     }
     private async getFromMemory() {
         try {

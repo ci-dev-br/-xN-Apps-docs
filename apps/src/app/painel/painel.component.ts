@@ -57,8 +57,8 @@ export class PainelComponent {
 
   async sair() {
     this.userService.sair();
-    // setTimeout(() =>
-    //   this.router.navigate(['/'])
-    // );
+    setTimeout(() =>
+      this.router.navigate(['/'])
+    );
   }
 }
