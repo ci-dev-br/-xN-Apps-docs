@@ -5,6 +5,7 @@ import { Policy } from '../models/policy';
 import { Tenant } from '../models/tenant';
 export interface User {
   email?: string | null;
+  emailVerificado?: boolean | null;
   fullName?: string | null;
   id?: string | null;
   permission?: Array<Policy> | null;

@@ -1,3 +1,6 @@
-img{
-    user-select: none;
+img {
+    // user-select: none;
+}
+:host{
+    flex: content;
 }

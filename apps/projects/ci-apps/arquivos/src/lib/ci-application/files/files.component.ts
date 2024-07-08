@@ -5,6 +5,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { IFile } from './i-file';
+import { FileExplorerService } from '@ci/portal-api';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'ci-files',
@@ -20,5 +22,13 @@ import { IFile } from './i-file';
   styleUrl: './files.component.scss'
 })
 export class FilesComponent {
+  constructor(
+    private readonly fileExplorer: FileExplorerService,
+  ) { }
   files?: IFile[];
+
+  async ir(endereco: string) {
+    let files = await lastValueFrom(this.fileExplorer.fileExplorerControllerReadDirectory({ body: { path: endereco } }));
+    console.log(files);
+  }
 }

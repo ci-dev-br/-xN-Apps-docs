@@ -15,6 +15,11 @@ mat-toolbar {
     flex: none;
     overflow: hidden;
 
+    background: linear-gradient(to top, rgba(#999, .0) 0%, rgba(#222, .33) 100%);
+    backdrop-filter: blur(2px);
+    box-shadow: 0px 0px 10px 10px rgba(#000, .33);
+    z-index: 1000;
+
     mat-form-field {
         margin-bottom: -20px;
         flex: auto;
@@ -49,6 +54,10 @@ mat-toolbar {
 
         }
     }
+}
+
+mat-drawer {
+    z-index: 1001;
 }
 
 .wrapper {

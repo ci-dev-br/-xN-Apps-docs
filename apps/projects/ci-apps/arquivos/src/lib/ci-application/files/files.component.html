@@ -10,6 +10,7 @@
             <button mat-icon-button>
                 <mat-icon>arrow_upward</mat-icon>
             </button>
+            <input type="text" class="navegacao"  #urlInput (keydown.enter)="ir(urlInput.value)" />
         </mat-toolbar>
         <h4>Pastas</h4>
         <div class="folders">

@@ -29,6 +29,7 @@ export { Prancheta } from './models/prancheta';
 export { PranchetaSyncPayloadDto } from './models/prancheta-sync-payload-dto';
 export { Product } from './models/product';
 export { ProductCotrollerGetInputDto } from './models/product-cotroller-get-input-dto';
+export { ReadDirectoryInput } from './models/read-directory-input';
 export { RefreshPayloadInputDto } from './models/refresh-payload-input-dto';
 export { RegistrarInputDto } from './models/registrar-input-dto';
 export { SyncPayloadDaoPessoa } from './models/sync-payload-dao-pessoa';
