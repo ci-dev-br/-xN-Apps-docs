@@ -2,5 +2,7 @@ img {
     // user-select: none;
 }
 :host{
-    flex: content;
+    flex: unset;
+    width: 150px;
+    filter: drop-shadow(0 0 10px #fff);
 }
