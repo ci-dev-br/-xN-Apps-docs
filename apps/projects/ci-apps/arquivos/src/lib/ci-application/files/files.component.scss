@@ -1,3 +1,5 @@
+$folder-size: 70px;
+
 .folders,
 .files {
     display: flex;
@@ -15,9 +17,10 @@
         justify-content: center;
 
         mat-icon {
-            width: 120px;
-            height: 120px;
-            font-size: 120px;
+            width: #{$folder-size};
+            height: #{$folder-size};
+            font-size: #{$folder-size};
+            line-height: #{$folder-size};
         }
 
         gap: 6px;
