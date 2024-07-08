@@ -5,10 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { lastValueFrom } from 'rxjs';
-import { AcessoPayload, AuthService, UserService } from '@ci/portal-api';
+import { AcessoPayload, AuthService } from '@ci/portal-api';
 import { SHA512 } from 'crypto-js';
 import { Router, RouterModule } from '@angular/router';
 import { CoreModule, StorageService } from '@ci/core';
+import { AuthModule, UserService } from '@ci/auth';
 
 @Component({
   selector: 'ci-acessar',
@@ -20,6 +21,7 @@ import { CoreModule, StorageService } from '@ci/core';
     MatButtonModule,
     ReactiveFormsModule,
     RouterModule,
+    AuthModule,
   ],
   templateUrl: './acessar.component.html',
   styleUrl: './acessar.component.scss'
@@ -132,9 +134,7 @@ export class AcessarComponent {
               user: { ...this.acesso_payload.user, photo: null }
             }
           });
-          // this.userService.identificarUsuario(this.acesso_payload.user);
-          // if (this.acesso_payload.bearer) this.token.Token = this.acesso_payload.bearer;
-          // if (this.acesso_payload.refreshToken) this.token.RefreshToken = this.acesso_payload.refreshToken;
+          this.userService.identificarUsuario(this.acesso_payload?.user);
           this.router.navigate(['/']);
         } else {
           this.snack.open('Acesso negado!', 'Ok');
