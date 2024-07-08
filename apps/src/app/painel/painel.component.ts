@@ -11,6 +11,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { APPS } from './apps/apps';
 import { AuthModule, UserService } from '@ci/auth';
+import { LogoComponent } from '@ci/components';
 @Component({
   selector: 'ci-painel',
   standalone: true,
@@ -26,17 +27,25 @@ import { AuthModule, UserService } from '@ci/auth';
     RouterModule,
     AuthModule,
     MatTooltipModule,
+    LogoComponent,
   ],
   templateUrl: './painel.component.html',
   styleUrl: './painel.component.scss'
 })
 export class PainelComponent {
-  apps?: any[] = APPS;
+  user = this.userService.user
+  apps?: any[];
   constructor(
     private readonly router: Router,
     private readonly userService: UserService,
     private readonly route: ActivatedRoute,
-  ) { }
+  ) {
+    this.userService.user.subscribe(user => {
+      if (!!user) {
+        this.apps = APPS.filter(app => !!app.roles.find(role => !!user.roles?.find(r => r === role)))
+      }
+    })
+  }
 
   async appClickHandler(event: MouseEvent, app: any) {
     if (event.ctrlKey) {
@@ -48,8 +57,8 @@ export class PainelComponent {
 
   async sair() {
     this.userService.sair();
-    // setTimeout(() =>
-    //   this.router.navigate(['/'])
-    // );
+    setTimeout(() =>
+      this.router.navigate(['/'])
+    );
   }
 }

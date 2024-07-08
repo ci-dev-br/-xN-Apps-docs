@@ -1,6 +1,6 @@
 import { Controller, Get, Req, Res } from '@nestjs/common';
 import { AppService } from './app.service';
-import { Public } from './auth/decorators/public.decorator';
+import { Public } from '../libs/auth/src/decorators/public.decorator';
 import { Request, Response } from 'express';
 import { resolve } from 'path';
 

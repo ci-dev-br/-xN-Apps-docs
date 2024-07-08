@@ -1,10 +1,10 @@
 /* tslint:disable */
 /* eslint-disable */
-import { ChaveAcesso } from '../models/chave-acesso';
 import { DocumentoIdentificacao } from '../models/documento-identificacao';
 export interface Pessoa {
   createdAt?: string | null;
-  createdBy?: ChaveAcesso | null;
+  createdBy?: {
+} | null;
   documentos?: Array<DocumentoIdentificacao> | null;
   emailPessoal?: string | null;
   empresa?: string | null;
@@ -12,7 +12,8 @@ export interface Pessoa {
   informacoesContato?: Array<string> | null;
   internalId?: string | null;
   lastModifiedAt?: string | null;
-  lastModifiedBy?: ChaveAcesso | null;
+  lastModifiedBy?: {
+} | null;
 
   /**
    * Nome

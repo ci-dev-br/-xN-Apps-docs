@@ -63,8 +63,8 @@
         "changelog.md": true,
         ".gitignore": true,
         "**/*.log": true,
-        "**/.gitignore": true,
-        "**/.env": true,
+        "**/.gitignore": false,
+        "**/.env": false,
         "**/*.dev": true,
         "**/.prettierrc": true,
         "**/*.md": true,
@@ -79,7 +79,8 @@
         ".editorconfig": true,
         "**/.editorconfig": true,
         "**/.angular": true,
-        "**/dist": true
+        "**/dist": true,
+        "client": false
     },
     "explorerExclude.backup": {},
 }

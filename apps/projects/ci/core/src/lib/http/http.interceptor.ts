@@ -43,22 +43,23 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         if (error?.status === 401) {
             let user: { authentication: { bearer: string, refreshToken: string } } = this.storage.restore('apps.ci.dev.br.store.User');
             user;
-            return this.auth.refresh({
-                body: {
-                    refreshToken: user.authentication.refreshToken
-                }
-            }).pipe(
-                switchMap((token: { authorization: string }) => {
-                    this.refreshing = false;
-                    user.authentication.bearer = token.authorization;
-                    this.storage.store('apps.ci.dev.br.store.User', user);
-                    return next.handle(this.addTokenHeader(request));
-                }), catchError(error => {
-                    return throwError(error);
-                })
-            )
-        } else {
-            return throwError(error);
-        }
+            if (!!user?.authentication?.refreshToken)
+                return this.auth.refresh({
+                    body: {
+                        refreshToken: user.authentication.refreshToken
+                    }
+                }).pipe(
+                    switchMap((token: { authorization: string }) => {
+                        this.refreshing = false;
+                        user.authentication.bearer = token.authorization;
+                        this.storage.store('apps.ci.dev.br.store.User', user);
+                        return next.handle(this.addTokenHeader(request));
+                    }), catchError(error => {
+                        return throwError(error);
+                    })
+                )
+            
+        } 
+        return throwError(error);
     }
 }

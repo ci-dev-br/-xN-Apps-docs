@@ -1,1 +1,7 @@
-<p>home works!</p>
+<div class="apps">
+    @for (item of items; track $index) {
+    <div class="aplicativo">
+        @if(!!item.titulo){<div class="titulo">{{item.titulo}}</div>}
+    </div>
+    }
+</div>

@@ -15,11 +15,35 @@ mat-toolbar {
     flex: none;
     overflow: hidden;
 
+    background: linear-gradient(to top, rgba(#dfdfdf, .77) 0%, rgba(#b8b8b8, .22) 44%, rgba(#646464, .22) 44%, rgba(#ffffff, .44) 100%);
+    backdrop-filter: blur(2px);
+    box-shadow: 0px 0px 10px 10px rgba(#000, .33);
+    z-index: 1000;
+
+    * {
+        mix-blend-mode: luminosity;
+    }
+
     mat-form-field {
         margin-bottom: -20px;
         flex: auto;
 
         ::ng-deep {
+
+            .mdc-floating-label[ng-reflect-floating=true] {
+                // box-shadow: 0 0 0 6px #ffffff;
+                //   text-shadow: ;
+                // filter: drop-shadow(0 0 5px #fff);
+                background: radial-gradient(#ffffff 0%, rgba(#ffffff, .0) 75%);
+                // border-radius: 15px;
+                // padding: 6px;
+            }
+
+            .mdc-text-field {
+                background: rgba(#ffffff, .22);
+                box-shadow: inset 0 0 12px #ffffff;
+                border-radius: 6px;
+            }
 
             label {
                 --mat-form-field-container-height: #{$size};
@@ -51,6 +75,10 @@ mat-toolbar {
     }
 }
 
+mat-drawer {
+    z-index: 1001;
+}
+
 .wrapper {
     flex: auto;
 
@@ -75,4 +103,9 @@ mat-toolbar {
         justify-content: stretch;
         overflow: auto;
     }
+}
+
+.ativo {
+    background-color: rgba(#222, .70);
+    color: white !important;
 }

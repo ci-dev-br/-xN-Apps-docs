@@ -73,6 +73,7 @@
               "buildTarget": "apps:build:production"
             },
             "development": {
+              "host": "apps.ci.dev.br",
               "buildTarget": "apps:build:development"
             }
           },
@@ -1020,6 +1021,39 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/ci/organizacao/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci-apps/blog": {
+      "projectType": "library",
+      "root": "projects/ci-apps/blog",
+      "sourceRoot": "projects/ci-apps/blog/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/blog/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/blog/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/blog/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/blog/tsconfig.spec.json",
             "polyfills": [
               "zone.js",
               "zone.js/testing"

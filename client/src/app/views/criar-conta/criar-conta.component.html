@@ -1,44 +1,24 @@
 <ci-l-nav></ci-l-nav>
 <header>
-  <form [formGroup]="form">
+  <form [formGroup]="form" (ngSubmit)="submit()">
     <h1>Crie sua conta para acesso</h1>
     <mat-form-field>
-      <input
-        matInput
-        type="text"
-        placeholder="Identificação"
-        formControlName="identificacao"
-      />
+      <input matInput type="text" placeholder="Identificação" formControlName="identificacao" />
       <mat-icon matPrefix>person</mat-icon>
     </mat-form-field>
     <mat-form-field>
-      <input
-        matInput
-        type="text"
-        placeholder="E-mail"
-        formControlName="email"
-      />
+      <input matInput type="text" placeholder="E-mail" formControlName="email" />
       <mat-icon matPrefix>email</mat-icon>
     </mat-form-field>
     <mat-form-field>
-      <input
-        matInput
-        type="text"
-        placeholder="Celular (Receber SMS)"
-        formControlName="phone"
-      />
+      <input matInput type="text" placeholder="Celular (Receber SMS)" formControlName="phone" />
       <mat-icon matPrefix>phone</mat-icon>
     </mat-form-field>
     <mat-form-field>
-      <input
-        matInput
-        type="password"
-        placeholder="Senha"
-        formControlName="password"
-      />
+      <input matInput type="password" placeholder="Senha" formControlName="password" />
       <mat-icon matPrefix>password</mat-icon>
     </mat-form-field>
-    <button mat-raised-button color="primary" (click)="criarConta()">
+    <button mat-raised-button color="primary" type="submit">
       Criar conta
     </button>
     <a routerLink="/acessar"> Já possui uma conta? Acessar conta</a>

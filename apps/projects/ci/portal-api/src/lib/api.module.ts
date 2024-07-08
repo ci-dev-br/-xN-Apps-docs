@@ -14,6 +14,7 @@ import { ProductService } from './services/product.service';
 import { PranchetaService } from './services/prancheta.service';
 import { UserService } from './services/user.service';
 import { PhotoService } from './services/photo.service';
+import { FileExplorerService } from './services/file-explorer.service';
 import { CadastroService } from './services/cadastro.service';
 import { PessoaService } from './services/pessoa.service';
 import { OrganizacaoService } from './services/organizacao.service';
@@ -36,6 +37,7 @@ import { OrganizacaoService } from './services/organizacao.service';
     PranchetaService,
     UserService,
     PhotoService,
+    FileExplorerService,
     CadastroService,
     PessoaService,
     OrganizacaoService,

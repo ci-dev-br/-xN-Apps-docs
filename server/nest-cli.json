@@ -3,6 +3,234 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true
+  },
+  "projects": {
+    "seo-marketing": {
+      "type": "library",
+      "root": "libs/seo-marketing",
+      "entryFile": "index",
+      "sourceRoot": "libs/seo-marketing/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/seo-marketing/tsconfig.lib.json"
+      }
+    },
+    "core": {
+      "type": "library",
+      "root": "libs/core",
+      "entryFile": "index",
+      "sourceRoot": "libs/core/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/core/tsconfig.lib.json"
+      }
+    },
+    "manager": {
+      "type": "library",
+      "root": "libs/manager",
+      "entryFile": "index",
+      "sourceRoot": "libs/manager/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/manager/tsconfig.lib.json"
+      }
+    },
+    "tenant": {
+      "type": "library",
+      "root": "libs/tenant",
+      "entryFile": "index",
+      "sourceRoot": "libs/tenant/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/tenant/tsconfig.lib.json"
+      }
+    },
+    "auth": {
+      "type": "library",
+      "root": "libs/auth",
+      "entryFile": "index",
+      "sourceRoot": "libs/auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/auth/tsconfig.lib.json"
+      }
+    },
+    "cadastro": {
+      "type": "library",
+      "root": "libs/cadastro",
+      "entryFile": "index",
+      "sourceRoot": "libs/cadastro/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/cadastro/tsconfig.lib.json"
+      }
+    },
+    "cms": {
+      "type": "library",
+      "root": "libs/cms",
+      "entryFile": "index",
+      "sourceRoot": "libs/cms/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/cms/tsconfig.lib.json"
+      }
+    },
+    "codex": {
+      "type": "library",
+      "root": "libs/codex",
+      "entryFile": "index",
+      "sourceRoot": "libs/codex/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/codex/tsconfig.lib.json"
+      }
+    },
+    "espazio": {
+      "type": "library",
+      "root": "libs/espazio",
+      "entryFile": "index",
+      "sourceRoot": "libs/espazio/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/espazio/tsconfig.lib.json"
+      }
+    },
+    "farmacia": {
+      "type": "library",
+      "root": "libs/farmacia",
+      "entryFile": "index",
+      "sourceRoot": "libs/farmacia/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/farmacia/tsconfig.lib.json"
+      }
+    },
+    "financeiro": {
+      "type": "library",
+      "root": "libs/financeiro",
+      "entryFile": "index",
+      "sourceRoot": "libs/financeiro/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/financeiro/tsconfig.lib.json"
+      }
+    },
+    "estoque": {
+      "type": "library",
+      "root": "libs/estoque",
+      "entryFile": "index",
+      "sourceRoot": "libs/estoque/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/estoque/tsconfig.lib.json"
+      }
+    },
+    "fiscal": {
+      "type": "library",
+      "root": "libs/fiscal",
+      "entryFile": "index",
+      "sourceRoot": "libs/fiscal/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/fiscal/tsconfig.lib.json"
+      }
+    },
+    "g11n": {
+      "type": "library",
+      "root": "libs/g11n",
+      "entryFile": "index",
+      "sourceRoot": "libs/g11n/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/g11n/tsconfig.lib.json"
+      }
+    },
+    "icons": {
+      "type": "library",
+      "root": "libs/icons",
+      "entryFile": "index",
+      "sourceRoot": "libs/icons/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/icons/tsconfig.lib.json"
+      }
+    },
+    "inpi": {
+      "type": "library",
+      "root": "libs/inpi",
+      "entryFile": "index",
+      "sourceRoot": "libs/inpi/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/inpi/tsconfig.lib.json"
+      }
+    },
+    "messager": {
+      "type": "library",
+      "root": "libs/messager",
+      "entryFile": "index",
+      "sourceRoot": "libs/messager/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/messager/tsconfig.lib.json"
+      }
+    },
+    "notification": {
+      "type": "library",
+      "root": "libs/notification",
+      "entryFile": "index",
+      "sourceRoot": "libs/notification/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/notification/tsconfig.lib.json"
+      }
+    },
+    "payment": {
+      "type": "library",
+      "root": "libs/payment",
+      "entryFile": "index",
+      "sourceRoot": "libs/payment/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/payment/tsconfig.lib.json"
+      }
+    },
+    "user": {
+      "type": "library",
+      "root": "libs/user",
+      "entryFile": "index",
+      "sourceRoot": "libs/user/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/user/tsconfig.lib.json"
+      }
+    },
+    "organizacao": {
+      "type": "library",
+      "root": "libs/organizacao",
+      "entryFile": "index",
+      "sourceRoot": "libs/organizacao/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/organizacao/tsconfig.lib.json"
+      }
+    },
+    "produto": {
+      "type": "library",
+      "root": "libs/produto",
+      "entryFile": "index",
+      "sourceRoot": "libs/produto/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/produto/tsconfig.lib.json"
+      }
+    },
+    "prancheta": {
+      "type": "library",
+      "root": "libs/prancheta",
+      "entryFile": "index",
+      "sourceRoot": "libs/prancheta/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/prancheta/tsconfig.lib.json"
+      }
+    },
+    "storage": {
+      "type": "library",
+      "root": "libs/storage",
+      "entryFile": "index",
+      "sourceRoot": "libs/storage/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/storage/tsconfig.lib.json"
+      }
+    },
+    "prolabore": {
+      "type": "library",
+      "root": "libs/prolabore",
+      "entryFile": "index",
+      "sourceRoot": "libs/prolabore/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/prolabore/tsconfig.lib.json"
+      }
+    }
   }
 }

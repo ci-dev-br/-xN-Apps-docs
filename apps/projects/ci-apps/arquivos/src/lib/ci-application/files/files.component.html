@@ -7,16 +7,24 @@
             <button mat-icon-button>
                 <mat-icon>arrow_forward</mat-icon>
             </button>
-            <button mat-icon-button>
+            <button mat-icon-button (click)="voltar()" >
                 <mat-icon>arrow_upward</mat-icon>
             </button>
+            <input type="text" class="navegacao" #urlInput [(ngModel)]="endereco"
+                (keydown.enter)="ir(urlInput.value)" />
         </mat-toolbar>
         <h4>Pastas</h4>
         <div class="folders">
-            <div class="folder">
+            @for (file of files; track $index) {
+            <div class="folder" (click)="file.info ? ir(file.info.path + '/' + file.name) : null">
+                <mat-icon>{{file.icon}}</mat-icon>
+                {{file.name}}
+            </div>
+            }
+            <!-- <div class="folder">
                 <mat-icon>folder</mat-icon>
                 Minhas fotos de Perfil
-            </div>
+            </div> -->
         </div>
         <h4>Arquivos</h4>
         <div class="files">

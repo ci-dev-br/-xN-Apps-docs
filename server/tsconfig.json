@@ -17,6 +17,158 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@ci/seo-marketing": [
+        "libs/seo-marketing/src"
+      ],
+      "@ci/seo-marketing/*": [
+        "libs/seo-marketing/src/*"
+      ],
+      "@ci/core": [
+        "libs/core/src"
+      ],
+      "@ci/core/*": [
+        "libs/core/src/*"
+      ],
+      "@ci/manager": [
+        "libs/manager/src"
+      ],
+      "@ci/manager/*": [
+        "libs/manager/src/*"
+      ],
+      "@ci/tenant": [
+        "libs/tenant/src"
+      ],
+      "@ci/tenant/*": [
+        "libs/tenant/src/*"
+      ],
+      "@ci/auth": [
+        "libs/auth/src"
+      ],
+      "@ci/auth/*": [
+        "libs/auth/src/*"
+      ],
+      "@ci/cadastro": [
+        "libs/cadastro/src"
+      ],
+      "@ci/cadastro/*": [
+        "libs/cadastro/src/*"
+      ],
+      "@ci/cms": [
+        "libs/cms/src"
+      ],
+      "@ci/cms/*": [
+        "libs/cms/src/*"
+      ],
+      "@ci/codex": [
+        "libs/codex/src"
+      ],
+      "@ci/codex/*": [
+        "libs/codex/src/*"
+      ],
+      "@ci/espazio": [
+        "libs/espazio/src"
+      ],
+      "@ci/espazio/*": [
+        "libs/espazio/src/*"
+      ],
+      "@ci/farmacia": [
+        "libs/farmacia/src"
+      ],
+      "@ci/farmacia/*": [
+        "libs/farmacia/src/*"
+      ],
+      "@ci/financeiro": [
+        "libs/financeiro/src"
+      ],
+      "@ci/financeiro/*": [
+        "libs/financeiro/src/*"
+      ],
+      "@ci/estoque": [
+        "libs/estoque/src"
+      ],
+      "@ci/estoque/*": [
+        "libs/estoque/src/*"
+      ],
+      "@ci/fiscal": [
+        "libs/fiscal/src"
+      ],
+      "@ci/fiscal/*": [
+        "libs/fiscal/src/*"
+      ],
+      "@ci/g11n": [
+        "libs/g11n/src"
+      ],
+      "@ci/g11n/*": [
+        "libs/g11n/src/*"
+      ],
+      "@ci/icons": [
+        "libs/icons/src"
+      ],
+      "@ci/icons/*": [
+        "libs/icons/src/*"
+      ],
+      "@ci/inpi": [
+        "libs/inpi/src"
+      ],
+      "@ci/inpi/*": [
+        "libs/inpi/src/*"
+      ],
+      "@ci/messager": [
+        "libs/messager/src"
+      ],
+      "@ci/messager/*": [
+        "libs/messager/src/*"
+      ],
+      "@ci/notification": [
+        "libs/notification/src"
+      ],
+      "@ci/notification/*": [
+        "libs/notification/src/*"
+      ],
+      "@ci/payment": [
+        "libs/payment/src"
+      ],
+      "@ci/payment/*": [
+        "libs/payment/src/*"
+      ],
+      "@ci/user": [
+        "libs/user/src"
+      ],
+      "@ci/user/*": [
+        "libs/user/src/*"
+      ],
+      "@ci/organizacao": [
+        "libs/organizacao/src"
+      ],
+      "@ci/organizacao/*": [
+        "libs/organizacao/src/*"
+      ],
+      "@ci/produto": [
+        "libs/produto/src"
+      ],
+      "@ci/produto/*": [
+        "libs/produto/src/*"
+      ],
+      "@ci/prancheta": [
+        "libs/prancheta/src"
+      ],
+      "@ci/prancheta/*": [
+        "libs/prancheta/src/*"
+      ],
+      "@ci/storage": [
+        "libs/storage/src"
+      ],
+      "@ci/storage/*": [
+        "libs/storage/src/*"
+      ],
+      "@ci/prolabore": [
+        "libs/prolabore/src"
+      ],
+      "@ci/prolabore/*": [
+        "libs/prolabore/src/*"
+      ]
+    }
   }
 }

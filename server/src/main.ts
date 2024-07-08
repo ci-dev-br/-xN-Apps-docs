@@ -7,7 +7,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
 import { config } from 'dotenv';
 import { spawnSync } from 'child_process';
-import { LoggingInterceptor } from './core/logging.interceptor';
+import { LoggingInterceptor } from '../libs/core/src/logging.interceptor';
 console.clear();
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
@@ -18,7 +18,9 @@ async function start(app: NestExpressApplication, port: number) {
   } catch (error) {
     if (error.code === 'EADDRINUSE') {
       console.error(error);
-      const out = spawnSync('powershell', ['Stop-Service -DisplayName apps.ci.dev.br']);
+      console.error("stop services");
+      const out = spawnSync('powershell', ['Stop-Service', 'apps.ci.dev.br']);
+      console.log(out.error)
       await start(app, port);
     }
   }
@@ -39,9 +41,10 @@ async function bootstrap() {
       await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
     origin: is_production ? [] : [
-      'http://localhost:4293',
-      'http://localhost:4200',
-      'http://192.168.0.119:99',
+      'http://apps.ci.dev.br:4200',
+      // 'http://localhost:4200',
+      // 'http://localhost:4000',
+      // 'http://192.168.0.119:99',
     ]
   });
   app.useGlobalInterceptors(new LoggingInterceptor());

@@ -1,16 +1,17 @@
 /* tslint:disable */
 /* eslint-disable */
-import { ChaveAcesso } from '../models/chave-acesso';
 import { Pessoa } from '../models/pessoa';
 import { Photo } from '../models/photo';
 import { Tenant } from '../models/tenant';
 export interface Organizacao {
   cadastroPessoa?: Pessoa | null;
   createdAt?: string | null;
-  createdBy?: ChaveAcesso | null;
+  createdBy?: {
+} | null;
   internalId?: string | null;
   lastModifiedAt?: string | null;
-  lastModifiedBy?: ChaveAcesso | null;
+  lastModifiedBy?: {
+} | null;
 
   /**
    * Logomarca da Organização

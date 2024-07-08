@@ -1,16 +1,15 @@
-import { Injectable, OnInit } from "@angular/core";
-import { AuthService, User, UserService as UserApiService } from "@ci/portal-api";
+import { Injectable } from "@angular/core";
+import { AuthService, User } from "@ci/portal-api";
 import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
 import { StorageService } from "@ci/core";
 
 @Injectable()
 export class UserService {
-    private $user = new BehaviorSubject<User | undefined>(this.getFromMemory());
+    private $user = new BehaviorSubject<User | undefined>(undefined);
     constructor(
         private readonly router: Router,
         private readonly storage: StorageService,
-        private readonly userApiService: UserApiService,
         private readonly authService: AuthService,
     ) {
         this.$user.subscribe(v => {
@@ -24,14 +23,15 @@ export class UserService {
                 } else {
                     try {
                         localStorage.removeItem('CIUSR');
-                        router.navigate(['/']);
+                        // router.navigate(['/']);
                     } catch (error) {
                     }
                 }
             } catch (error) {
                 console.error(error);
             }
-        })
+        });
+        (async () => await this.getFromMemory())();
     }
     get user() { return this.$user; }
     async identificarUsuario(user: User) {
@@ -39,23 +39,17 @@ export class UserService {
     }
     async sair() {
         this.storage.clean();
+        setTimeout(() => this.router.navigate(['/']));
         this.$user.next(undefined);
     }
-    private getFromMemory() {
-        let cached = undefined;
+    private async getFromMemory() {
         try {
-            cached = localStorage.getItem('CIUSR');
+            let profile = await lastValueFrom(this.authService.profile());
+            this.$user.next(profile);
+            return profile;
         } catch (error) {
+            this.router.navigate(['/']);
         }
-        if (cached) {
-            setTimeout(async () => {
-                this.$user.next(await lastValueFrom(
-                    this.authService.profile()
-                ));
-            }, 0);
-            return {
-                ...JSON.parse(atob(cached))
-            } as User;
-        } return undefined;
+        return undefined;
     }
 }
