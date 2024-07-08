@@ -31,7 +31,7 @@ export class UserService {
                 console.error(error);
             }
         });
-        (async () => this.$user.next(await this.getFromMemory()))();
+        (async () => await this.getFromMemory())();
     }
     get user() { return this.$user; }
     async identificarUsuario(user: User) {
@@ -43,7 +43,13 @@ export class UserService {
         this.router.navigate(['/']);
     }
     private async getFromMemory() {
-        let profile = await lastValueFrom(this.authService.profile());
-        return profile;
+        try {
+            let profile = await lastValueFrom(this.authService.profile());
+            this.$user.next(profile);
+            return profile;
+        } catch (error) {
+            this.router.navigate(['/']);
+        }
+        return undefined;
     }
 }
