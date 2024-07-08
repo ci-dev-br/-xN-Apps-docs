@@ -11,6 +11,7 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { fileExplorerControllerReadDirectory } from '../fn/file-explorer/file-explorer-controller-read-directory';
 import { FileExplorerControllerReadDirectory$Params } from '../fn/file-explorer/file-explorer-controller-read-directory';
+import { ReadDirectoryOutput } from '../models/read-directory-output';
 
 @Injectable({ providedIn: 'root' })
 export class FileExplorerService extends BaseService {
@@ -27,7 +28,7 @@ export class FileExplorerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  fileExplorerControllerReadDirectory$Response(params: FileExplorerControllerReadDirectory$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  fileExplorerControllerReadDirectory$Response(params: FileExplorerControllerReadDirectory$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<ReadDirectoryOutput>>> {
     return fileExplorerControllerReadDirectory(this.http, this.rootUrl, params, context);
   }
 
@@ -37,9 +38,9 @@ export class FileExplorerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  fileExplorerControllerReadDirectory(params: FileExplorerControllerReadDirectory$Params, context?: HttpContext): Observable<void> {
+  fileExplorerControllerReadDirectory(params: FileExplorerControllerReadDirectory$Params, context?: HttpContext): Observable<Array<ReadDirectoryOutput>> {
     return this.fileExplorerControllerReadDirectory$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<Array<ReadDirectoryOutput>>): Array<ReadDirectoryOutput> => r.body)
     );
   }
 

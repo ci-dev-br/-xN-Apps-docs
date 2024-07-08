@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { IFile } from './i-file';
 import { FileExplorerService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'ci-files',
@@ -17,18 +18,33 @@ import { lastValueFrom } from 'rxjs';
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
+    FormsModule,
   ],
   templateUrl: './files.component.html',
   styleUrl: './files.component.scss'
 })
 export class FilesComponent {
+  files?: IFile[];
   constructor(
     private readonly fileExplorer: FileExplorerService,
   ) { }
-  files?: IFile[];
+  endereco?: string;
 
   async ir(endereco: string) {
-    let files = await lastValueFrom(this.fileExplorer.fileExplorerControllerReadDirectory({ body: { path: endereco } }));
-    console.log(files);
+    this.endereco = endereco;
+    let files = (await lastValueFrom(this.fileExplorer.fileExplorerControllerReadDirectory({ body: { path: endereco } })));
+    if (!!files)
+      this.files = files.map(f => {
+        return {
+          icon: f.isDirectory ? 'folder' : f.isFile ? 'draft' : 'unknown_document',
+          name: f.name || 'UNKNOWN',
+          info: f
+        }
+      })
+  }
+  async voltar() {
+    let r = this.endereco?.replaceAll('\\', '/').split('/');
+    r?.pop();
+    this.ir(r?.join('/') || './')
   }
 }
