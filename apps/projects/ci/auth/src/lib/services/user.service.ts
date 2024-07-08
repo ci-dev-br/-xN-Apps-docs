@@ -23,7 +23,7 @@ export class UserService {
                 } else {
                     try {
                         localStorage.removeItem('CIUSR');
-                        router.navigate(['/']);
+                        // router.navigate(['/']);
                     } catch (error) {
                     }
                 }
@@ -40,6 +40,7 @@ export class UserService {
     async sair() {
         this.storage.clean();
         this.$user.next(undefined);
+        this.router.navigate(['/']);
     }
     private async getFromMemory() {
         let profile = await lastValueFrom(this.authService.profile());

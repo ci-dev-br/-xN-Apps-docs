@@ -58,7 +58,8 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                         return throwError(error);
                     })
                 )
-        }
+            
+        } 
         return throwError(error);
     }
 }

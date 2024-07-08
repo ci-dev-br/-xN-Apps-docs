@@ -32,7 +32,7 @@ export class AppsComponent implements OnInit {
         this.apps = APPS.filter(app => !!this.userService && !!this.userService.user && !!this.userService.user.value ?
           this.userService.user?.value?.roles?.find(role => app.roles.indexOf(role) > -1) : false);
       } else {
-        this.router.navigate(['/']);
+        // this.router.navigate(['/']);
       }
     })
   }

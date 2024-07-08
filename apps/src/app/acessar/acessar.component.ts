@@ -135,7 +135,7 @@ export class AcessarComponent {
             }
           });
           this.userService.identificarUsuario(this.acesso_payload?.user);
-          this.router.navigate(['/']);
+          setTimeout(() => this.router.navigate(['/']));
         } else {
           this.snack.open('Acesso negado!', 'Ok');
         }
