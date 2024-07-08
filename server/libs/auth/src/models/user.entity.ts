@@ -23,7 +23,7 @@ export class User {
     @Column({ nullable: true, unique: true })
     @ApiProperty({ required: false, nullable: true })
     email?: string;
-    @Column({ nullable: true, unique: true, default: false })
+    @Column({ nullable: true, default: false })
     @ApiProperty({ required: false, nullable: true })
     emailVerificado?: boolean;
     @Column({ nullable: true })
