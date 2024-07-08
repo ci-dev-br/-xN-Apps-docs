@@ -24,7 +24,7 @@ export class CriarContaComponent {
     this.form.markAllAsTouched();
     return false;
   }
-  async criarConta() {
+  async submit() {
     if (!this.validar()) return;
     const user = await lastValueFrom(this.authService.registrar({ body: { ...this.form.getRawValue() } }));
     console.log(user);

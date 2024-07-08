@@ -1,20 +1,24 @@
 <header>
-    <form>
+    <form [formGroup]="form" (ngSubmit)="confirmar()">
         <h1>Criar conta</h1>
         <h3>ci.dev.br</h3>
         <p>Crie sua conta ci.dev.br para acessar nossos serviços.
         </p>
         <mat-form-field>
             <mat-label>Apelido</mat-label>
-            <input matInput type="text" placeholder="Apelido">
+            <input matInput type="text" placeholder="Apelido" formControlName="identificacao">
         </mat-form-field>
         <mat-form-field>
             <mat-label>E-mail</mat-label>
-            <input matInput type="text">
+            <input matInput type="text" formControlName="email">
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Celular</mat-label>
+            <input matInput type="text" formControlName="phone">
         </mat-form-field>
         <mat-form-field>
             <mat-label>Senha para acesso</mat-label>
-            <input matInput type="text">
+            <input matInput type="password" formControlName="password">
         </mat-form-field>
         <mat-checkbox>Vincular conta a uma Pessoa Física ou Jurídica</mat-checkbox>
         <mat-checkbox>Receber anúncios de parceiros de acordo com minhas preferências</mat-checkbox>

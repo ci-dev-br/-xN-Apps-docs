@@ -4,3 +4,9 @@
     flex: auto;
     overflow: auto;
 }
+
+mat-toolbar {
+    * {
+        flex: none;
+    }
+}

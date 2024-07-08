@@ -9,21 +9,21 @@ export class AutoScollDirective {
     }
     @Input('auto-scroll')
     public set autoScroll(value: string | undefined) {
+        if (this._autoScroll === value) return;
         this._autoScroll = value;
-
-        if (this.element.nativeElement) {
-            this.element.nativeElement.onmousemove = (event: MouseEvent) => {
-                if (this._autoScroll === 'horizontal')
-                    this.element.nativeElement.scrollLeft = event.clientX;
-            }
-        }
     }
+    
 
     constructor(
         @Optional() private readonly element: ElementRef<HTMLElement>,
-        // @Optional() private readonly component: ComponentRef<any>,
     ) {
-        // component = component;
-        // element = element;
+        this.element.nativeElement.onmousemove = (event: MouseEvent) => {
+            if (this._autoScroll === 'horizontal') {
+                let pos = 0;
+
+                this.element.nativeElement.scrollLeft = pos;//event.clientX - this.element.nativeElement.getBoundingClientRect().left;
+            }
+        }
+        this.element.nativeElement.style.overflowX = 'hidden';
     }
 }
