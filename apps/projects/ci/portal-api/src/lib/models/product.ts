@@ -1,17 +1,18 @@
 /* tslint:disable */
 /* eslint-disable */
-import { ChaveAcesso } from '../models/chave-acesso';
 import { Marca } from '../models/marca';
 export interface Product {
   codigoBarras?: string | null;
   codigoFabricanete?: string | null;
   createdAt?: string | null;
-  createdBy?: ChaveAcesso | null;
+  createdBy?: {
+} | null;
   description?: string | null;
   gtin?: string | null;
   internalId?: string | null;
   lastModifiedAt?: string | null;
-  lastModifiedBy?: ChaveAcesso | null;
+  lastModifiedBy?: {
+} | null;
   marca?: Marca | null;
   nossoCodigo?: string | null;
   shortDescription?: string | null;

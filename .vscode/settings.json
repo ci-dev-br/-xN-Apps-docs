@@ -80,7 +80,7 @@
         "**/.editorconfig": true,
         "**/.angular": true,
         "**/dist": true,
-        "client": true
+        "client": false
     },
     "explorerExclude.backup": {},
 }

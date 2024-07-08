@@ -6,7 +6,6 @@ export { AuthorizationOutput } from './models/authorization-output';
 export { Buffer } from './models/buffer';
 export { Card } from './models/card';
 export { CardOption } from './models/card-option';
-export { ChaveAcesso } from './models/chave-acesso';
 export { CpuInfo } from './models/cpu-info';
 export { DevicePayload } from './models/device-payload';
 export { DocumentoIdentificacao } from './models/documento-identificacao';

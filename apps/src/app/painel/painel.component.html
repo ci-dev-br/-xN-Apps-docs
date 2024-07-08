@@ -23,7 +23,7 @@
 
     <span style="flex: auto;"></span>
     <button mat-button [matMenuTriggerFor]="userMenu">
-        Plhx.
+        {{(user | async)?.fullName || (user | async)?.username || (user | async)?.email }}
     </button>
     <mat-menu #userMenu>
         <button mat-menu-item (click)="sair()">

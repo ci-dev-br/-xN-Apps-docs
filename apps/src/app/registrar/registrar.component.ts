@@ -21,5 +21,8 @@ import { RouterModule } from '@angular/router';
   styleUrl: './registrar.component.scss'
 })
 export class RegistrarComponent {
+  constructor(  
+    // private readonly
+  ) { }
   year = (new Date()).getFullYear();
 }

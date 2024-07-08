@@ -33,6 +33,7 @@ import { LogoComponent } from '@ci/components';
   styleUrl: './painel.component.scss'
 })
 export class PainelComponent {
+  user = this.userService.user
   apps?: any[] = APPS;
   constructor(
     private readonly router: Router,
