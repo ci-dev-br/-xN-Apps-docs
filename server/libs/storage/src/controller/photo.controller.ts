@@ -28,6 +28,7 @@ export class PhotoController {
         private readonly audt: AudtService,
     ) { }
 
+    
     @Post('Sync')
     @ApiOperation({ operationId: 'SyncPhoto' })
     @ApiResponse({

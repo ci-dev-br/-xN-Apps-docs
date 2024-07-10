@@ -45,7 +45,7 @@ export class UserService {
     private async getFromMemory() {
         try {
             let profile = await lastValueFrom(this.authService.profile());
-            this.$user.next(profile);
+            if (profile) this.$user.next(profile);
             return profile;
         } catch (error) {
             this.router.navigate(['/']);

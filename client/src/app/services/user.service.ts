@@ -25,7 +25,7 @@ export class UserService {
                 } else {
                     try {
                         localStorage.removeItem('CIUSR');
-                        router.navigate(['/']);
+                        // router.navigate(['/']);
                     } catch (error) {
                     }
                 }
@@ -50,9 +50,11 @@ export class UserService {
         }
         if (cached) {
             setTimeout(async () => {
-                this.$user.next(await lastValueFrom(
-                    this.authService.profile()
-                ));
+                try {
+                    const user = await lastValueFrom(this.authService.profile());
+                    if (user) this.$user.next(user);
+                } catch (error) {
+                }
             }, 0);
             return {
                 ...JSON.parse(atob(cached))
