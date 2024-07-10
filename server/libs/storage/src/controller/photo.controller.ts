@@ -4,6 +4,7 @@ import { PhotoService } from "../service/photo.service";
 import { Photo } from "../models/photo.entity";
 import { UserService } from "@ci/auth/auth.module";
 import { AudtService } from "@ci/core";
+import { Role } from "@ci/auth/decorators/role.decorator";
 
 export class PhotoGetPaylodInputDto {
     @ApiProperty({ nullable: true, required: false }) query: string;
@@ -19,6 +20,7 @@ export class PartPayloadDto {
     @ApiProperty({ nullable: true, required: false }) TotalParts?: number;
 }
 
+@Role('USER')
 @ApiTags('Photo')
 @Controller('Photo')
 export class PhotoController {
@@ -28,7 +30,6 @@ export class PhotoController {
         private readonly audt: AudtService,
     ) { }
 
-    
     @Post('Sync')
     @ApiOperation({ operationId: 'SyncPhoto' })
     @ApiResponse({
@@ -40,7 +41,6 @@ export class PhotoController {
         const photo = await this.photoService.Sync(this.audt.doSync(payload, req, !!payload.internalId));
         return photo
     }
-
     @Post('SendPart')
     @ApiOperation({ operationId: 'SendPartPhoto' })
     @ApiResponse({

@@ -5,12 +5,12 @@ import { ReadDirectoryInput } from "./dto/read-directory-input.dto";
 import { ReadDirectoryOutput } from "./dto/read-directory-output.dto";
 import { Role } from "@ci/auth/decorators/role.decorator";
 
+@Role('MASTER')
 @ApiTags('FileExplorer')
 @Controller('FileExplorer')
 export class FileExplorerController {
     constructor() { }
     @ApiResponse({ type: ReadDirectoryOutput, isArray: true })
-    @Role('MASTER')
     @Post('ReadDirectory')
     async readDirectory(
         @Body() input: ReadDirectoryInput,
