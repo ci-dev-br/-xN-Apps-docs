@@ -4,7 +4,7 @@ function getColor() {
 }
 
 export const APPS = [
-    { color: getColor(), url: '/Arquivos', name: 'Arquivos', roles: ['MASTER'], icon: 'home_storage' },
+    { color: getColor(), url: '/Arquivos', name: 'Arquivos', roles: ['USER', 'ADMIN', 'MASTER'], icon: 'home_storage' },
     { color: getColor(), url: '/Cadastros', name: 'Cadastros', roles: ['MASTER'], icon: 'how_to_reg' },
     { color: getColor(), url: '/Codex', name: 'Codex', roles: ['MASTER'], icon: 'code' },
     { color: getColor(), url: '/DevTools', name: 'DevTools', roles: ['MASTER'], icon: 'handyman' },
