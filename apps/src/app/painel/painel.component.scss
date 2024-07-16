@@ -15,8 +15,9 @@ mat-toolbar {
     flex: none;
     overflow: hidden;
 
-    background: linear-gradient(to top, rgba(#dfdfdf, .77) 0%, rgba(#b8b8b8, .22) 44%, rgba(#646464, .22) 44%, rgba(#ffffff, .44) 100%);
-    backdrop-filter: blur(2px);
+    // background: linear-gradient(to top, rgba(#dfdfdf, .77) 0%, rgba(#b8b8b8, .22) 44%, rgba(#646464, .22) 44%, rgba(#ffffff, .44) 100%);
+
+    // backdrop-filter: blur(2px);
     box-shadow: 0px 0px 10px 10px rgba(#000, .33);
     z-index: 1000;
 

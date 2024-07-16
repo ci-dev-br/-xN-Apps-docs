@@ -9,6 +9,7 @@ import { Server } from "./model/server.entity";
 import { DomainService } from "./service/domain.service";
 import { DomainController } from "./controller/domain.controller";
 import { CoreModule } from "@ci/core";
+import { ServerController } from "./controller";
 export const ManagerEntities = [
     Application,
     Domain,
@@ -25,6 +26,7 @@ export const ManagerEntities = [
     controllers: [
         ApplicationController,
         DomainController,
+        ServerController,
     ],
     providers: [
         ApplicationService,
