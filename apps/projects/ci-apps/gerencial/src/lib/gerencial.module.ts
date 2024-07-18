@@ -36,10 +36,10 @@ const routes: Routes = [
             role: 'MASTER',
         },
         children: [
-            { path: 'devices', component: DevicesComponent, data: { title: 'Dispositivos', icon: 'edit' } },
+            { path: 'devices', component: DevicesComponent, data: { title: 'Dispositivos', icon: 'smartphone' } },
             // { path: 'settings', component: undefined },
-            { path: 'applications', component: ApplicationManagerComponent, data: { title: 'Apps', icon: 'edit' } },
-            { path: 'user-manager', component: UsersComponent, data: { title: 'Gestão de Usuários', icon: 'edit' } },
+            { path: 'applications', component: ApplicationManagerComponent, data: { title: 'Apps', icon: 'apps' } },
+            { path: 'user-manager', component: UsersComponent, data: { title: 'Gestão de Usuários', icon: 'badge' } },
         ]
     },
     {
