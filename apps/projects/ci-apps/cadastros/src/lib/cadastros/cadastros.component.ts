@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AuthModule } from '@ci/auth';
@@ -16,6 +17,7 @@ import { firstValueFrom } from 'rxjs';
     LNavModule,
     MatIconModule,
     AuthModule,
+    MatButtonModule,
   ],
   templateUrl: './cadastros.component.html',
   styleUrls: ['./cadastros.component.scss']
