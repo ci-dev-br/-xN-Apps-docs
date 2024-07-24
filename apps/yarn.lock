@@ -2174,6 +2174,13 @@
   resolved "https://registry.npmjs.org/@msgpackr-extract/msgpackr-extract-win32-x64/-/msgpackr-extract-win32-x64-3.0.2.tgz"
   integrity sha512-O+6Gs8UeDbyFpbSh2CPEz/UOrrdWPTBYNblZK5CxxLisYt4kGX3Sc+czffFonyjiGSq3jWLwJS/CCJc7tBr4sQ==
 
+"@ng-util/monaco-editor@^18.0.0":
+  version "18.0.0"
+  resolved "https://registry.npmjs.org/@ng-util/monaco-editor/-/monaco-editor-18.0.0.tgz"
+  integrity sha512-4mGOSkqs3+ID+h2Dg/Uf2fW0hJU5/nAc/n7rJV/rVPDf439P4tVxbqRmH6ngPKsBMNJwuruL0jnIwxq8kcvYtQ==
+  dependencies:
+    tslib "^2.3.0"
+
 "@ngtools/webpack@18.0.2":
   version "18.0.2"
   resolved "https://registry.npmjs.org/@ngtools/webpack/-/webpack-18.0.2.tgz"
@@ -5263,6 +5270,11 @@ license-webpack-plugin@4.0.2:
   integrity sha512-771TFWFD70G1wLTC4oU2Cw4qvtmNrIw+wRvBtn+okgHl7slJVi7zfNcdmqDL72BojM30VNJ2UHylr1o77U37Jw==
   dependencies:
     webpack-sources "^3.0.0"
+
+lil-gui@^0.19.2:
+  version "0.19.2"
+  resolved "https://registry.npmjs.org/lil-gui/-/lil-gui-0.19.2.tgz"
+  integrity sha512-nU8j4ND702ouGfQZoaTN4dfXxacvGOAVK0DtmZBVcUYUAeYQXLQAjAN50igMHiba3T5jZyKEjXZU+Ntm1Qs6ZQ==
 
 lines-and-columns@^1.1.6:
   version "1.2.4"

@@ -1,13 +1,11 @@
 {
-  "name": "@ci-apps/imersao",
+  "name": "@ci/ilustrador",
   "version": "0.0.1",
   "peerDependencies": {
     "@angular/common": "^18.0.0",
     "@angular/core": "^18.0.0"
   },
   "dependencies": {
-    "lil-gui": "^0.19.2",
-    "stats": "^1.0.0",
     "tslib": "^2.3.0"
   },
   "sideEffects": false

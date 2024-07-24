@@ -8,6 +8,7 @@ import { ServicesService } from './services/services.service';
 import { Localizacao } from './models/localozacao';
 import { DAN } from './services/dan.service';
 import { AutoScollDirective } from './directives/auto-scroll.directive';
+import { ConsoleService } from './services/console.service';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { AutoScollDirective } from './directives/auto-scroll.directive';
     DaoService,
     ServicesService,
     DAN,
+    ConsoleService,
   ],
   exports: [
     CommonModule,

@@ -8,9 +8,13 @@ import { provideServiceWorker } from '@angular/service-worker';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AuthorizationHttpInterceptor, CoreModule, StorageService } from '@ci/core';
 import { ApiModule } from '@ci/portal-api';
+import { provideNuMonacoEditorConfig } from '@ng-util/monaco-editor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideNuMonacoEditorConfig({
+      baseUrl: `lib`,
+    }),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideClientHydration(),

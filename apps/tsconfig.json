@@ -87,6 +87,9 @@
       "@ci/data-grid": [
         "./projects/ci/data-grid"
       ],
+      "@ci/ilustrador": [
+        "./dist/ci/ilustrador"
+      ],
       "@ci/organizacao": [
         "./projects/ci/organizacao"
       ],
@@ -120,10 +123,5 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  },
-  "exclude": [
-    // "./dist/**/**",
-    // "../../",
-    // "**/**/projects/**/**"
-  ]
+  }
 }
