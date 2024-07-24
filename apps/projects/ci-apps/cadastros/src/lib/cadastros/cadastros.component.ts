@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { AuthModule } from '@ci/auth';
 import { LNavModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { CadastroService, IDynamicForm } from '@ci/portal-api';
@@ -14,6 +15,7 @@ import { firstValueFrom } from 'rxjs';
     MatToolbarModule,
     LNavModule,
     MatIconModule,
+    AuthModule,
   ],
   templateUrl: './cadastros.component.html',
   styleUrls: ['./cadastros.component.scss']
