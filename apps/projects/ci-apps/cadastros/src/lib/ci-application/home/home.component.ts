@@ -25,11 +25,11 @@ export class HomeComponent {
     // private readonly dialog: MatDialog,
     // private readonly janela: WindowService,
   ) {
-
+    
     this.abas = route.routeConfig?.children?.map(r => {
       return {
         label: (r?.data as any)?.title || r.path,
-        path: r.path,
+        path: '/' + r.path,
         icon: (r?.data as any)?.icon || undefined,
       } as { label: string, path: string, icon: string }
     }) || undefined;

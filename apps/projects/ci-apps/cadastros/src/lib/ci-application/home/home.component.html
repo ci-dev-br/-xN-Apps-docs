@@ -1,7 +1,7 @@
 <nav mat-tab-nav-bar [tabPanel]="tabPanel">
     @if(abas){
     @for (aba of abas; track aba) {
-    <a mat-tab-link [routerLink]="aba.path">
+    <a mat-tab-link [routerLink]="'./' + aba.path">
         @if(aba.icon){<mat-icon>
             {{aba.icon}}
         </mat-icon>}
