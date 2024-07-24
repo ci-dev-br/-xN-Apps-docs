@@ -35,10 +35,10 @@
 <!-- 
 <div class="wrapper"> -->
 <mat-drawer-container class="container">
-    @if(!!apps){<mat-drawer mode="side" opened>
+    @if(!!apps){<mat-drawer mode="side" opened auto-scroll="vertical" >
         @for (app of apps; track $index) {
-        <button mat-icon-button [matTooltip]="app.name" [matTooltipPosition]="'right'"
-            (click)="appClickHandler($event, app)">
+        <button mat-icon-button [matTooltip]="app.name" [matTooltipPosition]="'right'" routerLinkActive="side-ativo"
+            [routerLink]="'/' + app.url" (click)="appClickHandler($event, app)">
             @if(app.icon){<mat-icon>{{app.icon}}</mat-icon>}
             <!-- {{app.name}} -->
         </button>

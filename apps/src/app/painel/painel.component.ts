@@ -51,8 +51,9 @@ export class PainelComponent {
     if (event.ctrlKey) {
       window.open(location.href + '/' + app.url, '')
     } else {
-      this.router.navigate(['/' + app.url], { relativeTo: this.route.root });
+      this.router.navigate(['/' + app.url], { relativeTo: this.route.root })
     }
+    setTimeout(() => document.body.click(),300)
   }
 
   async sair() {

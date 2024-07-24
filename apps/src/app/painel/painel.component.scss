@@ -95,7 +95,7 @@ mat-drawer {
     overflow: auto;
     flex: auto;
 
-    --mat-sidenav-container-width: 65px;
+    --mat-sidenav-container-width: 50px;
 
     mat-drawer-content {
         display: flex;
@@ -109,4 +109,52 @@ mat-drawer {
 .ativo {
     background-color: rgba(#222, .70);
     color: white !important;
+}
+
+.side-ativo {
+    position: relative;
+
+    &::before {
+        content: " ";
+        position: absolute;
+        left: 0;
+        top: 10px;
+        bottom: 10px;
+        width: 4px;
+        border-radius: 4px;
+        background-color: var(--mdc-protected-button-label-text-color);
+    }
+}
+
+mat-drawer {
+    overflow: hidden;
+
+    ::ng-deep .mat-drawer-inner-container {
+        padding: 0px 2px;
+
+        overflow: hidden;
+
+
+    }
+
+
+    box-shadow: 0px 0px 12px rgba(0, 0, 0, .33);
+}
+
+mat-drawer-container {
+    // margin-left: 60px;
+
+
+    &::before {
+        position: absolute;
+        content: " ";
+
+        top: 0;
+        bottom: 0;
+        width: 50px;
+
+        background-color: #ffffff;
+        z-index: -1;
+    }
+
 }
