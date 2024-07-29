@@ -6,7 +6,7 @@
       "name": "ng serve",
       "type": "chrome",
       "request": "launch",
-      // "preLaunchTask": "npm: start",
+      "preLaunchTask": "npm: start",
       "url": "http://apps.ci.dev.br:4200/"
     },
     {

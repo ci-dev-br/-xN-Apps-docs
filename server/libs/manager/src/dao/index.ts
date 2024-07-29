@@ -33,6 +33,10 @@ export abstract class AuditedEntity {
     deleted?: boolean;
 }
 
+/**
+ * Snapshot representa os dados visualizados por um ou mais usuários em um determinado momento. Toda vez que um dado é consultado, ele cria um snapshot, que permanece por um curto período em cache no Nodo da aplicação, para acesso de todos que possuem os níveis de acesso necessários.  
+ * 
+ */
 @Entity({ schema: 'snapshot' })
 export class Snapshot extends AuditedEntity {
     @Column({ type: 'jsonb' })
@@ -43,6 +47,10 @@ export class Snapshot extends AuditedEntity {
     hash: string;
 }
 
+/***
+ * Entidade Auditável vinculada entre usuário 1:n Tenant . 
+ * 
+ */
 export abstract class FullAuditedEntity extends AuditedEntity {
     @ManyToMany(() => Snapshot)
     @JoinTable({ schema: 'snapshot' })

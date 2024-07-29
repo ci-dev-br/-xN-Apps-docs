@@ -1,0 +1,76 @@
+:host {
+    display: flex;
+    flex-direction: column;
+}
+
+
+section {
+    flex: auto;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+}
+
+.blocos {
+
+
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    padding: 24px;
+    gap: 24px;
+
+
+    overflow: auto;
+
+
+    .bloco {
+        padding: 18px;
+        border: solid 1px black;
+        border-radius: 6px;
+
+        width: 8cm;
+
+        background: rgba(250, 250, 250, 95);
+        box-shadow: 2px 3px 5px rgba(0, 0, 0, .33);
+
+        backdrop-filter: blur(12.444px);
+
+        position: relative;
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p {
+            padding: 0;
+            margin: 0;
+        }
+
+        .input {
+            position: absolute;
+            left: -7px;
+            top: 50%;
+            width: 15px;
+            height: 15px;
+            background-color: black;
+            border-radius: 7px;
+        }
+
+        .output {
+            position: absolute;
+            right: -7px;
+            top: 50%;
+            width: 15px;
+            height: 15px;
+            background-color: black;
+            border-radius: 7px;
+        }
+    }
+}

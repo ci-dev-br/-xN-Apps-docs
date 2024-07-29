@@ -6,6 +6,7 @@ import { CoreModule } from '@ci/core/core.module';
 import { Page } from './models/page.entity';
 import { BackLink } from './models/back-link.entity';
 import { Campanha } from './models/campanha.entity';
+import { SearchService } from './services/search.service';
 export const SeoMarketingEntities = [
   KeyWord,
   Page,
@@ -20,7 +21,9 @@ export const SeoMarketingEntities = [
     ])
   ],
   providers: [
-    SeoMarketingService],
+    SeoMarketingService,
+    SearchService,
+  ],
   exports: [SeoMarketingService],
 })
 export class SeoMarketingModule { }
@@ -30,4 +33,5 @@ export {
   Page,
   BackLink,
   Campanha,
+  SearchService,
 }

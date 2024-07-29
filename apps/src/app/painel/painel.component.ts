@@ -53,7 +53,7 @@ export class PainelComponent {
     } else {
       this.router.navigate(['/' + app.url], { relativeTo: this.route.root })
     }
-    setTimeout(() => document.body.click(),300)
+    setTimeout(() => document.body.click(), 300)
   }
 
   async sair() {
@@ -61,5 +61,8 @@ export class PainelComponent {
     setTimeout(() =>
       this.router.navigate(['/'])
     );
+  }
+  async repo() {
+    window.open('https://github.com/ci-dev-br/-xN-Apps-docs', '_blank')
   }
 }

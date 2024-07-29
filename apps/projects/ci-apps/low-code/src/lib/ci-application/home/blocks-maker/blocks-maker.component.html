@@ -1,1 +1,64 @@
-<p>blocks-maker works!</p>
+<mat-toolbar>
+    <button mat-raised-button color="primary" [matMenuTriggerFor]="novoMenu">
+        <mat-icon>add</mat-icon>
+        Novo
+    </button>
+    <mat-menu #novoMenu>
+        <button mat-menu-item>
+            Bloco de Construção
+        </button>
+        <button mat-menu-item>
+            Bloco de Teste
+        </button>
+        <button mat-menu-item>
+            Bloco de Automação
+        </button>
+    </mat-menu>
+    <button mat-button>
+        <mat-icon>import</mat-icon>
+        Importar bloco
+    </button>
+</mat-toolbar>
+<section>
+    <h3>Criador de blocos de construção</h3>
+    <p>Os blocos de construção permitem construir as partes do seu sistema de forma transparente para as regras de
+        negócio.
+    </p>
+    <div class="blocos">
+        <div class="bloco">
+            <h5>Motive o usuário de acordo com o contexto</h5>
+            <p>Imprime uma frase motivacional na tela</p>
+
+            <div class="input"><!-- Context --></div>
+            <div class="output"><!-- emitMessage --></div>
+        </div>
+        <div class="bloco">
+            <h5>Enviar Notificação para Usuário</h5>
+            <p>Envia SMS para o usuário mediante permissão antecedente.</p>
+
+            <div class="input"><!-- Context --></div>
+            <div class="output"><!-- emitMessage --></div>
+        </div>
+        <div class="bloco">
+            <h5>Enviar Notificação por SMS</h5>
+            <p>Envia SMS para o usuário mediante permissão antecedente.</p>
+            <div class="input"><!-- Context --></div>
+            <div class="output"><!-- emitMessage --></div>
+        </div>
+        <div class="bloco">
+            <h5>Enviar Notificação por E-mail</h5>
+            <p>Realizar troca de mensagens por WhatsApp com Usuário mediante permissão antecedente. Para realização de
+                uma
+                reação</p>
+            <div class="input"><!-- Context --></div>
+            <div class="output"><!-- emitMessage --></div>
+        </div>
+        <div class="bloco">
+            <h5>Enviar Notificação por E-mail</h5>
+            <p>Realizar troca de e-mail para com Usuário mediante permissão antecedente. Para realização de uma reação
+            </p>
+            <div class="input"><!-- Context --></div>
+            <div class="output"><!-- emitMessage --></div>
+        </div>
+    </div>
+</section>

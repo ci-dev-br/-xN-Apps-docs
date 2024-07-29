@@ -9,6 +9,7 @@ import { Localizacao } from './models/localozacao';
 import { DAN } from './services/dan.service';
 import { AutoScollDirective } from './directives/auto-scroll.directive';
 import { ConsoleService } from './services/console.service';
+import { ThemeService } from './theme/theme.service';
 
 @NgModule({
   declarations: [
@@ -41,4 +42,5 @@ export {
   IChangeable,
   ServicesService,
   Localizacao,
+  ThemeService,
 }
