@@ -23,10 +23,9 @@ public class ItemListAdapter extends BaseAdapter {
         this.listaItens = listaItens;
     }
 
-
     @Override
     public int getCount() {
-        return listaItens.size();
+        return listaItens != null ? listaItens.size() : 0;
     }
 
     @Override
@@ -55,8 +54,8 @@ public class ItemListAdapter extends BaseAdapter {
             info_connection.setTituloTextView(tituloTextView);
             info_connection.setSubtituloTextView(subtituloTextView);
 
+            info_connection.tryConnect();
         }
-        info_connection.tryConnect();
 
         return convertView;
     }

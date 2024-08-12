@@ -1,31 +1,15 @@
 package br.dev.ci.MobManager.client;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
-import android.webkit.PermissionRequest;
-
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.NetworkInterface;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import br.dev.ci.MobManager.MainActivity;
+import br.dev.ci.MobManager.client.model.GatewayConnection;
 
 public class ManagerClient {
     private MainActivity mainActivity;
@@ -35,21 +19,24 @@ public class ManagerClient {
     }
 
     public void setMainActivity(MainActivity mainActivity) {this.mainActivity = mainActivity;}
-    List<String> gateways;
+    List<GatewayConnection> gateways;
 
     public void addGateway(String url) {
-        if(gateways == null) gateways = new ArrayList<>();
-        this.gateways.add(url);
-        this.connect(url);
+        GatewayConnection gateway  =new GatewayConnection(){{
+            setUrl(url);
+        }};
+        this.gateways.add(gateway);
+        this.connect(gateway);
     }
 
-    public List<String> getGateways(){
+    public List<GatewayConnection> getGateways(){
+        if(gateways == null) gateways = new ArrayList<>();
         return this.gateways;
     }
 
-    private void connect(String gateway_url){
+    private void connect(GatewayConnection connection){
         try {
-            DeviceConnect dc = new DeviceConnect(gateway_url);
+            DeviceConnect dc = new DeviceConnect(connection);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("applicationId", "e60e2ed1-e318-4f38-bdcd-2fceb3d0315d");
             jsonObject.put("id", this.getMacAddr());
@@ -88,36 +75,3 @@ public class ManagerClient {
     }
 }
 
-class DeviceConnect extends AsyncTask<String, Void, String>{
-    private String url_gateway;
-    public DeviceConnect(String url_gateway){
-            this.url_gateway = url_gateway;
-    }
-    @Override
-    protected String doInBackground(String... strings) {
-        try {
-            URL url = new URL(this.url_gateway + "api/Device/Connect");
-            HttpURLConnection client = (HttpURLConnection) url.openConnection();
-            client.setRequestMethod("POST");
-            client.setRequestProperty("Content-Type", "application/json");
-            client.setRequestProperty("Accept", "application/json");
-            client.setDoOutput(true);
-            try (OutputStream os = client.getOutputStream()) {
-                byte[] input = strings[0].getBytes("utf-8");
-                os.write(input, 0, input.length);
-            }
-            try (BufferedReader br = new BufferedReader(
-                    new InputStreamReader(client.getInputStream(), "utf-8"))) {
-                StringBuilder response = new StringBuilder();
-                String responseLine = null;
-                while ((responseLine = br.readLine()) != null) {
-                    response.append(responseLine.trim());
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-}

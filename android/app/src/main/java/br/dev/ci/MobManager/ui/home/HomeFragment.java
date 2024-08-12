@@ -4,23 +4,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import br.dev.ci.MobManager.R;
 import br.dev.ci.MobManager.client.ManagerClient;
 import br.dev.ci.MobManager.client.model.GatewayConnection;
 import br.dev.ci.MobManager.databinding.FragmentHomeBinding;
@@ -47,8 +40,8 @@ public class HomeFragment extends Fragment {
         url_input.setText("https://apps.ci.dev.br:446/");
         addButton.setOnClickListener(v -> {
             String url = url_input.getText().toString();
-            url_input.setText("");
             adicionarItem(url);
+            url_input.setText("");
         });
         this.atualizarLista();
         return root;
@@ -68,7 +61,8 @@ public class HomeFragment extends Fragment {
         if(ManagerClient.getInstance().getGateways() != null)
             gateways = ManagerClient.getInstance().getGateways().toArray(gateways);
 
-        this.gateways = new ArrayList<>();
+        // this.gateways = new ArrayList<>();
+        this.gateways = ManagerClient.getInstance().getGateways();
 
         if(this.adapter == null)
          this.adapter = new ItemListAdapter(this.getActivity()/*,
@@ -77,10 +71,8 @@ public class HomeFragment extends Fragment {
         this.servidoresLista.setAdapter(this.adapter);
     }
 
-    public void adicionarItem(String valor){
-        this.gateways.add(new GatewayConnection(){{
-            setUrl(valor);
-        }});
+    public void adicionarItem(String endpoint){
+        ManagerClient.getInstance().addGateway(endpoint);
         this.adapter.notifyDataSetChanged();
     }
 }
