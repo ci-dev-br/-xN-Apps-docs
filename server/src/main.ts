@@ -23,6 +23,10 @@ async function start(server: express.Express, app: NestExpressApplication, port:
     const httpsServer = https.createServer(httpsOptions, server).listen(port);
 
     console.log(`Application is running`);
+    return {
+      httpServer,
+      httpsServer
+    }
 
   } catch (error) {
     if (error.code === 'EADDRINUSE') {
@@ -43,14 +47,12 @@ async function bootstrap() {
     passphrase: process.env.passphrase ? process.env.passphrase : undefined
   };
   const server = express();
-  const app =
-    process.env.pfx || process.env.cert ?
-      await NestFactory.create<NestExpressApplication>(AppModule,
-        new ExpressAdapter(server)/* {
+  const app = process.env.pfx || process.env.cert ?
+    await NestFactory.create<NestExpressApplication>(AppModule,
+      new ExpressAdapter(server)/* {
         httpsOptions,
-        
       } */) :
-      await NestFactory.create<NestExpressApplication>(AppModule);
+    await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
     origin: is_production ? [] : [
       'http://apps.ci.dev.br:4200',
@@ -77,7 +79,9 @@ async function bootstrap() {
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
   const PORT = Number(process.env.PORT);
-  await start(server, app, PORT, httpsOptions);
+
+  app.init();
+  const servers = await start(server, app, PORT, httpsOptions);
   //app.listen('84')
   //  console.log(`Application is running on: ${await app.getUrl()}`);
   // console.log(__dirname);
