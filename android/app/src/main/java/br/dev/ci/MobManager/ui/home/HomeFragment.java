@@ -14,6 +14,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.util.List;
 
+import javax.net.ssl.HostnameVerifier;
+
 import br.dev.ci.MobManager.client.ManagerClient;
 import br.dev.ci.MobManager.client.model.GatewayConnection;
 import br.dev.ci.MobManager.databinding.FragmentHomeBinding;
@@ -37,7 +39,8 @@ public class HomeFragment extends Fragment {
         final Button addButton = binding.addButton;
         this.servidoresLista = binding.lista;
 
-        url_input.setText("https://apps.ci.dev.br:446/");
+
+        url_input.setText("https://192.168.0.119:446/");
         addButton.setOnClickListener(v -> {
             String url = url_input.getText().toString();
             adicionarItem(url);

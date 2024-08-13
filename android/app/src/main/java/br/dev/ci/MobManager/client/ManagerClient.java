@@ -3,12 +3,14 @@ package br.dev.ci.MobManager.client;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.OutputStreamWriter;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import br.dev.ci.MobManager.MainActivity;
+import br.dev.ci.MobManager.client.model.Device;
 import br.dev.ci.MobManager.client.model.GatewayConnection;
 
 public class ManagerClient {
@@ -35,16 +37,13 @@ public class ManagerClient {
     }
 
     private void connect(GatewayConnection connection){
-        try {
-            DeviceConnect dc = new DeviceConnect(connection);
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("applicationId", "e60e2ed1-e318-4f38-bdcd-2fceb3d0315d");
-            jsonObject.put("id", this.getMacAddr());
-            String jsonString = jsonObject.toString();
-            dc.execute(jsonString);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+        DeviceConnect dc = new DeviceConnect(connection);
+        Device device = new Device(){{
+            setId(getMacAddr());
+            setApplicationId("e60e2ed1-e318-4f38-bdcd-2fceb3d0315d");
+            setName("MobManager");
+        }};
+        dc.execute(device);
     }
 
     private  String getMacAddr() {
