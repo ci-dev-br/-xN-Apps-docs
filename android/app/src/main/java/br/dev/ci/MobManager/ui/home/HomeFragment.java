@@ -40,7 +40,7 @@ public class HomeFragment extends Fragment {
         this.servidoresLista = binding.lista;
 
 
-        url_input.setText("https://192.168.0.119:446/");
+        url_input.setText("http://192.168.0.119:86/");
         addButton.setOnClickListener(v -> {
             String url = url_input.getText().toString();
             adicionarItem(url);
