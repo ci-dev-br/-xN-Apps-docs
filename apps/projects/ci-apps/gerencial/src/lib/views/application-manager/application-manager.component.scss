@@ -3,10 +3,24 @@
     flex-direction: column;
     flex: auto;
     overflow: auto;
+    padding: 8px;
+    gap: 8px;
 }
 
 mat-toolbar {
+    // margin: 8px;
+    border: solid 1px #dedede;
+    box-shadow: 0 0 6px rgba(0, 0, 0, .44);
+    border-radius: 8px;
+
     * {
         flex: none;
     }
+}
+
+ci-data-grid {
+    overflow: hidden;
+    border-radius: 8px;
+
+    box-shadow: 0 0 6px rgba(0, 0, 0, .44);
 }

@@ -1,7 +1,9 @@
 :host {
-    display: contents;
-    // overflow: auto;
-    // flex: auto;
+    // display: block;
+    overflow: auto;
+    flex: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .grid-container {
