@@ -1,5 +1,9 @@
 package br.dev.ci.MobManager.client;
 
+import android.Manifest;
+
+import androidx.core.content.ContextCompat;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,6 +49,7 @@ public class ManagerClient {
         }};
         dc.execute(device);
     }
+
 
     private  String getMacAddr() {
         try {
