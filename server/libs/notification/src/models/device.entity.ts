@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
+import { PhoneNumber } from "./phone-number.entity";
 
 @Entity({
     schema: 'notification'
@@ -14,4 +15,7 @@ export class Device {
     @ApiProperty({ nullable: true })
     @Column({ nullable: true })
     type?: string;
+    @OneToMany(() => PhoneNumber, type => type.device)
+    @JoinTable()
+    numbers?:PhoneNumber[];    
 }
