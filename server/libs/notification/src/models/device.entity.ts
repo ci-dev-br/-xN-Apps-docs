@@ -1,7 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 
-@Entity()
+@Entity({
+    schema: 'notification'
+})
 export class Device {
     @ApiProperty({ nullable: true })
     @PrimaryGeneratedColumn('uuid')

@@ -1,6 +1,7 @@
 export { ApiService } from './services/api.service';
 export { SystemService } from './services/system.service';
 export { DeviceService } from './services/device.service';
+export { MessageService } from './services/message.service';
 export { AuthService } from './services/auth.service';
 export { ApplicationService } from './services/application.service';
 export { DomainService } from './services/domain.service';

@@ -7,6 +7,7 @@ import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 import { ApiService } from './services/api.service';
 import { SystemService } from './services/system.service';
 import { DeviceService } from './services/device.service';
+import { MessageService } from './services/message.service';
 import { AuthService } from './services/auth.service';
 import { ApplicationService } from './services/application.service';
 import { DomainService } from './services/domain.service';
@@ -30,6 +31,7 @@ import { OrganizacaoService } from './services/organizacao.service';
     ApiService,
     SystemService,
     DeviceService,
+    MessageService,
     AuthService,
     ApplicationService,
     DomainService,

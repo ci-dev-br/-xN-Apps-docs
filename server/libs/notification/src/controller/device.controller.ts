@@ -13,7 +13,7 @@ export class DeviceController {
     ) { }
 
     @Public()
-    @ApiOperation({ operationId: 'DeviceConnect' })
+    @ApiOperation({ operationId: 'Device.Connect' })
     @Post('Connect')
     @ApiResponse({ type: DevicePayload })
     public async connectDevice(@Body() input: DevicePayload) {
