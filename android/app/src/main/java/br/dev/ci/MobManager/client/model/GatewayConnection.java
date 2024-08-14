@@ -59,6 +59,6 @@ public class GatewayConnection {
                 }
             }
         };
-        handler.postDelayed(runnable, 5000);
+        handler.postDelayed(runnable, 0);
     }
 }
