@@ -1,9 +1,19 @@
+:host {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+}
+
 .apps {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 12px;
     padding: 24px;
+    justify-content: space-evenly;
+    align-content: space-evenly;
+    justify-items: stretch;
+    flex: auto;
 
     .app {
         $width: 100px;
