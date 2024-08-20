@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { CI_ICON_PACK, CoreModule, IPack, LoadIconsModule, LoadIconsService } from '@ci/core';
-import { Application } from '@ci/portal-api';
-import { lastValueFrom } from 'rxjs';
+import { CoreModule } from '@ci/core';
 import { APPS } from './apps';
 import { AuthModule, UserService } from '@ci/auth';
 
@@ -15,7 +13,6 @@ import { AuthModule, UserService } from '@ci/auth';
     MatIconModule,
     RouterModule,
     AuthModule,
-    LoadIconsModule,
   ],
   providers: [
     /*  {
@@ -33,41 +30,7 @@ export class AppsComponent implements OnInit {
     private readonly userService: UserService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
-    private readonly loadIcons: LoadIconsService,
-  ) {
-    loadIcons.load({
-      imersao: { url: 'icons/imersao.svg' },
-      agenda: { url: 'icons/agenda.svg' },
-      anotacoes: { url: 'icons/anotacoes.svg' },
-      cadastros: { url: 'icons/cadastros.svg' },
-      carteira: { url: 'icons/carteira.svg' },
-      codex: { url: 'icons/codex.svg' },
-      "dev-tools": { url: 'icons/dev-tools.svg' },
-      dynamic: { url: 'icons/dynamic.svg' },
-      estudos: { url: 'icons/estudos.svg' },
-      files: { url: 'icons/files.svg' },
-      financeiro: { url: 'icons/financeiro.svg' },
-      formularios: { url: 'icons/formularios.svg' },
-      fotos: { url: 'icons/fotos.svg' },
-      gerencial: { url: 'icons/gerencial.svg' },
-      icones: { url: 'icons/icones.svg' },
-      infra: { url: 'icons/infra.svg' },
-      instalacao: { url: 'icons/instalacao.svg' },
-      journal: { url: 'icons/journal.svg' },
-      "low-code": { url: 'icons/low-code.svg' },
-      mail: { url: 'icons/mail.svg' },
-      mensagens: { url: 'icons/mensagens.svg' },
-      organizacao: { url: 'icons/organizacao.svg' },
-      perfil: { url: 'icons/perfil.svg' },
-      produtos: { url: 'icons/produtos.svg' },
-      projetos: { url: 'icons/projetos.svg' },
-      seo: { url: 'icons/seo.svg' },
-      threejs: { url: 'icons/threejs.svg' },
-      tradutor: { url: 'icons/tradutor.svg' },
-      treinamento: { url: 'icons/treinamento.svg' },
-      vendas: { url: 'icons/vendas.svg' },
-    })
-  }
+  ) { }
   async ngOnInit() {
     this.userService.user.subscribe(user => {
       if (!!user) {
