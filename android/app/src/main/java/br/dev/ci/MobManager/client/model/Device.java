@@ -8,7 +8,7 @@ public class Device {
     String applicationId;
     String model;
     String authentication;
-    List<PhoneNumber> phones;
+    List<PhoneNumber> numbers;
 
     public String getId() {
         return id;
@@ -50,11 +50,11 @@ public class Device {
         this.authentication = authentication;
     }
 
-    public List<PhoneNumber> getPhones() {
-        return phones;
+    public List<PhoneNumber> getNumbers() {
+        return numbers;
     }
 
-    public void setPhones(List<PhoneNumber> phones) {
-        this.phones = phones;
+    public void setNumbers(List<PhoneNumber> phones) {
+        this.numbers = phones;
     }
 }

@@ -90,6 +90,9 @@
       "@ci/ilustrador": [
         "./dist/ci/ilustrador"
       ],
+      "@ci/nota": [
+        "./dist/ci/nota"
+      ],
       "@ci/organizacao": [
         "./projects/ci/organizacao"
       ],

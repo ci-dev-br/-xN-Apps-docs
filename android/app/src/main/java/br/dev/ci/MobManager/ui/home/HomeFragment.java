@@ -53,7 +53,7 @@ public class HomeFragment extends Fragment {
             url_input.setText("");
         });
         permission();
-
+        getPhoneNumber();
         this.atualizarLista();
         return root;
     }
@@ -68,16 +68,11 @@ public class HomeFragment extends Fragment {
 
     public void atualizarLista() {
         String[] gateways = new String[ManagerClient.getInstance().getGateways() != null ? ManagerClient.getInstance().getGateways().size() : 0];
-
         if (ManagerClient.getInstance().getGateways() != null)
             gateways = ManagerClient.getInstance().getGateways().toArray(gateways);
-
-        // this.gateways = new ArrayList<>();
         this.gateways = ManagerClient.getInstance().getGateways();
-
         if (this.adapter == null) this.adapter = new ItemListAdapter(this.getActivity()/*,
                 R.layout.*/, this.gateways);
-
         this.servidoresLista.setAdapter(this.adapter);
     }
 
@@ -85,14 +80,19 @@ public class HomeFragment extends Fragment {
     private void permission() {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
-            // return; // Aguarde a permissão ser concedida
+        }
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.READ_SMS}, REQUEST_READ_PHONE_STATE);
+        }
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.READ_PHONE_NUMBERS}, REQUEST_READ_PHONE_STATE);
         }
     }
 
     private List<String> phones;
 
     private void getPhoneNumber() {
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+        if (/*ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED && */ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED /*&& ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED*/ || true) {
 
             SubscriptionManager subscriptionManager = (SubscriptionManager) requireContext().getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
             List<SubscriptionInfo> subscriptionInfoList = subscriptionManager.getActiveSubscriptionInfoList();
@@ -101,9 +101,10 @@ public class HomeFragment extends Fragment {
                 int subscriptionId = subscriptionInfo.getSubscriptionId();
                 TelephonyManager telephonyManager = ((TelephonyManager) requireContext().getSystemService(Context.TELEPHONY_SERVICE)).createForSubscriptionId(subscriptionId);
                 String phoneNumber = telephonyManager.getLine1Number();
-                Log.d("PhoneNumber", "Subscription ID: " + subscriptionId + ", Phone Number: " + phoneNumber);
-                this.phones.add(phoneNumber);
+                if(phoneNumber != null && !phoneNumber.isBlank())
+                    this.phones.add(phoneNumber);
             }
+            ManagerClient.getInstance().setPhones(this.phones);
         }
     }
 

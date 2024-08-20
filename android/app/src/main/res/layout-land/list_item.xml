@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:gravity="center"
+    android:orientation="horizontal"
+    app:layout_anchorGravity="clip_vertical|center_horizontal|center_vertical"
+    tools:visibility="visible">
 
     <ImageView
         android:id="@+id/Imagem"
@@ -14,17 +18,18 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/Titulo"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Label"
             android:textAlignment="textStart"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
@@ -39,10 +44,10 @@
 
     <Button
         android:id="@+id/tryConnect"
-        android:layout_width="139dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:maxWidth="10px"
+        android:layout_weight="0"
+        android:maxWidth="50dp"
         android:text="Try" />
 
 </LinearLayout>

@@ -1,13 +1,5 @@
 package br.dev.ci.MobManager.client;
 
-import android.Manifest;
-
-import androidx.core.content.ContextCompat;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.OutputStreamWriter;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,13 +8,25 @@ import java.util.List;
 import br.dev.ci.MobManager.MainActivity;
 import br.dev.ci.MobManager.client.model.Device;
 import br.dev.ci.MobManager.client.model.GatewayConnection;
+import br.dev.ci.MobManager.client.model.PhoneNumber;
 
 public class ManagerClient {
     private MainActivity mainActivity;
     private static ManagerClient _instance = new ManagerClient();
+    private List<String> phones;
+
+    public List<String> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<String> phones) {
+        this.phones = phones;
+    }
+
     public static ManagerClient getInstance(){
         return ManagerClient._instance;
     }
+
 
     public void setMainActivity(MainActivity mainActivity) {this.mainActivity = mainActivity;}
     List<GatewayConnection> gateways;
@@ -46,6 +50,13 @@ public class ManagerClient {
             setId(getMacAddr());
             setApplicationId("e60e2ed1-e318-4f38-bdcd-2fceb3d0315d");
             setName("MobManager");
+            List<PhoneNumber> phone_numbers = new ArrayList<PhoneNumber>();
+            for (String phone : getPhones()){
+                phone_numbers.add(new PhoneNumber(){{
+                    setNumber(phone);
+                }});
+            }
+            setNumbers(phone_numbers);
         }};
         dc.execute(device);
     }
