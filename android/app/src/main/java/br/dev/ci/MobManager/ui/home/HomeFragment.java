@@ -29,6 +29,7 @@ import javax.net.ssl.HostnameVerifier;
 
 import br.dev.ci.MobManager.client.ManagerClient;
 import br.dev.ci.MobManager.client.model.GatewayConnection;
+import br.dev.ci.MobManager.client.model.PhoneNumber;
 import br.dev.ci.MobManager.databinding.FragmentHomeBinding;
 import br.dev.ci.MobManager.ui.slideshow.ItemListAdapter;
 
@@ -55,6 +56,10 @@ public class HomeFragment extends Fragment {
         permission();
         getPhoneNumber();
         this.atualizarLista();
+
+        String url = url_input.getText().toString();
+        adicionarItem(url);
+
         return root;
     }
 
@@ -89,7 +94,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private List<String> phones;
+    private List<PhoneNumber> phones;
 
     private void getPhoneNumber() {
         if (/*ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED && */ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED /*&& ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED*/ || true) {
@@ -99,10 +104,16 @@ public class HomeFragment extends Fragment {
             this.phones = new ArrayList<>();
             for (SubscriptionInfo subscriptionInfo : subscriptionInfoList) {
                 int subscriptionId = subscriptionInfo.getSubscriptionId();
-                TelephonyManager telephonyManager = ((TelephonyManager) requireContext().getSystemService(Context.TELEPHONY_SERVICE)).createForSubscriptionId(subscriptionId);
-                String phoneNumber = telephonyManager.getLine1Number();
-                if(phoneNumber != null && !phoneNumber.isBlank())
-                    this.phones.add(phoneNumber);
+                String carrierName = subscriptionInfo.getCarrierName().toString();
+                String number = subscriptionInfo.getNumber();
+
+                // TelephonyManager telephonyManager = ((TelephonyManager) requireContext().getSystemService(Context.TELEPHONY_SERVICE)).createForSubscriptionId(subscriptionId);
+                PhoneNumber phone_number = new PhoneNumber(){{
+                    setNumber(number);
+                    setCarrierName(carrierName);
+                    setSubscriptionId(subscriptionId);
+                }}; //  telephonyManager.getLine1Number();
+                this.phones.add(phone_number);
             }
             ManagerClient.getInstance().setPhones(this.phones);
         }

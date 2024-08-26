@@ -13,13 +13,13 @@ import br.dev.ci.MobManager.client.model.PhoneNumber;
 public class ManagerClient {
     private MainActivity mainActivity;
     private static ManagerClient _instance = new ManagerClient();
-    private List<String> phones;
+    private List<PhoneNumber> phones;
 
-    public List<String> getPhones() {
+    public List<PhoneNumber> getPhones() {
         return phones;
     }
 
-    public void setPhones(List<String> phones) {
+    public void setPhones(List<PhoneNumber> phones) {
         this.phones = phones;
     }
 
@@ -50,13 +50,7 @@ public class ManagerClient {
             setId(getMacAddr());
             setApplicationId("e60e2ed1-e318-4f38-bdcd-2fceb3d0315d");
             setName("MobManager");
-            List<PhoneNumber> phone_numbers = new ArrayList<PhoneNumber>();
-            for (String phone : getPhones()){
-                phone_numbers.add(new PhoneNumber(){{
-                    setNumber(phone);
-                }});
-            }
-            setNumbers(phone_numbers);
+            setNumbers(getPhones());
         }};
         dc.execute(device);
     }

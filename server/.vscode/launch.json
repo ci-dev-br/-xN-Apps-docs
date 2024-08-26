@@ -4,7 +4,7 @@
     // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        {
+        /*  {
             "name": "Attach by Process ID",
             "processId": "${command:PickProcess}",
             "request": "attach",
@@ -12,6 +12,25 @@
                 "<node_internals>/**"
             ],
             "type": "node"
+        } */
+        /*  { opção com ts-node (não está carregando as libs ...)
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Nest Framework",
+            "args": ["${workspaceFolder}/src/main.ts"],
+            "runtimeArgs": ["--nolazy", "-r", "ts-node/register", "-r", "tsconfig-paths/register"],
+            "sourceMaps": true,
+            "cwd": "${workspaceRoot}",
+            "protocol": "inspector"
+        } */
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach NestJS WS",
+            "port": 9229,
+            "restart": true,
+            "stopOnEntry": false,
+            "protocol": "inspector"
         }
     ]
 }

@@ -22,10 +22,12 @@ export class DeviceController {
     @Post('Connect')
     @ApiResponse({ type: DevicePayload })
     public async connectDevice(@Body() input: DevicePayload) {
+        console.log(input);
         return await this.deviceService.connect({
             mac: input.id,
             type: input.name,
-            numbers: (input.numbers || []).filter(e => !!e.number && e.number.length > 0),
+            numbers: input.numbers
+            //  numbers: (input.numbers || []).filter(e => !!e.number && e.number.length > 0),
         });
     }
     @Public()

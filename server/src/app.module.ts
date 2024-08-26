@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { Entities as NotificacaoEntities, NotificacaoModule } from '@ci/notification/notificacao.module';
+import { Entities as NotificacaoEntities, NotificacaoModule } from '@ci/notification';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule, AuthEntities as AuthEntities } from '@ci/auth/auth.module';
 import { ManagerEntities, ManagerModule } from '@ci/manager/manager.module';
@@ -104,6 +104,7 @@ process.env.MODULES.split(',').forEach(e => {
       maxQueryExecutionTime: 100,
       namingStrategy: new SnakeNamingStrategy(),
       verboseRetryLog: true,
+      dropSchema: false,
       entities: [
         ...LoadedEntities
       ]

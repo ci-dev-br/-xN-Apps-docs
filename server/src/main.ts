@@ -10,8 +10,7 @@ import * as express from 'express';
 import { spawnSync } from 'child_process';
 import * as http from 'http';
 import *as https from 'https';
-import { LoggingInterceptor } from '../libs/core/src/logging.interceptor';
-
+import { LoggingInterceptor } from '@ci/core';
 
 console.clear();
 const is_production = !!process.execArgv.find(arg => arg === '--prod');

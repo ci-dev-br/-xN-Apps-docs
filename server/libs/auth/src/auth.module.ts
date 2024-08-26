@@ -17,6 +17,8 @@ import { TenantModule } from "@ci/tenant/tenant.module";
 import { AccessCredential } from "./models/user-credential.entity";
 import { UserCredentialService } from "./service/user-credential.service";
 import { CoreModule } from "@ci/core/core.module";
+import { TwoFactorAuthenticationService } from "./service/two-factors.service";
+import { NotificacaoModule } from "@ci/notification";
 
 export const AuthEntities = [
     Policy,
@@ -38,6 +40,7 @@ export const AuthEntities = [
         }),
         TenantModule,
         CoreModule,
+        NotificacaoModule,
     ],
     controllers: [
         AuthController,
@@ -48,6 +51,7 @@ export const AuthEntities = [
         CredencialService,
         UserCredentialService,
         RefreshTokenStrategy,
+        TwoFactorAuthenticationService,
         {
             provide: APP_GUARD,
             useClass: AuthGuard,

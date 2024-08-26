@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { PhoneNumber } from "./phone-number.entity";
 
 @Entity({
     schema: 'notification'
@@ -6,8 +7,9 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeor
 export class Message {
     @PrimaryGeneratedColumn('uuid')
     id?: string;
-    @Column({ nullable: true })
-    form?: string;
+    @ManyToOne(type => PhoneNumber)
+    @JoinTable()
+    from?: PhoneNumber;
     @Column({ nullable: true })
     to?: string;
     @CreateDateColumn()
