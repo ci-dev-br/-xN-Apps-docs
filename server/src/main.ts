@@ -12,7 +12,7 @@ import * as http from 'http';
 import *as https from 'https';
 import { LoggingInterceptor } from '@ci/core';
 
-console.clear();
+console.clear(); 
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
 

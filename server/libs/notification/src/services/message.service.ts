@@ -22,7 +22,8 @@ export class MessageService {
         const message = this.messageRepository.create({
             from: phone_number,
             textMessage: payload.message,
-            to: payload.to
+            to: payload.to,
+            sent: false,
         })
         await this.messageRepository.save(message);
     }

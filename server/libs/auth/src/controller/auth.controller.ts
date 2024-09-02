@@ -104,13 +104,13 @@ export class AuthController {
       // O que fazer quando o usuário não é identificado?
       if (identified_user) {
         await this.credencialService.eliminarChaves(identified_user.id);
-        const two_factory_autentication = await this.twoFactorAuthenticationService.requestTwoFactorAuthentication(identified_user);
-        if (!two_factory_autentication) {
-          return {
-            chaveAcesso: chave.id,
-            stage: 'Authorization Code'
-          }
-        }
+        //const two_factory_autentication = await this.twoFactorAuthenticationService.requestTwoFactorAuthentication(identified_user);
+        //if (!two_factory_autentication) {
+        //  return {
+        //    chaveAcesso: chave.id,
+        //    stage: 'Authorization Code'
+        //  }
+        //}
         chave.identifiedUser = identified_user.id;
         chave = await this.credencialService.atualizar(chave);
         return new AcessoPayload({ ...chave, id: undefined });
