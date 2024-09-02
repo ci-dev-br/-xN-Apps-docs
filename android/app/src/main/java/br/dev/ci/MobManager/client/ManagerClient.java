@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import br.dev.ci.MobManager.MainActivity;
+import br.dev.ci.MobManager.InicioActivity;
 import br.dev.ci.MobManager.client.model.Device;
 import br.dev.ci.MobManager.client.model.GatewayConnection;
 import br.dev.ci.MobManager.client.model.PhoneNumber;
 
 public class ManagerClient {
-    private MainActivity mainActivity;
+    private InicioActivity inicioActivity;
     private static ManagerClient _instance = new ManagerClient();
     private List<PhoneNumber> phones;
 
@@ -28,7 +28,7 @@ public class ManagerClient {
     }
 
 
-    public void setMainActivity(MainActivity mainActivity) {this.mainActivity = mainActivity;}
+    public void setInicioActivity(InicioActivity inicioActivity) {this.inicioActivity = inicioActivity;}
     List<GatewayConnection> gateways;
 
     public void addGateway(String url) {
