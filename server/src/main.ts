@@ -9,7 +9,7 @@ import { config } from 'dotenv';
 import * as express from 'express';
 import { spawnSync } from 'child_process';
 import * as http from 'http';
-import *as https from 'https';
+import * as https from 'https';
 import { LoggingInterceptor } from '@ci/core';
 
 console.clear(); 
