@@ -1,4 +1,5 @@
 import { Component, NgModule, Optional } from "@angular/core";
+import { MatButtonModule } from "@angular/material/button";
 import { CoreModule, WsService } from "@ci/core";
 /**
  * Visualização geral do status da aplicação e das ações do cliente
@@ -12,10 +13,16 @@ import { CoreModule, WsService } from "@ci/core";
     constructor(
         @Optional() public readonly ws?: WsService
     ) { }
+    emit() {
+        let data = prompt('Message Data');
+        if (data)
+            this.ws?.emit(data);
+    }
 }
 @NgModule({
     imports: [
         CoreModule,
+        MatButtonModule,
     ],
     exports: [
         StatusBarComponent
