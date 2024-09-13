@@ -3,6 +3,7 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 
 @Injectable()
 export class WsService {
+    status: 'connecting' | 'online' = 'connecting';
     private retryWait = 100;
     private _grant_connection = false;
     private _subject?: WebSocketSubject<any>;
@@ -25,6 +26,7 @@ export class WsService {
         }
         this._subject = webSocket('ws://apps.ci.dev.br:81');
         this._subject.subscribe(message => {
+            this.status = 'online';
             this.receiveData(message)
         }, erros => {
             erros;
@@ -32,6 +34,7 @@ export class WsService {
             if (erros instanceof CloseEvent || (erros instanceof Event && erros.type === 'error')) {
                 if (this._subject) this._subject?.complete();
                 this._subject = undefined;
+                this.status = 'connecting';
                 setTimeout(() => {
                     this.init();
                 }, this.retryWait);
