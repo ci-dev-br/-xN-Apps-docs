@@ -37,7 +37,6 @@ export class WsService {
                 }, this.retryWait);
                 this.retryWait = this.retryWait + 500;
             }
-
         }, () => {
             console.info('Fim')
         });
