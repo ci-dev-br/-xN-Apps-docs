@@ -6,10 +6,11 @@ import { AutoFocusDirective } from './directives/auto-focus.directive';
 import { DaoService, IChangeable } from './dao/dao.service';
 import { ServicesService } from './services/services.service';
 import { Localizacao } from './models/localozacao';
-import { DAN } from './services/dan.service';
+import { Damn } from './services/damn.service';
 import { AutoScollDirective } from './directives/auto-scroll.directive';
 import { ConsoleService } from './services/console.service';
 import { ThemeService } from './theme/theme.service';
+import { WsService } from './io/ws.service';
 
 @NgModule({
   declarations: [
@@ -24,8 +25,9 @@ import { ThemeService } from './theme/theme.service';
     CoreService,
     DaoService,
     ServicesService,
-    DAN,
+    Damn,
     ConsoleService,
+    // WsService,
   ],
   exports: [
     CommonModule,
@@ -43,4 +45,5 @@ export {
   ServicesService,
   Localizacao,
   ThemeService,
+  WsService,
 }

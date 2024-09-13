@@ -1,5 +1,5 @@
 import { Injectable, Injector, Optional } from '@angular/core';
-import { DAN } from './services/dan.service';
+import { Damn } from './services/damn.service';
 import { ActivatedRoute, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { ThemeService } from './core.module';
 @Injectable()
@@ -13,7 +13,7 @@ export class CoreService {
     if (!!router) // setTimeout(() =>
       this.initRouterFixings()
     // );
-    setTimeout(() => inject.get(DAN));
+    setTimeout(() => inject.get(Damn));
   }
   async initRouterFixings() {
     let navigation_start: string | undefined = undefined;

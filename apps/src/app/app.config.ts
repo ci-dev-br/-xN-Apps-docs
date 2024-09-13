@@ -6,7 +6,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideServiceWorker } from '@angular/service-worker';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { AuthorizationHttpInterceptor, CoreModule, StorageService } from '@ci/core';
+import { AuthorizationHttpInterceptor, CoreModule, coreProvider, StorageService } from '@ci/core';
 import { ApiModule } from '@ci/portal-api';
 import { provideNuMonacoEditorConfig } from '@ng-util/monaco-editor';
 
@@ -29,5 +29,6 @@ export const appConfig: ApplicationConfig = {
       withInterceptorsFromDi(),
     ),
     { provide: HTTP_INTERCEPTORS, useClass: AuthorizationHttpInterceptor, multi: true }, provideAnimationsAsync(),
+    coreProvider({ gateway: 'ws://apps.ci.dev.br:87' }),
   ],
 };

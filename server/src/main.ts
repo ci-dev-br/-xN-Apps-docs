@@ -11,8 +11,9 @@ import { spawnSync } from 'child_process';
 import * as http from 'http';
 import * as https from 'https';
 import { LoggingInterceptor } from '@ci/core';
+import { WsAdapter } from '@nestjs/platform-ws';
 
-console.clear(); 
+console.clear();
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
 
@@ -57,13 +58,13 @@ async function bootstrap() {
       'http://apps.ci.dev.br:4200',
       'https://192.168.0.119:4200',
       'https://apps.ci.dev.br:446',
-      'https://www.bing.com',
-      'https://play.max.com',
+      'http://apps.ci.dev.br:86',
       // 'http://localhost:4200',
       // 'http://localhost:4000',
       // 'http://192.168.0.119:99',
     ]
   });
+  app.useWebSocketAdapter(new WsAdapter(app))
   app.useGlobalInterceptors(new LoggingInterceptor());
   const options = new DocumentBuilder()
     .setTitle('Apps CiDevBr')

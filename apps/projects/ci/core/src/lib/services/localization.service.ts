@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { ReplaySubject } from "rxjs";
-import { Localizacao } from "../model/localozacao";
+import { Localizacao } from "../models/localozacao";
 
 @Injectable()
 export class LocalizationService {

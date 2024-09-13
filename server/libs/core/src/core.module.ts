@@ -3,16 +3,16 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { Snapshot, SnapshotService } from "../../manager/src/dao";
 import { AudtService } from "./audt/audt.service";
 import { ChaveAcesso } from "./audt/chave-acesso.entity";
+import { DamnService } from "./damn/damn.service";
+import { EventsGateway } from "./events/events.gateway";
 // import { t } from "./i18n/t";
 // import { IAutentication } from "./auth/auth";
 // import { Status } from "./system/model/status";
 // mport { SystemService } from "./system/system.service";
-
 export const CoreEntities = [
     Snapshot,
     ChaveAcesso,
 ]
-
 /**
  * Módulo Core
  *  
@@ -42,6 +42,8 @@ export class CoreModule {
             module: CoreModule,
             providers: [
                 SnapshotService,
+                DamnService,
+                EventsGateway,
                 // SystemService,
             ]
         }

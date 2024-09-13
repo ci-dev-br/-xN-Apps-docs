@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
  * Deny Application for the bad-guy
  */
 @Injectable()
-export class DAN {
+export class Damn {
     constructor() {
         this.trackApplication();
     }
