@@ -38,7 +38,6 @@ async function start(server: express.Express, app: NestExpressApplication, port:
     }
   }
 }
-
 async function bootstrap() {
   const httpsOptions: HttpsOptions = {
     // cert: process.env.cert ? fs.readFileSync(process.env.cert) : undefined,
