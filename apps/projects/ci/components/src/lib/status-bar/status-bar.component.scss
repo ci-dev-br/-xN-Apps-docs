@@ -1,4 +1,5 @@
 :host {
+    overflow: hidden;
     display: flex;
     flex-direction: row;
     gap: 6px;
@@ -8,4 +9,11 @@
 
     text-shadow: 0 0 3px #000;
     align-items: center;
+
+    ::ng-deep {
+        * {
+            height: unset;
+            width: unset;
+        }
+    }
 }

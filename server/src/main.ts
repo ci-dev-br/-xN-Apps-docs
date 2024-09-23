@@ -55,10 +55,11 @@ async function bootstrap() {
   app.enableCors({
     origin: is_production ? [] : [
       'http://apps.ci.dev.br:4200',
+      'https://apps.ci.dev.br:4200',
       'https://192.168.0.119:4200',
       'https://apps.ci.dev.br:446',
       'http://apps.ci.dev.br:86',
-      // 'http://localhost:4200',
+      // 'http://localhost:4200', 
       // 'http://localhost:4000',
       // 'http://192.168.0.119:99',
     ]

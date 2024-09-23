@@ -1,0 +1,21 @@
+.files {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 24px;
+    // align-items: center;
+    justify-content: center;
+}
+
+ci-file {
+    flex: auto;
+    $size: 180px;
+
+    width: #{$size};
+    height: #{$size};
+    min-width: #{$size};
+    min-height: #{$size};
+    max-width: #{$size};
+    // max-height: #{$size};
+}

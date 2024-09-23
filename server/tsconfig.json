@@ -168,6 +168,12 @@
       ],
       "@ci/prolabore/*": [
         "libs/prolabore/src/*"
+      ],
+      "@ci/forms": [
+        "libs/forms/src"
+      ],
+      "@ci/forms/*": [
+        "libs/forms/src/*"
       ]
     }
   }

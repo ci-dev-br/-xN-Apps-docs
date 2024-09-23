@@ -16,7 +16,7 @@ import { CoreModule, WsService } from "@ci/core";
     emit() {
         let data = prompt('Message Data');
         if (data)
-            this.ws?.emit(data);
+            this.ws?.Emit(data);
     }
 }
 @NgModule({

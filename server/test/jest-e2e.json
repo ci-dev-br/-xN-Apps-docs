@@ -60,6 +60,8 @@
     "@ci/storage/(.*)": "<rootDir>/../libs/storage/src/$1",
     "@ci/storage": "<rootDir>/../libs/storage/src",
     "@ci/prolabore/(.*)": "<rootDir>/../libs/prolabore/src/$1",
-    "@ci/prolabore": "<rootDir>/../libs/prolabore/src"
+    "@ci/prolabore": "<rootDir>/../libs/prolabore/src",
+    "@ci/forms/(.*)": "<rootDir>/../libs/forms/src/$1",
+    "@ci/forms": "<rootDir>/../libs/forms/src"
   }
 }

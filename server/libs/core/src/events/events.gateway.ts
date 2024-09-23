@@ -1,6 +1,5 @@
 import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
-import { Server, WebSocket } from "ws";
-
+import { Server } from "ws";
 @WebSocketGateway(81, {
     transports: ['websocket'],
     cors: ['http://apps.ci.dev.br:4200',
@@ -10,12 +9,34 @@ import { Server, WebSocket } from "ws";
 
 })
 export class EventsGateway implements OnGatewayInit {
+    pings = [];
+    globalPing = 0;
     @WebSocketServer()
     server: Server;
     @SubscribeMessage('events')
-    onEvent(@ConnectedSocket() client: WebSocket, @MessageBody() data: any) {
+    onEvent(@ConnectedSocket() client: any, @MessageBody() data: any) {
         if (data.type === 'ping') {
-            return { event: 'events', type: 'pong', wait: 3000 + Math.random() * 20000 }
+            if (data.lastPing) {
+                this.globalPing = ((this.globalPing + (data.lastPing || 0)) / 2)
+                this.pings.push(data.lastPing)
+
+                if (this.pings.length > 500) {
+                    this.pings = this.pings.splice(this.pings.length - 500, this.pings.length);
+                }
+            }
+            let pm = 0;
+            try {
+                pm = this.pings.reduce((a, b) => a + b) / this.pings.length;
+            } catch (error) {
+            }
+            return {
+                event: 'events',
+                type: 'pong',
+                wait: 1000 + Math.random() * 14000/* 1000 + Math.random() * 5000 */,
+                momentum: data.momentum,
+                globalPing: this.globalPing,
+                pingMedium: pm,
+            }
         }
     }
     @SubscribeMessage('identity')
