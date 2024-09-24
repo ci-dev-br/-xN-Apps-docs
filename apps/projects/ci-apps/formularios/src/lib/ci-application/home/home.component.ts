@@ -42,6 +42,11 @@ export class HomeComponent implements OnInit {
   async criarFormulario() {
     if (!this.formsService) return;
     const form: Form = await lastValueFrom(this.formsService.formsSync({ body: { data: {} } })) as Form;
-    this.router.navigate(['Formularios', 'edit', form.internalId]);
+    if (form.internalId) this.openFormById(form.internalId);
+  }
+  openFormById(internalId: string) {
+    setTimeout(() => {
+      this.router.navigate(['Formularios', 'edit', internalId]);
+    })
   }
 }

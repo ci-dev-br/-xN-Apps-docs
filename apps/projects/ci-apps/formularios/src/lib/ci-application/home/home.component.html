@@ -3,14 +3,12 @@
 </mat-toolbar>
 <div class="files">
     @for (form of forms; track $index) {
-    <ci-file [title]="form.title || 'Formulário sem título'" [description]=" form.description || undefined"
-        icon="form"></ci-file>
+    <ci-file [title]="form.title || 'Formulário sem título'" [description]=" form.description || undefined" icon="form"
+        (click)="form.internalId ? openFormById(form.internalId) : null"></ci-file>
     }
 </div>
-
-
 <div class="float-menu">
-    <button mat-fab [matTooltip]="'Criar formulário'" [matTooltipPosition]="'left'" (click)="criarFormulario()" >
+    <button mat-fab [matTooltip]="'Criar formulário'" [matTooltipPosition]="'left'" (click)="criarFormulario()">
         <mat-icon>add</mat-icon>
     </button>
 </div>
