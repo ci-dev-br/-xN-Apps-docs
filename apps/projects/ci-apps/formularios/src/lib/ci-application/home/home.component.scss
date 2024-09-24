@@ -1,3 +1,14 @@
+:host {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    flex: auto;
+
+    overflow: auto;
+}
+
 .files {
     display: flex;
     flex-direction: row;
@@ -18,4 +29,17 @@ ci-file {
     min-height: #{$size};
     max-width: #{$size};
     // max-height: #{$size};
+}
+
+.float-menu {
+    // display: ;
+    right: 24px;
+    bottom: 24px;
+    position: absolute;
+    z-index: 10;
+
+    button[mat-fab] {
+        border-radius: 50%;
+        overflow: hidden;
+    }
 }
