@@ -2,7 +2,7 @@
     <h4>Formulários recentes</h4>
 </mat-toolbar>
 <div class="files">
-    @for (form of fomrs; track $index) {
+    @for (form of forms; track $index) {
     <ci-file [title]="form.title || 'Formulário sem título'" [description]=" form.description || undefined"
         icon="form"></ci-file>
     }
@@ -10,7 +10,7 @@
 
 
 <div class="float-menu">
-    <button mat-fab [matTooltip]="'Criar formulário'" [matTooltipPosition]="'left'">
+    <button mat-fab [matTooltip]="'Criar formulário'" [matTooltipPosition]="'left'" (click)="criarFormulario()" >
         <mat-icon>add</mat-icon>
     </button>
 </div>

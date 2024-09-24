@@ -3,9 +3,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
 import { FileComponent } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { Form, FormsService } from '@ci/portal-api';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'ci-home',
@@ -22,18 +24,24 @@ import { Form, FormsService } from '@ci/portal-api';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
-  fomrs?: Form[];
+  forms?: Form[];
   constructor(
-    private readonly forms?: FormsService,
+    private readonly formsService: FormsService,
+    private readonly router: Router,
   ) { }
   async ngOnInit() {
     this.find();
   }
   find() {
-    this.forms?.formsGet({
+    this.formsService?.formsGet({
       body: {
         take: 50, skip: 0,
       }
-    }).subscribe(v => this.fomrs = v);
+    }).subscribe(v => this.forms = v);
+  }
+  async criarFormulario() {
+    if (!this.formsService) return;
+    const form: Form = await lastValueFrom(this.formsService.formsSync({ body: { data: {} } })) as Form;
+    this.router.navigate(['Formularios', 'edit', form.internalId]);
   }
 }
