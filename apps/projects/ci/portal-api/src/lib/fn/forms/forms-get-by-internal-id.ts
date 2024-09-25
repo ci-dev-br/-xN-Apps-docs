@@ -9,14 +9,14 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import { Form } from '../../models/form';
-import { FormCotrollerGetInputDto } from '../../models/form-cotroller-get-input-dto';
+import { GetByInternalIdInputDto } from '../../models/get-by-internal-id-input-dto';
 
-export interface FormsGet$Params {
-      body: FormCotrollerGetInputDto
+export interface FormsGetByInternalId$Params {
+      body: GetByInternalIdInputDto
 }
 
-export function formsGet(http: HttpClient, rootUrl: string, params: FormsGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Form>>> {
-  const rb = new RequestBuilder(rootUrl, formsGet.PATH, 'post');
+export function formsGetByInternalId(http: HttpClient, rootUrl: string, params: FormsGetByInternalId$Params, context?: HttpContext): Observable<StrictHttpResponse<Form>> {
+  const rb = new RequestBuilder(rootUrl, formsGetByInternalId.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -26,9 +26,9 @@ export function formsGet(http: HttpClient, rootUrl: string, params: FormsGet$Par
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<Form>>;
+      return r as StrictHttpResponse<Form>;
     })
   );
 }
 
-formsGet.PATH = '/Forms/Get';
+formsGetByInternalId.PATH = '/Forms/GetByInternalId';

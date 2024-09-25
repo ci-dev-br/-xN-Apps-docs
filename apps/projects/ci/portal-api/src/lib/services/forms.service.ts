@@ -12,8 +12,10 @@ import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
 import { Form } from '../models/form';
-import { formsGet } from '../fn/forms/forms-get';
-import { FormsGet$Params } from '../fn/forms/forms-get';
+import { formsGetByInternalId } from '../fn/forms/forms-get-by-internal-id';
+import { FormsGetByInternalId$Params } from '../fn/forms/forms-get-by-internal-id';
+import { formsGetList } from '../fn/forms/forms-get-list';
+import { FormsGetList$Params } from '../fn/forms/forms-get-list';
 import { formsSync } from '../fn/forms/forms-sync';
 import { FormsSync$Params } from '../fn/forms/forms-sync';
 import { SyncPayloadDaoForm } from '../models/sync-payload-dao-form';
@@ -49,28 +51,53 @@ export class FormsService extends BaseService {
     );
   }
 
-  /** Path part for operation `formsGet()` */
-  static readonly FormsGetPath = '/Forms/Get';
+  /** Path part for operation `formsGetList()` */
+  static readonly FormsGetListPath = '/Forms/GetList';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `formsGet()` instead.
+   * To access only the response body, use `formsGetList()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  formsGet$Response(params: FormsGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Form>>> {
-    return formsGet(this.http, this.rootUrl, params, context);
+  formsGetList$Response(params: FormsGetList$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Form>>> {
+    return formsGetList(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `formsGet$Response()` instead.
+   * To access the full response (for headers, for example), `formsGetList$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  formsGet(params: FormsGet$Params, context?: HttpContext): Observable<Array<Form>> {
-    return this.formsGet$Response(params, context).pipe(
+  formsGetList(params: FormsGetList$Params, context?: HttpContext): Observable<Array<Form>> {
+    return this.formsGetList$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Form>>): Array<Form> => r.body)
+    );
+  }
+
+  /** Path part for operation `formsGetByInternalId()` */
+  static readonly FormsGetByInternalIdPath = '/Forms/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `formsGetByInternalId()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  formsGetByInternalId$Response(params: FormsGetByInternalId$Params, context?: HttpContext): Observable<StrictHttpResponse<Form>> {
+    return formsGetByInternalId(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `formsGetByInternalId$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  formsGetByInternalId(params: FormsGetByInternalId$Params, context?: HttpContext): Observable<Form> {
+    return this.formsGetByInternalId$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Form>): Form => r.body)
     );
   }
 

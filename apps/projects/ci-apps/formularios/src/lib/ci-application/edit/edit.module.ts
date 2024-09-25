@@ -3,6 +3,11 @@ import { CommonModule } from '@angular/common';
 
 import { EditRoutingModule } from './edit-routing.module';
 import { EditComponent } from './edit.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatTabsModule } from '@angular/material/tabs';
 
 
 @NgModule({
@@ -11,7 +16,12 @@ import { EditComponent } from './edit.component';
   ],
   imports: [
     CommonModule,
-    EditRoutingModule
+    EditRoutingModule,
+    MatCardModule,
+    MatInputModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatTabsModule,
   ],
 })
 export class EditModule { }

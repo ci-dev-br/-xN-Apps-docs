@@ -42,10 +42,10 @@ export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
     @ApiOperation({
         operationId: 'PessoaSync'
     })
-    override async sync(
+    override async Sync(
         @Body() body: SyncPayloadDaoPessoa,
     ) {
-        return await super.sync(body)
+        return await super.Sync(body)
     }
 
     @Post('Get')
@@ -56,9 +56,9 @@ export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
     @ApiOperation({
         operationId: 'PessoaGet'
     })
-    override async get(
+    override async GetList(
         @Body() input: ObterListaPessoa,
     ) {
-        return super.get(input);
+        return super.GetList(input);
     }
 }

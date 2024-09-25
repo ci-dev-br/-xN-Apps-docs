@@ -33,7 +33,7 @@ export class HomeComponent implements OnInit {
     this.find();
   }
   find() {
-    this.formsService?.formsGet({
+    this.formsService?.formsGetList({
       body: {
         take: 50, skip: 0,
       }

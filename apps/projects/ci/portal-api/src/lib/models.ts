@@ -15,6 +15,7 @@ export { Domain } from './models/domain';
 export { FiendClientByPayload } from './models/fiend-client-by-payload';
 export { Form } from './models/form';
 export { FormCotrollerGetInputDto } from './models/form-cotroller-get-input-dto';
+export { GetByInternalIdInputDto } from './models/get-by-internal-id-input-dto';
 export { GetInputDtos } from './models/get-input-dtos';
 export { IDynamicForm } from './models/i-dynamic-form';
 export { Marca } from './models/marca';

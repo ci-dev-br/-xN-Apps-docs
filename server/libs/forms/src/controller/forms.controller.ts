@@ -1,4 +1,4 @@
-import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
+import { ControllerDaoBase, GetByInternalIdInputDto, SyncPayloadDao } from "@ci/manager";
 import { FormsService } from "../service/forms.service";
 import { Form } from "../model/form.entity";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
@@ -19,6 +19,8 @@ export class FormCotrollerGetInputDto {
     orderBy?: any;
 }
 
+
+
 @ApiTags('Forms')
 @Controller('Forms')
 export class FormsController extends ControllerDaoBase<FormsService, Form> {
@@ -34,27 +36,41 @@ export class FormsController extends ControllerDaoBase<FormsService, Form> {
     @ApiOperation({
         operationId: 'FormsSync'
     })
-    override async sync(
+    override async Sync(
         @Body() input: SyncPayloadDaoForm,
         @Req() req?: any,
     ) {
-        return await super.sync(input, req);
+        return await super.Sync(input, req);
     }
 
-    @Post('Get')
+    @Post('GetList')
     @ApiResponse({
         type:
             Form,
         isArray: true
     })
     @ApiOperation({
-        operationId: 'FormsGet',
+        operationId: 'FormsGetList',
 
     })
-    override async get(
+    override async GetList(
         @Body() input: FormCotrollerGetInputDto,
         @Req() req,
     ) {
-        return await super.get(input, req);
+        return await super.GetList(input, req);
+    }
+
+    @Post('GetByInternalId')
+    @ApiResponse({
+        type: Form,
+    })
+    @ApiOperation({
+        operationId: 'FormsGetByInternalId',
+    })
+    override async GetByInternalId(
+        @Body() input: GetByInternalIdInputDto,
+        @Req() req,
+    ) {
+        return await super.GetByInternalId(input, req);
     }
 }
