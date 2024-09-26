@@ -1,5 +1,8 @@
-@if(form){
+@if(formulario){
 <mat-card>
-    <h1 mat-card-title>{{form.title || 'Formulário sem título'}}</h1>
+    <mat-card-content>
+        <ci-input mode="content-editable" label="Título" fieldName="title" el="h1" />
+        <ci-input mode="content-editable" label="Descrição" fieldName="description" />
+    </mat-card-content>
 </mat-card>
 }
