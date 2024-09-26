@@ -1,0 +1,22 @@
+@if(stage==='edit'){
+<mat-form-field>
+    <mat-label>{{label || placeholder || ''}}</mat-label>
+    <input #input type="text" matInput [placeholder]="placeholder || label||''" (keydown.enter)="confirm($event)" (blur)="confirm($event)">
+    <button matSuffix mat-icon-button (click)="confirm($event)">
+        <mat-icon>check</mat-icon>
+    </button>
+    <!-- hints -->
+</mat-form-field>
+}@else if(stage === 'view'){
+@switch (el) {
+@case ('h1') {<h1><ng-container *ngTemplateOutlet="inner"></ng-container></h1>}
+@case ('h2') {<h2><ng-container *ngTemplateOutlet="inner"></ng-container></h2>}
+@case ('h3') {<h3><ng-container *ngTemplateOutlet="inner"></ng-container></h3>}
+@case ('h4') {<h4><ng-container *ngTemplateOutlet="inner"></ng-container></h4>}
+@case ('h5') {<h5><ng-container *ngTemplateOutlet="inner"></ng-container></h5>}
+@case ('h6') {<h6><ng-container *ngTemplateOutlet="inner"></ng-container></h6>}
+@case ('p') {<p><ng-container *ngTemplateOutlet="inner"></ng-container></p>}
+@default {<span><ng-container *ngTemplateOutlet="inner"></ng-container></span>}
+}
+<ng-template #inner>Teste</ng-template>
+}
