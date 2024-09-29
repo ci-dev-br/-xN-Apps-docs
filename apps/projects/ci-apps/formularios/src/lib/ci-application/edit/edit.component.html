@@ -1,6 +1,6 @@
 @if(formulario){
 <mat-card>
-    <mat-card-content>
+    <mat-card-content [formGroup]="formGroup">
         <ci-input mode="content-editable" label="Título" fieldName="title" el="h1" />
         <ci-input mode="content-editable" label="Descrição" fieldName="description" />
     </mat-card-content>

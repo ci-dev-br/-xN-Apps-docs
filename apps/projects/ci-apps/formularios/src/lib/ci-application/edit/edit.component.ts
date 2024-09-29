@@ -31,7 +31,12 @@ export class EditComponent implements OnInit {
   ) { }
   async ngOnInit() {
     this.formsService.formsGetByInternalId({ body: { internalId: this.route.snapshot.paramMap.get('FormId') } }).subscribe(form_data => {
-      this.formulario = form_data
+      this.formulario = form_data;
+      this.daos.prepareToEdit(this.formulario);
+      this.daos.bindDataForm(this.formulario, this.formGroup);
+      this.daos.confirmation(this.formulario)?.subscribe(r => {
+        console.log(r);
+      })
     });
   }
 }
