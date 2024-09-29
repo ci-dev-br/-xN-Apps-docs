@@ -8,7 +8,6 @@ import { join } from 'path';
 import { config } from 'dotenv';
 import * as express from 'express';
 import { spawnSync } from 'child_process';
-import * as http from 'http';
 import * as https from 'https';
 import { LoggingInterceptor } from '@ci/core';
 import { WsAdapter } from '@nestjs/platform-ws';
@@ -17,24 +16,29 @@ console.clear();
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
 
-async function start(server: express.Express, app: NestExpressApplication, port: number, httpsOptions) {
+async function start(server: express.Express, app: NestExpressApplication, https_port: number, httpsOptions, http_port: number = 86) {
   try {
-    const httpServer = http.createServer(server).listen(86);
-    const httpsServer = https.createServer(httpsOptions, server).listen(port);
 
-    console.log(`Application is running`);
+
+    // let ws_adapter = new WsAdapter(app);
+    // app.useWebSocketAdapter(ws_adapter);
+
+    const httpsServer = https.createServer(httpsOptions, app.getHttpAdapter().getInstance());
+
+    let wss_adapter = new WsAdapter(httpsServer);
+    app.useWebSocketAdapter(wss_adapter);
+
     return {
-      httpServer,
-      httpsServer
+      httpServer: await app.listen(http_port),
+      httpsServer: httpsServer.listen(https_port),
     }
-
   } catch (error) {
     if (error.code === 'EADDRINUSE') {
       console.error(error);
       console.error("stop services");
       const out = spawnSync('powershell', ['Stop-Service', 'apps.ci.dev.br']);
       console.log(out.error)
-      await start(server, app, port, httpsOptions);
+      await start(server, app, https_port, httpsOptions);
     }
   }
 }
@@ -59,13 +63,18 @@ async function bootstrap() {
       'https://192.168.0.119:4200',
       'https://apps.ci.dev.br:446',
       'http://apps.ci.dev.br:86',
+      'https://xx.app.br',
+      'http://xx.app.br',
+      '*',
       // 'http://localhost:4200', 
       // 'http://localhost:4000',
       // 'http://192.168.0.119:99',
     ]
   });
-  app.useWebSocketAdapter(new WsAdapter(app))
-  app.useGlobalInterceptors(new LoggingInterceptor());
+
+  /**
+   * Swagger Open API 3
+   */
   const options = new DocumentBuilder()
     .setTitle('Apps CiDevBr')
     .setDescription('Apps API')
@@ -75,15 +84,23 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
+
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
-  app.setViewEngine('hbs');
-  const PORT = Number(process.env.PORT);
 
+  /** HBS View Engine */
+  app.setViewEngine('hbs');
+
+  /**
+   * Websocket (ws)
+   */
+
+  app.useGlobalInterceptors(new LoggingInterceptor());
   app.init();
-  const servers = await start(server, app, PORT, httpsOptions);
-  //app.listen('84')
-  //  console.log(`Application is running on: ${await app.getUrl()}`);
   // console.log(__dirname);
+
+  const PORT = Number(process.env.PORT);
+  const servers = await start(server, app, PORT, httpsOptions);
+  console.log(`Application is running on: ${await app.getUrl()} and ${PORT}`);
 }
 bootstrap();
