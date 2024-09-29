@@ -1,7 +1,8 @@
-@if(stage==='edit'){
-<mat-form-field>
+@if(stage==='edit' && form && fieldName){
+<mat-form-field [formGroup]="form">
     <mat-label>{{label || placeholder || ''}}</mat-label>
-    <input #input type="text" matInput [placeholder]="placeholder || label||''" (keydown.enter)="confirm($event)" (blur)="confirm($event)">
+    <input #input type="text" matInput [placeholder]="placeholder || label||''" (keydown.enter)="confirm($event)"
+        (blur)="confirm($event)" [formControlName]="fieldName" />
     <button matSuffix mat-icon-button (click)="confirm($event)">
         <mat-icon>check</mat-icon>
     </button>
@@ -19,5 +20,5 @@
 @case ('div') {<div><ng-container *ngTemplateOutlet="inner"></ng-container></div>}
 @default {<span><ng-container *ngTemplateOutlet="inner"></ng-container></span>}
 }
-<ng-template #inner>Teste</ng-template>
+<ng-template #inner>{{value || 'Não possui '+label}}</ng-template>
 }
