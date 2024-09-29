@@ -31,7 +31,7 @@ export class WsService {
         if (this._subject) {
             this._subject.complete();
         }
-        this._subject = webSocket('ws://apps.ci.dev.br:81');
+        this._subject = webSocket('wss://apps.ci.dev.br:446');
         this._subject.subscribe(message => {
             this.status = 'online';
             this.retryWait = 100;
