@@ -11,3 +11,4 @@ export * from './lib/logo/logo.component';
 export * from './lib/status-bar/status-bar';
 export * from './lib/file/file.component';
 export * from './lib/input/input.module';
+export * from './lib/action/action.module';
