@@ -4,7 +4,8 @@
 <div class="files">
     @for (form of forms; track $index) {
     <ci-file [title]="form.title || 'Formulário sem título'" [description]=" form.description || undefined" icon="form"
-        (click)="form.internalId ? openFormById(form.internalId) : null"></ci-file>
+        (click)="form.internalId ? openFormById(form.internalId) : null"
+        [view]="origin +'/Formularios/edit/' + form.internalId"></ci-file>
     }
 </div>
 <div class="float-menu">

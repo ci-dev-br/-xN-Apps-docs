@@ -25,6 +25,7 @@ import { lastValueFrom } from 'rxjs';
 })
 export class HomeComponent implements OnInit {
   forms?: Form[];
+  origin = location.origin;
   constructor(
     private readonly formsService: FormsService,
     private readonly router: Router,
