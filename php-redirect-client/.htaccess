@@ -1,0 +1,16 @@
+RewriteEngine On
+RewriteBase /
+
+# 1. Permite acesso direto a arquivos existentes
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# 2. Reescreve para index.php se a rota não corresponde a um arquivo e não tem extensão
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !\. [NC] 
+RewriteRule ^(.*)$ /index.php [L]
+
+# 3. Redireciona outras rotas
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ https://apps.ci.dev.br:446/$1 [L]
