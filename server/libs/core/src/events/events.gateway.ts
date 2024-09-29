@@ -11,13 +11,20 @@ import { Server } from "ws";
 
 })
 export class EventsGateway implements OnGatewayInit {
+    constructor() {
+        1 + 1;
+    }
     pings = [];
     globalPing = 0;
     @WebSocketServer()
     server: Server;
+    m = [];
     @SubscribeMessage('events')
     onEvent(@ConnectedSocket() client: any, @MessageBody() data: any) {
+        if (data.momentum && this.m.indexOf(data.momentum) !== -1) return;
+        this.m.push(data.momentum)
         if (data.type === 'ping') {
+            // data.__consumed = true;
             if (data.lastPing) {
                 this.globalPing = ((this.globalPing + (data.lastPing || 0)) / 2)
                 this.pings.push(data.lastPing)

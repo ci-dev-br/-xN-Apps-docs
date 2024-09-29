@@ -24,7 +24,8 @@ export class WsService {
         setTimeout(() => this.init());
     }
     async grantConnection() {
-        this._grant_connection = true;
+        this._grant_connection =
+            true;
     }
     async init() {
         if (!this.isBrowser) return;
