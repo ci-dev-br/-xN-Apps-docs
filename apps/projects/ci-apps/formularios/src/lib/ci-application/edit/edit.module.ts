@@ -8,6 +8,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { InputModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 @NgModule({
   declarations: [
     EditComponent
@@ -21,6 +23,8 @@ import { CoreModule } from '@ci/core';
     ReactiveFormsModule,
     MatTabsModule,
     InputModule,
+    MatButtonModule,
+    MatSnackBarModule,
   ],
 })
 export class EditModule { }

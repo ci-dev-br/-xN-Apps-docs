@@ -28,6 +28,7 @@ export class EditComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly formBuilder: FormBuilder,
     private readonly daos: DaoService,
+    private readonly snap: MatSnackBar,
   ) { }
   async ngOnInit() {
     this.formsService.formsGetByInternalId({ body: { internalId: this.route.snapshot.paramMap.get('FormId') } }).subscribe(form_data => {
@@ -38,5 +39,12 @@ export class EditComponent implements OnInit {
         console.log(r);
       })
     });
+  }
+async confirm() {
+    if (this.formGroup.invalid) {
+      this.formGroup.markAllAsTouched();
+      this.snap.open('Alguns campos precisam ser corrigidos...')
+      return;
+    }
   }
 }
