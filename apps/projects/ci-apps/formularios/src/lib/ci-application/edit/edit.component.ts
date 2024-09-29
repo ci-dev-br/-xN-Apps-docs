@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { DaoService } from '@ci/core';
 import { Form, FormsService } from '@ci/portal-api';
 @Component({
@@ -20,8 +21,8 @@ export class EditComponent implements OnInit {
 
   }
   formGroup: FormGroup = this.formBuilder.group({
-    title: [],
-    description: [],
+    title: [, [Validators.required]],
+    description: [, [Validators.required]],
   });
   constructor(
     private readonly formsService: FormsService,
@@ -40,7 +41,7 @@ export class EditComponent implements OnInit {
       })
     });
   }
-async confirm() {
+  async confirm() {
     if (this.formGroup.invalid) {
       this.formGroup.markAllAsTouched();
       this.snap.open('Alguns campos precisam ser corrigidos...')
