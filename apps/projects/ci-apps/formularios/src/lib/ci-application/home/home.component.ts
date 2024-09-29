@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { FileComponent } from '@ci/components';
+import { ActionModule, FileComponent } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { Form, FormsService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
@@ -19,6 +20,9 @@ import { lastValueFrom } from 'rxjs';
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
+    ActionModule,
+    MatMenuModule,
+    MatButtonModule,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
@@ -50,4 +54,5 @@ export class HomeComponent implements OnInit {
       this.router.navigate(['Formularios', 'edit', internalId]);
     })
   }
+
 }

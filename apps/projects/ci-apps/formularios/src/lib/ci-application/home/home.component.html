@@ -5,6 +5,8 @@
     @for (form of forms; track $index) {
     <ci-file [title]="form.title || 'Formulário sem título'" [description]=" form.description || undefined" icon="form"
         (click)="form.internalId ? openFormById(form.internalId) : null">
+        <ci-action menu icon="edit" label="Renomear"></ci-action>
+        <ci-action menu icon="delete" label="Excluir"></ci-action>
     </ci-file>
     }
 </div>
