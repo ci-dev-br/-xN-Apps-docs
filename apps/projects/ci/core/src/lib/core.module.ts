@@ -11,11 +11,13 @@ import { AutoScollDirective } from './directives/auto-scroll.directive';
 import { ConsoleService } from './services/console.service';
 import { ThemeService } from './theme/theme.service';
 import { WsService } from './io/ws.service';
+import { SafePipe } from './pipes/safe.pipe';
 
 @NgModule({
   declarations: [
     AutoFocusDirective,
     AutoScollDirective,
+    SafePipe,
   ],
   imports: [
     CommonModule,
@@ -30,6 +32,7 @@ import { WsService } from './io/ws.service';
     // WsService,
   ],
   exports: [
+    SafePipe,
     CommonModule,
     AutoFocusDirective,
     AutoScollDirective,
@@ -46,4 +49,5 @@ export {
   Localizacao,
   ThemeService,
   WsService,
+  SafePipe,
 }

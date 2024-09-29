@@ -1,5 +1,6 @@
 import { EnvironmentProviders, isDevMode, makeEnvironmentProviders, Provider } from "@angular/core";
 import { WsService } from "./io/ws.service";
+import { NotificationService } from "./notification/notification.service";
 
 
 export interface ICoreEnvironment {
@@ -13,6 +14,7 @@ export function coreProvider(
     }
     const providers: Provider[] = [
         WsService,
+        NotificationService,
     ];
     return makeEnvironmentProviders(providers);
 }
