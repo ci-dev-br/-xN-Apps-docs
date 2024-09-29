@@ -13,7 +13,7 @@ export class InputComponent {
   @Input() label?: string;
   @Input() placeholder?: string;
   @Input()
-  el?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | undefined;
+  el?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'div' | undefined;
   async confirm(event: MouseEvent | Event) {
     event.stopPropagation();
     this.stage = 'view';
