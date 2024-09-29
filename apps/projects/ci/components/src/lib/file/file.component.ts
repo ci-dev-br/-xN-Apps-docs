@@ -3,6 +3,8 @@ import { CoreModule } from "@ci/core";
 import { MatCardModule } from '@angular/material/card'
 import { MatIconModule } from "@angular/material/icon";
 import { DomSanitizer } from "@angular/platform-browser";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatButtonModule } from "@angular/material/button";
 
 
 @Component({
@@ -11,6 +13,8 @@ import { DomSanitizer } from "@angular/platform-browser";
         CoreModule,
         MatCardModule,
         MatIconModule,
+        MatMenuModule,
+        MatButtonModule,
     ],
     selector: 'ci-file',
     template: `
@@ -19,7 +23,14 @@ import { DomSanitizer } from "@angular/platform-browser";
             @if(view){<iframe mat-card-image [src]="view | safe" ></iframe>}
             @if(title){{{title}}}
             @if(icon){<mat-icon>{{icon}}</mat-icon>}
+            <button mat-icon-button (click)="$event.stopPropagation()" [matMenuTriggerFor]="menu" >
+                <mat-icon>more_vert</mat-icon>
+            </button>        
+            <mat-menu #menu>
+                <ng-content selector="[menu]" ></ng-content>
+            </mat-menu>
         </mat-card>
+        
     `,
     styles: [
         `:host{
