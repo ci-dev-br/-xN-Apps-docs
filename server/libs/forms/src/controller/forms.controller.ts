@@ -18,9 +18,6 @@ export class FormCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
     orderBy?: any;
 }
-
-
-
 @ApiTags('Forms')
 @Controller('Forms')
 export class FormsController extends ControllerDaoBase<FormsService, Form> {
@@ -59,7 +56,6 @@ export class FormsController extends ControllerDaoBase<FormsService, Form> {
     ) {
         return await super.GetList(input, req);
     }
-
     @Post('GetByInternalId')
     @ApiResponse({
         type: Form,
@@ -72,5 +68,18 @@ export class FormsController extends ControllerDaoBase<FormsService, Form> {
         @Req() req,
     ) {
         return await super.GetByInternalId(input, req);
+    }
+    @Post('Delete')
+    @ApiResponse({
+        type: Form,
+    })
+    @ApiOperation({
+        operationId: 'FormsDelete',
+    })
+    override async Delete(
+        @Body() input: GetByInternalIdInputDto,
+        @Req() req,
+    ) {
+        return await super.Delete(input, req);
     }
 }

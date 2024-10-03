@@ -20,15 +20,19 @@ import { MatButtonModule } from "@angular/material/button";
     template: `
         <mat-card>
             @if(image){<img mat-card-image [src]="image" />}
-            @if(view){<iframe mat-card-image [src]="view | safe" ></iframe>}
-            @if(title){{{title}}}
-            @if(icon){<mat-icon>{{icon}}</mat-icon>}
-            <button mat-icon-button (click)="$event.stopPropagation()" [matMenuTriggerFor]="menu" >
-                <mat-icon>more_vert</mat-icon>
-            </button>        
-            <mat-menu #menu>
-                <ng-content selector="[menu]" ></ng-content>
-            </mat-menu>
+            @else if(view){<iframe mat-card-image [src]="view | safe" ></iframe>}
+            <mat-card-footer>
+                @if(icon){<mat-icon>{{icon}}</mat-icon>}
+                <div class="col">
+                    @if(title){{{title}}}
+                </div>
+                <button mat-icon-button class="actions" (click)="$event.stopPropagation()" [matMenuTriggerFor]="menu" >
+                    <mat-icon>more_vert</mat-icon>
+                </button>        
+                <mat-menu #menu>
+                    <ng-content selector="[menu]" ></ng-content>
+                </mat-menu>
+            </mat-card-footer>
         </mat-card>
         
     `,
@@ -50,6 +54,26 @@ import { MatButtonModule } from "@angular/material/button";
             margin: -150%;
             pointer-events: none;
             user-select: none;
+        }
+        mat-icon{
+            flex:none;
+        }
+        mat-card-footer{
+            position:relative;
+            display: flex;
+            flex-direction: row;
+            align-items:center;
+            gap: 6px;
+        }
+        .actions{
+
+            // position: absolute;
+            // right: 0;
+            // top:0;
+        }
+        .col{
+            display: flex;
+            flex-direction: column;
         }
         `
     ],

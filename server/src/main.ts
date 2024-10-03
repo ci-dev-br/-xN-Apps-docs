@@ -65,6 +65,8 @@ async function bootstrap() {
       'http://apps.ci.dev.br:86',
       'https://xx.app.br',
       'http://xx.app.br',
+      'https://oitudobemeutobem.com.br',
+      'https://www.oitudobemeutobem.com.br',
       '*',
       // 'http://localhost:4200', 
       // 'http://localhost:4000',
