@@ -35,7 +35,6 @@
                 "input": "node_modules/monaco-editor/min/vs",
                 "output": "/lib/vs"
               }
-              
             ],
             "styles": [
               "src/styles.scss"
@@ -1194,6 +1193,39 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/ci/ilustrador/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci/nota": {
+      "projectType": "library",
+      "root": "projects/ci/nota",
+      "sourceRoot": "projects/ci/nota/src",
+      "prefix": "ci-apps",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci/nota/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci/nota/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci/nota/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci/nota/tsconfig.spec.json",
             "polyfills": [
               "zone.js",
               "zone.js/testing"

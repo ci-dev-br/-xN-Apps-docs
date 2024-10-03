@@ -8,6 +8,7 @@ import { CredencialService } from '../service/credencial.service';
 import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import { AuthService } from '../service/auth.service';
+import { TwoFactorAuthenticationService } from '../service/two-factors.service';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -16,6 +17,7 @@ export class AuthController {
     private readonly credencialService: CredencialService,
     private readonly jwtService: JwtService,
     private readonly authService: AuthService,
+    private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
   ) { }
   @Public()
   @Post('Registrar')
@@ -102,6 +104,13 @@ export class AuthController {
       // O que fazer quando o usuário não é identificado?
       if (identified_user) {
         await this.credencialService.eliminarChaves(identified_user.id);
+        //const two_factory_autentication = await this.twoFactorAuthenticationService.requestTwoFactorAuthentication(identified_user);
+        //if (!two_factory_autentication) {
+        //  return {
+        //    chaveAcesso: chave.id,
+        //    stage: 'Authorization Code'
+        //  }
+        //}
         chave.identifiedUser = identified_user.id;
         chave = await this.credencialService.atualizar(chave);
         return new AcessoPayload({ ...chave, id: undefined });

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { Entities as NotificacaoEntities, NotificacaoModule } from '@ci/notification/notificacao.module';
+import { Entities as NotificacaoEntities, NotificacaoModule } from '@ci/notification';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule, AuthEntities as AuthEntities } from '@ci/auth/auth.module';
 import { ManagerEntities, ManagerModule } from '@ci/manager/manager.module';
@@ -28,6 +28,7 @@ import { config } from 'dotenv';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { FORMS_ENTITIES, FormsModule } from '@ci/forms';
 
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
@@ -58,6 +59,7 @@ const _entities_name = {
   Organizacao: OrganizacaoEntities,
   INPI: INPIEntities,
   SeoMarketing: SeoMarketingEntities,
+  Forms: FORMS_ENTITIES,
 }
 const _modules_name = {
   System: SystemModule,
@@ -81,6 +83,7 @@ const _modules_name = {
   Organizacao: OrganizacaoModule,
   INPI: INPIModule,
   SeoMarketing: SeoMarketingModule,
+  Forms: FormsModule,
 }
 process.env.MODULES.split(',').forEach(e => {
   if (_entities_name[e]) LoadedEntities.push(..._entities_name[e]);
@@ -104,6 +107,7 @@ process.env.MODULES.split(',').forEach(e => {
       maxQueryExecutionTime: 100,
       namingStrategy: new SnakeNamingStrategy(),
       verboseRetryLog: true,
+      dropSchema: false,
       entities: [
         ...LoadedEntities
       ]

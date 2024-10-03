@@ -1,10 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { User } from '../models/user.entity';
-import { ILike, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
-import { Tenant } from '@ci/tenant/models/tenant.entity';
-import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class UserService {

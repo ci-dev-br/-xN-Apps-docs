@@ -3,6 +3,12 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "debug",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://apps.ci.dev.br:4200/"
+    },
+    {
       "name": "ng serve",
       "type": "chrome",
       "request": "launch",

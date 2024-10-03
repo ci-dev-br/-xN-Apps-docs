@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
-import { CoreModule, CoreService } from '@ci/core';
+import { CoreModule, CoreService, WsService } from '@ci/core';
 
 @Component({
   selector: 'ci-root',
@@ -21,10 +21,11 @@ export class AppComponent implements OnInit {
     private readonly matIconReg: MatIconRegistry,
     private readonly core: CoreService,
     private readonly router: Router,
+    private readonly ws: WsService,
   ) { }
   ngOnInit() {
     this.matIconReg.setDefaultFontSetClass('material-symbols-sharp')
-    this.router.events.subscribe(r => console.log(r))
+    // this.router.events.subscribe(r => console.log(r))
   }
 
 }

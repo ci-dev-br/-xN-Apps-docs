@@ -1,0 +1,11 @@
+:host {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    >* {
+        max-width: 850px;
+        width: 100%;
+    }
+}

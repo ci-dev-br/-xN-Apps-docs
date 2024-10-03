@@ -1,11 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiExcludeController, ApiExcludeEndpoint, ApiHideProperty, ApiProperty } from "@nestjs/swagger";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Column, CreateDateColumn, Entity, Equal, FindOneOptions, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, IsNull, JoinColumn, JoinTable, ManyToMany, ManyToOne, Not, OneToOne, PrimaryGeneratedColumn, Repository, UpdateDateColumn } from "typeorm";
 import { Tenant } from "@ci/tenant";
 
 import { createHash } from 'crypto';
 import { ChaveAcesso } from "@ci/core";
+import { Exclude } from "class-transformer";
 
 export abstract class AuditedEntity {
     @ApiProperty({ nullable: true, required: false, uniqueItems: true })
@@ -29,6 +30,7 @@ export abstract class AuditedEntity {
     @ManyToOne(() => ChaveAcesso, { nullable: true })
     @JoinColumn()
     lastModifiedBy?: ChaveAcesso;
+    @Exclude()
     @Column({ nullable: true })
     deleted?: boolean;
 }
@@ -155,18 +157,34 @@ export abstract class DaoServiceBase<E extends FullAuditedEntity> {
         if (_where)
             (Array.isArray(_where) ? _where : [_where]).forEach((w: any) => {
                 w.createdBy = { identifiedUser: Equal(request.user.id) };
-                w.deleted = false;
+                w.deleted = IsNull();
 
                 if (!Array.isArray(_where)) _where = [_where];
                 if (Array.isArray(_where)) _where.push({ ...w, deleted: IsNull() })
             });
         return ((await this._repo.find({ skip: options.skip, take: options.take, where: _where, relations: { createdBy: true, lastModifiedBy: true } as any, order: options.orderBy })) || [])
     }
-}
+    async getByInternalId(internalId: string, request?: any) {
+        let where: FindOptionsWhere<E> = {
+            internalId: Equal(internalId),
+            deleted: IsNull(),
+            createdBy: { identifiedUser: Equal(request.user.id) }
+        } as FindOptionsWhere<E>;
 
+        return await this._repo.findOne({ where, relations: { createdBy: true, lastModifiedBy: true } as any })
+    }
+
+    async delete(data: E, request?: any) {
+    }
+}
 export class SyncPayloadDao<Entity> {
     @ApiProperty()
     data?: Entity;
+}
+
+export class GetByInternalIdInputDto {
+    @ApiProperty({ nullable: true, required: false })
+    internalId?: string;
 }
 
 export abstract class ControllerDaoBase<Service extends DaoServiceBase<E>, E> {
@@ -174,14 +192,19 @@ export abstract class ControllerDaoBase<Service extends DaoServiceBase<E>, E> {
         private _service: Service,
     ) { }
 
-    async sync(entity: SyncPayloadDao<E>, request?: any) {
+    async Sync(entity: SyncPayloadDao<E>, request?: any) {
         return await this._service.sincronizar(entity.data, request);
     }
-    async get(options?: { skip?: number, take?: number, where?: any, relations?: FindOptionsRelations<E> | FindOptionsRelationByString, orderBy?: any }, request?: any) {
+    async GetList(options?: { skip?: number, take?: number, where?: any, relations?: FindOptionsRelations<E> | FindOptionsRelationByString, orderBy?: any }, request?: any) {
         return await this._service.obterLista(options, request);
     }
 
-    async delete(item: E, request?: any) {
-
+    async GetByInternalId(payload: GetByInternalIdInputDto, request?: any) {
+        return await this._service.getByInternalId(payload.internalId, request);
     }
+
+    async Delete(item: E, request?: any) {
+        return await this._service.delete(item, request);
+    }
+
 } 

@@ -1,7 +1,8 @@
 import { Injectable, Injector, Optional } from '@angular/core';
-import { DAN } from './services/dan.service';
+import { Damn } from './services/damn.service';
 import { ActivatedRoute, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { ThemeService } from './core.module';
+import { NotificationService } from './notification/notification.service';
 @Injectable()
 export class CoreService {
   constructor(
@@ -9,11 +10,14 @@ export class CoreService {
     @Optional() private readonly router: Router,
     @Optional() private readonly ar: ActivatedRoute,
     @Optional() private readonly themeService?: ThemeService,
+    @Optional() private readonly notification?: NotificationService,
   ) {
     if (!!router) // setTimeout(() =>
       this.initRouterFixings()
     // );
-    setTimeout(() => inject.get(DAN));
+    setTimeout(() => inject.get(Damn));
+    
+    notification?.requestPermission();
   }
   async initRouterFixings() {
     let navigation_start: string | undefined = undefined;

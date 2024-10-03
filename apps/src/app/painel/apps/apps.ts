@@ -4,26 +4,59 @@ function getColor() {
 }
 
 export const APPS = [
-    { color: getColor(), url: '/Arquivos', name: 'Arquivos', roles: ['USER', 'ADMIN', 'MASTER'], icon: 'home_storage' },
-    { color: getColor(), url: '/Cadastros', name: 'Cadastros', roles: ['MASTER'], icon: 'how_to_reg' },
-    { color: getColor(), url: '/Codex', name: 'Codex', roles: ['MASTER'], icon: 'code' },
-    { color: getColor(), url: '/DevTools', name: 'DevTools', roles: ['MASTER'], icon: 'handyman' },
-    { color: getColor(), url: '/Dynamic', name: 'Dynamic', roles: ['MASTER'], icon: 'dynamic_form' },
-    { color: getColor(), url: '/Financeiro', name: 'Financeiro', roles: ['MASTER'], icon: 'finance' },
-    { color: getColor(), url: '/Formularios', name: 'Formularios', roles: ['MASTER'], icon: 'fact_check' },
-    { color: getColor(), url: '/Gerencial', name: 'Gerencial', roles: ['MASTER'], icon: 'bookmark_manager' },
-    { color: getColor(), url: '/Icons', name: 'Icons', roles: ['MASTER'], icon: 'add_reaction' },
-    { color: getColor(), url: '/Imersao', name: 'Imersao', roles: ['MASTER'], icon: 'view_in_ar' },
-    { color: getColor(), url: '/Infra', name: 'Infra', roles: ['MASTER'], icon: 'lan' },
-    { color: getColor(), url: '/Instalacao', name: 'Instalacao', roles: ['MASTER'], icon: 'deployed_code' },
-    { color: getColor(), url: '/LowCode', name: 'LowCode', roles: ['MASTER'], icon: 'variable_add' },
-    { color: getColor(), url: '/Mensagens', name: 'Mensagens', roles: ['MASTER'], icon: 'chat' },
-    { color: getColor(), url: '/Organizacao', name: 'Organizacao', roles: ['MASTER'], icon: 'corporate_fare' },
-    { color: getColor(), url: '/Produtos', name: 'Produtos', roles: ['MASTER'], icon: 'inventory' },
-    { color: getColor(), url: '/Profile', name: 'Profile', roles: ['MASTER'], icon: 'face' },
-    { color: getColor(), url: '/Projetos', name: 'Projetos', roles: ['MASTER'], icon: 'tactic' },
-    { color: getColor(), url: '/SEO', name: 'SEO', roles: ['MASTER'], icon: 'robot_2' },
-    { color: getColor(), url: '/Threejs', name: 'Threejs', roles: ['MASTER'], icon: '3d_rotation' },
-    { color: getColor(), url: '/Treinamento', name: 'Treinamento', roles: ['MASTER'], icon: 'school' },
-    { color: getColor(), url: '/Vendas', name: 'Vendas', roles: ['MASTER'], icon: 'store' },
+    { color: getColor(), url: '/Arquivos', name: 'Arquivos', roles: ['USER', 'ADMIN', 'MASTER'], icon: 'files', type: 'svg' },
+    { color: getColor(), url: '/Cadastros', name: 'Cadastros', roles: ['MASTER'], icon: 'cadastros', type: 'svg' },
+    { color: getColor(), url: '/Codex', name: 'Codex', roles: ['MASTER'], icon: 'codex', type: 'svg' },
+    { color: getColor(), url: '/DevTools', name: 'DevTools', roles: ['MASTER'], icon: 'dev-tools', type: 'svg' },
+    { color: getColor(), url: '/Dynamic', name: 'Dynamic', roles: ['MASTER'], icon: 'dynamic', type: 'svg' },
+    { color: getColor(), url: '/Financeiro', name: 'Financeiro', roles: ['MASTER'], icon: 'financeiro', type: 'svg' },
+    { color: getColor(), url: '/Formularios', name: 'Formularios', roles: ['MASTER'], icon: 'formularios', type: 'svg' },
+    { color: getColor(), url: '/Gerencial', name: 'Gerencial', roles: ['MASTER'], icon: 'gerencial', type: 'svg' },
+    { color: getColor(), url: '/Icons', name: 'Icons', roles: ['MASTER'], icon: 'icones', type: 'svg' },
+    { color: getColor(), url: '/Imersao', name: 'Imersao', roles: ['MASTER'], icon: 'imersao', type: 'svg' },
+    { color: getColor(), url: '/Infra', name: 'Infra', roles: ['MASTER'], icon: 'infra', type: 'svg' },
+    { color: getColor(), url: '/Instalacao', name: 'Instalacao', roles: ['MASTER'], icon: 'instalacao', type: 'svg' },
+    { color: getColor(), url: '/LowCode', name: 'LowCode', roles: ['MASTER'], icon: 'low-code', type: 'svg' },
+    { color: getColor(), url: '/Mensagens', name: 'Mensagens', roles: ['MASTER'], icon: 'mensagens', type: 'svg' },
+    { color: getColor(), url: '/Organizacao', name: 'Organizacao', roles: ['MASTER'], icon: 'organizacao', type: 'svg' },
+    { color: getColor(), url: '/Produtos', name: 'Produtos', roles: ['MASTER'], icon: 'produtos', type: 'svg' },
+    { color: getColor(), url: '/Profile', name: 'Profile', roles: ['MASTER'], icon: 'perfil', type: 'svg' },
+    { color: getColor(), url: '/Projetos', name: 'Projetos', roles: ['MASTER'], icon: 'projetos', type: 'svg' },
+    { color: getColor(), url: '/SEO', name: 'SEO', roles: ['MASTER'], icon: 'seo', type: 'svg' },
+    { color: getColor(), url: '/Threejs', name: 'Threejs', roles: ['MASTER'], icon: 'threejs', type: 'svg' },
+    { color: getColor(), url: '/Treinamento', name: 'Treinamento', roles: ['MASTER'], icon: 'treinamento', type: 'svg' },
+    { color: getColor(), url: '/Vendas', name: 'Vendas', roles: ['MASTER'], icon: 'vendas', type: 'svg' },
 ];
+
+/* 
+agenda
+anotacoes
+cadastros
+carteira
+codex
+dev
+dynamic
+estudos
+files
+financeiro
+formularios
+fotos
+gerencial
+icones
+imersao
+infra
+instalacao
+journal
+low
+mail
+mensagens
+organizacao
+perfil
+produtos
+projetos
+seo
+threejs
+tradutor
+treinamento
+vendas
+*/

@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ManagerClient.getInstance().setMainActivity(this);
+        ManagerClient.getInstance().setInicioActivity(this);
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -69,6 +69,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ManagerClient.getInstance().setMainActivity(null);
+        ManagerClient.getInstance().setInicioActivity(null);
     }
 }

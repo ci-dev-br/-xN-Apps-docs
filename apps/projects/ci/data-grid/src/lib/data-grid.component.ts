@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'ci-data-grid',
@@ -13,5 +13,5 @@ import { Component } from '@angular/core';
 })
 export class DataGridComponent {
   @Input()
-  options?: 
+  options?: any;
 }

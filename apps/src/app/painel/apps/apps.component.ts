@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CoreModule } from '@ci/core';
-import { Application } from '@ci/portal-api';
-import { lastValueFrom } from 'rxjs';
 import { APPS } from './apps';
 import { AuthModule, UserService } from '@ci/auth';
 
@@ -15,6 +13,13 @@ import { AuthModule, UserService } from '@ci/auth';
     MatIconModule,
     RouterModule,
     AuthModule,
+  ],
+  providers: [
+    /*  {
+       provide: CI_ICON_PACK, useValue: {
+         agenda: { url: 'icons/agenda.svg' }
+       }, multi: true
+     } */
   ],
   templateUrl: './apps.component.html',
   styleUrl: './apps.component.scss'

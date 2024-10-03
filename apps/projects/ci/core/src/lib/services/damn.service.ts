@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
  * Deny Application for the bad-guy
  */
 @Injectable()
-export class DAN {
+export class Damn {
     constructor() {
         this.trackApplication();
     }
@@ -22,7 +22,7 @@ export class DAN {
         console.error = () => {
             while (1 === 1) {
                 ______23647048______();
-                ______25694738______('[DAN!]');
+                ______25694738______('[Damn!]');
             }
         }
         /*  while (1 === 1) {

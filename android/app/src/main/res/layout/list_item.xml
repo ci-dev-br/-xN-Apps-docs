@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/Imagem"
@@ -11,7 +12,7 @@
         app:srcCompat="@mipmap/online" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="250dp"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
@@ -21,8 +22,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Label"
-            android:textColor="@color/white"
             android:textAlignment="textStart"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -30,8 +31,17 @@
             android:id="@+id/Subtitulo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
             android:layout_weight="1"
-            android:text="Sub Label" />
+            android:text="Sub Label"
+            android:textColor="@color/white" />
+
     </LinearLayout>
+
+    <Button
+        android:id="@+id/tryConnect"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:maxWidth="10px"
+        android:text="Try" />
+
 </LinearLayout>

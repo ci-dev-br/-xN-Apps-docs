@@ -1,0 +1,60 @@
+:host {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    flex: auto;
+
+    overflow: auto;
+}
+
+.files {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 24px;
+    // align-items: center;
+    justify-content: center;
+
+    flex: auto;
+    overflow: auto;
+}
+
+mat-toolbar {
+    z-index: 2;
+
+}
+
+ci-file {
+    flex: auto;
+    $size: 180px;
+
+    width: #{$size};
+    height: #{$size};
+    min-width: #{$size};
+    min-height: #{$size};
+    max-width: #{$size};
+    // max-height: #{$size};
+    cursor: pointer;
+
+    &:hover {
+        ::ng-deep mat-card {
+            border: solid 1px rebeccapurple;
+        }
+    }
+}
+
+.float-menu {
+    // display: ;
+    right: 24px;
+    bottom: 24px;
+    position: absolute;
+    z-index: 10;
+
+    button[mat-fab] {
+        border-radius: 50%;
+        overflow: hidden;
+    }
+}

@@ -6,6 +6,8 @@ import { PhoneNumber } from "./models/phone-number.entity";
 import { DeviceController } from "./controller/device.controller";
 import { DeviceService } from "./services/device.service";
 import { MessageController } from "./controller/message.controller";
+import { MessageService } from "./services/message.service";
+import { NotificationService } from "./services/notification.service";
 export const Entities = [
     Device,
     Message,
@@ -19,12 +21,17 @@ export const Entities = [
     ],
     providers: [
         DeviceService,
-        MessageController,
+        MessageService,
+        NotificationService,
     ],
     controllers: [
+        MessageController,
         DeviceController,
         MessageController,
     ],
+    exports: [
+        MessageService,
+    ]
 })
 export class NotificacaoModule { }
 export {

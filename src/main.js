@@ -27,7 +27,8 @@ const service_process = spawn('node',
         '--openssl-legacy-provider',
         './node_modules/@nestjs/cli/bin/nest',
         'start',
-        '--watch'
+        '--watch',
+        '--debug'
         // './dist/main.js',
         // '--prod',
     ], { cwd: __dirname + '/../server' })

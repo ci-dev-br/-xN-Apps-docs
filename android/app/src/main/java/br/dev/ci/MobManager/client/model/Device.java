@@ -1,11 +1,14 @@
 package br.dev.ci.MobManager.client.model;
 
+import java.util.List;
+
 public class Device {
     String id;
     String name;
     String applicationId;
     String model;
     String authentication;
+    List<PhoneNumber> numbers;
 
     public String getId() {
         return id;
@@ -45,5 +48,13 @@ public class Device {
 
     public void setAuthentication(String authentication) {
         this.authentication = authentication;
+    }
+
+    public List<PhoneNumber> getNumbers() {
+        return numbers;
+    }
+
+    public void setNumbers(List<PhoneNumber> phones) {
+        this.numbers = phones;
     }
 }

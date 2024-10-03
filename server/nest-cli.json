@@ -231,6 +231,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/prolabore/tsconfig.lib.json"
       }
+    },
+    "forms": {
+      "type": "library",
+      "root": "libs/forms",
+      "entryFile": "index",
+      "sourceRoot": "libs/forms/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/forms/tsconfig.lib.json"
+      }
     }
   }
 }

@@ -32,11 +32,11 @@ export class ProductController extends ControllerDaoBase<ProductService, Product
     @ApiOperation({
         operationId: 'ProductSync'
     })
-    override async sync(
+    override async Sync(
         @Body() input: SyncPayloadDaoProduct,
         @Req() req?: any,
     ) {
-        return await super.sync(input, req);
+        return await super.Sync(input, req);
     }
 
     @Post('Get')
@@ -49,10 +49,10 @@ export class ProductController extends ControllerDaoBase<ProductService, Product
         operationId: 'ProductGet',
 
     })
-    override async get(
+    override async GetList(
         @Body() input: ProductCotrollerGetInputDto,
         @Req() req,
     ) {
-        return await super.get(input, req);
+        return await super.GetList(input, req);
     }
 }

@@ -2,7 +2,13 @@
 <div class="apps container">
     @for (app of apps; track $index) {
     <div class="app" (click)="appClickHandler($event, app)" [style.background]="app.color">
-        @if(app.icon){<mat-icon [inline]="true">{{app.icon}}</mat-icon>}
+        @if(app.icon){
+        @if(app.type === 'svg' && !!app.icon){
+        <mat-icon [svgIcon]="app.icon" [inline]="true"></mat-icon>
+        }@else{
+        <mat-icon [inline]="true">{{app.icon}}</mat-icon>
+        }
+        }
         {{app.name}}
     </div>
     }

@@ -29,14 +29,12 @@ public class DeviceConnect extends AsyncTask<Device, Void, String> {
         try {
             URL url = new URL(this.url_gateway.getUrl() + "Device/Connect");
 
-            HostnameVerifier hostnameVerifier = org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.getHost
             // connection.set
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/json");
-            // connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(connection.getOutputStream());
 
             outputStreamWriter.write(mapper.writeValueAsString(devices[0]));

@@ -8,33 +8,40 @@ import { join } from 'path';
 import { config } from 'dotenv';
 import * as express from 'express';
 import { spawnSync } from 'child_process';
-import * as http from 'http';
-import *as https from 'https';
-import { LoggingInterceptor } from '../libs/core/src/logging.interceptor';
-
+import * as https from 'https';
+import { LoggingInterceptor } from '@ci/core';
+import { WsAdapter } from '@nestjs/platform-ws';
 
 console.clear();
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
 
-async function start(server: express.Express, app: NestExpressApplication, port: number, httpsOptions) {
+async function start(server: express.Express, app: NestExpressApplication, https_port: number, httpsOptions, http_port: number = 86) {
   try {
-    const httpServer = http.createServer(server).listen(86);
-    const httpsServer = https.createServer(httpsOptions, server).listen(port);
 
-    console.log(`Application is running`);
 
+    // let ws_adapter = new WsAdapter(app);
+    // app.useWebSocketAdapter(ws_adapter);
+
+    const httpsServer = https.createServer(httpsOptions, app.getHttpAdapter().getInstance());
+
+    let wss_adapter = new WsAdapter(httpsServer);
+    app.useWebSocketAdapter(wss_adapter);
+
+    return {
+      httpServer: await app.listen(http_port),
+      httpsServer: httpsServer.listen(https_port),
+    }
   } catch (error) {
     if (error.code === 'EADDRINUSE') {
       console.error(error);
       console.error("stop services");
       const out = spawnSync('powershell', ['Stop-Service', 'apps.ci.dev.br']);
       console.log(out.error)
-      await start(server, app, port, httpsOptions);
+      await start(server, app, https_port, httpsOptions);
     }
   }
 }
-
 async function bootstrap() {
   const httpsOptions: HttpsOptions = {
     // cert: process.env.cert ? fs.readFileSync(process.env.cert) : undefined,
@@ -43,27 +50,33 @@ async function bootstrap() {
     passphrase: process.env.passphrase ? process.env.passphrase : undefined
   };
   const server = express();
-  const app =
-    process.env.pfx || process.env.cert ?
-      await NestFactory.create<NestExpressApplication>(AppModule,
-        new ExpressAdapter(server)/* {
+  const app = process.env.pfx || process.env.cert ?
+    await NestFactory.create<NestExpressApplication>(AppModule,
+      new ExpressAdapter(server)/* {
         httpsOptions,
-        
       } */) :
-      await NestFactory.create<NestExpressApplication>(AppModule);
+    await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
     origin: is_production ? [] : [
       'http://apps.ci.dev.br:4200',
+      'https://apps.ci.dev.br:4200',
       'https://192.168.0.119:4200',
       'https://apps.ci.dev.br:446',
-      'https://www.bing.com',
-      'https://play.max.com',
-      // 'http://localhost:4200',
+      'http://apps.ci.dev.br:86',
+      'https://xx.app.br',
+      'http://xx.app.br',
+      'https://oitudobemeutobem.com.br',
+      'https://www.oitudobemeutobem.com.br',
+      '*',
+      // 'http://localhost:4200', 
       // 'http://localhost:4000',
       // 'http://192.168.0.119:99',
     ]
   });
-  app.useGlobalInterceptors(new LoggingInterceptor());
+
+  /**
+   * Swagger Open API 3
+   */
   const options = new DocumentBuilder()
     .setTitle('Apps CiDevBr')
     .setDescription('Apps API')
@@ -73,13 +86,23 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
+
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
+
+  /** HBS View Engine */
   app.setViewEngine('hbs');
-  const PORT = Number(process.env.PORT);
-  await start(server, app, PORT, httpsOptions);
-  //app.listen('84')
-  //  console.log(`Application is running on: ${await app.getUrl()}`);
+
+  /**
+   * Websocket (ws)
+   */
+
+  app.useGlobalInterceptors(new LoggingInterceptor());
+  app.init();
   // console.log(__dirname);
+
+  const PORT = Number(process.env.PORT);
+  const servers = await start(server, app, PORT, httpsOptions);
+  console.log(`Application is running on: ${await app.getUrl()} and ${PORT}`);
 }
 bootstrap();
