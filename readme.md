@@ -11,9 +11,7 @@ O código é escrito em um alto nível de abstração sintática. Com camadas pa
 
 # Iniciando instalação
 
-Para instalar o projeto localmente você precisa ter o NodeJS instalado em sua máquina. Se deseja criar um banco de dados em branco,
-
-
+Para instalar o projeto localmente você precisa ter o NodeJS instalado em sua máquina. Se deseja criar um banco de dados é necessária ter acesso ao banco a partir da máquina que executará a aplicação. As bases são instaladas de acordo com o modelo de dados estruturados anteriormente.
 
 ---
 Obrigado pela preferência em utilizar do meu código, fito com ♥
