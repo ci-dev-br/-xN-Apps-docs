@@ -2,11 +2,7 @@ import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocke
 import { Server } from "ws";
 @WebSocketGateway({
     transports: ['websocket'],
-    cors: ['http://apps.ci.dev.br:4200',
-        'https://192.168.0.119:4200',
-        'https://apps.ci.dev.br:446',
-        'http://apps.ci.dev.br:86',
-        'https://xx.app.br',
+    cors: ['*',
     ],
 
 })
