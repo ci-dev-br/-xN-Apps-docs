@@ -55,6 +55,6 @@ export class HomeComponent implements OnInit {
     })
   }
   delete(form: Form) {
-    this.formsService.
+    // this.formsService.
   }
 }
