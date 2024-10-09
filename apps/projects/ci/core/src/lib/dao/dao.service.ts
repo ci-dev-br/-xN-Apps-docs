@@ -1,6 +1,8 @@
 import { EventEmitter, Injectable, SimpleChange, SimpleChanges } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { Subject, concat, concatAll, debounceTime } from "rxjs";
+import { WsService } from "../core.module";
+import { PropertyBinding } from "three";
 export interface IChangeable {
     __pre: any;
     __binding_form?: FormGroup;
@@ -16,18 +18,27 @@ export class SerializedObjectData {
 export class DaoService {
     private states = new Map<any, any>();
     constructor(
+        private readonly ws: WsService,
     ) { }
     prepareToEdit(data: any, options?: { fieldsId?: string[], onChange?: (changes: SimpleChanges) => void, debounceTime?: number }): any | SerializedObjectData {
+        //let emitter;
         if (!data) return undefined;
         if (Array.isArray(data)) {
             return data.map(data_child => this.prepareToEdit(data_child, options));
         }
+        //setTimeout(() => {
+        this.ws.Atention(data);
+        // })
         if (data instanceof Date) return data;
         if (data instanceof SerializedObjectData) return data;
         if (data && typeof data === 'object' && !('__pre' in data)) {
             let { __pre, __binding_form, __confirmation_subject, ...o_data } = data;
             let pre = { ...JSON.parse(JSON.stringify(o_data)) };
-            const emitter = !!options?.onChange ? new EventEmitter<SimpleChanges>() : undefined;
+            const emitter = /* !!options?.onChange ? */ new EventEmitter<SimpleChanges>() /* : undefined */;
+            const ws = this.ws;
+            emitter.subscribe(changes => {
+                ws.EmitChanges(data.internalId, changes);
+            })
             let ___changes_on_changing: SimpleChanges[] | undefined;
             if (!!emitter) emitter.subscribe(r => {
                 if (!___changes_on_changing) ___changes_on_changing = [];
@@ -74,6 +85,7 @@ export class DaoService {
                 }
             });
             data.complete = () => pre = { ...JSON.parse(JSON.stringify(o_data)) };
+            (data as any)['::CI!INTERNALS<emitter>'] = emitter;
             Object.setPrototypeOf(data, new SerializedObjectData());
         }
         return data;
@@ -107,6 +119,14 @@ export class DaoService {
                 });
             })
             data.__binding_form = form;
+            if (data && data['::CI!INTERNALS<emitter>']) (data['::CI!INTERNALS<emitter>'] as EventEmitter<SimpleChanges>)
+                .subscribe(changes => {
+                    Object.keys(changes).forEach(Property => {
+
+                        if (changes[Property].currentValue !== form.controls[Property].value)
+                            form.controls[Property].setValue(changes[Property].currentValue);
+                    })
+                })
         }
     }
     async confirmChanges(data: any,) {

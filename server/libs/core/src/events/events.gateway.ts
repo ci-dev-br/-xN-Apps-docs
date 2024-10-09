@@ -7,9 +7,7 @@ import { Server } from "ws";
 
 })
 export class EventsGateway implements OnGatewayInit {
-    constructor() {
-        1 + 1;
-    }
+    constructor() { }
     pings = [];
     globalPing = 0;
     @WebSocketServer()
@@ -45,8 +43,47 @@ export class EventsGateway implements OnGatewayInit {
         }
     }
     @SubscribeMessage('identity')
-    async identity(@MessageBody() data: number) {
+    async identity(@ConnectedSocket() client: any, @MessageBody() data: any) {
+        client.id = data.client;
         return data;
+    }
+    private _atentionDatas: Map<string, any> = new Map();
+    @SubscribeMessage('Atention')
+    async Atention(@ConnectedSocket() client: any, @MessageBody() data: any) {
+        if (!!data?.objectRef?.internalId) {
+            if (this._atentionDatas.has(data.objectRef.internalId)) {
+            } else {
+                this._atentionDatas.set(data.objectRef.internalId, { /* ...data.objectRef */ });
+            }
+            const __last_data = this._atentionDatas.get(data.objectRef.internalId);
+            if (!__last_data["::CI_INTERNAL.CLIENTS"])
+                __last_data["::CI_INTERNAL.CLIENTS"] = [];
+            __last_data["::CI_INTERNAL.CLIENTS"].push(client);
+        }
+    }
+    @SubscribeMessage('Changes')
+    async Changes(
+        @ConnectedSocket() client: any,
+        @MessageBody() data: any,
+    ) {
+        if (!!data?.internalId) {
+            const __last_data = this._atentionDatas.get(data.internalId);
+            if (data.changes && __last_data) {
+                Object.keys(data.changes).forEach(property => {
+                    if (data.changes[property].currentValue) {
+                        __last_data[property] = data.changes[property].currentValue;
+                    }
+                })
+            }
+            if (Array.isArray(
+                __last_data["::CI_INTERNAL.CLIENTS"])) [...__last_data["::CI_INTERNAL.CLIENTS"]].forEach((clients: any) => {
+                    clients.send(JSON.stringify({
+                        event: 'Changes',
+                        data
+                    }))
+                    // }
+                })
+        }
     }
     afterInit(server: any) {
 

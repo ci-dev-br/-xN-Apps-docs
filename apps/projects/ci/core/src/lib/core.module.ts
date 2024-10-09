@@ -31,7 +31,6 @@ import { ContextMenuServices } from './contextmenu/contextmenu.service';
     Damn,
     ConsoleService,
     ContextMenuServices,
-    // WsService,
   ],
   exports: [
     SafePipe,
