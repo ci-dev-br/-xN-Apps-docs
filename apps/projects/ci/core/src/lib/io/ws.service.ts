@@ -68,7 +68,7 @@ export class WsService {
         if (data.event === 'Changes') {
             Object.keys(data.data.changes).forEach(p => {
                 let o_DATA = this._atentionDatas.get(data.data.internalId);
-                if (o_DATA)
+                if (o_DATA && o_DATA[p] === (data?.data?.changes[p] as SimpleChange).previousValue)
                     o_DATA[p] = (data?.data?.changes[p]).currentValue;
             })
 

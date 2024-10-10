@@ -103,7 +103,8 @@ export class EventsGateway implements OnGatewayInit {
             const __last_data = this._atentionDatas.get(data.internalId);
             if (data.changes && __last_data) {
                 Object.keys(data.changes).forEach(property => {
-                    if (data.changes[property].currentValue) {
+                    if (data.changes[property].currentValue
+                    ) {
                         __last_data[property] = data.changes[property].currentValue;
                     }
                 })
