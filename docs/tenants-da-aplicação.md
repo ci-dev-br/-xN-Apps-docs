@@ -10,5 +10,5 @@ Tenants podem restringir regiões para seus tenants filiados, até mesmo monetiz
 
 ## Módulos exclusivos
 
-Com o controle sobre tenants é possível importar seu código e criar um módulo de integração de forma simples e conectar os recursos do sistema com seus códigos. Podendo moentizar o uso.
+Com o controle sobre tenants é possível importar seu código e criar um módulo de integração de forma simples e conectar os recursos do sistema com seus códigos. Podendo monetizar o uso.
 
