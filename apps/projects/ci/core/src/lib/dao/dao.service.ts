@@ -1,8 +1,7 @@
 import { EventEmitter, Injectable, SimpleChange, SimpleChanges } from "@angular/core";
 import { FormGroup } from "@angular/forms";
-import { Subject, concat, concatAll, debounceTime } from "rxjs";
+import { Subject } from "rxjs";
 import { WsService } from "../core.module";
-import { PropertyBinding } from "three";
 export interface IChangeable {
     __pre: any;
     __binding_form?: FormGroup;
@@ -122,8 +121,9 @@ export class DaoService {
             if (data && data['::CI!INTERNALS<emitter>']) (data['::CI!INTERNALS<emitter>'] as EventEmitter<SimpleChanges>)
                 .subscribe(changes => {
                     Object.keys(changes).forEach(Property => {
-
-                        if (changes[Property].currentValue !== form.controls[Property].value)
+                        if (changes[Property].currentValue !== form.controls[Property].value &&
+                            changes[Property].previousValue === form.controls[Property].value
+                        )
                             form.controls[Property].setValue(changes[Property].currentValue);
                     })
                 })

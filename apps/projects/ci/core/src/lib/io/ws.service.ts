@@ -53,10 +53,9 @@ export class WsService {
         }, () => {
             console.info('Fim')
         });
-        this._subject.next({ event: 'events', data: { type: 'ping', momentum: (new Date().getTime()) } });
+        this.Emit({ event: 'events', data: { type: 'ping', momentum: (new Date().getTime()) } });
     }
     private async ReceiveData(data?: any) {
-        if (data.data.client === this.clientIdentification) return;
         if (data.type === 'pong') {
             this.ping = (new Date().getTime()) - Number(data.momentum);
             this.globalPing = data.globalPing;
@@ -65,6 +64,7 @@ export class WsService {
                 this.Ping();
             }, data.wait);
         }
+        if (data.data.client === this.clientIdentification) return;
         if (data.event === 'Changes') {
             Object.keys(data.data.changes).forEach(p => {
                 let o_DATA = this._atentionDatas.get(data.data.internalId);
