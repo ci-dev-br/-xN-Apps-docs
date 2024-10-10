@@ -74,8 +74,7 @@ export class WsService {
                         (o_DATA[p] || '').length < ((data?.data?.changes[p] as SimpleChange).previousValue || '').length
                     ) &&
                     data.setOrigem !== this.clientIdentification
-                )
-                    o_DATA[p] = (data?.data?.changes[p]).currentValue;
+                ) o_DATA[p] = (data?.data?.changes[p]).currentValue;
             })
 
         }
