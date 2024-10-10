@@ -45,9 +45,9 @@ export class WsService {
                 if (this._subject) this._subject?.complete();
                 this._subject = undefined;
                 this.status = 'connecting';
-                // setTimeout(() => {
-                //     this.init();
-                // }, this.retryWait);
+                setTimeout(() => {
+                    this.init();
+                }, this.retryWait);
                 this.retryWait = this.retryWait + 500;
             }
         }, () => {
