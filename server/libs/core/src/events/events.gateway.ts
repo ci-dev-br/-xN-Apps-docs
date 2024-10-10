@@ -1,26 +1,24 @@
 import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+import { createHash } from "crypto";
 import { Server } from "ws";
 @WebSocketGateway({
     transports: ['websocket'],
-    cors: ['http://apps.ci.dev.br:4200',
-        'https://192.168.0.119:4200',
-        'https://apps.ci.dev.br:446',
-        'http://apps.ci.dev.br:86',
-        'https://xx.app.br',
+    cors: ['*',
     ],
 
 })
 export class EventsGateway implements OnGatewayInit {
-    constructor() {
-        1 + 1;
-    }
+    constructor() { }
     pings = [];
     globalPing = 0;
     @WebSocketServer()
     server: Server;
     m = [];
+    private clients = new Map<string, { ws: WebSocket, returned: boolean, momentum: number }>();
     @SubscribeMessage('events')
     onEvent(@ConnectedSocket() client: any, @MessageBody() data: any) {
+        if (!this.sing(data)) return;
+        this.set(data.client, client, data.momentum);
         if (data.momentum && this.m.indexOf(data.momentum) !== -1) return;
         this.m.push(data.momentum)
         if (data.type === 'ping') {
@@ -38,21 +36,99 @@ export class EventsGateway implements OnGatewayInit {
                 pm = this.pings.reduce((a, b) => a + b) / this.pings.length;
             } catch (error) {
             }
-            return {
+            const waiting = 1000 + Math.random() * 14000;
+            const last = {
                 event: 'events',
                 type: 'pong',
-                wait: 1000 + Math.random() * 14000/* 1000 + Math.random() * 5000 */,
+                wait: waiting/* 1000 + Math.random() * 5000 */,
                 momentum: data.momentum,
                 globalPing: this.globalPing,
                 pingMedium: pm,
-            }
+            };
+            setTimeout(() => {
+                const c = this.clients.get(data.client);
+                if (c && data.momentum === c.momentum) {
+                    c.returned = false;
+                    this.clients.delete(data.client);
+                }
+            }, waiting + 1000);
+            console.log(' Clients: ' + this.clients.size);
+            return last;
         }
     }
     @SubscribeMessage('identity')
-    async identity(@MessageBody() data: number) {
+    async identity(@ConnectedSocket() client: any, @MessageBody() data: any) {
+        if (!this.sing(data)) return;
+        client.id = data.client;
         return data;
+    }
+    private _atentionDatas: Map<string, any> = new Map();
+    @SubscribeMessage('Atention')
+    async Atention(@ConnectedSocket() client: any, @MessageBody() data: any) {
+        if (!this.sing(data)) return;
+        client.id = data.client;
+        this.set(data.client, client, data.momentum);
+        if (!!data?.objectRef?.internalId) {
+            if (this._atentionDatas.has(data.objectRef.internalId)) {
+            } else {
+                this._atentionDatas.set(data.objectRef.internalId, { /* ...data.objectRef */ });
+            }
+            const __last_data = this._atentionDatas.get(data.objectRef.internalId);
+            if (!__last_data["::CI_INTERNAL.CLIENTS"])
+                __last_data["::CI_INTERNAL.CLIENTS"] = [];
+            __last_data["::CI_INTERNAL.CLIENTS"].push(client);
+        }
+
+    }
+    set(id: string, ws: any, momentum?: number) {
+        ws.id = id;
+        if (!this.clients.has(id)
+        )
+            this.clients.set(id, {
+                ws, returned: true, momentum
+            });
+        else {
+            const c = this.clients.get(id);
+            c.returned = true;
+            if (momentum !== undefined) c.momentum = momentum;
+        }
+    }
+    @SubscribeMessage('Changes')
+    async Changes(
+        @ConnectedSocket() client: any,
+        @MessageBody() data: any,
+    ) {
+        if (!this.sing(data)) return;
+        this.set(data.client, client, data.momentum);
+        if (!!data?.internalId) {
+            const __last_data = this._atentionDatas.get(data.internalId);
+            if (data.changes && __last_data) {
+                Object.keys(data.changes).forEach(property => {
+                    if (data.changes[property].currentValue) {
+                        __last_data[property] = data.changes[property].currentValue;
+                    }
+                })
+            }
+            this.clients.forEach((v, k) => {
+                if (
+                    (v as any).id !== data.client
+                ) v.ws.send(JSON.stringify({
+                    event: 'Changes',
+                    data
+                }))
+            })
+        }
     }
     afterInit(server: any) {
 
+    }
+    lasts: string[] = [];
+    sing(data?: any) {
+        let s = createHash('md5').update(JSON.stringify(data)).digest('hex');
+        if (this.lasts.indexOf(s) === -1) {
+            this.lasts.push(s);
+            return true;
+        }
+        else false;
     }
 }

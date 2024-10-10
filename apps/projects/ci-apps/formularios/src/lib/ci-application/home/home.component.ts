@@ -54,8 +54,7 @@ export class HomeComponent implements OnInit {
       this.router.navigate(['Formularios', 'edit', internalId]);
     })
   }
-  delete(form: Form){
-    this.formsService.
+  delete(form: Form) {
+    // this.formsService.
   }
-
 }

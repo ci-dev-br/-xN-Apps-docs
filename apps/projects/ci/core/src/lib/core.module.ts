@@ -12,6 +12,7 @@ import { ConsoleService } from './services/console.service';
 import { ThemeService } from './theme/theme.service';
 import { WsService } from './io/ws.service';
 import { SafePipe } from './pipes/safe.pipe';
+import { ContextMenuServices } from './contextmenu/contextmenu.service';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,7 @@ import { SafePipe } from './pipes/safe.pipe';
     ServicesService,
     Damn,
     ConsoleService,
-    // WsService,
+    ContextMenuServices,
   ],
   exports: [
     SafePipe,
