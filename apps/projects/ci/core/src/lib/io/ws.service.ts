@@ -68,7 +68,13 @@ export class WsService {
         if (data.event === 'Changes') {
             Object.keys(data.data.changes).forEach(p => {
                 let o_DATA = this._atentionDatas.get(data.data.internalId);
-                if (o_DATA && o_DATA[p] === (data?.data?.changes[p] as SimpleChange).previousValue)
+                if (o_DATA &&
+                    (o_DATA[p] === (data?.data?.changes[p] as SimpleChange).previousValue
+                        ||
+                        (o_DATA[p] || '').length < ((data?.data?.changes[p] as SimpleChange).previousValue || '').length
+                    ) &&
+                    data.setOrigem !== this.clientIdentification
+                )
                     o_DATA[p] = (data?.data?.changes[p]).currentValue;
             })
 
@@ -89,6 +95,7 @@ export class WsService {
         if (!PAYLOAD_TO_SEND.data) PAYLOAD_TO_SEND.data = {};
         PAYLOAD_TO_SEND.data.client = this.clientIdentification;
         PAYLOAD_TO_SEND.data.moment = Date.now();
+        PAYLOAD_TO_SEND.data['setOrigem'] = this.clientIdentification;
         this.subject?.next(PAYLOAD_TO_SEND);
     }
     private _atentionDatas: Map<string, any> = new Map();

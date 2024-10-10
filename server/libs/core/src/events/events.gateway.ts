@@ -109,6 +109,7 @@ export class EventsGateway implements OnGatewayInit {
                     }
                 })
             }
+            /// if(data)
             this.clients.forEach((v, k) => {
                 if (
                     (v as any).id !== data.client
