@@ -173,8 +173,13 @@ export abstract class DaoServiceBase<E extends FullAuditedEntity> {
 
         return await this._repo.findOne({ where, relations: { createdBy: true, lastModifiedBy: true } as any })
     }
-
+    /**
+     * Marca registro com deletado. Posteriormente é removido da base principal em processo separado.
+     */
     async delete(data: E, request?: any) {
+        const old_data = (await this.getByInternalId(data.internalId, request));
+        old_data.deleted = true;
+        await this._repo.save(old_data);
     }
 }
 export class SyncPayloadDao<Entity> {
