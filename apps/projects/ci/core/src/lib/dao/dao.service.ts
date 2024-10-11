@@ -2,6 +2,7 @@ import { EventEmitter, Injectable, SimpleChange, SimpleChanges } from "@angular/
 import { FormGroup } from "@angular/forms";
 import { Subject } from "rxjs";
 import { WsService } from "../core.module";
+import { EMITTER } from "../emitter/token";
 export interface IChangeable {
     __pre: any;
     __binding_form?: FormGroup;
@@ -84,7 +85,7 @@ export class DaoService {
                 }
             });
             data.complete = () => pre = { ...JSON.parse(JSON.stringify(o_data)) };
-            (data as any)['::CI!INTERNALS<emitter>'] = emitter;
+            (data as any)[EMITTER] = emitter;
             Object.setPrototypeOf(data, new SerializedObjectData());
         }
         return data;
@@ -94,12 +95,16 @@ export class DaoService {
     }) {
         if (!data) return undefined;
         const r: any = {};
-        Object.getOwnPropertyNames(data).forEach(p => {
-            if (p.indexOf('_') === 0) return;
-            if (JSON.stringify((data as any)[p]) !== JSON.stringify(options?.pre[p])) {
-                r[p] = (data as any)[p];
-            }
-        })
+        try {
+            Object.getOwnPropertyNames(data).forEach(p => {
+                if (p.indexOf('_') === 0) return;
+                if (JSON.stringify((data as any)[p]) !== JSON.stringify(options?.pre[p])) {
+                    r[p] = (data as any)[p];
+                }
+            })
+        } catch (error) {
+            console.error(error);
+        }
         return r;
     }
     haveChanges(data?: IChangeable | any) {
@@ -118,7 +123,7 @@ export class DaoService {
                 });
             })
             data.__binding_form = form;
-            if (data && data['::CI!INTERNALS<emitter>']) (data['::CI!INTERNALS<emitter>'] as EventEmitter<SimpleChanges>)
+            if (data && data[EMITTER]) (data[EMITTER] as EventEmitter<SimpleChanges>)
                 .subscribe(changes => {
                     Object.keys(changes).forEach(Property => {
                         if (changes[Property].currentValue !== form.controls[Property].value &&
