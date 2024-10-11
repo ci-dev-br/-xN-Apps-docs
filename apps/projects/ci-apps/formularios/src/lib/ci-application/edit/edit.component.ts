@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar'
@@ -56,6 +56,13 @@ export class EditComponent implements OnInit {
   get changes() {
     return this.daos.getChanges(this.formulario as IChangeable);
   }
+  @HostListener('keydown', ['$event'])
+  shortcutKeyHandler(event: KeyboardEvent) {
+    if (event.ctrlKey && event.code === 'KeyS') {
+      this.confirm();
+      event.preventDefault();
+    }
+  }
   async confirm() {
     if (this.formGroup.invalid) {
       this.formGroup.markAllAsTouched();
@@ -63,5 +70,6 @@ export class EditComponent implements OnInit {
       return;
     }
     await this.daos.confirmChanges(this.formulario);
+    this.snap.open('Alterações confirmadas', 'Ver Histórico')
   }
 }

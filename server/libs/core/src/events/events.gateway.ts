@@ -112,7 +112,8 @@ export class EventsGateway implements OnGatewayInit {
             /// if(data)
             this.clients.forEach((v, k) => {
                 if (
-                    (v as any).id !== data.client
+                    (v as any).id !== data.client &&
+                    (v as any).id !== data.setOrigem
                 ) v.ws.send(JSON.stringify({
                     event: 'Changes',
                     data
