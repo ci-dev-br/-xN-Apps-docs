@@ -19,7 +19,7 @@ export class OrganizacaoService {
             if ('organizatioName' in organizacao) current.organizatioName = organizacao.organizatioName;
             if ('logo' in organizacao) current.logo = organizacao.logo;
             if ('tenant' in organizacao) current.tenant = organizacao.tenant;
-            if ('cadastroPessoa' in organizacao) current.cadastroPessoa = organizacao.cadastroPessoa;
+            if ('cadastroPessoa' in organizacao) current.responsavel = organizacao.responsavel;
 
             return this.repo.save(current);
         } else {
@@ -38,17 +38,17 @@ export class OrganizacaoService {
                     organizatioName: ILike('%' + query + '%'),
                 },
                 {
-                    cadastroPessoa: {
+                    responsavel: {
                         nomeFantasia: ILike('%' + query + '%'),
                     }
                 },
                 {
-                    cadastroPessoa: {
+                    responsavel: {
                         nome: ILike('%' + query + '%'),
                     }
                 },
                 {
-                    cadastroPessoa: {
+                    responsavel: {
                         documentos: { numeroDocumento: ILike('%' + query + '%') }
                     }
                 },

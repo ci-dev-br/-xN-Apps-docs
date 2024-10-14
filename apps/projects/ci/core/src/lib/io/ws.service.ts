@@ -89,8 +89,13 @@ export class WsService {
             },
         });
     }
+    /**
+     * Emite mensagem para o websocket auto-assinada pela aplicação cliente
+     * @param payload 
+     */
     Emit(payload: any) {
-        const PAYLOAD_TO_SEND = { ...payload, };
+        const { toJSON, toString, __constructor__, ...INNER_CONTENT_DATA } = payload;
+        const PAYLOAD_TO_SEND = { ...INNER_CONTENT_DATA, };
         if (!PAYLOAD_TO_SEND.data) PAYLOAD_TO_SEND.data = {};
         PAYLOAD_TO_SEND.data.client = this.clientIdentification;
         PAYLOAD_TO_SEND.data.moment = Date.now();
@@ -99,7 +104,7 @@ export class WsService {
     }
     private _atentionDatas: Map<string, any> = new Map();
     /**
-     * Solicitar atenção para um objeto. Mantém o objeto sincronizado com os demais clientes durante modificação.
+     * Solicitar atenção para um objeto. Mantém o objeto sincronizado com os demais clientes durante modificação. Recebendo retorno dos clientes que estão consumindo os eventos da aplicação.
      */
     async Atention(objectRef: any) {
         if (objectRef && !!objectRef.internalId) {
@@ -116,6 +121,12 @@ export class WsService {
             });
         }
     }
+    /**
+     * Emite as mudanças de um objeto a partir do padrão SimpleChanges do Angular
+     * 
+     * @param internalId 
+     * @param changes 
+     */
     async EmitChanges(internalId: string, changes: SimpleChanges) {
         this.Emit({
             event: 'Changes',

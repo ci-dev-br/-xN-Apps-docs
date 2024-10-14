@@ -1,7 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
+import { schema } from "../noms";
 
-@Entity()
+@Entity({ schema })
 export class Categoria {
     @ApiProperty({ nullable: true, required: false, maxLength: 30 })
     @PrimaryColumn({ length: 30 })

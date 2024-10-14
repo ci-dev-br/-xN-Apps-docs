@@ -50,7 +50,7 @@ export const CadastroEntidades = [
 export class CasdastroModule { }
 export {
     Endereco,
-    Pessoa,
+    Pessoa as Pessoa,
     InformacaoContato,
     DocumentoIdentificacao,
     TipoDocumentoIdentificacao,

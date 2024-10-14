@@ -31,6 +31,6 @@ export class DomainController {
     async Delete(
         @Body() domain: Domain
     ) {
-        return await this.domainService.delete(domain.id);
+        return await this.domainService.delete(domain.internalId);
     }
 }

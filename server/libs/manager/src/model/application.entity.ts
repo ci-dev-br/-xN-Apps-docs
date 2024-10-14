@@ -1,8 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Domain } from "./domain.entity";
+import { schema } from "../noms";
 
-@Entity()
+@Entity({ schema })
 export class Application {
     @ApiProperty({ nullable: true, required: false, uniqueItems: true })
     @PrimaryGeneratedColumn('uuid')
@@ -31,4 +32,8 @@ export class Application {
     @ApiProperty({ nullable: true, required: false })
     @Column({ length: 30, nullable: true })
     categoria: string;
+
+    @ApiProperty({ type: Domain, isArray: true })
+    @ManyToMany(type => Domain, domain => domain.aplications)
+    domains: Domain[]
 }
