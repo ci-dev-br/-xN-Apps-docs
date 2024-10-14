@@ -11,7 +11,7 @@ import { spawnSync } from 'child_process';
 import * as https from 'https';
 import { LoggingInterceptor } from '@ci/core';
 import { WsAdapter } from '@nestjs/platform-ws';
-import { DomainService } from '@ci/manager';
+import { corsOptionsDelegate } from './cors-option-delegate';
 
 console.clear();
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
@@ -44,21 +44,7 @@ async function start(server: express.Express, app: NestExpressApplication, https
   }
 }
 
-const corsOptionsDelegate
-  = (req, callback) => {
-    let corsOptions;
-    if (DomainService.whitelist.indexOf(req.header('Origin')) === -1) DomainService.requestWhitelist(req.header('Origin'));
-    let whitelist = DomainService.whitelist;
-    if (whitelist.indexOf(req.header('Origin')) !== -1) {
-      corsOptions = {
-        origin: true,
-        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE'
-      };
-    } else {
-      corsOptions = { origin: false };
-    }
-    callback(null, corsOptions);
-  };
+
 
 async function bootstrap() {
   const httpsOptions: HttpsOptions = {

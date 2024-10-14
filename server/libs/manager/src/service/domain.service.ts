@@ -14,14 +14,18 @@ export class DomainService implements OnModuleInit {
         return DomainService._whitelist;
     }
     static async requestWhitelist(host: string) {
-        // return DomainService._whitelist;
-        if (!DomainService._request) DomainService._request = [];
+        try {
+            // return DomainService._whitelist;
+            if (!DomainService._request) DomainService._request = [];
 
-        if (DomainService._request.indexOf(host) === -1)
-            DomainService._request.push(host);
-        if (!!DomainService._service) await this._service.requestDomains(DomainService._request)
+            if (DomainService._request.indexOf(host) === -1)
+                DomainService._request.push(host);
+            if (!!DomainService._service) await this._service.requestDomains(DomainService._request)
 
-        DomainService._whitelist = ((await this._service.repo.find({ where: { varified: true } })) || []).map(d => d.hostname)
+            DomainService._whitelist = ((await this._service.repo.find({ where: { varified: true } })) || []).map(d => d.hostname)
+        } catch (error) {
+            console.error(error)
+        }
     }
     constructor(
         @InjectRepository(Domain)
@@ -46,23 +50,33 @@ export class DomainService implements OnModuleInit {
         })
     }
     async requestDomains(hosts?: string | string[]) {
-        let hosts_finded = await this.repo.find({
-            where:
-                Array.isArray(hosts) ? hosts.map(h => { return { hostname: ILike(h) } }) : null
-        });
-        let finded = [];
-        if (Array.isArray(hosts)) hosts.forEach(async host => {
-            let find = hosts_finded.find(h => h.hostname === host);
-            if (!find) {
-                let host_to_create = await this.repo.create({ hostname: host });
-                this.repo.save(host_to_create);
-            } else {
-                if (find && !!find.varified) {
-                    finded.push(find);
+        try {
+            let hosts_finded = await this.repo.find({
+                where:
+                    Array.isArray(hosts) ? hosts.map(h => { return { hostname: ILike(h) } }) : null
+            });
+            let finded = [];
+            if (Array.isArray(hosts)) hosts.forEach(async host => {
+                if (!host) return;
+                let find = hosts_finded.find(h => h.hostname === host);
+                if (!find) {
+                    let host_to_create = await this.repo.create({ hostname: host });
+                    try {
+                        this.repo.save(host_to_create);
+                    } catch (error) {
+                        console.error(error);
+                    }
+                } else {
+                    if (find && !!find.varified) {
+                        finded.push(find);
+                    }
                 }
-            }
-        })
-        return finded;
+            })
+            return finded;
+        } catch (error) {
+            console.error(error);
+        }
+        return [];
     }
     async sync(domain: Domain) {
         let { internalId, ...changes } = domain;

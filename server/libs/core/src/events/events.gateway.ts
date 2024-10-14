@@ -1,13 +1,15 @@
+import { DomainService } from "@ci/manager";
 import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { createHash } from "crypto";
 import { Server } from "ws";
 @WebSocketGateway({
     transports: ['websocket'],
-    cors: ['*', // TODO: não pode ser utilizado cliente coringa. Deve ser criada modelo de Domínios permitidos, cada um com suas blacklists de bloqueio se ouver e regras adicionais de política de acesso pode ser necessárias.
+    cors: [DomainService.whitelist, // TODO: não pode ser utilizado cliente coringa. Deve ser criada modelo de Domínios permitidos, cada um com suas blacklists de bloqueio se ouver e regras adicionais de política de acesso pode ser necessárias.
     ],
 })
 export class EventsGateway implements OnGatewayInit {
-    constructor() { }
+    constructor() {
+    }
     pings = [];
     globalPing = 0;
     @WebSocketServer()
