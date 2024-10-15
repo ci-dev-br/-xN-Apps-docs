@@ -7,6 +7,7 @@ export interface Application {
   categoria?: string | null;
   description?: string | null;
   domain?: Domain | null;
+  domains?: Array<Domain> | null;
   icon?: string | null;
   id?: string | null;
   menuGroupName?: string | null;

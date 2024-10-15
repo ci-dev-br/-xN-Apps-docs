@@ -11,6 +11,7 @@ import { DomainController } from "./controller/domain.controller";
 import { CoreModule } from "@ci/core";
 import { ServerController } from "./controller";
 import { DinamycPageView } from "./model/page.entity";
+import { DNSService } from "./service/dns.service";
 export const ManagerEntities = [
     Application,
     Domain,
@@ -33,6 +34,7 @@ export const ManagerEntities = [
     providers: [
         ApplicationService,
         DomainService,
+        DNSService,
     ]
 })
 export class ManagerModule { }

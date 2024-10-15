@@ -33,7 +33,13 @@ export class Application {
     @Column({ length: 30, nullable: true })
     categoria: string;
 
-    @ApiProperty({ type: Domain, isArray: true })
+    @ApiProperty({
+        title: 'Domínios Associados',
+        type: Domain,
+        isArray: true,
+        nullable: true,
+        required: false,
+    })
     @ManyToMany(type => Domain, domain => domain.aplications)
     domains: Domain[]
 }
