@@ -36,6 +36,9 @@ export class SvgEditorComponent implements OnInit {
     circles: Circle[] = [];
     rectangles: Rectangle[] = [];
     images: Image[] = [];
+    fillColor: string = '#ff0000';
+    strokeColor: string = '#000000';
+    selectedTool: string = 'rect';
     constructor(
         private readonly el: ElementRef<HTMLElement>
     ) {
@@ -66,6 +69,9 @@ export class SvgEditorComponent implements OnInit {
         reader.readAsDataURL(file);
     }
     startDrag(event: MouseEvent, element: any, type: string) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
         this.selectedElement = element;
         this.selectedElementType = type;
         this.isDragging = true;
@@ -76,6 +82,9 @@ export class SvgEditorComponent implements OnInit {
     @HostListener('mousemove', ['$event'])
     onDrag(event: MouseEvent) {
         if (this.isDragging && this.selectedElement) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
             const svgRect = this.svgContainer.nativeElement.getBoundingClientRect();
             let newX = event.clientX - svgRect.left - (this.offsetX || 0);
             let newY = event.clientY - svgRect.top - (this.offsetY || 0);
@@ -91,12 +100,37 @@ export class SvgEditorComponent implements OnInit {
             }
         }
     }
-    @HostListener('mouseup')
-    stopDrag() {
+    @HostListener('mouseup', ['$event'])
+    stopDrag(event: Event) {
         if (this.isDragging) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
             this.isDragging = false;
             // this.selectedElement = null;
             // this.selectedElementType = '';
         }
+    }
+    addShape(event: MouseEvent) {
+        const svg = this.svgContainer.nativeElement;
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', event.offsetX.toString());
+        rect.setAttribute('y', event.offsetY.toString());
+        rect.setAttribute('width', '100');
+        rect.setAttribute('height', '50');
+        rect.setAttribute('fill', this.fillColor);
+        rect.setAttribute('stroke', this.strokeColor);
+        svg.appendChild(rect);
+    }
+    saveSvg() {
+        const svg = this.svgContainer.nativeElement;
+        const serializer = new XMLSerializer();
+        const svgString = serializer.serializeToString(svg);
+        const blob = new Blob([svgString], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'my-svg.svg';
+        link.click();
     }
 }

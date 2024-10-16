@@ -12,3 +12,11 @@
 rect {
     cursor: pointer;
 }
+
+.svg-editor {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+}

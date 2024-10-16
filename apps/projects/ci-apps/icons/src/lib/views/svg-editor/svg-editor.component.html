@@ -1,5 +1,19 @@
+<mat-toolbar>
+    <button (click)="saveSvg()">Export</button>
+    <button (click)="selectedTool = 'rect'">Retângulo</button>
+    <button (click)="selectedTool = 'circle'">Círculo</button>
+    <button (click)="selectedTool = 'ellipse'">Elipse</button>
+    <button (click)="selectedTool = 'polygon'">Polígono</button>
+    <button (click)="selectedTool = 'pencil'">Lápis</button>
+    <input type="color" [(ngModel)]="fillColor">
+    <input type="color" [(ngModel)]="strokeColor">
+    <button (click)="addCircle()">Adicionar Círculo</button>
+    <button (click)="addRectangle()">Adicionar Retângulo</button>
+    <input type="file" (change)="addImage($event)">
+    <button (click)="saveSvg()">Salvar</button>
+</mat-toolbar>
 <div class="svg-editor">
-    <svg #svgContainer [attr.width]="width" [attr.height]="height">
+    <svg #svgContainer [attr.width]="width" [attr.height]="height" (click)="addShape($event)">
         <circle *ngFor="let circle of circles" [attr.cx]="circle.cx" [attr.cy]="circle.cy" [attr.r]="circle.r"
             [attr.fill]="circle.fill" [class.--selected]="selectedElement === circle "
             (mousedown)="startDrag($event, circle, 'circle')" />
@@ -10,9 +24,7 @@
             [attr.height]="image.height" [attr.xlink:href]="image.href" (mousedown)="startDrag($event, image, 'image')"
             [class.--selected]="selectedElement === image" />
     </svg>
-    <div class="controls">
-        <button (click)="addCircle()">Adicionar Círculo</button>
-        <button (click)="addRectangle()">Adicionar Retângulo</button>
-        <input type="file" (change)="addImage($event)">
-    </div>
+    <!-- <div class="controls">
+
+    </div> -->
 </div>
