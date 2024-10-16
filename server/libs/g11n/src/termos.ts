@@ -1,0 +1,1 @@
+export const schema = 'G11n'

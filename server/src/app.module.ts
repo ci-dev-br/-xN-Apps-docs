@@ -100,13 +100,13 @@ process.env.MODULES.split(',').forEach(e => {
       database: process.env.DB_DATABASE,
       synchronize: Boolean(process.env.DB_SYNCHRONIZE || false),
       loggerLevel: 'warn',
-      logging: true,
+      logging: false,
       appname: '@CiDevBr/Portal',
       autoSave: true,
       cache: true,
       maxQueryExecutionTime: 100,
       namingStrategy: new SnakeNamingStrategy(),
-      verboseRetryLog: true,
+      verboseRetryLog: false,
       dropSchema: false,
       entities: [
         ...LoadedEntities

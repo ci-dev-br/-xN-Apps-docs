@@ -48,22 +48,36 @@ export class Pessoa extends FullAuditedEntity {
         nullable: true
     })
     registroGeralRepublicaBrasileira?: string;
-    @ApiProperty()
+    @ApiProperty({
+        title: 'RG Ógão Emissor'
+    })
     @Column({
         comment: t`Registro Geral Órgão Emissor`,
         nullable: true
     })
     registroGeralRepublicaBrasileiraOrgaoEmissorOrgaoEmissor?: string;
     @ApiProperty({
+        title: 'E-mail pessoal',
         nullable: true,
         required: false,
     })
     @Column({ nullable: true, length: 512 })
     emailPessoal?: string;
-    @ApiProperty({ required: false, nullable: true })
+    @ApiProperty({
+        title: 'Empresa',
+        required: false,
+        nullable: true
+    })
     @Column({ nullable: true, length: 14 })
     empresa?: string;
-    @ApiProperty({ required: false, nullable: true })
+    /**
+     * 
+     */
+    @ApiProperty({
+        title: 'Endereço',
+        required: false,
+        nullable: true
+    })
     @ManyToMany(() => Endereco)
     @JoinTable()
     endereco?: Endereco[];
@@ -74,13 +88,25 @@ export class Pessoa extends FullAuditedEntity {
     @ManyToMany(() => InformacaoContato)
     @JoinTable()
     informacoesContato?: InformacaoContato[];
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({
+        title: 'Website Institucional ou Portfólio',
+        nullable: true, required: false
+    })
     @Column({ nullable: true, length: 512 })
     site?: string;
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({
+        title: 'Típo de Representação Jurídica',
+        nullable: true,
+        required: false
+    })
     @Column({ nullable: true, enum: ['F', 'J'], length: 1 })
     tipoJuridico?: string;
+
+    /**
+     * 
+     */
     @ApiProperty({
+        title: '',
         nullable: true,
         required: false,
         type: DocumentoIdentificacao,

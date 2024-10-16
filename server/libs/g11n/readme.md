@@ -1,12 +1,45 @@
-# Globalization (g11n)
+# Globalização (g11n)
 
-A globalização centraliza a informações para tornar a aplicação globalizada. Ela armazena as traduções e possui um sistema de recuperação de traduções por demanda. As traduções podem ser fornecidas a partir de várias fontes. O módulo de globalização unifica a comunicação com o usuário por meio de mensagens ou ícones.
+Este módulo facilita a globalização da sua aplicação, centralizando informações e funcionalidades essenciais para adaptar a interface e o conteúdo a diferentes idiomas e culturas.
 
-Formatação de Datas, Formatação de Horas, Formatação de Números; Conversão de Moeda; Conversão de Unidade de Medida; Detecção automática de idioma; Seleção manual de Idioma; Persistência da opção de idioma; 
+**Funcionalidades Principais:**
 
-Considerações Culturais
-Adaptação de Conteúdo
-Localização
+* **Gerenciamento de Traduções:**
+    * Armazena e recupera traduções de forma eficiente.
+    * Suporta múltiplas fontes de tradução (arquivos, APIs, etc.).
+    * Unifica a comunicação com o usuário através de mensagens traduzidas e ícones localizados.
+* **Formatação:**
+    * Formatação de datas, horas e números de acordo com as convenções regionais.
+    * Conversão de moeda e unidades de medida.
+* **Idiomas:**
+    * Detecção automática do idioma do usuário.
+    * Seleção manual de idioma.
+    * Persistência da preferência de idioma do usuário.
+* **Localização:**
+    * Adaptação de conteúdo, incluindo texto, imagens e layout, para diferentes culturas.
+    * Consideração de aspectos culturais como cores, símbolos e direcionamento de texto.
 
-Tecnologias e Ferramentas:
 
+**Benefícios:**
+
+* **Alcance Global:** Expanda sua base de usuários, alcançando públicos em diferentes países e regiões.
+* **Experiência do Usuário Aprimorada:** Ofereça uma experiência personalizada e intuitiva para cada usuário, independentemente de sua localização ou idioma.
+* **Manutenção Simplificada:** Centralize o gerenciamento de traduções e configurações regionais, facilitando a atualização e manutenção da aplicação.
+
+
+**Tecnologias e Ferramentas:**
+
+* [Liste aqui as tecnologias e ferramentas utilizadas no módulo de globalização, por exemplo, bibliotecas de tradução, frameworks de internacionalização, APIs de localização, etc.]
+
+**Exemplos de Uso:**
+
+* [Inclua exemplos de como utilizar as funcionalidades do módulo, como recuperar traduções, formatar datas ou definir o idioma da aplicação.]
+
+**Contribuições:**
+
+* Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests.
+
+
+**Documentação:**
+
+* [Link para a documentação completa do módulo, se disponível.]

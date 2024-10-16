@@ -1,14 +1,15 @@
+import { DomainService } from "@ci/manager";
 import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { createHash } from "crypto";
 import { Server } from "ws";
 @WebSocketGateway({
     transports: ['websocket'],
-    cors: ['*',
+    cors: [DomainService.whitelist, // TODO: não pode ser utilizado cliente coringa. Deve ser criada modelo de Domínios permitidos, cada um com suas blacklists de bloqueio se ouver e regras adicionais de política de acesso pode ser necessárias.
     ],
-
 })
 export class EventsGateway implements OnGatewayInit {
-    constructor() { }
+    constructor() {
+    }
     pings = [];
     globalPing = 0;
     @WebSocketServer()
@@ -104,14 +105,17 @@ export class EventsGateway implements OnGatewayInit {
             const __last_data = this._atentionDatas.get(data.internalId);
             if (data.changes && __last_data) {
                 Object.keys(data.changes).forEach(property => {
-                    if (data.changes[property].currentValue) {
+                    if (data.changes[property].currentValue
+                    ) {
                         __last_data[property] = data.changes[property].currentValue;
                     }
                 })
             }
+            /// if(data)
             this.clients.forEach((v, k) => {
                 if (
-                    (v as any).id !== data.client
+                    (v as any).id !== data.client &&
+                    (v as any).id !== data.setOrigem
                 ) v.ws.send(JSON.stringify({
                     event: 'Changes',
                     data

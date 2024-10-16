@@ -1,0 +1,52 @@
+:host {
+    background: linear-gradient(to top, #333 0%, #666 100%);
+    color: #fff;
+
+    flex: auto;
+    overflow: auto;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.auto {
+    flex: auto;
+}
+
+.f0 {
+    flex: 0;
+}
+
+.f1 {
+    flex: 1;
+}
+
+.f2 {
+    flex: 1;
+}
+
+.f3 {
+    flex: 1;
+}
+
+.p24 {
+    padding: 24px;
+    gap: 12px;
+}
+
+header {
+    background: #222;
+    padding: 48px;
+    gap: 24px;
+    border-radius: 24px;
+}
+.wrap{
+    flex-wrap: wrap;
+}

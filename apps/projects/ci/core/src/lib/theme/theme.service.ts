@@ -10,4 +10,8 @@ export class ThemeService {
     get mode$() {
         return of('os');
     }
+
+    obterListaTemas() {
+
+    }
 }

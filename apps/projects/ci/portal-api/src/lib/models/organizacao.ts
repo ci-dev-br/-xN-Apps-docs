@@ -6,7 +6,11 @@ import { Pessoa } from '../models/pessoa';
 import { Photo } from '../models/photo';
 import { Tenant } from '../models/tenant';
 export interface Organizacao {
-  cadastroPessoa?: Pessoa | null;
+
+  /**
+   * Pessoa Responsável pelo cadastro da Organização na Plataforma virtual.
+   */
+  ''?: Pessoa | null;
   createdAt?: string | null;
   createdBy?: {
 } | null;

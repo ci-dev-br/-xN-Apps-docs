@@ -4,6 +4,14 @@
 
 export interface Domain {
   aplications?: Array<Array<any>> | null;
+  createdAt?: string | null;
+  createdBy?: {
+} | null;
   hostname?: string | null;
-  id?: string | null;
+  internalId?: string | null;
+  lastModifiedAt?: string | null;
+  lastModifiedBy?: {
+} | null;
+  tenants?: Array<string> | null;
+  varified?: boolean | null;
 }

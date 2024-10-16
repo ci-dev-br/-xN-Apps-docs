@@ -11,6 +11,7 @@ import { spawnSync } from 'child_process';
 import * as https from 'https';
 import { LoggingInterceptor } from '@ci/core';
 import { WsAdapter } from '@nestjs/platform-ws';
+import { corsOptionsDelegate } from './cors-option-delegate';
 
 console.clear();
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
@@ -42,6 +43,9 @@ async function start(server: express.Express, app: NestExpressApplication, https
     }
   }
 }
+
+
+
 async function bootstrap() {
   const httpsOptions: HttpsOptions = {
     // cert: process.env.cert ? fs.readFileSync(process.env.cert) : undefined,
@@ -56,23 +60,7 @@ async function bootstrap() {
         httpsOptions,
       } */) :
     await NestFactory.create<NestExpressApplication>(AppModule);
-  app.enableCors({
-    origin: is_production ? [] : [
-      'http://apps.ci.dev.br:4200',
-      'https://apps.ci.dev.br:4200',
-      'https://192.168.0.119:4200',
-      'https://apps.ci.dev.br:446',
-      'http://apps.ci.dev.br:86',
-      'https://xx.app.br',
-      'http://xx.app.br',
-      'https://oitudobemeutobem.com.br',
-      'https://www.oitudobemeutobem.com.br',
-      '*',
-      // 'http://localhost:4200', 
-      // 'http://localhost:4000',
-      // 'http://192.168.0.119:99',
-    ]
-  });
+  app.enableCors(corsOptionsDelegate);
 
   /**
    * Swagger Open API 3

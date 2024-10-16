@@ -17,7 +17,7 @@ import { ContainerModule } from "@ci/components";
     selector: 'ci-users-view',
     template: `
     <mat-toolbar>
-    
+        <button >Novo</button>
            <!--  <button mat-raised-button (click)="adicionar()">Cadastrar</button> -->
             <!-- <button mat-raised-button (click)="enviarConvite()" >enviarConvite</button> -->
     </mat-toolbar>

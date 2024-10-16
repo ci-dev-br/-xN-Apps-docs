@@ -1,9 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { DaoService } from '@ci/core';
+import { DaoService, IChangeable } from '@ci/core';
 import { Form, FormsService } from '@ci/portal-api';
+import { lastValueFrom } from 'rxjs';
 @Component({
   selector: 'ci-edit',
   templateUrl: './edit.component.html',
@@ -36,10 +37,31 @@ export class EditComponent implements OnInit {
       this.formulario = form_data;
       this.daos.prepareToEdit(this.formulario);
       this.daos.bindDataForm(this.formulario, this.formGroup);
-      this.daos.confirmation(this.formulario)?.subscribe(r => {
-        console.log(r);
+      this.daos.confirmation(this.formulario)?.subscribe(async data => {
+        try {
+          if (this.formulario && data) {
+            let _data: any = Object.assign(this.formulario,
+              await lastValueFrom(this.formsService.formsSync({ body: { data: data } }))
+            );
+            delete (_data as IChangeable).__pre;
+            this.daos.prepareToEdit(_data);
+            this.daos.bindDataForm(_data, this.formGroup);
+          }
+        } catch (error) {
+          console.error(error);
+        }
       })
     });
+  }
+  get changes() {
+    return this.daos.getChanges(this.formulario as IChangeable);
+  }
+  @HostListener('keydown', ['$event'])
+  shortcutKeyHandler(event: KeyboardEvent) {
+    if (event.ctrlKey && event.code === 'KeyS') {
+      this.confirm();
+      event.preventDefault();
+    }
   }
   async confirm() {
     if (this.formGroup.invalid) {
@@ -47,5 +69,7 @@ export class EditComponent implements OnInit {
       this.snap.open('Alguns campos precisam ser corrigidos...')
       return;
     }
+    await this.daos.confirmChanges(this.formulario);
+    this.snap.open('Alterações confirmadas', 'Ver Histórico')
   }
 }

@@ -12,6 +12,8 @@ import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
 import { Form } from '../models/form';
+import { formsDelete } from '../fn/forms/forms-delete';
+import { FormsDelete$Params } from '../fn/forms/forms-delete';
 import { formsGetByInternalId } from '../fn/forms/forms-get-by-internal-id';
 import { FormsGetByInternalId$Params } from '../fn/forms/forms-get-by-internal-id';
 import { formsGetList } from '../fn/forms/forms-get-list';
@@ -97,6 +99,31 @@ export class FormsService extends BaseService {
    */
   formsGetByInternalId(params: FormsGetByInternalId$Params, context?: HttpContext): Observable<Form> {
     return this.formsGetByInternalId$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Form>): Form => r.body)
+    );
+  }
+
+  /** Path part for operation `formsDelete()` */
+  static readonly FormsDeletePath = '/Forms/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `formsDelete()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  formsDelete$Response(params: FormsDelete$Params, context?: HttpContext): Observable<StrictHttpResponse<Form>> {
+    return formsDelete(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `formsDelete$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  formsDelete(params: FormsDelete$Params, context?: HttpContext): Observable<Form> {
+    return this.formsDelete$Response(params, context).pipe(
       map((r: StrictHttpResponse<Form>): Form => r.body)
     );
   }

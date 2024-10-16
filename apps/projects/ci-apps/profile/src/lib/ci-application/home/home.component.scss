@@ -1,0 +1,26 @@
+.user-profile-image {
+    width: 120px;
+    height: 120px;
+
+    background: black;
+    border-radius: 50%;
+
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.content,
+:host {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+}
+
+:host {
+    gap: 12px;
+    padding: 24px;
+}

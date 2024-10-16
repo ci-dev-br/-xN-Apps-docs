@@ -1,7 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { schema } from "../noms";
 
-@Entity()
+@Entity({ schema })
 export class Painel {
     @ApiProperty({ nullable: true, required: false, uniqueItems: true })
     @PrimaryGeneratedColumn('uuid')

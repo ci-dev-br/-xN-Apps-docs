@@ -18,9 +18,9 @@
 form {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    align-items: space-evenly;
     width: 350px;
-    background: rgba(200, 50, 50, .77);
+    // background: rgba(200, 50, 50, .77);
     color: white;
     padding: 40px 24px;
     border-radius: 6px;
@@ -40,12 +40,7 @@ form {
 }
 
 header {
-
-
-    width: 100%;
-    background: url('/ui-ux-representations-with-tablet.jpg')
-        /* rgba(0, 0, 0, .88) */
-    ;
+    // background: url('/ui-ux-representations-with-tablet.jpg');
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -54,9 +49,8 @@ header {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-around;
     gap: 24px;
-    padding: 40px;
 
     .destaque {
         // flex: auto;

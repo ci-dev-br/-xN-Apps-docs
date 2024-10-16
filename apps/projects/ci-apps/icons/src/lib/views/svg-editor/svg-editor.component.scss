@@ -1,0 +1,22 @@
+:host {
+    display: flex;
+    flex-direction: column;
+
+    flex: auto;
+    overflow: hidden;
+
+    background: linear-gradient(to top, #333 0%, #666 100%);
+
+}
+
+rect {
+    cursor: pointer;
+}
+
+.svg-editor {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+}
