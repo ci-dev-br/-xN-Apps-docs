@@ -1,0 +1,18 @@
+<div class="svg-editor">
+    <svg #svgContainer [attr.width]="width" [attr.height]="height">
+        <circle *ngFor="let circle of circles" [attr.cx]="circle.cx" [attr.cy]="circle.cy" [attr.r]="circle.r"
+            [attr.fill]="circle.fill" [class.--selected]="selectedElement === circle "
+            (mousedown)="startDrag($event, circle, 'circle')" />
+        <rect *ngFor="let rect of rectangles" [attr.x]="rect.x" [attr.y]="rect.y" [attr.width]="rect.width"
+            [attr.height]="rect.height" [attr.fill]="rect.fill" (mousedown)="startDrag($event, rect, 'rect')"
+            [class.--selected]="selectedElement === rect" />
+        <image *ngFor="let image of images" [attr.x]="image.x" [attr.y]="image.y" [attr.width]="image.width"
+            [attr.height]="image.height" [attr.xlink:href]="image.href" (mousedown)="startDrag($event, image, 'image')"
+            [class.--selected]="selectedElement === image" />
+    </svg>
+    <div class="controls">
+        <button (click)="addCircle()">Adicionar Círculo</button>
+        <button (click)="addRectangle()">Adicionar Retângulo</button>
+        <input type="file" (change)="addImage($event)">
+    </div>
+</div>
