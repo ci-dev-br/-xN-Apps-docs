@@ -5,7 +5,9 @@ import { SvgEditorComponent } from "./svg-editor.component";
 import { CoreModule } from "@ci/core";
 import { RouterModule } from "@angular/router";
 import { MatToolbarModule } from "@angular/material/toolbar";
+import { MatMenuModule } from "@angular/material/menu";
 import { FormsModule } from "@angular/forms";
+import { ActionModule } from "@ci/components";
 
 @NgModule({
     imports: [
@@ -14,6 +16,8 @@ import { FormsModule } from "@angular/forms";
         MatButtonModule,
         MatToolbarModule,
         FormsModule,
+        MatMenuModule,
+        ActionModule,
         RouterModule.forChild([
             { path: '', component: SvgEditorComponent }
         ])

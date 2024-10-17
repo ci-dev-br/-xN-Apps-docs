@@ -1,13 +1,17 @@
 import { NgModule } from '@angular/core';
-import { ActionComponent } from './action.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+
 import { CoreModule } from '@ci/core';
+
+import { ActionComponent } from './action.component';
+import { ActionsComponent } from './actions.component';
 
 @NgModule({
   declarations: [
-    ActionComponent
+    ActionComponent,
+    ActionsComponent,
   ],
   imports: [
     CoreModule,
@@ -16,10 +20,12 @@ import { CoreModule } from '@ci/core';
     MatButtonModule,
   ],
   exports: [
-    ActionComponent
+    ActionComponent,
+    ActionsComponent,
   ]
 })
 export class ActionModule { }
-export{
-  ActionComponent
+export {
+  ActionComponent,
+  ActionsComponent,
 }

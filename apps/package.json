@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "npm run api && ng serve",
     "build:apps:all": "npm run build:apps:Arquivos && npm run build:apps:Cadastros && npm run build:apps:Codex && npm run build:apps:DevTools && npm run build:apps:Dynamic && npm run build:apps:Financeiro && npm run build:apps:Formularios && npm run build:apps:Gerencial && npm run build:apps:Icons && npm run build:apps:Imersao && npm run build:apps:Infra && npm run build:apps:Instalacao && npm run build:apps:LowCode && npm run build:apps:Mensagens && npm run build:apps:Organizacao && npm run build:apps:Produtos && npm run build:apps:Profile && npm run build:apps:Projetos && npm run build:apps:SEO && npm run build:apps:Threejs && npm run build:apps:Treinamento && npm run build:apps:Vendas",
     "build:apps:Arquivos": "ng build @ci-apps/Arquivos",
     "build:apps:Cadastros": "ng build @ci-apps/Cadastros",
