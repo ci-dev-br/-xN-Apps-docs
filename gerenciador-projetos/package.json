@@ -1,0 +1,25 @@
+{
+  "name": "@ci/gerenciador-projetos",
+  "version": "1.0.0-pre",
+  "description": "Gerenciador de Projetos e Containers. Ci/Cd Auto Server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cicd",
+    "manager",
+    "projects"
+  ],
+  "author": "plhx@plhx.com.br",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.0.1"
+  },
+  "devDependecies": {
+    "@types/express": "^5.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
