@@ -13,6 +13,6 @@ import { Conta } from "./Conta.entity";
 export class Lancamento extends FullAuditedEntity {
     @ApiProperty({ title: 'Valor', nullable: true, required: false }) @Column({ nullable: true })
     valor?: number;
-    @ApiProperty({ title: 'Conta', nullable: true, required: false }) @ManyToMany(t => Conta) @JoinTable()
-    conta?: ContaBancaria;
+    // @ApiProperty({ title: 'Conta', nullable: true, required: false }) @ManyToMany(t => Conta) @JoinTable()
+    // conta?: ContaBancaria;
 }

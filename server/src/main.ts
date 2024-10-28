@@ -14,9 +14,10 @@ import { WsAdapter } from '@nestjs/platform-ws';
 import { corsOptionsDelegate } from './cors-option-delegate';
 console.clear();
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
-config({ path: is_production ? '.env' : '.env.dev' });
+config(/* { path: is_production ? '.env' : '.env.dev' } */);
 async function start(server: express.Express, app: NestExpressApplication, https_port: number, httpsOptions, http_port: number = 86) {
   try {
+
     // let ws_adapter = new WsAdapter(app);
     // app.useWebSocketAdapter(ws_adapter);
     const httpsServer = https.createServer(httpsOptions, app.getHttpAdapter().getInstance());

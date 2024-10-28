@@ -84,7 +84,7 @@ const _modules_name = {
   INPI: INPIModule,
   SeoMarketing: SeoMarketingModule,
   Forms: FormsModule,
-}
+} 
 process.env.MODULES.split(',').forEach(e => {
   if (_entities_name[e]) LoadedEntities.push(..._entities_name[e]);
   if (_modules_name[e]) LoadedModules.push(_modules_name[e]);
