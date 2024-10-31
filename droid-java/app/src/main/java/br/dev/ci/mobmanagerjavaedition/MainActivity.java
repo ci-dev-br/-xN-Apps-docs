@@ -1,15 +1,27 @@
 package br.dev.ci.mobmanagerjavaedition;
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import br.dev.ci.mobmanagerjavaedition.client.ManagerClient;
+import br.dev.ci.mobmanagerjavaedition.client.model.GatewayConnection;
+import br.dev.ci.mobmanagerjavaedition.client.model.PhoneNumber;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_READ_PHONE_STATE = 1;
@@ -27,12 +39,22 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
         this.message = findViewById(R.id.message);
-        String ws = "http://192.168.0.119:86/";
+        String api = "http://192.168.0.119:86/";
+        String ws = "http://192.168.0.119:42/";
         if(this.message != null){
             this.message.setText("Iniciando conexção... (1)");
             permission();
+            getPhoneNumber();
+            this.message.setText("Identificando números disponíveis");
+            adicionarItem(api);
+            this.message.setText("Dipositivo identificado");
         }
 
+    }
+
+    public void adicionarItem(String endpoint) {
+        ManagerClient.getInstance().addGateway(endpoint);
+        // this.adapter.notifyDataSetChanged();
     }
 
     private void permission() {
@@ -46,4 +68,50 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_NUMBERS}, REQUEST_READ_PHONE_STATE);
         }
     }
+    private List<PhoneNumber> phones;
+    private List<GatewayConnection> gateways;
+    public void atualizarLista() {
+        String[] gateways = new String[ManagerClient.getInstance().getGateways() != null ? ManagerClient.getInstance().getGateways().size() : 0];
+        if (ManagerClient.getInstance().getGateways() != null)
+            gateways = ManagerClient.getInstance().getGateways().toArray(gateways);
+        this.gateways = ManagerClient.getInstance().getGateways();
+        /*if (this.adapter == null) this.adapter = new ItemListAdapter(this.getActivity()/*,
+                R.layout.* /, this.gateways);
+        this.servidoresLista.setAdapter(this.adapter);
+        */
+    }
+
+    private void getPhoneNumber() {
+        if (/*ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED && */ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED /*&& ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED*/ || true) {
+
+            SubscriptionManager subscriptionManager = (SubscriptionManager) getApplicationContext().getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+            List<SubscriptionInfo> subscriptionInfoList = subscriptionManager.getActiveSubscriptionInfoList();
+            this.phones = new ArrayList<>();
+            for (SubscriptionInfo subscriptionInfo : subscriptionInfoList) {
+                int subscriptionId = subscriptionInfo.getSubscriptionId();
+                String carrierName = subscriptionInfo.getCarrierName().toString();
+                String number = subscriptionInfo.getNumber();
+
+                // TelephonyManager telephonyManager = ((TelephonyManager) requireContext().getSystemService(Context.TELEPHONY_SERVICE)).createForSubscriptionId(subscriptionId);
+                PhoneNumber phone_number = new PhoneNumber(){{
+                    setNumber(number);
+                    setCarrierName(carrierName);
+                    setSubscriptionId(subscriptionId);
+                }}; //  telephonyManager.getLine1Number();
+                this.phones.add(phone_number);
+            }
+            ManagerClient.getInstance().setPhones(this.phones);
+        }
+    }
+
+    /*@Override
+    public void (int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_READ_PHONE_STATE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getPhoneNumber();
+            } else {
+                Toast.makeText(getApplicationContext(), "Permissão negada. Não é possível obter os números de telefone.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }*/
 }

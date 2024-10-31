@@ -25,10 +25,10 @@ public class ManagerClient {
     List<GatewayConnection> gateways;
 
     public void addGateway(String url) {
-        GatewayConnection gateway  =new GatewayConnection(){{
+        GatewayConnection gateway = new GatewayConnection(){{
             setUrl(url);
         }};
-        this.gateways.add(gateway);
+        this.getGateways().add(gateway);
         this.connect(gateway);
     }
 
