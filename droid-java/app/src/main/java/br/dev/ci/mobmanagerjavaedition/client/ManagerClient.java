@@ -48,8 +48,6 @@ public class ManagerClient {
         }};
         dc.execute(device);
     }
-
-
     private  String getMacAddr() {
         try {
             List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
