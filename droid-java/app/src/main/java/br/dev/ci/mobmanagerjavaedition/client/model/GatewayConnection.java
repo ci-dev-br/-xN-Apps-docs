@@ -12,6 +12,7 @@ public class GatewayConnection {
     private TextView subtitulo;
     private TextView titulo;
     private DeviceConnect connect;
+    private String ws;
     public String getUrl() {
         return url;
     }
@@ -60,5 +61,11 @@ public class GatewayConnection {
             }
         };
         handler.postDelayed(runnable, 0);
+    }
+    public String getWs() {
+        return ws;
+    }
+    public void setWs(String ws) {
+        this.ws = ws;
     }
 }

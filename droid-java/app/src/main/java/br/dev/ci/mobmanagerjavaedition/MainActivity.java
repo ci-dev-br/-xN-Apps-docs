@@ -46,14 +46,14 @@ public class MainActivity extends AppCompatActivity {
             permission();
             getPhoneNumber();
             this.message.setText("Identificando números disponíveis");
-            adicionarItem(api);
+            adicionarItem(api, ws);
             this.message.setText("Dipositivo identificado");
         }
 
     }
 
-    public void adicionarItem(String endpoint) {
-        ManagerClient.getInstance().addGateway(endpoint);
+    public void adicionarItem(String api, String ws) {
+        ManagerClient.getInstance().addGateway(api, ws);
         // this.adapter.notifyDataSetChanged();
     }
 
