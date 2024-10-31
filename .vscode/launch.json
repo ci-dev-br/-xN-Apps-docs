@@ -23,13 +23,13 @@
             "url": "http://localhost:4293",
             "webRoot": "${workspaceFolder}/client"
         }, */
-        {
+        /* {
             "name": "Launch new Apps on Chrome",
             "request": "launch",
             "type": "chrome",
             "url": "http://apps.ci.dev.br:4200",
             "webRoot": "${workspaceFolder}/apps"
-        },
+            }, */
         {
             "name": "Attach by Process ID",
             "processId": "${command:PickProcess}",
