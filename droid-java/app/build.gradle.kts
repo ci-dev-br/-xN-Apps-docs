@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.jetbrainsKotlinAndroid)
 }
 
 android {
@@ -41,5 +42,4 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("com.fasterxml.jackson.core:jackson-databind:2.15.2")
-
 }
