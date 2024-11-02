@@ -106,13 +106,13 @@ public class HomeFragment extends Fragment {
                 int subscriptionId = subscriptionInfo.getSubscriptionId();
                 String carrierName = subscriptionInfo.getCarrierName().toString();
                 String number = subscriptionInfo.getNumber();
-
                 // TelephonyManager telephonyManager = ((TelephonyManager) requireContext().getSystemService(Context.TELEPHONY_SERVICE)).createForSubscriptionId(subscriptionId);
                 PhoneNumber phone_number = new PhoneNumber(){{
                     setNumber(number);
                     setCarrierName(carrierName);
                     setSubscriptionId(subscriptionId);
-                }}; //  telephonyManager.getLine1Number();
+                }}; 
+                //  telephonyManager.getLine1Number();
                 this.phones.add(phone_number);
             }
             ManagerClient.getInstance().setPhones(this.phones);
