@@ -1,0 +1,30 @@
+:host {
+    position: relative;
+    flex: 1;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: stretch;
+    
+    &,.container,.container .conversas-list{  display: flex; }
+    &, ::ng-deep mat-icon{ color: white; }
+}
+.container {
+    overflow: auto;
+
+    width: 240px;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 24px;
+
+    background: #333;
+
+    .conversas-list {
+        flex: auto;
+        overflow: auto;
+
+        display: flex;
+        flex-direction: column;
+    }
+}

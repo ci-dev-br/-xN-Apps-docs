@@ -6,10 +6,19 @@ import { Component } from '@angular/core';
   imports: [],
   template: `
     <p>
-      mensagens works!
+      Envie e receba mensagens sem precisar manter seu celular conectado na internet. Use o Mensagens em até 2 dispositivos conectados em um celular ao mesmo tempo.
     </p>
   `,
-  styles: ``
+  styles: `
+    :host{
+      flex: auto;
+      padding: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  `
 })
 export class MensagensComponent {
 

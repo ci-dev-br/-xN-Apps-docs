@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class MensagensService {
-
-  constructor() { }
+  constructor(
+    dialog: MatDialog,
+  ) { }
 }
