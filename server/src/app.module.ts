@@ -40,7 +40,7 @@ const _entities_name = {
   Notificacao: NotificacaoEntities,
   Auth: AuthEntities,
   Manager: ManagerEntities,
-  Message: MessageEntities,
+  Messager: MessageEntities,
   Product: ProductEntities,
   CodeX: CodeXEntities,
   Globalization: GlobalizationEntities,

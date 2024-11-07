@@ -1,6 +1,10 @@
-import { OnGatewayInit, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { EventsGateway } from "./events.gateway";
 import { Server } from "ws";
+
+export interface IEventPayload {
+    
+}
 
 @WebSocketGateway(
     42,
@@ -15,10 +19,24 @@ export class EventsLocalGateway implements OnGatewayInit {
     constructor(
         private readonly events?: EventsGateway,
     ) {
-
         console.log('Hello')
     }
     afterInit(server: any) {
         console.log('Hello2')
+        server;
+    }
+    @SubscribeMessage('events')
+    async eventHandler(
+        @ConnectedSocket() client: WebSocket,
+        @MessageBody() data: any) {
+        data;
+        client;
+        client.send(JSON.stringify({
+            event: 'events',
+            data: {
+                signal: -1,
+            }
+        }))
+
     }
 }
