@@ -4,7 +4,6 @@ import { CadastroComponent } from './cadastro.component';
 import { DynamicModule } from '../../dynamic/dynamic.module';
 
 
-
 @NgModule({
   declarations: [
     CadastroComponent,

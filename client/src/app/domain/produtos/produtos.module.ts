@@ -13,7 +13,6 @@ import { MatCardModule } from '@angular/material/card';
 import { CardActionsComponent } from 'src/app/components/card/card-actions.component';
 import { CoreModule } from 'src/app/core/core.module';
 
-
 @NgModule({
   declarations: [
     ProdutosComponent

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 
 import { ImersaoRoutingModule } from './imersao-routing.module';
 
-
 @NgModule({
   declarations: [],
   imports: [

@@ -11,7 +11,6 @@ import { WindowModule } from 'src/app/components/window/window.module';
 import { GridModule } from 'src/app/components/grid/grid.module';
 import { MatCardModule } from '@angular/material/card';
 
-
 @NgModule({
   declarations: [
     SeoComponent,

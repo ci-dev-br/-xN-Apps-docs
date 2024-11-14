@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { OrganizacaoRoutingModule } from './organizacao-routing.module';
 import { MatCardModule } from '@angular/material/card';
 
-
 @NgModule({
   declarations: [],
   imports: [

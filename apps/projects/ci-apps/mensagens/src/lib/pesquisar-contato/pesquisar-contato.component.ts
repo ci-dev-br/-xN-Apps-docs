@@ -20,4 +20,7 @@ export class PesquisarContatoComponent {
   constructor(
     private readonly ref?: MatDialogRef<PesquisarContatoComponent>,
   ) { }
+  async search() {
+      
+  }
 }

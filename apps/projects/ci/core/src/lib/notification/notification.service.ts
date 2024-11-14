@@ -9,7 +9,6 @@ export class NotificationService {
     async requestPermission() {
         this.permission = await Notification.requestPermission();
 
-
     }
 
     private async showNotification(title: string, message: string) {

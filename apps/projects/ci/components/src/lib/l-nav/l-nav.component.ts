@@ -43,7 +43,6 @@ export class LNavComponent {
     @Optional()
     private readonly organizacaoService?: OrganizacaoService,
 
-
     private readonly window?: WindowService,
   ) {
     this.load();

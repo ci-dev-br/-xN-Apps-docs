@@ -7,7 +7,6 @@ import { PesquisarService } from '../pesquisar-contato/pesquisar-contato.service
 import { MatDialogModule } from '@angular/material/dialog';
 import { PesquisarContatoComponent } from '../pesquisar-contato/pesquisar-contato.component';
 
-
 @NgModule({
   declarations: [],
   imports: [

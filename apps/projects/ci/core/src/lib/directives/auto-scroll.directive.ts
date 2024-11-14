@@ -13,7 +13,6 @@ export class AutoScollDirective {
         this._autoScroll = value;
     }
 
-
     constructor(
         @Optional() private readonly element: ElementRef<HTMLElement>,
     ) {

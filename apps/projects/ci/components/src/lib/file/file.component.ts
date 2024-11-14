@@ -6,7 +6,6 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatButtonModule } from "@angular/material/button";
 
-
 @Component({
     standalone: true,
     imports: [

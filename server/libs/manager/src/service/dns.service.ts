@@ -6,6 +6,5 @@ export class DNSService {
 
     getRules(domain: string) {
 
-
     }
 }
