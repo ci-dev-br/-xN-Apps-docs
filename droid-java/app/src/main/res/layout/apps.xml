@@ -20,18 +20,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="52dp"
                 android:layout_weight="1"
-                android:text="" />
+                android:text="te" />
             <Button
                 android:id="@+id/button3"
                 android:layout_width="wrap_content"
                 android:layout_height="52dp"
-                android:text="" />
+                android:text="teste" />
             <Button
                 android:id="@+id/button4"
                 android:layout_width="wrap_content"
                 android:layout_height="52dp"
                 android:layout_weight="1"
-                android:text="" />
+                android:text="teste" />
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

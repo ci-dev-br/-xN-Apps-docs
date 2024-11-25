@@ -1,10 +1,15 @@
 package br.dev.ci.mobmanagerjavaedition;
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
+import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_READ_PHONE_STATE = 1;
 
     private TextView message;
+    private Button appsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        this.appsButton = findViewById(R.id.apps);
         this.message = findViewById(R.id.message);
         String api = "http://192.168.0.119:86/";
         String ws = "http://192.168.0.119:42/";
@@ -49,12 +56,25 @@ public class MainActivity extends AppCompatActivity {
             adicionarItem(api, ws);
             this.message.setText("Dipositivo identificado");
         }
-
+        this.appsButton.setOnClickListener(v -> this.openApps());
     }
 
     public void adicionarItem(String api, String ws) {
         ManagerClient.getInstance().addGateway(api, ws);
         // this.adapter.notifyDataSetChanged();
+    }
+
+    private void openApps(){
+
+
+        AlertDialog.Builder builder = new  AlertDialog.Builder(this);
+        builder
+                .setTitle("Apps")
+                 .setView(View.inflate(this,R.layout.list_apps_fragment_item_list,null))
+        ;
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
     }
 
     private void permission() {
