@@ -1,1 +1,1 @@
-export const EMITTER = '::CI!INTERNALS<emitter>';
+export const EMITTER = (() => '::CI!INTERNALS<emitter>')();
