@@ -22,7 +22,8 @@ export interface Image {
 @Component({
     selector: 'ci-svg-editor',
     templateUrl: 'svg-editor.component.html',
-    styleUrls: ['svg-editor.component.scss']
+    styleUrls: ['svg-editor.component.scss'],
+    standalone: false
 })
 export class SvgEditorComponent implements OnInit {
     public selectedElement?: any;

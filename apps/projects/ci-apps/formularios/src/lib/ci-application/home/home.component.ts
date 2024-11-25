@@ -11,21 +11,20 @@ import { Form, FormsService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
-  selector: 'ci-home',
-  standalone: true,
-  imports: [
-    CoreModule,
-    MatToolbarModule,
-    FileComponent,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    ActionModule,
-    MatMenuModule,
-    MatButtonModule,
-  ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+    selector: 'ci-home',
+    imports: [
+        CoreModule,
+        MatToolbarModule,
+        FileComponent,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        ActionModule,
+        MatMenuModule,
+        MatButtonModule,
+    ],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
   forms?: Form[];

@@ -29,7 +29,6 @@ import { CoreModule } from '@ci/core';
             <small>Leia o QRCode com o aplicativo para celular para conectar o aparelho aos serviços.</small>
         </div> 
     `,
-    standalone: true,
     imports: [
         CoreModule,
         MatToolbarModule,

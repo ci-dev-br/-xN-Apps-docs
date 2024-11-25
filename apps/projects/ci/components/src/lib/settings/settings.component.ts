@@ -3,7 +3,6 @@ import { WindowService } from "@ci/components";
 import { CoreModule } from "@ci/core";
 
 @Component({
-    standalone: true,
     selector: 'ci-settings',
     imports: [
         CoreModule,

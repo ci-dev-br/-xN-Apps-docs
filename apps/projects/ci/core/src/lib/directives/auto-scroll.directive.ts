@@ -1,6 +1,7 @@
 import { ComponentRef, Directive, ElementRef, Input, Optional } from "@angular/core";
 @Directive({
-    selector: '[auto-scroll]'
+    selector: '[auto-scroll]',
+    standalone: false
 })
 export class AutoScollDirective {
     private _autoScroll?: string | undefined;

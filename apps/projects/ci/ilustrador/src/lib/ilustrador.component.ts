@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'ci-ilustrador',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'ci-ilustrador',
+    imports: [],
+    template: `
     <p>
       ilustrador works!
     </p>
   `,
-  styles: ``
+    styles: ``
 })
 export class IlustradorComponent {
 

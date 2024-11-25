@@ -5,16 +5,15 @@ import { ContainerModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
 
 @Component({
-  selector: 'ci-home',
-  standalone: true,
-  imports: [
-    CoreModule,
-    ContainerModule,
-    MatButtonModule,
-    MatToolbarModule,
-  ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+    selector: 'ci-home',
+    imports: [
+        CoreModule,
+        ContainerModule,
+        MatButtonModule,
+        MatToolbarModule,
+    ],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.scss'
 })
 export class HomeComponent {
 

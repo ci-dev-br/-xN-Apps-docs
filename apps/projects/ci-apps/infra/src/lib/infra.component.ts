@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'ci-Infra',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'ci-Infra',
+    imports: [],
+    template: `
     <p>
       infra works!
     </p>
   `,
-  styles: ``
+    styles: ``
 })
 export class InfraComponent {
 

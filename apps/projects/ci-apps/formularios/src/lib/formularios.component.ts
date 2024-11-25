@@ -2,15 +2,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'ci-Formularios',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'ci-Formularios',
+    imports: [],
+    template: `
     <p>
       formularios works!
     </p>
   `,
-  styles: ``
+    styles: ``
 })
 export class FormulariosComponent {
   constructor(

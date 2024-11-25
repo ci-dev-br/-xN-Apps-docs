@@ -7,18 +7,17 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'ci-home',
-  standalone: true,
-  imports: [
-    MatSidenavModule,
-    MatTooltipModule,
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    RouterModule,
-  ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+    selector: 'ci-home',
+    imports: [
+        MatSidenavModule,
+        MatTooltipModule,
+        MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
+        RouterModule,
+    ],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.scss'
 })
 export class HomeComponent {
 

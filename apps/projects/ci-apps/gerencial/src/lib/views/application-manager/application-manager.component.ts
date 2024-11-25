@@ -17,7 +17,6 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
     selector: 'ci-application-manager',
     templateUrl: 'application-manager.component.html',
     styleUrls: ['application-manager.component.scss'],
-    standalone: true,
     imports: [
         CoreModule,
         MatIconModule,

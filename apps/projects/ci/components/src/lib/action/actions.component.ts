@@ -9,7 +9,8 @@ import { Component } from "@angular/core";
     `,
     styleUrls: [
         'actions.component.scss',
-    ]
+    ],
+    standalone: false
 })
 export class ActionsComponent {
     constructor(

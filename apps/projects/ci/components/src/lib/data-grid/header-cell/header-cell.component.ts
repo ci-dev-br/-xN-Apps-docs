@@ -29,7 +29,8 @@ import { IColumnOption } from "../../models/i-column-options";
 </ng-container>`,
     styleUrls: [
         'header-cell.component.scss'
-    ]
+    ],
+    standalone: false
 })
 export class HeaderCellRenderer<T> {
     sort?: 'ASC' | 'DESC';

@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'ci-Imersao',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'ci-Imersao',
+    imports: [],
+    template: `
     <p>
       imersao works!
     </p>
   `,
-  styles: ``
+    styles: ``
 })
 export class ImersaoComponent {
 

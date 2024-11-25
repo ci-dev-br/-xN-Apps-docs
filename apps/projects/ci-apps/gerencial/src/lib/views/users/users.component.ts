@@ -25,7 +25,6 @@ import { ContainerModule } from "@ci/components";
         <ci-data-grid></ci-data-grid>
     </ci-container>    
     `,
-    standalone: true,
     imports: [
         CoreModule,
         MatIconModule,

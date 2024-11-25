@@ -3,14 +3,13 @@ import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'ci-homepage',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-  ],
-  templateUrl: './homepage.component.html',
-  styleUrl: './homepage.component.scss'
+    selector: 'ci-homepage',
+    imports: [
+        CommonModule,
+        RouterModule,
+    ],
+    templateUrl: './homepage.component.html',
+    styleUrl: './homepage.component.scss'
 })
 export class HomepageComponent {
 

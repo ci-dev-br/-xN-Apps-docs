@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'ci-LowCode',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'ci-LowCode',
+    imports: [],
+    template: `
     <p>
       low-code works!
     </p>
   `,
-  styles: ``
+    styles: ``
 })
 export class LowCodeComponent {
 

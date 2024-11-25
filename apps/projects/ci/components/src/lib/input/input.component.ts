@@ -2,9 +2,10 @@ import { Component, ElementRef, HostListener, Input, OnInit, Optional, ViewChild
 import { FormControlDirective, FormGroupDirective, FormGroup } from '@angular/forms';
 
 @Component({
-  selector: 'ci-input',
-  templateUrl: './input.component.html',
-  styleUrl: './input.component.scss'
+    selector: 'ci-input',
+    templateUrl: './input.component.html',
+    styleUrl: './input.component.scss',
+    standalone: false
 })
 export class InputComponent implements OnInit {
   @Input() mode?: 'input' | 'content-editable' = 'input';

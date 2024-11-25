@@ -8,18 +8,17 @@ import { RouterModule } from '@angular/router';
 import { PesquisarService } from '../pesquisar-contato/pesquisar-contato.service';
 
 @Component({
-  selector: 'ci-conversas',
-  standalone: true,
-  imports: [
-    MatInputModule,
-    MatFormFieldModule,
-    RouterModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-  ],
-  templateUrl: './conversas.component.html',
-  styleUrl: './conversas.component.scss'
+    selector: 'ci-conversas',
+    imports: [
+        MatInputModule,
+        MatFormFieldModule,
+        RouterModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+    ],
+    templateUrl: './conversas.component.html',
+    styleUrl: './conversas.component.scss'
 })
 export class ConversasComponent {
   constructor(

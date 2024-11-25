@@ -7,7 +7,6 @@ import { MatMenuModule } from "@angular/material/menu";
 import { MatButtonModule } from "@angular/material/button";
 
 @Component({
-    standalone: true,
     imports: [
         CoreModule,
         MatCardModule,
@@ -75,8 +74,7 @@ import { MatButtonModule } from "@angular/material/button";
             flex-direction: column;
         }
         `
-    ],
-
+    ]
 })
 export class FileComponent {
     @Input() icon?: string;

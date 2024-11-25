@@ -8,7 +8,8 @@ import { IColumnOption } from "../models/i-column-options";
     selector: 'ci-data-grid',
     templateUrl: 'data-grid.component.html',
     styleUrls: ['data-grid.component.scss'],
-    providers: [DataGridService]
+    providers: [DataGridService],
+    standalone: false
 })
 export class DataGridComponent<I> {
     @Output()

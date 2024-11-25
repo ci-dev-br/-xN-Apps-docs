@@ -4,7 +4,6 @@ import { CoreModule } from "@ci/core";
 @Component({
     selector: 'ci-gerecial-settings',
     template: ``,
-    standalone: true,
     imports: [
         CoreModule,
     ]

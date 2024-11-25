@@ -10,19 +10,18 @@ import { AuthService } from '@ci/portal-api';
 import { AuthModule, UserService } from '@ci/auth';
 
 @Component({
-  selector: 'ci-registrar',
-  standalone: true,
-  imports: [
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    ReactiveFormsModule,
-    MatCheckboxModule,
-    RouterModule,
-    AuthModule,
-  ],
-  templateUrl: './registrar.component.html',
-  styleUrl: './registrar.component.scss'
+    selector: 'ci-registrar',
+    imports: [
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        ReactiveFormsModule,
+        MatCheckboxModule,
+        RouterModule,
+        AuthModule,
+    ],
+    templateUrl: './registrar.component.html',
+    styleUrl: './registrar.component.scss'
 })
 export class RegistrarComponent {
   form: FormGroup = this.fb.group({

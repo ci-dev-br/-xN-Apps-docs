@@ -7,18 +7,17 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CoreModule } from '@ci/core';
 
 @Component({
-  selector: 'ci-home',
-  standalone: true,
-  imports: [
-    CoreModule,
-    RouterModule,
-    MatTabsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatMenuModule,
-  ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+    selector: 'ci-home',
+    imports: [
+        CoreModule,
+        RouterModule,
+        MatTabsModule,
+        MatIconModule,
+        MatButtonModule,
+        MatMenuModule,
+    ],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.scss'
 })
 export class HomeComponent {
   abas?: { label: string, path: string, icon: string }[];

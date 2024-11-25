@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'ci-Icons',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'ci-Icons',
+    imports: [],
+    template: `
     <p>
       icons works!
     </p>
   `,
-  styles: ``
+    styles: ``
 })
 export class IconsComponent {
 

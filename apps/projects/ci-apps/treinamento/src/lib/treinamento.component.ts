@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'ci-Treinamento',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'ci-Treinamento',
+    imports: [],
+    template: `
     <p>
       treinamento works!
     </p>
   `,
-  styles: ``
+    styles: ``
 })
 export class TreinamentoComponent {
 

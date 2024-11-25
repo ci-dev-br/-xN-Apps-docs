@@ -10,18 +10,17 @@ import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'ci-files',
-  standalone: true,
-  imports: [
-    CoreModule,
-    MatTabsModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    FormsModule,
-  ],
-  templateUrl: './files.component.html',
-  styleUrl: './files.component.scss'
+    selector: 'ci-files',
+    imports: [
+        CoreModule,
+        MatTabsModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatIconModule,
+        FormsModule,
+    ],
+    templateUrl: './files.component.html',
+    styleUrl: './files.component.scss'
 })
 export class FilesComponent {
   files?: IFile[];

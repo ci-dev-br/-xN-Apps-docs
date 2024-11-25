@@ -17,9 +17,10 @@ interface IBreadcrumb {
 }
 
 @Component({
-  selector: 'ci-l-nav',
-  templateUrl: './l-nav.component.html',
-  styleUrls: ['./l-nav.component.scss']
+    selector: 'ci-l-nav',
+    templateUrl: './l-nav.component.html',
+    styleUrls: ['./l-nav.component.scss'],
+    standalone: false
 })
 export class LNavComponent {
   apps?: Application[];

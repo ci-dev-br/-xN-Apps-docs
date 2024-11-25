@@ -4,15 +4,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'ci-home',
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    RouterModule,
-  ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+    selector: 'ci-home',
+    imports: [
+        MatButtonModule,
+        MatIconModule,
+        RouterModule,
+    ],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.scss'
 })
 export class HomeComponent {
 

@@ -8,9 +8,10 @@ import { ApplicationService } from '@ci/portal-api';
 import { IChangeable, DaoService } from '@ci/core';
 
 @Component({
-  selector: 'ci-editar-aplicativo',
-  templateUrl: './editar-aplicativo.component.html',
-  styleUrls: ['./editar-aplicativo.component.scss']
+    selector: 'ci-editar-aplicativo',
+    templateUrl: './editar-aplicativo.component.html',
+    styleUrls: ['./editar-aplicativo.component.scss'],
+    standalone: false
 })
 export class EditarAplicativoComponent implements OnInit, OnDestroy {
   form = this.fb.group({
