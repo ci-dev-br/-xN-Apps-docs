@@ -6,6 +6,7 @@ import { ChaveAcesso } from "./audt/chave-acesso.entity";
 import { DamnService } from "./damn/damn.service";
 import { EventsGateway } from "./events/events.gateway";
 import { EventsLocalGateway } from "./events/events-local.gateway";
+import { BusService } from "./events/events.service";
 // import { t } from "./i18n/t";
 // import { IAutentication } from "./auth/auth";
 // import { Status } from "./system/model/status";
@@ -46,6 +47,7 @@ export class CoreModule {
                 DamnService,
                 EventsGateway,
                 EventsLocalGateway,
+                BusService,
                 // SystemService,
             ]
         }
