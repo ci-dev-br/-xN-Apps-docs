@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'ci-DevTools',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'ci-DevTools',
+    imports: [],
+    template: `
     <p>
       dev-tools works!
     </p>
   `,
-  styles: ``
+    styles: ``
 })
 export class DevToolsComponent {
 

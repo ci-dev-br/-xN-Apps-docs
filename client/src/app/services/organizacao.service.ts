@@ -15,5 +15,4 @@ export class OrganizacaoService {
         // this.currentOrganization = await lastValueFrom(this.api.organizacaoGetCurrent());
     }
 
-
 }

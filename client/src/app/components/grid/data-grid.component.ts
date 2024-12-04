@@ -3,7 +3,6 @@ import { DataGridOptions, IColumnOption } from "./data-grid.options";
 import { ReturnStatement } from "@angular/compiler";
 import { DataGridService } from "./data-grid.service";
 
-
 @Component({
     selector: 'ci-data-grid',
     templateUrl: 'data-grid.component.html',

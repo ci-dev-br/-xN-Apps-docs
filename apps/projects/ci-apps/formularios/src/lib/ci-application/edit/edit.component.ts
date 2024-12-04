@@ -6,9 +6,10 @@ import { DaoService, IChangeable } from '@ci/core';
 import { Form, FormsService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
 @Component({
-  selector: 'ci-edit',
-  templateUrl: './edit.component.html',
-  styleUrl: './edit.component.scss'
+    selector: 'ci-edit',
+    templateUrl: './edit.component.html',
+    styleUrl: './edit.component.scss',
+    standalone: false
 })
 export class EditComponent implements OnInit {
   private _formulario?: Form | undefined;

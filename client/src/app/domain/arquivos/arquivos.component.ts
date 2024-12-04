@@ -3,7 +3,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { Photo, PhotoService } from '@portal/api';
 import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
 
-
 @Component({
   selector: 'ci-arquivos',
   standalone: true,

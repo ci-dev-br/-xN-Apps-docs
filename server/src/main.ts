@@ -12,23 +12,17 @@ import * as https from 'https';
 import { LoggingInterceptor } from '@ci/core';
 import { WsAdapter } from '@nestjs/platform-ws';
 import { corsOptionsDelegate } from './cors-option-delegate';
-
 console.clear();
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
-config({ path: is_production ? '.env' : '.env.dev' });
-
+config(/* { path: is_production ? '.env' : '.env.dev' } */);
 async function start(server: express.Express, app: NestExpressApplication, https_port: number, httpsOptions, http_port: number = 86) {
   try {
 
-
     // let ws_adapter = new WsAdapter(app);
     // app.useWebSocketAdapter(ws_adapter);
-
     const httpsServer = https.createServer(httpsOptions, app.getHttpAdapter().getInstance());
-
     let wss_adapter = new WsAdapter(httpsServer);
     app.useWebSocketAdapter(wss_adapter);
-
     return {
       httpServer: await app.listen(http_port),
       httpsServer: httpsServer.listen(https_port),
@@ -43,9 +37,6 @@ async function start(server: express.Express, app: NestExpressApplication, https
     }
   }
 }
-
-
-
 async function bootstrap() {
   const httpsOptions: HttpsOptions = {
     // cert: process.env.cert ? fs.readFileSync(process.env.cert) : undefined,
@@ -61,7 +52,6 @@ async function bootstrap() {
       } */) :
     await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors(corsOptionsDelegate);
-
   /**
    * Swagger Open API 3
    */
@@ -74,21 +64,16 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
-
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
-
   /** HBS View Engine */
   app.setViewEngine('hbs');
-
   /**
    * Websocket (ws)
    */
-
   app.useGlobalInterceptors(new LoggingInterceptor());
   app.init();
   // console.log(__dirname);
-
   const PORT = Number(process.env.PORT);
   const servers = await start(server, app, PORT, httpsOptions);
   console.log(`Application is running on: ${await app.getUrl()} and ${PORT}`);

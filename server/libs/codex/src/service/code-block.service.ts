@@ -12,7 +12,6 @@ export class CodeBlockService extends DaoServiceBase<CodeBlock> {
         private readonly codeBlockRepo: Repository<CodeBlock>,
     ) { super(snap, codeBlockRepo); }
 
-
     /**
      * Aciona a execução do Bloco em um determinado Contexto de Execução
      * @param block 

@@ -26,7 +26,8 @@ import { IColumnOption } from "../../models/i-column-options";
     `,
     styleUrls: [
         'cell-renderer.component.scss'
-    ]
+    ],
+    standalone: false
 })
 export class TextCellRenderer<T> {
     private _column?: IColumnOption<T> | undefined;

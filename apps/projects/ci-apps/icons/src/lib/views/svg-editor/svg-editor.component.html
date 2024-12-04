@@ -1,5 +1,56 @@
-<mat-toolbar>
-    <button (click)="saveSvg()">Export</button>
+<div class="col">
+    <ci-actions>
+        <button mat-stroked-button>
+            <mat-icon>edit</mat-icon>
+            Arquivo
+        </button>
+        <button mat-stroked-button>
+            <mat-icon>edit</mat-icon>
+            Página Inicial
+        </button>
+        <button mat-stroked-button>
+            <mat-icon>edit</mat-icon>
+            Inserir
+        </button>
+        <button mat-stroked-button>
+            <mat-icon>edit</mat-icon>
+            Design
+        </button>
+        <button mat-stroked-button>
+            <mat-icon>edit</mat-icon>
+            Layout
+        </button>
+        <button mat-stroked-button>
+            <mat-icon>edit</mat-icon>
+            Referências
+        </button>
+        <button mat-stroked-button>
+            <mat-icon>edit</mat-icon>
+            Correspondências
+        </button>
+        <button mat-stroked-button>
+            <mat-icon>edit</mat-icon>
+            Revisão
+        </button>
+        <button mat-stroked-button>
+            <mat-icon>edit</mat-icon>
+            Exibir
+        </button>
+        <button mat-stroked-button>
+            <mat-icon>edit</mat-icon>
+            Ajuda
+        </button>
+        <button mat-stroked-button>
+            <mat-icon>edit</mat-icon>
+            Acrobat
+        </button>
+    </ci-actions>
+    <div class="row">
+        <div class="toolbar">
+            <!-- <button [matMenuTriggerFor]="menu" >Menu</button>
+    <mat-menu #menu> -->
+            <!-- <button (click)="saveSvg()">Export</button>
+    {{selectedTool}}
     <button (click)="selectedTool = 'rect'">Retângulo</button>
     <button (click)="selectedTool = 'circle'">Círculo</button>
     <button (click)="selectedTool = 'ellipse'">Elipse</button>
@@ -10,21 +61,21 @@
     <button (click)="addCircle()">Adicionar Círculo</button>
     <button (click)="addRectangle()">Adicionar Retângulo</button>
     <input type="file" (change)="addImage($event)">
-    <button (click)="saveSvg()">Salvar</button>
-</mat-toolbar>
-<div class="svg-editor">
-    <svg #svgContainer [attr.width]="width" [attr.height]="height" (click)="addShape($event)">
-        <circle *ngFor="let circle of circles" [attr.cx]="circle.cx" [attr.cy]="circle.cy" [attr.r]="circle.r"
-            [attr.fill]="circle.fill" [class.--selected]="selectedElement === circle "
-            (mousedown)="startDrag($event, circle, 'circle')" />
-        <rect *ngFor="let rect of rectangles" [attr.x]="rect.x" [attr.y]="rect.y" [attr.width]="rect.width"
-            [attr.height]="rect.height" [attr.fill]="rect.fill" (mousedown)="startDrag($event, rect, 'rect')"
-            [class.--selected]="selectedElement === rect" />
-        <image *ngFor="let image of images" [attr.x]="image.x" [attr.y]="image.y" [attr.width]="image.width"
-            [attr.height]="image.height" [attr.xlink:href]="image.href" (mousedown)="startDrag($event, image, 'image')"
-            [class.--selected]="selectedElement === image" />
-    </svg>
-    <!-- <div class="controls">
+    <button (click)="saveSvg()">Salvar</button> -->
+            <!-- </mat-menu> -->
 
-    </div> -->
+            <!-- TODO: Controles -->
+        </div>
+        <div class="svg-editor">
+            <svg #svgContainer [attr.width]="width" [attr.height]="height"><!-- (click)="addShape($event)" -->
+                @for(prancheta of pranchetas; track prancheta){
+                {{prancheta | json}}
+                <rect class="prancheta" [attr.x]="prancheta.x" [attr.y]="prancheta.y" [attr.width]="prancheta.width"
+                    [attr.height]="prancheta.height" [attr.fill]="prancheta.fill">
+                </rect>
+                }
+            </svg>
+
+        </div>
+    </div>
 </div>

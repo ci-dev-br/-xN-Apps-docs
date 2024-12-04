@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'ci-SEO',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'ci-SEO',
+    imports: [],
+    template: `
     <p>
       seo works!
     </p>
   `,
-  styles: ``
+    styles: ``
 })
 export class SEOComponent {
 

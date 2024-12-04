@@ -15,9 +15,10 @@ export interface IItemMenu {
  * 
  */
 @Component({
-  selector: 'ci-window',
-  templateUrl: './window.component.html',
-  styleUrls: ['./window.component.scss']
+    selector: 'ci-window',
+    templateUrl: './window.component.html',
+    styleUrls: ['./window.component.scss'],
+    standalone: false
 })
 export class WindowComponent implements OnInit, OnDestroy {
   @Input()

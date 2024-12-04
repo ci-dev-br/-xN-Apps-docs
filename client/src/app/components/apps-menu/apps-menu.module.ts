@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { AppsMenuRoutingModule } from './apps-menu-routing.module';
 import { AppsMenuComponent } from './apps-menu.component';
 
-
 @NgModule({
   declarations: [
     AppsMenuComponent

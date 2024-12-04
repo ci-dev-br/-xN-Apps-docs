@@ -3,11 +3,10 @@ import * as THREE from 'three';
 import { VRButton, GLTFLoader, Octree, OctreeHelper, Capsule } from 'three/addons';
 import { GUI } from 'lil-gui';
 @Component({
-  selector: 'ci-infiltrado',
-  standalone: true,
-  imports: [],
-  templateUrl: './infiltrado.component.html',
-  styleUrl: './infiltrado.component.scss'
+    selector: 'ci-infiltrado',
+    imports: [],
+    templateUrl: './infiltrado.component.html',
+    styleUrl: './infiltrado.component.scss'
 })
 export class InfiltradoComponent {
   private GRAVITY?: any;

@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'ci-Vendas',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'ci-Vendas',
+    imports: [],
+    template: `
     <p>
       vendas works!
     </p>
   `,
-  styles: ``
+    styles: ``
 })
 export class VendasComponent {
 

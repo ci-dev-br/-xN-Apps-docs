@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 
 import { CiApplicationRoutingModule } from './ci-application-routing.module';
 
-
 @NgModule({
   declarations: [],
   imports: [

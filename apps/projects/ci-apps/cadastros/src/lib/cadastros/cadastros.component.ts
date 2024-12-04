@@ -9,18 +9,17 @@ import { CadastroService, IDynamicForm } from '@ci/portal-api';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
-  selector: 'ci-cadastros',
-  standalone: true,
-  imports: [
-    CoreModule,
-    MatToolbarModule,
-    LNavModule,
-    MatIconModule,
-    AuthModule,
-    MatButtonModule,
-  ],
-  templateUrl: './cadastros.component.html',
-  styleUrls: ['./cadastros.component.scss']
+    selector: 'ci-cadastros',
+    imports: [
+        CoreModule,
+        MatToolbarModule,
+        LNavModule,
+        MatIconModule,
+        AuthModule,
+        MatButtonModule,
+    ],
+    templateUrl: './cadastros.component.html',
+    styleUrls: ['./cadastros.component.scss']
 })
 export class CadastrosComponent {
   currentForm?: IDynamicForm;

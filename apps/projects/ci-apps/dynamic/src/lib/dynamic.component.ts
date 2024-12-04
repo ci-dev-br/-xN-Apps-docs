@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'ci-Dynamic',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'ci-Dynamic',
+    imports: [],
+    template: `
     <p>
       dynamic works!
     </p>
   `,
-  styles: ``
+    styles: ``
 })
 export class DynamicComponent {
 

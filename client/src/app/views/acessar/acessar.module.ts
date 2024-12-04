@@ -13,7 +13,6 @@ import { CoreModule } from 'src/app/core/core.module';
 import { LFooterModule } from 'src/app/components/l-footer/l-footer.module';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
-
 @NgModule({
   declarations: [
     AcessarComponent

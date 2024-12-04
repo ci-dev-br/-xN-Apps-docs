@@ -1,18 +1,18 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from "@angular/core";
-interface Circle {
+export interface Circle {
     cx: number;
     cy: number;
     r: number;
     fill: string;
 }
-interface Rectangle {
+export interface Rectangle {
     x: number;
     y: number;
     width: number;
     height: number;
     fill: string;
 }
-interface Image {
+export interface Image {
     x: number;
     y: number;
     width: number;
@@ -22,7 +22,8 @@ interface Image {
 @Component({
     selector: 'ci-svg-editor',
     templateUrl: 'svg-editor.component.html',
-    styleUrls: ['svg-editor.component.scss']
+    styleUrls: ['svg-editor.component.scss'],
+    standalone: false
 })
 export class SvgEditorComponent implements OnInit {
     public selectedElement?: any;
@@ -39,11 +40,15 @@ export class SvgEditorComponent implements OnInit {
     fillColor: string = '#ff0000';
     strokeColor: string = '#000000';
     selectedTool: string = 'rect';
+    pranchetas?: any[] = [];
     constructor(
         private readonly el: ElementRef<HTMLElement>
     ) {
     }
     async ngOnInit() {
+        this.pranchetas = [
+            { x: 0, y: 0, width: 500, height: 500, fill: '#ffffff' },
+        ]
         let getSize = () => {
             let { width, height } = this.el.nativeElement.getBoundingClientRect();
             this.height = height - 50;

@@ -99,7 +99,6 @@ export class SnapshotService {
     }
 }
 
-
 export abstract class DaoServiceBase<E extends FullAuditedEntity> {
     constructor(
         private readonly _snap: SnapshotService,

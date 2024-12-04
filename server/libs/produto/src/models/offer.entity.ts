@@ -2,7 +2,6 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Currency } from "@ci/g11n/models/currency.entity";
 import { Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
-
 /**
  * Offer refere-se à oferta feita sobre um produto para venda. 
  *

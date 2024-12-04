@@ -2,7 +2,6 @@ import { EnvironmentProviders, isDevMode, makeEnvironmentProviders, Provider } f
 import { WsService } from "./io/ws.service";
 import { NotificationService } from "./notification/notification.service";
 
-
 export interface ICoreEnvironment {
     gateway?: string;
 }

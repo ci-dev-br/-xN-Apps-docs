@@ -1,0 +1,12 @@
+:host {
+    .container {
+        display: flex;
+        flex-direction: row;
+        gap: 6px;
+        font-weight: bold;
+        background: black;
+        color: white;
+        padding: 4px;
+        gap: 2px;
+    }
+}

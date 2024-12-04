@@ -29,6 +29,7 @@ import { config } from 'dotenv';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { FORMS_ENTITIES, FormsModule } from '@ci/forms';
+import { CmsEntities, CmsModule } from '@ci/cms/cms.module';
 
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
@@ -40,7 +41,7 @@ const _entities_name = {
   Notificacao: NotificacaoEntities,
   Auth: AuthEntities,
   Manager: ManagerEntities,
-  Message: MessageEntities,
+  Messager: MessageEntities,
   Product: ProductEntities,
   CodeX: CodeXEntities,
   Globalization: GlobalizationEntities,
@@ -59,6 +60,7 @@ const _entities_name = {
   Organizacao: OrganizacaoEntities,
   INPI: INPIEntities,
   SeoMarketing: SeoMarketingEntities,
+  Cms: CmsEntities,
   Forms: FORMS_ENTITIES,
 }
 const _modules_name = {
@@ -66,7 +68,7 @@ const _modules_name = {
   Notificacao: NotificacaoModule,
   Auth: AuthModule,
   Manager: ManagerModule,
-  Messager: MessagerModule,
+Messager: MessagerModule,
   Produto: ProdutoModule,
   Codex: CodexModule,
   Globalization: GlobalizationModule,
@@ -84,7 +86,8 @@ const _modules_name = {
   INPI: INPIModule,
   SeoMarketing: SeoMarketingModule,
   Forms: FormsModule,
-}
+  Cms: CmsModule,
+} 
 process.env.MODULES.split(',').forEach(e => {
   if (_entities_name[e]) LoadedEntities.push(..._entities_name[e]);
   if (_modules_name[e]) LoadedModules.push(_modules_name[e]);

@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'ci-Threejs',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'ci-Threejs',
+    imports: [],
+    template: `
     <p>
       threejs works!
     </p>
   `,
-  styles: ``
+    styles: ``
 })
 export class ThreejsComponent {
 

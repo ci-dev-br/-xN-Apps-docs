@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'ci-Profile',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'ci-Profile',
+    imports: [],
+    template: `
     <p>
       profile works!
     </p>
   `,
-  styles: ``
+    styles: ``
 })
 export class ProfileComponent {
 

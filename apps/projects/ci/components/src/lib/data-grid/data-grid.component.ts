@@ -4,12 +4,12 @@ import { DataGridService } from "./data-grid.service";
 import { IDataGridOptions } from "../models/i-data-grid-options";
 import { IColumnOption } from "../models/i-column-options";
 
-
 @Component({
     selector: 'ci-data-grid',
     templateUrl: 'data-grid.component.html',
     styleUrls: ['data-grid.component.scss'],
-    providers: [DataGridService]
+    providers: [DataGridService],
+    standalone: false
 })
 export class DataGridComponent<I> {
     @Output()

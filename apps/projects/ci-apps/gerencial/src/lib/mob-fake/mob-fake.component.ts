@@ -41,19 +41,18 @@ export class InnerService {
 }
 
 @Component({
-  selector: 'ci-mob-fake',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ReactiveFormsModule,
-  ],
-  templateUrl: './mob-fake.component.html',
-  styleUrl: './mob-fake.component.scss'
+    selector: 'ci-mob-fake',
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './mob-fake.component.html',
+    styleUrl: './mob-fake.component.scss'
 })
 export class MobFakeComponent implements OnDestroy {
   private previous_title = document.title;

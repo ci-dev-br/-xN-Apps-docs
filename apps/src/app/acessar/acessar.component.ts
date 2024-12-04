@@ -12,19 +12,18 @@ import { CoreModule, StorageService } from '@ci/core';
 import { AuthModule, UserService } from '@ci/auth';
 
 @Component({
-  selector: 'ci-acessar',
-  standalone: true,
-  imports: [
-    CoreModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    ReactiveFormsModule,
-    RouterModule,
-    AuthModule,
-  ],
-  templateUrl: './acessar.component.html',
-  styleUrl: './acessar.component.scss'
+    selector: 'ci-acessar',
+    imports: [
+        CoreModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        AuthModule,
+    ],
+    templateUrl: './acessar.component.html',
+    styleUrl: './acessar.component.scss'
 })
 export class AcessarComponent {
   private acesso_payload?: AcessoPayload;

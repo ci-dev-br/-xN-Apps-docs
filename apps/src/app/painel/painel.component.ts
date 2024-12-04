@@ -13,25 +13,24 @@ import { APPS } from './apps/apps';
 import { AuthModule, UserService } from '@ci/auth';
 import { LogoComponent } from '@ci/components';
 @Component({
-  selector: 'ci-painel',
-  standalone: true,
-  imports: [
-    CoreModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatMenuModule,
-    MatSidenavModule,
-    RouterModule,
-    AuthModule,
-    MatTooltipModule,
-    LogoComponent,
-    LoadIconsModule,
-  ],
-  templateUrl: './painel.component.html',
-  styleUrl: './painel.component.scss'
+    selector: 'ci-painel',
+    imports: [
+        CoreModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatMenuModule,
+        MatSidenavModule,
+        RouterModule,
+        AuthModule,
+        MatTooltipModule,
+        LogoComponent,
+        LoadIconsModule,
+    ],
+    templateUrl: './painel.component.html',
+    styleUrl: './painel.component.scss'
 })
 export class PainelComponent {
   user = this.userService.user

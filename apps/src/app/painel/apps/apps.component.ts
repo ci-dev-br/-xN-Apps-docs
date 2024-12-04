@@ -6,23 +6,22 @@ import { APPS } from './apps';
 import { AuthModule, UserService } from '@ci/auth';
 
 @Component({
-  selector: 'ci-apps',
-  standalone: true,
-  imports: [
-    CoreModule,
-    MatIconModule,
-    RouterModule,
-    AuthModule,
-  ],
-  providers: [
+    selector: 'ci-apps',
+    imports: [
+        CoreModule,
+        MatIconModule,
+        RouterModule,
+        AuthModule,
+    ],
+    providers: [
     /*  {
        provide: CI_ICON_PACK, useValue: {
          agenda: { url: 'icons/agenda.svg' }
        }, multi: true
      } */
-  ],
-  templateUrl: './apps.component.html',
-  styleUrl: './apps.component.scss'
+    ],
+    templateUrl: './apps.component.html',
+    styleUrl: './apps.component.scss'
 })
 export class AppsComponent implements OnInit {
   apps?: any[];

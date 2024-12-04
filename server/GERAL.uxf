@@ -1,0 +1,17 @@
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><element><id>UMLNote</id><coordinates><x>460</x><y>160</y><w>140</w><h>70</h></coordinates><panel_attributes>.env
+bg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>430</x><y>310</y><w>800</w><h>240</h></coordinates><panel_attributes>git: auto pull(30m)
+--
+group=group-4</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>450</x><y>340</y><w>190</w><h>70</h></coordinates><panel_attributes>_object: Ci Server Application
+--
+
+group=group-4</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>810</x><y>370</y><w>140</w><h>70</h></coordinates><panel_attributes>Application Module
+--
+bg=#115599
+fg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1070</x><y>440</y><w>140</w><h>70</h></coordinates><panel_attributes>Custom Module B
+--
+bg=#115599
+fg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>400</x><y>190</y><w>260</w><h>210</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>50;190;10;190;10;110;240;110;240;10;200;10</additional_attributes></element><element><id>Relation</id><coordinates><x>630</x><y>190</y><w>200</w><h>250</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>180;230;140;230;140;10;10;10</additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1070</x><y>350</y><w>140</w><h>70</h></coordinates><panel_attributes>Custom Module A
+-- 
+bg=#115599
+fg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>830</x><y>390</y><w>260</w><h>110</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>240;10;160;10;160;90;10;90;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>830</x><y>430</y><w>260</w><h>70</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>240;50;10;50;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>530</x><y>400</y><w>300</w><h>100</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>280;20;240;20;240;80;10;80;10;10</additional_attributes></element><element><id>UMLInterface</id><coordinates><x>430</x><y>560</y><w>100</w><h>70</h></coordinates><panel_attributes>endpoint api
+--</panel_attributes><additional_attributes></additional_attributes></element></diagram>

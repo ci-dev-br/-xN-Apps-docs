@@ -1,7 +1,6 @@
 import { FullAuditedEntity } from '@ci/core';
 import { Column, Entity } from 'typeorm';
 
-
 export interface IServerInfo { }
 
 @Entity()

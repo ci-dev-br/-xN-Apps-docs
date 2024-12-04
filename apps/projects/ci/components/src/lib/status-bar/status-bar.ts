@@ -8,7 +8,7 @@ import { CoreModule, WsService } from "@ci/core";
     selector: 'ci-status-bar',
     templateUrl: `status-bar.component.html`,
     styleUrls: [`status-bar.component.scss`],
-
+    standalone: false
 }) export class StatusBarComponent {
     constructor(
         @Optional() public readonly ws?: WsService

@@ -24,7 +24,6 @@ export interface IFormFieldDefinition<T> {
 
 export const FORM_OPTIONS = new InjectionToken<IFormOptions>('PX_FORM_OPTIONS');
 
-
 @Injectable()
 export class FormOptionsBuilder {
     constructor(

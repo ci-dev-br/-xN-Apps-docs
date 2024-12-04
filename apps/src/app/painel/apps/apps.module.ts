@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 
 import { AppsRoutingModule } from './apps-routing.module';
 
-
 @NgModule({
   declarations: [],
   imports: [

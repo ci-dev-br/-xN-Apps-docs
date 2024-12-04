@@ -6,7 +6,6 @@ import { CoreModule } from "@ci/core";
 
 @Component({
     selector: 'ci-views',
-    standalone: true,
     imports: [
         CoreModule,
         MatTabsModule,
