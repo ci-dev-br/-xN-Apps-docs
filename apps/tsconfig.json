@@ -75,6 +75,9 @@
       "@ci-apps/blog": [
         "./projects/ci-apps/blog/src/public-api"
       ],
+      "@ci-apps/sites": [
+        "./dist/ci-apps/sites"
+      ],
       "@ci/auth": [
         "./projects/ci/auth"
       ],
