@@ -5,7 +5,7 @@
 }
 
 .--flexible {
-    .apps {
+    &.apps {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
@@ -35,6 +35,16 @@
 
             padding: 12px;
 
+            position: relative;
+            overflow: hidden;
+
+            .bg {
+                position: absolute;
+                inset: 0;
+                z-index: -1;
+                opacity: .5;
+            }
+
             mat-icon {
                 $icon-size: #{$width*.6};
 
@@ -54,20 +64,57 @@
 @mixin card($size : 12vw) {
     padding: $size;
     max-width: $size;
-    max-height: 100cqw;
+    max-height: $size;
     width: $size;
-    height: 100cqw;
+    height: $size;
+
     box-shadow: 3px 3px 6px rgba(0, 0, 0, .9);
 }
 
 .--gridnes {
     &.apps {
         display: grid;
-        grid-template: 2fr 1fr;
+        grid-template-areas:
+            "card1 card1 card1 card2 card3"
+            "card1 card1 card1 card4 card5"
+            "card1 card1 card1 card6 card7"
+        ;
+        margin: 24px;
+        gap: 12px;
+        border-radius: 12px;
     }
 
     .app {
-        @include card(auto);
+        @include card(10px);
+        grid-area: card1;
+
+        +.app {
+            grid-area: card2;
+
+            +.app {
+                grid-area: card3;
+
+                +.app {
+                    grid-area: card4;
+
+                    +.app {
+                        grid-area: card5;
+
+                        +.app {
+                            grid-area: card6;
+
+                            +.app {
+                                grid-area: card7;
+
+                                +.app {
+                                    grid-area: card8;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // 
