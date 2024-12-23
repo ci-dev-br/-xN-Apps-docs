@@ -1,6 +1,10 @@
 # Changelogs
 As mudanças devem estar descritas neste documento para melhor analisar a implementação com seu obejtivo a ser atingido. Descreva o que o recurso implementado resolve e o estágio em que ele se encontra para se comparado com os relatórios gerados após enviar se PR.
 
+# Dezembro 2024
+    [ ] - Implementar Serviço de Tema da aplicação:
+        [>] - Implementar LightMode e Dark Mode;
+
 # Outubro 2024
     [ ] - [#95][95] Ajustes em start da aplicação: gerar apis toda vez que a aplicação for iniciada.
     [ ] - Implementação de Profile App:

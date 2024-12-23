@@ -1,5 +1,5 @@
 <h3>Aplicativos</h3>
-<div class="apps container">
+<div class="apps container --gridnes">
     @for (app of apps; track $index) {
     <div class="app" (click)="appClickHandler($event, app)" [style.background]="app.color">
         @if(app.icon){

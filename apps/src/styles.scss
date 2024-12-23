@@ -1,7 +1,7 @@
 @use '@angular/material' as mat;
 @include mat.elevation-classes();
 @include mat.app-background();
-$apps-theme: mat.define-theme((color: (theme-type: light,
+$apps-theme-light: mat.define-theme((color: (theme-type: light,
         primary: mat.$azure-palette,
         tertiary: mat.$blue-palette,
       ),
