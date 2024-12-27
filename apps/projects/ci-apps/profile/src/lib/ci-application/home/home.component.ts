@@ -42,8 +42,7 @@ export class HomeComponent implements OnInit {
         private readonly daos: DaoService,
         private readonly userService: UserService,
         private readonly authUserService: AuthUserService,
-    ) {
-    }
+    ) { }
     ngOnInit(): void {
         this.authUserService.user.subscribe(user => { this.hasUser(user) })
     }
