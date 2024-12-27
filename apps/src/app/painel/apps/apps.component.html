@@ -1,7 +1,8 @@
 <h3>Aplicativos</h3>
-<div class="apps container">
+<div class="apps container --flexible">
     @for (app of apps; track $index) {
-    <div class="app" (click)="appClickHandler($event, app)" [style.background]="app.color">
+    <div class="app" (click)="appClickHandler($event, app)">
+        <div class="bg"  [style.background]="app.color" ></div>
         @if(app.icon){
         @if(app.type === 'svg' && !!app.icon){
         <mat-icon [svgIcon]="app.icon" [inline]="true"></mat-icon>

@@ -1,7 +1,13 @@
 @use '@angular/material' as mat;
 @include mat.elevation-classes();
 @include mat.app-background();
-$apps-theme: mat.define-theme((color: (theme-type: light,
+$apps-theme-light: mat.define-theme((color: (theme-type: light,
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      density: (scale: 0,
+      )));
+$apps-theme-dark: mat.define-theme((color: (theme-type: dark,
         primary: mat.$azure-palette,
         tertiary: mat.$blue-palette,
       ),
@@ -10,7 +16,13 @@ $apps-theme: mat.define-theme((color: (theme-type: light,
 @import url('https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
-  @include mat.all-component-themes($apps-theme);
+  @media (prefers-color-scheme: light) {
+    @include mat.all-component-themes($apps-theme-light);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    @include mat.all-component-themes($apps-theme-dark);
+  }
 }
 
 html,
@@ -25,12 +37,12 @@ body {
   font-optical-sizing: auto;
   font-style: normal;
 
-  background: linear-gradient(170deg, #224488 0%, #227798 100%);
+  // background: linear-gradient(170deg, #224488 0%, #227798 100%);
 }
 
 :root {
-  --mat-sidenav-content-background-color: rgba(240, 240, 255, .6);
-  --mat-toolbar-container-background-color: rgba(240, 240, 255, .6);
+  // --mat-sidenav-content-background-color: rgba(240, 240, 255, .6);
+  // --mat-toolbar-container-background-color: rgba(240, 240, 255, .6);
 
 }
 

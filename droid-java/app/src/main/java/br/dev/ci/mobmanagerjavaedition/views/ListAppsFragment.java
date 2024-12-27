@@ -38,7 +38,7 @@ public class ListAppsFragment extends Fragment {
     public static ListAppsFragment newInstance(int columnCount) {
         ListAppsFragment fragment = new ListAppsFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putInt(ARG_COLUMN_COUNT, columnCount); 
         fragment.setArguments(args);
         return fragment;
     }

@@ -2,10 +2,10 @@ import { Component, ElementRef, HostListener, Input, OnInit, Optional, ViewChild
 import { FormControlDirective, FormGroupDirective, FormGroup } from '@angular/forms';
 
 @Component({
-    selector: 'ci-input',
-    templateUrl: './input.component.html',
-    styleUrl: './input.component.scss',
-    standalone: false
+  selector: 'ci-input',
+  templateUrl: './input.component.html',
+  styleUrl: './input.component.scss',
+  standalone: false
 })
 export class InputComponent implements OnInit {
   @Input() mode?: 'input' | 'content-editable' = 'input';
@@ -14,7 +14,7 @@ export class InputComponent implements OnInit {
   @Input() label?: string;
   @Input() placeholder?: string;
   @Input()
-  el?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'div' | undefined;
+  el?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'div' | 'sub' | undefined;
   async confirm(event: MouseEvent | Event) {
     event.stopPropagation();
     this.stage = 'view';

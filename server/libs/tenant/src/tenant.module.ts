@@ -6,6 +6,9 @@ export const TenantEntities = [
     Tenant,
 ]
 
+/**
+ * Módulos de inquilinos permitem com que uma instalação supra recursos para outra instalação por meio do Serviço de Inquilinos que permite executar processos. 
+ */
 @Module({
     imports: [
         TypeOrmModule.forFeature(TenantEntities)

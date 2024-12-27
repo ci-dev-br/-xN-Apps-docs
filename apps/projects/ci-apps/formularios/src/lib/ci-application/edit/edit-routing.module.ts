@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { EditComponent } from './edit.component';
 
 const routes: Routes = [
-  { path: ':FormId', component: EditComponent, }
+  { path: ':FormId', component: EditComponent,}
 ];
 
 @NgModule({
