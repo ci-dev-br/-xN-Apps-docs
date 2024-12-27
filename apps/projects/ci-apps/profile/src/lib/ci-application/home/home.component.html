@@ -1,39 +1,34 @@
-<mat-card>
-    <mat-card-content>
-        <div class="row">
-            <img src="" alt="" class="user-profile-image">
-            <div class="content">
-                <h1>User 123</h1>
-                <p>Un f e we io fio wehuf hfw hufiowehf ui fwuifwegfiwebfweuihweui hfwehf we fe fwe hfuweg hwefweg
-                    fuwegfuwegh</p>
+<ng-container [formGroup]="form">
+    <mat-card>
+        <mat-card-content>
+            <div class="row">
+                <img src="" alt="" class="user-profile-image">
+                <div class="content">
+                    <ci-input mode="content-editable" fieldName="fullName" label="Nome Completo" el="h1"></ci-input>
+                    <ci-input mode="content-editable" fieldName="username" label="Nome de usuário" el="sub"></ci-input>
+                </div>
             </div>
-        </div>
-    </mat-card-content>
-</mat-card>
+        </mat-card-content>
+    </mat-card>
 
-<mat-card>
-    <mat-card-content>
-        <div class="row">
-            <!--  <img src="" alt="" class="user-profile-image"> -->
-            <div class="content">
-                <!--  <h1>User 123</h1>
-                <p>Un f e we io fio wehuf hfw hufiowehf ui fwuifwegfiwebfweuihweui hfwehf we fe fwe hfuweg hwefweg
-                    fuwegfuwegh</p> -->
+    <mat-card>
+        <mat-card-content>
+            <div class="row">
+                <div class="content">
+                    <ci-input mode="content-editable" fieldName="email" label="E-mail" ></ci-input>
+                </div>
             </div>
-        </div>
-    </mat-card-content>
-</mat-card>
+        </mat-card-content>
+    </mat-card>
 
 
-<mat-card>
-    <mat-card-content>
-        <div class="row">
-            <!--  <img src="" alt="" class="user-profile-image"> -->
-            <div class="content">
-                <!--  <h1>User 123</h1>
-                <p>Un f e we io fio wehuf hfw hufiowehf ui fwuifwegfiwebfweuihweui hfwehf we fe fwe hfuweg hwefweg
-                    fuwegfuwegh</p> -->
+    <mat-card>
+        <mat-card-content>
+            <div class="row">
+                <div class="content">
+                    <button mat-raised-button [disabled]="form?.invalid" (click)="saveProfile()">Save Profile</button>
+                </div>
             </div>
-        </div>
-    </mat-card-content>
-</mat-card>
+        </mat-card-content>
+    </mat-card>
+</ng-container>
