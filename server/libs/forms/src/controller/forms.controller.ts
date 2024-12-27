@@ -24,7 +24,6 @@ export class FormsController extends ControllerDaoBase<FormsService, Form> {
     constructor(service: FormsService) {
         super(service);
     }
-
     @Post('Sync')
     @ApiResponse({
         type:
