@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
-import { InputModule } from '@ci/components';
+import { InputModule, LogoComponent } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -25,6 +25,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     InputModule,
     MatButtonModule,
     MatSnackBarModule,
+    LogoComponent,
   ],
 })
 export class EditModule { }
