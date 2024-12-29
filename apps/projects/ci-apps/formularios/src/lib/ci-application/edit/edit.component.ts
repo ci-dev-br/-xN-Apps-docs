@@ -3,13 +3,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { DaoService, IChangeable } from '@ci/core';
-import { Form, FormsService } from '@ci/portal-api';
+import { Form, FormsService, Pergunta } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
 @Component({
-    selector: 'ci-edit',
-    templateUrl: './edit.component.html',
-    styleUrl: './edit.component.scss',
-    standalone: false
+  selector: 'ci-edit',
+  templateUrl: './edit.component.html',
+  styleUrl: './edit.component.scss',
+  standalone: false
 })
 export class EditComponent implements OnInit {
   private _formulario?: Form | undefined;
@@ -72,5 +72,23 @@ export class EditComponent implements OnInit {
     }
     await this.daos.confirmChanges(this.formulario);
     this.snap.open('Alterações confirmadas', 'Ver Histórico')
+  }
+  async adicionarPergunta() {
+    if (this.formulario) {
+      if (!this.formulario.perguntas) this.formulario.perguntas = { perguntas: [] };
+      this.formulario.perguntas.perguntas?.push({
+        questao: ''
+      });
+      this.formulario.perguntas.perguntas = [...(this.formulario.perguntas.perguntas || [])];
+    }
+  }
+  async removerPergunta(pergunta: Pergunta) {
+    if (this.formulario?.perguntas?.perguntas) {
+      let pos = this.formulario?.perguntas?.perguntas.indexOf(pergunta);
+      if (pos > -1) {
+        this.formulario.perguntas.perguntas.splice(pos, 1);
+        this.formulario.perguntas.perguntas = [...this.formulario.perguntas.perguntas];
+      }
+    }
   }
 }

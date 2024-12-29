@@ -150,7 +150,8 @@ export class DaoService {
                         }
                     });
                 })
-                data.__binding_form = form;
+                //  data.__binding_form = form; ? para que serve esta linha? Faz efeito remove-la?
+                // Ela vem de uma estrutura legada que não foi adaptada. Aparentemente pode sim ser removida sem provocar reflexo
                 if (data && data[EMITTER]) (data[EMITTER] as EventEmitter<SimpleChanges>)
                     .subscribe(changes => {
                         Object.keys(changes).forEach(Property => {

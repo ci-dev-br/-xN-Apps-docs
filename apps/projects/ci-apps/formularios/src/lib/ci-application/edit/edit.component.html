@@ -1,17 +1,39 @@
-@if(formulario){
-<mat-card>
-    <mat-card-content [formGroup]="formGroup">
-        <ci-input mode="content-editable" label="Título" fieldName="title" el="h1" />
-        <ci-input mode="content-editable" label="Descrição" fieldName="description" />
-    </mat-card-content>
-</mat-card>
-<mat-card>
-    <mat-card-footer align="end">
-        <button mat-raised-button color="primary" (click)="confirm()">Confirmar ajustes</button>
-    </mat-card-footer>
-</mat-card>
-}
-
+<div class="row">
+    @if(formulario){
+    <div class="col small-container">
+        <mat-card>
+            <mat-card-content [formGroup]="formGroup">
+                <ci-input mode="content-editable" label="Título" fieldName="title" el="h1" />
+                <ci-input mode="content-editable" label="Descrição" fieldName="description" />
+            </mat-card-content>
+        </mat-card>
+        @if(!!formulario?.perguntas){
+        @for (pergunta of formulario?.perguntas?.perguntas; track $index) {
+        <mat-card>
+            <mat-card-content>
+                <ci-pergunta [source]="pergunta"></ci-pergunta>
+            </mat-card-content>
+            <mat-card-footer align="end">
+                <button mat-icon-button (click)="removerPergunta(pergunta)" >
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </mat-card-footer>
+        </mat-card>
+        }
+        }
+        <mat-card>
+            <mat-card-footer align="end">
+                <button mat-raised-button color="primary" (click)="confirm()">Confirmar ajustes</button>
+            </mat-card-footer>
+        </mat-card>
+    </div>
+    }
+    <div class="menu">
+        <button mat-icon-button matTooltip="Adicionar pergunta" matTooltipPosition="left" (click)="adicionarPergunta()">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
+</div>
 <h4>
     <ci-logo></ci-logo> Formulários
 </h4>
