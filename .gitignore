@@ -6,3 +6,4 @@ daemon/appscidevbr.out.log
 server/.env.dev
 nssm.exe
 **.env
+**/node_modules
