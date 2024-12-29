@@ -1,0 +1,16 @@
+{
+  "name": "@ci/gulp",
+  "version": "1.0.0",
+  "main": "Gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "plhx@plhx.com.br",
+  "license": "MIT",
+  "description": "",
+  "devDependencies": {
+    "gulp": "^5.0.0",
+    "gulp-util": "^3.0.8",
+    "vinyl-ftp": "^0.6.1"
+  }
+}
