@@ -26,6 +26,8 @@ export { OrganizacaoFindResult } from './models/organizacao-find-result';
 export { OrganizacaoSyncPayload } from './models/organizacao-sync-payload';
 export { PartPayloadDto } from './models/part-payload-dto';
 export { Payload } from './models/payload';
+export { Pergunta } from './models/pergunta';
+export { Perguntas } from './models/perguntas';
 export { Pessoa } from './models/pessoa';
 export { PhoneNumber } from './models/phone-number';
 export { Photo } from './models/photo';

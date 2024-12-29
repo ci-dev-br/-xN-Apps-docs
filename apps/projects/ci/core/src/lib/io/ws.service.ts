@@ -64,7 +64,7 @@ export class WsService {
                 this.Ping();
             }, data.wait);
         }
-        if (data.data.client === this.clientIdentification) return;
+        if (data.data?.client === this.clientIdentification) return;
         if (data.event === 'Changes') {
             Object.keys(data.data.changes).forEach(p => {
                 let o_DATA = this._atentionDatas.get(data.data.internalId);

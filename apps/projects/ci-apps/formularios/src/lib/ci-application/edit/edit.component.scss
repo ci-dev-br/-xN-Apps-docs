@@ -25,3 +25,33 @@ h4 {
 ci-logo ::ng-deep img {
     width: 100px;
 }
+
+.row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px;
+    border-radius: 6px;
+    background-color: var(--mdc-elevated-card-container-color, var(--mat-sys-surface-container-low));
+    position: sticky;
+    top: 100px;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+// TODO: please add media rules, layout on mobile has broked 
+.small-container {
+    min-width: 750px;
+}
