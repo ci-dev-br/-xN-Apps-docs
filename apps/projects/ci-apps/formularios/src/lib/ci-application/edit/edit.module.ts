@@ -6,13 +6,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
-import { InputModule } from '@ci/components';
+import { InputModule, LogoComponent } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { PerguntaItemComponent } from './pergunta-item/pergunta-item.component';
 @NgModule({
   declarations: [
-    EditComponent
+    EditComponent,
   ],
   imports: [
     CoreModule,
@@ -25,6 +28,10 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     InputModule,
     MatButtonModule,
     MatSnackBarModule,
+    LogoComponent,
+    MatIconModule,
+    MatTooltipModule,
+    PerguntaItemComponent,
   ],
 })
 export class EditModule { }

@@ -1,0 +1,3 @@
+# Task list
+
+[ ] Implementar deploy por gulp, incluindo todos os clients privados que são distribuídos por @ci/Apps.

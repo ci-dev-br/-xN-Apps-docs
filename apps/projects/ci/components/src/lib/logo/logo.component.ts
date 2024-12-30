@@ -6,8 +6,10 @@ import { CoreModule } from '@ci/core';
     imports: [
         CoreModule,
     ],
+    standalone: true,
     templateUrl: './logo.component.html',
     styleUrl: './logo.component.scss'
 })
 export class LogoComponent {
+    link = location.origin;
 }
