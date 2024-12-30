@@ -25,7 +25,7 @@ function BuildPClientApplication(cb) {
 // Deploy Local Client Application
 function DeployLocalClient(cb) {
     // TODO: clean old public files
-    if (!!R734 && !!R348) src(R734 + '**').pipe(dest(R348, { overwrite: true }));
+    if (!!R734 && !!R348) src(R734 + '**', { encoding: false }).pipe(dest(R348, { overwrite: true }));
     cb();
 }
 
