@@ -11,6 +11,6 @@ export class AppController {
   @Get()
   @Public()
   root(@Req() req: Request, @Res() res: Response) {
-    return res.sendFile(resolve('public/index.html'));
+    return res.sendFile(resolve('public/index.csr.html'));
   }
 }
