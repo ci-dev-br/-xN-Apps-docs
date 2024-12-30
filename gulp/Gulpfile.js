@@ -1,6 +1,11 @@
 const { src, dest, parallel, series } = require('gulp');
+const gutil = require('gulp-util');
+const ftp = require('vinyl-ftp');
+const vfs = require('vinyl-fs');
 const { execSync } = require('child_process');
 require('dotenv').config();
+const map = require('map-stream');
+
 const {
     client_dist_static_public: R734,
     server_local_static_public: R348,
@@ -26,6 +31,33 @@ function DeployLocalClient(cb) {
 
 // Deploy FTP's application
 function DeployFTPApplications(cb) {
+    /** @type {Array<{deployMode:string, commonName?:string, user?:string,  password?:string, host?:string}>}  */
+    let clients = JSON.parse(process.env.ftp_clients).clients;
+    clients.forEach(e => {
+        if (e.deployMode.indexOf('ftp') > -1) {
+            let conn = ftp.create({
+                host: e.host,
+                user: e.user,
+                password: e.password,
+                parallel: 10,
+                log: gutil.log,
+                secureOptions: { rejectUnauthorized: false },
+                secure: true,
+                reload: true
+            });
+            let globs = [];
+            if (e.deployMode.indexOf('index') > -1) {
+                globs.push('index.csr.html');
+            }
+            if (globs.length > 0) {
+                vfs.src(globs, { cwd: R734, buffer: true, })
+                    .pipe(conn.dest('/'))
+                    .pipe(map((file, cbb) => {
+                        cbb();
+                    }));
+            }
+        }
+    })
     cb();
 }
 
