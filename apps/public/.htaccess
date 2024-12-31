@@ -1,0 +1,27 @@
+RewriteEngine On
+RewriteBase /
+
+# 0. non www to www assign
+# Redirect to www
+# RewriteCond %{HTTP_HOST} ^[^.]+\.[^.]+$
+# RewriteCond %{HTTPS}s ^on(s)|
+# RewriteRule ^ http%1://www.%{HTTP_HOST}%{REQUEST_URI} [L]
+
+# 0. www to non-www assign 
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^(.*)$ %{HTTP_HOST}$1 [C]
+RewriteRule ^www\.(.*)$ https://$1 [L]
+
+# 1. Permite acesso direto a arquivos existentes
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# 2. Reescreve para index.php se a rota não corresponde a um arquivo e não tem extensão
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !\. [NC] 
+RewriteRule ^(.*)$ /index.php [L]
+
+# 3. Redireciona demais rotas para recursos internos
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ https://apps.ci.dev.br:446/$1 [L]

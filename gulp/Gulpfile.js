@@ -30,38 +30,49 @@ function DeployLocalClient(cb) {
 }
 
 // Deploy FTP's application
-function DeployFTPApplications(cb) {
+async function DeployFTPApplications(cb) {
     /** @type {Array<{deployMode:string, commonName?:string, user?:string,  password?:string, host?:string}>}  */
     let clients = JSON.parse(process.env.ftp_clients).clients;
-    clients.forEach(e => {
-        if (e.deployMode.indexOf('ftp') > -1) {
-            let conn = ftp.create({
-                host: e.host,
-                user: e.user,
-                password: e.password,
-                parallel: 1,
-                log: gutil.log,
-                secureOptions: { rejectUnauthorized: false },
-                secure: true,
-                reload: true,
-            });
-            let globs = [];
-            if (e.deployMode.indexOf('index') > -1) {
-                globs.push('index.csr.html');
+    for (const e of clients) {
+        await new Promise((res, rej) => {
+            if (e.deployMode.indexOf('ftp') > -1) {
+                let conn = ftp.create({
+                    host: e.host,
+                    user: e.user,
+                    password: e.password,
+                    parallel: 5,
+                    log: gutil.log,
+                    secureOptions: { rejectUnauthorized: false },
+                    secure: true,
+                    reload: true,
+                });
+                let globs = [];
+                if (e.deployMode.indexOf('index') > -1) {
+                    globs.push('index.csr.html');
+                }
+                if (e.deployMode.indexOf('htaccess') > -1) {
+                    globs.push('.htaccess');
+                }
+                if (e.deployMode.indexOf('php') > -1) {
+                    globs.push('index.php');
+                }
+                if (globs.length > 0) {
+                    console.log(e.commonName + ' 🆙 ');
+                    let cnt = globs.length;
+                    vfs.src(globs, { cwd: R734, buffer: true })
+                        .pipe(conn.dest('/', { buffer: true }))
+                        .pipe(map((file, cbb) => {
+                            cbb();
+                            cnt--;
+                            if (cnt === 0) {
+                                res();
+                                console.log('[end]')
+                            }
+                        }));
+                }
             }
-            if (e.deployMode.indexOf('htaccess') > -1) {
-                globs.push('.htaccess');
-            }
-            if (globs.length > 0) {
-                vfs.src(globs, { cwd: R734, buffer: true, })
-                    .pipe(conn.dest('/'))
-                    .pipe(map((file, cbb) => {
-                        console.log(e.commonName + ' 🆙 ')
-                        cbb();
-                    }));
-            }
-        }
-    })
+        });
+    }
     cb();
 }
 
