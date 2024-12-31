@@ -39,20 +39,24 @@ function DeployFTPApplications(cb) {
                 host: e.host,
                 user: e.user,
                 password: e.password,
-                parallel: 10,
+                parallel: 1,
                 log: gutil.log,
                 secureOptions: { rejectUnauthorized: false },
                 secure: true,
-                reload: true
+                reload: true,
             });
             let globs = [];
             if (e.deployMode.indexOf('index') > -1) {
                 globs.push('index.csr.html');
             }
+            if (e.deployMode.indexOf('htaccess') > -1) {
+                globs.push('.htaccess');
+            }
             if (globs.length > 0) {
                 vfs.src(globs, { cwd: R734, buffer: true, })
                     .pipe(conn.dest('/'))
                     .pipe(map((file, cbb) => {
+                        console.log(e.commonName + ' 🆙 ')
                         cbb();
                     }));
             }
