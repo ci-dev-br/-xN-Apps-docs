@@ -11,7 +11,7 @@ import { ApiModule } from '@ci/portal-api';
 import { provideNuMonacoEditorConfig } from '@ng-util/monaco-editor';
 
 const SETUP = {
-  API_URL_GATEWAY: 'https://apps.ci.dev.br:445',
+  API_URL_GATEWAY: 'https://apps.ci.dev.br:446',
   ALTERN_GATEWAYS: [
     'https://srv33.internals.ci.dev.br:664',
     'https://lorelei.ci.dev.br'
