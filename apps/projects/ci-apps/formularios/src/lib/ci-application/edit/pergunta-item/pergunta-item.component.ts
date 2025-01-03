@@ -4,8 +4,10 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
 import { CoreModule, DaoService } from "@ci/core";
 import { Pergunta } from "@ci/portal-api";
+import { Type, TYPES } from "../../../type";
 
 @Component({
     standalone: true,
@@ -16,6 +18,7 @@ import { Pergunta } from "@ci/portal-api";
         MatIconModule,
         MatButtonModule,
         ReactiveFormsModule,
+        MatSelectModule,
     ],
     selector: 'ci-pergunta',
     styles: `
@@ -28,12 +31,26 @@ import { Pergunta } from "@ci/portal-api";
     <mat-form-field>
         <mat-label>Questão</mat-label>
         <input matInput placeholder="Qual a pergunta?" formControlName="questao" >
+
+    </mat-form-field>
+    <mat-form-field>
+        <mat-select  formControlName="type">
+            @for (item of types; track $index) {
+                <mat-option [value]="item.name" >
+               @if(item.icon) {<mat-icon>{{item.icon}}</mat-icon>}
+               @if(item.description) { {{item.description}} }
+                </mat-option>
+            }
+        </mat-select>
     </mat-form-field>
 </ng-container>`,
 })
 export class PerguntaItemComponent {
+    types: Type[] = TYPES;
     form = this.formBuilder.group({
         questao: [, []],
+        type: [, []],
+        options: [, []],
     });
     private _source?: Pergunta | undefined;
     public get source(): Pergunta | undefined {

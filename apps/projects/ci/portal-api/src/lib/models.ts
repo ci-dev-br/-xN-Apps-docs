@@ -20,6 +20,7 @@ export { GetInputDtos } from './models/get-input-dtos';
 export { IDynamicForm } from './models/i-dynamic-form';
 export { Marca } from './models/marca';
 export { ObterListaPessoa } from './models/obter-lista-pessoa';
+export { Option } from './models/option';
 export { Organizacao } from './models/organizacao';
 export { OrganizacaoFindPayload } from './models/organizacao-find-payload';
 export { OrganizacaoFindResult } from './models/organizacao-find-result';
