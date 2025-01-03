@@ -18,6 +18,5 @@ export class ApiConfiguration {
  * Parameters for `ApiModule.forRoot()`
  */
 export interface ApiConfigurationParams {
-  rootUrl?: string | string[];
-  alternativeGateways?: string | string[];
+  rootUrl?: string;
 }

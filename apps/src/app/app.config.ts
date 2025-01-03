@@ -10,6 +10,15 @@ import { AuthorizationHttpInterceptor, CoreModule, coreProvider, StorageService 
 import { ApiModule } from '@ci/portal-api';
 import { provideNuMonacoEditorConfig } from '@ng-util/monaco-editor';
 
+const SETUP = {
+  API_URL_GATEWAY: 'https://apps.ci.dev.br:445',
+  ALTERN_GATEWAYS: [
+    'https://srv33.internals.ci.dev.br:664',
+    'https://lorelei.ci.dev.br'
+  ],
+  UNSATLY_WS_COMMON: 'ws://apps.ci.dev.br:87',
+}
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideNuMonacoEditorConfig({
@@ -25,17 +34,17 @@ export const appConfig: ApplicationConfig = {
     }),
     ...(ApiModule.forRoot(
       {
-        rootUrl: 'https://apps.ci.dev.br:446',
-        alternativeGateways: [
-          'https://srv33.internals.ci.dev.br:664',
-          'https://lorelei.ci.dev.br'
-        ],
+        rootUrl: SETUP.API_URL_GATEWAY,
       }).providers as []),
     StorageService,
     provideHttpClient(
       withInterceptorsFromDi(),
     ),
     { provide: HTTP_INTERCEPTORS, useClass: AuthorizationHttpInterceptor, multi: true }, provideAnimationsAsync(),
-    coreProvider({ gateway: 'ws://apps.ci.dev.br:87' }),
+    coreProvider({
+      gateway: SETUP.UNSATLY_WS_COMMON,
+      rootApi: SETUP.API_URL_GATEWAY,
+      alternativeApiGateways: SETUP.ALTERN_GATEWAYS,
+    }),
   ],
 };
