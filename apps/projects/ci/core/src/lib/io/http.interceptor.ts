@@ -13,7 +13,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         // private readonly token: TokenService,
         private readonly auth: AuthService,
     ) {
-        console.log('[SEC.v-2.3.33401.2]');
+        console.log('[SEC.v-2.3.33401.3]');
     }
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const { method, url } = request;

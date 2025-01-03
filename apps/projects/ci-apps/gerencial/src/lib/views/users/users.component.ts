@@ -15,11 +15,13 @@ import { lastValueFrom } from "rxjs";
 import { ContainerModule } from "@ci/components";
 @Component({
     selector: 'ci-users-view',
+    standalone: true,
     template: `
     <mat-toolbar>
-        <button >Novo</button>
-           <!--  <button mat-raised-button (click)="adicionar()">Cadastrar</button> -->
-            <!-- <button mat-raised-button (click)="enviarConvite()" >enviarConvite</button> -->
+        <button mat-raised-button (click)="cadastrarNovoUsuario()">Novo</button>
+        <button mat-raised-button (click)="localizarUsuario()">Localizar Usuário</button>
+        <!-- <button mat-raised-button (click)="action('')">Cadastrar</button> -->
+        <!-- <button mat-raised-button (click)="enviarConvite()" >enviarConvite</button> -->
     </mat-toolbar>
     <ci-container>
         <ci-data-grid></ci-data-grid>
@@ -86,6 +88,12 @@ import { ContainerModule } from "@ci/components";
         this.users = await lastValueFrom(this.userService.userGetList());
     }
 
+    async cadastrarNovoUsuario() {
+
+    }
+    async localizarUsuario() {
+
+    }
     // private cache(prop: string, value: () => any) {
     //     if (!this._cached_map.has(prop))
     //         this._cached_map.set(prop, value());

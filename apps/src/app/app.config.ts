@@ -23,7 +23,14 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
     }),
-    ...(ApiModule.forRoot({ rootUrl: 'https://apps.ci.dev.br:446' }).providers as []),
+    ...(ApiModule.forRoot(
+      {
+        rootUrl: 'https://apps.ci.dev.br:446',
+        alternativeGateways: [
+          'https://srv33.internals.ci.dev.br:664',
+          'https://lorelei.ci.dev.br'
+        ],
+      }).providers as []),
     StorageService,
     provideHttpClient(
       withInterceptorsFromDi(),

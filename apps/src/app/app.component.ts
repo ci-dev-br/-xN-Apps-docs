@@ -4,15 +4,16 @@ import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { CoreModule, CoreService, WsService } from '@ci/core';
 
 @Component({
-    selector: 'ci-root',
-    imports: [
-        CoreModule,
-        RouterOutlet,
-        MatIconModule,
-        RouterModule,
-    ],
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.scss'
+  selector: 'ci-root',
+  standalone: true,
+  imports: [
+    CoreModule,
+    RouterOutlet,
+    MatIconModule,
+    RouterModule,
+  ],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   title = 'apps';
@@ -23,8 +24,7 @@ export class AppComponent implements OnInit {
     private readonly ws: WsService,
   ) { }
   ngOnInit() {
-    this.matIconReg.setDefaultFontSetClass('material-symbols-sharp')
+    this.matIconReg.setDefaultFontSetClass('material-symbols-sharp');
     // this.router.events.subscribe(r => console.log(r))
   }
-
 }
