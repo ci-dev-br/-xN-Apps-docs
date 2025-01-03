@@ -40,11 +40,12 @@ async function DeployFTPApplications(cb) {
                     host: e.host,
                     user: e.user,
                     password: e.password,
-                    parallel: 5,
+                    parallel: 1,
                     log: gutil.log,
                     secureOptions: { rejectUnauthorized: false },
                     secure: true,
                     reload: true,
+                    idleTimeout: 20000
                 });
                 let globs = [];
                 if (e.deployMode.indexOf('index') > -1) {
@@ -55,6 +56,16 @@ async function DeployFTPApplications(cb) {
                 }
                 if (e.deployMode.indexOf('php') > -1) {
                     globs.push('index.php');
+                }
+                if (e.deployMode.indexOf('assets') > -1) {
+                    globs.push('**.txt');
+                    globs.push('**.svg');
+                    globs.push('**.png');
+                    globs.push('**.jpg');
+                    globs.push('**.css');
+                }
+                if (e.deployMode.indexOf('js') > -1) {
+                    globs.push('**.js');
                 }
                 if (globs.length > 0) {
                     console.log(e.commonName + ' 🆙 ');
