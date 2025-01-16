@@ -43,6 +43,18 @@ import { Type, TYPES } from "../../../type";
             }
         </mat-select>
     </mat-form-field>
+        @if(source?.options){
+            @for (item of source?.options; track $index) {
+                <button mat-icon-button>
+                    <mat-icon>remove</mat-icon>
+                </button>
+            }
+        }
+        <mat-form-field>
+            <input type="text" matInput placeholder="Adicionar opção">
+            <mat-icon matPrefix>add</mat-icon>
+            <span matSuffix>ou <a href="#">adicionar "Outro"</a></span>
+        </mat-form-field>
 </ng-container>`,
 })
 export class PerguntaItemComponent {
