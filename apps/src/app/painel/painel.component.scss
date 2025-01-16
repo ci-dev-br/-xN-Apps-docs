@@ -14,9 +14,7 @@ mat-toolbar {
     $size: 40px;
     flex: none;
     overflow: hidden;
-
     // background: linear-gradient(to top, rgba(#dfdfdf, .77) 0%, rgba(#b8b8b8, .22) 44%, rgba(#646464, .22) 44%, rgba(#ffffff, .44) 100%);
-
     // backdrop-filter: blur(2px);
     box-shadow: 0px 0px 10px 10px rgba(#000, .33);
     z-index: 1000;
@@ -32,10 +30,10 @@ mat-toolbar {
         ::ng-deep {
 
             .mdc-floating-label[ng-reflect-floating=true] {
+                background: radial-gradient(#ffffff 0%, rgba(#ffffff, .0) 75%);
                 // box-shadow: 0 0 0 6px #ffffff;
                 //   text-shadow: ;
                 // filter: drop-shadow(0 0 5px #fff);
-                background: radial-gradient(#ffffff 0%, rgba(#ffffff, .0) 75%);
                 // border-radius: 15px;
                 // padding: 6px;
             }
@@ -131,12 +129,8 @@ mat-drawer {
 
     ::ng-deep .mat-drawer-inner-container {
         padding: 0px 2px;
-
         overflow: hidden;
-
-
     }
-
 
     box-shadow: 0px 0px 12px rgba(0, 0, 0, .33);
 }
