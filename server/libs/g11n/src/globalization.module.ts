@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Currency } from "./models/currency.entity";
+import { CurrencyCode } from "../../i11n/src/models/currency-code.entity";
 
 export const GlobalizationEntities = [
-    Currency,
+    CurrencyCode,
 ];
 
 @Module({
@@ -13,6 +13,6 @@ export const GlobalizationEntities = [
 })
 export class GlobalizationModule { }
 export {
-    Currency,
+    CurrencyCode,
 
 }
