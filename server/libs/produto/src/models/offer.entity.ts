@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Currency } from "@ci/g11n/models/currency.entity";
+import { CurrencyCode } from "@ci/i11n/models/currency-code.entity";
 import { Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 /**
@@ -10,12 +10,21 @@ import { Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn } 
 export class Offer {
     @PrimaryGeneratedColumn('uuid')
     id?: string;
-    @ApiProperty({})
-    @Column({})
-    price?: number;
-    @ApiProperty({})
-    @ManyToMany(() => Currency)
-    currency?: Currency;
+    @ApiProperty({
+        nullable: true,
+        required: false,
+    })
+    @ApiProperty({ type: CurrencyCode })
+    @ManyToMany(() => CurrencyCode)
+    currency?: CurrencyCode;
+    @ApiProperty({
+        description: 'Ammount of Offer',
+        example: 0.123,
+    })
+    @Column({
+        nullable: false
+    })
+    ammount?: number;
     @ApiProperty({
         description: 'Data de cadastramento.'
     })

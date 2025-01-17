@@ -62,6 +62,8 @@
     "@ci/prolabore/(.*)": "<rootDir>/../libs/prolabore/src/$1",
     "@ci/prolabore": "<rootDir>/../libs/prolabore/src",
     "@ci/forms/(.*)": "<rootDir>/../libs/forms/src/$1",
-    "@ci/forms": "<rootDir>/../libs/forms/src"
+    "@ci/forms": "<rootDir>/../libs/forms/src",
+    "@ci/i11n/(.*)": "<rootDir>/../libs/i11n/src/$1",
+    "@ci/i11n": "<rootDir>/../libs/i11n/src"
   }
 }

@@ -240,6 +240,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/forms/tsconfig.lib.json"
       }
+    },
+    "i11n": {
+      "type": "library",
+      "root": "libs/i11n",
+      "entryFile": "index",
+      "sourceRoot": "libs/i11n/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/i11n/tsconfig.lib.json"
+      }
     }
   }
 }

@@ -4,16 +4,20 @@ import { BillingType } from "./model/BillingType.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Category } from "./model/category.entity";
 import { FaturamentoController } from "./controller/faturamento.controller";
+import { Transação } from "./model/Transação";
+import { I11nModule } from "@ci/i11n";
 export const FinanceiroEntities = [
     Lancamento,
     BillingType,
     Category,
+    Transação,
 ];
 @Module({
     imports: [
         TypeOrmModule.forFeature([
             ...FinanceiroEntities,
-        ])
+        ]),
+        I11nModule,
     ],
     exports: [],
     controllers: [
@@ -27,4 +31,5 @@ export {
     Lancamento,
     BillingType,
     Category,
+    Transação,
 }

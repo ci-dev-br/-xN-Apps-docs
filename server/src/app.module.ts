@@ -30,6 +30,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { FORMS_ENTITIES, FormsModule } from '@ci/forms';
 import { CmsEntities, CmsModule } from '@ci/cms/cms.module';
+import { I11nEntities, I11nModule } from '@ci/i11n';
 
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
@@ -62,6 +63,7 @@ const _entities_name = {
   SeoMarketing: SeoMarketingEntities,
   Cms: CmsEntities,
   Forms: FORMS_ENTITIES,
+  I11n: I11nEntities,
 }
 const _modules_name = {
   System: SystemModule,
@@ -87,6 +89,7 @@ Messager: MessagerModule,
   SeoMarketing: SeoMarketingModule,
   Forms: FormsModule,
   Cms: CmsModule,
+  I11n: I11nModule,
 } 
 process.env.MODULES.split(',').forEach(e => {
   if (_entities_name[e]) LoadedEntities.push(..._entities_name[e]);
