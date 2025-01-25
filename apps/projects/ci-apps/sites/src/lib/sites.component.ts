@@ -4,11 +4,7 @@ import { Component } from '@angular/core';
   selector: 'ci-sites',
   standalone: false,
   
-  template: `
-    <p>
-      sites works!
-    </p>
-  `,
+  templateUrl: 'sites.component.html',
   styles: ``
 })
 export class SitesComponent {

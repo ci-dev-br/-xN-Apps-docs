@@ -1,7 +1,6 @@
 import { FullAuditedEntity } from "@ci/manager";
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, PrimaryColumn } from "typeorm";
-
+import { Column, Entity } from "typeorm";
 /**
  * Entidade de ícone da aplicação
  */
