@@ -249,6 +249,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/i11n/tsconfig.lib.json"
       }
+    },
+    "projetos": {
+      "type": "library",
+      "root": "libs/projetos",
+      "entryFile": "index",
+      "sourceRoot": "libs/projetos/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/projetos/tsconfig.lib.json"
+      }
     }
   }
 }

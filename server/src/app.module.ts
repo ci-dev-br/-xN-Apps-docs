@@ -31,6 +31,7 @@ import { AppService } from './app.service';
 import { FORMS_ENTITIES, FormsModule } from '@ci/forms';
 import { CmsEntities, CmsModule } from '@ci/cms/cms.module';
 import { I11nEntities, I11nModule } from '@ci/i11n';
+import { ProjetosEntities, ProjetosModule } from '@ci/projetos';
 
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
@@ -64,13 +65,14 @@ const _entities_name = {
   Cms: CmsEntities,
   Forms: FORMS_ENTITIES,
   I11n: I11nEntities,
+  Projetos: ProjetosEntities,
 }
 const _modules_name = {
   System: SystemModule,
   Notificacao: NotificacaoModule,
   Auth: AuthModule,
   Manager: ManagerModule,
-Messager: MessagerModule,
+  Messager: MessagerModule,
   Produto: ProdutoModule,
   Codex: CodexModule,
   Globalization: GlobalizationModule,
@@ -90,7 +92,8 @@ Messager: MessagerModule,
   Forms: FormsModule,
   Cms: CmsModule,
   I11n: I11nModule,
-} 
+  Projetos: ProjetosModule,
+}
 process.env.MODULES.split(',').forEach(e => {
   if (_entities_name[e]) LoadedEntities.push(..._entities_name[e]);
   if (_modules_name[e]) LoadedModules.push(_modules_name[e]);

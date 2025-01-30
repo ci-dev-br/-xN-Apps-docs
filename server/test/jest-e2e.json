@@ -64,6 +64,8 @@
     "@ci/forms/(.*)": "<rootDir>/../libs/forms/src/$1",
     "@ci/forms": "<rootDir>/../libs/forms/src",
     "@ci/i11n/(.*)": "<rootDir>/../libs/i11n/src/$1",
-    "@ci/i11n": "<rootDir>/../libs/i11n/src"
+    "@ci/i11n": "<rootDir>/../libs/i11n/src",
+    "@ci/projetos/(.*)": "<rootDir>/../libs/projetos/src/$1",
+    "@ci/projetos": "<rootDir>/../libs/projetos/src"
   }
 }

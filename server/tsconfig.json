@@ -180,6 +180,12 @@
       ],
       "@ci/i11n/*": [
         "libs/i11n/src/*"
+      ],
+      "@ci/projetos": [
+        "libs/projetos/src"
+      ],
+      "@ci/projetos/*": [
+        "libs/projetos/src/*"
       ]
     }
   }
