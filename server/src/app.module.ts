@@ -45,7 +45,6 @@ const _entities_name = {
   Manager: ManagerEntities,
   Messager: MessageEntities,
   Product: ProductEntities,
-  CodeX: CodeXEntities,
   Globalization: GlobalizationEntities,
   Prancheta: PranchetaEntities,
   Icons: IconEntities,
@@ -66,6 +65,7 @@ const _entities_name = {
   Forms: FORMS_ENTITIES,
   I11n: I11nEntities,
   Projetos: ProjetosEntities,
+  CodeX: CodeXEntities,
 }
 const _modules_name = {
   System: SystemModule,
@@ -74,7 +74,6 @@ const _modules_name = {
   Manager: ManagerModule,
   Messager: MessagerModule,
   Produto: ProdutoModule,
-  Codex: CodexModule,
   Globalization: GlobalizationModule,
   Prancheta: PranchetaModule,
   Icons: IconsModule,
@@ -93,6 +92,7 @@ const _modules_name = {
   Cms: CmsModule,
   I11n: I11nModule,
   Projetos: ProjetosModule,
+  Codex: CodexModule,
 }
 process.env.MODULES.split(',').forEach(e => {
   if (_entities_name[e]) LoadedEntities.push(..._entities_name[e]);

@@ -1,3 +1,5 @@
+
+
 import { FullAuditedEntity } from "@ci/core";
 import { Entity } from "typeorm";
 import { schema } from "./schema";
@@ -5,6 +7,6 @@ import { schema } from "./schema";
 @Entity({
     schema
 })
-export class Lexico extends FullAuditedEntity {
-    
+export class CodigoFonte extends FullAuditedEntity {
+
 }
