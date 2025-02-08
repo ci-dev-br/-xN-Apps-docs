@@ -8,11 +8,13 @@ import { CoreModule } from "@ci/core/core.module";
 import { Termo } from "./models/termo";
 import { CodigoFonte } from "./models/codigo-fonte.entity";
 import { Lexico } from "./models/lexico";
+import { File } from "./models/file.entity";
 export const CodeXEntities = [
     // Agent,
     // CodeBlock,
     // Termo,
     CodigoFonte,
+    File,
     // Lexico,
 ];
 @Module({
