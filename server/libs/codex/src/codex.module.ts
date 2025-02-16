@@ -5,7 +5,7 @@ import { CodexService } from "./service/codex.service";
 import { CodexController } from "./controller/codex.controller";
 import { CodeBlock } from "./models/code-block.entity";
 import { CoreModule } from "@ci/core/core.module";
-import { Termo } from "./models/termo";
+import { Terminoligia } from "./models/termo";
 import { CodigoFonte } from "./models/codigo-fonte.entity";
 import { Lexico } from "./models/lexico";
 import { File } from "./models/file.entity";
