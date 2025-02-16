@@ -1,8 +1,9 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany } from "typeorm";
 import { schema } from "./schema";
 import { ApiProperty } from "@nestjs/swagger";
 import { FullAuditedEntity } from "@ci/manager";
 import { Termos } from "../termos";
+import { Cliente } from "./cliente.entity";
 /**
  * Projetos
  */
@@ -34,4 +35,10 @@ export class Projeto extends FullAuditedEntity {
     })
     @Column({ nullable: true })
     controleVersao?: string;
+    @ApiProperty({
+        nullable: true, type: Cliente,
+        description: Termos.Projeto.Cliente.Descrição,
+    })
+    @ManyToMany(t => Cliente) @JoinTable()
+    cliente?: Cliente;
 } 

@@ -7,6 +7,9 @@ export const Termos = {
         ControleVersão: {
             Descrição: 'Controle de Versão',
         },
+        Cliente: {
+            Descrição: 'Cliente',
+        },
         visibilidade: {
             Descrição: 'Visibilidade',
         },
