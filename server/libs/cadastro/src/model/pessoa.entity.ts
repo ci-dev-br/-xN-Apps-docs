@@ -5,12 +5,12 @@ import { ApiProperty } from "@nestjs/swagger";
 import { InformacaoContato } from "./informacao-contato.entity";
 import { DocumentoIdentificacao } from "./documento-identificacao.entity";
 import { t } from "@ci/core";
-
+import { schema } from "./schema";
 /**
  * Cadastro de Pessoa, Entidade Física ou Jurídica, representada, ou não por instituição de outrem
  * 
  */
-@Entity({ schema: 'cadastro' })
+@Entity({ schema })
 export class Pessoa extends FullAuditedEntity {
     /**
      * Nome
