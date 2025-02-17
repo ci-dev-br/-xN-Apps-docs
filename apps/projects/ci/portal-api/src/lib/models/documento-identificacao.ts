@@ -12,6 +12,8 @@ export interface DocumentoIdentificacao {
   lastModifiedBy?: {
 } | null;
   numeroDocumento?: string | null;
+  pessoa?: {
+} | null;
   tenants?: Array<string> | null;
   tipo?: TipoDocumentoIdentificacao | null;
 }

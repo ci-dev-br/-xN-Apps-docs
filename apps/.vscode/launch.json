@@ -4,8 +4,9 @@
   "configurations": [
     {
       "name": "debug",
-      "type": "vscode-edge-devtools.debug",
+      "type": "msedge",
       "request": "launch",
+      "preLaunchTask": "npm: start",
       "url": "http://apps.ci.dev.br:4200/"
     },
     {

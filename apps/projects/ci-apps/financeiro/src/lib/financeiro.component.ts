@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
 
 @Component({
-    selector: 'ci-Financeiro',
-    imports: [],
-    template: `
+  selector: 'ci-Financeiro',
+  imports: [],
+  standalone: true,
+  template: `
     <p>
       financeiro works!
     </p>
   `,
-    styles: ``
+  styles: ``
 })
 export class FinanceiroComponent {
 

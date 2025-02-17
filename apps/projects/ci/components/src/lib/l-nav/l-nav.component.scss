@@ -9,7 +9,6 @@
 
 nav {
   min-height: 48px;
-
   flex: 0;
   background: linear-gradient(to top, #222 0%, #000 100%);
   position: sticky;
@@ -20,8 +19,13 @@ nav {
   margin: 0;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  // justify-content: space-around;
   align-items: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
 
   .wrapper {
     flex: auto;
@@ -40,12 +44,6 @@ nav {
     text-decoration: none;
     padding: 0px;
   }
-
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
 
   ul,
   li {
