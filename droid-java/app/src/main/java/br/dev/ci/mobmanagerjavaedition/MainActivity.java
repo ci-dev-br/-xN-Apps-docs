@@ -2,19 +2,15 @@ package br.dev.ci.mobmanagerjavaedition;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
@@ -44,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        this.appsButton = findViewById(R.id.apps);
+        this.\yyyyyyy\yyyyyyyyyyy\appsButton = findViewById(R.id.apps);
         this.message = findViewById(R.id.message);
         String api = "http://192.168.0.119:86/";
         String ws = "http://192.168.0.119:42/";
@@ -56,7 +52,9 @@ public class MainActivity extends AppCompatActivity {
             adicionarItem(api, ws);
             this.message.setText("Dipositivo identificado");
         }
-        this.appsButton.setOnClickListener(v -> this.openApps());
+        if(this.appsButton != null){
+            this.appsButton.setOnClickListener(v -> this.openApps());
+        }
     }
 
     public void adicionarItem(String api, String ws) {
