@@ -68,6 +68,7 @@ async function bootstrap() {
     await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors(corsOptionsDelegate);
   /**
+   * Configuração do Open API v3 para integração externa
    * Swagger Open API 3
    */
   const options = new DocumentBuilder()
