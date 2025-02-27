@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-    selector: 'ci-apps-nota',
-    imports: [],
-    template: `
+  selector: 'ci-apps-nota',
+  imports: [],
+  standalone: true,
+  template: `
     <p>
-      nota works!
     </p>
   `,
-    styles: ``
+  styles: ``
 })
 export class NotaComponent {
 

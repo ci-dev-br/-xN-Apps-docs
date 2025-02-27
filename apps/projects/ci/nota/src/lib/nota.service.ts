@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { NotaComponent } from './nota.component';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class NotaService {
-
-  constructor() { }
+  constructor(
+    private dialog: MatDialog,
+  ) { }
+  async novaNota() {
+    this.dialog.open(NotaComponent);
+  }
 }
