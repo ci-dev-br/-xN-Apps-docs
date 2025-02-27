@@ -53,7 +53,9 @@ export class UserService {
             this.$user.next(profile);
             return profile;
         } else {
-            this.router.navigate(['/']);
+            setTimeout(() => {
+                this.router.navigate(['/']);
+            })
             return undefined;
         }
     }
