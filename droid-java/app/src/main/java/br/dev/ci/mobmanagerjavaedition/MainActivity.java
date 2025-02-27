@@ -40,10 +40,10 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        this.\yyyyyyy\yyyyyyyyyyy\appsButton = findViewById(R.id.apps);
+        this.appsButton = findViewById(R.id.apps);
         this.message = findViewById(R.id.message);
-        String api = "http://192.168.0.119:86/";
-        String ws = "http://192.168.0.119:42/";
+        String api = "https://apps.ci.dev.br:446/";
+        String ws = "wss://apps.ci.dev.br:446/";
         if(this.message != null){
             this.message.setText("Iniciando conexção... (1)");
             permission();
@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void adicionarItem(String api, String ws) {
         ManagerClient.getInstance().addGateway(api, ws);
-        // this.adapter.notifyDataSetChanged();
     }
 
     private void openApps(){
