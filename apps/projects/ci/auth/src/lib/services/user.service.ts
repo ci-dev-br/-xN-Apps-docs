@@ -43,13 +43,18 @@ export class UserService {
         this.$user.next(undefined);
     }
     private async getFromMemory() {
+        let profile: User | null = null;
         try {
-            let profile = await lastValueFrom(this.authService.profile());
-            if (profile) this.$user.next(profile);
-            return profile;
+            profile = await lastValueFrom(this.authService.profile());
         } catch (error) {
-            this.router.navigate(['/']);
+            console.error(error);
         }
-        return undefined;
+        if (!!profile) {
+            this.$user.next(profile);
+            return profile;
+        } else {
+            this.router.navigate(['/']);
+            return undefined;
+        }
     }
 }
