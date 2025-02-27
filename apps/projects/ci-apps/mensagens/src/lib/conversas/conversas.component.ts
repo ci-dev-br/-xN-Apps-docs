@@ -6,19 +6,21 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { PesquisarService } from '../pesquisar-contato/pesquisar-contato.service';
+import { TorusGeometry } from 'three';
 
 @Component({
-    selector: 'ci-conversas',
-    imports: [
-        MatInputModule,
-        MatFormFieldModule,
-        RouterModule,
-        MatButtonModule,
-        MatIconModule,
-        MatTooltipModule,
-    ],
-    templateUrl: './conversas.component.html',
-    styleUrl: './conversas.component.scss'
+  selector: 'ci-conversas',
+  imports: [
+    MatInputModule,
+    MatFormFieldModule,
+    RouterModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+  ],
+  standalone: true,
+  templateUrl: './conversas.component.html',
+  styleUrl: './conversas.component.scss'
 })
 export class ConversasComponent {
   constructor(
