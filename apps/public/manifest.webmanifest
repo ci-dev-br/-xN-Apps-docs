@@ -1,10 +1,10 @@
 {
-  "name": "Informação",
-  "short_name": "Informação",
-  "start_url": "https://xn--informao-xza3b.app.br/",
+  "name": "Aplicativos",
+  "short_name": "Apps",
+  "start_url": "https://apps.ci.dev.br:446/",
   "display": "standalone",
-  "background_color": "#1144FF",
-  "description": "Informação a um clique",
+  "background_color": "#99DDAA",
+  "description": "Apps.",
   "icons": [
     {
       "src": "apps.png",
