@@ -12,28 +12,40 @@
 
 .folders,
 .files {
+    $size: 48px;
+
+
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+
+    align-items: flex-start;
+    justify-content: start;
 
     gap: 6px;
 
 
     .folder,
     .file {
+
+        flex: 1;
+
         display: flex;
         flex-direction: column;
-
         align-items: center;
         justify-content: center;
 
+        width: #{$size + 24};
+        height: #{$size + 24};
+
         mat-icon {
-            width: 120px;
-            height: 120px;
-            font-size: 120px;
+            width: #{$size};
+            height: #{$size};
+            font-size: #{$size};
+            line-height: #{$size};
         }
 
-        gap: 6px;
+        gap: 12px;
 
         border: solid 1px #cecece;
         padding: 12px;
@@ -42,6 +54,26 @@
 
         &:hover {
             background: rgba(0, 0, 0, .2);
+        }
+    }
+
+    .folder-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        max-width: #{$size + 48};
+        width: #{$size + 48};
+        height: #{$size + 80};
+        align-items: center;
+        justify-content: center;
+
+        .title {
+            flex: unset;
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            text-wrap: balance;
+            white-space: normal;
         }
     }
 }
