@@ -11,6 +11,13 @@ export class AppController {
   @Get()
   @Public()
   root(@Req() req: Request, @Res() res: Response) {
+    if (!!req.path && req.path.indexOf('.') > -1) {
+      try {
+        return res.sendFile(resolve(`public${req.path}`));
+      } catch (error) {
+        console.error(error);
+      }
+    }
     return res.sendFile(resolve('public/index.csr.html'));
   }
 }
