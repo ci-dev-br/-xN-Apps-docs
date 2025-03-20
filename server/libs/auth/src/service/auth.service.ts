@@ -39,6 +39,9 @@ export class AuthService {
                 ip: ip,
                 identificacao_inicial: old_authorization.id
             }));
+            chaveAcesso.alive = true;
+            chaveAcesso.valid = false;
+            await this.credencial.atualizar(chaveAcesso);
             return {
                 authorization: await this.jwtService.signAsync({
                     id: user?.id,
