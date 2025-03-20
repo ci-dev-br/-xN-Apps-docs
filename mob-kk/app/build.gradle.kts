@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace = "br.dev.ci.mobmanger_kitkat"
-    compileSdk = 35
+    compileSdk = 19
 
     defaultConfig {
         applicationId = "br.dev.ci.mobmanger_kitkat"
@@ -33,10 +33,8 @@ android {
 
 dependencies {
 
-    implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
-    implementation(libs.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
