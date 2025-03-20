@@ -14,6 +14,8 @@ export class ServerService {
      * Registra servidor na base interna
      */
     async registrar() {
-
+        /* 
+        Reegistrar serviço de mirror para espelhamento de rede e cache para seriços de terceiros na rede interna
+        */
     }
 }
