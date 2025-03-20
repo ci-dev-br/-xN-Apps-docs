@@ -37,6 +37,14 @@ export class CredencialService {
             .setParameter('id', assinatura)
             .getOne();
     }
+    async obterChaveAcessoPorId(
+        chave_acesso_id?: string,
+    ) {
+        return await this.chaveAcessoRepo.createQueryBuilder('chave_acesso')
+            .where(`chave_acesso.id = :id`)
+            .setParameter('id', chave_acesso_id)
+            .getOne();
+    }
     async atualizar(
         chave: ChaveAcesso
     ) {
