@@ -3,6 +3,7 @@ import { User } from '../models/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
+import { ChaveAcesso } from '@ci/core';
 
 @Injectable()
 export class UserService {
@@ -50,11 +51,22 @@ export class UserService {
             refreshToken: null
         })
     }
-    async updateRefreshToken(userId: string, refreshToken: string) {
+    async updateRefreshToken(userId: string, refreshToken: string, chave?: ChaveAcesso) {
         const hashedRefreshToken = await this.hashData(refreshToken);
-        await this.userRepo.update(userId, {
-            refreshToken: hashedRefreshToken
-        })
+
+        return hashedRefreshToken;
+        // TODO:  implementar verificação do hash do RefrashToken ...
+        // 
+        // if (!!chave) {
+        //     if (!chave.alive && !!chave.valid) {
+        //         chave.refreshToken = hashedRefreshToken;
+        //     }
+        // } else {
+        //     // old
+        //     await this.userRepo.update(userId, {
+        //         refreshToken: hashedRefreshToken
+        //     })
+        // }
     }
     async findById(userId: string) {
         const user = await this.userRepo.findOne({ where: { id: userId }, relations: ['photo', 'tenants'] })
