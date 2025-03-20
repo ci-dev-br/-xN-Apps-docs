@@ -48,11 +48,13 @@ export class UserService {
             profile = await lastValueFrom(this.authService.profile());
         } catch (error) {
             console.error(error);
+            // this.router.navigate(['/']);
         }
         if (!!profile) {
             this.$user.next(profile);
             return profile;
         } else {
+            this.$user.next(undefined);
             setTimeout(() => {
                 this.router.navigate(['/']);
             })
