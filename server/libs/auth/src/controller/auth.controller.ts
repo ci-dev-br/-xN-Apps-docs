@@ -81,11 +81,14 @@ export class AuthController {
           {
             // TODO: obter chave para criptografia do jwt para o usuário,
             // secret: jwtConstants.secret,
-            expiresIn: '7d',
+            expiresIn: '90d',
           },
         );
-        authenticated_user.refreshToken = refresh_token;
-        await this.userService.updateRefreshToken(authenticated_user.id, permission_uuid);
+        // authenticated_user.refreshToken = refresh_token;
+        const refreshTokenArg2 = await this.userService.updateRefreshToken(authenticated_user.id, permission_uuid);
+        chave = await this.credencialService.obterChaveAcesso(payload.chaveAcesso);
+        chave.refreshToken = refreshTokenArg2;
+        await this.credencialService.atualizar(chave);
         const { photo, ...user_payload } = authenticated_user;
         return {
           user: authenticated_user,
@@ -140,7 +143,6 @@ export class AuthController {
     @Body() payload: RefreshPayloadInputDto,
     @Ip() ip,
   ) {
-
     return await this.authService.refreshToken(
       null, payload.refreshToken, req, ip
     );

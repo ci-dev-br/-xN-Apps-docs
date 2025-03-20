@@ -60,6 +60,7 @@ export const AuthEntities = [
     exports: [
         UserService,
         AuthService,
+        CredencialService,
     ]
 })
 export class AuthModule { }
