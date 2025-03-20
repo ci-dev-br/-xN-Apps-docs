@@ -9,4 +9,11 @@ export class ServerService {
         @InjectRepository(Server)
         private readonly userRepo: Repository<Server>,
     ) { }
+
+    /**
+     * Registra servidor na base interna
+     */
+    async registrar() {
+
+    }
 }
