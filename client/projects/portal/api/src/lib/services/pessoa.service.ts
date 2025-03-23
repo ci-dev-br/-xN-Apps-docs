@@ -15,7 +15,7 @@ import { pessoaSync } from '../fn/pessoa/pessoa-sync';
 import { PessoaSync$Params } from '../fn/pessoa/pessoa-sync';
 import { SyncPayloadDaoPessoa } from '../models/sync-payload-dao-pessoa';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class PessoaService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);

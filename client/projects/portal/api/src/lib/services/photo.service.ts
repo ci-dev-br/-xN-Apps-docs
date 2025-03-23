@@ -17,7 +17,7 @@ import { SendPartPhoto$Params } from '../fn/photo/send-part-photo';
 import { syncPhoto } from '../fn/photo/sync-photo';
 import { SyncPhoto$Params } from '../fn/photo/sync-photo';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class PhotoService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);

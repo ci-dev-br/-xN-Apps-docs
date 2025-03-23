@@ -16,7 +16,7 @@ import { devicePool } from '../fn/device/device-pool';
 import { DevicePool$Params } from '../fn/device/device-pool';
 import { PoolDto } from '../models/pool-dto';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class DeviceService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);

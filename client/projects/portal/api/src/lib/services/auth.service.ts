@@ -23,7 +23,7 @@ import { registrar } from '../fn/auth/registrar';
 import { Registrar$Params } from '../fn/auth/registrar';
 import { User } from '../models/user';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class AuthService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);

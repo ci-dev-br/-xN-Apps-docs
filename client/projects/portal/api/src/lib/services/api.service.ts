@@ -12,7 +12,7 @@ import { StrictHttpResponse } from '../strict-http-response';
 import { appControllerRoot } from '../fn/operations/app-controller-root';
 import { AppControllerRoot$Params } from '../fn/operations/app-controller-root';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class ApiService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);

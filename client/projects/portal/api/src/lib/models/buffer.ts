@@ -1,4 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
-export interface Buffer {
+export interface IBuffer {
+}
+
+export class Buffer implements IBuffer {
+  static typeName = 'Buffer';
+  toJSON(): IBuffer{
+    return {
+    }
+  }
 }

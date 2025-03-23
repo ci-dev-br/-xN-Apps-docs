@@ -15,7 +15,7 @@ import { PranchetaControllerGet$Params } from '../fn/prancheta/prancheta-control
 import { pranchetaControllerSync } from '../fn/prancheta/prancheta-controller-sync';
 import { PranchetaControllerSync$Params } from '../fn/prancheta/prancheta-controller-sync';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class PranchetaService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);

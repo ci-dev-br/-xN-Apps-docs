@@ -17,7 +17,7 @@ import { Get$Params } from '../fn/application/get';
 import { sync } from '../fn/application/sync';
 import { Sync$Params } from '../fn/application/sync';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class ApplicationService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);

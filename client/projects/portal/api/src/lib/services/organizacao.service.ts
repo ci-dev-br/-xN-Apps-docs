@@ -18,7 +18,7 @@ import { organizacaoSync } from '../fn/organizacao/organizacao-sync';
 import { OrganizacaoSync$Params } from '../fn/organizacao/organizacao-sync';
 import { Tenant } from '../models/tenant';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class OrganizacaoService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);

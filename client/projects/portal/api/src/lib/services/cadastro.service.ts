@@ -13,7 +13,7 @@ import { cadastroControllerGetAll } from '../fn/cadastro/cadastro-controller-get
 import { CadastroControllerGetAll$Params } from '../fn/cadastro/cadastro-controller-get-all';
 import { IDynamicForm } from '../models/i-dynamic-form';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class CadastroService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);

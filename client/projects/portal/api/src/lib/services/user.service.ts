@@ -15,7 +15,7 @@ import { User } from '../models/user';
 import { userGetList } from '../fn/user/user-get-list';
 import { UserGetList$Params } from '../fn/user/user-get-list';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class UserService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);

@@ -16,7 +16,7 @@ import { productSync } from '../fn/product/product-sync';
 import { ProductSync$Params } from '../fn/product/product-sync';
 import { SyncPayloadDaoProduct } from '../models/sync-payload-dao-product';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class ProductService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);

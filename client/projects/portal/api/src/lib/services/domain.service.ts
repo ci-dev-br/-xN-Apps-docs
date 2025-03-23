@@ -15,7 +15,7 @@ import { DomainDelete$Params } from '../fn/domain/domain-delete';
 import { domainSync } from '../fn/domain/domain-sync';
 import { DomainSync$Params } from '../fn/domain/domain-sync';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class DomainService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);

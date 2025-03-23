@@ -13,7 +13,7 @@ import { CpuInfo } from '../models/cpu-info';
 import { systemLeitura } from '../fn/system/system-leitura';
 import { SystemLeitura$Params } from '../fn/system/system-leitura';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class SystemService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
