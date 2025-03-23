@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '../models/user.entity';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
 import { ChaveAcesso } from '@ci/core';
@@ -34,14 +34,24 @@ export class UserService {
         assinaturaPassword: string,
         chaveAcesso: string,
     ) {
-        return await this.userRepo.createQueryBuilder('user')
-            .leftJoinAndSelect('user.photo', 'photo')
-            .leftJoinAndSelect('user.tenants', 'tenant')
-            .where(`"user".id::varchar = :user_id::varchar and encode(sha512(concat(encode(sha512("user".password::bytea),'hex'), :chave_acesso::varchar )::bytea),'hex') = :ass_pass::varchar`)
-            .setParameter('user_id', userId)
-            .setParameter('ass_pass', assinaturaPassword)
-            .setParameter('chave_acesso', chaveAcesso)
-            .getOne()
+        const user = await this.userRepo.findOne({
+            where: { id: Equal(userId), passwordMode: Equal('argon2') }
+        });
+        if (!!user) {
+            if (await argon2.verify(user.password, assinaturaPassword)) {
+                delete user.password;
+                return user;
+            }
+        } else {
+            return await this.userRepo.createQueryBuilder('user')
+                .leftJoinAndSelect('user.photo', 'photo')
+                .leftJoinAndSelect('user.tenants', 'tenant')
+                .where(`"user".id::varchar = :user_id::varchar and encode(sha512(concat(encode(sha512("user".password::bytea),'hex'), :chave_acesso::varchar )::bytea),'hex') = :ass_pass::varchar`)
+                .setParameter('user_id', userId)
+                .setParameter('ass_pass', assinaturaPassword)
+                .setParameter('chave_acesso', chaveAcesso)
+                .getOne()
+        }
     }
     hashData(data: string) {
         return argon2.hash(data);

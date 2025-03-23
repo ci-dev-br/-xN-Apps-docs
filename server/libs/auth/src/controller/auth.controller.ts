@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import { AuthService } from '../service/auth.service';
 import { TwoFactorAuthenticationService } from '../service/two-factors.service';
+import * as argon2 from 'argon2';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -31,9 +32,10 @@ export class AuthController {
   ) {
     const created_user = await this.userService.registrar({
       email: input.email,
-      password: input.password,
+      password: await argon2.hash(input.password),
       username: input.identificacao,
-      phone: input.phone
+      phone: input.phone,
+      passwordMode: 'argon2',
     });
     return created_user;
   }
@@ -116,7 +118,7 @@ export class AuthController {
         //}
         chave.identifiedUser = identified_user.id;
         chave = await this.credencialService.atualizar(chave);
-        return new AcessoPayload({ ...chave, id: undefined });
+        return new AcessoPayload({ ...chave, id: undefined }, identified_user.passwordMode);
       } else {
         throw new Error('Falha ao localizar chave de acesso.');
       }

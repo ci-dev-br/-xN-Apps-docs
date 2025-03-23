@@ -11,6 +11,7 @@ export class RegistrarInputDto {
     password?: string;
     @ApiProperty({ required: false })
     phone?: string;
+
 }
 export class AcessoPayload {
     @ApiProperty({ required: false })
@@ -27,12 +28,15 @@ export class AcessoPayload {
     bearer?: string;
     @ApiProperty({ required: false })
     refreshToken?: string;
-    constructor(chave?: ChaveAcesso) {
+    @ApiProperty({ required: false })
+    mode?: string;
+    constructor(chave?: ChaveAcesso, mode?: string) {
         if (chave instanceof ChaveAcesso) {
             this.chaveAcesso = chave.id;
             this.user = new User();
             this.user.id = chave.identifiedUser;
         }
+        if (!!mode) this.mode = mode;
     }
 }
 
