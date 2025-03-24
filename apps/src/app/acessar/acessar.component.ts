@@ -3,14 +3,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { lastValueFrom } from 'rxjs';
 import { AcessoPayload, AuthService } from '@ci/portal-api';
 import { SHA512 } from 'crypto-js';
 import { Router, RouterModule } from '@angular/router';
 import { CoreModule, StorageService } from '@ci/core';
 import { AuthModule, UserService } from '@ci/auth';
-// import Argon2 from '@phi-ag/argon2';
 
 @Component({
   selector: 'ci-acessar',

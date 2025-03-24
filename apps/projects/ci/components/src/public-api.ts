@@ -13,3 +13,4 @@ export * from './lib/file/file.component';
 export * from './lib/input/input.module';
 export * from './lib/action/action.module';
 export * from './lib/icon/icon.module';
+export * from './lib/navbar/navbar.module';

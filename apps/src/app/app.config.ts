@@ -6,7 +6,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideServiceWorker } from '@angular/service-worker';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { AuthorizationHttpInterceptor, CoreModule, coreProvider, StorageService } from '@ci/core';
+import { AuthorizationHttpInterceptor, coreProvider, StorageService } from '@ci/core';
 import { ApiModule } from '@ci/portal-api';
 import { provideNuMonacoEditorConfig } from '@ng-util/monaco-editor';
 
