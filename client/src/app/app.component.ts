@@ -24,7 +24,7 @@ export class AppComponent {
     router.events.subscribe(v => {
       try {
         if (v instanceof NavigationError) {
-          // router.navigate(['/']); // TODO: para que serve isso?
+          // router.navigate(['/']); // TODO: para que serve
         }
         console.log(v.constructor.name);
         if (!!(v as any)?.snapshot?.data?.name) {
