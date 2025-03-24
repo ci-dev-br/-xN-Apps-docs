@@ -1,6 +1,7 @@
 import { EnvironmentProviders, InjectionToken, isDevMode, makeEnvironmentProviders, Provider } from "@angular/core";
 import { WsService } from "./io/ws.service";
 import { NotificationService } from "./notification/notification.service";
+import { UserService } from "@ci/auth";
 
 export interface ICoreEnvironment {
     gateway?: string;
@@ -17,6 +18,7 @@ export function coreProvider(
     }
     const providers: Provider[] = [
         WsService,
+        UserService,
         NotificationService,
         { provide: CORE_ENV, useValue: options },
     ];

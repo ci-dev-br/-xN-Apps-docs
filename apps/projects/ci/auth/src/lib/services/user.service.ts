@@ -19,14 +19,12 @@ export class UserService {
     })());
     constructor(
         private readonly authService: AuthService,
-        @Optional() private readonly router?: Router,
-        @Optional() private readonly storage?: StorageService,
+        private readonly router?: Router,
+        private readonly storage?: StorageService,
     ) {
-
         this.init()
     }
     async init() {
-        this.$user = new BehaviorSubject<User | null>(null);
         this.$user.subscribe(user => {
             try {
                 if (!!user) {
@@ -45,7 +43,7 @@ export class UserService {
 
     get user() { return this.$user; }
     async identificarUsuario(user: User) {
-        this.$user.next(user);
+        this.$user.next(await lastValueFrom(this.authService.profile()));
     }
     async sair() {
         this.storage?.clean();

@@ -7,6 +7,8 @@ nav {
     gap: 8px;
     padding: 12px;
 
+    z-index: 5000;
+
     ul,
     li {
         display: contents;

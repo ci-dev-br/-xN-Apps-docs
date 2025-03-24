@@ -9,30 +9,36 @@ export class StorageService implements OnInit {
     }
     store(key: string, value: any) {
         try {
-            localStorage.setItem(
-                SHA512(key).toString(),
-                btoa(
-                    JSON.stringify(value, null, 2)
-                )
-            )
+            if (localStorage) {
+                localStorage.setItem(
+                    SHA512(key).toString(),
+                    btoa(
+                        JSON.stringify(value, null, 2)
+                    )
+                );
+            }
         } catch (error) {
 
         }
     }
     restore(key: string) {
         try {
-            let a = localStorage.getItem(
-                SHA512(key).toString()
-            );
-            if (a) {
-                return JSON.parse(atob(a));
+            if (localStorage) {
+                let a = localStorage.getItem(
+                    SHA512(key).toString()
+                );
+                if (a) {
+                    return JSON.parse(atob(a));
+                }
             }
         } catch (error) {
         }
     }
     clean() {
         try {
-            localStorage.clear();
+            if (localStorage) {
+                localStorage.clear();
+            }
         } catch (error) {
         }
     }

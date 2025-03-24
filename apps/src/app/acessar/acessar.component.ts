@@ -139,8 +139,8 @@ export class AcessarComponent implements OnInit {
               user: { ...this.acesso_payload.user, photo: null }
             }
           });
-          this.userService.identificarUsuario(this.acesso_payload?.user);
-          // setTimeout(() => this.router.navigate(['/'])); // TODO: para que serve isto?
+          await this.userService.identificarUsuario(this.acesso_payload?.user);
+          setTimeout(() => this.router.navigate(['/'])); // TODO: para que serve isto?
         } else {
           this.snack.open('Acesso negado!', 'Ok');
         }

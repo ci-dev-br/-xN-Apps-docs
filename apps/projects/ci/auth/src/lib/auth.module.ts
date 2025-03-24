@@ -8,7 +8,6 @@ import { RouterModule } from '@angular/router';
     RouterModule,
   ],
   providers: [
-    UserService,
   ]
 })
 export class AuthModule { }
