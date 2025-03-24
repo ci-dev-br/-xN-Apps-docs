@@ -1,6 +1,11 @@
 # Changelogs
 As mudanças devem estar descritas neste documento para melhor analisar a implementação com seu obejtivo a ser atingido. Descreva o que o recurso implementado resolve e o estágio em que ele se encontra para se comparado com os relatórios gerados após enviar se PR.
 
+# Sprint Março de 2025 
+    [OK] - Refresh Token viinculado a chave de acesso;
+        [ ] - Documentar Chave de Acesso;
+    [ ] - Profile: Implementações de Acesso e Segurança;
+
 # Dezembro 2024
     [ ] - Implementar Serviço de Tema da aplicação:
         [>] - Implementar LightMode e Dark Mode;

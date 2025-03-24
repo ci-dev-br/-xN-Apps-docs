@@ -31,7 +31,9 @@ export class UserService {
                 console.error(error);
             }
         });
-        (async () => await this.getFromMemory())();
+        setTimeout(async () => {
+            await this.getFromMemory();
+        });
     }
     get user() { return this.$user; }
     async identificarUsuario(user: User) {
@@ -39,15 +41,15 @@ export class UserService {
     }
     async sair() {
         this.storage.clean();
-        setTimeout(() => this.router.navigate(['/']));
         this.$user.next(undefined);
+        setTimeout(() => this.router.navigate(['/']));
     }
     private async getFromMemory() {
         let profile: User | null = null;
         try {
             profile = await lastValueFrom(this.authService.profile());
         } catch (error) {
-            console.error(error);
+            // console.error(error);
             // this.router.navigate(['/']);
         }
         if (!!profile) {
@@ -55,9 +57,9 @@ export class UserService {
             return profile;
         } else {
             this.$user.next(undefined);
-            setTimeout(() => {
-                this.router.navigate(['/']);
-            })
+            // setTimeout(() => {
+            //     this.router.navigate(['/']);
+            // })
             return undefined;
         }
     }

@@ -40,7 +40,7 @@ export class WsService {
             this.ReceiveData(message)
         }, erros => {
             erros;
-            console.error('erro', erros)
+            //  console.error('erro', erros)
             if (erros instanceof CloseEvent || (erros instanceof Event && erros.type === 'error')) {
                 if (this._subject) this._subject?.complete();
                 this._subject = undefined;

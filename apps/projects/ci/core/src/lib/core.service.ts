@@ -19,6 +19,11 @@ export class CoreService {
     setTimeout(() => inject.get(Damn));
     notification?.requestPermission();
   }
+
+  /**
+   * 
+   * para que serve este trecho? qual era a intenção inicial?
+   */
   async initRouterFixings() {
     let navigation_start: string | undefined = undefined;
     let u = this.router?.events.subscribe(next => {
@@ -26,7 +31,9 @@ export class CoreService {
       if (next instanceof NavigationEnd) setTimeout(() => {
         if (next.url !== navigation_start) {
           try {
-            this.router?.navigate([navigation_start]); u?.unsubscribe();
+            if (navigation_start !== '/') {
+              /// this.router?.navigate([navigation_start]); u?.unsubscribe();
+            }
           } catch (error) {
             ///  this.router.navigate(['/']); u.unsubscribe()
           }

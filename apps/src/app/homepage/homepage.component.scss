@@ -15,28 +15,6 @@
 
 header {
     position: relative;
-
-    nav {
-        display: flex;
-        flex-direction: row;
-        position: absolute;
-        right: 10px;
-        top: 0px;
-        gap: 8px;
-        padding: 12px;
-
-        ul,
-        li {
-            display: contents;
-        }
-
-        a {
-            padding: 12px;
-            color: white;
-            background-color: black;
-            border-radius: 12px;
-        }
-    }
 }
 
 .container {

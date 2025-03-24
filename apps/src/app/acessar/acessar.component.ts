@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,22 +10,26 @@ import { SHA512 } from 'crypto-js';
 import { Router, RouterModule } from '@angular/router';
 import { CoreModule, StorageService } from '@ci/core';
 import { AuthModule, UserService } from '@ci/auth';
+// import Argon2 from '@phi-ag/argon2';
 
 @Component({
-    selector: 'ci-acessar',
-    imports: [
-        CoreModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        ReactiveFormsModule,
-        RouterModule,
-        AuthModule,
-    ],
-    templateUrl: './acessar.component.html',
-    styleUrl: './acessar.component.scss'
+  selector: 'ci-acessar',
+  imports: [
+    CoreModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    AuthModule,
+  ],
+  standalone: true,
+  templateUrl: './acessar.component.html',
+  styleUrl: './acessar.component.scss'
 })
-export class AcessarComponent {
+export class AcessarComponent implements OnInit {
+  // private argon2?: Argon2;
+  year = (new Date()).getFullYear();
   private acesso_payload?: AcessoPayload;
   stage?: 'identification' | 'loading' | 'captcha' | 'authentication' = 'identification';
   form?: FormGroup;
@@ -43,8 +47,10 @@ export class AcessarComponent {
     private readonly fb: FormBuilder,
     private readonly router: Router,
   ) {
-    if (!!this.storageService.restore('apps.ci.dev.br.store.User')) router.navigate(['/']);
+    // if (!!this.storageService.restore('apps.ci.dev.br.store.User')) router.navigate(['/']); // TODO: acho que esta correto mas deve ser revisado a necessidade de roteamento neste ponto...
     if (this.stage) this.criarFormulario(this.stage)
+  }
+  async ngOnInit() {
   }
   private criarFormulario(stage: 'identification' | 'loading' | 'captcha' | 'authentication') {
     if (this.stage !== stage) this.stage = stage;
@@ -118,11 +124,12 @@ export class AcessarComponent {
         this.acesso_payload = await lastValueFrom(this.authService.acessar({
           body: {
             chaveAcesso: SHA512(this.acesso_payload.chaveAcesso).toString(),
-            password:
+            password: this.acesso_payload.mode === 'full-text' ?
               SHA512(
                 SHA512(this.form?.get('password')?.value).toString() +
                 this.acesso_payload?.chaveAcesso
               ).toString()
+              : this.acesso_payload.mode === 'argon2' ? this.form?.get('password')?.value : undefined
             ,
           }
         }));
@@ -134,7 +141,7 @@ export class AcessarComponent {
             }
           });
           this.userService.identificarUsuario(this.acesso_payload?.user);
-          setTimeout(() => this.router.navigate(['/']));
+          // setTimeout(() => this.router.navigate(['/'])); // TODO: para que serve isto?
         } else {
           this.snack.open('Acesso negado!', 'Ok');
         }

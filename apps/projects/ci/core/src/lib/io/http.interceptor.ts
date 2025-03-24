@@ -3,8 +3,7 @@ import { Inject, Injectable, Optional } from "@angular/core";
 import { Observable, throwError } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
 import { StorageService } from "../storage/storage.service";
-import { ApiConfiguration, AuthService } from "@ci/portal-api";
-import { MatOptionSelectionChange } from "@angular/material/core";
+import { AuthService } from "@ci/portal-api";
 import { CORE_ENV, ICoreEnvironment } from "../provider";
 // import { AuthService } from "@ci/portal-api";
 @Injectable()
@@ -29,7 +28,11 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         console.log('[SEC.v-2.3.33401.3]');
         let efail = localStorage.getItem('e-fail');
         if (!!efail) {
-            this._efail = JSON.parse(efail);
+            try {
+                this._efail = JSON.parse(efail);
+            } catch (error) {
+                console.error(error);
+            }
         }
     }
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {

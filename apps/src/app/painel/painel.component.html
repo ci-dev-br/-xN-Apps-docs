@@ -26,7 +26,7 @@
         {{(user | async)?.username}}
     </button>
     <button mat-icon-button (click)="repo()">
-        <mat-icon>github</mat-icon>
+        <ci-icon mode="svg" icon="github"></ci-icon>
     </button>
     <mat-menu #userMenu>
         <button mat-menu-item (click)="sair()">

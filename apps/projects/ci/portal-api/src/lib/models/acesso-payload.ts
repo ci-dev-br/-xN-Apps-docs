@@ -7,6 +7,7 @@ export interface AcessoPayload {
   bearer?: string;
   chaveAcesso?: string;
   identificacao?: string;
+  mode?: string;
   password?: string;
   refreshToken?: string;
   solicitarSessao?: string;
