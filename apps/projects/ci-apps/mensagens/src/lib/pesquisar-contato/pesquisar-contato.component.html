@@ -1,6 +1,7 @@
-<mat-form-field>
-    <input matInput type="text" placeholder="Pesquisar nome ou número">
-</mat-form-field>
-<div class="lista">
-
-</div>
+@if(form){<ng-container [formGroup]="form">
+    <mat-form-field>
+        <input matInput type="text" placeholder="Pesquisar nome ou número" formControlName="search">
+    </mat-form-field>
+    <div class="lista">
+    </div>
+</ng-container>}

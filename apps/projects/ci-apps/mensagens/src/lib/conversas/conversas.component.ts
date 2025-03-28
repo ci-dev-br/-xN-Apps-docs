@@ -7,6 +7,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { PesquisarService } from '../pesquisar-contato/pesquisar-contato.service';
 import { TorusGeometry } from 'three';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'ci-conversas',
@@ -17,6 +18,7 @@ import { TorusGeometry } from 'three';
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
+    ReactiveFormsModule,
   ],
   standalone: true,
   templateUrl: './conversas.component.html',

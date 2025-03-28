@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CoreModule } from '@ci/core';
@@ -48,4 +48,23 @@ export class AppsComponent implements OnInit {
       this.router.navigate([app.url], {/*  relativeTo: this.route */ });
     }
   }
+
+
+  /*  @HostListener('keyup', ['$event'])
+   keyUpHandler(e: KeyboardEvent) {
+     if (e.key == 'PrintScreen') {
+       navigator.clipboard.writeText('');
+       alert('Screenshots disabled!');
+     }
+   };
+ 
+   @HostListener('keydown', ['$event'])
+   keyDownHandler(e: KeyboardEvent) {
+     if (e.ctrlKey && e.key == 'p') {
+       alert('This section is not allowed to print or export to PDF');
+       e.cancelBubble = true;
+       e.preventDefault();
+       e.stopImmediatePropagation();
+     }
+   }; */
 }
