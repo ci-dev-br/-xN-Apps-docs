@@ -22,11 +22,11 @@
     </mat-form-field>
 
     <span style="flex: auto;"></span>
-    <button mat-button [matMenuTriggerFor]="userMenu">
-        {{(user | async)?.username}}
-    </button>
     <button mat-icon-button (click)="repo()">
         <ci-icon mode="svg" icon="github"></ci-icon>
+    </button>
+    <button mat-button [matMenuTriggerFor]="userMenu">
+        {{(user | async)?.username}}
     </button>
     <mat-menu #userMenu>
         <button mat-menu-item (click)="sair()">
@@ -35,8 +35,6 @@
         </button>
     </mat-menu>
 </mat-toolbar>
-<!-- 
-<div class="wrapper"> -->
 <mat-drawer-container class="container">
     @if(!!apps){<mat-drawer mode="side" opened auto-scroll="vertical" tabindex="0">
         @for (app of apps; track $index) {
@@ -50,7 +48,6 @@
             <mat-icon>{{app.icon}}</mat-icon>
             }
             }
-            <!-- {{app.name}} -->
         </button>
         }
     </mat-drawer>}
@@ -58,4 +55,3 @@
         <router-outlet></router-outlet>
     </mat-drawer-content>
 </mat-drawer-container>
-<!-- </div> -->
