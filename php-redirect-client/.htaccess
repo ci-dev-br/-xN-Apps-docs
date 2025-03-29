@@ -1,6 +1,9 @@
 RewriteEngine On
 RewriteBase /
 
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
 # 1. Permite acesso direto a arquivos existentes
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
