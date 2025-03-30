@@ -44,9 +44,9 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                 })
             }
         }
-        return this.etry(request, next)
+        return this._eTry(request, next)
     }
-    private etry(request: HttpRequest<any>, next: HttpHandler) {
+    private _eTry(request: HttpRequest<any>, next: HttpHandler) {
         return next.handle(this.addTokenHeader(request)).pipe(catchError(error => {
             if (error) {
                 if (error.status === 0) {
