@@ -33,14 +33,29 @@ export class WsService {
         if (this._subject) {
             this._subject.complete();
         }
-        this._subject = webSocket('wss://apps.ci.dev.br:446');
+
+        let gateway_api = 'wss://apps.ci.dev.br:446';
+
+        let efail = localStorage.getItem('e-fail');
+        if (!!efail) {
+            try {
+                efail = JSON.parse(efail);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        if (!!efail) {
+            gateway_api = efail.replace('http', 'ws');
+        }
+
+        this._subject = webSocket(gateway_api);
+
         this._subject.subscribe(message => {
             this.status = 'online';
             this.retryWait = 100;
             this.ReceiveData(message)
         }, erros => {
-            erros;
-            //  console.error('erro', erros)
             if (erros instanceof CloseEvent || (erros instanceof Event && erros.type === 'error')) {
                 if (this._subject) this._subject?.complete();
                 this._subject = undefined;

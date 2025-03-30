@@ -21,11 +21,9 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
     }
     constructor(
         private readonly storage: StorageService,
-        // private readonly token: TokenService,
         private readonly auth: AuthService,
         @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
     ) {
-        console.log('[SEC.v-2.3.33401.3]');
         let efail = localStorage.getItem('e-fail');
         if (!!efail) {
             try {
