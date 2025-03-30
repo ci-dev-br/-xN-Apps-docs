@@ -49,7 +49,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
     private _eTry(request: HttpRequest<any>, next: HttpHandler) {
         return next.handle(this.addTokenHeader(request)).pipe(catchError(error => {
             if (error) {
-                if (error.status === 0) {
+                if (error instanceof HttpErrorResponse && error.status === 0) {
                     if (this.config && Array.isArray(this.config.alternativeApiGateways)) {
                         if (!this._efail)
                             this.efail = this.config.alternativeApiGateways[0];
@@ -58,10 +58,10 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                         else if (this._efail === this.config.alternativeApiGateways[1])
                             this.efail = undefined;
 
-                        location.reload();
+                        // alternate url and retry
+                        return next.handle(this.addTokenHeader(request));
                     }
-                }
-                if (error instanceof HttpErrorResponse /* && this.token.hasRefreshToken() */) {
+                } else if (error instanceof HttpErrorResponse /* && this.token.hasRefreshToken() */) {
                     return this.handlerUnauthorizedError(error, next, request);
                 }
             }
