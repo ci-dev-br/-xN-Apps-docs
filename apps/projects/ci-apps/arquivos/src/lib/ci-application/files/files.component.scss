@@ -13,30 +13,34 @@
 .folders,
 .files {
     $size: 48px;
-
-
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-
-    align-items: flex-start;
+    align-items: normal;
     justify-content: start;
 
-    gap: 6px;
+    gap: 12px;
+    padding: 12px;
 
+    flex: unset;
+    // min-width: 100%;
+    // min-height: 100%;
+    margin: 0;
 
     .folder,
     .file {
-
-        flex: 1;
+        flex: 0;
 
         display: flex;
         flex-direction: column;
+
+        cursor: pointer;
+
         align-items: center;
         justify-content: center;
-
-        width: #{$size + 24};
-        height: #{$size + 24};
+        // width: #{$size + 24};
+        // height: #{$size + 24};
+        //height: fit-content;
 
         mat-icon {
             width: #{$size};
@@ -45,11 +49,9 @@
             line-height: #{$size};
         }
 
-        gap: 12px;
-
+        gap: 4px;
         border: solid 1px #cecece;
-        padding: 12px;
-
+        padding: 4px;
         border-radius: 8px;
 
         &:hover {
@@ -61,11 +63,14 @@
         display: flex;
         flex-direction: column;
         gap: 3px;
-        max-width: #{$size + 48};
-        width: #{$size + 48};
-        height: #{$size + 80};
+        // max-width: #{$size + 48};
+        // width: #{$size + 48};
+        // height: #{$size + 80};
         align-items: center;
         justify-content: center;
+        flex: 0;
+
+        height: fit-content;
 
         .title {
             flex: unset;
@@ -74,6 +79,10 @@
             overflow: hidden;
             text-wrap: balance;
             white-space: normal;
+
+            font-size: 8px;
+            margin: 0;
+            padding: 0;
         }
     }
 }
@@ -88,7 +97,6 @@ input.navegacao {
 
 .scoller {
     flex: auto;
-
     display: flex;
     overflow: auto;
     flex-direction: column;

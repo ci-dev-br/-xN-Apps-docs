@@ -17,12 +17,12 @@
             <h4>Pastas</h4>
             <div class="folders">
                 @for (file of files; track $index) {
-                <div class="folder-wrapper">
-                    <div class="folder" (click)="file.info ? ir(file.info.path + '/' + file.name) : null">
+                <div class="folder" (click)="file.info ? ir(file.info.path + '/' + file.name) : null">
+                    <div class="folder-wrapper">
                         <mat-icon>{{file.icon}}</mat-icon>
-                    </div>
-                    <div class="title">
-                        {{file.name}}
+                        <div class="title">
+                            {{file.name}}
+                        </div>
                     </div>
                 </div>
                 }
