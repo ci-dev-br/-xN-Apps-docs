@@ -8,7 +8,7 @@ export interface IEventPayload {
     iam?: string;
 }
 @WebSocketGateway(
-    3333,
+    664,
     {
         transports: ['websocket'],
         // cors: [DomainService.whitelist, // TODO: não pode ser utilizado cliente coringa. Deve ser criada modelo de Domínios permitidos, cada um com suas blacklists de bloqueio se ouver e regras adicionais de política de acesso pode ser necessárias.

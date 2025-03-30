@@ -24,17 +24,27 @@ async function start(server: express.Express, app: NestExpressApplication, https
       });
 
     const httpsServer = https.createServer(httpsOptions, applicationInstance);
-    if (httpsServer)
+    if (httpsServer) {
+
       httpsServer.listen(https_port, () => {
         console.log(`Secure Internet Application is Running`);
       });
+
+      let wss_adapter = new WsAdapter(httpsServer);
+      app.useWebSocketAdapter(wss_adapter);
+    }
+
     const httpsInternalServer = !!internalHttpsOptions ? https.createServer(internalHttpsOptions, applicationInstance) : undefined;
-    if (httpsInternalServer)
+    if (httpsInternalServer) {
+
       httpsInternalServer.listen(https_internal_port, () => {
         console.log(`Secure Infranet Application is Running`);
       });
-    let wss_adapter = new WsAdapter(httpsServer);
-    app.useWebSocketAdapter(wss_adapter);
+
+      let wss_internal_adapter = new WsAdapter(httpsInternalServer);
+      app.useWebSocketAdapter(wss_internal_adapter);
+    }
+
   } catch (error) {
     if (error.code === 'EADDRINUSE') {
       console.error(error);

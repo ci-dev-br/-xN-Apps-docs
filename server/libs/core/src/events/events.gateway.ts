@@ -22,20 +22,18 @@ export class EventsGateway implements OnGatewayInit {
     globalPing = 0;
     @WebSocketServer()
     server: Server;
-    m = [];
+    mementu = [];
     private clients = new Map<string, { ws: WebSocket, returned: boolean, momentum: number }>();
     @SubscribeMessage('events')
     onEvent(@ConnectedSocket() client: any, @MessageBody() data: any) {
         if (!this.sing(data)) return;
         this.set(data.client, client, data.momentum);
-        if (data.momentum && this.m.indexOf(data.momentum) !== -1) return;
-        this.m.push(data.momentum)
+        if (data.momentum && this.mementu.indexOf(data.momentum) !== -1) return;
+        this.mementu.push(data.momentum)
         if (data.type === 'ping') {
-            // data.__consumed = true;
             if (data.lastPing) {
                 this.globalPing = ((this.globalPing + (data.lastPing || 0)) / 2)
                 this.pings.push(data.lastPing)
-
                 if (this.pings.length > 500) {
                     this.pings = this.pings.splice(this.pings.length - 500, this.pings.length);
                 }
@@ -49,7 +47,7 @@ export class EventsGateway implements OnGatewayInit {
             const last = {
                 event: 'events',
                 type: 'pong',
-                wait: waiting/* 1000 + Math.random() * 5000 */,
+                wait: waiting,
                 momentum: data.momentum,
                 globalPing: this.globalPing,
                 pingMedium: pm,
