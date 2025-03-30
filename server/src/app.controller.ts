@@ -3,6 +3,7 @@ import { AppService } from './app.service';
 import { Public } from '../libs/auth/src/decorators/public.decorator';
 import { Request, Response } from 'express';
 import { resolve } from 'path';
+import { existsSync } from 'fs';
 
 @Controller('*')
 export class AppController {
@@ -13,7 +14,10 @@ export class AppController {
   root(@Req() req: Request, @Res() res: Response) {
     if (!!req.path && req.path.indexOf('.') > -1) {
       try {
-        return res.sendFile(resolve(`public${req.path}`));
+        if (existsSync(__dirname + `/../public${req.path}`)) {
+          return res.sendFile(resolve(`public${req.path}`));
+        }
+        return res.sendFile(resolve('public/index.csr.html'));
       } catch (error) {
         console.error(error);
       }
