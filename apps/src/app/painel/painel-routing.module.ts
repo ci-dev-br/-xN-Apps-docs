@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { PainelComponent } from './painel.component';
 
 const routes: Routes = [
+  { path: 'prancheta', loadChildren: () => import('./board/board.module').then(m => m.BoardModule) },
   {
     path: '', component: PainelComponent, children: [
       { path: 'meus-apps', loadChildren: () => import('./apps/apps.module').then(m => m.AppsModule) },
