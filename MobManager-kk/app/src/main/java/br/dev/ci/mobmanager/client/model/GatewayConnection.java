@@ -4,13 +4,15 @@ import android.os.Handler;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import br.dev.ci.mobmanager.client.DeviceConnect;
+
 public class GatewayConnection {
     private String url;
     private String status;
     private ImageView imagem;
     private TextView subtitulo;
     private TextView titulo;
-    // private DeviceConnect connect;
+    private DeviceConnect connect;
     private String ws;
     public String getUrl() {
         return url;
@@ -24,12 +26,12 @@ public class GatewayConnection {
         if (this.subtitulo != null)
             this.subtitulo.setText(this.url);
     }
-    /*public DeviceConnect getConnect() {
+    public DeviceConnect getConnect() {
         return connect;
     }
     public void setConnect(DeviceConnect connect) {
         this.connect = connect;
-    }*/
+    }
     public void setImageView(ImageView imagem){
         this.imagem = imagem;
     }
