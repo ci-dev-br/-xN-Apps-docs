@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "t
 import { Cliente } from "./cliente";
 import { schema } from "./schema";
 import { FullAuditedEntity } from "@ci/manager";
+import { TipoContato } from "./tipo-contato";
 
 @Entity({ schema })
 export class HistoricoContato extends FullAuditedEntity {
@@ -30,7 +31,7 @@ export class HistoricoContato extends FullAuditedEntity {
     @Column({ type: 'text', nullable: true })
     detalhes?: string;
 
-    @ApiProperty({ length: 255, nullable: true })
+    @ApiProperty({ maxLength: 255, nullable: true })
     @Column({ length: 255, nullable: true })
     responsavel?: string;
 }

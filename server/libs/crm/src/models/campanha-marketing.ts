@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "t
 import { schema } from "./schema";
 import { Cliente } from "./cliente";
 import { FullAuditedEntity } from "@ci/manager";
+import { TipoCampanha } from "./tipo-campanha";
 
 @Entity({ schema })
 export class CampanhaMarketing extends FullAuditedEntity {

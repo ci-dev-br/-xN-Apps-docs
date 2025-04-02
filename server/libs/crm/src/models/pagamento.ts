@@ -6,6 +6,8 @@ import { VendaProduto } from "./venda-produto";
 import { Atendimento } from "./atendimento";
 import { Cliente } from "./cliente";
 import { FullAuditedEntity } from "@ci/manager";
+import { FormaPagamento } from "./forma-pagamento";
+import { StatusPagamento } from "./status-pagamento";
 
 @Entity({
     schema
@@ -59,7 +61,7 @@ export class Pagamento extends FullAuditedEntity {
     @Column({ type: 'enum', enum: FormaPagamento })
     formaPagamento: FormaPagamento;
 
-    @ApiProperty({ enum: StatusPagamento })
+    @ApiProperty({})
     @Column({ type: 'enum', enum: StatusPagamento, default: StatusPagamento.PENDENTE })
     status: StatusPagamento;
 

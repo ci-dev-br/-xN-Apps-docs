@@ -1,4 +1,4 @@
-enum TipoContato {
+export enum TipoContato {
     TELEFONE = 'Telefone',
     EMAIL = 'Email',
     WHATSAPP = 'WhatsApp',

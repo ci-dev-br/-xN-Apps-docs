@@ -1,4 +1,4 @@
-enum AgendamentoStatus {
+export enum AgendamentoStatus {
     AGENDADO = 'Agendado',
     CONFIRMADO = 'Confirmado',
     CANCELADO = 'Cancelado',

@@ -7,6 +7,7 @@ import { Profissional } from "./profissional";
 import { Atendimento } from "./atendimento";
 import { Pagamento } from "./pagamento";
 import { FullAuditedEntity } from "@ci/manager";
+import { AgendamentoStatus } from "./agendamento-status";
 
 @Entity({
     schema
