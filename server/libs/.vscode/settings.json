@@ -1,11 +1,11 @@
 {
     "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/.DS_Store": true,
-        "**/Thumbs.db": true,
-        "**/CVS": true,
+        "**/.git": false,
+        "**/.svn": false,
+        "**/.hg": false,
+        "**/.DS_Store": false,
+        "**/Thumbs.db": false,
+        "**/CVS": false,
         "**/**.json": false,
         "**/**.lock": false,
         "**/**git**": false,
@@ -33,11 +33,7 @@
         "**/.gradle": false,
         "**/*.pro": false,
         "**/build": false,
-        "node_modules": true,
-        "**/.env": true,
-        "**/.env.dev": true,
         "**/*.unotation": true
     },
-    "explorerExclude.backup": {},
     "bigUML.hideUnotation": true
 }
