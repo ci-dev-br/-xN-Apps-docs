@@ -33,6 +33,8 @@ import { CmsEntities, CmsModule } from '@ci/cms/cms.module';
 import { I11nEntities, I11nModule } from '@ci/i11n';
 import { ProjetosEntities, ProjetosModule } from '@ci/projetos';
 import { L10nEntities, L10nModule } from '@ci/core/l10n/l10n.module';
+import { CrmEntities } from '@ci/crm/models';
+import { CrmModule } from '@ci/crm';
 
 /**
  * Adicione os módulos que podem ser carregados pela configfuração do environment;
@@ -80,6 +82,7 @@ const _entities_name = {
   Projetos: ProjetosEntities,
   CodeX: CodeXEntities,
   L10n: L10nEntities,
+  CRM: CrmEntities,
 }
 const _modules_name = {
   System: SystemModule,
@@ -108,6 +111,7 @@ const _modules_name = {
   Projetos: ProjetosModule,
   Codex: CodexModule,
   L10n: L10nModule,
+  CRM: CrmModule,
 }
 /**
  * « end
