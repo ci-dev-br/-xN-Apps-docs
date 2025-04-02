@@ -26,7 +26,6 @@ import br.dev.ci.mobmanagerjavaedition.client.model.PhoneNumber;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_READ_PHONE_STATE = 1;
-
     private TextView message;
     private Button appsButton;
 
@@ -42,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
         });
         this.appsButton = findViewById(R.id.apps);
         this.message = findViewById(R.id.message);
-        String api = "https://apps.ci.dev.br:446/";
-        String ws = "wss://apps.ci.dev.br:446/";
+        String api = "https://srv33.internals.ci.dev.br:664/";
+        String ws = "wss://srv33.internals.ci.dev.br:664/";
         if(this.message != null){
             this.message.setText("Iniciando conexção... (1)");
             permission();
