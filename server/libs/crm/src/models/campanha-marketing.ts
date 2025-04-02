@@ -16,11 +16,11 @@ export class CampanhaMarketing extends FullAuditedEntity {
 
     @ApiProperty({ type: 'string', format: 'date', nullable: true })
     @Column({ type: 'date', nullable: true })
-    data_inicio?: Date;
+    dataInicio?: Date;
 
     @ApiProperty({ type: 'string', format: 'date', nullable: true })
     @Column({ type: 'date', nullable: true })
-    data_fim?: Date;
+    dataFim?: Date;
 
     @ApiProperty({ type: 'string', nullable: true })
     @Column({ type: 'text', nullable: true })
@@ -28,7 +28,7 @@ export class CampanhaMarketing extends FullAuditedEntity {
 
     @ApiProperty({ type: 'string', nullable: true })
     @Column({ type: 'text', nullable: true })
-    publico_alvo?: string;
+    publicoAlvo?: string;
 
     @ApiProperty({ enum: TipoCampanha })
     @Column({ type: 'enum', enum: TipoCampanha })

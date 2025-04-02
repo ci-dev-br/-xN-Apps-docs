@@ -28,7 +28,7 @@ export class Servico extends FullAuditedEntity {
 
     @ApiProperty({ type: 'string', format: 'time', nullable: true })
     @Column({ type: 'time', nullable: true })
-    duracao_estimada?: string;
+    duracaoEstimada?: string;
 
     @ApiProperty({ maxLength: 100, nullable: true })
     @Column({ length: 100, nullable: true })

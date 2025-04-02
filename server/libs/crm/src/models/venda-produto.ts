@@ -14,26 +14,26 @@ export class VendaProduto extends FullAuditedEntity {
 
     @ApiProperty({ nullable: true })
     @Column({ nullable: true })
-    atendimento_id?: number;
+    atendimentoId?: number;
 
     @ManyToOne(() => Atendimento, (atendimento) => atendimento.vendasProdutos, { onDelete: 'SET NULL' })
-    @JoinColumn({ name: 'atendimento_id' })
+    @JoinColumn({ name: 'atendimentoId' })
     atendimento?: Atendimento;
 
     @ApiProperty()
     @Column()
-    cliente_id: number;
+    clienteId: number;
 
     @ManyToOne(() => Cliente, (cliente) => cliente.vendasProdutos, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'cliente_id' })
+    @JoinColumn({ name: 'clienteId' })
     cliente: Cliente;
 
     @ApiProperty()
     @Column()
-    produto_id: number;
+    produtoId: number;
 
     @ManyToOne(() => Produto, (produto) => produto.vendasProdutos, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'produto_id' })
+    @JoinColumn({ name: 'produtoId' })
     produto: Produto;
 
     @ApiProperty()
@@ -42,5 +42,5 @@ export class VendaProduto extends FullAuditedEntity {
 
     @ApiProperty({ type: 'number', format: 'float' })
     @Column({ type: 'decimal', precision: 10, scale: 2 })
-    preco_unitario: number;
+    precoUnitario: number;
 }

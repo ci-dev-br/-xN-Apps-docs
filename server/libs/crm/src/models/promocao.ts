@@ -22,23 +22,23 @@ export class Promocao extends FullAuditedEntity {
 
     @ApiProperty({ type: 'string', format: 'date', nullable: true })
     @Column({ type: 'date', nullable: true })
-    data_inicio?: Date;
+    dataInicio?: Date;
 
     @ApiProperty({ type: 'string', format: 'date', nullable: true })
     @Column({ type: 'date', nullable: true })
-    data_fim?: Date;
+    dataFim?: Date;
 
     @ApiProperty({ type: 'number', format: 'float', nullable: true })
     @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
-    desconto_percentual?: number;
+    descontoPercentual?: number;
 
     @ApiProperty({ type: 'number', format: 'float', nullable: true })
     @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
-    desconto_valor?: number;
+    descontoValor?: number;
 
     @ApiProperty({ type: 'string', nullable: true, description: 'Lista de IDs de serviços aplicáveis (separados por vírgula)' })
     @Column({ type: 'text', nullable: true })
-    servicos_aplicaveis?: string; // Could be a relation table for better normalization
+    servicosAplicaveis?: string; // Could be a relation table for better normalization
 
     @ManyToMany(() => Servico, (servico) => servico.promocoes)
     @JoinTable()

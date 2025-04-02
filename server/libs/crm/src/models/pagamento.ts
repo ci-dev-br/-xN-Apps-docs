@@ -17,7 +17,7 @@ export class Pagamento extends FullAuditedEntity {
 
     @ApiProperty({ nullable: true })
     @Column({ nullable: true })
-    agendamento_id?: number;
+    agendamentoId?: number;
 
     @OneToOne(() => Agendamento, (agendamento) => agendamento.pagamento, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'agendamento_id' })
@@ -25,7 +25,7 @@ export class Pagamento extends FullAuditedEntity {
 
     @ApiProperty({ nullable: true })
     @Column({ nullable: true })
-    venda_produto_id?: number;
+    vendaProdutoId?: number;
 
     @OneToOne(() => VendaProduto, (vendaProduto) => vendaProduto.pagamento, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'venda_produto_id' })
@@ -33,7 +33,7 @@ export class Pagamento extends FullAuditedEntity {
 
     @ApiProperty({ nullable: true })
     @Column({ nullable: true })
-    atendimento_id?: number;
+    atendimentoId?: number;
 
     @OneToOne(() => Atendimento, (atendimento) => atendimento.pagamento, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'atendimento_id' })
@@ -41,7 +41,7 @@ export class Pagamento extends FullAuditedEntity {
 
     @ApiProperty()
     @Column()
-    cliente_id: number;
+    clienteId: number;
 
     @ManyToOne(() => Cliente, (cliente) => cliente.pagamentos, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'cliente_id' })
@@ -49,7 +49,7 @@ export class Pagamento extends FullAuditedEntity {
 
     @ApiProperty({ type: 'string', format: 'date-time' })
     @Column({ type: 'datetime' })
-    data_pagamento: Date;
+    dataPagamento: Date;
 
     @ApiProperty({ type: 'number', format: 'float' })
     @Column({ type: 'decimal', precision: 10, scale: 2 })
@@ -57,7 +57,7 @@ export class Pagamento extends FullAuditedEntity {
 
     @ApiProperty({ enum: FormaPagamento })
     @Column({ type: 'enum', enum: FormaPagamento })
-    forma_pagamento: FormaPagamento;
+    formaPagamento: FormaPagamento;
 
     @ApiProperty({ enum: StatusPagamento })
     @Column({ type: 'enum', enum: StatusPagamento, default: StatusPagamento.PENDENTE })
@@ -65,11 +65,11 @@ export class Pagamento extends FullAuditedEntity {
 
     @ApiProperty({ maxLength: 255, nullable: true })
     @Column({ length: 255, nullable: true })
-    numero_transacao?: string;
+    numeroTransacao?: string;
 
     @CreateDateColumn()
-    data_criacao: Date;
+    dataCriacao: Date;
 
     @UpdateDateColumn()
-    data_atualizacao: Date;
+    dataAtualizacao: Date;
 }

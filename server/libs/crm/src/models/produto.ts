@@ -22,11 +22,11 @@ export class Produto extends FullAuditedEntity {
 
     @ApiProperty({ type: 'number', format: 'float' })
     @Column({ type: 'decimal', precision: 10, scale: 2 })
-    preco_custo: number;
+    precoCusto: number;
 
     @ApiProperty({ type: 'number', format: 'float' })
     @Column({ type: 'decimal', precision: 10, scale: 2 })
-    preco_venda: number;
+    precoVenda: number;
 
     @ApiProperty()
     @Column({ type: 'int' })

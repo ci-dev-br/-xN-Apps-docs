@@ -19,42 +19,42 @@ export class Atendimento extends FullAuditedEntity {
 
     @ApiProperty()
     @Column({ nullable: true })
-    agendamento_id?: number;
+    agendamentoId?: number;
 
     @OneToOne(() => Agendamento, (agendamento) => agendamento.atendimento, { onDelete: 'SET NULL' })
-    @JoinColumn({ name: 'agendamento_id' })
+    @JoinColumn({ name: 'agendamentoId' })
     agendamento?: Agendamento;
 
     @ApiProperty({ type: 'string', format: 'date-time' })
     @Column({ type: 'datetime' })
-    data_inicio: Date;
+    dataInicio: Date;
 
     @ApiProperty({ type: 'string', format: 'date-time' })
     @Column({ type: 'datetime' })
-    data_fim: Date;
+    dataFim: Date;
 
     @ApiProperty()
     @Column()
-    profissional_id: number;
+    profissionalId: number;
 
     @ManyToOne(() => Profissional, (profissional) => profissional.atendimentos, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'profissional_id' })
+    @JoinColumn({ name: 'profissionalId' })
     profissional: Profissional;
 
     @ApiProperty()
     @Column()
-    cliente_id: number;
+    clienteId: number;
 
     @ManyToOne(() => Cliente, (cliente) => cliente.atendimentos, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'cliente_id' })
+    @JoinColumn({ name: 'clienteId' })
     cliente: Cliente;
 
     @ApiProperty()
     @Column()
-    servico_id: number;
+    servicoId: number;
 
     @ManyToOne(() => Servico, (servico) => servico.atendimentos, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'servico_id' })
+    @JoinColumn({ name: 'servicoId' })
     servico: Servico;
 
     @ApiProperty({ type: 'string', nullable: true })
@@ -63,7 +63,7 @@ export class Atendimento extends FullAuditedEntity {
 
     @ApiProperty({ type: 'number', nullable: true })
     @Column({ type: 'int', nullable: true })
-    avaliacao_cliente?: number;
+    avaliacaoCliente?: number;
 
     @OneToMany(() => VendaProduto, (vendaProduto) => vendaProduto.atendimento)
     vendasProdutos: VendaProduto[];

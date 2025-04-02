@@ -23,7 +23,7 @@ export class Profissional extends FullAuditedEntity {
 
     @ApiProperty({ type: 'string', format: 'date', nullable: true })
     @Column({ type: 'date', nullable: true })
-    data_contratacao?: Date;
+    dataContratacao?: Date;
 
     @ApiProperty({ maxLength: 255, nullable: true })
     @Column({ length: 255, nullable: true })

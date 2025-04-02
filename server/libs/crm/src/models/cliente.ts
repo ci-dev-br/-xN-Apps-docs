@@ -27,7 +27,7 @@ export class Cliente extends FullAuditedEntity {
 
     @ApiProperty({ type: 'string', format: 'date', nullable: true })
     @Column({ type: 'date', nullable: true })
-    data_nascimento?: Date;
+    dataNascimento?: Date;
 
     @ApiProperty({ maxLength: 255, nullable: true })
     @Column({ length: 255, nullable: true })
@@ -55,7 +55,7 @@ export class Cliente extends FullAuditedEntity {
 
     @ApiProperty()
     @CreateDateColumn()
-    data_cadastro: Date;
+    dataCadastro: Date;
 
     @ApiProperty({ type: 'string', nullable: true })
     @Column({ type: 'text', nullable: true })

@@ -18,7 +18,7 @@ export class Agendamento extends FullAuditedEntity {
 
     @ApiProperty()
     @Column()
-    cliente_id: number;
+    clienteId: number;
 
     @ManyToOne(() => Cliente, (cliente) => cliente.agendamentos, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'cliente_id' })
@@ -42,7 +42,7 @@ export class Agendamento extends FullAuditedEntity {
 
     @ApiProperty({ type: 'string', format: 'date-time' })
     @Column({ type: 'datetime' })
-    data_hora: Date;
+    dataHora: Date;
 
     @ApiProperty({ type: 'string', format: 'time' })
     @Column({ type: 'time' })

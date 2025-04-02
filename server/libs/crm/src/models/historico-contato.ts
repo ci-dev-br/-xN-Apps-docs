@@ -12,19 +12,19 @@ export class HistoricoContato extends FullAuditedEntity {
 
     @ApiProperty()
     @Column()
-    cliente_id: number;
+    clienteId: number;
 
     @ManyToOne(() => Cliente, (cliente) => cliente.historicoContatos, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'cliente_id' })
+    @JoinColumn({ name: 'clienteId' })
     cliente: Cliente;
 
     @ApiProperty({ type: 'string', format: 'date-time' })
     @Column({ type: 'datetime' })
-    data_hora: Date;
+    dataHora: Date;
 
     @ApiProperty({ enum: TipoContato })
     @Column({ type: 'enum', enum: TipoContato })
-    tipo_contato: TipoContato;
+    tipoContato: TipoContato;
 
     @ApiProperty({ type: 'string', nullable: true })
     @Column({ type: 'text', nullable: true })
