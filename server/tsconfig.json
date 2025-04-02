@@ -186,6 +186,12 @@
       ],
       "@ci/projetos/*": [
         "libs/projetos/src/*"
+      ],
+      "@ci/crm": [
+        "libs/crm/src"
+      ],
+      "@ci/crm/*": [
+        "libs/crm/src/*"
       ]
     }
   }
