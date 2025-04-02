@@ -1299,6 +1299,39 @@
           }
         }
       }
+    },
+    "@ci-apps/crm": {
+      "projectType": "library",
+      "root": "projects/ci-apps/crm",
+      "sourceRoot": "projects/ci-apps/crm/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/crm/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/crm/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/crm/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/crm/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {
