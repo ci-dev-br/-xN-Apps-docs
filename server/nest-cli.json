@@ -258,6 +258,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/projetos/tsconfig.lib.json"
       }
+    },
+    "crm": {
+      "type": "library",
+      "root": "libs/crm",
+      "entryFile": "index",
+      "sourceRoot": "libs/crm/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/crm/tsconfig.lib.json"
+      }
     }
   }
 }

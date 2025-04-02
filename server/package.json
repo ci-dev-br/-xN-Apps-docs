@@ -122,7 +122,8 @@
       "^@ci/prolabore(|/.*)$": "<rootDir>/libs/prolabore/src/$1",
       "^@ci/forms(|/.*)$": "<rootDir>/libs/forms/src/$1",
       "^@ci/i11n(|/.*)$": "<rootDir>/libs/i11n/src/$1",
-      "^@ci/projetos(|/.*)$": "<rootDir>/libs/projetos/src/$1"
+      "^@ci/projetos(|/.*)$": "<rootDir>/libs/projetos/src/$1",
+      "^@ci/crm(|/.*)$": "<rootDir>/libs/crm/src/$1"
     }
   }
 }
