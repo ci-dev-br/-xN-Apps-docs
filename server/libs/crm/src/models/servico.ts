@@ -10,9 +10,6 @@ import { FullAuditedEntity } from "@ci/manager";
     schema
 })
 export class Servico extends FullAuditedEntity {
-    @ApiProperty()
-    @PrimaryGeneratedColumn()
-    id: number;
 
     @ApiProperty({ maxLength: 255 })
     @Column({ length: 255 })

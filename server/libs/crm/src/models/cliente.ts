@@ -12,10 +12,7 @@ import { FullAuditedEntity } from "@ci/manager";
 @Entity({
     schema
 })
-export class Cliente extends FullAuditedEntity {
-    @ApiProperty()
-    @PrimaryGeneratedColumn()
-    id: number;
+export class ClienteCrm extends FullAuditedEntity {
 
     @ApiProperty()
     @Column({ length: 255 })

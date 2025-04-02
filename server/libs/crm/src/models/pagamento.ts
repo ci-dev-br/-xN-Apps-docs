@@ -4,7 +4,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Agendamento } from "./agendamento";
 import { VendaProduto } from "./venda-produto";
 import { Atendimento } from "./atendimento";
-import { Cliente } from "./cliente";
+import { ClienteCrm } from "./cliente";
 import { FullAuditedEntity } from "@ci/manager";
 import { FormaPagamento } from "./forma-pagamento";
 import { StatusPagamento } from "./status-pagamento";
@@ -13,9 +13,6 @@ import { StatusPagamento } from "./status-pagamento";
     schema
 })
 export class Pagamento extends FullAuditedEntity {
-    @ApiProperty()
-    @PrimaryGeneratedColumn()
-    id: number;
 
     @ApiProperty({ nullable: true })
     @Column({ nullable: true })
@@ -45,12 +42,12 @@ export class Pagamento extends FullAuditedEntity {
     @Column()
     clienteId: number;
 
-    @ManyToOne(() => Cliente, (cliente) => cliente.pagamentos, { onDelete: 'CASCADE' })
+    @ManyToOne(() => ClienteCrm, (cliente) => cliente.pagamentos, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'cliente_id' })
-    cliente: Cliente;
+    cliente: ClienteCrm;
 
     @ApiProperty({ type: 'string', format: 'date-time' })
-    @Column({ type: 'datetime' })
+    @Column({  })
     dataPagamento: Date;
 
     @ApiProperty({ type: 'number', format: 'float' })

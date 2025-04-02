@@ -1,7 +1,7 @@
 import { Agendamento } from "./agendamento";
 import { Atendimento } from "./atendimento";
 import { CampanhaMarketing } from "./campanha-marketing";
-import { Cliente } from "./cliente";
+import { ClienteCrm } from "./cliente";
 import { HistoricoContato } from "./historico-contato";
 import { Pagamento } from "./pagamento";
 import { Produto } from "./produto";
@@ -14,7 +14,7 @@ export const CrmEntities = [
     Agendamento,
     Atendimento,
     CampanhaMarketing,
-    Cliente,
+    ClienteCrm,
     HistoricoContato,
     Pagamento,
     Produto,

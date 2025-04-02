@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { schema } from "./schema";
 import { ApiProperty } from "@nestjs/swagger";
-import { Cliente } from "./cliente";
+import { ClienteCrm } from "./cliente";
 import { Servico } from "./servico";
 import { Profissional } from "./profissional";
 import { Atendimento } from "./atendimento";
@@ -14,35 +14,31 @@ import { AgendamentoStatus } from "./agendamento-status";
 })
 export class Agendamento extends FullAuditedEntity {
     @ApiProperty()
-    @PrimaryGeneratedColumn()
-    id: number;
-
-    @ApiProperty()
     @Column()
     clienteId: number;
 
-    @ManyToOne(() => Cliente, (cliente) => cliente.agendamentos, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'cliente_id' })
-    cliente: Cliente;
+    @ManyToOne(() => ClienteCrm, (cliente) => cliente.agendamentos, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'clienteId' })
+    cliente: ClienteCrm;
 
     @ApiProperty()
     @Column()
-    servico_id: number;
+    servicoId: number;
 
     @ManyToOne(() => Servico, (servico) => servico.agendamentos, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'servico_id' })
+    @JoinColumn({ name: 'servicoId' })
     servico: Servico;
 
     @ApiProperty()
     @Column()
-    profissional_id: number;
+    profissionalId: number;
 
     @ManyToOne(() => Profissional, (profissional) => profissional.agendamentos, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'profissional_id' })
+    @JoinColumn({ name: 'profissionalId' })
     profissional: Profissional;
 
     @ApiProperty({ type: 'string', format: 'date-time' })
-    @Column({ type: 'datetime' })
+    @Column({})
     dataHora: Date;
 
     @ApiProperty({ type: 'string', format: 'time' })

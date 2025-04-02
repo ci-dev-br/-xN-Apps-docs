@@ -3,7 +3,7 @@ import { schema } from "./schema";
 import { ApiProperty } from "@nestjs/swagger";
 import { Agendamento } from "./agendamento";
 import { Profissional } from "./profissional";
-import { Cliente } from "./cliente";
+import { ClienteCrm } from "./cliente";
 import { Servico } from "./servico";
 import { VendaProduto } from "./venda-produto";
 import { Pagamento } from "./pagamento";
@@ -13,9 +13,6 @@ import { FullAuditedEntity } from "@ci/manager";
     schema
 })
 export class Atendimento extends FullAuditedEntity {
-    @ApiProperty()
-    @PrimaryGeneratedColumn()
-    id: number;
 
     @ApiProperty()
     @Column({ nullable: true })
@@ -26,11 +23,11 @@ export class Atendimento extends FullAuditedEntity {
     agendamento?: Agendamento;
 
     @ApiProperty({ type: 'string', format: 'date-time' })
-    @Column({ type: 'datetime' })
+    @Column({  })
     dataInicio: Date;
 
     @ApiProperty({ type: 'string', format: 'date-time' })
-    @Column({ type: 'datetime' })
+    @Column({  })
     dataFim: Date;
 
     @ApiProperty()
@@ -45,9 +42,9 @@ export class Atendimento extends FullAuditedEntity {
     @Column()
     clienteId: number;
 
-    @ManyToOne(() => Cliente, (cliente) => cliente.atendimentos, { onDelete: 'CASCADE' })
+    @ManyToOne(() => ClienteCrm, (cliente) => cliente.atendimentos, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'clienteId' })
-    cliente: Cliente;
+    cliente: ClienteCrm;
 
     @ApiProperty()
     @Column()
