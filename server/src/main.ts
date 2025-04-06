@@ -20,14 +20,14 @@ async function start(server: express.Express, app: NestExpressApplication, https
     const applicationInstance = app.getHttpAdapter().getInstance();
     if (app)
       app.listen(http_port, () => {
-        console.log(`Internet Application is Running`);
+        console.log(`Non-Sercure HTTP Application is Running on ${http_port}`);
       });
 
     const httpsServer = https.createServer(httpsOptions, applicationInstance);
     if (httpsServer) {
 
       httpsServer.listen(https_port, () => {
-        console.log(`Secure Internet Application is Running`);
+        console.log(`Secure Internet Application is Running on ${https_port}`);
       });
 
       let wss_adapter = new WsAdapter(httpsServer);
@@ -38,22 +38,22 @@ async function start(server: express.Express, app: NestExpressApplication, https
     if (httpsInternalServer) {
 
       httpsInternalServer.listen(https_internal_port, () => {
-        console.log(`Secure Infranet Application is Running`);
+        console.log(`Secure Intranet Application is Running on ${https_internal_port}`);
       });
 
       let wss_internal_adapter = new WsAdapter(httpsInternalServer);
       app.useWebSocketAdapter(wss_internal_adapter);
     }
-
   } catch (error) {
     if (error.code === 'EADDRINUSE') {
       console.error(error);
       console.error("stop services");
       const out = spawnSync('powershell', ['Stop-Service', 'apps.ci.dev.br']);
       console.log(out.error)
-      await start(server, app, https_port, httpsOptions, http_port || 86, internalHttpsOptions, https_internal_port || 664);
+      await start(server, app, https_port, httpsOptions, http_port || 86, internalHttpsOptions, https_internal_port);
     } else {
-      console.error('Falha ao iniciar serviços...', error);
+      console.error('Falha ao iniciar serviços...');
+      console.trace(error);
     }
   }
 }
@@ -66,10 +66,14 @@ async function bootstrap() {
   };
 
   const internalHttpsOptions: HttpsOptions = (!!process.env.internal_pfx || !!process.env.internal_key) ? {
-    pfx: process.env.internal_pfx ? fs.readFileSync(process.env.internal_pfx) : undefined,
-    passphrase: process.env.internal_passphrase ? process.env.internal_passphrase : undefined,
-    key: process.env.internal_key ? fs.readFileSync(process.env.internal_key) : undefined,
-    cert: process.env.internal_cert ? fs.readFileSync(process.env.internal_cert) : undefined
+    cert: !!process.env.internal_cert ? fs.readFileSync(process.env.internal_cert) : undefined,
+    key: !!process.env.internal_key ? fs.readFileSync(process.env.internal_key) : undefined,
+    pfx: !!process.env.internal_pfx ? fs.readFileSync(process.env.internal_pfx) : undefined,
+    passphrase: !!process.env.internal_passphrase ? process.env.internal_passphrase : undefined
+    // pfx: process.env.internal_pfx ? fs.readFileSync(process.env.internal_pfx) : undefined,
+    // passphrase: process.env.internal_passphrase ? process.env.internal_passphrase : undefined,
+    // key: process.env.internal_key ? fs.readFileSync(process.env.internal_key) : undefined,
+    // cert: process.env.internal_cert ? fs.readFileSync(process.env.internal_cert) : undefined
   } : undefined;
   const server = express();
   const app = process.env.pfx || process.env.cert ?
@@ -98,8 +102,7 @@ async function bootstrap() {
    * Websocket (ws)
    */
   app.useGlobalInterceptors(new LoggingInterceptor());
-  const PORT = Number(process.env.PORT);
   app.init();
-  start(server, app, PORT, httpsOptions, 86, internalHttpsOptions, 664);
+  start(server, app, Number(process.env.PORT), httpsOptions, 86, internalHttpsOptions, Number(process.env.INTERNAL_PORT));
 }
 bootstrap();
