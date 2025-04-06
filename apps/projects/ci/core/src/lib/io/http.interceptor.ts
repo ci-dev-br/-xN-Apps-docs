@@ -16,8 +16,11 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
     public set efail(value: string | number | undefined) {
         if (this._efail === value) return;
         this._efail = value;
-
-        localStorage.setItem('e-fail', JSON.stringify(value));
+        if (!!value) {
+            localStorage.setItem('e-fail', JSON.stringify(value));
+        } else {
+            localStorage.removeItem('e-fail');
+        }
     }
     constructor(
         private readonly storage: StorageService,
@@ -55,7 +58,6 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                             this.efail = this.config.alternativeApiGateways[1];
                         else if (this._efail === this.config.alternativeApiGateways[1])
                             this.efail = undefined;
-
                         // alternate url and retry
                         return next.handle(this.addTokenHeader(request));
                     }
