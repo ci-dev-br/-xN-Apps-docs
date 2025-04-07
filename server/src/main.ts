@@ -36,11 +36,9 @@ async function start(server: express.Express, app: NestExpressApplication, https
 
     const httpsInternalServer = !!internalHttpsOptions ? https.createServer(internalHttpsOptions, applicationInstance) : undefined;
     if (httpsInternalServer) {
-
       httpsInternalServer.listen(https_internal_port, () => {
         console.log(`Secure Intranet Application is Running on ${https_internal_port}`);
       });
-
       let wss_internal_adapter = new WsAdapter(httpsInternalServer);
       app.useWebSocketAdapter(wss_internal_adapter);
     }

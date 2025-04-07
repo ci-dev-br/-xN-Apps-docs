@@ -2,14 +2,14 @@ import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocke
 import { EventsGateway } from "./events.gateway";
 import { Server } from "ws";
 import { BusService } from "./events.service";
-import { DomainService } from "@ci/manager";
+// import { DomainService } from "@ci/manager";
 
 export interface IEventPayload {
     mac?: string;
     iam?: string;
 }
 @WebSocketGateway(
-    664,
+    3333, // alterado para 3333, está em conflito  ....
     {
         transports: ['websocket'],
         // cors: ['*', // DomainService.whitelist, // TODO: não pode ser utilizado cliente coringa. Deve ser criada modelo de Domínios permitidos, cada um com suas blacklists de bloqueio se ouver e regras adicionais de política de acesso pode ser necessárias.
