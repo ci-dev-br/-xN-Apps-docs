@@ -7,11 +7,15 @@ import { ContactService } from "./service/contact.service";
 import { Contact } from "./model/contact.entity";
 import { TenantModule } from "@ci/tenant";
 import { CoreModule } from "@ci/core";
+import { Chamada } from "./model/chamada.entity";
+import { ChamadaService } from "./service/chamada.service";
+import { ChamadaController } from "./controller/chamada.controller";
 
 export const Entities = [
     Conversation,
     DirectMessage,
     Contact,
+    Chamada,
 ];
 
 @Module({
@@ -24,9 +28,11 @@ export const Entities = [
     ],
     providers: [
         ContactService,
+        ChamadaService,
     ],
     controllers: [
         ContactController,
+        ChamadaController,
     ],
 })
 export class MessagerModule { }
