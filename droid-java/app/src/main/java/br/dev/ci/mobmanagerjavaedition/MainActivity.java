@@ -61,8 +61,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openApps(){
-
-
         AlertDialog.Builder builder = new  AlertDialog.Builder(this);
         builder
                 .setTitle("Apps")

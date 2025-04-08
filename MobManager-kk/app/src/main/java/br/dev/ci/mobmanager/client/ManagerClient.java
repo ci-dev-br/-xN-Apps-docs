@@ -43,7 +43,7 @@ public class ManagerClient {
         Device device = new Device(){{
             setId(getMacAddr());
             setApplicationId("e60e2ed1-e318-4f38-bdcd-2fceb3d0315d");
-            setName("MobManager-KitKat Edition");
+            setName("MMKK");
             setNumbers(getPhones());
         }};
         dc.execute(device);
