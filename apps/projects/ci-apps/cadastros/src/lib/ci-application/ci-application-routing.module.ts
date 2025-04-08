@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component'
 import { CadastrosComponent } from '../cadastros/cadastros.component';
 const c: Routes = [
-  { path: '', component: CadastrosComponent, data: { title: 'Cadastros', icon: 'dashboard' } },
+  { path: '', component: CadastrosComponent, data: { title: 'Cadastros', icon: 'dashboard' }, children: [] },
 
 ];
 const routes: Routes = [

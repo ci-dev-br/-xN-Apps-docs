@@ -6,29 +6,42 @@ import { AuthModule } from '@ci/auth';
 import { LNavModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { CadastroService, IDynamicForm } from '@ci/portal-api';
-import { firstValueFrom } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { RouterModule } from '@angular/router';
+import { BreakpointObserver, BreakpointState, LayoutModule } from '@angular/cdk/layout';
+
+const IS_SMALL = '(max-width: 599px)';
 
 @Component({
-    selector: 'ci-cadastros',
-    imports: [
-        CoreModule,
-        MatToolbarModule,
-        LNavModule,
-        MatIconModule,
-        AuthModule,
-        MatButtonModule,
-    ],
-    templateUrl: './cadastros.component.html',
-    styleUrls: ['./cadastros.component.scss']
+  selector: 'ci-cadastros',
+  imports: [
+    CoreModule,
+    MatToolbarModule,
+    LNavModule,
+    MatIconModule,
+    AuthModule,
+    MatButtonModule,
+    MatSidenavModule,
+    RouterModule,
+    LayoutModule,
+  ],
+  standalone: true,
+  templateUrl: './cadastros.component.html',
+  styleUrls: ['./cadastros.component.scss']
 })
 export class CadastrosComponent {
+  isSmallScreen: BehaviorSubject<BreakpointState> = new BehaviorSubject(null as any);
   currentForm?: IDynamicForm;
   menu?: IDynamicForm[];
   constructor(
-    private readonly cadastro: CadastroService
+    private readonly cadastro: CadastroService,
+    breakpointObserver: BreakpointObserver,
   ) {
     this.montarMenu();
+    breakpointObserver.observe(IS_SMALL).subscribe(v => this.isSmallScreen.next(v));
   }
+
   async montarMenu() {
     this.menu = await firstValueFrom(
       this.cadastro.cadastroControllerGetAll({ body: { fields: ['title'] } })

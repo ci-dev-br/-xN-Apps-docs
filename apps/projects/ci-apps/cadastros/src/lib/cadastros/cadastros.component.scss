@@ -1,4 +1,4 @@
-:host {
+/*:host {
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -7,9 +7,9 @@
 
     overflow: auto;
 
-}
+}*/
 
-div.container {
+/* div.container {
     background: url(/assets/1000_F_620089764_eazt3jdd9Y2sLAtWfUpUeT72Xn81QXIQ.jpg);
     background-position: center;
     background-repeat: no-repeat;
@@ -61,18 +61,18 @@ nav.status {
     display: flex;
     flex-direction: row;
     gap: 12px;
-}
+} */
 
-.icon {
-    // width: 28px;
-    // height: 28px;
-    // min-width: 28px;
-    // max-width: 28px;
-    // min-height: 28px;
-    // max-height: 28px;
-}
+// .icon {
+//     // width: 28px;
+//     // height: 28px;
+//     // min-width: 28px;
+//     // max-width: 28px;
+//     // min-height: 28px;
+//     // max-height: 28px;
+// }
 
-.draw {
+/* .draw {
     display: flex;
     flex-direction: row;
     flex: auto;
@@ -101,4 +101,28 @@ nav.status {
     .container {
         flex: auto;
     }
+} */
+
+:host {
+    display: contents;
+}
+
+mat-drawer {
+    min-width: 250px;
+
+}
+
+
+.menu {
+    display: flex;
+    flex-direction: column;
+
+    >* {
+        flex: auto;
+    }
+}
+
+mat-drawer-container {
+    flex: auto;
+    width: 100%;
 }
