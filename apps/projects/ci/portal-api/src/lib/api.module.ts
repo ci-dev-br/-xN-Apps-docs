@@ -8,12 +8,13 @@ import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
 import { ApiService } from './services/api.service';
 import { SystemService } from './services/system.service';
-import { MessageService } from './services/message.service';
 import { DeviceService } from './services/device.service';
+import { MessageService } from './services/message.service';
 import { AuthService } from './services/auth.service';
 import { ApplicationService } from './services/application.service';
 import { DomainService } from './services/domain.service';
 import { ContactsService } from './services/contacts.service';
+import { ChamadaService } from './services/chamada.service';
 import { ProductService } from './services/product.service';
 import { PranchetaService } from './services/prancheta.service';
 import { UserService } from './services/user.service';
@@ -34,12 +35,13 @@ import { FormsService } from './services/forms.service';
   providers: [
     ApiService,
     SystemService,
-    MessageService,
     DeviceService,
+    MessageService,
     AuthService,
     ApplicationService,
     DomainService,
     ContactsService,
+    ChamadaService,
     ProductService,
     PranchetaService,
     UserService,

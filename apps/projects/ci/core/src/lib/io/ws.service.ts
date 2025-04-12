@@ -34,20 +34,20 @@ export class WsService {
             this._subject.complete();
         }
 
-        let gateway_api = 'wss://apps.ci.dev.br:446';
+        let gateway_api = 'https://srv33.internals.ci.dev.br:664/';
 
-        let efail = localStorage.getItem('e-fail');
-        if (!!efail) {
-            try {
-                efail = JSON.parse(efail);
-            } catch (error) {
-                console.error(error);
-            }
-        }
+        // let efail = localStorage.getItem('e-fail');
+        // if (!!efail) {
+        //     try {
+        //         efail = JSON.parse(efail);
+        //     } catch (error) {
+        //         console.error(error);
+        //     }
+        // }
 
-        if (!!efail) {
-            gateway_api = efail.replace('http', 'ws');
-        }
+        // if (!!efail) {
+        //     gateway_api = efail.replace('http', 'ws');
+        // }
 
         this._subject = webSocket(gateway_api);
 

@@ -13,8 +13,13 @@ import { provideNuMonacoEditorConfig } from '@ng-util/monaco-editor';
 const SETUP = {
   API_URL_GATEWAY: 'https://apps.ci.dev.br:446',
   ALTERN_GATEWAYS: [
+    'https://lorelei.ci.dev.br',
+    'https://srv33.internals.ci.dev.br:446',
     'https://srv33.internals.ci.dev.br:664',
-    'https://lorelei.ci.dev.br'
+    'wss://srv33.internals.ci.dev.br:664',
+    'ws://srv33.internals.ci.dev.br:87',
+    'wss://apps.ci.dev.br:446',
+    'ws://apps.ci.dev.br:87',
   ],
   UNSATLY_WS_COMMON: 'ws://apps.ci.dev.br:87',
 }

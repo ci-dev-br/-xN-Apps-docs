@@ -8,6 +8,8 @@ import { RouterModule } from '@angular/router';
 import { PesquisarService } from '../pesquisar-contato/pesquisar-contato.service';
 import { TorusGeometry } from 'three';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ChamadaService } from '@ci/portal-api';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'ci-conversas',
@@ -27,8 +29,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 export class ConversasComponent {
   constructor(
     private readonly pesquisar: PesquisarService,
+    private readonly chamada: ChamadaService,
   ) { }
   async pesquisarContato() {
     return await this.pesquisar.pesquisarContato();
+  }
+  async iniciarChamada() {
+    await lastValueFrom(this.chamada.chamadaControllerNovaChamada());
   }
 }
