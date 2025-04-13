@@ -11,7 +11,6 @@ import { WindowService } from 'src/app/components/window/window.service';
 import { AdicionarWidgetComponent } from '../adicionar-widget/adicionar-widget.component';
 import { WidgetService } from '../widget.service';
 // import { WidgetModule } from 'src/app/widgets/widgets.module';
-
 @Component({
   selector: 'ci-prancheta',
   standalone: true,

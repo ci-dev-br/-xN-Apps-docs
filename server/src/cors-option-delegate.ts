@@ -1,6 +1,5 @@
 
 import { DomainService } from '@ci/manager';
-
 export const corsOptionsDelegate = (req, callback) => {
     let corsOptions;
     if (DomainService.whitelist.indexOf(req.header('Origin')) === -1) DomainService.requestWhitelist(req.header('Origin'));

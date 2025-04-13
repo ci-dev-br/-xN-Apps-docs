@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-
 @Component({
   selector: 'ci-layout-thumb',
   templateUrl: './layout-thumb.component.html',

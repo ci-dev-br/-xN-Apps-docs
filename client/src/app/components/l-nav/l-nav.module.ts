@@ -9,7 +9,6 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { WindowModule } from '../window/window.module';
-
 @NgModule({
   declarations: [
     LNavComponent

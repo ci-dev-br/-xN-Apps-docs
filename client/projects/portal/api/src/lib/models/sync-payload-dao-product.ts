@@ -4,7 +4,6 @@ import { Product } from '../models/product';
 export interface ISyncPayloadDaoProduct {
   data: Product;
 }
-
 export class SyncPayloadDaoProduct implements ISyncPayloadDaoProduct {
   static typeName = 'SyncPayloadDaoProduct';
   private _data: Product;

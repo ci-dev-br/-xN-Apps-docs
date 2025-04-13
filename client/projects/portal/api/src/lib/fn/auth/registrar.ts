@@ -5,20 +5,16 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
-
 import { RegistrarInputDto } from '../../models/registrar-input-dto';
 import { User } from '../../models/user';
-
 export interface Registrar$Params {
       body: RegistrarInputDto
 }
-
 export function registrar(http: HttpClient, rootUrl: string, params: Registrar$Params, context?: HttpContext): Observable<StrictHttpResponse<User>> {
   const rb = new RequestBuilder(rootUrl, registrar.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
-
   return http.request(
     rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
@@ -28,5 +24,4 @@ export function registrar(http: HttpClient, rootUrl: string, params: Registrar$P
     })
   );
 }
-
 registrar.PATH = '/auth/Registrar';

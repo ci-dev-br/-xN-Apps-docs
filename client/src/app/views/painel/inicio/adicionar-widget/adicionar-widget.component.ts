@@ -3,7 +3,6 @@ import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { IWidget } from "src/app/widgets/i-widget";
 import { Widgets } from "src/app/widgets/widgets";
 import { WidgetService } from "../widget.service";
-
 @Component({
     selector: 'px-adicionar-widget',
     templateUrl: 'adicionar-widget.component.html',

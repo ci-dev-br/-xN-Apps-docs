@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 @Component({
   selector: 'ci-data-group',
   templateUrl: './data-group.component.html',

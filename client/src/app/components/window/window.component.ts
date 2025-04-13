@@ -1,7 +1,6 @@
 import { Component, Inject, Injector, Input, OnDestroy, OnInit, TemplateRef, Type, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DaoService } from 'src/app/core/dao/dao.service';
-
 export interface IItemMenu {
   icon?: string;
   label?: string;

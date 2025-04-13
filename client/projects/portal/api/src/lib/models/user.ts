@@ -16,7 +16,6 @@ export interface IUser {
   tenants?: Array<Tenant> | null;
   username?: string | null;
 }
-
 export class User implements IUser {
   static typeName = 'User';
   private _email?: string | null;

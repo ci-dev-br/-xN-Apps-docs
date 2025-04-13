@@ -4,7 +4,6 @@ import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne,
 import { Policy } from "./policy.entity";
 import { Tenant } from "@ci/tenant/models/tenant.entity";
 import { Photo } from "@ci/storage/models/photo.entity";
-
 /**
  *	Usuário Auto-identificado do Sistema
  * */

@@ -1,7 +1,6 @@
 import { Column, Entity, JoinTable, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { Banco } from './banco.entity';
 import { ApiProperty } from '@nestjs/swagger';
-
 @Entity({ schema: 'prolabore' })
 export class ContaBancaria {
     @ApiProperty({ nullable: false })

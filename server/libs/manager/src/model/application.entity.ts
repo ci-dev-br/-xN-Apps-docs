@@ -2,7 +2,6 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Domain } from "./domain.entity";
 import { schema } from "../noms";
-
 @Entity({ schema })
 export class Application {
     @ApiProperty({ nullable: true, required: false, uniqueItems: true })
@@ -32,7 +31,6 @@ export class Application {
     @ApiProperty({ nullable: true, required: false })
     @Column({ length: 30, nullable: true })
     categoria: string;
-
     @ApiProperty({
         title: 'Domínios Associados',
         type: Domain,

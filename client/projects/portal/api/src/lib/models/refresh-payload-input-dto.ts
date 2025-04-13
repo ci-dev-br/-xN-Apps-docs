@@ -3,7 +3,6 @@
 export interface IRefreshPayloadInputDto {
   refreshToken: string;
 }
-
 export class RefreshPayloadInputDto implements IRefreshPayloadInputDto {
   static typeName = 'RefreshPayloadInputDto';
   private _refreshToken: string;

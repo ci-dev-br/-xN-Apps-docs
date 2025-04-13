@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CadastroService, IDynamicForm } from '@portal/api';
 import { firstValueFrom } from 'rxjs';
-
 @Component({
   selector: 'ci-cadastros',
   templateUrl: './cadastros.component.html',

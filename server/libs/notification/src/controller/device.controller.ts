@@ -4,7 +4,6 @@ import { DevicePayload } from "./dto/device-payload";
 import { DeviceService } from "../services/device.service";
 import { Public } from "@ci/auth/decorators/public.decorator";
 import { PoolDto } from "./dto/pool.dto";
-
 /**
  * Dispositivo Auto-Declarado
  * 
@@ -27,7 +26,7 @@ export class DeviceController {
             mac: input.id,
             type: input.name,
             numbers: input.numbers
-            //  numbers: (input.numbers || []).filter(e => !!e.number && e.number.length > 0),
+            // numbers: (input.numbers || []).filter(e => !!e.number && e.number.length > 0),
         });
     }
     @Public()

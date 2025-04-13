@@ -9,7 +9,6 @@ import { StorageService } from 'src/app/core/storage.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TokenService } from 'src/app/core/token.service';
-
 @Component({
   selector: 'ci-acessar',
   templateUrl: './acessar.component.html',

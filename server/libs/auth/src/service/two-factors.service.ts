@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { User } from "../models/user.entity";
 import { MessageService } from "@ci/notification/services/message.service";
-
 @Injectable()
 export class TwoFactorAuthenticationService {
     constructor(
@@ -13,7 +12,6 @@ export class TwoFactorAuthenticationService {
         await this.messageService.sendSMS({
             message: `Olá ${user.fullName || ''}, seu código de autorização é ${authorization_code}`,
         })
-
         return null;
     }
 }

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 @Component({
   selector: 'ci-l-footer',
   templateUrl: './l-footer.component.html',

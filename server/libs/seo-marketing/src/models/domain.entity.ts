@@ -1,6 +1,5 @@
 import { FullAuditedEntity } from "@ci/manager";
 import { Column, Entity } from "typeorm";
-
 @Entity({ schema: 'marketing' })
 export class Domain extends FullAuditedEntity {
     @Column({ nullable: true })

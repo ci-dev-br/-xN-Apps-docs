@@ -27,7 +27,6 @@ export class FormOptionsBuilder {
         let fields: any = {};
         if (formOptions.fields)
             formOptions.fields.forEach(field => {
-
                 if (field.property)
                     fields[field.property] = [, []];
             });

@@ -3,7 +3,6 @@
 export interface IReadDirectoryInput {
   path?: string | null;
 }
-
 export class ReadDirectoryInput implements IReadDirectoryInput {
   static typeName = 'ReadDirectoryInput';
   private _path?: string | null;

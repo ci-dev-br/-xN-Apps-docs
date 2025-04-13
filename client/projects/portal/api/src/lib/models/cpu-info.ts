@@ -9,7 +9,6 @@ export interface ICpuInfo {
   system?: number | null;
   user?: number | null;
 }
-
 export class CpuInfo implements ICpuInfo {
   static typeName = 'CpuInfo';
   private _external?: number | null;

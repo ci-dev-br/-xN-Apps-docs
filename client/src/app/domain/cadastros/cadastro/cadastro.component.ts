@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { IDynamicForm } from '@portal/api';
-
 @Component({
   selector: 'ci-cadastro',
   templateUrl: './cadastro.component.html',
@@ -9,6 +8,5 @@ import { IDynamicForm } from '@portal/api';
 export class CadastroComponent {
   @Input()
   dynamicForm?: IDynamicForm;
-
   constructor() { }
 }

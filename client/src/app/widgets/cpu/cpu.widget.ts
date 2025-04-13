@@ -2,7 +2,6 @@ import { Component, NgModule, OnDestroy } from "@angular/core";
 import { ApiModule, SystemService } from "@portal/api";
 import { NgxChartsModule } from "@swimlane/ngx-charts";
 import { lastValueFrom } from "rxjs";
-
 @Component({
     selector: 'px-cpu-widget',
     template: `
@@ -71,7 +70,6 @@ export class CPUWidget implements OnDestroy {
             });
             this.cpuStatus = [...Object.values(x)];
         } catch (error) {
-
             console.error(error);
         }
         if (this.alive) setTimeout(() => this.updateCpuInfo(), 1000);

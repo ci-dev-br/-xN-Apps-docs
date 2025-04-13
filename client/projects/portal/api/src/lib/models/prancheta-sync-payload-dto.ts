@@ -4,7 +4,6 @@ import { Prancheta } from '../models/prancheta';
 export interface IPranchetaSyncPayloadDto {
   prancheta?: Prancheta | null;
 }
-
 export class PranchetaSyncPayloadDto implements IPranchetaSyncPayloadDto {
   static typeName = 'PranchetaSyncPayloadDto';
   private _prancheta?: Prancheta | null;

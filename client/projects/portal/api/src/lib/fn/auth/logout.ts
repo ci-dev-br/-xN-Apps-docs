@@ -5,16 +5,12 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
-
-
 export interface Logout$Params {
 }
-
 export function logout(http: HttpClient, rootUrl: string, params?: Logout$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
   const rb = new RequestBuilder(rootUrl, logout.PATH, 'post');
   if (params) {
   }
-
   return http.request(
     rb.build({ responseType: 'text', accept: '*/*', context })
   ).pipe(
@@ -24,5 +20,4 @@ export function logout(http: HttpClient, rootUrl: string, params?: Logout$Params
     })
   );
 }
-
 logout.PATH = '/auth/Logout';

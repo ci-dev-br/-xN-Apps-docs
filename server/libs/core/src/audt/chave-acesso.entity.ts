@@ -1,7 +1,6 @@
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, TableForeignKey } from "typeorm";
 import { Application } from "@ci/manager";
 import { ApiProperty } from "@nestjs/swagger";
-
 @Entity()
 export class ChaveAcesso {
     @ApiProperty({ required: false }) @PrimaryGeneratedColumn('uuid') id?: string;

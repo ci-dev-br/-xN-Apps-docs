@@ -22,18 +22,14 @@ async function start(server: express.Express, app: NestExpressApplication, https
       app.listen(http_port, () => {
         console.log(`Non-Sercure HTTP Application is Running on ${http_port}`);
       });
-
     const httpsServer = https.createServer(httpsOptions, applicationInstance);
     if (httpsServer) {
-
       httpsServer.listen(https_port, () => {
         console.log(`Secure Internet Application is Running on ${https_port}`);
       });
-
       let wss_adapter = new WsAdapter(httpsServer);
       app.useWebSocketAdapter(wss_adapter);
     }
-
     const httpsInternalServer = !!internalHttpsOptions ? https.createServer(internalHttpsOptions, applicationInstance) : undefined;
     if (httpsInternalServer) {
       httpsInternalServer.listen(https_internal_port, () => {
@@ -62,7 +58,6 @@ async function bootstrap() {
     pfx: process.env.pfx ? fs.readFileSync(process.env.pfx) : undefined,
     passphrase: process.env.passphrase ? process.env.passphrase : undefined
   };
-
   const internalHttpsOptions: HttpsOptions = (!!process.env.internal_pfx || !!process.env.internal_key) ? {
     cert: !!process.env.internal_cert ? fs.readFileSync(process.env.internal_cert) : undefined,
     key: !!process.env.internal_key ? fs.readFileSync(process.env.internal_key) : undefined,

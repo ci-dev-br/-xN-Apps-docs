@@ -3,7 +3,6 @@ import { FormsModule } from '@angular/forms';
 import { DynFormModule } from 'src/app/components/dyn-form/dyn-form.module';
 import { FORM_OPTIONS, IFormOptions } from 'src/app/components/dyn-form/i-form-options';
 import { CoreModule } from 'src/app/core/core.module';
-
 @Component({
   selector: 'ci-domain',
   standalone: true,
@@ -30,5 +29,4 @@ import { CoreModule } from 'src/app/core/core.module';
   styleUrl: './domain.component.scss'
 })
 export class DomainComponent {
-
 }

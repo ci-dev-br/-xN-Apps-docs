@@ -4,7 +4,6 @@ import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
 import { StorageService } from "../core/storage.service";
 // import { TokenService } from "../core/token.service";
-
 @Injectable()
 export class UserService {
     private $user = new BehaviorSubject<User | undefined>(this.getFromMemory());

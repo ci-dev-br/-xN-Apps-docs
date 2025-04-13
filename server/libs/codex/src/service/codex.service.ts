@@ -3,7 +3,6 @@ import { CodeBlock } from "../models/code-block.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DaoServiceBase, SnapshotService } from "@ci/core";
-
 @Injectable()
 export class CodexService extends DaoServiceBase<CodeBlock> {
     constructor(
@@ -11,5 +10,4 @@ export class CodexService extends DaoServiceBase<CodeBlock> {
         @InjectRepository(CodeBlock)
         private readonly codeBlockRepo: Repository<CodeBlock>,
     ) { super(snap, codeBlockRepo); }
-
 }

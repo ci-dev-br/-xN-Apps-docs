@@ -3,7 +3,6 @@ import { PranchetaService } from "../service/prancheta.service";
 import { ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Prancheta } from "../models/prancheta.entity";
 import { AudtService } from "@ci/core";
-
 export class PranchetaSyncPayloadDto {
     @ApiProperty({ type: Prancheta, nullable: true, required: false })
     prancheta?: Prancheta
@@ -15,7 +14,6 @@ export class PranchetaController {
         private readonly service: PranchetaService,
         private readonly audt: AudtService,
     ) { }
-
     @ApiResponse({
         type: Prancheta
     })

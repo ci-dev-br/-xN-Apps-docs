@@ -5,19 +5,15 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
-
 import { SyncPayloadDaoForm } from '../../models/sync-payload-dao-form';
-
 export interface FormsSync$Params {
       body: SyncPayloadDaoForm
 }
-
 export function formsSync(http: HttpClient, rootUrl: string, params: FormsSync$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoForm>> {
   const rb = new RequestBuilder(rootUrl, formsSync.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
-
   return http.request(
     rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
@@ -27,5 +23,4 @@ export function formsSync(http: HttpClient, rootUrl: string, params: FormsSync$P
     })
   );
 }
-
 formsSync.PATH = '/Forms/Sync';

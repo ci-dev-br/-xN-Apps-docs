@@ -4,7 +4,6 @@ import { Equal, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
 import { ChaveAcesso } from '@ci/core';
-
 @Injectable()
 export class UserService {
     constructor(
@@ -16,7 +15,6 @@ export class UserService {
         return await this.userRepo.save(new_user);
     }
     async solicitarAcesso(informacaoAcesso: { identificador?: string }) {
-
     }
     async existsUserByIdentification(identification: string, fator: string) {
         return await this.userRepo.createQueryBuilder('user')
@@ -26,7 +24,6 @@ export class UserService {
                     assinatura: identification, fator: fator
                 })
             .getOne()
-
             ;
     }
     async verificarAssinaturaAutenticacao(
@@ -63,7 +60,6 @@ export class UserService {
     }
     async updateRefreshToken(userId: string, refreshToken: string, chave?: ChaveAcesso) {
         const hashedRefreshToken = await this.hashData(refreshToken);
-
         return hashedRefreshToken;
         // TODO:  implementar verificação do hash do RefrashToken ...
         // 
@@ -82,7 +78,6 @@ export class UserService {
         const user = await this.userRepo.findOne({ where: { id: userId }, relations: ['photo', 'tenants'] })
         return user;
     }
-
     /**
      * Sincronizar objeto
      * @param data 
@@ -103,7 +98,6 @@ export class UserService {
     }
     async find(
         tenants?: string[],
-
     ): Promise<User[] | undefined> {
         return await this.userRepo.find({
             where: {

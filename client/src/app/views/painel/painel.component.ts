@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 @Component({
   selector: 'ci-painel',
   templateUrl: './painel.component.html',

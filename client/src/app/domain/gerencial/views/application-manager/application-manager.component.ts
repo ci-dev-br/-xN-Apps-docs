@@ -48,7 +48,6 @@ import { IColumnOption } from "src/app/components/grid/data-grid.options";
                         <th mat-header-cell *matHeaderCellDef>{{c.headerName}}</th>
                         <td mat-cell *matCellDef="let element">
                             <px-cell-renderer [data]="element" [column]="c">
-
                             </px-cell-renderer>
                         </td>
                     </ng-container>
@@ -166,5 +165,4 @@ import { IColumnOption } from "src/app/components/grid/data-grid.options";
     async carregarListaAplicativos() {
         this.apps = await lastValueFrom(this.applications.get({ body: { all: true } }));
     }
-
 }

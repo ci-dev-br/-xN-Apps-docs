@@ -3,7 +3,6 @@
 export interface IOrganizacaoFindPayload {
   query: string | null;
 }
-
 export class OrganizacaoFindPayload implements IOrganizacaoFindPayload {
   static typeName = 'OrganizacaoFindPayload';
   private _query: string | null;

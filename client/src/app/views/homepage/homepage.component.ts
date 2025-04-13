@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 @Component({
   selector: 'ci-homepage',
   templateUrl: './homepage.component.html',
@@ -7,7 +6,6 @@ import { Component } from '@angular/core';
 })
 export class HomepageComponent {
   vibrate?: string = '';
-
   vibrar() {
     navigator.vibrate(JSON.parse(String(this.vibrate)))
   }

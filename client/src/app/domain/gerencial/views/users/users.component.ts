@@ -81,12 +81,10 @@ import { ContainerModule } from "src/app/components/container/container.module";
         (async () => this.find())();
     }
     async adicionar() {
-
     }
     async find() {
         this.users = await lastValueFrom(this.userService.userGetList());
     }
-
     // private cache(prop: string, value: () => any) {
     //     if (!this._cached_map.has(prop))
     //         this._cached_map.set(prop, value());
@@ -110,5 +108,4 @@ import { ContainerModule } from "src/app/components/container/container.module";
     // async carregarListaAplicativos() {
     //     this.apps = await lastValueFrom(this.applications.get({ body: { all: true } }));
     // }
-
 }

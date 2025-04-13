@@ -9,7 +9,6 @@ export interface IDevicePayload {
   name?: string | null;
   numbers?: Array<PhoneNumber> | null;
 }
-
 export class DevicePayload implements IDevicePayload {
   static typeName = 'DevicePayload';
   private _applicationId?: string | null;

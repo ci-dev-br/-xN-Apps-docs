@@ -4,7 +4,6 @@ import { Pergunta } from '../models/pergunta';
 export interface IPerguntas {
   perguntas?: Array<Pergunta> | null;
 }
-
 export class Perguntas implements IPerguntas {
   static typeName = 'Perguntas';
   private _perguntas?: Array<Pergunta> | null;

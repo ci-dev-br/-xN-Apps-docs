@@ -11,11 +11,9 @@ import { WindowService } from '../window/window.service';
 import { SettingsComponent } from 'src/app/views/settings/settings.component';
 // import { WindowService } from '../window/window.service';
 // import { SettingsComponent } from 'src/app/views/settings/settings.component';
-
 interface IBreadcrumb {
   name?: string;
 }
-
 @Component({
   selector: 'ci-l-nav',
   templateUrl: './l-nav.component.html',
@@ -42,7 +40,6 @@ export class LNavComponent {
     private readonly system: SystemService,
     @Optional()
     private readonly organizacaoService?: OrganizacaoService,
-
     private readonly window?: WindowService,
   ) {
     this.load();
@@ -57,10 +54,8 @@ export class LNavComponent {
         const data: { name?: string, icon?: string } = event.snapshot.data;
         if (data && 'name' in data) {
           if (!this.breadcrumb) this.breadcrumb = [];
-
           if (data.name) this.title = data.name;
           if (data.icon) this.icon = data.icon;
-
           if (!!this.breadcrumb.find(b => b.name === data.name)) return;
           this.breadcrumb = [{
             name: data.name
@@ -127,7 +122,6 @@ export class LNavComponent {
     }
     return c.join("");
   }
-
   load() {
     (async () => {
       //try {
@@ -147,13 +141,11 @@ export class LNavComponent {
   status_services: any = {};
   loadStatus() {
     // Ignorado até resolver https da aplicação de Check Health
-
     // this.http.get(`https://apps.ci.dev.br:7684/json`).subscribe(v => {
     // this.status_services = v;
     // });
     // setTimeout(() => this.loadStatus(), 10000);
   }
-
   @HostListener('window:wheel', ['$event'])
   fixarAoTopo(event: WheelEvent) {
     /* if (event.offsetY === 0) {

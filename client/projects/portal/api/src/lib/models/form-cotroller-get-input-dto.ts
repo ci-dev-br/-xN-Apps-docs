@@ -8,7 +8,6 @@ export interface IFormCotrollerGetInputDto {
   where?: {
 } | null;
 }
-
 export class FormCotrollerGetInputDto implements IFormCotrollerGetInputDto {
   static typeName = 'FormCotrollerGetInputDto';
   private _orderBy?: {

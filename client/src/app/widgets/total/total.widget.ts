@@ -1,5 +1,4 @@
 import { Component, Input, NgModule } from "@angular/core";
-
 @Component({
     selector: 'px-iframe-widget',
     template: `

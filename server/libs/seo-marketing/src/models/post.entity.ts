@@ -2,8 +2,6 @@ import { FullAuditedEntity } from "@ci/manager";
 import { Column, Entity } from "typeorm";
 import { schema } from "./schema";
 import { ApiProperty } from "@nestjs/swagger";
-
-
 @Entity({
     schema
 })

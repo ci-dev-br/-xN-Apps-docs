@@ -14,7 +14,6 @@ export interface IMarca {
   siteUrl?: string | null;
   tenants?: Array<string> | null;
 }
-
 export class Marca implements IMarca {
   static typeName = 'Marca';
   private _code?: string | null;

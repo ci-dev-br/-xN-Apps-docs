@@ -1,7 +1,6 @@
 import { FullAuditedEntity } from "@ci/core";
 import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
 import { PaymentAuthorization } from "./payment-authorization.entity";
-
 @Entity({
     schema: 'payment'
 })

@@ -2,7 +2,6 @@
 import { Injectable } from '@angular/core';
 @Injectable()
 export class StorageService {
-
     session: any = this.SESSION() || {};
     constructor() { }
     set(key: string, value: any) {
@@ -18,7 +17,6 @@ export class StorageService {
         try {
             session_b64 = localStorage.getItem('SESSION[0]');
         } catch (error) {
-
         }
         if (session_b64) {
             const session = JSON.parse(atob(session_b64));

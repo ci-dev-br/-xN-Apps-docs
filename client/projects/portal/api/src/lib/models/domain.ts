@@ -13,7 +13,6 @@ export interface IDomain {
   tenants?: Array<string> | null;
   varified?: boolean | null;
 }
-
 export class Domain implements IDomain {
   static typeName = 'Domain';
   private _aplications?: Array<Array<any>> | null;

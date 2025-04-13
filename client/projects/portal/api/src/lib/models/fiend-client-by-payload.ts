@@ -1,31 +1,25 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface IFiendClientByPayload {
-
   /**
    * Text of search Clients Disposes to send Message
    */
   cellPhone: string;
-
   /**
    * Text of search Clients Disposes to send Message
    */
   documentId: string;
-
   /**
    * Text of search Clients Disposes to send Message
    */
   search: string;
-
   /**
    * Text of search Clients Disposes to send Message
    */
   username: string;
 }
-
 export class FiendClientByPayload implements IFiendClientByPayload {
   static typeName = 'FiendClientByPayload';
-
   /**
    * Text of search Clients Disposes to send Message
    */
@@ -35,7 +29,6 @@ export class FiendClientByPayload implements IFiendClientByPayload {
     if(this._cellPhone === value) return;
     this._cellPhone = value;
   }
-
   /**
    * Text of search Clients Disposes to send Message
    */
@@ -45,7 +38,6 @@ export class FiendClientByPayload implements IFiendClientByPayload {
     if(this._documentId === value) return;
     this._documentId = value;
   }
-
   /**
    * Text of search Clients Disposes to send Message
    */
@@ -55,7 +47,6 @@ export class FiendClientByPayload implements IFiendClientByPayload {
     if(this._search === value) return;
     this._search = value;
   }
-
   /**
    * Text of search Clients Disposes to send Message
    */

@@ -14,7 +14,6 @@ export interface IForm {
   tenants?: Array<string> | null;
   title?: string | null;
 }
-
 export class Form implements IForm {
   static typeName = 'Form';
   private _createdAt?: string | null;

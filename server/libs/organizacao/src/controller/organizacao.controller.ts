@@ -5,7 +5,6 @@ import { Organizacao } from "../model/organizacao.entity";
 import { Status } from "@ci/core";
 import { Tenant } from "@ci/tenant/models/tenant.entity";
 import { UserService } from "@ci/auth/auth.module";
-
 export class OrganizacaoSyncPayload {
     @ApiProperty({ type: Organizacao })
     data: Organizacao
@@ -14,19 +13,16 @@ export class OrganizacaoSyncOutput {
     @ApiProperty({ type: Organizacao })
     out: Organizacao
 }
-
 export class OrganizacaoFindPayload {
     @ApiProperty({ nullable: true, required: true })
     query: string
 }
-
 export class OrganizacaoFindResult {
     @ApiProperty({ nullable: true, required: true, type: Organizacao, isArray: true })
     0: Organizacao[];
     @ApiProperty({ nullable: true, required: true })
     1: number;
 }
-
 @Controller('Organizacao')
 @ApiTags('Organizacao')
 export class OrganizacaoController {
@@ -63,5 +59,4 @@ export class OrganizacaoController {
     ) {
         return await this.organizacaoService.Find(input.query);
     }
-
 }

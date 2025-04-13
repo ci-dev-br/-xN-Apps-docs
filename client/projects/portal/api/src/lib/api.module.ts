@@ -3,7 +3,6 @@
 import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
-
 import { ApiService } from './services/api.service';
 import { SystemService } from './services/system.service';
 import { MessageService } from './services/message.service';
@@ -21,7 +20,6 @@ import { CadastroService } from './services/cadastro.service';
 import { PessoaService } from './services/pessoa.service';
 import { OrganizacaoService } from './services/organizacao.service';
 import { FormsService } from './services/forms.service';
-
 /**
  * Module that provides all services and configuration.
  */
@@ -62,7 +60,6 @@ export class ApiModule {
       ]
     }
   }
-
   constructor( 
     @Optional() @SkipSelf() parentModule: ApiModule,
     @Optional() http: HttpClient

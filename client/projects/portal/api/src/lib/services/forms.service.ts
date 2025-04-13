@@ -4,11 +4,9 @@ import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
 import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
-
 import { Form } from '../models/form';
 import { formsDelete } from '../fn/forms/forms-delete';
 import { FormsDelete$Params } from '../fn/forms/forms-delete';
@@ -19,16 +17,13 @@ import { FormsGetList$Params } from '../fn/forms/forms-get-list';
 import { formsSync } from '../fn/forms/forms-sync';
 import { FormsSync$Params } from '../fn/forms/forms-sync';
 import { SyncPayloadDaoForm } from '../models/sync-payload-dao-form';
-
 @Injectable()
 export class FormsService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
   }
-
   /** Path part for operation `formsSync()` */
   static readonly FormsSyncPath = '/Forms/Sync';
-
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `formsSync()` instead.
@@ -38,7 +33,6 @@ export class FormsService extends BaseService {
   formsSync$Response(params: FormsSync$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoForm>> {
     return formsSync(this.http, this.rootUrl, params, context);
   }
-
   /**
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `formsSync$Response()` instead.
@@ -50,10 +44,8 @@ export class FormsService extends BaseService {
       map((r: StrictHttpResponse<SyncPayloadDaoForm>): SyncPayloadDaoForm => r.body)
     );
   }
-
   /** Path part for operation `formsGetList()` */
   static readonly FormsGetListPath = '/Forms/GetList';
-
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `formsGetList()` instead.
@@ -63,7 +55,6 @@ export class FormsService extends BaseService {
   formsGetList$Response(params: FormsGetList$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Form>>> {
     return formsGetList(this.http, this.rootUrl, params, context);
   }
-
   /**
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `formsGetList$Response()` instead.
@@ -75,10 +66,8 @@ export class FormsService extends BaseService {
       map((r: StrictHttpResponse<Array<Form>>): Array<Form> => r.body)
     );
   }
-
   /** Path part for operation `formsGetByInternalId()` */
   static readonly FormsGetByInternalIdPath = '/Forms/GetByInternalId';
-
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `formsGetByInternalId()` instead.
@@ -88,7 +77,6 @@ export class FormsService extends BaseService {
   formsGetByInternalId$Response(params: FormsGetByInternalId$Params, context?: HttpContext): Observable<StrictHttpResponse<Form>> {
     return formsGetByInternalId(this.http, this.rootUrl, params, context);
   }
-
   /**
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `formsGetByInternalId$Response()` instead.
@@ -100,10 +88,8 @@ export class FormsService extends BaseService {
       map((r: StrictHttpResponse<Form>): Form => r.body)
     );
   }
-
   /** Path part for operation `formsDelete()` */
   static readonly FormsDeletePath = '/Forms/Delete';
-
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `formsDelete()` instead.
@@ -113,7 +99,6 @@ export class FormsService extends BaseService {
   formsDelete$Response(params: FormsDelete$Params, context?: HttpContext): Observable<StrictHttpResponse<Form>> {
     return formsDelete(this.http, this.rootUrl, params, context);
   }
-
   /**
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `formsDelete$Response()` instead.
@@ -125,5 +110,4 @@ export class FormsService extends BaseService {
       map((r: StrictHttpResponse<Form>): Form => r.body)
     );
   }
-
 }

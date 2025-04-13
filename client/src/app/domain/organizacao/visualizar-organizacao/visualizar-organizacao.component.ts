@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 @Component({
   selector: 'ci-visualizar-organizacao',
   standalone: true,
@@ -8,5 +7,4 @@ import { Component } from '@angular/core';
   styleUrl: './visualizar-organizacao.component.scss'
 })
 export class VisualizarOrganizacaoComponent {
-
 }

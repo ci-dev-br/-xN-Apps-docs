@@ -13,7 +13,6 @@ export interface IApplication {
   roles?: Array<string> | null;
   url?: string | null;
 }
-
 export class Application implements IApplication {
   static typeName = 'Application';
   private _categoria?: string | null;

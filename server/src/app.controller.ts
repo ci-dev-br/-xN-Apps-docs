@@ -4,7 +4,6 @@ import { Public } from '../libs/auth/src/decorators/public.decorator';
 import { Request, Response } from 'express';
 import { resolve } from 'path';
 import { existsSync } from 'fs';
-
 @Controller('*')
 export class AppController {
   constructor(private readonly appService: AppService) {

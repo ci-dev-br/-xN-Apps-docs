@@ -1,7 +1,6 @@
 import { Component } from "@angular/core";
 import { Prancheta } from "@portal/api";
 import { PranchetaService } from "../../config.service";
-
 @Component({
     selector: 'px-layout',
     templateUrl: 'layout.component.html',

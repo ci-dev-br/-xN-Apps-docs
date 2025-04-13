@@ -13,7 +13,6 @@ import { NotificationService } from "./services/notification.service";
 import { ServicesService } from "./services/services.service";
 import { LocalizationService } from "./services/localization.service";
 import { TranslateDirective } from "./i18n/translate.directive";
-
 @NgModule({ declarations: [
         PurePipe,
         AutoFocusDirective,

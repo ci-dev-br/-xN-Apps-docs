@@ -14,7 +14,6 @@ export interface IPessoa {
   lastModifiedAt?: string | null;
   lastModifiedBy?: {
 } | null;
-
   /**
    * Nome
    */
@@ -24,7 +23,6 @@ export interface IPessoa {
   registroGeralRepublicaBrasileira?: string | null;
   registroGeralRepublicaBrasileiraOrgaoEmissorOrgaoEmissor: string;
   site?: string | null;
-
   /**
    * Sobrenome
    */
@@ -32,7 +30,6 @@ export interface IPessoa {
   tenants?: Array<string> | null;
   tipoJuridico?: string | null;
 }
-
 export class Pessoa implements IPessoa {
   static typeName = 'Pessoa';
   private _createdAt?: string | null;
@@ -101,7 +98,6 @@ export class Pessoa implements IPessoa {
     if(this._lastModifiedBy === value) return;
     this._lastModifiedBy = value;
   }
-
   /**
    * Nome
    */
@@ -141,7 +137,6 @@ export class Pessoa implements IPessoa {
     if(this._site === value) return;
     this._site = value;
   }
-
   /**
    * Sobrenome
    */

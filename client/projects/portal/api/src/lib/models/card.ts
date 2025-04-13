@@ -6,7 +6,6 @@ export interface ICard {
   componentVersion?: string | null;
   settings?: CardOption | null;
 }
-
 export class Card implements ICard {
   static typeName = 'Card';
   private _componentName?: string | null;

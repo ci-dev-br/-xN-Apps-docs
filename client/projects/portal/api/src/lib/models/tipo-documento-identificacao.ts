@@ -4,7 +4,6 @@ export interface ITipoDocumentoIdentificacao {
   createdAt?: string | null;
   createdBy?: {
 } | null;
-
   /**
    * Descrição
    */
@@ -15,7 +14,6 @@ export interface ITipoDocumentoIdentificacao {
 } | null;
   tenants?: Array<string> | null;
 }
-
 export class TipoDocumentoIdentificacao implements ITipoDocumentoIdentificacao {
   static typeName = 'TipoDocumentoIdentificacao';
   private _createdAt?: string | null;
@@ -33,7 +31,6 @@ export class TipoDocumentoIdentificacao implements ITipoDocumentoIdentificacao {
     if(this._createdBy === value) return;
     this._createdBy = value;
   }
-
   /**
    * Descrição
    */

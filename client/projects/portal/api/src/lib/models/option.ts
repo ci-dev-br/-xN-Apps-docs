@@ -4,7 +4,6 @@ export interface IOption {
   label?: string | null;
   type?: string | null;
 }
-
 export class Option implements IOption {
   static typeName = 'Option';
   private _label?: string | null;

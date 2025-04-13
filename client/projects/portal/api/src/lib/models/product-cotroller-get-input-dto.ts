@@ -8,7 +8,6 @@ export interface IProductCotrollerGetInputDto {
   where?: {
 } | null;
 }
-
 export class ProductCotrollerGetInputDto implements IProductCotrollerGetInputDto {
   static typeName = 'ProductCotrollerGetInputDto';
   private _orderBy?: {

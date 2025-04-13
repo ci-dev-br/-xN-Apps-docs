@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-
 export class ReadDirectoryOutput {
     @ApiProperty({ nullable: true, required: false }) path?: string;
     @ApiProperty({ nullable: true, required: false }) name?: string;

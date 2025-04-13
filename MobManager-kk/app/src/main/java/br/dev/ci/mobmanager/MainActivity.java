@@ -1,19 +1,17 @@
 package br.dev.ci.mobmanager;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
@@ -23,7 +21,9 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.dev.ci.mobmanager.client.DeviceConnect;
 import br.dev.ci.mobmanager.client.ManagerClient;
+import br.dev.ci.mobmanager.client.model.Device;
 import br.dev.ci.mobmanager.client.model.PhoneNumber;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,14 +41,16 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        String api = "https://srv33.internals.ci.dev.br:664/";
-        String ws = "wss://srv33.internals.ci.dev.br:664/";
+        String api = "http://srv33.internals.ci.dev.br:86/";
+        String ws = "ws://srv33.internals.ci.dev.br:86/";
         this.message = findViewById(R.id.message);
         permission();
         try {
             getPhoneNumber();
         } catch( Exception ex){
-
+            if(this.message != null) {
+                this.message.setText("Falha ao identificar números do dispositivo.");
+            }
         }
         if(this.message != null){
             this.message.setText("Iniciando conexção... (1)");
@@ -57,10 +59,24 @@ public class MainActivity extends AppCompatActivity {
         if(this.message != null){
             this.message.setText("Identificando números disponíveis");
         }
-        adicionarItem(api, ws);
-        if(this.message != null){
-            this.message.setText("Dipositivo identificado");
+        try {
+            adicionarItem(api, ws);
+            Boolean ffail = false;
+            for (DeviceConnect dc : ManagerClient.getInstance().getConnections()){
+                    if( dc.status == null ){
+                        ffail = true;
+                    }
+            }
+            if(ffail == Boolean.TRUE){
+                throw new Exception("Falha ao conectar");
+            }
+            if(this.message != null){
+                this.message.setText("Dipositivo identificado");
+            }
+        }catch(Exception ex){
+            this.message.setText("Falha ao conectar");
         }
+
         if(this.appsButton != null){
             this.appsButton.setOnClickListener(v -> this.openApps());
         }
@@ -77,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
         dialog.show();*/
     }
-    public void adicionarItem(String api, String ws) {
-        ManagerClient.getInstance().addGateway( api, ws);
+    public AsyncTask<Device, Void, String> adicionarItem(String api, String ws) {
+        return ManagerClient.getInstance().addGateway( api, ws);
     }
     private void permission() {
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {

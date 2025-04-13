@@ -25,7 +25,6 @@ import { OrganizacaoEntities, OrganizacaoModule } from '@ci/organizacao/organiza
 import { INPIEntities, INPIModule } from '@ci/inpi/inpi.module';
 import { SeoMarketingEntities, SeoMarketingModule } from '@ci/seo-marketing';
 import { config } from 'dotenv';
-
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { FORMS_ENTITIES, FormsModule } from '@ci/forms';
@@ -35,7 +34,6 @@ import { ProjetosEntities, ProjetosModule } from '@ci/projetos';
 import { L10nEntities, L10nModule } from '@ci/core/l10n/l10n.module';
 import { CrmEntities } from '@ci/crm/models';
 import { CrmModule } from '@ci/crm';
-
 /**
  * Adicione os módulos que podem ser carregados pela configfuração do environment;
  * Nesta versão a compilação possui todos os módulos mesmo não estando indicados no .env
@@ -43,14 +41,12 @@ import { CrmModule } from '@ci/crm';
  * verões futuras, sendo gerado apenas o fonte dos módulos indicados no .env, impedindo uso
  * direto entre módulos. Para integrar módulos crie um módulo raiz.
  */
-
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
 const LoadedEntities = [
 ];
 const LoadedModules = [
 ]
-
 /***
  * Trecho auto-gerado, não modificar manualmente «
  */

@@ -2,7 +2,6 @@ import { FullAuditedEntity } from "@ci/manager/dao";
 import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity } from "typeorm";
 import { schema } from "./schema";
-
 @Entity({ schema })
 export class KeyWord extends FullAuditedEntity {
     @ApiProperty({ required: false, nullable: true }) @Column({ nullable: true }) termo?: string;

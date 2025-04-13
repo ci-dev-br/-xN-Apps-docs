@@ -3,7 +3,6 @@ import { Payload } from "../dto/payload.dto";
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CadastroBase, IDynamicForm } from "../service/CadastroBase";
 import { ModuleRef } from "@nestjs/core";
-
 @ApiTags('Cadastro')
 @Controller('Cadastro')
 export class CadastroController {

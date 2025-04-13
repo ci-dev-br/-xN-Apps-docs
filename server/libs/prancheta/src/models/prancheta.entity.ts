@@ -1,11 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { FullAuditedEntity } from "@ci/core";
-
 export class CardOption {
     [option: string]: any;
 }
-
 export class Card {
     @ApiProperty({ nullable: true, required: false })
     componentName?: string;
@@ -14,7 +12,6 @@ export class Card {
     @ApiProperty({ nullable: true, required: false, type: CardOption })
     settings: CardOption;
 }
-
 @Entity()
 export class Prancheta extends FullAuditedEntity {
     @ApiProperty({ nullable: true, required: false })

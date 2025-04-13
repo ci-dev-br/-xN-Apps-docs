@@ -4,7 +4,6 @@ import { ChaveAcesso } from "@ci/core";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserService } from "./user.service";
 import { JwtService } from "@nestjs/jwt";
-
 @Injectable()
 export class CredencialService {
     constructor(

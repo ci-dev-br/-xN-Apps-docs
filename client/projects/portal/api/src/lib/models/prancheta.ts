@@ -15,7 +15,6 @@ export interface IPrancheta {
   tenants?: Array<string> | null;
   title?: string | null;
 }
-
 export class Prancheta implements IPrancheta {
   static typeName = 'Prancheta';
   private _cards?: Array<Card> | null;

@@ -18,7 +18,6 @@ export interface IDictionary {
     CPF?: string;
     Nome?: string;
 }
-
 export const L: IDictionary = {
     CurrentLang: 'pt',
     NomeCompleto: "Nome Completo",

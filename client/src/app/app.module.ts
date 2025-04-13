@@ -11,7 +11,6 @@ import { CoreModule } from './core/core.module';
 import { ContextmenuModule } from './components/contextmenu/contextmenu.module';
 import { PaginaErroComponent } from './views/pagina-erro/pagina-erro.component';
 import { OrganizacaoService } from './services/organizacao.service';
-
 @NgModule({
   declarations: [
     AppComponent,

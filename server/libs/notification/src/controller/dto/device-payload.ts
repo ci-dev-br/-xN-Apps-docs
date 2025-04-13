@@ -1,6 +1,5 @@
 import { PhoneNumber } from "@ci/notification/notificacao.module";
 import { ApiProperty } from "@nestjs/swagger";
-
 export class DevicePayload {
     @ApiProperty({ nullable: true, required: false })
     id?: string;

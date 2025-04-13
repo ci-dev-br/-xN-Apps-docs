@@ -2,7 +2,6 @@ import { ApiProperty } from "@nestjs/swagger";
 import { FullAuditedEntity } from "@ci/core";
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Attachment } from "./attachment.entity";
-
 @Entity()
 export class Document extends FullAuditedEntity {
     @ApiProperty({ nullable: true }) @Column({ nullable: true })

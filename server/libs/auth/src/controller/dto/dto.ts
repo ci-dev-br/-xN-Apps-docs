@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { ChaveAcesso } from "@ci/core";
 import { User } from "@ci/auth/models/user.entity";
-
 export class RegistrarInputDto {
     @ApiProperty({ required: false })
     identificacao?: string;
@@ -11,7 +10,6 @@ export class RegistrarInputDto {
     password?: string;
     @ApiProperty({ required: false })
     phone?: string;
-
 }
 export class AcessoPayload {
     @ApiProperty({ required: false })
@@ -39,12 +37,10 @@ export class AcessoPayload {
         if (!!mode) this.mode = mode;
     }
 }
-
 export class RefreshPayloadInputDto {
     @ApiProperty({ required: true, nullable: false })
     refreshToken: string;
 }
-
 export class AuthorizationOutput {
     @ApiProperty({ required: true, nullable: false })
     authorization: string;

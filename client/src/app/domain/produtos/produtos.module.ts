@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { ProdutosRoutingModule } from './produtos-routing.module';
 import { ProdutosComponent } from './produtos.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,7 +11,6 @@ import { GridModule } from 'src/app/components/grid/grid.module';
 import { MatCardModule } from '@angular/material/card';
 import { CardActionsComponent } from 'src/app/components/card/card-actions.component';
 import { CoreModule } from 'src/app/core/core.module';
-
 @NgModule({
   declarations: [
     ProdutosComponent

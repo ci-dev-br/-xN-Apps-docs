@@ -5,20 +5,16 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
-
 import { Form } from '../../models/form';
 import { FormCotrollerGetInputDto } from '../../models/form-cotroller-get-input-dto';
-
 export interface FormsGetList$Params {
       body: FormCotrollerGetInputDto
 }
-
 export function formsGetList(http: HttpClient, rootUrl: string, params: FormsGetList$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Form>>> {
   const rb = new RequestBuilder(rootUrl, formsGetList.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
-
   return http.request(
     rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
@@ -28,5 +24,4 @@ export function formsGetList(http: HttpClient, rootUrl: string, params: FormsGet
     })
   );
 }
-
 formsGetList.PATH = '/Forms/GetList';

@@ -4,7 +4,6 @@ import { Form } from '../models/form';
 export interface ISyncPayloadDaoForm {
   data: Form;
 }
-
 export class SyncPayloadDaoForm implements ISyncPayloadDaoForm {
   static typeName = 'SyncPayloadDaoForm';
   private _data: Form;

@@ -3,7 +3,6 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity } from "typeorm";
 import { FullAuditedEntity } from "../dao";
 import { schema } from "../noms";
-
 /**
  * 
  * 

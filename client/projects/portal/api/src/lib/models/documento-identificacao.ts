@@ -15,7 +15,6 @@ export interface IDocumentoIdentificacao {
   tenants?: Array<string> | null;
   tipo?: TipoDocumentoIdentificacao | null;
 }
-
 export class DocumentoIdentificacao implements IDocumentoIdentificacao {
   static typeName = 'DocumentoIdentificacao';
   private _createdAt?: string | null;

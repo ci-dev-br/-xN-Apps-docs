@@ -7,7 +7,6 @@ export interface IPayload {
   equals?: string | null;
   fields?: Array<string> | null;
 }
-
 export class Payload implements IPayload {
   static typeName = 'Payload';
   private _by?: string | null;

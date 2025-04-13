@@ -4,7 +4,6 @@ import { ControllerDaoBase, SyncPayloadDao } from "@ci/core";
 import { Pessoa } from "../model/pessoa.entity";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { FindOptionsWhere } from "typeorm";
-
 export class SyncPayloadDaoPessoa extends SyncPayloadDao<Pessoa> {
     @ApiProperty({ type: Pessoa })
     override data?: Pessoa;
@@ -18,14 +17,12 @@ export class ObterListaPessoa {
     @ApiProperty({})
     where?: FindOptionsWhere<Pessoa>[] | FindOptionsWhere<Pessoa>;
 }
-
 export class PessoaCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
     query?: string;
     @ApiProperty({ nullable: true, required: false })
     limit?: number;
 }
-
 /**
  * Pessoa Controller
  * 
@@ -47,7 +44,6 @@ export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
     ) {
         return await super.Sync(body)
     }
-
     @Post('Get')
     @ApiResponse({
         type:

@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { CodexRoutingModule } from './codex-routing.module';
 import { CodeEditorComponent } from './code-editor/code-editor.component';
 import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
@@ -15,7 +14,6 @@ import { ProjetoComponent } from './projeto/projeto.component';
 import { WindowModule } from 'src/app/components/window/window.module';
 import { AgentService } from './agent.service';
 import { MatTabsModule } from '@angular/material/tabs';
-
 @NgModule({
   declarations: [
     CodeEditorComponent,

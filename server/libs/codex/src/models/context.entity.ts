@@ -1,18 +1,14 @@
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
-
 export class Parameter<T> {
     valueStrinOf: string;
     value: T;
 }
-
 @Entity()
 export class Context {
     // parameters?: Parameter<any>[];
-
     @ManyToMany(t => InstanceExecutor)
     Executor?: InstanceExecutor
 }
-
 /***
  *  Instancia de Executor registra as Instancias da Aplicação Cliente/Servidor registrada 
  * para processamento de informação; O processamento da Informação do sistema ocorre de
@@ -34,7 +30,6 @@ export class InstanceExecutor {
          comment: 'Máximo de esforço em milissegundos de uma execução'
      })
      MaximumEsforceInMilliseconds?: number */
-
     @Column({ nullable: true })
     lastIp?: string;
 }

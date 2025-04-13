@@ -3,7 +3,6 @@ import { Equal, Repository } from "typeorm";
 import { Device } from "../models/device.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { PhoneNumber } from "../notificacao.module";
-
 @Injectable()
 export class DeviceService {
     constructor(
@@ -52,7 +51,6 @@ export class DeviceService {
                 }
             })
         }
-
         return device;
     }
     async find(device?: Device) {

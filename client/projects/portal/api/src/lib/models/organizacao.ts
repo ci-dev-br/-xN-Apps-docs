@@ -4,7 +4,6 @@ import { Pessoa } from '../models/pessoa';
 import { Photo } from '../models/photo';
 import { Tenant } from '../models/tenant';
 export interface IOrganizacao {
-
   /**
    * Pessoa Responsável pelo cadastro da Organização na Plataforma virtual.
    */
@@ -16,12 +15,10 @@ export interface IOrganizacao {
   lastModifiedAt?: string | null;
   lastModifiedBy?: {
 } | null;
-
   /**
    * Logomarca da Organização
    */
   logo?: Photo | null;
-
   /**
    * Nome da Organização
    */
@@ -29,10 +26,8 @@ export interface IOrganizacao {
   tenant?: Tenant | null;
   tenants?: Array<string> | null;
 }
-
 export class Organizacao implements IOrganizacao {
   static typeName = 'Organizacao';
-
   /**
    * Pessoa Responsável pelo cadastro da Organização na Plataforma virtual.
    */
@@ -78,7 +73,6 @@ export class Organizacao implements IOrganizacao {
     if(this._lastModifiedBy === value) return;
     this._lastModifiedBy = value;
   }
-
   /**
    * Logomarca da Organização
    */
@@ -88,7 +82,6 @@ export class Organizacao implements IOrganizacao {
     if(this._logo === value) return;
     this._logo = value;
   }
-
   /**
    * Nome da Organização
    */

@@ -3,7 +3,6 @@ import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocke
 import { createHash } from "crypto";
 import { Server } from "ws";
 import { BusService } from "./events.service";
-
 @WebSocketGateway(
     {
         transports: [
@@ -87,7 +86,6 @@ export class EventsGateway implements OnGatewayInit {
                 __last_data["::CI_INTERNAL.CLIENTS"] = [];
             __last_data["::CI_INTERNAL.CLIENTS"].push(client);
         }
-
     }
     set(id: string, ws: any, momentum?: number) {
         ws.id = id;
@@ -132,7 +130,6 @@ export class EventsGateway implements OnGatewayInit {
         }
     }
     afterInit(server: any) {
-
     }
     lasts: string[] = [];
     sing(data?: any) {

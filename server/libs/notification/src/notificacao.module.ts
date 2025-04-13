@@ -8,6 +8,7 @@ import { DeviceService } from "./services/device.service";
 import { MessageController } from "./controller/message.controller";
 import { MessageService } from "./services/message.service";
 import { NotificationService } from "./services/notification.service";
+import { MailService } from "./services/mail.service";
 export const Entities = [
     Device,
     Message,
@@ -23,14 +24,15 @@ export const Entities = [
         DeviceService,
         MessageService,
         NotificationService,
+        MailService,
     ],
     controllers: [
-        MessageController,
         DeviceController,
         MessageController,
     ],
     exports: [
         MessageService,
+        MailService,
     ]
 })
 export class NotificacaoModule { }

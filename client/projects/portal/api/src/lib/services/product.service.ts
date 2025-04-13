@@ -4,27 +4,22 @@ import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
 import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
-
 import { Product } from '../models/product';
 import { productGet } from '../fn/product/product-get';
 import { ProductGet$Params } from '../fn/product/product-get';
 import { productSync } from '../fn/product/product-sync';
 import { ProductSync$Params } from '../fn/product/product-sync';
 import { SyncPayloadDaoProduct } from '../models/sync-payload-dao-product';
-
 @Injectable()
 export class ProductService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
   }
-
   /** Path part for operation `productSync()` */
   static readonly ProductSyncPath = '/Product/Sync';
-
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `productSync()` instead.
@@ -34,7 +29,6 @@ export class ProductService extends BaseService {
   productSync$Response(params: ProductSync$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoProduct>> {
     return productSync(this.http, this.rootUrl, params, context);
   }
-
   /**
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `productSync$Response()` instead.
@@ -46,10 +40,8 @@ export class ProductService extends BaseService {
       map((r: StrictHttpResponse<SyncPayloadDaoProduct>): SyncPayloadDaoProduct => r.body)
     );
   }
-
   /** Path part for operation `productGet()` */
   static readonly ProductGetPath = '/Product/Get';
-
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `productGet()` instead.
@@ -59,7 +51,6 @@ export class ProductService extends BaseService {
   productGet$Response(params: ProductGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Product>>> {
     return productGet(this.http, this.rootUrl, params, context);
   }
-
   /**
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `productGet$Response()` instead.
@@ -71,5 +62,4 @@ export class ProductService extends BaseService {
       map((r: StrictHttpResponse<Array<Product>>): Array<Product> => r.body)
     );
   }
-
 }

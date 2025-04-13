@@ -8,7 +8,6 @@ import { MatInputModule } from '@angular/material/input';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
-
 export class InnerService {
   status: 'offline' | 'online' | 'connecting' = 'offline';
   deviceConnection: any;
@@ -39,7 +38,6 @@ export class InnerService {
     Object.assign(this.mem, pool);
   }
 }
-
 @Component({
   selector: 'ci-mob-fake',
   standalone: true,
@@ -75,7 +73,6 @@ export class MobFakeComponent implements OnDestroy {
   async conectar() {
     if (this.status === 'off-line')
       this.status = 'conectando';
-
     const service = new InnerService(this.form.get('url')?.value);
     this.addService(service);
     await service.conectar(this.http);
@@ -89,7 +86,6 @@ export class MobFakeComponent implements OnDestroy {
   }
   connect(service: InnerService) {
     service.status = 'online';
-
     const ever = async () => {
       if (service.status === 'online') {
         try {

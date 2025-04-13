@@ -1,6 +1,5 @@
 import { SnapshotService } from "@ci/manager";
 import { Injectable } from "@nestjs/common";
-
 @Injectable()
 export class SearchService /* extends DaoServiceBase<Page> */ {
     constructor(
@@ -10,8 +9,6 @@ export class SearchService /* extends DaoServiceBase<Page> */ {
     ) {
         // super(snap, repo);
     }
-
     async findByText(text: string) {
-
     }
 }

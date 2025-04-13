@@ -1,7 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, Injector, Optional } from "@angular/core";
 import { WindowService } from "src/app/components/window/window.service";
-
 @Injectable()
 export class AgentService {
     constructor(
@@ -30,7 +29,6 @@ export class AgentService {
                     injetor: this.injetor,
                     janela: this.janela,
                 };
-
                 const any_code = `(new Promise(async (res,rej) => {
                         try{
                             const ___internal = (async () => {
@@ -45,7 +43,6 @@ export class AgentService {
                     }).catch(err => {
                         alert('Falha ao executar código no agente.');
                     });`;
-
                 await eval(any_code);
             })();
         } catch (error) {

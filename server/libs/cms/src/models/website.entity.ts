@@ -2,7 +2,6 @@ import { ApiProperty } from "@nestjs/swagger";
 import { User } from "@ci/auth/models/user.entity";
 import { FullAuditedEntity } from "@ci/core";
 import { Column, Entity, ManyToMany } from "typeorm";
-
 @Entity({
     schema: 'cms',
 })

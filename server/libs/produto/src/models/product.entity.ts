@@ -2,7 +2,6 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { FullAuditedEntity } from "@ci/core";
 import { Marca } from "@ci/inpi/model/marca.entity";
-
 @Entity()
 export class Product extends FullAuditedEntity {
     @ApiProperty({ nullable: true, required: false })

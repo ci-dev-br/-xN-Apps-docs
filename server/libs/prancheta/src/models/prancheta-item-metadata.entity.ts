@@ -1,6 +1,5 @@
 import { Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Prancheta } from "./prancheta.entity";
-
 @Entity()
 export class PranchetaItemMetadata {
     @PrimaryGeneratedColumn('uuid')

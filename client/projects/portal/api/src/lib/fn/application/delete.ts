@@ -5,19 +5,15 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
-
 import { Application } from '../../models/application';
-
 export interface Delete$Params {
       body: Application
 }
-
 export function delete$(http: HttpClient, rootUrl: string, params: Delete$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
   const rb = new RequestBuilder(rootUrl, delete$.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
-
   return http.request(
     rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
@@ -27,5 +23,4 @@ export function delete$(http: HttpClient, rootUrl: string, params: Delete$Params
     })
   );
 }
-
 delete$.PATH = '/Application/Delete';

@@ -4,7 +4,6 @@ import { Organizacao } from '../models/organizacao';
 export interface IOrganizacaoSyncPayload {
   data: Organizacao;
 }
-
 export class OrganizacaoSyncPayload implements IOrganizacaoSyncPayload {
   static typeName = 'OrganizacaoSyncPayload';
   private _data: Organizacao;

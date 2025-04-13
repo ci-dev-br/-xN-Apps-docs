@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable, throwError } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
 import { TokenService } from "./token.service";
-import { AuthService } from "@portal/api";
+import { AuthService, RefreshPayloadInputDto } from "@portal/api";
 @Injectable()
 export class AuthorizationHttpInterceptor implements HttpInterceptor {
     private refreshing?: boolean;
@@ -39,7 +39,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             return this.auth.refresh({
                 body: {
                     refreshToken: this.token.RefreshToken
-                }
+                } as RefreshPayloadInputDto
             }).pipe(
                 switchMap((token: any) => {
                     this.refreshing = false;

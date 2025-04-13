@@ -1,7 +1,6 @@
 import { Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { PhoneNumber } from "./phone-number.entity";
-
 @Entity({
     schema: 'notification'
 })

@@ -6,7 +6,6 @@ export interface IObterListaPessoa {
   where: {
 };
 }
-
 export class ObterListaPessoa implements IObterListaPessoa {
   static typeName = 'ObterListaPessoa';
   private _skip: number;

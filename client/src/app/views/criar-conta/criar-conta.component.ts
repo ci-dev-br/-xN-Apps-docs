@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { lastValueFrom } from 'rxjs';
 import { AuthService } from '@portal/api';
-
 @Component({
   selector: 'ci-criar-conta',
   templateUrl: './criar-conta.component.html',

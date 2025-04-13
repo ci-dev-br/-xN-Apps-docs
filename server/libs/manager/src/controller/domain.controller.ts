@@ -2,7 +2,6 @@ import { Body, Controller, Post } from "@nestjs/common";
 import { DomainService } from "../service/domain.service";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Domain } from "../model/domain.entity";
-
 @ApiTags('Domain')
 @Controller('Domain')
 export class DomainController {

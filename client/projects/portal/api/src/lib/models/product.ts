@@ -19,13 +19,11 @@ export interface IProduct {
   sku?: string | null;
   subGrupo?: string | null;
   tenants?: Array<string> | null;
-
   /**
    * URL do site
    */
   urlWebsiteOficial?: string | null;
 }
-
 export class Product implements IProduct {
   static typeName = 'Product';
   private _codigoBarras?: string | null;
@@ -124,7 +122,6 @@ export class Product implements IProduct {
     if(this._tenants === value) return;
     this._tenants = value;
   }
-
   /**
    * URL do site
    */

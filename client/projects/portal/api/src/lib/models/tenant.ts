@@ -4,7 +4,6 @@ export interface ITenant {
   id: string;
   name: string | null;
 }
-
 export class Tenant implements ITenant {
   static typeName = 'Tenant';
   private _id: string;

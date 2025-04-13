@@ -3,7 +3,6 @@
 export interface IGetInputDtos {
   all?: boolean | null;
 }
-
 export class GetInputDtos implements IGetInputDtos {
   static typeName = 'GetInputDtos';
   private _all?: boolean | null;

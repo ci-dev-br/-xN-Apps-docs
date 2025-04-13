@@ -6,7 +6,6 @@ export interface IPhoneNumber {
 };
   subscriptionId: number;
 }
-
 export class PhoneNumber implements IPhoneNumber {
   static typeName = 'PhoneNumber';
   private _carrierName: string;

@@ -1,5 +1,7 @@
 package br.dev.ci.mobmanager.client;
 
+import android.os.AsyncTask;
+
 import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,11 +12,14 @@ import br.dev.ci.mobmanager.client.model.GatewayConnection;
 import br.dev.ci.mobmanager.client.model.PhoneNumber;
 
 public class ManagerClient {
-    // private InicioActivity inicioActivity;
+    private List<DeviceConnect> connections = new ArrayList<>();
     private static ManagerClient _instance = new ManagerClient();
     private List<PhoneNumber> phones;
     public List<PhoneNumber> getPhones() {
         return phones;
+    }
+    public List<DeviceConnect> getConnections() {
+        return connections;
     }
     public void setPhones(List<PhoneNumber> phones) {
         this.phones = phones;
@@ -22,15 +27,19 @@ public class ManagerClient {
     public static ManagerClient getInstance(){
         return ManagerClient._instance;
     }
+    private AsyncTask<Device, Void, String> task;
     List<GatewayConnection> gateways;
-
-    public void addGateway(String url, String ws) {
+    public AsyncTask<Device, Void, String> getTask() {
+        return this.task;
+    }
+    public AsyncTask<Device, Void, String> addGateway(String url, String ws) {
         GatewayConnection gateway = new GatewayConnection(){{
             if(url != null)setUrl(url);
             if(ws != null)setWs(ws);
         }};
         this.getGateways().add(gateway);
-        this.connect(gateway);
+        this.task = this.connect(gateway);
+        return this.task;
     }
 
     public List<GatewayConnection> getGateways(){
@@ -38,15 +47,16 @@ public class ManagerClient {
         return this.gateways;
     }
 
-    private void connect(GatewayConnection connection){
-        DeviceConnect dc = new DeviceConnect(connection);
+    private AsyncTask<Device, Void, String> connect(GatewayConnection connection){
+        DeviceConnect device_connection = new DeviceConnect(connection);
+        connections.add(device_connection);
         Device device = new Device(){{
             setId(getMacAddr());
-            setApplicationId("e60e2ed1-e318-4f38-bdcd-2fceb3d0315d");
+            setApplicationId("kitkatd1-e318-4f38-bdcd-2fceb3d0315d");
             setName("MMKK");
             setNumbers(getPhones());
         }};
-        dc.execute(device);
+        return device_connection.execute(device);
     }
     private  String getMacAddr() {
         try {

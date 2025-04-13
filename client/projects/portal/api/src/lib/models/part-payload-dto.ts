@@ -7,7 +7,6 @@ export interface IPartPayloadDto {
   md5Part?: string | null;
   partialBase64?: string | null;
 }
-
 export class PartPayloadDto implements IPartPayloadDto {
   static typeName = 'PartPayloadDto';
   private _TotalParts?: number | null;

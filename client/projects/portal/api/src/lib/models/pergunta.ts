@@ -6,7 +6,6 @@ export interface IPergunta {
   questao?: string | null;
   type?: string | null;
 }
-
 export class Pergunta implements IPergunta {
   static typeName = 'Pergunta';
   private _options?: Array<Option> | null;

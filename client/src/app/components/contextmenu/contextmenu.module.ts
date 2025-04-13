@@ -1,7 +1,6 @@
 import { ModuleWithProviders, NgModule } from "@angular/core";
 import { ContextmenuDirective } from "./contextmenu.directive";
 import { ContextmenuService } from "./contextmenu.service";
-
 @NgModule({
     imports: [],
     declarations: [

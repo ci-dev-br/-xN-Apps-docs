@@ -40,7 +40,7 @@ export class AppComponent implements OnInit {
       // as part of a critical journey.
       // showInAppInstallPromotion();
     });
-    this.worker();
+    // this.worker();
   }
   private showInAppInstallPromotion() {
     alert("Instala ai tio")

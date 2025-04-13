@@ -6,7 +6,6 @@ export interface IRegistrarInputDto {
   password?: string;
   phone?: string;
 }
-
 export class RegistrarInputDto implements IRegistrarInputDto {
   static typeName = 'RegistrarInputDto';
   private _email?: string;

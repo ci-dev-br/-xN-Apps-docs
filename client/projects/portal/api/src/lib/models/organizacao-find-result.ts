@@ -5,7 +5,6 @@ export interface IOrganizacaoFindResult {
   '0': Array<Organizacao> | null;
   '1': number | null;
 }
-
 export class OrganizacaoFindResult implements IOrganizacaoFindResult {
   static typeName = 'OrganizacaoFindResult';
   private _'0': Array<Organizacao> | null;

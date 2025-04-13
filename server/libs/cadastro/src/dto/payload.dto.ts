@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-
 /**
  *  Dto data Payload Base
  */

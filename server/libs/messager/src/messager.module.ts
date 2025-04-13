@@ -10,14 +10,13 @@ import { CoreModule } from "@ci/core";
 import { Chamada } from "./model/chamada.entity";
 import { ChamadaService } from "./service/chamada.service";
 import { ChamadaController } from "./controller/chamada.controller";
-
+import { NotificacaoModule } from "@ci/notification";
 export const Entities = [
     Conversation,
     DirectMessage,
     Contact,
     Chamada,
 ];
-
 @Module({
     imports: [
         TypeOrmModule.forFeature([
@@ -25,6 +24,7 @@ export const Entities = [
         ]),
         TenantModule,
         CoreModule,
+        NotificacaoModule,
     ],
     providers: [
         ContactService,

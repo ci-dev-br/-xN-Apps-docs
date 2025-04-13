@@ -3,11 +3,9 @@ import { ApiExcludeController, ApiExcludeEndpoint, ApiHideProperty, ApiProperty 
 import { InjectRepository } from "@nestjs/typeorm";
 import { Column, CreateDateColumn, Entity, Equal, FindOneOptions, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, IsNull, JoinColumn, JoinTable, ManyToMany, ManyToOne, Not, OneToOne, PrimaryGeneratedColumn, Repository, UpdateDateColumn } from "typeorm";
 import { Tenant } from "@ci/tenant";
-
 import { createHash } from 'crypto';
 import { ChaveAcesso } from "@ci/core";
 import { Exclude } from "class-transformer";
-
 export abstract class AuditedEntity {
     @ApiProperty({ nullable: true, required: false, uniqueItems: true })
     @PrimaryGeneratedColumn('uuid')
@@ -34,7 +32,6 @@ export abstract class AuditedEntity {
     @Column({ nullable: true })
     deleted?: boolean;
 }
-
 /**
  * Snapshot representa os dados visualizados por um ou mais usuários em um determinado momento. Toda vez que um dado é consultado, ele cria um snapshot, que permanece por um curto período em cache no Nodo da aplicação, para acesso de todos que possuem os níveis de acesso necessários.  
  * 
@@ -48,7 +45,6 @@ export class Snapshot extends AuditedEntity {
     })
     hash: string;
 }
-
 /***
  * Entidade Auditável vinculada entre usuário 1:n Tenant . 
  * 
@@ -58,7 +54,6 @@ export abstract class FullAuditedEntity extends AuditedEntity {
     @JoinTable({ schema: 'snapshot' })
     snapshots?: Snapshot[];
 }
-
 /***
  * Serviço de Snapshot
  * 
@@ -78,7 +73,6 @@ export class SnapshotService {
             if (!!hash && !!hash.hash)
                 this.lastSnapshotHash = hash.hash;
         } catch (error) {
-
         }
     }
     async snapshot(entidade: FullAuditedEntity) {
@@ -98,14 +92,12 @@ export class SnapshotService {
         }
     }
 }
-
 export abstract class DaoServiceBase<E extends FullAuditedEntity> {
     constructor(
         private readonly _snap: SnapshotService,
         private readonly _repo?: Repository<E>,
     ) {
     }
-
     async sincronizar(data: E, request?: any) {
         let ___receipt_data = data;
         let ___internal_data: E = null;
@@ -132,14 +124,12 @@ export abstract class DaoServiceBase<E extends FullAuditedEntity> {
                         .filter(p => !['internalId', 'createdAt', 'createdBy'].includes(p))
                         .forEach(p => ___internal_data[p] = ___receipt_data[p]);
                     ___internal_data.lastModifiedAt = new Date();
-
                     if (request) {
                         if (request.chaveAcesso) {
                             ___internal_data.lastModifiedBy = { id: request.chaveAcesso };
                         }
                     }
                     // TODO: adicionar usuário modificador
-
                     if (___internal_data instanceof FullAuditedEntity) {
                         await this._snap.snapshot(___internal_data);
                     }
@@ -149,15 +139,12 @@ export abstract class DaoServiceBase<E extends FullAuditedEntity> {
         return await this._repo.save(___internal_data);
         /// }
     }
-
     async obterLista(options?: { skip?: number, take?: number, where?: FindOptionsWhere<E>[] | FindOptionsWhere<E>, relations?: FindOptionsRelations<E> | FindOptionsRelationByString, orderBy?: any }, request?: any) {
         let _where: FindOptionsWhere<E>[] | FindOptionsWhere<E> = options.where || {};
-
         if (_where)
             (Array.isArray(_where) ? _where : [_where]).forEach((w: any) => {
                 w.createdBy = { identifiedUser: Equal(request.user.id) };
                 w.deleted = IsNull();
-
                 if (!Array.isArray(_where)) _where = [_where];
                 if (Array.isArray(_where)) _where.push({ ...w, deleted: IsNull() })
             });
@@ -169,7 +156,6 @@ export abstract class DaoServiceBase<E extends FullAuditedEntity> {
             deleted: IsNull(),
             createdBy: { identifiedUser: Equal(request.user.id) }
         } as FindOptionsWhere<E>;
-
         return await this._repo.findOne({ where, relations: { createdBy: true, lastModifiedBy: true } as any })
     }
     /**
@@ -185,30 +171,24 @@ export class SyncPayloadDao<Entity> {
     @ApiProperty()
     data?: Entity;
 }
-
 export class GetByInternalIdInputDto {
     @ApiProperty({ nullable: true, required: false })
     internalId?: string;
 }
-
 export abstract class ControllerDaoBase<Service extends DaoServiceBase<E>, E> {
     constructor(
         private _service: Service,
     ) { }
-
     async Sync(entity: SyncPayloadDao<E>, request?: any) {
         return await this._service.sincronizar(entity.data, request);
     }
     async GetList(options?: { skip?: number, take?: number, where?: any, relations?: FindOptionsRelations<E> | FindOptionsRelationByString, orderBy?: any }, request?: any) {
         return await this._service.obterLista(options, request);
     }
-
     async GetByInternalId(payload: GetByInternalIdInputDto, request?: any) {
         return await this._service.getByInternalId(payload.internalId, request);
     }
-
     async Delete(item: E, request?: any) {
         return await this._service.delete(item, request);
     }
-
 } 

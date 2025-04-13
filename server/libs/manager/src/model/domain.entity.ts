@@ -3,7 +3,6 @@ import { Application } from "./application.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { schema } from "../noms";
 import { FullAuditedEntity } from "../dao";
-
 @Entity({ schema })
 export class Domain extends FullAuditedEntity {
     @ApiProperty({

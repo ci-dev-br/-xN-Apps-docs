@@ -3,7 +3,6 @@ import { FormsService } from "../service/forms.service";
 import { Form } from "../model/form.entity";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Body, Controller, Post, Req } from "@nestjs/common";
-
 export class SyncPayloadDaoForm extends SyncPayloadDao<Form> {
     @ApiProperty({ type: Form })
     override data?: Form;
@@ -38,7 +37,6 @@ export class FormsController extends ControllerDaoBase<FormsService, Form> {
     ) {
         return await super.Sync(input, req);
     }
-
     @Post('GetList')
     @ApiResponse({
         type:
@@ -47,7 +45,6 @@ export class FormsController extends ControllerDaoBase<FormsService, Form> {
     })
     @ApiOperation({
         operationId: 'FormsGetList',
-
     })
     override async GetList(
         @Body() input: FormCotrollerGetInputDto,

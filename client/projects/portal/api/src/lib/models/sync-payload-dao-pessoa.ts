@@ -4,7 +4,6 @@ import { Pessoa } from '../models/pessoa';
 export interface ISyncPayloadDaoPessoa {
   data: Pessoa;
 }
-
 export class SyncPayloadDaoPessoa implements ISyncPayloadDaoPessoa {
   static typeName = 'SyncPayloadDaoPessoa';
   private _data: Pessoa;

@@ -4,7 +4,6 @@ import { Application } from "../model/application.entity";
 import { ApplicationService } from "../service/application.service";
 import { User } from "@ci/auth/models/user.entity";
 import { GetInputDtos } from "../dto/input-dto";
-
 @ApiTags('Application')
 @Controller('Application')
 export class ApplicationController {

@@ -4,7 +4,6 @@ export interface IPolicy {
   code: string;
   description?: string | null;
 }
-
 export class Policy implements IPolicy {
   static typeName = 'Policy';
   private _code: string;

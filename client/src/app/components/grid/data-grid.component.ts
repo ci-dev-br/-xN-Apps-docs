@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { DataGridOptions, IColumnOption } from "./data-grid.options";
 import { ReturnStatement } from "@angular/compiler";
 import { DataGridService } from "./data-grid.service";
-
 @Component({
     selector: 'ci-data-grid',
     templateUrl: 'data-grid.component.html',
@@ -18,10 +17,8 @@ export class DataGridComponent<I> {
     selectionMode?: 'cell' | 'row' | 'multi-cell' | 'multi-row' | 'multi' = 'row';
     @Input()
     source?: I[];
-
     selectedItem?: I;
     selectedItems?: I[];
-
     private _options?: DataGridOptions | undefined;
     public get options(): DataGridOptions | undefined {
         return this._options;
@@ -40,7 +37,6 @@ export class DataGridComponent<I> {
     ) { 
         services.grid = this;
     }
-
     rowSelectionHandler(event: MouseEvent, row: I) {
         if (this.selectionMode === 'row') {
             if (event.ctrlKey) {

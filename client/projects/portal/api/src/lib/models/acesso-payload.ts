@@ -11,7 +11,6 @@ export interface IAcessoPayload {
   solicitarSessao?: string;
   user?: User;
 }
-
 export class AcessoPayload implements IAcessoPayload {
   static typeName = 'AcessoPayload';
   private _bearer?: string;

@@ -12,7 +12,6 @@ export interface IPhoto {
   originalFile?: Buffer | null;
   tenants?: Array<string> | null;
 }
-
 export class Photo implements IPhoto {
   static typeName = 'Photo';
   private _createdAt?: string | null;

@@ -5,7 +5,6 @@ export interface IPhotoGetPaylodInputDto {
   offset?: string | null;
   query?: string | null;
 }
-
 export class PhotoGetPaylodInputDto implements IPhotoGetPaylodInputDto {
   static typeName = 'PhotoGetPaylodInputDto';
   private _limit?: string | null;

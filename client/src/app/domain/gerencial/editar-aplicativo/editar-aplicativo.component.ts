@@ -6,7 +6,6 @@ import { lastValueFrom } from 'rxjs';
 import { Application } from '@portal/api';
 import { ApplicationService } from '@portal/api';
 import { IChangeable, DaoService } from 'src/app/core/dao/dao.service';
-
 @Component({
   selector: 'ci-editar-aplicativo',
   templateUrl: './editar-aplicativo.component.html',
@@ -27,7 +26,6 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
     private readonly fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA)
     public readonly data?: Application,
-
   ) { }
   ngOnDestroy(): void {
   }
@@ -48,7 +46,6 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
           dao.bindDataForm(_data, form);
         }
       } catch (error) {
-
       }
     });
   }
@@ -70,7 +67,6 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
         }
       }, 0);
   }
-
   get changes() {
     return this.dao.getChanges(this.data as IChangeable);
   }

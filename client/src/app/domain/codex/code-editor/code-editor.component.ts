@@ -26,6 +26,5 @@ export class CodeEditorComponent {
     // this.janela?.open(ProjetoComponent)
   }
   abrirProjeto() {
-
   }
 }

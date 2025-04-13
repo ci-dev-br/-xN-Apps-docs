@@ -4,7 +4,6 @@ import { Domain, DomainService } from '@portal/api';
 import { WindowService } from 'src/app/components/window/window.service';
 import { DomainComponent } from './casdastros/domain/domain.component';
 import { DaoService } from 'src/app/core/dao/dao.service';
-
 @Component({
   selector: 'ci-inicio',
   templateUrl: './inicio.component.html',

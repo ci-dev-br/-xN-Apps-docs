@@ -1,12 +1,10 @@
 import { Injectable } from "@nestjs/common";
-
 export class BusEvent {
     readonly name: string = 'event';
     constructor(name?: string, private readonly data?: any) {
         this.name = name;
     }
 }
-
 export class BusClientSignal {
     signal: number = -2;
     clients: WebSocket[] = [];
@@ -19,7 +17,6 @@ export class BusClientSignal {
     }
     emit(eventName: string = 'event', data?: any) {
         let event = new BusEvent(eventName);
-
         this.clients.forEach(client => {
             if (client.OPEN) {
                 // client.send()
@@ -36,7 +33,6 @@ export class BusClientSignal {
         }, 5000);
     }
 }
-
 @Injectable()
 export class BusService {
     private clients = new Map<string, BusClientSignal>();
@@ -44,7 +40,6 @@ export class BusService {
     ) { }
     registry(client: WebSocket, mac: string) {
         let bus_client_signal = this.clients.has(mac) ? this.clients.get(mac) : this.clients.set(mac, new BusClientSignal()).get(mac);
-
         bus_client_signal.addClient(client);
     }
 }

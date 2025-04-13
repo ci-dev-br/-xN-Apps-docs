@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { DataGridComponent } from "./data-grid.component";
-
 @Injectable()
 export class DataGridService {
     private _sort?: any;

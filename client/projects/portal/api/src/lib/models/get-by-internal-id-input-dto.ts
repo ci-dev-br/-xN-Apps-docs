@@ -3,7 +3,6 @@
 export interface IGetByInternalIdInputDto {
   internalId?: string | null;
 }
-
 export class GetByInternalIdInputDto implements IGetByInternalIdInputDto {
   static typeName = 'GetByInternalIdInputDto';
   private _internalId?: string | null;

@@ -5,20 +5,16 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
-
 import { Form } from '../../models/form';
 import { GetByInternalIdInputDto } from '../../models/get-by-internal-id-input-dto';
-
 export interface FormsDelete$Params {
       body: GetByInternalIdInputDto
 }
-
 export function formsDelete(http: HttpClient, rootUrl: string, params: FormsDelete$Params, context?: HttpContext): Observable<StrictHttpResponse<Form>> {
   const rb = new RequestBuilder(rootUrl, formsDelete.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
-
   return http.request(
     rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
@@ -28,5 +24,4 @@ export function formsDelete(http: HttpClient, rootUrl: string, params: FormsDele
     })
   );
 }
-
 formsDelete.PATH = '/Forms/Delete';

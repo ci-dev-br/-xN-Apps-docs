@@ -3,7 +3,6 @@ import { Cliente } from "./cliente.entity";
 import { ContaBancaria } from "./conta-bancaria.entity";
 import { FullAuditedEntity } from "@ci/core";
 import { ApiProperty } from "@nestjs/swagger";
-
 /**
  * 
  * https://docs.asaas.com/docs/criando-um-cliente
@@ -26,7 +25,6 @@ export class ClienteAssas extends FullAuditedEntity {
     @ApiProperty({ nullable: true })
     @Column({})
     mobilePhone?: string;
-
     @ApiProperty({ nullable: true })
     @ManyToOne(() => ContaBancaria)
     @JoinTable()

@@ -8,7 +8,6 @@ import { HeaderCellRenderer } from "./header-cell/header-cell.component";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { DataGridService } from "./data-grid.service";
-
 @NgModule({
     declarations: [
         DataGridComponent,
@@ -27,7 +26,6 @@ import { DataGridService } from "./data-grid.service";
         DataGridComponent,
     ],
     providers: [
-
     ]
 })
 export class GridModule { }

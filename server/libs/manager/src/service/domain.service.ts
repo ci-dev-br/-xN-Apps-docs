@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Domain } from '../model/domain.entity';
 import { ILike, Repository } from 'typeorm';
 // import { threadId } from 'worker_threads';
-
 @Injectable()
 export class DomainService implements OnModuleInit {
     private static _request = [];
@@ -17,11 +16,9 @@ export class DomainService implements OnModuleInit {
         try {
             // return DomainService._whitelist;
             if (!DomainService._request) DomainService._request = [];
-
             if (DomainService._request.indexOf(host) === -1)
                 DomainService._request.push(host);
             if (!!DomainService._service) await this._service.requestDomains(DomainService._request)
-
             DomainService._whitelist = ((await this._service.repo.find({ where: { varified: true } })) || []).map(d => d.hostname)
         } catch (error) {
             console.error(error)

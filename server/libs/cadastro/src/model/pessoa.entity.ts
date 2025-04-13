@@ -101,7 +101,6 @@ export class Pessoa extends FullAuditedEntity {
     })
     @Column({ nullable: true, enum: ['F', 'J'], length: 1 })
     tipoJuridico?: string;
-
     /**
      * 
      */

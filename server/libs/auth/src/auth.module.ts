@@ -19,7 +19,6 @@ import { UserCredentialService } from "./service/user-credential.service";
 import { CoreModule } from "@ci/core/core.module";
 import { TwoFactorAuthenticationService } from "./service/two-factors.service";
 import { NotificacaoModule } from "@ci/notification";
-
 export const AuthEntities = [
     Policy,
     User,
@@ -27,7 +26,6 @@ export const AuthEntities = [
     DeviceAuthenticated,
     AccessCredential,
 ];
-
 @Module({
     imports: [
         TypeOrmModule.forFeature([

@@ -4,7 +4,6 @@ import { Photo, PhotoService, User, UserService as UserApiService } from '@porta
 import { lastValueFrom } from 'rxjs';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MD5 } from 'crypto-js';
-
 @Component({
   selector: 'ci-profile',
   templateUrl: './profile.component.html',
@@ -28,18 +27,15 @@ export class ProfileComponent implements OnDestroy {
         this.loadPhoto()
     );
   }
-
   ngOnDestroy(): void {
     this.mediaStream?.getTracks()?.map(t => t.stop());
   }
-
   edit(toEdit: string) {
     if (!this.editingField) {
       this.editingField = toEdit;
     } else if (toEdit !== this.editingField) {
       this.editingField = undefined;
     } else {
-
     }
   }
   async change(event: FocusEvent | Event, propertyName: string) {
@@ -91,7 +87,6 @@ export class ProfileComponent implements OnDestroy {
         const canvas = document.createElement('canvas');
         let w = video.videoWidth;
         let h = video.videoHeight;
-
         canvas.width = w;
         canvas.height = h;
         const context = canvas.getContext('2d');
@@ -137,7 +132,6 @@ export class ProfileComponent implements OnDestroy {
         const data_part = data.substring(index * buffer_size, index * buffer_size + buffer_size);
         const data_part_md5 = MD5(data_part).toString();
         const part = index;
-
         const r = await lastValueFrom(this.photoService.sendPartPhoto({
           body: {
             currentPart: part,

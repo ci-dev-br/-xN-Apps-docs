@@ -2,7 +2,6 @@ import { Injectable, Injector, Type } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialog } from "@angular/material/dialog";
 import { WindowComponent } from "./window.component";
 import { lastValueFrom } from "rxjs";
-
 @Injectable()
 export class WindowService {
     constructor(
@@ -21,5 +20,4 @@ export class WindowService {
         }
         return await lastValueFrom(dialog.afterClosed());
     }
-
 }

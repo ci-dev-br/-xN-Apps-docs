@@ -5,17 +5,13 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
-
 import { User } from '../../models/user';
-
 export interface Profile$Params {
 }
-
 export function profile(http: HttpClient, rootUrl: string, params?: Profile$Params, context?: HttpContext): Observable<StrictHttpResponse<User>> {
   const rb = new RequestBuilder(rootUrl, profile.PATH, 'post');
   if (params) {
   }
-
   return http.request(
     rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
@@ -25,5 +21,4 @@ export function profile(http: HttpClient, rootUrl: string, params?: Profile$Para
     })
   );
 }
-
 profile.PATH = '/auth/Profile';

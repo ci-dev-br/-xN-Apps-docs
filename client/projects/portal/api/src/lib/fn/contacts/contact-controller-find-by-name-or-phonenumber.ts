@@ -5,16 +5,12 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
-
-
 export interface ContactControllerFindByNameOrPhonenumber$Params {
 }
-
 export function contactControllerFindByNameOrPhonenumber(http: HttpClient, rootUrl: string, params?: ContactControllerFindByNameOrPhonenumber$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
   const rb = new RequestBuilder(rootUrl, contactControllerFindByNameOrPhonenumber.PATH, 'post');
   if (params) {
   }
-
   return http.request(
     rb.build({ responseType: 'text', accept: '*/*', context })
   ).pipe(
@@ -24,5 +20,4 @@ export function contactControllerFindByNameOrPhonenumber(http: HttpClient, rootU
     })
   );
 }
-
 contactControllerFindByNameOrPhonenumber.PATH = '/Contacts/FindByNameOrPhonenumber';

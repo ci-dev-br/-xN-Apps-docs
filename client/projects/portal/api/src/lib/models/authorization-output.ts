@@ -3,7 +3,6 @@
 export interface IAuthorizationOutput {
   authorization: string;
 }
-
 export class AuthorizationOutput implements IAuthorizationOutput {
   static typeName = 'AuthorizationOutput';
   private _authorization: string;

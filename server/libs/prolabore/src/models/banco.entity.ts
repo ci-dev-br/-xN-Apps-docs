@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { FullAuditedEntity } from '@ci/core';
 import { Column, Entity } from 'typeorm'
-
 @Entity({ schema: 'prolabore' })
 export class Banco extends FullAuditedEntity {
     @ApiProperty({ nullable: false, required: true, uniqueItems: true })

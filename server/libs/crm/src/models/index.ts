@@ -9,7 +9,6 @@ import { Profissional } from "./profissional";
 import { Promocao } from "./promocao";
 import { Servico } from "./servico";
 import { VendaProduto } from "./venda-produto";
-
 export const CrmEntities = [
     Agendamento,
     Atendimento,

@@ -9,7 +9,6 @@ export interface IReadDirectoryOutput {
   name?: string | null;
   path?: string | null;
 }
-
 export class ReadDirectoryOutput implements IReadDirectoryOutput {
   static typeName = 'ReadDirectoryOutput';
   private _isDirectory?: boolean | null;

@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
-
 export class IDynamicFormControl {
     label?: string;
     placeholder?: string;
@@ -10,7 +9,6 @@ export class IDynamicFormControl {
     min?: number | Date;
     options?: string[];
 }
-
 export class IDynamicForm {
     @ApiProperty({ nullable: true, required: false })
     controls?: { [key: string]: IDynamicFormControl };
@@ -19,7 +17,6 @@ export class IDynamicForm {
     @ApiProperty({ nullable: true, required: false })
     description?: string;
 }
-
 @Injectable()
 export abstract class CadastroBase {
     abstract view: IDynamicForm;

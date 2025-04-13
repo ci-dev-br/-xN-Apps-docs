@@ -3,7 +3,6 @@ import { schema } from "../termos";
 import { FullAuditedEntity } from "@ci/manager";
 import { ApiProperty } from "@nestjs/swagger";
 import { Organizacao } from "./organizacao.entity";
-
 /**
  * # Setor da Organização
  */
@@ -17,7 +16,6 @@ export class Setor extends FullAuditedEntity {
         description: '',
         // externalDocs: { url: },
     }) @Column({ nullable: true }) name?: string;
-
     /**
      * # Organização
      */

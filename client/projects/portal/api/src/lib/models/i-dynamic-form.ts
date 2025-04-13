@@ -6,7 +6,6 @@ export interface IIDynamicForm {
   description?: string | null;
   title?: string | null;
 }
-
 export class IDynamicForm implements IIDynamicForm {
   static typeName = 'IDynamicForm';
   private _controls?: {

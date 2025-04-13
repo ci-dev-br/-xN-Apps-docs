@@ -3,7 +3,6 @@
 export interface IPoolDto {
   messages: Array<Array<any>>;
 }
-
 export class PoolDto implements IPoolDto {
   static typeName = 'PoolDto';
   private _messages: Array<Array<any>>;

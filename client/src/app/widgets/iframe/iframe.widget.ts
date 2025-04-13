@@ -1,7 +1,6 @@
 import { Component, Input, NgModule, SecurityContext } from "@angular/core";
 import { IWidget } from "../i-widget";
 import { DomSanitizer } from "@angular/platform-browser";
-
 @Component({
     selector: 'px-iframe-widget',
     template: `

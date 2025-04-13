@@ -2,11 +2,9 @@ import { DynamicModule, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Server } from "./model/server.entity";
 import { ServerService } from "./service/server.service";
-
 export const InfraEntities = [
     Server,
 ]
-
 /**
  * Módulo Core
  *  

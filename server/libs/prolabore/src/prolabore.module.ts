@@ -30,13 +30,10 @@ export const ProlaboreEntities = [
         TypeOrmModule.forFeature(ProlaboreEntities)
     ],
     exports: [
-
     ],
     controllers: [
-
     ],
     providers: [
-
     ]
 })
 export class ProlaboreModule { }
