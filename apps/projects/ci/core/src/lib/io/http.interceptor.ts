@@ -31,7 +31,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         let efail = localStorage.getItem('e-fail');
         if (!!efail) {
             try {
-                this._efail = JSON.parse(efail);
+                this.efail = JSON.parse(efail);
             } catch (error) {
                 console.error(error);
             }
@@ -42,7 +42,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         if (this.config && this.config.alternativeApiGateways && this.config.rootApi) {
             if (!!this._efail && typeof this.efail === 'string') {
                 request = request.clone({
-                    url: url.replace(this.config.rootApi, this.efail)
+                    url: url.replace(/((http|ws)[s]{0,1}:\/\/[\w.]{0,}[:]{0,1}[\d]{0,5})/g, this.efail)
                 })
             }
         }
@@ -50,7 +50,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
     }
     private _eTry(request: HttpRequest<any>, next: HttpHandler) {
         return next.handle(this.addBearerToken(request))
-            .pipe(timeout({ each: 500, with: () => { throw new HttpErrorResponse({ status: 0, statusText: 'Interceptor Timeout' }) } }))
+            .pipe(timeout({ each: 1000, with: () => { throw new HttpErrorResponse({ status: 0, statusText: 'Interceptor Timeout' }) } }))
             .pipe(catchError(error => {
                 if (error) {
                     if (error instanceof HttpErrorResponse && (error.status === 0 || error.status === 404)) {
