@@ -3,12 +3,12 @@ package br.dev.ci.mobmanager.client.model;
 import java.util.List;
 
 public class Device {
-    String id;
-    String name;
-    String applicationId;
-    String model;
-    String authentication;
-    List<PhoneNumber> numbers;
+    private String id;
+    private String name;
+    private String applicationId;
+    private String model;
+    private String authentication;
+    private List<PhoneNumber> numbers;
     public String getId() {
         return id;
     }
