@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        String api = "http://srv33.internals.ci.dev.br:86/";
-        String ws = "ws://srv33.internals.ci.dev.br:86/";
+        String api = "https://srv33.internals.ci.dev.br:664/";
+        String ws = "wss://srv33.internals.ci.dev.br:664/";
         this.message = findViewById(R.id.message);
         permission();
         try {

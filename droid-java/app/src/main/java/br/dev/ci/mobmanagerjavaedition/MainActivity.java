@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ManagerClient.getInstance().setActivity(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -41,15 +42,12 @@ public class MainActivity extends AppCompatActivity {
         });
         this.appsButton = findViewById(R.id.apps);
         this.message = findViewById(R.id.message);
-        String api = "https://srv33.internals.ci.dev.br:664/";
-        String ws = "wss://srv33.internals.ci.dev.br:664/";
+        String api = "http://srv33.internals.ci.dev.br:86/";
+        String ws = "ws://srv33.internals.ci.dev.br:86/";
         if(this.message != null){
-            this.message.setText("Iniciando conexção... (1)");
             permission();
             getPhoneNumber();
-            this.message.setText("Identificando números disponíveis");
             adicionarItem(api, ws);
-            this.message.setText("Dipositivo identificado");
         }
         if(this.appsButton != null){
             this.appsButton.setOnClickListener(v -> this.openApps());
@@ -81,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_NUMBERS}, REQUEST_READ_PHONE_STATE);
         }
+        message.setText("Autorizado...");
     }
     private List<PhoneNumber> phones;
     private List<GatewayConnection> gateways;
