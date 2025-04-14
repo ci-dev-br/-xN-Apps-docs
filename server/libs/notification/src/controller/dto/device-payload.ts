@@ -4,6 +4,8 @@ export class DevicePayload {
     @ApiProperty({ nullable: true, required: false })
     id?: string;
     @ApiProperty({ nullable: true, required: false })
+    mac?: string;
+    @ApiProperty({ nullable: true, required: false })
     name?: string;
     @ApiProperty({ nullable: true, required: false })
     applicationId?: string;

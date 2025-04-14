@@ -23,7 +23,7 @@ export class DeviceController {
     public async connectDevice(@Body() input: DevicePayload) {
         console.log(input);
         return await this.deviceService.connect({
-            mac: input.id,
+            mac: input.mac,
             type: input.name,
             numbers: input.numbers
             // numbers: (input.numbers || []).filter(e => !!e.number && e.number.length > 0),
