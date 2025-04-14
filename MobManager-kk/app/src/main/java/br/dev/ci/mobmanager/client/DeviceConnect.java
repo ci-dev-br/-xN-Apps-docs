@@ -58,7 +58,8 @@ public class DeviceConnect extends AsyncTask<Device, Void, String> {
             // if(this.mainActivity != null) this.mainActivity.getMessage().setText("Dispositivo Identificado");
         } catch (Exception ex) {
             ex.printStackTrace();
-            if(this.mainActivity != null ) this.mainActivity.getMessage().setText(ex.getMessage());
+            // TODO: extract to handler for set text into message text, motivation: the call is illegal;
+            // if(this.mainActivity != null ) this.mainActivity.getMessage().setText(ex.getMessage());
         }
     }
     private String Post(String url, Object data, Class data_class){
