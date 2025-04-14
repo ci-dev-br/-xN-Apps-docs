@@ -21,7 +21,6 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.dev.ci.mobmanager.client.DeviceConnect;
 import br.dev.ci.mobmanager.client.ManagerClient;
 import br.dev.ci.mobmanager.client.model.Device;
 import br.dev.ci.mobmanager.client.model.PhoneNumber;
@@ -31,9 +30,13 @@ public class MainActivity extends AppCompatActivity {
     private List<PhoneNumber> phones;
     private TextView message;
     private Button appsButton;
+    public TextView getMessage(){
+        return this.message;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ManagerClient.getInstance().setMainActivity(this);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -41,38 +44,24 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        String api = "https://srv33.internals.ci.dev.br:664/";
-        String ws = "wss://srv33.internals.ci.dev.br:664/";
         this.message = findViewById(R.id.message);
-        permission();
+        solicitarPermissoes();
         try {
-            getPhoneNumber();
+            identificarNumerosTelefone();
         } catch( Exception ex){
             if(this.message != null) {
                 this.message.setText("Falha ao identificar números do dispositivo.");
             }
         }
-        if(this.message != null){
+        /* if(this.message != null){
             this.message.setText("Iniciando conexção... (1)");
-        }
+        }*/
 
-        if(this.message != null){
+        /* if(this.message != null){
             this.message.setText("Identificando números disponíveis");
-        }
+        }*/
         try {
-            adicionarItem(api, ws);
-            Boolean ffail = false;
-            for (DeviceConnect dc : ManagerClient.getInstance().getConnections()){
-                    if( dc.status == null ){
-                        ffail = true;
-                    }
-            }
-            if(ffail == Boolean.TRUE){
-                throw new Exception("Falha ao conectar");
-            }
-            if(this.message != null){
-                this.message.setText("Dipositivo identificado");
-            }
+            adicionarGateway("http://srv33.internals.ci.dev.br:86/", "ws://srv33.internals.ci.dev.br:86/");
         }catch(Exception ex){
             this.message.setText("Falha ao conectar");
         }
@@ -82,21 +71,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void openApps(){
-
-
-        /*AlertDialog.Builder builder = new  AlertDialog.Builder(this);
-        builder
-                .setTitle("Apps")
-                .setView(View.inflate(this,R.layout.list_apps_fragment_item_list,null))
-        ;
-        AlertDialog dialog = builder.create();
-
-        dialog.show();*/
+        // TODO: abrir menu de aplicativos do dispositivo
     }
-    public AsyncTask<Device, Void, String> adicionarItem(String api, String ws) {
+    public AsyncTask<Device, Void, String> adicionarGateway(String api, String ws) {
         return ManagerClient.getInstance().addGateway( api, ws);
     }
-    private void permission() {
+    private void solicitarPermissoes() {
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
         }
@@ -108,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     // @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
-    private void getPhoneNumber() {
+    private void identificarNumerosTelefone() {
         if (
                 /*ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED && */
                 ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED

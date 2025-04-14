@@ -1,12 +1,17 @@
 package br.dev.ci.mobmanager.client.model;
 
 import android.os.Handler;
+import android.os.Message;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
+import br.dev.ci.mobmanager.MainActivity;
 import br.dev.ci.mobmanager.client.DeviceConnect;
 
-public class GatewayConnection {
+public class GatewayConnection extends Handler{
+    private MainActivity mainActivity;
     private String url;
     private String status;
     private ImageView imagem;
@@ -25,6 +30,12 @@ public class GatewayConnection {
 
         if (this.subtitulo != null)
             this.subtitulo.setText(this.url);
+    }
+    public MainActivity getMainActivity() {
+        return mainActivity;
+    }
+    public void setMainActivity(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
     }
     public DeviceConnect getConnect() {
         return connect;
@@ -57,7 +68,6 @@ public class GatewayConnection {
                 if(titulo != null){
                     titulo.setText("Offline");
                    //  imagem.setImageResource(R.mipmap.offline);
-
                 }
             }
         };
@@ -68,5 +78,10 @@ public class GatewayConnection {
     }
     public void setWs(String ws) {
         this.ws = ws;
+    }
+
+    @Override
+    public void handleMessage(@NonNull Message msg) {
+        super.handleMessage(msg);
     }
 }

@@ -7,11 +7,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import br.dev.ci.mobmanager.MainActivity;
 import br.dev.ci.mobmanager.client.model.Device;
 import br.dev.ci.mobmanager.client.model.GatewayConnection;
 import br.dev.ci.mobmanager.client.model.PhoneNumber;
 
 public class ManagerClient {
+    private MainActivity mainActivity;
     private List<DeviceConnect> connections = new ArrayList<>();
     private static ManagerClient _instance = new ManagerClient();
     private List<PhoneNumber> phones;
@@ -20,6 +22,12 @@ public class ManagerClient {
     }
     public List<DeviceConnect> getConnections() {
         return connections;
+    }
+    public MainActivity getMainActivity() {
+        return mainActivity;
+    }
+    public void setMainActivity(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
     }
     public void setPhones(List<PhoneNumber> phones) {
         this.phones = phones;
@@ -33,25 +41,24 @@ public class ManagerClient {
         return this.task;
     }
     public AsyncTask<Device, Void, String> addGateway(String url, String ws) {
-        GatewayConnection gateway = new GatewayConnection(){{
-            if(url != null)setUrl(url);
-            if(ws != null)setWs(ws);
+        GatewayConnection gateway_connection = new GatewayConnection(){{
+            if(url != null) setUrl(url);
+            if(ws != null) setWs(ws);
+            if(mainActivity != null) setMainActivity(mainActivity);
         }};
-        this.getGateways().add(gateway);
-        this.task = this.connect(gateway);
+        this.getGateways().add(gateway_connection);
+        this.task = this.connect(gateway_connection);
         return this.task;
     }
-
     public List<GatewayConnection> getGateways(){
         if(gateways == null) gateways = new ArrayList<>();
         return this.gateways;
     }
-
     private AsyncTask<Device, Void, String> connect(GatewayConnection connection){
-        DeviceConnect device_connection = new DeviceConnect(connection);
+        DeviceConnect device_connection = new DeviceConnect(connection,this.getMainActivity());
         connections.add(device_connection);
         Device device = new Device(){{
-            setId(getMacAddr());
+            setMac(getMacAddr());
             setApplicationId("e60e2ed1-e318-4f38-bdcd-2fceb3d0315d");
             setName("MobManager-KitKat");
             setNumbers(getPhones());
@@ -63,17 +70,14 @@ public class ManagerClient {
             List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
             for (NetworkInterface nif : all) {
                 if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
-
                 byte[] macBytes = nif.getHardwareAddress();
                 if (macBytes == null) {
                     return "";
                 }
-
                 StringBuilder res1 = new StringBuilder();
                 for (byte b : macBytes) {
                     res1.append(Integer.toHexString(b & 0xFF) + ":");
                 }
-
                 if (res1.length() > 0) {
                     res1.deleteCharAt(res1.length() - 1);
                 }
@@ -84,6 +88,4 @@ public class ManagerClient {
         }
         return "";
     }
-
-
 }

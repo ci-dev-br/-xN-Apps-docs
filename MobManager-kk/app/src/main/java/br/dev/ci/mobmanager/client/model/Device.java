@@ -8,6 +8,7 @@ public class Device {
     private String applicationId;
     private String model;
     private String authentication;
+    private String mac;
     private List<PhoneNumber> numbers;
     public String getId() {
         return id;
@@ -45,4 +46,11 @@ public class Device {
     public void setNumbers(List<PhoneNumber> phones) {
         this.numbers = phones;
     }
+    public void setMac(String value){
+        this.mac = value;
+    }
+    public String getMac() {
+        return this.mac;
+    }
+
 }
