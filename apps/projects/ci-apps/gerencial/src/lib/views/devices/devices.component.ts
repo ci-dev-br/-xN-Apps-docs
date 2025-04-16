@@ -17,6 +17,7 @@ import { lastValueFrom } from "rxjs";
                 background: black;
                 border-radius: 14px;
                 box-shadow: 3px 6px 4px rgba(0,0,0,.455);
+                padding: 12px;
             }
             .devices{
                 display: flex;
@@ -47,7 +48,9 @@ import { lastValueFrom } from "rxjs";
             <small>Leia o QRCode com o aplicativo para celular para conectar o aparelho aos serviços.</small>
         </div> } @else {
            <div class="devices" > @for(device of devices; track device){
-                <div class="device" >{{device.mac}}</div>
+                <div class="device" >
+                    {{device.mac || ''}} / {{device.type || ''}}                
+                </div>
             } </div>
         }
     `,
