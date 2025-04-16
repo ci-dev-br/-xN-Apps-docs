@@ -4,6 +4,8 @@ import { DevicePayload } from "./dto/device-payload";
 import { DeviceService } from "../services/device.service";
 import { Public } from "@ci/auth/decorators/public.decorator";
 import { PoolDto } from "./dto/pool.dto";
+import { GetDeviceInput } from "./dto/get-device-input";
+import { Device } from "../models/device.entity";
 /**
  * Dispositivo Auto-Declarado
  * 
@@ -37,5 +39,13 @@ export class DeviceController {
         let pool = new PoolDto();
         pool.messages = [];
         return await pool;
+    }
+
+
+    @ApiOperation({ operationId: 'GetAll' })
+    @Post('GetAll')
+    @ApiResponse({ type: Device, isArray: true })
+    public async GetAll(@Body() input?: GetDeviceInput) {
+        return await this.deviceService.findAll(input?.query);
     }
 }

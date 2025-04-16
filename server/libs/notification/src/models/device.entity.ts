@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { PhoneNumber } from "./phone-number.entity";
 @Entity({
@@ -16,5 +16,9 @@ export class Device {
     type?: string;
     @OneToMany(() => PhoneNumber, type => type.device)
     @JoinTable()
-    numbers?:PhoneNumber[];    
+    numbers?: PhoneNumber[];
+    @CreateDateColumn({})
+    createdAt?: Date;
+    @UpdateDateColumn()
+    changedAt?: Date;
 }

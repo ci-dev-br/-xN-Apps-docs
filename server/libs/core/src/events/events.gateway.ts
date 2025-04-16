@@ -16,7 +16,7 @@ import { BusService } from "./events.service";
     })
 export class EventsGateway implements OnGatewayInit {
     constructor(
-        private readonly service: BusService,
+        private readonly service: BusService, // para que serve o bus services?
     ) {
     }
     pings = [];
@@ -38,6 +38,9 @@ export class EventsGateway implements OnGatewayInit {
                 if (this.pings.length > 500) {
                     this.pings = this.pings.splice(this.pings.length - 500, this.pings.length);
                 }
+            }
+            if (!!data.device && typeof data.device === 'string') {
+                // TODO: atualizar serviço de devices notificando atividade
             }
             let pm = 0;
             try {

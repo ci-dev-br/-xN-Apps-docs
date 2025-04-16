@@ -15,7 +15,7 @@ export class DeviceService {
         try {
             return await this.createAndSave(device)
         } catch (error) {
-            console.error(new Error("Falha"), error);
+            console.error(new Error('Não foi possível conectar o dispositivo.'), error);
         }
     }
     async createAndSave(device?: Device) {
@@ -23,13 +23,14 @@ export class DeviceService {
         const numbers = device.numbers;
         const device_found = await this.find(device);
         if (device_found) {
+            device_found.changedAt = new Date();
             await this.repo.save(device_found, { reload: true });
             device = device_found;
         } else {
             device = this.repo.create(device);
             device = await this.repo.save(device);
         }
-        if (numbers) {
+        if (!!numbers) {
             device_found.numbers = [...numbers];
             device_found.numbers.forEach(async phoneNumber => {
                 try {
@@ -58,5 +59,8 @@ export class DeviceService {
         if (device.mac)
             return await this.repo.findOne({ where: { mac: Equal(device.mac) } });
         return null;
+    }
+    async findAll(query?: string) {
+        return await this.repo.find({});
     }
 }
