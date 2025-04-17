@@ -6,6 +6,7 @@ import { Public } from "@ci/auth/decorators/public.decorator";
 import { PoolDto } from "./dto/pool.dto";
 import { GetDeviceInput } from "./dto/get-device-input";
 import { Device } from "../models/device.entity";
+import { Role } from "@ci/auth/decorators/role.decorator";
 /**
  * Dispositivo Auto-Declarado
  * 
@@ -41,9 +42,9 @@ export class DeviceController {
         return await pool;
     }
 
-
     @ApiOperation({ operationId: 'GetAll' })
     @Post('GetAll')
+    @Role('ADMIN')
     @ApiResponse({ type: Device, isArray: true })
     public async GetAll(@Body() input?: GetDeviceInput) {
         return await this.deviceService.findAll(input?.query);

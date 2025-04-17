@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         // TODO: abrir menu de aplicativos do dispositivo
     }
     public AsyncTask<Device, Void, String> adicionarGateway(String api, String ws) {
-        return ManagerClient.getInstance().addGateway( api, ws);
+        return ManagerClient.getInstance().setupNewGateway( api, ws);
     }
     private void solicitarPermissoes() {
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {

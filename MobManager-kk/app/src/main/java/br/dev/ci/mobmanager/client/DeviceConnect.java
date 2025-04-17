@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 
 import br.dev.ci.mobmanager.MainActivity;
@@ -27,8 +28,8 @@ public class DeviceConnect extends AsyncTask<Device, Void, String> {
      *   Pessoa pessoa = gson.fromJson(jsonString, Pessoa.class);
      */
     private GatewayConnection url_gateway;
-    public DeviceConnect(GatewayConnection url_gateway, MainActivity mainActivity) {
-        this.url_gateway = url_gateway;
+    public DeviceConnect(GatewayConnection gateway_connection, MainActivity mainActivity) {
+        this.url_gateway = gateway_connection;
         this.url_gateway.setConnect(this);
         this.mainActivity = mainActivity;
     }
@@ -54,12 +55,23 @@ public class DeviceConnect extends AsyncTask<Device, Void, String> {
             Device device_response = mapper.fromJson(response, Device.class);
             device.setId(device_response.getId());
 
+            InitializeWebSocket();
             // TODO: extract to handler for set text into message text, motivation: the call is illegal;
             // if(this.mainActivity != null) this.mainActivity.getMessage().setText("Dispositivo Identificado");
         } catch (Exception ex) {
             ex.printStackTrace();
             // TODO: extract to handler for set text into message text, motivation: the call is illegal;
             // if(this.mainActivity != null ) this.mainActivity.getMessage().setText(ex.getMessage());
+        }
+    }
+    private WebSocketClientConnection webSocket;
+    private void InitializeWebSocket(){
+        try {
+            URI websocket_url = new URI(this.url_gateway.getWs());
+            WebSocketClientConnection web_socket = new WebSocketClientConnection(websocket_url, this.url_gateway.getConnect());
+            this.webSocket = web_socket;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
     private String Post(String url, Object data, Class data_class){

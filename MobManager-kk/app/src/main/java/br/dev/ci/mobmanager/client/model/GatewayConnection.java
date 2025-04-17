@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import br.dev.ci.mobmanager.MainActivity;
 import br.dev.ci.mobmanager.client.DeviceConnect;
+import br.dev.ci.mobmanager.client.WebSocketClientConnection;
 
 public class GatewayConnection extends Handler{
     private MainActivity mainActivity;
@@ -77,6 +78,7 @@ public class GatewayConnection extends Handler{
         return ws;
     }
     public void setWs(String ws) {
+        if(this.ws == ws) return;
         this.ws = ws;
     }
 

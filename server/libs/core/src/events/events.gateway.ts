@@ -2,7 +2,7 @@ import { DomainService } from "@ci/manager";
 import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { createHash } from "crypto";
 import { Server } from "ws";
-import { BusService } from "./events.service";
+import { BusService } from "./bus.service";
 @WebSocketGateway(
     {
         transports: [
@@ -16,7 +16,8 @@ import { BusService } from "./events.service";
     })
 export class EventsGateway implements OnGatewayInit {
     constructor(
-        private readonly service: BusService, // para que serve o bus services?
+        private readonly bus: BusService,
+        // para que serve o bus services?
     ) {
     }
     pings = [];

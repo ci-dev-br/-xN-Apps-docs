@@ -40,7 +40,7 @@ public class ManagerClient {
     public AsyncTask<Device, Void, String> getTask() {
         return this.task;
     }
-    public AsyncTask<Device, Void, String> addGateway(String url, String ws) {
+    public AsyncTask<Device, Void, String> setupNewGateway(String url, String ws) {
         GatewayConnection gateway_connection = new GatewayConnection(){{
             if(url != null) setUrl(url);
             if(ws != null) setWs(ws);

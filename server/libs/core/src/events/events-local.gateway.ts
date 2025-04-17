@@ -1,7 +1,7 @@
 import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { EventsGateway } from "./events.gateway";
 import { Server } from "ws";
-import { BusService } from "./events.service";
+import { BusService } from "./bus.service";
 // import { DomainService } from "@ci/manager";
 export interface IEventPayload {
     mac?: string;

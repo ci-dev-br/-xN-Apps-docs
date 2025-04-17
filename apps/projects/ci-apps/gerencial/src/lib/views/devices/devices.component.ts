@@ -7,6 +7,11 @@ import { CoreModule } from '@ci/core';
 import { Device, DeviceService } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 
+export interface DeviceItem {
+    device?: Device;
+    status?: -1 | 0 | 1;
+}
+
 @Component({
     selector: 'ci-devices',
     template: `
@@ -18,6 +23,7 @@ import { lastValueFrom } from "rxjs";
                 border-radius: 14px;
                 box-shadow: 3px 6px 4px rgba(0,0,0,.455);
                 padding: 12px;
+                position: relative;
             }
             .devices{
                 display: flex;
@@ -25,6 +31,24 @@ import { lastValueFrom } from "rxjs";
                 flex-wrap: wrap;
                 gap: 48px;
                 padding: 48px;
+                }
+            .device > .status{
+                width: 15px;
+                height: 15px;
+                border-radius: 9px;
+                position: absolute;
+                right: 14px;
+                bottom: 14px;
+            }
+            .active{
+                background-color: green;
+            }
+            .waiting{
+                background-color: yellow;
+            }
+            .offline{
+                border: solid 2px red;
+                background-color: black;
             }
         </style>
          <mat-toolbar>
@@ -47,13 +71,15 @@ import { lastValueFrom } from "rxjs";
             </ngx-qrcode>
             <small>Leia o QRCode com o aplicativo para celular para conectar o aparelho aos serviços.</small>
         </div> } @else {
-           <div class="devices" > @for(device of devices; track device){
+           <div class="devices" > @for(item of devices; track item){
                 <div class="device" >
-                    {{device.mac || ''}} / {{device.type || ''}}                
+                    {{item.device?.mac || ''}} / {{item.device?.type || ''}}          
+                    <div class="status" [class.active]="item.status===1" [class.waiting]="item.status===0" [class.offline]="item.status===-1" ></div>      
                 </div>
             } </div>
         }
     `,
+    standalone: true,
     imports: [
         CoreModule,
         MatToolbarModule,
@@ -74,7 +100,15 @@ import { lastValueFrom } from "rxjs";
         window.open(location.origin + '/Gerencial/Painel/mob-fake', 'teste' + Math.random().toString(32).substring(5).toUpperCase(), 'scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=350,height=600,left=-1000,top=-1000');
     }
     async loadDevices() {
-        this.devices = await lastValueFrom(this.deviceService.getAll({ body: { query: '' } }));
+        this.updateDevices(await lastValueFrom(this.deviceService.getAll({ body: { query: '' } })))
     }
-    devices?: Device[];
+    updateDevices(devices: Device[]) {
+        this.devices = devices.map(device => {
+            return {
+                status: -1,
+                device,
+            }
+        });
+    }
+    devices?: DeviceItem[];
 }

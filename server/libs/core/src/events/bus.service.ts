@@ -42,4 +42,8 @@ export class BusService {
         let bus_client_signal = this.clients.has(mac) ? this.clients.get(mac) : this.clients.set(mac, new BusClientSignal()).get(mac);
         bus_client_signal.addClient(client);
     }
+
+    async addEventListner(name: string, hanlder: () => void) {
+
+    }
 }

@@ -41,4 +41,5 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation ("com.google.code.gson:gson:2.8.6")
+    implementation ("org.java-websocket:Java-WebSocket:1.5.7")
 }

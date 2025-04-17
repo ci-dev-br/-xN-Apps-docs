@@ -1,5 +1,12 @@
 # Changelogs
 As mudanças devem estar descritas neste documento para melhor analisar a implementação com seu obejtivo a ser atingido. Descreva o que o recurso implementado resolve e o estágio em que ele se encontra para se comparado com os relatórios gerados após enviar se PR.
+# Sprint Abril de 2025
+    [ ] - Implementação de Notification Bus:
+        [ ] - CLiente em Mobile Manager;
+        [ ] - Cliente em PWA;
+        [ ] - Serviço de Notificação e Event Bus na camada no do NestJS;
+    [ ] - Implementação de Envio de SMS em MobMannager;
+    [x] - Correção em implementação de Identificação de Dispositivo em MobManager API v 19; 
 
 # Sprint Março de 2025 
     [OK] - Refresh Token viinculado a chave de acesso;
