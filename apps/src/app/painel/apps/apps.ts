@@ -21,7 +21,7 @@ export const APPS = [
         roles: ['MASTER'], icon: 'dev-tools', type: 'svg'
     },
     {
-        color: getColor(), url: '/Dynamic', name: 'Dynamic',
+        color: getColor(), url: '/Dynamic', name: 'Dynamic XD',
         roles: ['MASTER'], icon: 'dynamic', type: 'svg'
     },
     {

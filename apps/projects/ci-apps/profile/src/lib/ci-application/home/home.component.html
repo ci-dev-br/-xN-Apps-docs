@@ -1,31 +1,87 @@
-<ng-container [formGroup]="form">
-    <mat-card>
-        <mat-card-content>
-            <div class="row">
-                <img src="" alt="" class="user-profile-image">
-                <div class="content">
-                    <ci-input mode="content-editable" fieldName="fullName" label="Nome Completo" el="h1"></ci-input>
-                    <ci-input mode="content-editable" fieldName="username" label="Nome de usuário" el="sub"></ci-input>
-                </div>
-            </div>
-        </mat-card-content>
-    </mat-card>
-    <mat-card>
-        <mat-card-content>
-            <div class="row">
-                <div class="content">
-                    <ci-input mode="content-editable" fieldName="email" label="E-mail"></ci-input>
-                </div>
-            </div>
-        </mat-card-content>
-    </mat-card>
-    <mat-card>
-        <mat-card-content>
-            <div class="row">
-                <div class="content">
-                    <button mat-raised-button [disabled]="!!form?.invalid" (click)="saveProfile()">Save Profile</button>
-                </div>
-            </div>
-        </mat-card-content>
-    </mat-card>
-</ng-container>
+<div class="row">
+    <div class="col">
+
+        <ng-container [formGroup]="form">
+            <mat-card>
+                <mat-card-content>
+                    <div class="row">
+                        <img src="" alt="" class="user-profile-image">
+                        <div class="content">
+                            <ci-input mode="content-editable" fieldName="fullName" label="Nome Completo"
+                                el="h1"></ci-input>
+                            <ci-input mode="content-editable" fieldName="username" label="Nome de usuário"
+                                el="sub"></ci-input>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+            <mat-card>
+                <mat-card-content>
+                    <div class="row">
+                        <div class="content">
+                            <ci-input mode="content-editable" fieldName="email" label="E-mail"></ci-input>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+            <mat-card>
+                <mat-card-content>
+                    <div class="row">
+                        <div class="content">
+                            <button mat-raised-button [disabled]="!!form?.invalid" (click)="saveProfile()">Save
+                                Profile</button>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </ng-container>
+    </div>
+    <div class="col">
+
+        <mat-card>
+            <mat-card-content>
+                Assinaturas
+            </mat-card-content>
+        </mat-card>
+        <mat-card>
+            <mat-card-content>
+                Seu armazenamento
+            </mat-card-content>
+        </mat-card>
+        <mat-card>
+            <mat-card-content>
+                Assistente Pessoal
+            </mat-card-content>
+        </mat-card>
+        <mat-card>
+            <mat-card-content>
+                Dispositivos
+            </mat-card-content>
+        </mat-card>
+        <mat-card>
+            <mat-card-content>
+                Privacidade
+            </mat-card-content>
+        </mat-card>
+        <mat-card>
+            <mat-card-content>
+                Segurança
+            </mat-card-content>
+        </mat-card>
+        <mat-card>
+            <mat-card-content>
+                Opções de pagamento
+            </mat-card-content>
+        </mat-card>
+        <mat-card>
+            <mat-card-content>
+                Histórico de pedidos
+            </mat-card-content>
+        </mat-card>
+        <mat-card>
+            <mat-card-content>
+                Discover | Família | Recompensas | Outlook 
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

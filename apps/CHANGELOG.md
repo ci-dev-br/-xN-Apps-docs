@@ -7,7 +7,6 @@ As mudanças devem estar descritas neste documento para melhor analisar a implem
         [ ] - Serviço de Notificação e Event Bus na camada no do NestJS;
     [ ] - Implementação de Envio de SMS em MobMannager;
     [x] - Correção em implementação de Identificação de Dispositivo em MobManager API v 19; 
-
 # Sprint Março de 2025 
     [OK] - Refresh Token viinculado a chave de acesso;
         [ ] - Documentar Chave de Acesso;

@@ -40,9 +40,10 @@ export class EventsGateway implements OnGatewayInit {
                     this.pings = this.pings.splice(this.pings.length - 500, this.pings.length);
                 }
             }
-            if (!!data.device && typeof data.device === 'string') {
-                // TODO: atualizar serviço de devices notificando atividade
-            }
+            // TODO: implementar Bus Service
+            // if (!!data.device && typeof data.device === 'string') {
+            //     // TODO: atualizar serviço de devices notificando atividade
+            // }
             let pm = 0;
             try {
                 pm = this.pings.reduce((a, b) => a + b) / this.pings.length;

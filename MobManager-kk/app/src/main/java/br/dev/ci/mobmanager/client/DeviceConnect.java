@@ -70,6 +70,7 @@ public class DeviceConnect extends AsyncTask<Device, Void, String> {
             URI websocket_url = new URI(this.url_gateway.getWs());
             WebSocketClientConnection web_socket = new WebSocketClientConnection(websocket_url, this.url_gateway.getConnect());
             this.webSocket = web_socket;
+            web_socket.connect();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -7,10 +7,23 @@
 
 }
 
-.row {
+.row,
+.col {
     display: flex;
-    flex-direction: row;
     gap: 12px;
+}
+
+.row {
+    flex-direction: row;
+}
+
+.col {
+    flex-direction: column;
+    flex: 1;
+    mat-card{
+        width: 100%;
+        //  flex: auto;
+    }
 }
 
 .content,
