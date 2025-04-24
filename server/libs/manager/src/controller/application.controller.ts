@@ -10,7 +10,7 @@ export class ApplicationController {
     constructor(
         private readonly service: ApplicationService
     ) { }
-    
+
     @Post('Get')
     @ApiResponse({ type: Application, isArray: true, description: 'Obter Aplicações' })
     @ApiOperation({
