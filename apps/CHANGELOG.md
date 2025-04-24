@@ -1,6 +1,7 @@
 # Changelogs
 As mudanças devem estar descritas neste documento para melhor analisar a implementação com seu obejtivo a ser atingido. Descreva o que o recurso implementado resolve e o estágio em que ele se encontra para se comparado com os relatórios gerados após enviar se PR.
 # Sprint Abril de 2025
+    [ ] - Implementar Formulário com OpenAPI para construção dinâmica do formulário conforme modelo.
     [ ] - Implementação de Notification Bus:
         [ ] - CLiente em Mobile Manager;
         [ ] - Cliente em PWA;
