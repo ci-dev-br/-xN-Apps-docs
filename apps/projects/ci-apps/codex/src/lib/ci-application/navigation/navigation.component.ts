@@ -6,20 +6,32 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CoreModule } from '@ci/core';
 
+export interface IMenu {
+  items: IMenuItem[];
+}
+
+export interface IMenuItem {
+  label: string;
+  icon?: string;
+  action?: () => void;
+}
+
 @Component({
-    selector: 'ci-home',
-    imports: [
-        CoreModule,
-        RouterModule,
-        MatTabsModule,
-        MatIconModule,
-        MatButtonModule,
-        MatMenuModule,
-    ],
-    templateUrl: './home.component.html',
-    styleUrl: './home.component.scss'
+  selector: 'ci-navigation',
+  standalone: true,
+  imports: [
+    CoreModule,
+    RouterModule,
+    MatTabsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatMenuModule,
+  ],
+  templateUrl: './navigation.component.html',
+  styleUrl: './navigation.component.scss'
 })
-export class HomeComponent {
+export class NavigationComponent {
+  menuBar?: IMenu;
   abas?: { label: string, path: string, icon: string }[];
   constructor(
     private readonly route: ActivatedRoute,
