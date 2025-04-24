@@ -1,31 +1,32 @@
 import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { lastValueFrom } from 'rxjs';
-import { Application } from '@ci/portal-api';
+import { Application, FormsService } from '@ci/portal-api';
 import { ApplicationService } from '@ci/portal-api';
 import { IChangeable, DaoService } from '@ci/core';
 
 @Component({
-    selector: 'ci-editar-aplicativo',
-    templateUrl: './editar-aplicativo.component.html',
-    styleUrls: ['./editar-aplicativo.component.scss'],
-    standalone: false
+  selector: 'ci-editar-aplicativo',
+  templateUrl: './editar-aplicativo.component.html',
+  styleUrls: ['./editar-aplicativo.component.scss'],
+  standalone: false
 })
 export class EditarAplicativoComponent implements OnInit, OnDestroy {
-  form = this.fb.group({
-    id: ['', []],
+  form?: FormGroup<any>; /* this.fb.group({
+    id:-['', []],
     name: ['', []],
     description: ['', []],
     icon: ['', []],
     url: ['', []],
     menuGroupName: ['', []],
-  });
+  }); */
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly dao: DaoService,
     private readonly fb: FormBuilder,
+    private readonly formsService: FormsService,
     @Inject(MAT_DIALOG_DATA)
     public readonly data?: Application,
 
@@ -37,7 +38,7 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
     const _data = this.data;
     const form = this.form;
     this.dao.prepareToEdit(this.data);
-    this.dao.bindDataForm(this.data, this.form);
+    if (this.form) this.dao.bindDataForm(this.data, this.form);
     this.dao.confirmation(this.data)?.subscribe(async data => {
       try {
         if (this.data && data) {
@@ -46,7 +47,7 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
           );
           delete (_data as IChangeable).__pre;
           dao.prepareToEdit(_data);
-          dao.bindDataForm(_data, form);
+          if (form) dao.bindDataForm(_data, form);
         }
       } catch (error) {
 
