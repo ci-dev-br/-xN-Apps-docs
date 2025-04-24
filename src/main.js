@@ -33,14 +33,17 @@ cliente_processo?.stdout.on('data', (data) => {
  */
 const service_process = spawn('node',
     [
-        '--openssl-legacy-provider',
         './node_modules/@nestjs/cli/bin/nest',
         'start',
         '--watch',
         '--debug'
-        // './dist/main.js',
-        // '--prod',
-    ], { cwd: __dirname + '/../server' })
+    ],
+    {
+        cwd: __dirname + '/../server',
+        env: {
+            NODE_OPTIONS: '--openssl-legacy-provider'
+        }
+    })
     .on('data', m => console.log(m))
     .on('error', m => console.log(m))
     .on('message', m => console.log(m))
