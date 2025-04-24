@@ -7,8 +7,8 @@
                 <ci-input mode="content-editable" label="Descrição" fieldName="description" />
             </mat-card-content>
         </mat-card>
-        @if(!!formulario?.perguntas){
-        @for (pergunta of formulario?.perguntas?.perguntas; track $index) {
+        @if(!!formulario.perguntas){
+        @for (pergunta of formulario.perguntas.perguntas; track $index) {
         <mat-card>
             <mat-card-content>
                 <ci-pergunta [source]="pergunta"></ci-pergunta>

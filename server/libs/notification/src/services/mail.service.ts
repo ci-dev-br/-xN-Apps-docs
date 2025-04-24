@@ -88,13 +88,15 @@ export class MailService {
     async readMail(REGX?: RegExp) {
         return new Promise<string>(async (res, rej) => {
             try {
+                // TODO:  adicionar contas de e-mail vinculadas ao tenant.
+
                 this.imap = new Imap({
-                    user: 'allana.santos@ci.dev.br',
-                    password: '21x3$N&*KhEC%¨g¨&j*ilK(0ç0-*34f5g6h',
-                    host: 'mail.ci.dev.br',
-                    port: 143 /* 993 */,
-                    tls: false,
-                    mailbox: "INBOX"
+                    // user: 'allana.santos@ci.dev.br',
+                    // password: '21x3$N&*KhEC%¨g¨&j*ilK(0ç0-*34f5g6h',
+                    // host: 'mail.ci.dev.br',
+                    // port: 143 /* 993 */,
+                    // tls: false,
+                    // mailbox: "INBOX"
                 });
                 try {
                     res(await this.readyHandler(REGX));

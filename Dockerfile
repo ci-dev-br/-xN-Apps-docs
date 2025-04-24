@@ -1,9 +1,10 @@
-FROM node:20
+ARG NODE_VERSION=20.17.0
+ARG PNPM_VERSION=9.1.4
+FROM node:${NODE_VERSION}-alpine
+ENV NODE_ENV production
 WORKDIR /usr/src/app
-COPY server/package*.json ./
+COPY server/package*.json .
 RUN npm install
-COPY ./server/dist/main.js ./dist
-COPY ./server/public/ ./public
-RUN node dist/main.js
-EXPOSE 86,446,664
+COPY . .
+EXPOSE 3333
 CMD ["node", "dist/main"]
