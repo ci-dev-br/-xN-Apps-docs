@@ -48,6 +48,7 @@ export class HomeComponent implements OnInit {
     }
     hasUser(user?: User) {
         if (!!user) {
+            // TODO: separar bloco
             this.daos.prepareToEdit(user);
             this.daos.bindDataForm(user, this.form);
             this.daos.confirmation(user)?.subscribe(async data => {
