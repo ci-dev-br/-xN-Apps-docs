@@ -31,7 +31,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:apps": "node dist/apps/server/server.mjs",
-    "api": "node node_modules/ng-openapi-gen/lib/index.js",
+    "api": "node node_modules/@ci/api-gen/lib/index.js",
     "serve:ssr:@ci/quase": "node dist/ci/quase/server/server.mjs"
   },
   "private": true,
