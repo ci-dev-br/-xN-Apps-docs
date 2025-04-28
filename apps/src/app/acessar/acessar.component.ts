@@ -76,7 +76,7 @@ export class AcessarComponent implements OnInit {
             result = await
               lastValueFrom(this.authService.acessar({
                 body: {
-                }
+                } as any
               }))
           } catch (error) {
             this.snack.open('Acesso indisponível.', 'Ok');
@@ -94,7 +94,7 @@ export class AcessarComponent implements OnInit {
                     body: {
                       chaveAcesso: SHA512((this.acesso_payload as any).chaveAcesso).toString(),
                       identificacao: passe
-                    }
+                    } as any
                   }));
                   this.acesso_payload = payload;
                 } catch (error) {
@@ -122,15 +122,14 @@ export class AcessarComponent implements OnInit {
       ) {
         this.acesso_payload = await lastValueFrom(this.authService.acessar({
           body: {
-            chaveAcesso: SHA512(this.acesso_payload.chaveAcesso).toString(),
-            password: this.acesso_payload.mode === 'full-text' ?
+            chaveAcesso: (SHA512(this.acesso_payload.chaveAcesso).toString()) as string,
+            password: (this.acesso_payload.mode === 'full-text' ?
               SHA512(
                 SHA512(this.form?.get('password')?.value).toString() +
                 this.acesso_payload?.chaveAcesso
               ).toString()
-              : this.acesso_payload.mode === 'argon2' ? this.form?.get('password')?.value : undefined
-            ,
-          }
+              : this.acesso_payload.mode === 'argon2' ? String(this.form?.get('password')?.value) : undefined) as string,
+          } as any
         }));
         if (this.acesso_payload?.user?.id) {
           this.storageService.store('apps.ci.dev.br.store.User', {

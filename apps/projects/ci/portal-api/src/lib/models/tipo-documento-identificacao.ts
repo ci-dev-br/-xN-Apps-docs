@@ -10,7 +10,7 @@ export interface TipoDocumentoIdentificacao {
   /**
    * Descrição
    */
-  description: string | null;
+  description?: string | null;
   internalId?: string | null;
   lastModifiedAt?: string | null;
   lastModifiedBy?: {

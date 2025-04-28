@@ -4,12 +4,12 @@
 
 import { User } from '../models/user';
 export interface AcessoPayload {
-  bearer?: string;
-  chaveAcesso?: string;
-  identificacao?: string;
-  mode?: string;
-  password?: string;
-  refreshToken?: string;
-  solicitarSessao?: string;
-  user?: User;
+  bearer?: string | null;
+  chaveAcesso?: string | null;
+  identificacao?: string | null;
+  mode?: string | null;
+  password?: string | null;
+  refreshToken?: string | null;
+  solicitarSessao?: string | null;
+  user?: User | null;
 }

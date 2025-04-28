@@ -46,19 +46,14 @@ export class Organizacao extends FullAuditedEntity {
     /**
      * Cadastro de Pessoa Física ou Pessoa Jurídica que representa uma determinada Organização
      */
+    /**
+     * Responsável pelo cadastro da Organização
+     */
     @ApiProperty({
         title: 'Responsável pela Organização',
         description: 'Pessoa Responsável pelo cadastro da Organização na Plataforma virtual.',
         type: Pessoa, nullable: true,
         required: false
-    })
-    /**
-     * Responsável pelo cadastro da Organização
-     */
-    @ApiProperty({
-        title: '',
-        name: '',
-        example: '',
     })
     @ManyToOne(type => Pessoa, { nullable: true })
     @JoinTable()

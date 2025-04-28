@@ -19,9 +19,9 @@ export class OrganizacaoFindPayload {
 }
 export class OrganizacaoFindResult {
     @ApiProperty({ nullable: true, required: true, type: Organizacao, isArray: true })
-    0: Organizacao[];
+    results: Organizacao[];
     @ApiProperty({ nullable: true, required: true })
-    1: number;
+    totalLength: number;
 }
 @Controller('Organizacao')
 @ApiTags('Organizacao')
@@ -57,6 +57,11 @@ export class OrganizacaoController {
     async Find(
         @Req() req: any, @Body() input: OrganizacaoFindPayload
     ) {
-        return await this.organizacaoService.Find(input.query);
+        return ((r) => {
+            return {
+                results: r[0],
+                totalLength: r[1],
+            } as OrganizacaoFindResult
+        })(await this.organizacaoService.Find(input.query));
     }
 }

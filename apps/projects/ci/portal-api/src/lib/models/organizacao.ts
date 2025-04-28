@@ -6,11 +6,6 @@ import { Pessoa } from '../models/pessoa';
 import { Photo } from '../models/photo';
 import { Tenant } from '../models/tenant';
 export interface Organizacao {
-
-  /**
-   * Pessoa Responsável pelo cadastro da Organização na Plataforma virtual.
-   */
-  ''?: Pessoa | null;
   createdAt?: string | null;
   createdBy?: {
 } | null;
@@ -28,6 +23,11 @@ export interface Organizacao {
    * Nome da Organização
    */
   organizatioName?: string | null;
+
+  /**
+   * Pessoa Responsável pelo cadastro da Organização na Plataforma virtual.
+   */
+  responsavel?: Pessoa | null;
   tenant?: Tenant | null;
   tenants?: Array<string> | null;
 }
