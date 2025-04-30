@@ -28,7 +28,7 @@
                 <mat-card-content>
                     <div class="row">
                         <div class="content">
-                            <button mat-raised-button [disabled]="!!form?.invalid" (click)="saveProfile()">Save
+                            <button mat-raised-button [disabled]="!!(form.invalid)" (click)="saveProfile()">Save
                                 Profile</button>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
         </mat-card>
         <mat-card>
             <mat-card-content>
-                Discover | Família | Recompensas | Outlook 
+                Discover | Família | Recompensas | Outlook
             </mat-card-content>
         </mat-card>
     </div>

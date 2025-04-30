@@ -5,6 +5,11 @@
 import { Card } from '../models/card';
 export interface Prancheta {
   cards?: Array<Card> | null;
+
+  /**
+   * Código interno para prancheta Padrão, permite compartilhar a prancheta internamente entre usuários a partir de seu código global
+   */
+  codigoGlobal?: string | null;
   createdAt?: string | null;
   createdBy?: {
 } | null;

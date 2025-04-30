@@ -5,7 +5,11 @@ import { Prancheta } from "../models/prancheta.entity";
 import { AudtService } from "@ci/core";
 export class PranchetaSyncPayloadDto {
     @ApiProperty({ type: Prancheta, nullable: true, required: false })
-    prancheta?: Prancheta
+    prancheta?: Prancheta;
+    @ApiProperty({
+        required: false,
+    })
+    defaultGlobalCode?: string;
 }
 @ApiTags('Prancheta')
 @Controller('Prancheta')
@@ -27,14 +31,22 @@ export class PranchetaController {
             { req });
     }
     @ApiResponse({
-        type: Prancheta, isArray: true
+        type: Prancheta,
+        // isArray: true
     })
     @Post('Get')
     async Get(
         @Req() req: any,
         @Body() input: PranchetaSyncPayloadDto) {
-        return await this.service.Get({
-            userId: req.user.id
-        })
+        if (!!input.defaultGlobalCode) {
+            return await this.service.Get({
+                globalCode: input.defaultGlobalCode
+            })
+        } else {
+            return await this.service.Get({
+                userId: req.user.id,
+            })
+        }
     }
+
 }

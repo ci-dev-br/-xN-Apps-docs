@@ -37,15 +37,21 @@ export class PranchetaService {
         options: {
             userId?: string,
             tenant?: string,
+            globalCode?: string,
         }
     ) {
-        return await this.prancheta_reppository.find({
+        return await this.prancheta_reppository.findOne({
             where:
-            {
-                createdBy: {
-                    identifiedUser: Equal(options.userId)
-                }
-            },
+                !!options?.globalCode ?
+                    {
+                        codigoGlobal: options.globalCode
+                    }
+                    :
+                    {
+                        createdBy: {
+                            identifiedUser: Equal(options.userId)
+                        }
+                    },
         });
     }
 }

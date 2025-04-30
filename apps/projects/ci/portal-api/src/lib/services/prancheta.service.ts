@@ -57,7 +57,7 @@ export class PranchetaService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  pranchetaControllerGet$Response(params: PranchetaControllerGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Prancheta>>> {
+  pranchetaControllerGet$Response(params: PranchetaControllerGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Prancheta>> {
     return pranchetaControllerGet(this.http, this.rootUrl, params, context);
   }
 
@@ -67,9 +67,9 @@ export class PranchetaService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  pranchetaControllerGet(params: PranchetaControllerGet$Params, context?: HttpContext): Observable<Array<Prancheta>> {
+  pranchetaControllerGet(params: PranchetaControllerGet$Params, context?: HttpContext): Observable<Prancheta> {
     return this.pranchetaControllerGet$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<Prancheta>>): Array<Prancheta> => r.body)
+      map((r: StrictHttpResponse<Prancheta>): Prancheta => r.body)
     );
   }
 

@@ -28,4 +28,7 @@ export class Prancheta extends FullAuditedEntity {
     order?: number;
     /* @OneToMany(() => PranchetaItemMetadata, item => item.prnahceta)
     items?: PranchetaItemMetadata[]; */
+    @ApiProperty({ nullable: true, required: false, description: 'Código interno para prancheta Padrão, permite compartilhar a prancheta internamente entre usuários a partir de seu código global' })
+    @Column({ nullable: true, unique: true, })
+    codigoGlobal?: string;
 }

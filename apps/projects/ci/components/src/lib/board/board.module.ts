@@ -1,6 +1,29 @@
-import { NgModule } from "@angular/core";
+import { ModuleWithProviders, NgModule } from "@angular/core";
+import { CoreModule } from "@ci/core";
+import { BoardComponent } from "./board.component";
 
 
 @NgModule({
-
-}) export class BoardModule { }
+    imports: [
+        CoreModule,
+    ],
+    declarations: [
+        BoardComponent,
+    ],
+    exports: [
+        BoardComponent,
+    ]
+})
+export class BoardModule {
+    public static forFeature(): ModuleWithProviders<BoardModule> {
+        return {
+            ngModule: BoardModule,
+            providers: [
+                
+            ]
+        }
+    }
+}
+export {
+    BoardComponent,
+}
