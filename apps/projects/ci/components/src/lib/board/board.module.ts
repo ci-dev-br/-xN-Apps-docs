@@ -1,11 +1,15 @@
 import { ModuleWithProviders, NgModule } from "@angular/core";
 import { CoreModule } from "@ci/core";
 import { BoardComponent } from "./board.component";
+import { InputModule } from "../input/input.module";
+import { ReactiveFormsModule } from "@angular/forms";
 
 
 @NgModule({
     imports: [
         CoreModule,
+        InputModule,
+        ReactiveFormsModule,
     ],
     declarations: [
         BoardComponent,
@@ -19,7 +23,7 @@ export class BoardModule {
         return {
             ngModule: BoardModule,
             providers: [
-                
+
             ]
         }
     }

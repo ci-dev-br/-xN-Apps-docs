@@ -93,7 +93,7 @@ export const APPS = [
         roles: ['MASTER'], icon: 'vendas', type: 'svg'
     },
     {
-        color: getColor(), url: '/crm', name: 'CRM',
+        color: getColor(), url: '/CRM', name: 'CRM',
         roles: ['ADMIN'], icon: 'crm', type: 'svg'
     },
 ];

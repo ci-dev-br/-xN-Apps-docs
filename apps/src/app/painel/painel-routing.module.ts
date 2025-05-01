@@ -29,6 +29,7 @@ const routes: Routes = [
       { path: 'Threejs', loadChildren: () => import('@ci-apps/Threejs').then(m => m.CiApplicationModule) },
       { path: 'Treinamento', loadChildren: () => import('@ci-apps/Treinamento').then(m => m.CiApplicationModule) },
       { path: 'Vendas', loadChildren: () => import('@ci-apps/Vendas').then(m => m.CiApplicationModule) },
+      { path: 'CRM', loadChildren: () => import('@ci-apps/crm').then(m => m.CiApplicationModule) },
     ]
   }
 ];

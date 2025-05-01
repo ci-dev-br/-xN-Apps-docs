@@ -1,14 +1,16 @@
 import { Component, Input, OnInit } from "@angular/core";
+import { FormGroup } from "@angular/forms";
 import { UserService } from "@ci/auth";
+import { DaoFormService, DaoService, IChangeable } from "@ci/core";
 import { Prancheta, PranchetaService } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 
 @Component({
     selector: 'ci-board',
     template: `
-        <div class="board-wrap">
-            <h1>{{prancheta?.title}}</h1>
-        </div>
+        @if(form){<div class="board-wrap" [formGroup]="form" > 
+            <ci-input mode="content-editable" fieldName="title" label="Título"  el="h1"></ci-input>
+        </div>}
     `,
     styleUrls: [
         'board.component.scss',
@@ -16,13 +18,39 @@ import { lastValueFrom } from "rxjs";
     standalone: false,
 })
 export class BoardComponent implements OnInit {
+    form?: FormGroup;
     @Input() default?: string;
     constructor(
+        private readonly daoForms: DaoFormService,
         private readonly user: UserService,
-        private readonly pranchetas: PranchetaService
+        private readonly pranchetas: PranchetaService,
+        private readonly daos: DaoService,
     ) { }
     async ngOnInit() {
-        this.loadBoard();
+        await this.loadBoard();
+        this.form = await this.daoForms.getForm('Prancheta');
+        this.daos.prepareToEdit(this.prancheta);
+        this.daos.bindDataForm(this.prancheta, this.form);
+
+        this.daos.confirmation(this.prancheta)?.subscribe(async data => {
+            try {
+                if (this.prancheta && data && this.form) {
+                    let _data: any = Object.assign(this.prancheta,
+                        await lastValueFrom(this.pranchetas.pranchetaControllerSync({ body: { prancheta: this.prancheta } }))
+                    );
+                    // delete (_data as IChangeable).__pre;
+                    // this.daos.prepareToEdit(_data);
+                    // this.daos.bindDataForm(_data, this.form);
+                    // this.prancheta = _data;
+                    _data;
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        });
+        this.form.valueChanges.subscribe(v => {
+            this.syncPrancheta();
+        })
     }
     prancheta?: Prancheta;
     async loadBoard() {
@@ -41,6 +69,14 @@ export class BoardComponent implements OnInit {
             // if (!!this.default) {
             //     this.pranchetas.pranchetaControllerGet({ body: { defaultGlobalCode: this.default } });
             // }
+        }
+    }
+
+    async syncPrancheta() {
+        if (this.prancheta && this.form?.valid) {
+            await this.daos.confirmChanges(this.prancheta);
+        } else {
+            this.form?.markAllAsTouched();
         }
     }
 }
