@@ -75,13 +75,16 @@ export class SnapshotService {
         } catch (error) {
         }
     }
-    async snapshot(entidade: FullAuditedEntity) {
+    async snapshot(entidade: FullAuditedEntity, request?: Request) {
         const json_snapshot = JSON.parse(JSON.stringify(entidade, null, 2));
         const moment = new Date().toISOString();
         const hash = createHash('sha256').update([this.lastSnapshotHash || ''] + json_snapshot + moment).digest('hex').toString();
+        const user_id: string | undefined = (request as any)?.user?.id;
+        const chave_acesso = (request as any).chaveAcesso
         const snap = this.snapRepo.create({
             snap: json_snapshot,
             hash: hash,
+            createdBy: chave_acesso,
         })
         this.lastSnapshotHash = hash;
         this.snapRepo.save(snap);
