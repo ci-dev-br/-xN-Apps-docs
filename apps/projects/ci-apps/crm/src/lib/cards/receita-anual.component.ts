@@ -4,26 +4,24 @@ import { CoreModule } from "@ci/core";
 @Component({
     selector: 'ci-card--crm-totalizador',
     template: `
-        <h4>Total de Vendas</h4>
-        <p>
-            R$ 145,20
-        </p>
+        <h4>Receita Anual</h4>
+        
     `,
     standalone: true,
     imports: [
         CoreModule,
     ]
 })
-export class TotalizadorComponent {
+export class ReceitaAnualComponent {
 
 }
-export const TotalizadorCardInfo = {
-    title: 'Total de Vendas',
+export const ReceitaAnualCardInfo = {
+    title: 'Receita Anual',
     descricao: `Verifique o total de vendas realizados durante o período selecionado.`,
-    tags: ['CRM', 'Totalizador', 'Relatório'],
-    componentRef: TotalizadorComponent,
+    tags: ['CRM', 'Receita', 'Gráfico'],
+    componentRef: ReceitaAnualComponent,
     componentVersion: '1.0.0',
-    componentName: 'TotalizadorComponent',
+    componentName: 'ReceitaAnualComponent',
     settings: {
 
     }

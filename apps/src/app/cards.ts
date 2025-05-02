@@ -1,18 +1,18 @@
-import { Type } from "@angular/core";
-import { TotalizadorComponent } from "@ci-apps/crm";
+import { TotalizadorCardInfo } from "@ci-apps/crm";
 import { ImplCard } from "@ci/components";
-import { Card, CardOption } from "@ci/portal-api";
+import { ReceitaAnualCardInfo } from "../../projects/ci-apps/crm/src/lib/cards/receita-anual.component";
+import { ListCardInfo } from "../../projects/ci-apps/crm/src/lib/cards/list.component";
+import { CustomerByContryCardInfo } from "../../projects/ci-apps/crm/src/lib/cards/customer-by-country.component";
+import { StatisticsCardInfo } from "../../projects/ci-apps/crm/src/lib/cards/statistics.component";
+import { CalendarCardInfo } from "../../projects/ci-apps/crm/src/lib/cards/calendar.component";
+import { AvailableForInstantPayoutCardInfo } from "../../projects/ci-apps/crm/src/lib/cards/available-for-instant-payout.component";
 
 export const Cards: ImplCard[] = [
-    {
-        title: 'Total de Vendas',
-        descricao: `Verifique o total de vendas realizados durante o período selecionado.`,
-        tags: ['CRM', 'Totalizador', 'Relatório'],
-        componentRef: TotalizadorComponent,
-        componentVersion: '1.0.0',
-        componentName: 'TotalizadorComponent',
-        settings: {
-
-        }
-    }
+    TotalizadorCardInfo,
+    ReceitaAnualCardInfo,
+    ListCardInfo,
+    CustomerByContryCardInfo,
+    StatisticsCardInfo,
+    CalendarCardInfo,
+    AvailableForInstantPayoutCardInfo,
 ]

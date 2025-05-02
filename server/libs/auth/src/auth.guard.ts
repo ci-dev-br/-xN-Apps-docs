@@ -42,8 +42,8 @@ export class AuthGuard implements CanActivate {
       });
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
-      console.log('ROLE', role)
-      console.log('PAYLOAD', payload)
+      // console.log('ROLE', role)
+      // console.log('PAYLOAD', payload)
       request['user'] = { id: payload.id };
       request['chaveAcesso'] = payload.chaveAcesso;
       let chave_acesso_local = await this.credencial.obterChaveAcessoPorId(payload.chaveAcesso);
