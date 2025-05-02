@@ -2,7 +2,10 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { FullAuditedEntity } from "@ci/core";
 import { Marca } from "@ci/inpi/model/marca.entity";
-@Entity()
+import { schema } from "./schema";
+@Entity({
+    schema
+})
 export class Product extends FullAuditedEntity {
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })
@@ -24,6 +27,9 @@ export class Product extends FullAuditedEntity {
     description?: string;
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })
+    name?: string;
+    @ApiProperty({ nullable: true, required: false })
+    @Column({ nullable: true })
     shortDescription?: string;
     @ApiProperty({ nullable: true, required: false, description: 'URL do site' })
     @Column({ nullable: true })
@@ -34,6 +40,11 @@ export class Product extends FullAuditedEntity {
     marca?: Marca;
     @ApiProperty({ nullable: true, required: false, })
     subGrupo: string;
+    @ApiProperty({ nullable: true, required: false, })
+    @Column({ length: 3, nullable: true, default: 'BRL' })
+    moeda: string;
+    unidadeMedida: UnidadeMedida;
+    // categoria:Catego
     /* @ApiProperty({ nullable: true, required: false })
     @ManyToOne(() => Tenant)
     @JoinTable()

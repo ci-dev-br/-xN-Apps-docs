@@ -2,14 +2,14 @@ import { Module } from "@nestjs/common";
 import { Lancamento } from "./model/Lançamento.entity";
 import { BillingType } from "./model/billingType.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Category } from "./model/category.entity";
+import { Category } from "../../cadastro/src/model/category.entity";
 import { FaturamentoController } from "./controller/faturamento.controller";
 import { Transação } from "./model/Transação";
 import { I11nModule } from "@ci/i11n";
+import { CasdastroModule } from "@ci/cadastro";
 export const FinanceiroEntities = [
     Lancamento,
     BillingType,
-    Category,
     Transação,
 ];
 @Module({
@@ -18,6 +18,7 @@ export const FinanceiroEntities = [
             ...FinanceiroEntities,
         ]),
         I11nModule,
+        CasdastroModule,
     ],
     exports: [],
     controllers: [
@@ -30,6 +31,5 @@ export class FinanceiroModule { }
 export {
     Lancamento,
     BillingType,
-    Category,
     Transação,
 }

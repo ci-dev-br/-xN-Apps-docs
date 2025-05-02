@@ -2,13 +2,15 @@ import { Inject, ModuleWithProviders, NgModule, Optional, Pipe, PipeTransform } 
 import { CoreModule } from "@ci/core";
 import { BoardComponent } from "./board.component";
 import { InputModule } from "../input/input.module";
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { CardSetting, ImplCard } from "./card";
 import { CardFinderComponent } from "./card-finder/card-finder.component";
 import { MatDialogModule } from "@angular/material/dialog";
 import { Card } from "@ci/portal-api";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 @Pipe({ name: 'cardComponent', pure: true })
 export class CardComponentPipe implements PipeTransform {
@@ -29,6 +31,9 @@ export class CardComponentPipe implements PipeTransform {
         MatButtonModule,
         MatIconModule,
         MatDialogModule,
+        MatInputModule,
+        MatFormFieldModule,
+        FormsModule,
     ],
     declarations: [
         CardFinderComponent,

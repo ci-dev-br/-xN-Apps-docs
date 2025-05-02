@@ -1,7 +1,7 @@
 import { FullAuditedEntity } from "@ci/core";
-import { Column, Entity } from "typeorm";
-import { schema } from "../norms";
 import { ApiProperty } from "@nestjs/swagger";
+import { Column, Entity } from "typeorm";
+import { schema } from "./schema";
 @Entity({
     schema
 })

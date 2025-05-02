@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DaoServiceBase, SnapshotService } from "@ci/manager";
+import { DaoFullAuditedServiceBase, SnapshotService } from "@ci/manager";
 import { Campanha } from "../models/campanha.entity";
 @Injectable()
-export class CampanhaService extends DaoServiceBase<Campanha> {
+export class CampanhaService extends DaoFullAuditedServiceBase<Campanha> {
     constructor(
         snap: SnapshotService,
         @InjectRepository(Campanha)

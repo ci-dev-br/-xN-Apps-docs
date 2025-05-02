@@ -1,8 +1,10 @@
 <div>
-    <input type="text" placeholder="Pesquisar">
+    <mat-form-field>
+        <input matInput #pesquisaInput type="text" placeholder="Pesquisar" (keydown.enter)="find(pesquisaInput.value)">
+    </mat-form-field>
 </div>
 <div class="cards">
-    @for (card of cardsFound; track $index) {
+    @for (card of lista; track $index) {
     <div class="card-preview">
         <div>
             @if(!!card.title){<h3>{{card.title}}</h3>}

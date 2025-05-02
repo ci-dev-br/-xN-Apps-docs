@@ -14,6 +14,7 @@ import { CadastroBase } from "./service/CadastroBase";
 import { CadastroPessoaForm } from "./service/cadastros/cadastro-pessoa.form";
 import { CadastroEnderecoForm } from "./service/cadastros/cadastro-endereco.form";
 import { CadastroImagensForm } from "./service/cadastros/cadastro-imagens.form";
+import { Category } from "./model/category.entity";
 const FORM_PROVIDERS = [
     CadastroPessoaForm,
     CadastroEnderecoForm,
@@ -25,6 +26,7 @@ export const CadastroEntidades = [
     InformacaoContato,
     DocumentoIdentificacao,
     TipoDocumentoIdentificacao,
+    Category,
 ]
 @Module({
     imports: [
@@ -50,8 +52,9 @@ export const CadastroEntidades = [
 export class CasdastroModule { }
 export {
     Endereco,
-    Pessoa as Pessoa,
+    Pessoa,
     InformacaoContato,
     DocumentoIdentificacao,
     TipoDocumentoIdentificacao,
+    Category,
 }
