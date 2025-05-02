@@ -12,12 +12,13 @@
             </button>
             <input type="text" class="navegacao" #urlInput [(ngModel)]="endereco"
                 (keydown.enter)="ir(urlInput.value)" />
+            <input type="text" class="navegacao" [(ngModel)]="filtrar" />
         </mat-toolbar>
         <div class="scoller">
             <h4>Pastas</h4>
             <div class="folders">
-                @for (file of files; track $index) {
-                <div class="folder" (click)="file.info ? ir(file.info.path + '/' + file.name) : null">
+                @for (file of filteredFiles || files; track $index) {
+                <div class="folder" (click)="abrir(file)">
                     <div class="folder-wrapper">
                         <mat-icon>{{file.icon}}</mat-icon>
                         <div class="title">

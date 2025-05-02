@@ -1,0 +1,23 @@
+:host {
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.cards {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    gap: 12px;
+    padding: 12px;
+}
+
+.card-preview {
+    border-radius: 9px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .44);
+
+
+    display: flex;
+    flex-direction: row;
+}

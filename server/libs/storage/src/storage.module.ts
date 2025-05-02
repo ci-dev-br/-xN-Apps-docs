@@ -6,6 +6,7 @@ import { PhotoController } from "./controller/photo.controller";
 import { AuthModule } from "@ci/auth/auth.module";
 import { CoreModule } from "@ci/core/core.module";
 import { FileExplorerController } from "./controller/file-explorer.controller";
+import { VideoController } from "./controller/video.controller";
 export const StorageEntities = [
     Photo,
 ];
@@ -18,6 +19,7 @@ export const StorageEntities = [
     controllers: [
         PhotoController,
         FileExplorerController,
+        VideoController,
     ],
     providers: [
         PhotoService,

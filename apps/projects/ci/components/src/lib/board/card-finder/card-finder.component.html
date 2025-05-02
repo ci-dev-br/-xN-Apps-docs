@@ -1,0 +1,14 @@
+<div>
+    <input type="text" placeholder="Pesquisar">
+</div>
+<div class="cards">
+    @for (card of cardsFound; track $index) {
+    <div class="card-preview">
+        <div>
+            @if(!!card.title){<h3>{{card.title}}</h3>}
+            @if(!!card.descricao){<p>{{card.descricao}}</p>}
+        </div>
+        <button mat-raised-button (click)="adicionar(card)">Adicionar Card </button>
+    </div>
+    }
+</div>

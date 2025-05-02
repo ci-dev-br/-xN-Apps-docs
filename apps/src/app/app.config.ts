@@ -9,6 +9,8 @@ import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@a
 import { AuthorizationHttpInterceptor, coreProvider, StorageService } from '@ci/core';
 import { ApiModule } from '@ci/portal-api';
 import { provideNuMonacoEditorConfig } from '@ng-util/monaco-editor';
+import { CardSetting } from '@ci/components';
+import { Cards } from './cards';
 
 const SETUP = {
   API_URL_GATEWAY: 'https://apps.ci.dev.br:446',
@@ -51,5 +53,6 @@ export const appConfig: ApplicationConfig = {
       rootApi: SETUP.API_URL_GATEWAY,
       alternativeApiGateways: SETUP.ALTERN_GATEWAYS,
     }),
+    { provide: CardSetting, useValue: Cards }
   ],
 };

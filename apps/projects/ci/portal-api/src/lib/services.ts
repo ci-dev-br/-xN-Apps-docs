@@ -16,6 +16,7 @@ export { PranchetaService } from './services/prancheta.service';
 export { UserService } from './services/user.service';
 export { PhotoService } from './services/photo.service';
 export { FileExplorerService } from './services/file-explorer.service';
+export { VideoService } from './services/video.service';
 export { CadastroService } from './services/cadastro.service';
 export { PessoaService } from './services/pessoa.service';
 export { OrganizacaoService } from './services/organizacao.service';

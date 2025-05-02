@@ -20,6 +20,7 @@ import { PranchetaService } from './services/prancheta.service';
 import { UserService } from './services/user.service';
 import { PhotoService } from './services/photo.service';
 import { FileExplorerService } from './services/file-explorer.service';
+import { VideoService } from './services/video.service';
 import { CadastroService } from './services/cadastro.service';
 import { PessoaService } from './services/pessoa.service';
 import { OrganizacaoService } from './services/organizacao.service';
@@ -47,6 +48,7 @@ import { FormsService } from './services/forms.service';
     UserService,
     PhotoService,
     FileExplorerService,
+    VideoService,
     CadastroService,
     PessoaService,
     OrganizacaoService,

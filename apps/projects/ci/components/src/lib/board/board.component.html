@@ -1,0 +1,22 @@
+@if(form){<div class="board-wrap" [formGroup]="form">
+    <ci-input mode="content-editable" fieldName="title" label="Título" el="h1"></ci-input>
+
+    @if(prancheta){
+    <div class="cards-wrapp">
+        @for (card of prancheta.cards; track $index) {
+        <div class="card-wrapper">
+            <ng-container *ngComponentOutlet="component(card).componentRef"></ng-container>
+        </div>
+        }
+    </div>
+    }
+</div>}
+
+<div class="c">
+    <button mat-icon-button (click)="findCardToAdd()">
+        <mat-icon>add</mat-icon>
+    </button>
+    <button mat-icon-button (click)="findCardToAdd()">
+        <mat-icon>settings</mat-icon>
+    </button>
+</div>

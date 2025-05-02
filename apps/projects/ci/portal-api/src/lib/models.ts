@@ -52,3 +52,4 @@ export type { SyncPayloadDaoProduct } from './models/sync-payload-dao-product';
 export type { Tenant } from './models/tenant';
 export type { TipoDocumentoIdentificacao } from './models/tipo-documento-identificacao';
 export type { User } from './models/user';
+export type { VideoGetInput } from './models/video-get-input';

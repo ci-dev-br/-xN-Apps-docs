@@ -1,0 +1,28 @@
+:host {
+    display: flex;
+    flex-direction: column;
+}
+
+.c {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.cards-wrapp {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+
+.card-wrapper {
+    padding: 6px;
+    background-color: black;
+    border-radius: 12px;
+}

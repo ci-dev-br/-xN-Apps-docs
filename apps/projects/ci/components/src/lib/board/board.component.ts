@@ -1,17 +1,16 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Inject, Injector, Input, OnInit } from "@angular/core";
 import { FormGroup } from "@angular/forms";
+import { MatDialog } from "@angular/material/dialog";
 import { UserService } from "@ci/auth";
 import { DaoFormService, DaoService, IChangeable } from "@ci/core";
-import { Prancheta, PranchetaService } from "@ci/portal-api";
+import { Card, Prancheta, PranchetaService } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
+import { CardFinderComponent } from "./card-finder/card-finder.component";
+import { CardSetting, ImplCard } from "./card";
 
 @Component({
     selector: 'ci-board',
-    template: `
-        @if(form){<div class="board-wrap" [formGroup]="form" > 
-            <ci-input mode="content-editable" fieldName="title" label="Título"  el="h1"></ci-input>
-        </div>}
-    `,
+    templateUrl: 'board.component.html',
     styleUrls: [
         'board.component.scss',
     ],
@@ -25,7 +24,16 @@ export class BoardComponent implements OnInit {
         private readonly user: UserService,
         private readonly pranchetas: PranchetaService,
         private readonly daos: DaoService,
-    ) { }
+        private readonly dialog: MatDialog,
+        private readonly injector: Injector,
+        @Inject(CardSetting)
+        public cardsFound?: ImplCard[],
+    ) {
+        this.cardsFound?.forEach(c => {
+            this.cards.set(c.componentName || '', c);
+        })
+    }
+    cards = new Map<string, ImplCard>();
     async ngOnInit() {
         await this.loadBoard();
         this.form = await this.daoForms.getForm('Prancheta');
@@ -78,5 +86,18 @@ export class BoardComponent implements OnInit {
         } else {
             this.form?.markAllAsTouched();
         }
+    }
+    component(card: Card): ImplCard {
+        return this.cards.get(card.componentName || '') as ImplCard;
+    }
+    async findCardToAdd() {
+        const cardFinderDialog = this.dialog.open(CardFinderComponent);
+        cardFinderDialog.afterClosed().subscribe(value => {
+            if (!!this.prancheta && !!value) {
+                if (!this.prancheta.cards) this.prancheta.cards = [];
+                this.prancheta.cards.push(value);
+                this.syncPrancheta();
+            }
+        })
     }
 }

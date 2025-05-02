@@ -8,6 +8,7 @@ import { IFile } from './i-file';
 import { FileExplorerService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { TechnicolorShader } from 'three/examples/jsm/Addons.js';
 
 @Component({
   selector: 'ci-files',
@@ -25,13 +26,30 @@ import { FormsModule } from '@angular/forms';
 })
 export class FilesComponent {
   files?: IFile[];
+  filteredFiles?: IFile[];
   constructor(
     private readonly fileExplorer: FileExplorerService,
   ) { }
   endereco?: string;
+  private _filtrar?: string | undefined;
+  public get filtrar(): string | undefined {
+    return this._filtrar;
+  }
+  public set filtrar(value: string | undefined) {
+    if (this._filtrar === value) return;
+    this._filtrar = value;
 
+    setTimeout(() => {
+      if (value && value.trim().length > 0)
+        this.filteredFiles = [...(this.files || [])]
+          .filter(file => file && file.name && (file.name.indexOf(value) > -1 || RegExp(value).test(file.name)))
+      else
+        this.filteredFiles = [];
+    })
+  }
   async ir(endereco: string) {
     this.endereco = endereco;
+    this.filteredFiles = undefined;
     let files = (await lastValueFrom(this.fileExplorer.fileExplorerControllerReadDirectory({ body: { path: endereco } })));
     if (!!files)
       this.files = files.map(f => {
@@ -46,5 +64,15 @@ export class FilesComponent {
     let r = this.endereco?.replaceAll('\\', '/').split('/');
     r?.pop();
     this.ir(r?.join('/') || './')
+  }
+
+  async abrir(file: IFile) {
+    if (file.info) {
+      if (file.name?.indexOf('.') === -1) {
+        this.ir(file.info.path + '/' + file.name);
+      } else {
+
+      }
+    }
   }
 }

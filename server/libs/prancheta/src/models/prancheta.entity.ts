@@ -9,7 +9,7 @@ export class Card {
     componentName?: string;
     @ApiProperty({ nullable: true, required: false })
     componentVersion?: string;
-    @ApiProperty({ nullable: true, required: false, type: CardOption })
+    @ApiProperty({ nullable: true, required: false })
     settings: CardOption;
 }
 @Entity()
