@@ -25,7 +25,7 @@ export class SnapshotService {
         } catch (error) {
         }
     }
-    async snapshot(entidade: FullAuditedEntity, request?: Request) {
+    async snapshot(entidade: FullAuditedEntity | any, request?: Request) {
         const json_snapshot = JSON.parse(JSON.stringify(entidade, null, 2));
         const moment = new Date().toISOString();
         const hash = createHash('sha256').update([this.lastSnapshotHash || ''] + json_snapshot + moment).digest('hex').toString();

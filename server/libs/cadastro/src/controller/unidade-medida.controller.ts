@@ -2,6 +2,8 @@ import { Body, Controller, Post } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { UnidadeMedida } from "../model/unidade-medida.entity";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
+import { FindOptionsWhere } from "typeorm";
+import { UnidadeMedidaService } from "../service/unidade-medida.service";
 export class SyncPayloadDaoUnidadeMedida extends SyncPayloadDao<UnidadeMedida> {
     @ApiProperty({ type: UnidadeMedida })
     override data?: UnidadeMedida;
