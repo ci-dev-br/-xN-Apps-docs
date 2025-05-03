@@ -160,3 +160,17 @@ mat-drawer-container {
     }
 
 }
+
+button.app {
+    display: flex;
+    flex-direction: column;
+    font-size: 9px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: unset;
+    min-height: unset;
+    max-height: unset;
+    gap: 4px;
+    border-radius: 0;
+}
