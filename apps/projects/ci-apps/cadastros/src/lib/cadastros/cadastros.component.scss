@@ -105,6 +105,7 @@ nav.status {
 
 :host {
     display: contents;
+    flex: auto;
 }
 
 mat-drawer {
@@ -125,4 +126,8 @@ mat-drawer {
 mat-drawer-container {
     flex: auto;
     width: 100%;
+}
+
+.container {
+    flex: auto;
 }

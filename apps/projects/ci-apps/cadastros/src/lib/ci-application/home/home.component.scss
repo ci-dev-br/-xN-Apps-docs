@@ -1,3 +1,20 @@
 :host {
     flex: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+mat-tab-nav-panel {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+
+    & ::ng-deep>* {
+        flex: auto;
+    }
+}
+
+router-outlet{
+    display: contents;
 }
