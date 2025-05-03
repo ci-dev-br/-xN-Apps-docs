@@ -16,6 +16,8 @@ export interface Product {
   lastModifiedBy?: {
 } | null;
   marca?: Marca | null;
+  moeda?: string | null;
+  name?: string | null;
   nossoCodigo?: string | null;
   shortDescription?: string | null;
   sku?: string | null;
