@@ -12,7 +12,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { CoreModule } from "@ci/core";
-import { LNavModule, StatusBarModule } from "@ci/components";
+import { DynFormModule, LNavModule, StatusBarModule } from "@ci/components";
 import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo.component';
 import { GerencialComponent } from "./gerencial.component";
 import { WindowModule } from "@ci/components";
@@ -79,6 +79,7 @@ const routes: Routes = [
         MatChipsModule,
         MobFakeModule,
         StatusBarModule,
+        DynFormModule,
         RouterModule.forChild(routes)
     ]
 })

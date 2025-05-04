@@ -15,3 +15,4 @@ export * from './lib/action/action.module';
 export * from './lib/icon/icon.module';
 export * from './lib/navbar/navbar.module';
 export * from './lib/board/board.module';
+export * from './lib/dyn-form/dyn-form.module';

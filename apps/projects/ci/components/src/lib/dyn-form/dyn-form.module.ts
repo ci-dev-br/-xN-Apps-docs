@@ -1,17 +1,17 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { DynFormComponent } from './dyn-form.component';
 import { FORM_OPTIONS, FormOptionsBuilder, IFormOptions } from './i-form-options';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CoreModule } from '@ci/core';
 @NgModule({
   declarations: [
     DynFormComponent
   ],
   imports: [
-    CommonModule,
+    CoreModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
@@ -21,7 +21,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     FormOptionsBuilder,
   ],
   exports: [
-    DynFormComponent
+    DynFormComponent,
   ]
 })
 export class DynFormModule {
@@ -33,4 +33,7 @@ export class DynFormModule {
       ]
     }
   }
+}
+export {
+  DynFormComponent,
 }
