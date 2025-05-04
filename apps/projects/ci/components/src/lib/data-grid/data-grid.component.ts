@@ -20,7 +20,6 @@ export class DataGridComponent<I> {
     selectionMode?: 'cell' | 'row' | 'multi-cell' | 'multi-row' | 'multi' = 'row';
     @Input()
     source?: I[];
-
     selectedItem?: I;
     selectedItems?: I[];
 

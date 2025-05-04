@@ -13,7 +13,7 @@ async function waitTrue(condition: () => boolean) {
                 } else {
                     repeat();
                 }
-            }, 10);
+            }, 5);
         }
         if (condition()) {
             res();
@@ -22,14 +22,26 @@ async function waitTrue(condition: () => boolean) {
         }
     })
 }
-
-interface ISchema {
-    type: string;
-    properties: { [key: string]: any }
+export interface ISchemaProperty {
+    title?: string;
+    description?: string;
+    format?: string;
+    type?: string;
+    nullable?: boolean;
+    uniqueItems?: boolean;
+    allOf?: { [key: string]: string };
+    /* {
+        '$ref'?: string
+    }; */
+    items?: { [key: string]: string };
 }
-
+export interface ISchema {
+    type?: string;
+    properties?: { [key: string]: ISchemaProperty };
+    required?: string[];
+}
 @Injectable()
-export class DaoFormService {
+export class DaoBuilder /* Service */ {
     api_json = new BehaviorSubject<any>(undefined);
     constructor(
         private readonly http: HttpClient,
@@ -44,14 +56,20 @@ export class DaoFormService {
         ));
     }
     async getForm(name: string) {
-        await waitTrue(() => !!this.api_json.value)
-        const schema: ISchema = this.api_json.value.components.schemas[name];
+        const schema: ISchema = await this.getSchema(name);
         const fields: any = {}
-        Object.keys(schema.properties).map(key => {
-            fields[key] = [, []];
-        })
+        if (schema.properties) {
+            Object.keys(schema.properties).map(key => {
+                fields[key] = [, []];
+            });
+        }
         return this.formBuilder.group({
             ...fields
         });
+    }
+    async getSchema(name: string) {
+        await waitTrue(() => !!this.api_json.value)
+        const schema: ISchema = this.api_json.value.components.schemas[name];
+        return schema;
     }
 }

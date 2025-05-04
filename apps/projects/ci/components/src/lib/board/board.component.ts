@@ -2,7 +2,7 @@ import { Component, Inject, Injector, Input, OnInit } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { UserService } from "@ci/auth";
-import { DaoFormService, DaoService, IChangeable } from "@ci/core";
+import { DaoBuilder, DaoService } from "@ci/core";
 import { Card, Prancheta, PranchetaService } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 import { CardFinderComponent } from "./card-finder/card-finder.component";
@@ -20,7 +20,7 @@ export class BoardComponent implements OnInit {
     form?: FormGroup;
     @Input() default?: string;
     constructor(
-        private readonly daoForms: DaoFormService,
+        private readonly daoForms: DaoBuilder,
         private readonly user: UserService,
         private readonly pranchetas: PranchetaService,
         private readonly daos: DaoService,

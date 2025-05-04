@@ -13,7 +13,7 @@ import { ThemeService } from './theme/theme.service';
 import { WsService } from './io/ws.service';
 import { SafePipe } from './pipes/safe.pipe';
 import { ContextMenuServices } from './contextmenu/contextmenu.service';
-import { DaoFormService } from './dao/dao-form-builder.service';
+import { DaoBuilder, ISchema, ISchemaProperty } from './dao/dao-builder.service';
 
 @NgModule({
   declarations: [
@@ -32,7 +32,7 @@ import { DaoFormService } from './dao/dao-form-builder.service';
     Damn,
     ConsoleService,
     ContextMenuServices,
-    DaoFormService,
+    DaoBuilder,
   ],
   exports: [
     SafePipe,
@@ -53,5 +53,7 @@ export {
   ThemeService,
   WsService,
   SafePipe,
-  DaoFormService,
+  DaoBuilder,
+  ISchemaProperty,
+  ISchema,
 }
