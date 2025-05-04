@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { lastValueFrom } from 'rxjs';
 import { Application, FormsService } from '@ci/portal-api';
 import { ApplicationService } from '@ci/portal-api';
-import { IChangeable, DaoService } from '@ci/core';
+import { IChangeable, DaoService, DaoBuilder } from '@ci/core';
 
 @Component({
   selector: 'ci-editar-aplicativo',
@@ -14,28 +14,22 @@ import { IChangeable, DaoService } from '@ci/core';
   standalone: false
 })
 export class EditarAplicativoComponent implements OnInit, OnDestroy {
-  form?: FormGroup<any>; /* this.fb.group({
-    id:-['', []],
-    name: ['', []],
-    description: ['', []],
-    icon: ['', []],
-    url: ['', []],
-    menuGroupName: ['', []],
-  }); */
+  form?: FormGroup<any>;
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly dao: DaoService,
+    private readonly daoBuilder: DaoBuilder,
     private readonly fb: FormBuilder,
     private readonly formsService: FormsService,
     @Inject(MAT_DIALOG_DATA)
     public readonly data?: Application,
-
   ) { }
-  ngOnDestroy(): void {
+  async ngOnDestroy() {
   }
-  ngOnInit(): void {
+  async ngOnInit() {
     const dao = this.dao;
     const _data = this.data;
+    this.form = await this.daoBuilder.getForm('Application');
     const form = this.form;
     this.dao.prepareToEdit(this.data);
     if (this.form) this.dao.bindDataForm(this.data, this.form);
@@ -72,7 +66,6 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
         }
       }, 0);
   }
-
   get changes() {
     return this.dao.getChanges(this.data as IChangeable);
   }

@@ -38,7 +38,7 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
     visualizacao: 'table' | 'list' = 'table';
     filtrarPapel?: string = 'all';
     apps?: Application[];
-    gridOptions?: IDataGridOptions<Application> = {
+    gridOptions?: IDataGridOptions<Application>;/*  {
         columns: [
             { headerName: 'ID', fieldName: 'id', hide: true },
             { headerName: 'Nome ', fieldName: 'name' },
@@ -48,7 +48,7 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
             { headerName: 'Grupo', fieldName: 'menuGroupName' },
             { headerName: 'Papéis', fieldName: 'roles' },
         ]
-    };
+    }; */
     constructor(
         private readonly applications: ApplicationService,
         private readonly janela: WindowService,
