@@ -1,4 +1,4 @@
-import { Component, Inject, Injector, Input, OnInit } from "@angular/core";
+import { Component, HostListener, Inject, Injector, Input, OnInit } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { UserService } from "@ci/auth";
@@ -99,5 +99,17 @@ export class BoardComponent implements OnInit {
                 this.syncPrancheta();
             }
         })
+    }
+    edittingCard?: Card;
+    async editCard(card: Card, event: Event) {
+        this.edittingCard = card;
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    async removeCard(card: Card) {
+    }
+    @HostListener('window:click')
+    clickHandler() {
+        this.edittingCard = undefined;
     }
 }
