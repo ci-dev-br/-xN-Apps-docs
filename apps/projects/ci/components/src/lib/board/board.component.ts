@@ -107,6 +107,10 @@ export class BoardComponent implements OnInit {
         event.stopPropagation();
     }
     async removeCard(card: Card) {
+        if (this.prancheta && this.prancheta.cards) {
+            const pos = this.prancheta.cards.indexOf(card);
+            if (pos > -1) this.prancheta.cards.splice(pos, 1);
+        }
     }
     @HostListener('window:click')
     clickHandler() {
