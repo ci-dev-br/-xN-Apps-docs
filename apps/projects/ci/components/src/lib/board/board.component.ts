@@ -41,11 +41,12 @@ export class BoardComponent implements OnInit {
         this.daos.bindDataForm(this.prancheta, this.form);
 
         this.daos.confirmation(this.prancheta)?.subscribe(async data => {
+            this.syncing = true;
             try {
                 if (this.prancheta && data && this.form) {
-                    let _data: any = Object.assign(this.prancheta,
-                        await lastValueFrom(this.pranchetas.pranchetaControllerSync({ body: { prancheta: this.prancheta } }))
-                    );
+                    const prancheta_syncronized = await lastValueFrom(this.pranchetas.pranchetaControllerSync({ body: { prancheta: this.prancheta } }));
+
+                    let _data: any = Object.assign(this.prancheta, prancheta_syncronized);
                     // delete (_data as IChangeable).__pre;
                     // this.daos.prepareToEdit(_data);
                     // this.daos.bindDataForm(_data, this.form);
@@ -55,11 +56,13 @@ export class BoardComponent implements OnInit {
             } catch (error) {
                 console.error(error);
             }
+            this.syncing = false;
         });
         this.form.valueChanges.subscribe(v => {
-            this.syncPrancheta();
+            if (!this.syncing) this.syncPrancheta();
         })
     }
+    syncing?: boolean;
     prancheta?: Prancheta;
     async loadBoard() {
         this.prancheta = await lastValueFrom(
@@ -82,7 +85,7 @@ export class BoardComponent implements OnInit {
 
     async syncPrancheta() {
         if (this.prancheta && this.form?.valid) {
-            await this.daos.confirmChanges(this.prancheta);
+            if (!this.syncing) await this.daos.confirmChanges(this.prancheta);
         } else {
             this.form?.markAllAsTouched();
         }
