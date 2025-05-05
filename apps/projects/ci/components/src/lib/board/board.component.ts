@@ -111,6 +111,7 @@ export class BoardComponent implements OnInit {
             const pos = this.prancheta.cards.indexOf(card);
             if (pos > -1) this.prancheta.cards.splice(pos, 1);
         }
+        this.syncPrancheta();
     }
     @HostListener('window:click')
     clickHandler() {
