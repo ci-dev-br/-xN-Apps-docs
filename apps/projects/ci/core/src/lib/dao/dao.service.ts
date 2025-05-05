@@ -125,7 +125,9 @@ export class DaoService {
         try {
             Object.getOwnPropertyNames(data).forEach(p => {
                 if (p.indexOf('_') === 0) return;
-                if (JSON.stringify((data as any)[p]) !== JSON.stringify(options?.pre[p])) {
+                let { complete, __confirmation_subject, ...current_data } = data as any;
+                current_data = { ...current_data, '::CI!INTERNALS<emitter>': undefined }
+                if (JSON.stringify((current_data as any)[p]) !== JSON.stringify(options?.pre[p])) {
                     r[p] = (data as any)[p];
                 }
             })
