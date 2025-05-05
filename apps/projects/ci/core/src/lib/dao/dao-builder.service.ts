@@ -28,6 +28,7 @@ export interface ISchemaProperty {
     format?: string;
     type?: string;
     nullable?: boolean;
+    isArray?: boolean;
     uniqueItems?: boolean;
     allOf?: { [key: string]: string };
     /* {

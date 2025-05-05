@@ -20,9 +20,9 @@ export class ApplicationService {
             ]
         })
     }
-    async sync(application: Application) {
+    async sync(application: Application, req?: Request) {
         let { id, ...changes } = application;
-        let ref = !!application.id ? await this.repo.findOneBy({ id: application.id }) : await this.repo.create(application);
+        let ref = !!application.id && application.id.trim().length > 0 ? await this.repo.findOneBy({ id: application.id }) : await this.repo.create(application);
         Object.assign(ref, changes);
         return await this.repo.save(ref);
     }

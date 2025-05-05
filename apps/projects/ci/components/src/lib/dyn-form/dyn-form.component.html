@@ -1,11 +1,25 @@
 @if(!!source){
-
 @if(source.fields){
 @if(formGroup){
 <form [formGroup]="formGroup ">
     @for (field of source.fields; track $index) {
     <mat-form-field>
+        @if(field.isArray === true && !!field && !!field.property){
+        <mat-chip-grid #chipGrid aria-label="Fruit selection">
+            @for (option of formGroup.controls[field.property].value; track $index) {
+            <mat-chip-row (removed)="removeOption(option, formGroup.controls[field.property].value)">
+                {{option}}
+                <button matChipRemove [attr.aria-label]="'remove ' + option">
+                    <mat-icon>cancel</mat-icon>
+                </button>
+            </mat-chip-row>
+            }
+        </mat-chip-grid>
+        <input matInput [placeholder]="field?.label || ''" [matChipInputFor]="chipGrid" [matChipInputAddOnBlur]="true"
+            (matChipInputTokenEnd)="add(field.property,$event)" />
+        }@else{
         <ng-container *ngTemplateOutlet="inputTmpl"></ng-container>
+        }
         <ng-template #inputTmpl>
             <input matInput [placeholder]="field?.label || ''" [formControlName]="field?.property || null" />
         </ng-template>

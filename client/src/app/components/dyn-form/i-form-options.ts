@@ -16,6 +16,7 @@ export interface IFormFieldDefinition<T> {
     property?: string;
     dataService?: DataServiceBase<T>;
     classTypeRef?: Type<T>;
+    isArray?: boolean;
 }
 export const FORM_OPTIONS = new InjectionToken<IFormOptions>('PX_FORM_OPTIONS');
 @Injectable()

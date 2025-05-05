@@ -37,9 +37,16 @@ export class ApplicationController {
         operationId: 'Sync'
     })
     async sync(
-        @Body() application: Application
+        @Body() application: Application,
+        @Request() req: Request,
+
     ) {
-        return await this.service.sync(application);
+        try {
+            return await this.service.sync(application, req);
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
     @Post('Delete')
     @ApiResponse({
