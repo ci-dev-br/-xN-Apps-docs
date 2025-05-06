@@ -20,7 +20,7 @@ export class DataListComponent<I> {
   selectedItems?: I[];
   constructor() { }
 
-  rowSelectionHandler(event: MouseEvent, row: I) {
+  rowSelectionHandler(event: Event, row: I) {
     //if (this.selectionMode === 'row') {
     /*  if (event.ctrlKey) {
        if (row === this.selectedItem) {
