@@ -1,4 +1,4 @@
-import { Component, Input, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
 import { IListOptions } from '../models/i-list-options';
 
 @Component({
@@ -7,12 +7,30 @@ import { IListOptions } from '../models/i-list-options';
   styleUrl: './data-list.component.scss',
   standalone: false
 })
-export class DataListComponent<T> {
+export class DataListComponent<I> {
+  @Output()
+  select = new EventEmitter<I | I[]>();
   @Input()
-  source?: T[];
+  source?: I[];
   @Input()
-  options?: IListOptions<T>;
+  options?: IListOptions<I>;
   @Input()
   templateItem?: TemplateRef<any>;
+  selectedItem?: I;
+  selectedItems?: I[];
   constructor() { }
+
+  rowSelectionHandler(event: MouseEvent, row: I) {
+    //if (this.selectionMode === 'row') {
+    /*  if (event.ctrlKey) {
+       if (row === this.selectedItem) {
+         this.select.emit(undefined);
+         this.selectedItem = undefined;
+         return;
+       }
+     } */
+    this.select.emit(row);
+    this.selectedItem = row;
+  }
+  // }
 }
