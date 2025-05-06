@@ -5,6 +5,7 @@ import { catchError, switchMap, timeout } from "rxjs/operators";
 import { StorageService } from "../storage/storage.service";
 import { AuthService } from "@ci/portal-api";
 import { CORE_ENV, ICoreEnvironment } from "../provider";
+import { Router } from "@angular/router";
 // import { AuthService } from "@ci/portal-api";
 @Injectable()
 export class AuthorizationHttpInterceptor implements HttpInterceptor {
@@ -24,6 +25,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         }
     }
     constructor(
+        private readonly router: Router,
         private readonly storage: StorageService,
         private readonly auth: AuthService,
         @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
@@ -53,6 +55,12 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             .pipe(timeout({ each: 1000, with: () => { throw new HttpErrorResponse({ status: 0, statusText: 'Interceptor Timeout' }) } }))
             .pipe(catchError(error => {
                 if (error) {
+                    if (error?.error?.message?.indexOf('Acesso negado. Não corresponde ao nível de acesso necessário.') > -1) {
+                        setTimeout(() => {
+                            this.router.navigate(['/meus-apps']);
+                        });
+                        return throwError(undefined);
+                    }
                     if (error instanceof HttpErrorResponse && (error.status === 0 || error.status === 404)) {
                         if (this.config && Array.isArray(this.config.alternativeApiGateways)) {
 
