@@ -6,3 +6,27 @@
     align-items: stretch;
     justify-content: stretch;
 }
+
+nav {
+    display: flex;
+    flex-direction: row;
+    flex: unset;
+    padding: 12px;
+    gap: 12px;
+
+    ul,
+    li {
+        display: contents;
+    }
+
+    a {
+        padding: 15px;
+        margin: 0;
+        background: white;
+        border-radius: 15px;
+    }
+
+    +* {
+        flex: auto;
+    }
+}

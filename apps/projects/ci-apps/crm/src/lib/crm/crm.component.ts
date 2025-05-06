@@ -8,6 +8,12 @@ import { BoardModule } from '@ci/components';
     BoardModule,
   ],
   template: `
+    <nav>
+        <ul>
+            <li><a href="">Início</a></li>
+            <li><a href="">Atendimento</a></li>
+        </ul>
+    </nav>
     <ci-board default="Apps.CRM" ></ci-board>
   `,
   styleUrls: ['crm.component.scss']
