@@ -1,4 +1,13 @@
 <div class="list">
-
-
+    @if(!!source && source.length > 0){
+    @for (item of source; track $index) {
+    <div class="item">
+        @if(!!templateItem){
+        <ng-container *ngTemplateOutlet="templateItem; context: {item : item}"></ng-container>
+        }
+    </div>
+    }
+    }@else {
+    Nenhum item na lista
+    }
 </div>
