@@ -28,5 +28,5 @@ export const routes: Routes = [
         canMatch: [authGuard], loadChildren: () => import('./painel/painel.module').then(m => m.PainelModule),
     },
 
-    // { path: '**', redirectTo: '/acessar', pathMatch: 'full' },
+    { path: '**', redirectTo: '/acessar', pathMatch: 'full' },
 ];
