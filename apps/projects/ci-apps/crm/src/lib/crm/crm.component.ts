@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BoardModule } from '@ci/components';
 
 @Component({
@@ -12,6 +12,12 @@ import { BoardModule } from '@ci/components';
   `,
   styleUrls: ['crm.component.scss']
 })
-export class CrmComponent {
-
+export class CrmComponent implements OnInit, OnDestroy {
+  private t = document.title;
+  ngOnInit(): void {
+    document.title = `${this.t} :: CRM`;
+  }
+  ngOnDestroy(): void {
+    document.title = this.t;
+  }
 }
