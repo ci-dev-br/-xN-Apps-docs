@@ -4,6 +4,9 @@ import { Application } from "../model/application.entity";
 import { ApplicationService } from "../service/application.service";
 import { User } from "@ci/auth/models/user.entity";
 import { GetInputDtos } from "../dto/input-dto";
+import { Role } from "@ci/auth/decorators/role.decorator";
+
+@Role('MASTER')
 @ApiTags('Application')
 @Controller('Application')
 export class ApplicationController {
@@ -33,7 +36,7 @@ export class ApplicationController {
     @ApiResponse({
         type: Application, description: 'Sincronizar Objeto de Aplicação'
     })
-    @ApiOperation({
+@ApiOperation({
         operationId: 'Sync'
     })
     async sync(
