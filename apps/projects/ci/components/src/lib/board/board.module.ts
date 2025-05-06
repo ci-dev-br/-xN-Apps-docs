@@ -11,6 +11,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { Card } from "@ci/portal-api";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { DragDropModule } from "@angular/cdk/drag-drop";
 
 @Pipe({ name: 'cardComponent', pure: true })
 export class CardComponentPipe implements PipeTransform {
@@ -34,6 +35,7 @@ export class CardComponentPipe implements PipeTransform {
         MatInputModule,
         MatFormFieldModule,
         FormsModule,
+        DragDropModule,
     ],
     declarations: [
         CardFinderComponent,

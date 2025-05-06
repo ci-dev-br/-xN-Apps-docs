@@ -1,9 +1,10 @@
 @if(form){<div class="board-wrap" [formGroup]="form">
     <ci-input mode="content-editable" fieldName="title" label="Título" el="h1"></ci-input>
     @if(prancheta){
-    <div class="cards-container">
+    <div class="cards-container" cdkDropList (cdkDropListDropped)="drop($event)">
         @for (card of prancheta.cards; track $index) {
-        <div class="card-wrapper" (contextmenu)="editCard(card, $event)" [class.editing]="edittingCard === card">
+        <div class="card-wrapper" (contextmenu)="editCard(card, $event)" [class.editing]="edittingCard === card"
+            cdkDrag>
             <div class="inner">
                 <ng-container *ngComponentOutlet="component(card).componentRef"></ng-container>
             </div>
@@ -19,8 +20,11 @@
 </div>}
 <div class="c">
     <button mat-icon-button (click)="findCardToAdd()">
-        <mat-icon>add</mat-icon>
+        <mat-icon>widgets</mat-icon>
     </button>
+    <!-- <button mat-icon-button (click)="editCards()">
+        <mat-icon>pinch</mat-icon>
+    </button> -->
     <button mat-icon-button (click)="findCardToAdd()">
         <mat-icon>settings</mat-icon>
     </button>

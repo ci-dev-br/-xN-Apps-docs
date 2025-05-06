@@ -7,6 +7,7 @@ import { Card, Prancheta, PranchetaService } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 import { CardFinderComponent } from "./card-finder/card-finder.component";
 import { CardSetting, ImplCard } from "./card";
+import { moveItemInArray } from "@angular/cdk/drag-drop";
 
 @Component({
     selector: 'ci-board',
@@ -119,5 +120,12 @@ export class BoardComponent implements OnInit {
     @HostListener('window:click')
     clickHandler() {
         this.edittingCard = undefined;
+    }
+    drop(event: any) {
+        if (!!this.prancheta?.cards) moveItemInArray(this.prancheta.cards, event.previousIndex, event.currentIndex);
+        this.syncPrancheta();
+    }
+    get layout() {
+        return this.prancheta?.layout?.split(',').map(d => Number(d))
     }
 }
