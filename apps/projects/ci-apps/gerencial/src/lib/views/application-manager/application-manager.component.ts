@@ -4,7 +4,7 @@ import { MatIcon, MatIconModule } from "@angular/material/icon";
 import { MatTableModule } from "@angular/material/table";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { Application, ApplicationService } from "@ci/portal-api";
-import { CoreModule } from "@ci/core";
+import { CoreModule, DaoBuilder } from "@ci/core";
 import { DataListModule, WindowService, GridModule, IDataGridOptions } from "@ci/components";
 import { lastValueFrom } from "rxjs";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -52,8 +52,10 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
     constructor(
         private readonly applications: ApplicationService,
         private readonly janela: WindowService,
+        private readonly daoBuilder: DaoBuilder,
         // private readonly liust: 
     ) {
+        (async () => this.loadGrid())();
         (async () => this.carregarListaAplicativos())();
     }
     private cache(prop: string, value: () => any) {
@@ -66,6 +68,21 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
         const data = await this.editar(app);
         if (!!data?.id)
             this.apps = [data, ...this.apps || []];
+    }
+    async loadGrid() {
+        const properties = await (await this.daoBuilder.getSchema('Application')).properties
+        this.gridOptions = {
+            columns: [
+                ...Object.keys(properties || {}).map(property => {
+                    const headerName = properties ? properties[property].title : property;
+                    const fieldName = property;
+                    return {
+                        headerName,
+                        fieldName
+                    }
+                })
+            ]
+        }
     }
     async editar(application: Application) {
         return await this.janela.open(EditarAplicativoComponent, application)
