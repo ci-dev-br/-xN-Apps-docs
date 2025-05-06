@@ -16,7 +16,8 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 0;
+    margin: 0 6px;
 }
 
 .card-wrapper {
@@ -28,6 +29,7 @@
     min-height: 120px;
     overflow: hidden;
     flex: 1;
+    margin: 6px;
 
     >.inner {
         position: absolute;
