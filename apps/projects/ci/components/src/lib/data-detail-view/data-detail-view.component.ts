@@ -28,7 +28,7 @@ import { DaoBuilder } from "@ci/core";
 
     }
     async ngOnInit() {
-
+        this.loadGrid();
     }
     async loadGrid() {
         if (!this.schemaName) return;
