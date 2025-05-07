@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
+import { DataDetailViewModule } from '@ci/components';
 
 @Component({
     selector: 'ci-home',
-    imports: [],
+    standalone: true,
+    imports: [
+        DataDetailViewModule,
+    ],
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss'
 })
