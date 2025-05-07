@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CoreModule } from '@ci/core';
+import { OpenProjectComponent } from '../open-project/open-project.component';
 
 export interface IMenu {
   items: IMenuItem[];
@@ -26,6 +28,7 @@ export interface IMenuItem {
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
+    MatDialogModule,
   ],
   templateUrl: './navigation.component.html',
   styleUrl: './navigation.component.scss'
@@ -35,7 +38,7 @@ export class NavigationComponent {
   abas?: { label: string, path: string, icon: string }[];
   constructor(
     private readonly route: ActivatedRoute,
-    // private readonly dialog: MatDialog,
+    private readonly dialog: MatDialog,
     // private readonly janela: WindowService,
   ) {
 
@@ -51,4 +54,9 @@ export class NavigationComponent {
     { titulo: "Criar novo Módulo" },
     { titulo: "Inspecionar Módulo" },
   ]
+  openProject() {
+    this.dialog.open(OpenProjectComponent, {
+      data: {}
+    })
+  }
 }

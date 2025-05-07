@@ -9,7 +9,7 @@ import { CoreModule } from "@ci/core";
 
     ],
     selector: 'ci-homepage',
-    template: `Homemedwd`
+    template: ``
 })
 export class HomepageComponent {
     constructor() { }
