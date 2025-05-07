@@ -1,0 +1,29 @@
+<mat-toolbar [auto-scroll]="'horizontal'">
+    <!-- <button mat-raised-button (click)="novoAplicativo()">
+        Novo
+    </button> -->
+    <!-- <mat-form-field>
+        <mat-label>Filtrar por Papel</mat-label>
+        <mat-select [(ngModel)]="filtrarPapel">
+            <mat-option value="all">Todos os Papéis</mat-option>
+        </mat-select>
+    </mat-form-field> -->
+    <ng-content selector="toolbar"></ng-content>
+    <span style="flex:auto"></span>
+    <mat-button-toggle-group [(ngModel)]="visualizacao">
+        <mat-button-toggle value="table"><mat-icon>view_list</mat-icon>Tabela</mat-button-toggle>
+        <mat-button-toggle value="list"><mat-icon>grid_view</mat-icon>Lista</mat-button-toggle>
+    </mat-button-toggle-group>
+</mat-toolbar>
+<ng-container *ngIf="list">
+    @if(visualizacao==='list'){
+    <ci-data-list [source]="list" [templateItem]="listItem"></ci-data-list>
+    <ng-template #listItem let-item="item">
+        @if(!!item.title){<h6>{{item.title}}</h6>}
+        @if(!!item.description){<small>{{item.description}}</small>}
+    </ng-template>
+    }
+    @else{
+    <ci-data-grid [options]="gridOptions" [source]="list"></ci-data-grid>
+    }
+</ng-container>
