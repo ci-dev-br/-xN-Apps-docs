@@ -1,21 +1,21 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { UnidadeMedida } from "../model/unidade-medida.entity";
+import { Endereco } from "../model/endereco.entity";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
 import { FindOptionsWhere } from "typeorm";
-import { UnidadeMedidaService } from "../service/unidade-medida.service";
-export class SyncPayloadDaoUnidadeMedida extends SyncPayloadDao<UnidadeMedida> {
-    @ApiProperty({ type: UnidadeMedida })
-    override data?: UnidadeMedida;
+import { EnderecoService } from "../service/endereco.service";
+export class SyncPayloadDaoEndereco extends SyncPayloadDao<Endereco> {
+    @ApiProperty({ type: Endereco })
+    override data?: Endereco;
 }
-export class ObterListaUnidadeMedida {
-    // override data?: UnidadeMedida;
+export class ObterListaEndereco {
+    // override data?: Endereco;
     @ApiProperty({})
     skip?: number;
     @ApiProperty({})
     take?: number;
     @ApiProperty({})
-    where?: FindOptionsWhere<UnidadeMedida>[] | FindOptionsWhere<UnidadeMedida>;
+    where?: FindOptionsWhere<Endereco>[] | FindOptionsWhere<Endereco>;
 }
 export class PessoaCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
@@ -23,32 +23,32 @@ export class PessoaCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
     limit?: number;
 }
-@ApiTags('UnidadeMedida')
-@Controller('UnidadeMedida')
-export class UnidadeMedidaController extends ControllerDaoBase<UnidadeMedidaService, UnidadeMedida> {
+@ApiTags('Endereco')
+@Controller('Endereco')
+export class EnderecoController extends ControllerDaoBase<EnderecoService, Endereco> {
     @Post('Sync')
     @ApiResponse({
         type:
-            SyncPayloadDaoUnidadeMedida
+            SyncPayloadDaoEndereco
     })
     @ApiOperation({
-        operationId: 'UnidadeMedidaSync'
+        operationId: 'EnderecoSync'
     })
     override async Sync(
-        @Body() body: SyncPayloadDaoUnidadeMedida,
+        @Body() body: SyncPayloadDaoEndereco,
     ) {
         return await super.Sync(body)
     }
     @Post('Get')
     @ApiResponse({
         type:
-            SyncPayloadDaoUnidadeMedida
+            SyncPayloadDaoEndereco
     })
     @ApiOperation({
-        operationId: 'UnidadeMedidaGet'
+        operationId: 'EnderecoGet'
     })
     override async GetList(
-        @Body() input: ObterListaUnidadeMedida,
+        @Body() input: ObterListaEndereco,
     ) {
         return super.GetList(input);
     }

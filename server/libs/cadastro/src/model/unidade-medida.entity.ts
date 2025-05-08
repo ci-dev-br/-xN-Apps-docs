@@ -16,6 +16,6 @@ export class UnidadeMedida {
     @Column({ nullable: true })
     description: string;
     @ApiProperty({ nullable: true, required: false })
-    @Column({ nullable: true, array: true })
+    @Column({ nullable: true, type: 'varchar', array: true })
     externalReferenceUrl: string[];
 }   
