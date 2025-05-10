@@ -9,3 +9,4 @@ export * from './lib/provider';
 
 export * from './lib/io/http.interceptor';
 export * from './lib/io/ws.service';
+export * from './lib/decorators/short-cut.decorator';
