@@ -1,6 +1,8 @@
 # Changelog
 ---
 este arquivo é enviado periodicamente
+ - [ ]: Compartilhar em App/Formulários, permitir criar link público ou privado para compartilhamento do formulário para apresentação ou edição;
+ - [ ]: Refresh Token deve ser validado com argon2 ... este processo foi obfuscado;
  - [✔️][FALHA]: Ao executar `node deploy` ocorre falha ao copiar todos os arquivos da distribuição; 
  - [✔️] Implementação de App CodeX para edição de código-fonte ;
  ---
