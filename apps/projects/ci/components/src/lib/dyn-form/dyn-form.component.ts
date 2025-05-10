@@ -41,7 +41,7 @@ export class DynFormComponent implements OnInit {
                 property: p,
                 description: property_info.description,
                 type: property_info.type,
-                readonly: property_info.readonly,
+                readonly: property_info.readOnly,
                 isArray: property_info.type === 'array' || property_info.isArray
               } as IFormFieldDefinition<any>
             })

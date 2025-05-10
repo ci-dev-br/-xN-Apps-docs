@@ -49,7 +49,7 @@ export interface ISchemaProperty {
     /**
      * Define this field with only for read. 
      */
-    readonly?: boolean;
+    readOnly?: boolean;
     /**
      * Define the property with Array
      */
