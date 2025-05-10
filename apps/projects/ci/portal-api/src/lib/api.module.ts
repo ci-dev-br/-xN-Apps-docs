@@ -22,7 +22,10 @@ import { PhotoService } from './services/photo.service';
 import { FileExplorerService } from './services/file-explorer.service';
 import { VideoService } from './services/video.service';
 import { CadastroService } from './services/cadastro.service';
+import { EnderecoService } from './services/endereco.service';
+import { InformacaoContatoService } from './services/informacao-contato.service';
 import { PessoaService } from './services/pessoa.service';
+import { UnidadeMedidaService } from './services/unidade-medida.service';
 import { OrganizacaoService } from './services/organizacao.service';
 import { FormsService } from './services/forms.service';
 
@@ -50,7 +53,10 @@ import { FormsService } from './services/forms.service';
     FileExplorerService,
     VideoService,
     CadastroService,
+    EnderecoService,
+    InformacaoContatoService,
     PessoaService,
+    UnidadeMedidaService,
     OrganizacaoService,
     FormsService,
     ApiConfiguration
