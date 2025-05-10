@@ -20,12 +20,39 @@ export class DataGridComponent<I> {
     selectionMode?: 'cell' | 'row' | 'multi-cell' | 'multi-row' | 'multi' = 'row';
     @Input()
     source?: I[];
+    private _selectedItem?: I | undefined;
+    /**
+     * Indica o item selecionado durante a navegação
+     */
+    public get selectedItem(): I | undefined {
+        return this._selectedItem;
+    }
     @Input()
-    selectedItem?: I;
+    public set selectedItem(value: I | undefined) {
+        if (this._selectedItem === value) return;
+        this._selectedItem = value;
+        if (this._selectedItem && this.source && this._selectedIndex !== undefined && this._selectedItem !== this.source[this._selectedIndex]) {
+            this.selectedIndex = this.source.indexOf(this._selectedItem);
+        }
+    }
     @Input()
     selectedItems?: I[];
+    private _selectedIndex?: number | undefined;
+    /**
+     * Indica o índice na lista do item selecionado.
+     */
+    public get selectedIndex(): number | undefined {
+        return this._selectedIndex;
+    }
     @Input()
-    selectedIndex?: number;
+    public set selectedIndex(value: number | undefined) {
+        if (this._selectedIndex === value) return;
+        this._selectedIndex = value;
+
+        if (this.source && this.selectedItem && value !== this.source?.indexOf(this.selectedItem)) {
+            this.selectedItem = this.source[this.source?.indexOf(this.selectedItem)];
+        }
+    }
     private _options?: IDataGridOptions<I> | undefined;
     public get options(): IDataGridOptions<I> | undefined {
         return this._options;
