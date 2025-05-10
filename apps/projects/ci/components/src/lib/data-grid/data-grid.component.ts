@@ -2,6 +2,7 @@ import { Component, EventEmitter, HostListener, Input, Output } from "@angular/c
 import { DataGridService } from "./data-grid.service";
 import { IDataGridOptions } from "../models/i-data-grid-options";
 import { IColumnOption } from "../models/i-column-options";
+import { ShortCut } from "@ci/core";
 
 @Component({
     selector: 'ci-data-grid',
@@ -40,8 +41,6 @@ export class DataGridComponent<I> {
     displayedColumns?: string[];
     constructor(
         private readonly services: DataGridService,
-        // private readonly shortCut: ShortCut,
-        // TODO: criar serviço de short cut
     ) {
         services.grid = this;
     }
@@ -60,6 +59,36 @@ export class DataGridComponent<I> {
     }
     @HostListener('keydown', ['$event'])
     async keyDownHandler(event: KeyboardEvent) {
-        // this.shortCut.fromEvent(event);
+        [
+            {
+                desc: "Navegar para cima",
+                keyCode: 'ArrowUp',
+                action: () => { if (this.selectedIndex !== undefined) this.selectedIndex-- }
+            },
+            {
+                desc: "Navegar para baixo",
+                keyCode: 'ArrowDown',
+                action: () => { if (this.selectedIndex !== undefined) this.selectedIndex++ }
+            }
+        ].find(s => s.keyCode === event.code)?.action();
     }
+
+    /*
+     *
+        Sugestão de implementação com decorators
+
+    
+    @ShortCut({
+        default: 'ArrowUp',
+    })
+    navigateToUp(event: KeyboardEvent) {
+            
+    }
+    @ShortCut({
+        default: 'ArrowDown',
+    })
+    navigateToDown(event: KeyboardEvent) {
+        
+    }
+    */
 }
