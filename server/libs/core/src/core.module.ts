@@ -8,6 +8,7 @@ import { EventsGateway } from "./events/events.gateway";
 // import { EventsLocalGateway } from "./events/events-local.gateway";
 import { BusService } from "./events/bus.service";
 import { EventsLocalGateway } from "./events/events-local.gateway";
+import { Log } from "./logger/log.entity";
 // import { t } from "./i18n/t";
 // import { IAutentication } from "./auth/auth";
 // import { Status } from "./system/model/status";
@@ -15,6 +16,7 @@ import { EventsLocalGateway } from "./events/events-local.gateway";
 export const CoreEntities = [
     Snapshot,
     ChaveAcesso,
+    Log,
 ]
 /**
  * Módulo Core
