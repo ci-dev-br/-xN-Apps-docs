@@ -141,6 +141,22 @@ import { IColumnOption } from "src/app/components/grid/data-grid.options";
         private readonly janela: WindowService,
     ) {
         (async () => this.carregarListaAplicativos())();
+
+
+        // This variable will save the event for later use.
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevents the default mini-infobar or install dialog from appearing on mobile
+            e.preventDefault();
+            // Save the event because you'll need to trigger it later.
+            deferredPrompt = e;
+            // Show your customized install prompt for your PWA
+            // Your own UI doesn't have to be a single element, you
+            // can have buttons in different locations, or wait to prompt
+            // as part of a critical journey.
+            // showInAppInstallPromotion();
+        });
+
     }
     private cache(prop: string, value: () => any) {
         if (!this._cached_map.has(prop))
@@ -148,7 +164,7 @@ import { IColumnOption } from "src/app/components/grid/data-grid.options";
         return this._cached_map.get(prop);
     }
     async novoAplicativo() {
-        let app = {};
+        let app: Application = {};
         const data = await this.editar(app);
         if (!!data?.id)
             this.apps = [data, ...this.apps || []];
