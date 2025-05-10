@@ -91,4 +91,7 @@ export class EditComponent implements OnInit {
       }
     }
   }
+  async compartilhar() {
+
+  }
 }

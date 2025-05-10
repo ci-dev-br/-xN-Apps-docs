@@ -1,7 +1,7 @@
 {
   "name": "Aplicativos",
   "short_name": "Apps",
-  "start_url": "https://apps.ci.dev.br:446/",
+  "start_url": "https://xx.app.br/",
   "display": "standalone",
   "background_color": "#99DDAA",
   "description": "Apps.",
