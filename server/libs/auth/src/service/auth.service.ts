@@ -3,6 +3,7 @@ import { UserService } from "./user.service";
 import { JwtService } from "@nestjs/jwt";
 import { UserCredentialService } from "./user-credential.service";
 import { CredencialService } from "./credencial.service";
+import { ChaveAcesso } from "@ci/core";
 @Injectable()
 export class AuthService {
     constructor(
@@ -19,25 +20,45 @@ export class AuthService {
         req?: Request,
         ip?: string,
     ) {
+        let confiance: any = 'r';
         const r: { try?: string } = await this.jwtService.verifyAsync(refreshToken);
         let old_authorization: {
             id: string,
             roles: string[],
             exp: number,
             iat: number,
+            chaveAcesso?: string;
+            confiance: string,
         };
         let permission = null;
+        let chave_acesso: ChaveAcesso = null;
         if ('try' in r && r.try && typeof r.try === 'string') {
             permission = JSON.parse(atob(r.try)).permission;
             old_authorization = (await this.jwtService.decode(req.headers['authorization'].replace('Bearer', '').trim())) as any;
             userId = old_authorization.id;
+            // TODO: verificar validade da chave de acesso 
+            try {
+                const chave_acesso_token = old_authorization.chaveAcesso;
+                chave_acesso = await this.credencial.obterChaveAcessoPorId(chave_acesso_token);
+                chave_acesso;
+                if (userId !== chave_acesso.identifiedUser) {
+                    userId = chave_acesso.identifiedUser;
+                    confiance += 'v';
+                } else {
+                    confiance += 'o';
+                }
+            } catch (error) {
+                console.trace(error);
+                confiance += 'e';
+                throw new UnauthorizedException('Sem autenticidade.');
+            }
         }
         const user = await this.userService.findById(userId);
         this.userCredentialService.credenciar(user.id);
         if (user) {
             const chaveAcesso = (await this.credencial.solicitarCredencial({
                 ip: ip,
-                identificacao_inicial: old_authorization.id
+                identificacao_inicial: chave_acesso.identifiedUser,  //  old_authorization.id
             }));
             chaveAcesso.alive = true;
             chaveAcesso.valid = false;
@@ -47,11 +68,12 @@ export class AuthService {
                     id: user?.id,
                     roles: user?.roles,
                     permission: permission,
-                    chaveAcesso: chaveAcesso.id
+                    chaveAcesso: chaveAcesso.id,
+                    confiance
                 })
             }
         } else {
-            throw new UnauthorizedException('Acesso Nagado');
+            throw new UnauthorizedException('Acesso Nagado.');
         }
     }
 }
