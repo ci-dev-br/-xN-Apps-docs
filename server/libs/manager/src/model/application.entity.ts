@@ -4,7 +4,13 @@ import { Domain } from "./domain.entity";
 import { schema } from "../noms";
 @Entity({ schema })
 export class Application {
-    @ApiProperty({ nullable: true, required: false, uniqueItems: true, title: 'Chave Interna', readOnly: true })
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        uniqueItems: true,
+        title: 'Chave Interna',
+        readOnly: true,
+    })
     @PrimaryGeneratedColumn('uuid')
     id?: string;
     @ApiProperty({ nullable: true, required: false, title: 'Endereço URL' })
@@ -36,6 +42,7 @@ export class Application {
     categoria: string;
     @ApiProperty({
         title: 'Domínios Associados',
+        description: 'Adicione os domínios que podem responder por esta aplicação.',
         type: Domain,
         isArray: true,
         nullable: true,

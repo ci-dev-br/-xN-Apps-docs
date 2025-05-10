@@ -22,23 +22,66 @@ async function waitTrue(condition: () => boolean) {
         }
     })
 }
+/**
+ * 
+ */
 export interface ISchemaProperty {
+    /**
+     * Title of Property schema
+     */
     title?: string;
+    /**
+     * Description of field
+     */
     description?: string;
+    /**
+     * Format of data
+     */
     format?: string;
+    /**
+     * Type of data 
+     */
     type?: string;
+    /**
+     * Nullable not permit instancialize new object with not information
+     */
     nullable?: boolean;
+    /**
+     * Define this field with only for read. 
+     */
+    readonly?: boolean;
+    /**
+     * Define the property with Array
+     */
     isArray?: boolean;
+    /**
+     * This field is Unique
+     */
     uniqueItems?: boolean;
+    /**
+     * 
+     */
     allOf?: { [key: string]: string };
+    /**
+     * 
+     */
+    items?: { [key: string]: string };
     /* {
         '$ref'?: string
     }; */
-    items?: { [key: string]: string };
 }
 export interface ISchema {
+    /**
+     * Type of Schema Information
+     */
     type?: string;
+    /**
+     * Porperties informations
+     */
     properties?: { [key: string]: ISchemaProperty };
+    /**
+     * Required fields to creation
+     */
     required?: string[];
 }
 @Injectable()
