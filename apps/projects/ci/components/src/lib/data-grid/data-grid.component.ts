@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { ReturnStatement } from "@angular/compiler";
+import { Component, EventEmitter, HostListener, Input, Output } from "@angular/core";
 import { DataGridService } from "./data-grid.service";
 import { IDataGridOptions } from "../models/i-data-grid-options";
 import { IColumnOption } from "../models/i-column-options";
@@ -8,8 +7,8 @@ import { IColumnOption } from "../models/i-column-options";
     selector: 'ci-data-grid',
     templateUrl: 'data-grid.component.html',
     styleUrls: ['data-grid.component.scss'],
+    standalone: false,
     providers: [DataGridService],
-    standalone: false
 })
 export class DataGridComponent<I> {
     @Output()
@@ -20,9 +19,12 @@ export class DataGridComponent<I> {
     selectionMode?: 'cell' | 'row' | 'multi-cell' | 'multi-row' | 'multi' = 'row';
     @Input()
     source?: I[];
+    @Input()
     selectedItem?: I;
+    @Input()
     selectedItems?: I[];
-
+    @Input()
+    selectedIndex?: number;
     private _options?: IDataGridOptions<I> | undefined;
     public get options(): IDataGridOptions<I> | undefined {
         return this._options;
@@ -37,11 +39,12 @@ export class DataGridComponent<I> {
     columns?: IColumnOption<I>[];
     displayedColumns?: string[];
     constructor(
-        services: DataGridService,
+        private readonly services: DataGridService,
+        // private readonly shortCut: ShortCut,
+        // TODO: criar serviço de short cut
     ) {
         services.grid = this;
     }
-
     rowSelectionHandler(event: MouseEvent, row: I) {
         if (this.selectionMode === 'row') {
             if (event.ctrlKey) {
@@ -54,5 +57,9 @@ export class DataGridComponent<I> {
             this.select.emit(row);
             this.selectedItem = row;
         }
+    }
+    @HostListener('keydown', ['$event'])
+    async keyDownHandler(event: KeyboardEvent) {
+        // this.shortCut.fromEvent(event);
     }
 }

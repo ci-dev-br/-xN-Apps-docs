@@ -5,7 +5,7 @@ import { MatTableModule } from "@angular/material/table";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { Application, ApplicationService } from "@ci/portal-api";
 import { CoreModule, DaoBuilder } from "@ci/core";
-import { DataListModule, WindowService, GridModule, IDataGridOptions } from "@ci/components";
+import { DataListModule, WindowService, GridModule, IDataGridOptions, IColumnOption } from "@ci/components";
 import { lastValueFrom } from "rxjs";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
@@ -68,8 +68,9 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
                     const fieldName = property;
                     return {
                         headerName,
-                        fieldName
-                    }
+                        fieldName,
+                        hide: fieldName && ['internalId', 'id'].indexOf(fieldName) > -1
+                    } as IColumnOption<any>
                 })
             ]
         }
