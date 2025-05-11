@@ -27,35 +27,8 @@ import { Type, TYPES } from "../../../type";
             width: auto;
         }   
     `,
-    template: `<ng-container [formGroup]="form" >
-    <mat-form-field>
-        <mat-label>Questão</mat-label>
-        <input matInput placeholder="Qual a pergunta?" formControlName="questao" >
-
-    </mat-form-field>
-    <mat-form-field>
-        <mat-select  formControlName="type">
-            @for (item of types; track $index) {
-                <mat-option [value]="item.name" >
-               @if(item.icon) {<mat-icon>{{item.icon}}</mat-icon>}
-               @if(item.description) { {{item.description}} }
-                </mat-option>
-            }
-        </mat-select>
-    </mat-form-field>
-        @if(source?.options){
-            @for (item of source?.options; track $index) {
-                <button mat-icon-button>
-                    <mat-icon>remove</mat-icon>
-                </button>
-            }
-        }
-        <mat-form-field>
-            <input type="text" matInput placeholder="Adicionar opção">
-            <mat-icon matPrefix>add</mat-icon>
-            <span matSuffix>ou <a href="#">adicionar "Outro"</a></span>
-        </mat-form-field>
-</ng-container>`,
+    templateUrl: `pergunta-item.component.html`,
+    styleUrl: `pergunta-item.component.scss`,
 })
 export class PerguntaItemComponent {
     types: Type[] = TYPES;
