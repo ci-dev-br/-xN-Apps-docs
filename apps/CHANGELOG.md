@@ -12,24 +12,6 @@ As mudanças devem estar descritas neste documento para melhor analisar a implem
         [>] - Implementar LightMode e Dark Mode;
     [ ] - Profile: 
         [ ] - Permitir adicionar foto de perfirl;
-
-# Sprint Abril de 2025
-    [x] - Implementar Formulário com OpenAPI para construção dinâmica do formulário conforme modelo.
-        [x] - Carga do Formulário de acordo com o nome do Schema;
-        [x] - Implentação do DaoBuilder para construção de schemas para componentes;
-    [x] - Implementação do componente Ícone `<ci-icon>;
-    [x] - Correção em implementação de Identificação de Dispositivo em MobManager API v 19; 
-# Sprint Março de 2025 
-    [OK] - Refresh Token viinculado a chave de acesso;
-        [ ] - Documentar Chave de Acesso;
-    [x] - Profile: Implementações de Acesso e Segurança;
-
-# Dezembro 2024
-
-# Outubro 2024
-    [x] - [#95][95] Ajustes em start da aplicação: gerar apis toda vez que a aplicação for iniciada.
-    [x] - Implementação de Profile App:
-         Alterar informações do usuário como nome de Usuário, nome e senha entre outros campos disponíveis.
     [ ] - Implementação de Arquivos App:
         [ ] - Home: Visão geral dos arquivos disponíveis ao acesso do usuário.
         [ ] - Este PC: Permite compatilhar informações dos arquivos locais para serem compartilhados ou abertos com Apps especializados.
@@ -76,6 +58,24 @@ As mudanças devem estar descritas neste documento para melhor analisar a implem
         [ ] - Gerenciar Turmas;
     [ ] - Implementação de Vendas App:
         [ ] - Criar nova meta de venda
+
+# Sprint Abril de 2025
+    [x] - Implementar Formulário com OpenAPI para construção dinâmica do formulário conforme modelo.
+        [x] - Carga do Formulário de acordo com o nome do Schema;
+        [x] - Implentação do DaoBuilder para construção de schemas para componentes;
+    [x] - Implementação do componente Ícone `<ci-icon>;
+    [x] - Correção em implementação de Identificação de Dispositivo em MobManager API v 19; 
+# Sprint Março de 2025 
+    [OK] - Refresh Token viinculado a chave de acesso;
+        [ ] - Documentar Chave de Acesso;
+    [x] - Profile: Implementações de Acesso e Segurança;
+
+# Dezembro 2024
+
+# Outubro 2024
+    [x] - [#95][95] Ajustes em start da aplicação: gerar apis toda vez que a aplicação for iniciada.
+    [x] - Implementação de Profile App:
+         Alterar informações do usuário como nome de Usuário, nome e senha entre outros campos disponíveis.
 
 # Anterior à Outubro de 2024:
     [x] - CORS dinâmico, solicitar autorização de CORS para novos domínios, gerar witelist de CORS com base em domínios confiáveis verificados;
