@@ -1,0 +1,3 @@
+@if(mode === 'material'){<mat-icon>{{icon}}</mat-icon>}
+@else if(mode === 'svg' && icon){<mat-icon [svgIcon]="icon"></mat-icon>}
+@if(mode === 'img'){<img />}
