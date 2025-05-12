@@ -1,26 +1,35 @@
 # Changelogs
 As mudanças devem estar descritas neste documento para melhor analisar a implementação com seu obejtivo a ser atingido. Descreva o que o recurso implementado resolve e o estágio em que ele se encontra para se comparado com os relatórios gerados após enviar se PR.
-# Sprint Abril de 2025
-    [ ] - Implementar Formulário com OpenAPI para construção dinâmica do formulário conforme modelo.
+# Sprint Maio de 2025
+    [>] Cadastros: 
+        [ ] - Implementar edição e visualização de Cadastros com DaoBuilder, seguindo sugestão de Implementação em Apps\Gerencial\Applications;
+    [ ] - Implementação de Envio de SMS em MobMannager;
     [ ] - Implementação de Notification Bus:
         [ ] - CLiente em Mobile Manager;
         [ ] - Cliente em PWA;
         [ ] - Serviço de Notificação e Event Bus na camada no do NestJS;
-    [ ] - Implementação de Envio de SMS em MobMannager;
+    [ ] - Implementar Serviço de Tema da aplicação:
+        [>] - Implementar LightMode e Dark Mode;
+    [ ] - Profile: 
+        [ ] - Permitir adicionar foto de perfirl;
+
+# Sprint Abril de 2025
+    [x] - Implementar Formulário com OpenAPI para construção dinâmica do formulário conforme modelo.
+        [x] - Carga do Formulário de acordo com o nome do Schema;
+        [x] - Implentação do DaoBuilder para construção de schemas para componentes;
+    [x] - Implementação do componente Ícone `<ci-icon>;
     [x] - Correção em implementação de Identificação de Dispositivo em MobManager API v 19; 
 # Sprint Março de 2025 
     [OK] - Refresh Token viinculado a chave de acesso;
         [ ] - Documentar Chave de Acesso;
-    [ ] - Profile: Implementações de Acesso e Segurança;
+    [x] - Profile: Implementações de Acesso e Segurança;
 
 # Dezembro 2024
-    [ ] - Implementar Serviço de Tema da aplicação:
-        [>] - Implementar LightMode e Dark Mode;
 
 # Outubro 2024
-    [ ] - [#95][95] Ajustes em start da aplicação: gerar apis toda vez que a aplicação for iniciada.
-    [ ] - Implementação de Profile App:
-        Permitir adicionar foto de perfirl. Alterar informações do usuário como nome de Usuário, nome e senha entre outros campos disponíveis.
+    [x] - [#95][95] Ajustes em start da aplicação: gerar apis toda vez que a aplicação for iniciada.
+    [x] - Implementação de Profile App:
+         Alterar informações do usuário como nome de Usuário, nome e senha entre outros campos disponíveis.
     [ ] - Implementação de Arquivos App:
         [ ] - Home: Visão geral dos arquivos disponíveis ao acesso do usuário.
         [ ] - Este PC: Permite compatilhar informações dos arquivos locais para serem compartilhados ou abertos com Apps especializados.
