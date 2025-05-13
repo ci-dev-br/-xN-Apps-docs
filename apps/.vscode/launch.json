@@ -11,7 +11,7 @@
     },
     {
       "name": "ng serve",
-      "type": "pwa-msedge",
+      "type": "msedge",
       "request": "launch",
       "preLaunchTask": "npm: start",
       "url": "http://srv33.internals.ci.dev.br:4200/"
