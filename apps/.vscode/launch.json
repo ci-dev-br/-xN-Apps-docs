@@ -3,13 +3,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "debug",
-      "type": "msedge",
-      "request": "launch",
-      // "preLaunchTask": "npm: start",
-      "url": "http://srv33.internals.ci.dev.br:4200/"
-    },
-    {
       "name": "ng serve",
       "type": "msedge",
       "request": "launch",
