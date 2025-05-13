@@ -7,20 +7,20 @@ const home_children: Routes = [
   {
     path: '', component: CadastrosComponent, data: { title: 'Cadastros', icon: 'dashboard' }, children: [
       {
-        path: 'unidade-medida', component: MasterDetailComponent, data: {
-          dataType: 'UnidadeMedida', title: 'Unidade de Medida', icon: 'svg:unidade_medida',
+        path: ':EntityName', component: MasterDetailComponent, data: {
+          /// dataType: 'EntityMasterDetail', title: 'Unidade de Medida', icon: 'svg:unidade_medida',
         }
       },
-      {
+      /* {
         path: 'pessoa', component: MasterDetailComponent, data: {
           dataType: 'Pessoa', title: 'Pessoa', icon: 'person',
         }
-      },
-      {
-        path: 'endereco', component: MasterDetailComponent, data: {
-          dataType: 'Endereco', title: 'Endereço', icon: 'map',
-        }
-      },
+      }, */
+      /*  {
+         path: 'endereco', component: MasterDetailComponent, data: {
+           dataType: 'Endereco', title: 'Endereço', icon: 'map',
+         }
+       }, */
     ]
   },
 ];

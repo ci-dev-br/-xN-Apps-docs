@@ -2,7 +2,7 @@
     <mat-drawer [mode]="!(isSmallScreen | async)?.matches ? 'side' : 'over'" opened auto-scroll="vertical">
         <div class="menu">
             <ng-container *ngFor="let item of menu">
-                <button mat-raised-button (click)="abrirItemMenu(item.title ||'')">
+                <button mat-raised-button (click)="abrirItemMenu(item.path ||'')">
                     <mat-icon>person</mat-icon>{{item.title}}
                 </button>
             </ng-container>

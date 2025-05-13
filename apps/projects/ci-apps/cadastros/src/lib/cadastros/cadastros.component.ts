@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -8,11 +8,15 @@ import { CoreModule } from '@ci/core';
 import { CadastroService, IDynamicForm } from '@ci/portal-api';
 import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Route, Router, RouterModule } from '@angular/router';
 import { BreakpointObserver, BreakpointState, LayoutModule } from '@angular/cdk/layout';
 
 const IS_SMALL = '(max-width: 599px)';
-
+interface IMenuItem {
+  description?: string | null;
+  title?: string | null;
+  path?: string | null;
+}
 @Component({
   selector: 'ci-cadastros',
   imports: [
@@ -30,18 +34,20 @@ const IS_SMALL = '(max-width: 599px)';
   templateUrl: './cadastros.component.html',
   styleUrls: ['./cadastros.component.scss']
 })
-export class CadastrosComponent {
+export class CadastrosComponent implements OnInit {
+
   isSmallScreen: BehaviorSubject<BreakpointState> = new BehaviorSubject(null as any);
   currentForm?: IDynamicForm;
-  menu?: IDynamicForm[];
+  menu?: IMenuItem[];
   constructor(
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
     private readonly cadastro: CadastroService,
     breakpointObserver: BreakpointObserver,
   ) {
     this.montarMenu();
     breakpointObserver.observe(IS_SMALL).subscribe(v => this.isSmallScreen.next(v));
   }
-
   async montarMenu() {
     this.menu = (await firstValueFrom(
       // this.cadastro.cadastroControllerGetAll({ body: { fields: ['title'] } }) // old definition
@@ -50,19 +56,24 @@ export class CadastrosComponent {
       return {
         title: E,
         description: E,
-        controls: null/// TODO
+        path: E,
+        // controls: null/// TODO
       }
     });
   }
-  async abrirItemMenu(title: string) {
-    const item = await firstValueFrom(
-      this.cadastro.cadastroControllerGetAll({ body: { by: 'title', equals: title } })
-    );
-    if (item && item.length === 1) {
-      this.abrir(item[0]);
-    }
+  async abrirItemMenu(path?: string) {
+    // const item = await firstValueFrom(
+    //   this.cadastro.cadastroControllerGetAll({ body: { by: 'title', equals: title } })
+    // );
+    // if (item && item.length === 1) {
+    //   this.abrir(item[0]);
+    // }
+    if (!!path)
+      this.router.navigate([`${path}`], { relativeTo: this.route });
   }
   abrir(form: IDynamicForm) {
     this.currentForm = form;
+  }
+  ngOnInit(): void {
   }
 }
