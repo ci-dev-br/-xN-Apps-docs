@@ -43,9 +43,16 @@ export class CadastrosComponent {
   }
 
   async montarMenu() {
-    this.menu = await firstValueFrom(
-      this.cadastro.cadastroControllerGetAll({ body: { fields: ['title'] } })
-    );
+    this.menu = (await firstValueFrom(
+      // this.cadastro.cadastroControllerGetAll({ body: { fields: ['title'] } }) // old definition
+      this.cadastro.cadastroControllerEditables()
+    ) || []).map((E: string) => {
+      return {
+        title: E,
+        description: E,
+        controls: null/// TODO
+      }
+    });
   }
   async abrirItemMenu(title: string) {
     const item = await firstValueFrom(

@@ -11,6 +11,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { cadastroControllerEditables } from '../fn/cadastro/cadastro-controller-editables';
+import { CadastroControllerEditables$Params } from '../fn/cadastro/cadastro-controller-editables';
 import { cadastroControllerGetAll } from '../fn/cadastro/cadastro-controller-get-all';
 import { CadastroControllerGetAll$Params } from '../fn/cadastro/cadastro-controller-get-all';
 import { IDynamicForm } from '../models/i-dynamic-form';
@@ -19,6 +21,31 @@ import { IDynamicForm } from '../models/i-dynamic-form';
 export class CadastroService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
+  }
+
+  /** Path part for operation `cadastroControllerEditables()` */
+  static readonly CadastroControllerEditablesPath = '/Cadastro/Editables';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `cadastroControllerEditables()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  cadastroControllerEditables$Response(params?: CadastroControllerEditables$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<string>>> {
+    return cadastroControllerEditables(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `cadastroControllerEditables$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  cadastroControllerEditables(params?: CadastroControllerEditables$Params, context?: HttpContext): Observable<Array<string>> {
+    return this.cadastroControllerEditables$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<string>>): Array<string> => r.body)
+    );
   }
 
   /** Path part for operation `cadastroControllerGetAll()` */

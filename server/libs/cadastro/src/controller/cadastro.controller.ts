@@ -9,9 +9,8 @@ export class CadastroController {
     private services: CadastroBase[];
     constructor(
         private readonly injector: ModuleRef,
-        @Optional()
-        @Inject('FORM_PROVIDERS')
-        private readonly FORM_PROVIDER_SERVICES?: any[]) {
+        @Optional() @Inject('CLIENT.MODEL.EDITABLES') private readonly _editables: string[],
+        @Optional() @Inject('FORM_PROVIDERS') private readonly FORM_PROVIDER_SERVICES?: any[]) {
         if (this.FORM_PROVIDER_SERVICES) {
             const s = [];
             this.FORM_PROVIDER_SERVICES.forEach(e => {
@@ -20,6 +19,16 @@ export class CadastroController {
             this.services = s;
         }
     }
+    @ApiResponse({
+        description: 'CadastroEditables',
+        type: String,
+        isArray: true,
+    })
+    @Post('Editables')
+    async editables() {
+        return this._editables;
+    }
+
     @ApiResponse({
         type: IDynamicForm,
         isArray: true,
