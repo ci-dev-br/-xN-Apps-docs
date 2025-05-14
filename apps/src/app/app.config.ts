@@ -52,6 +52,9 @@ export const appConfig: ApplicationConfig = {
       gateway: SETUP.UNSATLY_WS_COMMON,
       rootApi: SETUP.API_URL_GATEWAY,
       alternativeApiGateways: SETUP.ALTERN_GATEWAYS,
+      servicesCommons: {
+        
+      }
     }),
     { provide: CardSetting, useValue: Cards }
   ],
