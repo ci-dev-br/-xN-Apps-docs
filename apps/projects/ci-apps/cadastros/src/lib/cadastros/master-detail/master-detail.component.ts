@@ -40,10 +40,11 @@ import { EditarComponent } from "./editar/editar.component";
     `
 })
 export class MasterDetailComponent<T> implements OnInit {
+    @Input()
     visualizacao: 'table' | 'list' = 'table';
-
     @Input()
     schemaName?: string;
+    @Input()
     gridOptions?: IDataGridOptions<Application>;
     constructor(
         private readonly daoBuilder: DaoBuilder,
@@ -77,11 +78,12 @@ export class MasterDetailComponent<T> implements OnInit {
             this.loadGrid();
         });
     }
-    async editar(application: Application) {
-        return await this.window.open(EditarComponent, application)
+    async editar(data: T) {
+        return await this.window.open(EditarComponent,
+            { schemaName: this.schemaName, data }, this.schemaName)
     }
     async createNew() {
-        let new_instance = {};
+        let new_instance: T = {} as T;
         const data = await this.editar(new_instance);
         if (!!data?.internalId || !!data?.id) // TODO: revisar esta regra
             this.source = [data, ...this.source || []];
