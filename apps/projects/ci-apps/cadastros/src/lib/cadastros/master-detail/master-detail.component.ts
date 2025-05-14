@@ -4,7 +4,7 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatIconModule } from "@angular/material/icon";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { ActivatedRoute, RouterModule } from "@angular/router";
-import { GridModule, IDataGridOptions, WindowModule, WindowService } from "@ci/components";
+import { GridModule, IColumnOption, IDataGridOptions, WindowModule, WindowService } from "@ci/components";
 import { CoreModule, DaoBuilder } from "@ci/core";
 import { Application } from "@ci/portal-api";
 import { EditarComponent } from "./editar/editar.component";
@@ -62,8 +62,10 @@ export class MasterDetailComponent<T> implements OnInit {
                         const fieldName = property;
                         return {
                             headerName,
-                            fieldName
-                        }
+                            fieldName,
+                            hide: fieldName && ['internalId', 'id'].indexOf(fieldName) > -1
+
+                        } as IColumnOption<any>
                     })
                 ]
             }
