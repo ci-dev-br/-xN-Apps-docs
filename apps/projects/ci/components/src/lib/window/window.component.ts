@@ -15,10 +15,10 @@ export interface IItemMenu {
  * 
  */
 @Component({
-    selector: 'ci-window',
-    templateUrl: './window.component.html',
-    styleUrls: ['./window.component.scss'],
-    standalone: false
+  selector: 'ci-window',
+  templateUrl: './window.component.html',
+  styleUrls: ['./window.component.scss'],
+  standalone: false
 })
 export class WindowComponent implements OnInit, OnDestroy {
   @Input()
@@ -47,10 +47,10 @@ export class WindowComponent implements OnInit, OnDestroy {
   }
   get changed() {
     if (!this.data?.data) return false;
-    return this.daos.haveChanges(this.data.data)
+    return this.daos.haveChanges(!!this.data?.data?.schemaName ? this.data.data.data : this.data.data)
   }
   confirm() {
-    this.daos.confirmChanges(this.data.data)
+    this.daos.confirmChanges(!!this.data?.data?.schemaName ? this.data.data.data : this.data.data)
   }
   close() {
     this.showing = false;
