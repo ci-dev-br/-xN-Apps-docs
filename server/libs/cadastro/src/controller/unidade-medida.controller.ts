@@ -26,6 +26,11 @@ export class PessoaCotrollerGetInputDto {
 @ApiTags('UnidadeMedida')
 @Controller('UnidadeMedida')
 export class UnidadeMedidaController extends ControllerDaoBase<UnidadeMedidaService, UnidadeMedida> {
+    constructor(
+        service: UnidadeMedidaService
+    ) {
+        super(service);
+    }
     @Post('Sync')
     @ApiResponse({
         type: UnidadeMedida,
@@ -36,7 +41,16 @@ export class UnidadeMedidaController extends ControllerDaoBase<UnidadeMedidaServ
     override async Sync(
         @Body() body: SyncPayloadDaoUnidadeMedida,
     ) {
-        return await super.Sync(body)
+        try {
+            return await super.Sync(body)
+        } catch (error) {
+            return {
+                status: 500,
+                message: 'Falha',
+                detahes: error.message,
+                stack: error.stack
+            } as any
+        }
     }
     @Post('Get')
     @ApiResponse({
