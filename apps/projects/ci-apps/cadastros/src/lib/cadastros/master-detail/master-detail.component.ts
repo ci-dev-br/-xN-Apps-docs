@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, RouterModule } from "@angular/router";
 import { GridModule, IDataGridOptions } from "@ci/components";
-import { CoreModule, DaoBuilder, ISchemaProperty } from "@ci/core";
+import { CoreModule, DaoBuilder } from "@ci/core";
 import { Application } from "@ci/portal-api";
 
 @Component({
