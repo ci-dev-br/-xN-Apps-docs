@@ -10,6 +10,7 @@ import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ActivatedRoute, Route, Router, RouterModule } from '@angular/router';
 import { BreakpointObserver, BreakpointState, LayoutModule } from '@angular/cdk/layout';
+import { MatMenuModule } from '@angular/material/menu';
 
 const IS_SMALL = '(max-width: 599px)';
 interface IMenuItem {
@@ -29,6 +30,7 @@ interface IMenuItem {
     MatSidenavModule,
     RouterModule,
     LayoutModule,
+    MatMenuModule,
   ],
   standalone: true,
   templateUrl: './cadastros.component.html',

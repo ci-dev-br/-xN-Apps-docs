@@ -1,7 +1,7 @@
 import { FullAuditedEntity } from "@ci/core";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 import { Endereco } from "./endereco.entity";
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiExtraModels, ApiProperty } from "@nestjs/swagger";
 import { InformacaoContato } from "./informacao-contato.entity";
 import { DocumentoIdentificacao } from "./documento-identificacao.entity";
 import { t } from "@ci/core";
