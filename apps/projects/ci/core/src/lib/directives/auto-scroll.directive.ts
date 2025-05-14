@@ -18,6 +18,7 @@ export class AutoScollDirective {
         @Optional() private readonly element: ElementRef<HTMLElement>,
     ) {
         this.element.nativeElement.onmousemove = (event: MouseEvent) => this.mouseMoveHandler(event);
+        this.element.nativeElement.addEventListener('mouseover', (event: MouseEvent) => this.mouseMoveHandler(event));
         this.element.nativeElement.style.overflowX = 'hidden';
     }
 

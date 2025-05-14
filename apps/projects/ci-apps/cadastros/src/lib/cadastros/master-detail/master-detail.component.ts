@@ -34,7 +34,6 @@ import { EditarComponent } from "./editar/editar.component";
         <mat-button-toggle value="list"><mat-icon>grid_view</mat-icon>Lista</mat-button-toggle>
     </mat-button-toggle-group>
 </mat-toolbar>
-   
     <!-- TODO: Visualização em lista e em tabela permitindo visualização lateral ou em janela dos valores selecionados. -->
     <ci-data-grid [options]="gridOptions" [source]="source"></ci-data-grid>
     `

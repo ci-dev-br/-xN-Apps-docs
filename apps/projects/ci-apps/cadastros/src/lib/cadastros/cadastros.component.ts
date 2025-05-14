@@ -37,7 +37,6 @@ interface IMenuItem {
   styleUrls: ['./cadastros.component.scss']
 })
 export class CadastrosComponent implements OnInit {
-
   isSmallScreen: BehaviorSubject<BreakpointState> = new BehaviorSubject(null as any);
   currentForm?: IDynamicForm;
   menu?: IMenuItem[];
@@ -52,24 +51,16 @@ export class CadastrosComponent implements OnInit {
   }
   async montarMenu() {
     this.menu = (await firstValueFrom(
-      // this.cadastro.cadastroControllerGetAll({ body: { fields: ['title'] } }) // old definition
       this.cadastro.cadastroControllerEditables()
     ) || []).map((E: string) => {
       return {
         title: E,
         description: E,
         path: E,
-        // controls: null/// TODO
       }
     });
   }
   async abrirItemMenu(path?: string) {
-    // const item = await firstValueFrom(
-    //   this.cadastro.cadastroControllerGetAll({ body: { by: 'title', equals: title } })
-    // );
-    // if (item && item.length === 1) {
-    //   this.abrir(item[0]);
-    // }
     if (!!path)
       this.router.navigate([`${path}`], { relativeTo: this.route });
   }

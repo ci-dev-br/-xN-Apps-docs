@@ -1,9 +1,9 @@
-import { Component, Inject, Input, OnInit } from "@angular/core";
+import { Component, Inject, Injector, Input, OnInit, Optional } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
 import { DynFormModule } from "@ci/components";
-import { CoreModule, DaoBuilder, DaoService } from "@ci/core";
+import { CORE_ENV, CoreModule, DaoBuilder, DaoService, ICoreEnvironment } from "@ci/core";
 import { FormsService } from "@ci/portal-api";
 export interface IDataEditar {
     data: any;
@@ -25,14 +25,17 @@ export class EditarComponent implements OnInit {
     form?: FormGroup<any>;
     @Input()
     schemaName?: string;
+    service?: any;
     constructor(
         private readonly dao: DaoService,
         private readonly daoBuilder: DaoBuilder,
         private readonly fb: FormBuilder,
         private readonly formsService: FormsService,
         private readonly route: ActivatedRoute,
+        private readonly injector: Injector,
         @Inject(MAT_DIALOG_DATA)
         public readonly data?: IDataEditar,
+        @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
     ) {
         if (data && data.schemaName) this.schemaName = data.schemaName;
     }
@@ -41,6 +44,9 @@ export class EditarComponent implements OnInit {
     }
     private async laodForm() {
         if (this.schemaName) {
+
+            // this.service = this.injector.get(this.config?.servicesCommons?.find(s => s.schemaName === this.schemaName)?.// service)
+
             const dao = this.dao;
             const _data = this.data;
             this.form = await this.daoBuilder.getForm(this.schemaName);
