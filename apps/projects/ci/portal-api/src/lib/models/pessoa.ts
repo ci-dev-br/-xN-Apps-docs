@@ -4,7 +4,7 @@
 
 import { DocumentoIdentificacao } from '../models/documento-identificacao';
 export interface Pessoa {
-  createdAt?: string | null;
+  createdAt?: Date | null;
   createdBy?: {
 } | null;
   documentos?: Array<DocumentoIdentificacao> | null;
@@ -13,7 +13,7 @@ export interface Pessoa {
   endereco?: Array<string> | null;
   informacoesContato?: Array<string> | null;
   internalId?: string | null;
-  lastModifiedAt?: string | null;
+  lastModifiedAt?: Date | null;
   lastModifiedBy?: {
 } | null;
 

@@ -6,11 +6,11 @@ export interface Endereco {
   address?: string | null;
   addressNumber?: string | null;
   complement?: string | null;
-  createdAt?: string | null;
+  createdAt?: Date | null;
   createdBy?: {
 } | null;
   internalId?: string | null;
-  lastModifiedAt?: string | null;
+  lastModifiedAt?: Date | null;
   lastModifiedBy?: {
 } | null;
   logradouro?: string | null;

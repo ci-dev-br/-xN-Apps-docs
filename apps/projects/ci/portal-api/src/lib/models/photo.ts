@@ -4,11 +4,11 @@
 
 import { Buffer } from '../models/buffer';
 export interface Photo {
-  createdAt?: string | null;
+  createdAt?: Date | null;
   createdBy?: {
 } | null;
   internalId?: string | null;
-  lastModifiedAt?: string | null;
+  lastModifiedAt?: Date | null;
   lastModifiedBy?: {
 } | null;
   originalFile?: Buffer | null;

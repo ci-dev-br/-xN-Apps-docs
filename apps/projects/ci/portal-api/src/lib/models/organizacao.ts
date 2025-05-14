@@ -6,11 +6,11 @@ import { Pessoa } from '../models/pessoa';
 import { Photo } from '../models/photo';
 import { Tenant } from '../models/tenant';
 export interface Organizacao {
-  createdAt?: string | null;
+  createdAt?: Date | null;
   createdBy?: {
 } | null;
   internalId?: string | null;
-  lastModifiedAt?: string | null;
+  lastModifiedAt?: Date | null;
   lastModifiedBy?: {
 } | null;
 

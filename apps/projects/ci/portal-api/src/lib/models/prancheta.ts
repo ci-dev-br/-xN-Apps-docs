@@ -10,11 +10,11 @@ export interface Prancheta {
    * Código interno para prancheta Padrão, permite compartilhar a prancheta internamente entre usuários a partir de seu código global
    */
   codigoGlobal?: string | null;
-  createdAt?: string | null;
+  createdAt?: Date | null;
   createdBy?: {
 } | null;
   internalId?: string | null;
-  lastModifiedAt?: string | null;
+  lastModifiedAt?: Date | null;
   lastModifiedBy?: {
 } | null;
   layout?: string | null;

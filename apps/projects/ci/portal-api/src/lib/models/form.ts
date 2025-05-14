@@ -4,12 +4,12 @@
 
 import { Perguntas } from '../models/perguntas';
 export interface Form {
-  createdAt?: string | null;
+  createdAt?: Date | null;
   createdBy?: {
 } | null;
   description?: string | null;
   internalId?: string | null;
-  lastModifiedAt?: string | null;
+  lastModifiedAt?: Date | null;
   lastModifiedBy?: {
 } | null;
   perguntas?: Perguntas | null;

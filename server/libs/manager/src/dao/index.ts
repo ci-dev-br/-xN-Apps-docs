@@ -11,14 +11,14 @@ export abstract class AuditedEntity {
     @ManyToMany(() => Tenant)
     @JoinTable()
     tenants?: Tenant[];
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({ nullable: true, required: false, type: 'Date' })
     @CreateDateColumn({})
     createdAt?: Date;
     @ApiProperty({ nullable: true, required: false })
     @ManyToOne(() => ChaveAcesso, { nullable: true })
     @JoinColumn()
     createdBy?: ChaveAcesso;
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({ nullable: true, required: false, type: 'Date' })
     @UpdateDateColumn()
     lastModifiedAt?: Date;
     @ApiProperty({ nullable: true, required: false })

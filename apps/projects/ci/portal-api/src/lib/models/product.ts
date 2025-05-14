@@ -7,13 +7,13 @@ import { UnidadeMedida } from '../models/unidade-medida';
 export interface Product {
   codigoBarras?: string | null;
   codigoFabricanete?: string | null;
-  createdAt?: string | null;
+  createdAt?: Date | null;
   createdBy?: {
 } | null;
   description?: string | null;
   gtin?: string | null;
   internalId?: string | null;
-  lastModifiedAt?: string | null;
+  lastModifiedAt?: Date | null;
   lastModifiedBy?: {
 } | null;
   marca?: Marca | null;

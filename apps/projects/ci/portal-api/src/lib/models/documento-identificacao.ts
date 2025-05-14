@@ -4,11 +4,11 @@
 
 import { TipoDocumentoIdentificacao } from '../models/tipo-documento-identificacao';
 export interface DocumentoIdentificacao {
-  createdAt?: string | null;
+  createdAt?: Date | null;
   createdBy?: {
 } | null;
   internalId?: string | null;
-  lastModifiedAt?: string | null;
+  lastModifiedAt?: Date | null;
   lastModifiedBy?: {
 } | null;
   numeroDocumento?: string | null;
