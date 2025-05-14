@@ -8,13 +8,14 @@ export class WindowService {
     constructor(
         private readonly dialog: MatDialog,
     ) { }
-    async open(component: Type<any>, data: any) {
+    async open(component: Type<any>, data: any, title?: string) {
         const dialog = await this.dialog.open(WindowComponent, {
             data: {
                 component: component,
                 data: data,
             },
         });
+        dialog.componentInstance.title = title;
         if (dialog.componentRef?.instance) {
             dialog.componentRef.instance.component = component;
             //  dialog.componentRef.instance.title = 
