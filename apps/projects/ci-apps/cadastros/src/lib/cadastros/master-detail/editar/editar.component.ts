@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
 import { DynFormModule } from "@ci/components";
-import { CORE_ENV, CoreModule, DaoBuilder, DaoService, ICoreEnvironment } from "@ci/core";
+import { CORE_ENV, CoreModule, DaoBuilder, DaoService, IChangeable, ICoreEnvironment, ISchemaPreset } from "@ci/core";
 import { FormsService } from "@ci/portal-api";
 export interface IDataEditar {
     data: any;
@@ -11,6 +11,7 @@ export interface IDataEditar {
 }
 @Component({
     selector: 'ci-master-datail--editar',
+    styleUrl: 'editar.component.scss',
     template: `@if(form){
 <ci-dyn-form [formGroup]="form" [schemaName]="schemaName"></ci-dyn-form>
 }`,
@@ -26,6 +27,7 @@ export class EditarComponent implements OnInit {
     @Input()
     schemaName?: string;
     service?: any;
+    preset?: ISchemaPreset<any, any>;
     constructor(
         private readonly dao: DaoService,
         private readonly daoBuilder: DaoBuilder,
@@ -40,15 +42,16 @@ export class EditarComponent implements OnInit {
         if (data && data.schemaName) this.schemaName = data.schemaName;
     }
     ngOnInit() {
-        this.laodForm();
+        this.loadFormFromDaoBuilder();
     }
-    private async laodForm() {
+    private async loadFormFromDaoBuilder() {
         if (this.schemaName) {
-
-            // this.service = this.injector.get(this.config?.servicesCommons?.find(s => s.schemaName === this.schemaName)?.// service)
+            this.preset = this.config?.servicesCommons?.find(s => s.schemaName === this.schemaName);
+            if (!!this.preset?.service)
+                this.service = this.injector.get(this.preset.service);
 
             const dao = this.dao;
-            const _data = this.data;
+            const _data = this.data?.data;
             this.form = await this.daoBuilder.getForm(this.schemaName);
             const form = this.form;
             this.dao.prepareToEdit(this.data?.data);
@@ -56,10 +59,13 @@ export class EditarComponent implements OnInit {
             this.dao.confirmation(this.data?.data)?.subscribe(async data => {
                 try {
                     if (this.data?.data && data) {
-                        Object.assign(this.data?.data,
-                            // await lastValueFrom(this.applicationService.sync({ body: { ...data, id: this.data?.id } }))
-                        );
-                        // delete (_data as IChangeable).__pre;
+
+                        if (!!this.preset?.sync) {
+                            Object.assign(this.data?.data,
+                                await this.preset.sync(this.service, this.data?.data)
+                            );
+                        }
+                        delete (_data as IChangeable).__pre;
                         dao.prepareToEdit(_data);
                         if (form) dao.bindDataForm(_data, form);
                     }
