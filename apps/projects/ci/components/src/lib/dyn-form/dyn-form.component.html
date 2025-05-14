@@ -2,6 +2,7 @@
 <form [formGroup]="formGroup ">
     @for (field of source.fields; track $index) {
     <mat-form-field>
+        @if(field.label){<mat-label>{{field.label}}</mat-label>}
         @if(field.isArray === true && !!field && !!field.property){
         <mat-chip-grid #chipGrid>
             @for (option of formGroup.controls[field.property].value; track $index) {
