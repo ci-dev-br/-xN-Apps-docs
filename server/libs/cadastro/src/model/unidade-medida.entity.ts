@@ -1,13 +1,14 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { schema } from "./schema";
 import { ApiProperty } from "@nestjs/swagger";
+import { FullAuditedEntity } from "@ci/manager";
 
 @Entity({
     schema
 })
-export class UnidadeMedida {
+export class UnidadeMedida extends FullAuditedEntity {
     @ApiProperty({ nullable: true, required: false, uniqueItems: true })
-    @PrimaryColumn()
+    @Column({ nullable: false })
     internationalCode: string;
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })
