@@ -43,7 +43,6 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
         private readonly applications: ApplicationService,
         private readonly janela: WindowService,
         private readonly daoBuilder: DaoBuilder,
-        // private readonly liust: 
     ) {
         (async () => this.loadGrid())();
         (async () => this.carregarListaAplicativos())();
@@ -87,5 +86,4 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
     async carregarListaAplicativos() {
         this.apps = await lastValueFrom(this.applications.get({ body: { all: true } }));
     }
-
 }
