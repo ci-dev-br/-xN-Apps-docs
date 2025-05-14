@@ -14,7 +14,7 @@ import { IColumnOption } from "../../models/i-column-options";
     selector: 'px-header-cell',
     template: `<ng-container *ngIf="column">
 <div class="row">
-@if(!!column.headerName){  <span class="text-content">{{column.headerName}} </span> }
+@if(!!column.headerName || !!column.fieldName){  <span class="text-content">{{column.headerName || column.fieldName}} </span> }
 @if(sort === 'ASC'){
     <button mat-icon-button >
         <mat-icon>arrow_upward</mat-icon>
