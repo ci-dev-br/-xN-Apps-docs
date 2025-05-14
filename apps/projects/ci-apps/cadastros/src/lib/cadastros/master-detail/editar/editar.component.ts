@@ -59,7 +59,6 @@ export class EditarComponent implements OnInit {
             this.dao.confirmation(this.data?.data)?.subscribe(async data => {
                 try {
                     if (this.data?.data && data) {
-
                         if (!!this.preset?.sync) {
                             Object.assign(this.data?.data,
                                 await this.preset.sync(this.service, this.data?.data)

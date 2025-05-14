@@ -3,6 +3,7 @@ import { WsService } from "./io/ws.service";
 import { NotificationService } from "./notification/notification.service";
 import { UserService } from "@ci/auth";
 export interface ISchemaPreset<T, D> {
+    primary?: string | string[];
     schemaName?: string;
     service?: Type<T>,
     get?: (service: T, ...args: any) => Promise<D[]>;
