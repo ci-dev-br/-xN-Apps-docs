@@ -1,4 +1,5 @@
-import { Component } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { GridModule, IDataGridOptions } from "@ci/components";
 import { CoreModule, DaoBuilder, ISchemaProperty } from "@ci/core";
 import { Application } from "@ci/portal-api";
@@ -9,33 +10,45 @@ import { Application } from "@ci/portal-api";
     imports: [
         CoreModule,
         GridModule,
+        RouterModule,
     ],
     template: `
+    {{schemaName || ''}}
     <!-- TODO: Visualização em lista e em tabela permitindo visualização lateral ou em janela dos valores selecionados. -->
     <ci-data-grid [options]="gridOptions" [source]="source"></ci-data-grid>
     `
 })
-export class MasterDetailComponent {
+export class MasterDetailComponent<T> implements OnInit {
+    @Input()
+    schemaName?: string;
     gridOptions?: IDataGridOptions<Application>;
     constructor(
         private readonly daoBuilder: DaoBuilder,
+        private readonly route: ActivatedRoute,
     ) {
-        this.loadGrid();
     }
-    source?: Application[];
+    source?: T[] = [];
     async loadGrid() {
-        const properties = await (await this.daoBuilder.getSchema('Application')).properties
-        this.gridOptions = {
-            columns: [
-                ...Object.keys(properties || {}).map(property => {
-                    const headerName = properties ? properties[property].title : property;
-                    const fieldName = property;
-                    return {
-                        headerName,
-                        fieldName
-                    }
-                })
-            ]
+        if (!!this.schemaName) {
+            const properties = await (await this.daoBuilder.getSchema(this.schemaName)).properties
+            this.gridOptions = {
+                columns: [
+                    ...Object.keys(properties || {}).map(property => {
+                        const headerName = properties ? properties[property].title : property;
+                        const fieldName = property;
+                        return {
+                            headerName,
+                            fieldName
+                        }
+                    })
+                ]
+            }
         }
+    }
+    async ngOnInit() {
+        this.route.paramMap.subscribe(params => {
+            this.schemaName = params.get('EntityName') || undefined;
+            this.loadGrid();
+        });
     }
 }
