@@ -11,7 +11,7 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { SyncPayloadDaoUnidadeMedida } from '../models/sync-payload-dao-unidade-medida';
+import { UnidadeMedida } from '../models/unidade-medida';
 import { unidadeMedidaGet } from '../fn/unidade-medida/unidade-medida-get';
 import { UnidadeMedidaGet$Params } from '../fn/unidade-medida/unidade-medida-get';
 import { unidadeMedidaSync } from '../fn/unidade-medida/unidade-medida-sync';
@@ -32,7 +32,7 @@ export class UnidadeMedidaService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  unidadeMedidaSync$Response(params: UnidadeMedidaSync$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoUnidadeMedida>> {
+  unidadeMedidaSync$Response(params: UnidadeMedidaSync$Params, context?: HttpContext): Observable<StrictHttpResponse<UnidadeMedida>> {
     return unidadeMedidaSync(this.http, this.rootUrl, params, context);
   }
 
@@ -42,9 +42,9 @@ export class UnidadeMedidaService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  unidadeMedidaSync(params: UnidadeMedidaSync$Params, context?: HttpContext): Observable<SyncPayloadDaoUnidadeMedida> {
+  unidadeMedidaSync(params: UnidadeMedidaSync$Params, context?: HttpContext): Observable<UnidadeMedida> {
     return this.unidadeMedidaSync$Response(params, context).pipe(
-      map((r: StrictHttpResponse<SyncPayloadDaoUnidadeMedida>): SyncPayloadDaoUnidadeMedida => r.body)
+      map((r: StrictHttpResponse<UnidadeMedida>): UnidadeMedida => r.body)
     );
   }
 
@@ -57,7 +57,7 @@ export class UnidadeMedidaService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  unidadeMedidaGet$Response(params: UnidadeMedidaGet$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoUnidadeMedida>> {
+  unidadeMedidaGet$Response(params: UnidadeMedidaGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<UnidadeMedida>>> {
     return unidadeMedidaGet(this.http, this.rootUrl, params, context);
   }
 
@@ -67,9 +67,9 @@ export class UnidadeMedidaService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  unidadeMedidaGet(params: UnidadeMedidaGet$Params, context?: HttpContext): Observable<SyncPayloadDaoUnidadeMedida> {
+  unidadeMedidaGet(params: UnidadeMedidaGet$Params, context?: HttpContext): Observable<Array<UnidadeMedida>> {
     return this.unidadeMedidaGet$Response(params, context).pipe(
-      map((r: StrictHttpResponse<SyncPayloadDaoUnidadeMedida>): SyncPayloadDaoUnidadeMedida => r.body)
+      map((r: StrictHttpResponse<Array<UnidadeMedida>>): Array<UnidadeMedida> => r.body)
     );
   }
 
