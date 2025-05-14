@@ -28,8 +28,7 @@ export class PessoaCotrollerGetInputDto {
 export class UnidadeMedidaController extends ControllerDaoBase<UnidadeMedidaService, UnidadeMedida> {
     @Post('Sync')
     @ApiResponse({
-        type:
-            SyncPayloadDaoUnidadeMedida
+        type: UnidadeMedida,
     })
     @ApiOperation({
         operationId: 'UnidadeMedidaSync'
@@ -41,8 +40,7 @@ export class UnidadeMedidaController extends ControllerDaoBase<UnidadeMedidaServ
     }
     @Post('Get')
     @ApiResponse({
-        type:
-            SyncPayloadDaoUnidadeMedida
+        type: UnidadeMedida, isArray: true
     })
     @ApiOperation({
         operationId: 'UnidadeMedidaGet'
