@@ -25,16 +25,13 @@ export class PessoaCotrollerGetInputDto {
 }
 /**
  * Pessoa Controller
- * 
- * 
  */
 @ApiTags('Pessoa')
 @Controller('Pessoa')
 export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
     @Post('Sync')
     @ApiResponse({
-        type:
-            SyncPayloadDaoPessoa
+        type: SyncPayloadDaoPessoa
     })
     @ApiOperation({
         operationId: 'PessoaSync'
