@@ -116,4 +116,9 @@ export class DaoBuilder /* Service */ {
         const schema: ISchema = this.api_json.value.components.schemas[name];
         return schema;
     }
+
+    async listSchemas() {
+        await waitTrue(() => !!this.api_json.value)
+        return Object.keys(this.api_json.value.components.schemas);
+    }
 }
