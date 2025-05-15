@@ -76,7 +76,9 @@ export class Pessoa extends FullAuditedEntity {
     @ApiProperty({
         title: 'Endereço',
         required: false,
-        nullable: true
+        nullable: true,
+        type: Endereco,
+        isArray: true,
     })
     @ManyToMany(() => Endereco)
     @JoinTable()
