@@ -51,6 +51,10 @@ export interface IFormFieldDefinition<T> {
      * Define if property is only for read
      */
     readonly: boolean;
+    /**
+     *  Serviço do objeto 
+     */
+    service?: Type<any>;
 }
 
 export const FORM_OPTIONS = new InjectionToken<IFormOptions>('PX_FORM_OPTIONS');
