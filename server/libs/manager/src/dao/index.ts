@@ -4,24 +4,24 @@ import { Tenant } from "@ci/tenant";
 import { ChaveAcesso } from "@ci/core";
 import { Exclude } from "class-transformer";
 export abstract class AuditedEntity {
-    @ApiProperty({ nullable: true, required: false, uniqueItems: true })
+    @ApiProperty({ nullable: true, required: false, uniqueItems: true, readOnly: true })
     @PrimaryGeneratedColumn('uuid')
     internalId?: string;
     @ApiProperty({ nullable: true, required: false })
     @ManyToMany(() => Tenant)
     @JoinTable()
     tenants?: Tenant[];
-    @ApiProperty({ nullable: true, required: false, type: 'Date' })
+    @ApiProperty({ nullable: true, required: false, type: 'Date', readOnly: true })
     @CreateDateColumn({})
     createdAt?: Date;
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({ nullable: true, required: false, readOnly: true })
     @ManyToOne(() => ChaveAcesso, { nullable: true })
     @JoinColumn()
     createdBy?: ChaveAcesso;
-    @ApiProperty({ nullable: true, required: false, type: 'Date' })
+    @ApiProperty({ nullable: true, required: false, type: 'Date', readOnly: true })
     @UpdateDateColumn()
     lastModifiedAt?: Date;
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({ nullable: true, required: false, readOnly: true })
     @ManyToOne(() => ChaveAcesso, { nullable: true })
     @JoinColumn()
     lastModifiedBy?: ChaveAcesso;
