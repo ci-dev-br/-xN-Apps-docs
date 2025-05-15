@@ -21,7 +21,7 @@ import { UnidadeMedidaService } from "./service/unidade-medida.service";
 import { EnderecoController } from "./controller/endereco.controller";
 import { InformacaoContatoController } from "./controller/informacao-contato.controller";
 import { UnidadeMedidaController } from "./controller/unidade-medida.controller";
-import { endWith } from "rxjs";
+import { Pais } from "./model/pais.entity";
 const FORM_PROVIDERS = [
     CadastroPessoaForm,
     CadastroEnderecoForm,
@@ -35,6 +35,7 @@ export const CadastroEntidades = [
     TipoDocumentoIdentificacao,
     Category,
     UnidadeMedida,
+    // Pais,
 ]
 @Module({
     imports: [
@@ -60,7 +61,7 @@ export const CadastroEntidades = [
                 ...(CadastroEntidades.map(e => e.name))
             ]
         }
-
+        // TODO: realizar carga dos formulários
     ],
     controllers: [
         CadastroController,
