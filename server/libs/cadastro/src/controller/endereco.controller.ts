@@ -42,7 +42,7 @@ export class EnderecoController extends ControllerDaoBase<EnderecoService, Ender
     @Post('Get')
     @ApiResponse({
         type:
-        SyncPayloadDaoEndereco
+            SyncPayloadDaoEndereco
     })
     @ApiOperation({
         operationId: 'EnderecoGet',
