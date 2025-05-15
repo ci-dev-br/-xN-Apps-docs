@@ -14,6 +14,7 @@ export class WindowService {
                 component: component,
                 data: data,
             },
+            maxWidth: '90vw',
         });
         dialog.componentInstance.title = title;
         if (dialog.componentRef?.instance) {
