@@ -27,6 +27,8 @@ export class EnderecoService extends BaseService {
   static readonly EnderecoSyncPath = '/Endereco/Sync';
 
   /**
+   * sync
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `enderecoSync()` instead.
    *
@@ -37,6 +39,8 @@ export class EnderecoService extends BaseService {
   }
 
   /**
+   * sync
+   *
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `enderecoSync$Response()` instead.
    *
@@ -52,6 +56,8 @@ export class EnderecoService extends BaseService {
   static readonly EnderecoGetPath = '/Endereco/Get';
 
   /**
+   * get
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `enderecoGet()` instead.
    *
@@ -62,6 +68,8 @@ export class EnderecoService extends BaseService {
   }
 
   /**
+   * get
+   *
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `enderecoGet$Response()` instead.
    *
