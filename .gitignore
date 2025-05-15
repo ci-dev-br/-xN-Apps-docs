@@ -8,3 +8,4 @@ nssm.exe
 **.env
 **/node_modules
 daemon/*
+daemon/apps.out.log
