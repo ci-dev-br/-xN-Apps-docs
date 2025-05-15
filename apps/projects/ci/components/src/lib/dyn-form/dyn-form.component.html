@@ -1,7 +1,7 @@
 @if(!!source && source.fields && formGroup){
 <form [formGroup]="formGroup ">
     @for (field of source.fields; track $index) {
-    <mat-form-field>
+    @if(!(!formGroup.controls[field?.property||''].value && !!field.readonly)){<mat-form-field>
         @if(field.label){<mat-label>{{field.label}}</mat-label>}
         @if(field.isArray === true && !!field && !!field.property){
         <mat-chip-grid #chipGrid>
@@ -20,10 +20,11 @@
         <ng-container *ngTemplateOutlet="inputTmpl"></ng-container>
         }
         <ng-template #inputTmpl>
-            <input matInput [placeholder]="field?.label || ''" [formControlName]="field?.property || null" />
+            <input matInput [placeholder]="field?.label || ''" [formControlName]="field?.property || null"
+                [readonly]="field.readonly" />
         </ng-template>
         @if(field.description){<mat-hint>{{field.description}}</mat-hint>}
-    </mat-form-field>
+    </mat-form-field>}
     }
 </form>
 }
