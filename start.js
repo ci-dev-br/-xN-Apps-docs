@@ -9,21 +9,22 @@ async function prov_of_life() {
         setTimeout(() => prov_of_life(), 10000);
     }).on('error', res => {
         console.log('Error', res);
-        if (res.statusCode === 504) {
-            if (mem.tryed === undefined) {
-                mem.tryed = 0;
-            }
-            mem.tryed++;
-            if (mem.tryed === 8) {
-
-                if (!mem.tryed2) mem.tryed2 = 0;
-                mem.tryed2++;
-                if (mem.tryed2 > 3) {
-                    require('child_process').execSync('shutdown /r');
-                }
+        // if (res.statusCode === 504) {
+        if (mem.tryed === undefined) {
+            mem.tryed = 0;
+        }
+        mem.tryed++;
+        if (mem.tryed === 8) {
+            require('child_process').execSync('git stash push -u -m stached', { cwd: __dirname });
+            mem.tryed = 0;
+            if (!mem.tryed2) mem.tryed2 = 0;
+            mem.tryed2++;
+            if (mem.tryed2 > 3) {
+                require('child_process').execSync('shutdown /r');
             }
         }
-        setTimeout(() => prov_of_life(), 2000);
+        //}
+        setTimeout(() => prov_of_life(), 1000);
     })
 }
 setTimeout(() => prov_of_life(), 10000);
