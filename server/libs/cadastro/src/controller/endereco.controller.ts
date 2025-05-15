@@ -28,11 +28,11 @@ export class PessoaCotrollerGetInputDto {
 export class EnderecoController extends ControllerDaoBase<EnderecoService, Endereco> {
     @Post('Sync')
     @ApiResponse({
-        type:
-            SyncPayloadDaoEndereco
+        type: SyncPayloadDaoEndereco,
     })
     @ApiOperation({
-        operationId: 'EnderecoSync'
+        operationId: 'EnderecoSync',
+        description: 'sync',
     })
     override async Sync(
         @Body() body: SyncPayloadDaoEndereco,
@@ -42,10 +42,11 @@ export class EnderecoController extends ControllerDaoBase<EnderecoService, Ender
     @Post('Get')
     @ApiResponse({
         type:
-            SyncPayloadDaoEndereco
+        SyncPayloadDaoEndereco
     })
     @ApiOperation({
-        operationId: 'EnderecoGet'
+        operationId: 'EnderecoGet',
+        description: 'get',
     })
     override async GetList(
         @Body() input: ObterListaEndereco,
