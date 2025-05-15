@@ -7,3 +7,4 @@ server/.env.dev
 nssm.exe
 **.env
 **/node_modules
+daemon/*
