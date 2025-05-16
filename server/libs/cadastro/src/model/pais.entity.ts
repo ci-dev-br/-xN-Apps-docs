@@ -18,6 +18,6 @@ export class Pais extends FullAuditedEntity {
     @ApiProperty({ title: 'Nome' }) @Column({ nullable: true })
     nome?: string;
     @ApiProperty({ title: 'Referências Externas' })
-    @Column({ nullable: true, array: true })
+    @Column({ nullable: true, array: true, type: 'varchar' })
     referenciasExternas?: string[];
 }   

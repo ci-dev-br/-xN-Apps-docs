@@ -35,7 +35,7 @@ export const CadastroEntidades = [
     TipoDocumentoIdentificacao,
     Category,
     UnidadeMedida,
-    // Pais,
+    Pais,
 ]
 @Module({
     imports: [
