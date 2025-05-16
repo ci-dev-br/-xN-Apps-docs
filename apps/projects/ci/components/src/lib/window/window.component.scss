@@ -10,6 +10,7 @@
 
 ::ng-deep {
     .mat-mdc-dialog-surface {
-        background-color: rgba(255, 255, 255, .7);
+        background-color: rgba(210, 215, 255, .4);
+        backdrop-filter: blur(12px);
     }
 }
