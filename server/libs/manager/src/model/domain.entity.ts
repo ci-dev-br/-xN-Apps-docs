@@ -9,7 +9,11 @@ export class Domain extends FullAuditedEntity {
         title: 'Hostname',
         required: false, nullable: true
     })
-    @Column({ length: 512, nullable: true, unique: true })
+    @Column({
+        length: 512,
+        nullable: true,
+        //  unique: true ~> não gostei ...
+    })
     hostname?: string;
     @ApiProperty({
         title: 'Aplicações correspondentes ao domínio',
