@@ -14,17 +14,17 @@ import { Cards } from './cards';
 import { UnidadeMedidaPreset } from '../../projects/ci-apps/cadastros/src/lib/presets';
 
 const SETUP = {
-  API_URL_GATEWAY: 'https://apps.ci.dev.br:446',
+  API_URL_GATEWAY: 'https://apps.ci.dev.br',
   ALTERN_GATEWAYS: [
-    'https://lorelei.ci.dev.br',
-    'https://srv33.internals.ci.dev.br:446',
-    'https://srv33.internals.ci.dev.br:664',
-    'wss://srv33.internals.ci.dev.br:664',
-    'ws://srv33.internals.ci.dev.br:87',
-    'wss://apps.ci.dev.br:446',
-    'ws://apps.ci.dev.br:87',
+    // 'https://lorelei.ci.dev.br',
+    // 'https://srv33.internals.ci.dev.br:446',
+    // 'https://srv33.internals.ci.dev.br:664',
+    // 'wss://srv33.internals.ci.dev.br:664',
+    // 'ws://srv33.internals.ci.dev.br:87',
+    // 'wss://apps.ci.dev.br:446',
+    // 'ws://apps.ci.dev.br:87',
   ],
-  UNSATLY_WS_COMMON: 'ws://apps.ci.dev.br:87',
+  UNSATLY_WS_COMMON: 'wss://apps.ci.dev.br',
 }
 
 export const appConfig: ApplicationConfig = {

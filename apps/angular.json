@@ -78,7 +78,6 @@
               "buildTarget": "apps:build:production"
             },
             "development": {
-              "host": "srv33.internals.ci.dev.br",
               "buildTarget": "apps:build:development"
             }
           },

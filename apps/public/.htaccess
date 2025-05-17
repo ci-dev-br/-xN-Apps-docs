@@ -22,12 +22,6 @@ RewriteCond %{REQUEST_URI} !\. [NC]
 RewriteRule ^(.*)$ /index.php [L]
 
 # 3. Redireciona demais rotas para recursos internos
-RewriteCond %{REMOTE_ADDR} !=191.177.187.102
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ https://apps.ci.dev.br:446/$1 [L]
-
-RewriteCond %{REMOTE_ADDR} =191.177.187.102
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ https://srv33.internals.ci.dev.br:664/$1 [L]
+RewriteRule ^(.*)$ https://apps.ci.dev.br/$1 [L]

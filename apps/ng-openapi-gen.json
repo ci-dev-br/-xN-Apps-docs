@@ -1,6 +1,6 @@
 {
     "$schema": "node_modules/ng-openapi-gen/ng-openapi-gen-schema.json",
-    "input": "https://srv33.internals.ci.dev.br:664/api-json",
+    "input": "http://127.0.0.1:86/api-json",
     "output": "projects/ci/portal-api/src/lib",
     "ignoreUnusedModels": false
 }
