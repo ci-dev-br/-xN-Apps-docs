@@ -4,7 +4,7 @@ const https = require('https');
 async function prov_of_life() {
     if (mem.lived === undefined) mem.lived = 0;
     mem.lived++;
-    https.get('https://apps.ci.dev.br/', res => {
+    https.get('http://localhost:86/', res => {
         console.log(res.statusCode);
         setTimeout(() => prov_of_life(), 10000);
     }).on('error', res => {
@@ -23,11 +23,10 @@ async function prov_of_life() {
             } catch (error) {
                 console.error('[Falha ao tentar realizar stash em git]', error);
             }
-            mem.tryed = 0;
             if (!mem.tryed2) mem.tryed2 = 0;
             mem.tryed2++;
             if (mem.tryed2 > 3) {
-                 // require('child_process').execSync('shutdown /r');
+                // require('child_process').execSync('shutdown /r');
             }
         }
         //}
