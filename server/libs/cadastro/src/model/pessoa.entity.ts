@@ -15,13 +15,13 @@ export class Pessoa extends FullAuditedEntity {
     /**
      * Nome
      */
-    @ApiProperty({ required: false, nullable: true, description: 'Nome' })
+    @ApiProperty({ required: false, nullable: true, title: 'Nome', description: 'Nome' })
     @Column({ nullable: true, length: 120 })
     nome?: string;
     /**
      * Sobrenome
      */
-    @ApiProperty({ required: false, nullable: true, description: 'Sobrenome' })
+    @ApiProperty({ required: false, nullable: true, title: 'Sobrenome', description: 'Sobrenome' })
     @Column({ nullable: true, length: 120 })
     sobrenome?: string;
     /**
