@@ -34,7 +34,7 @@ export const AuthEntities = [
         JwtModule.register({
             global: true,
             secret: jwtConstants.secret,
-            signOptions: { expiresIn: '7s' },
+            signOptions: { expiresIn: '60s' },
         }),
         TenantModule,
         CoreModule,
