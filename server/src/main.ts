@@ -95,7 +95,7 @@ async function bootstrap() {
    * Websocket (ws)
    */
   app.useGlobalInterceptors(new LoggingInterceptor());
-  app.init();
   start(server, app, Number(process.env.PORT), httpsOptions, 86, internalHttpsOptions, Number(process.env.INTERNAL_PORT));
+  app.init();
 }
 bootstrap();
