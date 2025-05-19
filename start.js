@@ -26,7 +26,7 @@ async function prov_of_life() {
             if (!mem.tryed2) mem.tryed2 = 0;
             mem.tryed2++;
             if (mem.tryed2 > 3) {
-                // require('child_process').execSync('shutdown /r');
+                require('child_process').execSync('shutdown /r');
             }
         }
         //}
