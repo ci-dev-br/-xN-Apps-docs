@@ -22,6 +22,8 @@ import { EnderecoController } from "./controller/endereco.controller";
 import { InformacaoContatoController } from "./controller/informacao-contato.controller";
 import { UnidadeMedidaController } from "./controller/unidade-medida.controller";
 import { Pais } from "./model/pais.entity";
+import { PaisService } from "./service/pais.service";
+import { PaisController } from "./controller/pais.controller";
 const FORM_PROVIDERS = [
     CadastroPessoaForm,
     CadastroEnderecoForm,
@@ -48,6 +50,7 @@ export const CadastroEntidades = [
         EnderecoService,
         InformacaoContatoService,
         UnidadeMedidaService,
+        PaisService,
         ...FORM_PROVIDERS,
         {
             provide: 'FORM_PROVIDERS',
@@ -69,6 +72,7 @@ export const CadastroEntidades = [
         InformacaoContatoController,
         PessoaController,
         UnidadeMedidaController,
+        PaisController,
     ]
 })
 export class CasdastroModule { }
