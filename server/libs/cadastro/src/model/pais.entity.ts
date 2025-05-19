@@ -9,7 +9,7 @@ import { FullAuditedEntity } from "@ci/manager";
  */
 @Entity({ schema })
 export class Pais extends FullAuditedEntity {
-    @ApiProperty({ title: 'Códifo IBGE' })
+    @ApiProperty({ title: 'Código IBGE' })
     @Column({ nullable: true })
     ibgeCode?: string;
     @ApiProperty({ title: 'Nome Internacional' })
