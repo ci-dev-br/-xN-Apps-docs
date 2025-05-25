@@ -32,6 +32,7 @@
     "test": "ng test",
     "serve:ssr:apps": "node dist/apps/server/server.mjs",
     "api": "node node_modules/ng-openapi-gen/lib/index.js",
+    "apil": "node node_modules/@ci/api-gen/lib/index.js",
     "serve:ssr:@ci/quase": "node dist/ci/quase/server/server.mjs"
   },
   "private": true,
@@ -69,7 +70,7 @@
     "@angular-devkit/build-angular": "^19.0.1",
     "@angular/cli": "^19.0.1",
     "@angular/compiler-cli": "^19.0.0",
-    "@ci/api-gen": "file:../../ng-openapi-gen",
+    "@ci/api-gen": "file:../../ng-openapi-gen/dist",
     "@types/crypto-js": "^4.2.2",
     "@types/d3-scale": "^4.0.8",
     "@types/d3-selection": "^3.0.10",
