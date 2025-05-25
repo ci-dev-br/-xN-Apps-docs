@@ -22,5 +22,6 @@ export { EnderecoService } from './services/endereco.service';
 export { InformacaoContatoService } from './services/informacao-contato.service';
 export { PessoaService } from './services/pessoa.service';
 export { UnidadeMedidaService } from './services/unidade-medida.service';
+export { PaisService } from './services/pais.service';
 export { OrganizacaoService } from './services/organizacao.service';
 export { FormsService } from './services/forms.service';

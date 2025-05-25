@@ -26,6 +26,7 @@ import { EnderecoService } from './services/endereco.service';
 import { InformacaoContatoService } from './services/informacao-contato.service';
 import { PessoaService } from './services/pessoa.service';
 import { UnidadeMedidaService } from './services/unidade-medida.service';
+import { PaisService } from './services/pais.service';
 import { OrganizacaoService } from './services/organizacao.service';
 import { FormsService } from './services/forms.service';
 
@@ -57,6 +58,7 @@ import { FormsService } from './services/forms.service';
     InformacaoContatoService,
     PessoaService,
     UnidadeMedidaService,
+    PaisService,
     OrganizacaoService,
     FormsService,
     ApiConfiguration
