@@ -26,7 +26,7 @@ async function start(server: express.Express, app: NestExpressApplication, https
     if (httpsServer) {
       httpsServer.listen(https_port, () => {
         console.log(`Secure Internet Application is Running on ${https_port}`);
-      });
+      }); 
       let wss_adapter = new WsAdapter(httpsServer);
       app.useWebSocketAdapter(wss_adapter);
     }
@@ -96,6 +96,7 @@ async function bootstrap() {
    */
   app.useGlobalInterceptors(new LoggingInterceptor());
   start(server, app, Number(process.env.PORT), httpsOptions, 86, internalHttpsOptions, Number(process.env.INTERNAL_PORT));
-  app.init();
+  let service_application = await app.init();
+
 }
 bootstrap();
