@@ -9,12 +9,12 @@ import { RequestBuilder } from '../../request-builder';
 import { ObterListaInformacaoContato } from '../../models/obter-lista-informacao-contato';
 import { SyncPayloadDaoInformacaoContato } from '../../models/sync-payload-dao-informacao-contato';
 
-export interface InformacaoContatoGet$Params {
+export interface GetListInformacaoContato$Params {
       body: ObterListaInformacaoContato
 }
 
-export function informacaoContatoGet(http: HttpClient, rootUrl: string, params: InformacaoContatoGet$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoInformacaoContato>> {
-  const rb = new RequestBuilder(rootUrl, informacaoContatoGet.PATH, 'post');
+export function getListInformacaoContato(http: HttpClient, rootUrl: string, params: GetListInformacaoContato$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoInformacaoContato>> {
+  const rb = new RequestBuilder(rootUrl, getListInformacaoContato.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -29,4 +29,4 @@ export function informacaoContatoGet(http: HttpClient, rootUrl: string, params: 
   );
 }
 
-informacaoContatoGet.PATH = '/InformacaoContato/Get';
+getListInformacaoContato.PATH = '/InformacaoContato/GetList';

@@ -9,12 +9,12 @@ import { RequestBuilder } from '../../request-builder';
 import { ObterListaPais } from '../../models/obter-lista-pais';
 import { Pais } from '../../models/pais';
 
-export interface PaisGet$Params {
+export interface GetListPais$Params {
       body: ObterListaPais
 }
 
-export function paisGet(http: HttpClient, rootUrl: string, params: PaisGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Pais>>> {
-  const rb = new RequestBuilder(rootUrl, paisGet.PATH, 'post');
+export function getListPais(http: HttpClient, rootUrl: string, params: GetListPais$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Pais>>> {
+  const rb = new RequestBuilder(rootUrl, getListPais.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -29,4 +29,4 @@ export function paisGet(http: HttpClient, rootUrl: string, params: PaisGet$Param
   );
 }
 
-paisGet.PATH = '/Pais/Get';
+getListPais.PATH = '/Pais/GetList';

@@ -6,15 +6,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { ObterListaPessoa } from '../../models/obter-lista-pessoa';
-import { SyncPayloadDaoPessoa } from '../../models/sync-payload-dao-pessoa';
+import { Application } from '../../models/application';
 
-export interface PessoaGet$Params {
-      body: ObterListaPessoa
+export interface DeleteApplication$Params {
+      body: Application
 }
 
-export function pessoaGet(http: HttpClient, rootUrl: string, params: PessoaGet$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoPessoa>> {
-  const rb = new RequestBuilder(rootUrl, pessoaGet.PATH, 'post');
+export function deleteApplication(http: HttpClient, rootUrl: string, params: DeleteApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
+  const rb = new RequestBuilder(rootUrl, deleteApplication.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -24,9 +23,9 @@ export function pessoaGet(http: HttpClient, rootUrl: string, params: PessoaGet$P
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SyncPayloadDaoPessoa>;
+      return r as StrictHttpResponse<Application>;
     })
   );
 }
 
-pessoaGet.PATH = '/Pessoa/Get';
+deleteApplication.PATH = '/Application/Delete';

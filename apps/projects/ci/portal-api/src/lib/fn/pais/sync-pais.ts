@@ -6,13 +6,17 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { Pais } from '../../models/pais';
+import { SyncPayloadDaoPais } from '../../models/sync-payload-dao-pais';
 
-export interface CadastroControllerEditables$Params {
+export interface SyncPais$Params {
+      body: SyncPayloadDaoPais
 }
 
-export function cadastroControllerEditables(http: HttpClient, rootUrl: string, params?: CadastroControllerEditables$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<string>>> {
-  const rb = new RequestBuilder(rootUrl, cadastroControllerEditables.PATH, 'post');
+export function syncPais(http: HttpClient, rootUrl: string, params: SyncPais$Params, context?: HttpContext): Observable<StrictHttpResponse<Pais>> {
+  const rb = new RequestBuilder(rootUrl, syncPais.PATH, 'post');
   if (params) {
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -20,9 +24,9 @@ export function cadastroControllerEditables(http: HttpClient, rootUrl: string, p
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<string>>;
+      return r as StrictHttpResponse<Pais>;
     })
   );
 }
 
-cadastroControllerEditables.PATH = '/Cadastro/Editables';
+syncPais.PATH = '/Pais/Sync';

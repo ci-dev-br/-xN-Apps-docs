@@ -6,15 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Pais } from '../../models/pais';
-import { SyncPayloadDaoPais } from '../../models/sync-payload-dao-pais';
+import { ObterListaPessoa } from '../../models/obter-lista-pessoa';
+import { SyncPayloadDaoPessoa } from '../../models/sync-payload-dao-pessoa';
 
-export interface PaisSync$Params {
-      body: SyncPayloadDaoPais
+export interface GetListPessoa$Params {
+      body: ObterListaPessoa
 }
 
-export function paisSync(http: HttpClient, rootUrl: string, params: PaisSync$Params, context?: HttpContext): Observable<StrictHttpResponse<Pais>> {
-  const rb = new RequestBuilder(rootUrl, paisSync.PATH, 'post');
+export function getListPessoa(http: HttpClient, rootUrl: string, params: GetListPessoa$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoPessoa>> {
+  const rb = new RequestBuilder(rootUrl, getListPessoa.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -24,9 +24,9 @@ export function paisSync(http: HttpClient, rootUrl: string, params: PaisSync$Par
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Pais>;
+      return r as StrictHttpResponse<SyncPayloadDaoPessoa>;
     })
   );
 }
 
-paisSync.PATH = '/Pais/Sync';
+getListPessoa.PATH = '/Pessoa/GetList';

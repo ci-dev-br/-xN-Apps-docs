@@ -9,12 +9,12 @@ import { RequestBuilder } from '../../request-builder';
 import { SyncPayloadDaoUnidadeMedida } from '../../models/sync-payload-dao-unidade-medida';
 import { UnidadeMedida } from '../../models/unidade-medida';
 
-export interface UnidadeMedidaSync$Params {
+export interface SyncUnidadeMedida$Params {
       body: SyncPayloadDaoUnidadeMedida
 }
 
-export function unidadeMedidaSync(http: HttpClient, rootUrl: string, params: UnidadeMedidaSync$Params, context?: HttpContext): Observable<StrictHttpResponse<UnidadeMedida>> {
-  const rb = new RequestBuilder(rootUrl, unidadeMedidaSync.PATH, 'post');
+export function syncUnidadeMedida(http: HttpClient, rootUrl: string, params: SyncUnidadeMedida$Params, context?: HttpContext): Observable<StrictHttpResponse<UnidadeMedida>> {
+  const rb = new RequestBuilder(rootUrl, syncUnidadeMedida.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -29,4 +29,4 @@ export function unidadeMedidaSync(http: HttpClient, rootUrl: string, params: Uni
   );
 }
 
-unidadeMedidaSync.PATH = '/UnidadeMedida/Sync';
+syncUnidadeMedida.PATH = '/UnidadeMedida/Sync';

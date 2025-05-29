@@ -1,4 +1,4 @@
-/* tslint:disable */
+ /* tslint:disable */
 /* eslint-disable */
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -9,10 +9,10 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { cadastroControllerEditables } from '../fn/cadastro/cadastro-controller-editables';
-import { CadastroControllerEditables$Params } from '../fn/cadastro/cadastro-controller-editables';
-import { cadastroControllerGetAll } from '../fn/cadastro/cadastro-controller-get-all';
-import { CadastroControllerGetAll$Params } from '../fn/cadastro/cadastro-controller-get-all';
+import { editablesCadastro } from '../fn/cadastro/editables-cadastro';
+import { EditablesCadastro$Params } from '../fn/cadastro/editables-cadastro';
+import { getAllCadastro } from '../fn/cadastro/get-all-cadastro';
+import { GetAllCadastro$Params } from '../fn/cadastro/get-all-cadastro';
 import { IDynamicForm } from '../models/i-dynamic-form';
 
 @Injectable()
@@ -21,52 +21,52 @@ export class CadastroService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `cadastroControllerEditables()` */
-  static readonly CadastroControllerEditablesPath = '/Cadastro/Editables';
+  /** Path part for operation `editablesCadastro()` */
+  static readonly EditablesCadastroPath = '/Cadastro/Editables';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `cadastroControllerEditables()` instead.
+   * To access only the response body, use `editablesCadastro()` instead.
    *
    * This method doesn't expect any request body.
    */
-  cadastroControllerEditables$Response(params?: CadastroControllerEditables$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<string>>> {
-    return cadastroControllerEditables(this.http, this.rootUrl, params, context);
+  editablesCadastro$Response(params?: EditablesCadastro$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<string>>> {
+    return editablesCadastro(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `cadastroControllerEditables$Response()` instead.
+   * To access the full response (for headers, for example), `editablesCadastro$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  cadastroControllerEditables(params?: CadastroControllerEditables$Params, context?: HttpContext): Observable<Array<string>> {
-    return this.cadastroControllerEditables$Response(params, context).pipe(
+  editables(params?: EditablesCadastro$Params, context?: HttpContext): Observable<Array<string>> {
+    return this.editablesCadastro$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<string>>): Array<string> => r.body)
     );
   }
 
-  /** Path part for operation `cadastroControllerGetAll()` */
-  static readonly CadastroControllerGetAllPath = '/Cadastro/All';
+  /** Path part for operation `getAllCadastro()` */
+  static readonly GetAllCadastroPath = '/Cadastro/All';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `cadastroControllerGetAll()` instead.
+   * To access only the response body, use `getAllCadastro()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  cadastroControllerGetAll$Response(params: CadastroControllerGetAll$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<IDynamicForm>>> {
-    return cadastroControllerGetAll(this.http, this.rootUrl, params, context);
+  getAllCadastro$Response(params: GetAllCadastro$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<IDynamicForm>>> {
+    return getAllCadastro(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `cadastroControllerGetAll$Response()` instead.
+   * To access the full response (for headers, for example), `getAllCadastro$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  cadastroControllerGetAll(params: CadastroControllerGetAll$Params, context?: HttpContext): Observable<Array<IDynamicForm>> {
-    return this.cadastroControllerGetAll$Response(params, context).pipe(
+  getAll(params: GetAllCadastro$Params, context?: HttpContext): Observable<Array<IDynamicForm>> {
+    return this.getAllCadastro$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<IDynamicForm>>): Array<IDynamicForm> => r.body)
     );
   }

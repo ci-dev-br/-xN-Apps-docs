@@ -6,14 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Domain } from '../../models/domain';
+import { Application } from '../../models/application';
+import { GetInputDtos } from '../../models/get-input-dtos';
 
-export interface DomainSync$Params {
-      body: Domain
+export interface GetApplication$Params {
+      body: GetInputDtos
 }
 
-export function domainSync(http: HttpClient, rootUrl: string, params: DomainSync$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
-  const rb = new RequestBuilder(rootUrl, domainSync.PATH, 'post');
+export function getApplication(http: HttpClient, rootUrl: string, params: GetApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Application>>> {
+  const rb = new RequestBuilder(rootUrl, getApplication.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -23,9 +24,9 @@ export function domainSync(http: HttpClient, rootUrl: string, params: DomainSync
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Domain>;
+      return r as StrictHttpResponse<Array<Application>>;
     })
   );
 }
 
-domainSync.PATH = '/Domain/Sync';
+getApplication.PATH = '/Application/Get';

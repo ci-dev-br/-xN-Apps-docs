@@ -1,4 +1,4 @@
-/* tslint:disable */
+ /* tslint:disable */
 /* eslint-disable */
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -9,11 +9,11 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { pessoaGet } from '../fn/pessoa/pessoa-get';
-import { PessoaGet$Params } from '../fn/pessoa/pessoa-get';
-import { pessoaSync } from '../fn/pessoa/pessoa-sync';
-import { PessoaSync$Params } from '../fn/pessoa/pessoa-sync';
+import { getListPessoa } from '../fn/pessoa/get-list-pessoa';
+import { GetListPessoa$Params } from '../fn/pessoa/get-list-pessoa';
 import { SyncPayloadDaoPessoa } from '../models/sync-payload-dao-pessoa';
+import { syncPessoa } from '../fn/pessoa/sync-pessoa';
+import { SyncPessoa$Params } from '../fn/pessoa/sync-pessoa';
 
 @Injectable()
 export class PessoaService extends BaseService {
@@ -21,52 +21,52 @@ export class PessoaService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `pessoaSync()` */
-  static readonly PessoaSyncPath = '/Pessoa/Sync';
+  /** Path part for operation `syncPessoa()` */
+  static readonly SyncPessoaPath = '/Pessoa/Sync';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `pessoaSync()` instead.
+   * To access only the response body, use `syncPessoa()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  pessoaSync$Response(params: PessoaSync$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoPessoa>> {
-    return pessoaSync(this.http, this.rootUrl, params, context);
+  syncPessoa$Response(params: SyncPessoa$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoPessoa>> {
+    return syncPessoa(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `pessoaSync$Response()` instead.
+   * To access the full response (for headers, for example), `syncPessoa$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  pessoaSync(params: PessoaSync$Params, context?: HttpContext): Observable<SyncPayloadDaoPessoa> {
-    return this.pessoaSync$Response(params, context).pipe(
+  sync(params: SyncPessoa$Params, context?: HttpContext): Observable<SyncPayloadDaoPessoa> {
+    return this.syncPessoa$Response(params, context).pipe(
       map((r: StrictHttpResponse<SyncPayloadDaoPessoa>): SyncPayloadDaoPessoa => r.body)
     );
   }
 
-  /** Path part for operation `pessoaGet()` */
-  static readonly PessoaGetPath = '/Pessoa/Get';
+  /** Path part for operation `getListPessoa()` */
+  static readonly GetListPessoaPath = '/Pessoa/GetList';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `pessoaGet()` instead.
+   * To access only the response body, use `getListPessoa()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  pessoaGet$Response(params: PessoaGet$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoPessoa>> {
-    return pessoaGet(this.http, this.rootUrl, params, context);
+  getListPessoa$Response(params: GetListPessoa$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoPessoa>> {
+    return getListPessoa(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `pessoaGet$Response()` instead.
+   * To access the full response (for headers, for example), `getListPessoa$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  pessoaGet(params: PessoaGet$Params, context?: HttpContext): Observable<SyncPayloadDaoPessoa> {
-    return this.pessoaGet$Response(params, context).pipe(
+  getList(params: GetListPessoa$Params, context?: HttpContext): Observable<SyncPayloadDaoPessoa> {
+    return this.getListPessoa$Response(params, context).pipe(
       map((r: StrictHttpResponse<SyncPayloadDaoPessoa>): SyncPayloadDaoPessoa => r.body)
     );
   }

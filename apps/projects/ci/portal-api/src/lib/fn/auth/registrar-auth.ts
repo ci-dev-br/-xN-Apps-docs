@@ -6,14 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { SyncPayloadDaoInformacaoContato } from '../../models/sync-payload-dao-informacao-contato';
+import { RegistrarInputDto } from '../../models/registrar-input-dto';
+import { User } from '../../models/user';
 
-export interface InformacaoContatoSync$Params {
-      body: SyncPayloadDaoInformacaoContato
+export interface RegistrarAuth$Params {
+      body: RegistrarInputDto
 }
 
-export function informacaoContatoSync(http: HttpClient, rootUrl: string, params: InformacaoContatoSync$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoInformacaoContato>> {
-  const rb = new RequestBuilder(rootUrl, informacaoContatoSync.PATH, 'post');
+export function registrarAuth(http: HttpClient, rootUrl: string, params: RegistrarAuth$Params, context?: HttpContext): Observable<StrictHttpResponse<User>> {
+  const rb = new RequestBuilder(rootUrl, registrarAuth.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -23,9 +24,9 @@ export function informacaoContatoSync(http: HttpClient, rootUrl: string, params:
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SyncPayloadDaoInformacaoContato>;
+      return r as StrictHttpResponse<User>;
     })
   );
 }
 
-informacaoContatoSync.PATH = '/InformacaoContato/Sync';
+registrarAuth.PATH = '/auth/Registrar';

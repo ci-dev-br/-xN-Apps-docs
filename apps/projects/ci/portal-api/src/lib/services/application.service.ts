@@ -1,4 +1,4 @@
-/* tslint:disable */
+ /* tslint:disable */
 /* eslint-disable */
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -10,12 +10,12 @@ import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
 import { Application } from '../models/application';
-import { delete$ } from '../fn/application/delete';
-import { Delete$Params } from '../fn/application/delete';
-import { get } from '../fn/application/get';
-import { Get$Params } from '../fn/application/get';
-import { sync } from '../fn/application/sync';
-import { Sync$Params } from '../fn/application/sync';
+import { deleteApplication } from '../fn/application/delete-application';
+import { DeleteApplication$Params } from '../fn/application/delete-application';
+import { getApplication } from '../fn/application/get-application';
+import { GetApplication$Params } from '../fn/application/get-application';
+import { syncApplication } from '../fn/application/sync-application';
+import { SyncApplication$Params } from '../fn/application/sync-application';
 
 @Injectable()
 export class ApplicationService extends BaseService {
@@ -23,77 +23,77 @@ export class ApplicationService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `get()` */
-  static readonly GetPath = '/Application/Get';
+  /** Path part for operation `getApplication()` */
+  static readonly GetApplicationPath = '/Application/Get';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `get()` instead.
+   * To access only the response body, use `getApplication()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  get$Response(params: Get$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Application>>> {
-    return get(this.http, this.rootUrl, params, context);
+  getApplication$Response(params: GetApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Application>>> {
+    return getApplication(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `get$Response()` instead.
+   * To access the full response (for headers, for example), `getApplication$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  get(params: Get$Params, context?: HttpContext): Observable<Array<Application>> {
-    return this.get$Response(params, context).pipe(
+  get(params: GetApplication$Params, context?: HttpContext): Observable<Array<Application>> {
+    return this.getApplication$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Application>>): Array<Application> => r.body)
     );
   }
 
-  /** Path part for operation `sync()` */
-  static readonly SyncPath = '/Application/Sync';
+  /** Path part for operation `syncApplication()` */
+  static readonly SyncApplicationPath = '/Application/Sync';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `sync()` instead.
+   * To access only the response body, use `syncApplication()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  sync$Response(params: Sync$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
-    return sync(this.http, this.rootUrl, params, context);
+  syncApplication$Response(params: SyncApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
+    return syncApplication(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `sync$Response()` instead.
+   * To access the full response (for headers, for example), `syncApplication$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  sync(params: Sync$Params, context?: HttpContext): Observable<Application> {
-    return this.sync$Response(params, context).pipe(
+  sync(params: SyncApplication$Params, context?: HttpContext): Observable<Application> {
+    return this.syncApplication$Response(params, context).pipe(
       map((r: StrictHttpResponse<Application>): Application => r.body)
     );
   }
 
-  /** Path part for operation `delete()` */
-  static readonly DeletePath = '/Application/Delete';
+  /** Path part for operation `deleteApplication()` */
+  static readonly DeleteApplicationPath = '/Application/Delete';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `delete()` instead.
+   * To access only the response body, use `deleteApplication()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  delete$Response(params: Delete$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
-    return delete$(this.http, this.rootUrl, params, context);
+  deleteApplication$Response(params: DeleteApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
+    return deleteApplication(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `delete$Response()` instead.
+   * To access the full response (for headers, for example), `deleteApplication$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  delete(params: Delete$Params, context?: HttpContext): Observable<Application> {
-    return this.delete$Response(params, context).pipe(
+  delete(params: DeleteApplication$Params, context?: HttpContext): Observable<Application> {
+    return this.deleteApplication$Response(params, context).pipe(
       map((r: StrictHttpResponse<Application>): Application => r.body)
     );
   }

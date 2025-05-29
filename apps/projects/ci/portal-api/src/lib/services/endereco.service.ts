@@ -1,4 +1,4 @@
-/* tslint:disable */
+ /* tslint:disable */
 /* eslint-disable */
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -9,10 +9,10 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { enderecoGet } from '../fn/endereco/endereco-get';
-import { EnderecoGet$Params } from '../fn/endereco/endereco-get';
-import { enderecoSync } from '../fn/endereco/endereco-sync';
-import { EnderecoSync$Params } from '../fn/endereco/endereco-sync';
+import { getListEndereco } from '../fn/endereco/get-list-endereco';
+import { GetListEndereco$Params } from '../fn/endereco/get-list-endereco';
+import { syncEndereco } from '../fn/endereco/sync-endereco';
+import { SyncEndereco$Params } from '../fn/endereco/sync-endereco';
 import { SyncPayloadDaoEndereco } from '../models/sync-payload-dao-endereco';
 
 @Injectable()
@@ -21,60 +21,60 @@ export class EnderecoService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `enderecoSync()` */
-  static readonly EnderecoSyncPath = '/Endereco/Sync';
+  /** Path part for operation `syncEndereco()` */
+  static readonly SyncEnderecoPath = '/Endereco/Sync';
 
   /**
-   * sync
+   * Syncronize data with node api
    *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `enderecoSync()` instead.
+   * To access only the response body, use `syncEndereco()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  enderecoSync$Response(params: EnderecoSync$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoEndereco>> {
-    return enderecoSync(this.http, this.rootUrl, params, context);
+  syncEndereco$Response(params: SyncEndereco$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoEndereco>> {
+    return syncEndereco(this.http, this.rootUrl, params, context);
   }
 
   /**
-   * sync
+   * Syncronize data with node api
    *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `enderecoSync$Response()` instead.
+   * To access the full response (for headers, for example), `syncEndereco$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  enderecoSync(params: EnderecoSync$Params, context?: HttpContext): Observable<SyncPayloadDaoEndereco> {
-    return this.enderecoSync$Response(params, context).pipe(
+  sync(params: SyncEndereco$Params, context?: HttpContext): Observable<SyncPayloadDaoEndereco> {
+    return this.syncEndereco$Response(params, context).pipe(
       map((r: StrictHttpResponse<SyncPayloadDaoEndereco>): SyncPayloadDaoEndereco => r.body)
     );
   }
 
-  /** Path part for operation `enderecoGet()` */
-  static readonly EnderecoGetPath = '/Endereco/Get';
+  /** Path part for operation `getListEndereco()` */
+  static readonly GetListEnderecoPath = '/Endereco/Get';
 
   /**
-   * get
+   * Get list from Endereço Entities
    *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `enderecoGet()` instead.
+   * To access only the response body, use `getListEndereco()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  enderecoGet$Response(params: EnderecoGet$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoEndereco>> {
-    return enderecoGet(this.http, this.rootUrl, params, context);
+  getListEndereco$Response(params: GetListEndereco$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoEndereco>> {
+    return getListEndereco(this.http, this.rootUrl, params, context);
   }
 
   /**
-   * get
+   * Get list from Endereço Entities
    *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `enderecoGet$Response()` instead.
+   * To access the full response (for headers, for example), `getListEndereco$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  enderecoGet(params: EnderecoGet$Params, context?: HttpContext): Observable<SyncPayloadDaoEndereco> {
-    return this.enderecoGet$Response(params, context).pipe(
+  getList(params: GetListEndereco$Params, context?: HttpContext): Observable<SyncPayloadDaoEndereco> {
+    return this.getListEndereco$Response(params, context).pipe(
       map((r: StrictHttpResponse<SyncPayloadDaoEndereco>): SyncPayloadDaoEndereco => r.body)
     );
   }

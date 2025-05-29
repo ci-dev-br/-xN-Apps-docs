@@ -1,4 +1,4 @@
-/* tslint:disable */
+ /* tslint:disable */
 /* eslint-disable */
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -40,7 +40,7 @@ export class UserService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  syncUser(params: SyncUser$Params, context?: HttpContext): Observable<User> {
+  sync(params: SyncUser$Params, context?: HttpContext): Observable<User> {
     return this.syncUser$Response(params, context).pipe(
       map((r: StrictHttpResponse<User>): User => r.body)
     );

@@ -6,15 +6,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { RegistrarInputDto } from '../../models/registrar-input-dto';
-import { User } from '../../models/user';
+import { Domain } from '../../models/domain';
 
-export interface Registrar$Params {
-      body: RegistrarInputDto
+export interface SyncDomain$Params {
+      body: Domain
 }
 
-export function registrar(http: HttpClient, rootUrl: string, params: Registrar$Params, context?: HttpContext): Observable<StrictHttpResponse<User>> {
-  const rb = new RequestBuilder(rootUrl, registrar.PATH, 'post');
+export function syncDomain(http: HttpClient, rootUrl: string, params: SyncDomain$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
+  const rb = new RequestBuilder(rootUrl, syncDomain.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -24,9 +23,9 @@ export function registrar(http: HttpClient, rootUrl: string, params: Registrar$P
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<User>;
+      return r as StrictHttpResponse<Domain>;
     })
   );
 }
 
-registrar.PATH = '/auth/Registrar';
+syncDomain.PATH = '/Domain/Sync';

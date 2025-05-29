@@ -1,4 +1,4 @@
-/* tslint:disable */
+ /* tslint:disable */
 /* eslint-disable */
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -9,11 +9,11 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { getListPais } from '../fn/pais/get-list-pais';
+import { GetListPais$Params } from '../fn/pais/get-list-pais';
 import { Pais } from '../models/pais';
-import { paisGet } from '../fn/pais/pais-get';
-import { PaisGet$Params } from '../fn/pais/pais-get';
-import { paisSync } from '../fn/pais/pais-sync';
-import { PaisSync$Params } from '../fn/pais/pais-sync';
+import { syncPais } from '../fn/pais/sync-pais';
+import { SyncPais$Params } from '../fn/pais/sync-pais';
 
 @Injectable()
 export class PaisService extends BaseService {
@@ -21,52 +21,52 @@ export class PaisService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `paisSync()` */
-  static readonly PaisSyncPath = '/Pais/Sync';
+  /** Path part for operation `syncPais()` */
+  static readonly SyncPaisPath = '/Pais/Sync';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `paisSync()` instead.
+   * To access only the response body, use `syncPais()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  paisSync$Response(params: PaisSync$Params, context?: HttpContext): Observable<StrictHttpResponse<Pais>> {
-    return paisSync(this.http, this.rootUrl, params, context);
+  syncPais$Response(params: SyncPais$Params, context?: HttpContext): Observable<StrictHttpResponse<Pais>> {
+    return syncPais(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `paisSync$Response()` instead.
+   * To access the full response (for headers, for example), `syncPais$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  paisSync(params: PaisSync$Params, context?: HttpContext): Observable<Pais> {
-    return this.paisSync$Response(params, context).pipe(
+  sync(params: SyncPais$Params, context?: HttpContext): Observable<Pais> {
+    return this.syncPais$Response(params, context).pipe(
       map((r: StrictHttpResponse<Pais>): Pais => r.body)
     );
   }
 
-  /** Path part for operation `paisGet()` */
-  static readonly PaisGetPath = '/Pais/Get';
+  /** Path part for operation `getListPais()` */
+  static readonly GetListPaisPath = '/Pais/GetList';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `paisGet()` instead.
+   * To access only the response body, use `getListPais()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  paisGet$Response(params: PaisGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Pais>>> {
-    return paisGet(this.http, this.rootUrl, params, context);
+  getListPais$Response(params: GetListPais$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Pais>>> {
+    return getListPais(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `paisGet$Response()` instead.
+   * To access the full response (for headers, for example), `getListPais$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  paisGet(params: PaisGet$Params, context?: HttpContext): Observable<Array<Pais>> {
-    return this.paisGet$Response(params, context).pipe(
+  getList(params: GetListPais$Params, context?: HttpContext): Observable<Array<Pais>> {
+    return this.getListPais$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Pais>>): Array<Pais> => r.body)
     );
   }

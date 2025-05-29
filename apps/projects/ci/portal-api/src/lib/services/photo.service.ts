@@ -1,4 +1,4 @@
-/* tslint:disable */
+ /* tslint:disable */
 /* eslint-disable */
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -42,7 +42,7 @@ export class PhotoService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  syncPhoto(params: SyncPhoto$Params, context?: HttpContext): Observable<Photo> {
+  sync(params: SyncPhoto$Params, context?: HttpContext): Observable<Photo> {
     return this.syncPhoto$Response(params, context).pipe(
       map((r: StrictHttpResponse<Photo>): Photo => r.body)
     );
@@ -67,7 +67,7 @@ export class PhotoService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  sendPartPhoto(params: SendPartPhoto$Params, context?: HttpContext): Observable<Photo> {
+  sendPart(params: SendPartPhoto$Params, context?: HttpContext): Observable<Photo> {
     return this.sendPartPhoto$Response(params, context).pipe(
       map((r: StrictHttpResponse<Photo>): Photo => r.body)
     );
@@ -92,7 +92,7 @@ export class PhotoService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  getPhoto(params: GetPhoto$Params, context?: HttpContext): Observable<Array<Photo>> {
+  get(params: GetPhoto$Params, context?: HttpContext): Observable<Array<Photo>> {
     return this.getPhoto$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Photo>>): Array<Photo> => r.body)
     );

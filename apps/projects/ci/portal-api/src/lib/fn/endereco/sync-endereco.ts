@@ -6,14 +6,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { SyncPayloadDaoPessoa } from '../../models/sync-payload-dao-pessoa';
+import { SyncPayloadDaoEndereco } from '../../models/sync-payload-dao-endereco';
 
-export interface PessoaSync$Params {
-      body: SyncPayloadDaoPessoa
+export interface SyncEndereco$Params {
+      body: SyncPayloadDaoEndereco
 }
 
-export function pessoaSync(http: HttpClient, rootUrl: string, params: PessoaSync$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoPessoa>> {
-  const rb = new RequestBuilder(rootUrl, pessoaSync.PATH, 'post');
+export function syncEndereco(http: HttpClient, rootUrl: string, params: SyncEndereco$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoEndereco>> {
+  const rb = new RequestBuilder(rootUrl, syncEndereco.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -23,9 +23,9 @@ export function pessoaSync(http: HttpClient, rootUrl: string, params: PessoaSync
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SyncPayloadDaoPessoa>;
+      return r as StrictHttpResponse<SyncPayloadDaoEndereco>;
     })
   );
 }
 
-pessoaSync.PATH = '/Pessoa/Sync';
+syncEndereco.PATH = '/Endereco/Sync';

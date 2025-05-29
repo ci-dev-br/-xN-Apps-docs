@@ -1,4 +1,4 @@
-/* tslint:disable */
+ /* tslint:disable */
 /* eslint-disable */
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -9,11 +9,13 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deleteDomain } from '../fn/domain/delete-domain';
+import { DeleteDomain$Params } from '../fn/domain/delete-domain';
 import { Domain } from '../models/domain';
-import { domainDelete } from '../fn/domain/domain-delete';
-import { DomainDelete$Params } from '../fn/domain/domain-delete';
-import { domainSync } from '../fn/domain/domain-sync';
-import { DomainSync$Params } from '../fn/domain/domain-sync';
+import { getDomain } from '../fn/domain/get-domain';
+import { GetDomain$Params } from '../fn/domain/get-domain';
+import { syncDomain } from '../fn/domain/sync-domain';
+import { SyncDomain$Params } from '../fn/domain/sync-domain';
 
 @Injectable()
 export class DomainService extends BaseService {
@@ -21,52 +23,77 @@ export class DomainService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `domainSync()` */
-  static readonly DomainSyncPath = '/Domain/Sync';
+  /** Path part for operation `getDomain()` */
+  static readonly GetDomainPath = '/Domain/Get';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `domainSync()` instead.
+   * To access only the response body, use `getDomain()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  domainSync$Response(params: DomainSync$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
-    return domainSync(this.http, this.rootUrl, params, context);
+  getDomain$Response(params: GetDomain$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
+    return getDomain(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `domainSync$Response()` instead.
+   * To access the full response (for headers, for example), `getDomain$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  domainSync(params: DomainSync$Params, context?: HttpContext): Observable<Domain> {
-    return this.domainSync$Response(params, context).pipe(
+  get(params: GetDomain$Params, context?: HttpContext): Observable<Domain> {
+    return this.getDomain$Response(params, context).pipe(
       map((r: StrictHttpResponse<Domain>): Domain => r.body)
     );
   }
 
-  /** Path part for operation `domainDelete()` */
-  static readonly DomainDeletePath = '/Domain/Delete';
+  /** Path part for operation `syncDomain()` */
+  static readonly SyncDomainPath = '/Domain/Sync';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `domainDelete()` instead.
+   * To access only the response body, use `syncDomain()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  domainDelete$Response(params: DomainDelete$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
-    return domainDelete(this.http, this.rootUrl, params, context);
+  syncDomain$Response(params: SyncDomain$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
+    return syncDomain(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `domainDelete$Response()` instead.
+   * To access the full response (for headers, for example), `syncDomain$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  domainDelete(params: DomainDelete$Params, context?: HttpContext): Observable<Domain> {
-    return this.domainDelete$Response(params, context).pipe(
+  sync(params: SyncDomain$Params, context?: HttpContext): Observable<Domain> {
+    return this.syncDomain$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Domain>): Domain => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteDomain()` */
+  static readonly DeleteDomainPath = '/Domain/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteDomain()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteDomain$Response(params: DeleteDomain$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
+    return deleteDomain(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteDomain$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteDomain$Params, context?: HttpContext): Observable<Domain> {
+    return this.deleteDomain$Response(params, context).pipe(
       map((r: StrictHttpResponse<Domain>): Domain => r.body)
     );
   }

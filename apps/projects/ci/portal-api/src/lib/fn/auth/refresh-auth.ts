@@ -6,14 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Application } from '../../models/application';
+import { AuthorizationOutput } from '../../models/authorization-output';
+import { RefreshPayloadInputDto } from '../../models/refresh-payload-input-dto';
 
-export interface Delete$Params {
-      body: Application
+export interface RefreshAuth$Params {
+      body: RefreshPayloadInputDto
 }
 
-export function delete$(http: HttpClient, rootUrl: string, params: Delete$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
-  const rb = new RequestBuilder(rootUrl, delete$.PATH, 'post');
+export function refreshAuth(http: HttpClient, rootUrl: string, params: RefreshAuth$Params, context?: HttpContext): Observable<StrictHttpResponse<AuthorizationOutput>> {
+  const rb = new RequestBuilder(rootUrl, refreshAuth.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -23,9 +24,9 @@ export function delete$(http: HttpClient, rootUrl: string, params: Delete$Params
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Application>;
+      return r as StrictHttpResponse<AuthorizationOutput>;
     })
   );
 }
 
-delete$.PATH = '/Application/Delete';
+refreshAuth.PATH = '/auth/Refresh';

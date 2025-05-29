@@ -6,15 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { IDynamicForm } from '../../models/i-dynamic-form';
-import { Payload } from '../../models/payload';
+import { ObterListaEndereco } from '../../models/obter-lista-endereco';
+import { SyncPayloadDaoEndereco } from '../../models/sync-payload-dao-endereco';
 
-export interface CadastroControllerGetAll$Params {
-      body: Payload
+export interface GetListEndereco$Params {
+      body: ObterListaEndereco
 }
 
-export function cadastroControllerGetAll(http: HttpClient, rootUrl: string, params: CadastroControllerGetAll$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<IDynamicForm>>> {
-  const rb = new RequestBuilder(rootUrl, cadastroControllerGetAll.PATH, 'post');
+export function getListEndereco(http: HttpClient, rootUrl: string, params: GetListEndereco$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoEndereco>> {
+  const rb = new RequestBuilder(rootUrl, getListEndereco.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -24,9 +24,9 @@ export function cadastroControllerGetAll(http: HttpClient, rootUrl: string, para
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<IDynamicForm>>;
+      return r as StrictHttpResponse<SyncPayloadDaoEndereco>;
     })
   );
 }
 
-cadastroControllerGetAll.PATH = '/Cadastro/All';
+getListEndereco.PATH = '/Endereco/Get';

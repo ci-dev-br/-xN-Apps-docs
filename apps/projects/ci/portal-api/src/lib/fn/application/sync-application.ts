@@ -6,14 +6,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { SyncPayloadDaoEndereco } from '../../models/sync-payload-dao-endereco';
+import { Application } from '../../models/application';
 
-export interface EnderecoSync$Params {
-      body: SyncPayloadDaoEndereco
+export interface SyncApplication$Params {
+      body: Application
 }
 
-export function enderecoSync(http: HttpClient, rootUrl: string, params: EnderecoSync$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoEndereco>> {
-  const rb = new RequestBuilder(rootUrl, enderecoSync.PATH, 'post');
+export function syncApplication(http: HttpClient, rootUrl: string, params: SyncApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
+  const rb = new RequestBuilder(rootUrl, syncApplication.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -23,9 +23,9 @@ export function enderecoSync(http: HttpClient, rootUrl: string, params: Endereco
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SyncPayloadDaoEndereco>;
+      return r as StrictHttpResponse<Application>;
     })
   );
 }
 
-enderecoSync.PATH = '/Endereco/Sync';
+syncApplication.PATH = '/Application/Sync';

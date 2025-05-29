@@ -1,4 +1,4 @@
-/* tslint:disable */
+ /* tslint:disable */
 /* eslint-disable */
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -9,18 +9,18 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { acessar } from '../fn/auth/acessar';
-import { Acessar$Params } from '../fn/auth/acessar';
+import { acessarAuth } from '../fn/auth/acessar-auth';
+import { AcessarAuth$Params } from '../fn/auth/acessar-auth';
 import { AcessoPayload } from '../models/acesso-payload';
 import { AuthorizationOutput } from '../models/authorization-output';
-import { logout } from '../fn/auth/logout';
-import { Logout$Params } from '../fn/auth/logout';
-import { profile } from '../fn/auth/profile';
-import { Profile$Params } from '../fn/auth/profile';
-import { refresh } from '../fn/auth/refresh';
-import { Refresh$Params } from '../fn/auth/refresh';
-import { registrar } from '../fn/auth/registrar';
-import { Registrar$Params } from '../fn/auth/registrar';
+import { logoutAuth } from '../fn/auth/logout-auth';
+import { LogoutAuth$Params } from '../fn/auth/logout-auth';
+import { profileAuth } from '../fn/auth/profile-auth';
+import { ProfileAuth$Params } from '../fn/auth/profile-auth';
+import { refreshAuth } from '../fn/auth/refresh-auth';
+import { RefreshAuth$Params } from '../fn/auth/refresh-auth';
+import { registrarAuth } from '../fn/auth/registrar-auth';
+import { RegistrarAuth$Params } from '../fn/auth/registrar-auth';
 import { User } from '../models/user';
 
 @Injectable()
@@ -29,127 +29,127 @@ export class AuthService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `registrar()` */
-  static readonly RegistrarPath = '/auth/Registrar';
+  /** Path part for operation `registrarAuth()` */
+  static readonly RegistrarAuthPath = '/auth/Registrar';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `registrar()` instead.
+   * To access only the response body, use `registrarAuth()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  registrar$Response(params: Registrar$Params, context?: HttpContext): Observable<StrictHttpResponse<User>> {
-    return registrar(this.http, this.rootUrl, params, context);
+  registrarAuth$Response(params: RegistrarAuth$Params, context?: HttpContext): Observable<StrictHttpResponse<User>> {
+    return registrarAuth(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `registrar$Response()` instead.
+   * To access the full response (for headers, for example), `registrarAuth$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  registrar(params: Registrar$Params, context?: HttpContext): Observable<User> {
-    return this.registrar$Response(params, context).pipe(
+  registrar(params: RegistrarAuth$Params, context?: HttpContext): Observable<User> {
+    return this.registrarAuth$Response(params, context).pipe(
       map((r: StrictHttpResponse<User>): User => r.body)
     );
   }
 
-  /** Path part for operation `profile()` */
-  static readonly ProfilePath = '/auth/Profile';
+  /** Path part for operation `profileAuth()` */
+  static readonly ProfileAuthPath = '/auth/Profile';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `profile()` instead.
+   * To access only the response body, use `profileAuth()` instead.
    *
    * This method doesn't expect any request body.
    */
-  profile$Response(params?: Profile$Params, context?: HttpContext): Observable<StrictHttpResponse<User>> {
-    return profile(this.http, this.rootUrl, params, context);
+  profileAuth$Response(params?: ProfileAuth$Params, context?: HttpContext): Observable<StrictHttpResponse<User>> {
+    return profileAuth(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `profile$Response()` instead.
+   * To access the full response (for headers, for example), `profileAuth$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  profile(params?: Profile$Params, context?: HttpContext): Observable<User> {
-    return this.profile$Response(params, context).pipe(
+  profile(params?: ProfileAuth$Params, context?: HttpContext): Observable<User> {
+    return this.profileAuth$Response(params, context).pipe(
       map((r: StrictHttpResponse<User>): User => r.body)
     );
   }
 
-  /** Path part for operation `acessar()` */
-  static readonly AcessarPath = '/auth/Acessar';
+  /** Path part for operation `acessarAuth()` */
+  static readonly AcessarAuthPath = '/auth/Acessar';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `acessar()` instead.
+   * To access only the response body, use `acessarAuth()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  acessar$Response(params: Acessar$Params, context?: HttpContext): Observable<StrictHttpResponse<AcessoPayload>> {
-    return acessar(this.http, this.rootUrl, params, context);
+  acessarAuth$Response(params: AcessarAuth$Params, context?: HttpContext): Observable<StrictHttpResponse<AcessoPayload>> {
+    return acessarAuth(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `acessar$Response()` instead.
+   * To access the full response (for headers, for example), `acessarAuth$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  acessar(params: Acessar$Params, context?: HttpContext): Observable<AcessoPayload> {
-    return this.acessar$Response(params, context).pipe(
+  acessar(params: AcessarAuth$Params, context?: HttpContext): Observable<AcessoPayload> {
+    return this.acessarAuth$Response(params, context).pipe(
       map((r: StrictHttpResponse<AcessoPayload>): AcessoPayload => r.body)
     );
   }
 
-  /** Path part for operation `logout()` */
-  static readonly LogoutPath = '/auth/Logout';
+  /** Path part for operation `logoutAuth()` */
+  static readonly LogoutAuthPath = '/auth/Logout';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `logout()` instead.
+   * To access only the response body, use `logoutAuth()` instead.
    *
    * This method doesn't expect any request body.
    */
-  logout$Response(params?: Logout$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return logout(this.http, this.rootUrl, params, context);
+  logoutAuth$Response(params?: LogoutAuth$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return logoutAuth(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `logout$Response()` instead.
+   * To access the full response (for headers, for example), `logoutAuth$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  logout(params?: Logout$Params, context?: HttpContext): Observable<void> {
-    return this.logout$Response(params, context).pipe(
+  logout(params?: LogoutAuth$Params, context?: HttpContext): Observable<void> {
+    return this.logoutAuth$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 
-  /** Path part for operation `refresh()` */
-  static readonly RefreshPath = '/auth/Refresh';
+  /** Path part for operation `refreshAuth()` */
+  static readonly RefreshAuthPath = '/auth/Refresh';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `refresh()` instead.
+   * To access only the response body, use `refreshAuth()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  refresh$Response(params: Refresh$Params, context?: HttpContext): Observable<StrictHttpResponse<AuthorizationOutput>> {
-    return refresh(this.http, this.rootUrl, params, context);
+  refreshAuth$Response(params: RefreshAuth$Params, context?: HttpContext): Observable<StrictHttpResponse<AuthorizationOutput>> {
+    return refreshAuth(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `refresh$Response()` instead.
+   * To access the full response (for headers, for example), `refreshAuth$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  refresh(params: Refresh$Params, context?: HttpContext): Observable<AuthorizationOutput> {
-    return this.refresh$Response(params, context).pipe(
+  refresh(params: RefreshAuth$Params, context?: HttpContext): Observable<AuthorizationOutput> {
+    return this.refreshAuth$Response(params, context).pipe(
       map((r: StrictHttpResponse<AuthorizationOutput>): AuthorizationOutput => r.body)
     );
   }

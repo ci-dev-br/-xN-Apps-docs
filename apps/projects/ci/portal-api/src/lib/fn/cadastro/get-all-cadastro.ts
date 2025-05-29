@@ -6,14 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Domain } from '../../models/domain';
+import { IDynamicForm } from '../../models/i-dynamic-form';
+import { Payload } from '../../models/payload';
 
-export interface DomainDelete$Params {
-      body: Domain
+export interface GetAllCadastro$Params {
+      body: Payload
 }
 
-export function domainDelete(http: HttpClient, rootUrl: string, params: DomainDelete$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
-  const rb = new RequestBuilder(rootUrl, domainDelete.PATH, 'post');
+export function getAllCadastro(http: HttpClient, rootUrl: string, params: GetAllCadastro$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<IDynamicForm>>> {
+  const rb = new RequestBuilder(rootUrl, getAllCadastro.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -23,9 +24,9 @@ export function domainDelete(http: HttpClient, rootUrl: string, params: DomainDe
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Domain>;
+      return r as StrictHttpResponse<Array<IDynamicForm>>;
     })
   );
 }
 
-domainDelete.PATH = '/Domain/Delete';
+getAllCadastro.PATH = '/Cadastro/All';

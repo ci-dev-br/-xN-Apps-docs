@@ -6,15 +6,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Application } from '../../models/application';
-import { GetInputDtos } from '../../models/get-input-dtos';
+import { SyncPayloadDaoPessoa } from '../../models/sync-payload-dao-pessoa';
 
-export interface Get$Params {
-      body: GetInputDtos
+export interface SyncPessoa$Params {
+      body: SyncPayloadDaoPessoa
 }
 
-export function get(http: HttpClient, rootUrl: string, params: Get$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Application>>> {
-  const rb = new RequestBuilder(rootUrl, get.PATH, 'post');
+export function syncPessoa(http: HttpClient, rootUrl: string, params: SyncPessoa$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoPessoa>> {
+  const rb = new RequestBuilder(rootUrl, syncPessoa.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -24,9 +23,9 @@ export function get(http: HttpClient, rootUrl: string, params: Get$Params, conte
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<Application>>;
+      return r as StrictHttpResponse<SyncPayloadDaoPessoa>;
     })
   );
 }
 
-get.PATH = '/Application/Get';
+syncPessoa.PATH = '/Pessoa/Sync';

@@ -1,4 +1,4 @@
-/* tslint:disable */
+ /* tslint:disable */
 /* eslint-disable */
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -9,11 +9,11 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { getListUnidadeMedida } from '../fn/unidade-medida/get-list-unidade-medida';
+import { GetListUnidadeMedida$Params } from '../fn/unidade-medida/get-list-unidade-medida';
+import { syncUnidadeMedida } from '../fn/unidade-medida/sync-unidade-medida';
+import { SyncUnidadeMedida$Params } from '../fn/unidade-medida/sync-unidade-medida';
 import { UnidadeMedida } from '../models/unidade-medida';
-import { unidadeMedidaGet } from '../fn/unidade-medida/unidade-medida-get';
-import { UnidadeMedidaGet$Params } from '../fn/unidade-medida/unidade-medida-get';
-import { unidadeMedidaSync } from '../fn/unidade-medida/unidade-medida-sync';
-import { UnidadeMedidaSync$Params } from '../fn/unidade-medida/unidade-medida-sync';
 
 @Injectable()
 export class UnidadeMedidaService extends BaseService {
@@ -21,52 +21,52 @@ export class UnidadeMedidaService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `unidadeMedidaSync()` */
-  static readonly UnidadeMedidaSyncPath = '/UnidadeMedida/Sync';
+  /** Path part for operation `syncUnidadeMedida()` */
+  static readonly SyncUnidadeMedidaPath = '/UnidadeMedida/Sync';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `unidadeMedidaSync()` instead.
+   * To access only the response body, use `syncUnidadeMedida()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  unidadeMedidaSync$Response(params: UnidadeMedidaSync$Params, context?: HttpContext): Observable<StrictHttpResponse<UnidadeMedida>> {
-    return unidadeMedidaSync(this.http, this.rootUrl, params, context);
+  syncUnidadeMedida$Response(params: SyncUnidadeMedida$Params, context?: HttpContext): Observable<StrictHttpResponse<UnidadeMedida>> {
+    return syncUnidadeMedida(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `unidadeMedidaSync$Response()` instead.
+   * To access the full response (for headers, for example), `syncUnidadeMedida$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  unidadeMedidaSync(params: UnidadeMedidaSync$Params, context?: HttpContext): Observable<UnidadeMedida> {
-    return this.unidadeMedidaSync$Response(params, context).pipe(
+  sync(params: SyncUnidadeMedida$Params, context?: HttpContext): Observable<UnidadeMedida> {
+    return this.syncUnidadeMedida$Response(params, context).pipe(
       map((r: StrictHttpResponse<UnidadeMedida>): UnidadeMedida => r.body)
     );
   }
 
-  /** Path part for operation `unidadeMedidaGet()` */
-  static readonly UnidadeMedidaGetPath = '/UnidadeMedida/Get';
+  /** Path part for operation `getListUnidadeMedida()` */
+  static readonly GetListUnidadeMedidaPath = '/UnidadeMedida/GetList';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `unidadeMedidaGet()` instead.
+   * To access only the response body, use `getListUnidadeMedida()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  unidadeMedidaGet$Response(params: UnidadeMedidaGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<UnidadeMedida>>> {
-    return unidadeMedidaGet(this.http, this.rootUrl, params, context);
+  getListUnidadeMedida$Response(params: GetListUnidadeMedida$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<UnidadeMedida>>> {
+    return getListUnidadeMedida(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `unidadeMedidaGet$Response()` instead.
+   * To access the full response (for headers, for example), `getListUnidadeMedida$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  unidadeMedidaGet(params: UnidadeMedidaGet$Params, context?: HttpContext): Observable<Array<UnidadeMedida>> {
-    return this.unidadeMedidaGet$Response(params, context).pipe(
+  getList(params: GetListUnidadeMedida$Params, context?: HttpContext): Observable<Array<UnidadeMedida>> {
+    return this.getListUnidadeMedida$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<UnidadeMedida>>): Array<UnidadeMedida> => r.body)
     );
   }

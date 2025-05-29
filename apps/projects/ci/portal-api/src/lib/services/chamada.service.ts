@@ -1,4 +1,4 @@
-/* tslint:disable */
+ /* tslint:disable */
 /* eslint-disable */
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -37,7 +37,7 @@ export class ChamadaService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  chamadaControllerNovaChamada(params?: ChamadaControllerNovaChamada$Params, context?: HttpContext): Observable<void> {
+  chamadaControllerNova(params?: ChamadaControllerNovaChamada$Params, context?: HttpContext): Observable<void> {
     return this.chamadaControllerNovaChamada$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );

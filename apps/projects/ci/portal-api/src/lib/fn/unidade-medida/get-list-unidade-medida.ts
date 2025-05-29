@@ -9,12 +9,12 @@ import { RequestBuilder } from '../../request-builder';
 import { ObterListaUnidadeMedida } from '../../models/obter-lista-unidade-medida';
 import { UnidadeMedida } from '../../models/unidade-medida';
 
-export interface UnidadeMedidaGet$Params {
+export interface GetListUnidadeMedida$Params {
       body: ObterListaUnidadeMedida
 }
 
-export function unidadeMedidaGet(http: HttpClient, rootUrl: string, params: UnidadeMedidaGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<UnidadeMedida>>> {
-  const rb = new RequestBuilder(rootUrl, unidadeMedidaGet.PATH, 'post');
+export function getListUnidadeMedida(http: HttpClient, rootUrl: string, params: GetListUnidadeMedida$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<UnidadeMedida>>> {
+  const rb = new RequestBuilder(rootUrl, getListUnidadeMedida.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -29,4 +29,4 @@ export function unidadeMedidaGet(http: HttpClient, rootUrl: string, params: Unid
   );
 }
 
-unidadeMedidaGet.PATH = '/UnidadeMedida/Get';
+getListUnidadeMedida.PATH = '/UnidadeMedida/GetList';

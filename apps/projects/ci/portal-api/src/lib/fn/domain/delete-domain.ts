@@ -6,15 +6,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { ObterListaEndereco } from '../../models/obter-lista-endereco';
-import { SyncPayloadDaoEndereco } from '../../models/sync-payload-dao-endereco';
+import { Domain } from '../../models/domain';
 
-export interface EnderecoGet$Params {
-      body: ObterListaEndereco
+export interface DeleteDomain$Params {
+      body: Domain
 }
 
-export function enderecoGet(http: HttpClient, rootUrl: string, params: EnderecoGet$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoEndereco>> {
-  const rb = new RequestBuilder(rootUrl, enderecoGet.PATH, 'post');
+export function deleteDomain(http: HttpClient, rootUrl: string, params: DeleteDomain$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
+  const rb = new RequestBuilder(rootUrl, deleteDomain.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -24,9 +23,9 @@ export function enderecoGet(http: HttpClient, rootUrl: string, params: EnderecoG
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SyncPayloadDaoEndereco>;
+      return r as StrictHttpResponse<Domain>;
     })
   );
 }
 
-enderecoGet.PATH = '/Endereco/Get';
+deleteDomain.PATH = '/Domain/Delete';
