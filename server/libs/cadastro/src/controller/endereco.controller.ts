@@ -31,8 +31,8 @@ export class EnderecoController extends ControllerDaoBase<EnderecoService, Ender
         type: SyncPayloadDaoEndereco,
     })
     @ApiOperation({
-        operationId: 'EnderecoSync',
-        description: 'sync',
+        operationId: 'SyncEndereco',
+        description: 'Syncronize data with node api',
     })
     override async Sync(
         @Body() body: SyncPayloadDaoEndereco,
@@ -45,8 +45,8 @@ export class EnderecoController extends ControllerDaoBase<EnderecoService, Ender
             SyncPayloadDaoEndereco
     })
     @ApiOperation({
-        operationId: 'EnderecoGet',
-        description: 'get',
+        operationId: 'GetListEndereco',
+        description: 'Get list from Endereço Entities',
     })
     override async GetList(
         @Body() input: ObterListaEndereco,

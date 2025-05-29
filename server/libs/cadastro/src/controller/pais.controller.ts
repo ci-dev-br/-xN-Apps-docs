@@ -36,7 +36,7 @@ export class PaisController extends ControllerDaoBase<PaisService, Pais> {
         type: Pais,
     })
     @ApiOperation({
-        operationId: 'PaisSync'
+        operationId: 'SyncPais'
     })
     override async Sync(
         @Body() body: SyncPayloadDaoPais,
@@ -52,12 +52,12 @@ export class PaisController extends ControllerDaoBase<PaisService, Pais> {
             } as any
         }
     }
-    @Post('Get')
+    @Post('GetList')
     @ApiResponse({
         type: Pais, isArray: true
     })
     @ApiOperation({
-        operationId: 'PaisGet'
+        operationId: 'GetListPais'
     })
     override async GetList(
         @Body() input: ObterListaPais,

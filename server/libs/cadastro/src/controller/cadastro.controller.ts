@@ -1,6 +1,6 @@
 import { Body, Controller, Inject, Optional, Post, Type } from "@nestjs/common";
 import { Payload } from "../dto/payload.dto";
-import { ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CadastroBase, IDynamicForm } from "../service/CadastroBase";
 import { ModuleRef } from "@nestjs/core";
 @ApiTags('Cadastro')
@@ -25,15 +25,17 @@ export class CadastroController {
         isArray: true,
     })
     @Post('Editables')
+    @ApiOperation({ operationId: 'EditablesCadastro' })
     async editables() {
         return this._editables;
     }
-
+    
     @ApiResponse({
         type: IDynamicForm,
         isArray: true,
     })
     @Post('All')
+    @ApiOperation({ operationId: 'GetAllCadastro' })
     async getAll(
         @Body()
         input?: Payload<void>) {

@@ -22,7 +22,7 @@ export class AuthController {
   ) { }
   @Public()
   @Post('Registrar')
-  @ApiOperation({ operationId: 'Registrar' })
+  @ApiOperation({ operationId: 'RegistrarAuth' })
   @ApiResponse({
     type: User
   })
@@ -40,7 +40,7 @@ export class AuthController {
     return created_user;
   }
   @Post('Profile')
-  @ApiOperation({ operationId: 'Profile' })
+  @ApiOperation({ operationId: 'ProfileAuth' })
   @ApiResponse({
     type: User
   })
@@ -52,7 +52,7 @@ export class AuthController {
   }
   @Public()
   @Post('Acessar')
-  @ApiOperation({ operationId: 'Acessar' })
+  @ApiOperation({ operationId: 'AcessarAuth' })
   @ApiResponse({
     type: AcessoPayload
   })
@@ -132,14 +132,14 @@ export class AuthController {
     }
   }
   @Post('Logout')
-  @ApiOperation({ operationId: 'Logout' })
+  @ApiOperation({ operationId: 'LogoutAuth' })
   async logout(@Req() req) {
     this.userService.logout(null)
   }
   @Public()
   @Post('Refresh')
   @ApiResponse({ type: AuthorizationOutput })
-  @ApiOperation({ operationId: 'Refresh' })
+  @ApiOperation({ operationId: 'RefreshAuth' })
   async refresh(
     @Req() req: Request,
     @Body() payload: RefreshPayloadInputDto,

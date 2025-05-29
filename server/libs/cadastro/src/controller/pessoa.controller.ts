@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+ import { Body, Controller, Post } from "@nestjs/common";
 import { PessoaService } from "../service/pessoa.service";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/core";
 import { Pessoa } from "../model/pessoa.entity";
@@ -34,20 +34,20 @@ export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
         type: SyncPayloadDaoPessoa
     })
     @ApiOperation({
-        operationId: 'PessoaSync'
+        operationId: 'SyncPessoa'
     })
     override async Sync(
         @Body() body: SyncPayloadDaoPessoa,
     ) {
         return await super.Sync(body)
     }
-    @Post('Get')
+    @Post('GetList')
     @ApiResponse({
         type:
             SyncPayloadDaoPessoa
     })
     @ApiOperation({
-        operationId: 'PessoaGet'
+        operationId: 'GetListPessoa'
     })
     override async GetList(
         @Body() input: ObterListaPessoa,

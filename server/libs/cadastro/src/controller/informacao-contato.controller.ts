@@ -37,20 +37,20 @@ export class InformacaoContatoController extends ControllerDaoBase<InformacaoCon
             SyncPayloadDaoInformacaoContato
     })
     @ApiOperation({
-        operationId: 'InformacaoContatoSync'
+        operationId: 'SyncInformacaoContato'
     })
     override async Sync(
         @Body() body: SyncPayloadDaoInformacaoContato,
     ) {
         return await super.Sync(body)
     }
-    @Post('Get')
+    @Post('GetList')
     @ApiResponse({
         type:
             SyncPayloadDaoInformacaoContato
     })
     @ApiOperation({
-        operationId: 'InformacaoContatoGet'
+        operationId: 'GetListInformacaoContato'
     })
     override async GetList(
         @Body() input: ObterListaInformacaoContato,

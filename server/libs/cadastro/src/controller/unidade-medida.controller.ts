@@ -36,7 +36,7 @@ export class UnidadeMedidaController extends ControllerDaoBase<UnidadeMedidaServ
         type: UnidadeMedida,
     })
     @ApiOperation({
-        operationId: 'UnidadeMedidaSync'
+        operationId: 'SyncUnidadeMedida'
     })
     override async Sync(
         @Body() body: SyncPayloadDaoUnidadeMedida,
@@ -52,12 +52,12 @@ export class UnidadeMedidaController extends ControllerDaoBase<UnidadeMedidaServ
             } as any
         }
     }
-    @Post('Get')
+    @Post('GetList')
     @ApiResponse({
         type: UnidadeMedida, isArray: true
     })
     @ApiOperation({
-        operationId: 'UnidadeMedidaGet'
+        operationId: 'GetListUnidadeMedida'
     })
     override async GetList(
         @Body() input: ObterListaUnidadeMedida,

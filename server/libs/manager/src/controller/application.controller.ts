@@ -15,9 +15,12 @@ export class ApplicationController {
     ) { }
 
     @Post('Get')
-    @ApiResponse({ type: Application, isArray: true, description: 'Obter Aplicações' })
+    @ApiResponse({
+        type: Application,
+        isArray: true, description: 'Obter Aplicações'
+    })
     @ApiOperation({
-        operationId: 'Get'
+        operationId: 'GetApplication',
     })
     async get(
         @Request() req: Request,
@@ -36,8 +39,9 @@ export class ApplicationController {
     @ApiResponse({
         type: Application, description: 'Sincronizar Objeto de Aplicação'
     })
-@ApiOperation({
-        operationId: 'Sync'
+    @ApiOperation({
+
+        operationId: 'SyncApplication',
     })
     async sync(
         @Body() application: Application,
@@ -56,7 +60,7 @@ export class ApplicationController {
         type: Application, description: 'Excluir Cadastro de Aplicação'
     })
     @ApiOperation({
-        operationId: 'Delete'
+        operationId: 'DeleteApplication',
     })
     async Delete(
         @Body() application: Application
