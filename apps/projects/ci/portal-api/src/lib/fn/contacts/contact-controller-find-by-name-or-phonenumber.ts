@@ -25,4 +25,4 @@ export function contactControllerFindByNameOrPhonenumber(http: HttpClient, rootU
   );
 }
 
-contactControllerFindByNameOrPhonenumber.PATH = '/Contacts/FindByNameOrPhonenumber';
+contactControllerFindByNameOrPhonenumber.PATH = '/Contacts/FindByNameOrPhonenumberContacts';

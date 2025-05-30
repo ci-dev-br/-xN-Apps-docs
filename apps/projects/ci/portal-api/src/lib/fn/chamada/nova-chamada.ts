@@ -7,11 +7,11 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 
-export interface ChamadaControllerNovaChamada$Params {
+export interface NovaChamada$Params {
 }
 
-export function chamadaControllerNovaChamada(http: HttpClient, rootUrl: string, params?: ChamadaControllerNovaChamada$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, chamadaControllerNovaChamada.PATH, 'post');
+export function novaChamada(http: HttpClient, rootUrl: string, params?: NovaChamada$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, novaChamada.PATH, 'post');
   if (params) {
   }
 
@@ -25,4 +25,4 @@ export function chamadaControllerNovaChamada(http: HttpClient, rootUrl: string, 
   );
 }
 
-chamadaControllerNovaChamada.PATH = '/Chamada/NovaChamada';
+novaChamada.PATH = '/Chamada/NovaChamada';

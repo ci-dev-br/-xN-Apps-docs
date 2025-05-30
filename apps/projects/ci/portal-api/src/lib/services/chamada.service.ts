@@ -9,8 +9,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { chamadaControllerNovaChamada } from '../fn/chamada/chamada-controller-nova-chamada';
-import { ChamadaControllerNovaChamada$Params } from '../fn/chamada/chamada-controller-nova-chamada';
+import { novaChamada } from '../fn/chamada/nova-chamada';
+import { NovaChamada$Params } from '../fn/chamada/nova-chamada';
 
 @Injectable()
 export class ChamadaService extends BaseService {
@@ -18,27 +18,27 @@ export class ChamadaService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `chamadaControllerNovaChamada()` */
-  static readonly ChamadaControllerNovaChamadaPath = '/Chamada/NovaChamada';
+  /** Path part for operation `novaChamada()` */
+  static readonly NovaChamadaPath = '/Chamada/NovaChamada';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `chamadaControllerNovaChamada()` instead.
+   * To access only the response body, use `novaChamada()` instead.
    *
    * This method doesn't expect any request body.
    */
-  chamadaControllerNovaChamada$Response(params?: ChamadaControllerNovaChamada$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return chamadaControllerNovaChamada(this.http, this.rootUrl, params, context);
+  novaChamada$Response(params?: NovaChamada$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return novaChamada(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `chamadaControllerNovaChamada$Response()` instead.
+   * To access the full response (for headers, for example), `novaChamada$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  chamadaControllerNova(params?: ChamadaControllerNovaChamada$Params, context?: HttpContext): Observable<void> {
-    return this.chamadaControllerNovaChamada$Response(params, context).pipe(
+  nova(params?: NovaChamada$Params, context?: HttpContext): Observable<void> {
+    return this.novaChamada$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }

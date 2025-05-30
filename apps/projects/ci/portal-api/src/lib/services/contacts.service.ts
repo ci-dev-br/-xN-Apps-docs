@@ -19,7 +19,7 @@ export class ContactsService extends BaseService {
   }
 
   /** Path part for operation `contactControllerFindByNameOrPhonenumber()` */
-  static readonly ContactControllerFindByNameOrPhonenumberPath = '/Contacts/FindByNameOrPhonenumber';
+  static readonly ContactControllerFindByNameOrPhonenumberPath = '/Contacts/FindByNameOrPhonenumberContacts';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
