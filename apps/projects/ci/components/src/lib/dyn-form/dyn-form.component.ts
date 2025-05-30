@@ -2,10 +2,9 @@ import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { FORM_OPTIONS, IFormFieldDefinition, IFormOptions } from './i-form-options';
 import { FormGroup } from '@angular/forms';
 import { DaoBuilder } from '@ci/core';
+import { getServiceAsSchema } from '@ci/portal-api';
 import { MatChipInputEvent } from '@angular/material/chips';
-function getDaoServiceAsSchema(schema?: string) {
-  
-}
+
 @Component({
   selector: 'ci-dyn-form',
   standalone: false,
@@ -44,7 +43,7 @@ export class DynFormComponent implements OnInit {
                 description: property_info.description,
                 type: property_info.type,
                 readonly: property_info.readOnly,
-                dataService: getDaoServiceAsSchema(property_info.type),
+                /// dataService: property_info.type ? getServiceAsSchema(property_info.type) as any : undefined,
                 isArray: property_info.type === 'array' || property_info.isArray
               } as IFormFieldDefinition<any>
             })
