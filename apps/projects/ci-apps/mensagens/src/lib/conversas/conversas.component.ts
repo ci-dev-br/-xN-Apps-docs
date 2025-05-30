@@ -35,6 +35,6 @@ export class ConversasComponent {
     return await this.pesquisar.pesquisarContato();
   }
   async iniciarChamada() {
-    await lastValueFrom(this.chamada.chamadaControllerNovaChamada());
+    await lastValueFrom(this.chamada.nova());
   }
 }

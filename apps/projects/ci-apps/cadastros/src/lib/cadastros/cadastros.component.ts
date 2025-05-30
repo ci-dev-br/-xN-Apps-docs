@@ -51,7 +51,7 @@ export class CadastrosComponent implements OnInit {
   }
   async montarMenu() {
     this.menu = (await firstValueFrom(
-      this.cadastro.cadastroControllerEditables()
+      this.cadastro.editables()
     ) || []).map((E: string) => {
       return {
         title: E,

@@ -6,9 +6,9 @@ export const UnidadeMedidaPreset: ISchemaPreset<UnidadeMedidaService, UnidadeMed
     primary: 'internationalCode',
     service: UnidadeMedidaService,
     get: async (s) => await lastValueFrom(
-        s.unidadeMedidaGet({ body: { skip: 0, take: 10, where: {} } })
+        s.getList({ body: { skip: 0, take: 10, where: {} } })
     ),
     sync: async (s, data: UnidadeMedida) => await lastValueFrom(
-        s.unidadeMedidaSync({ body: { data: data } })
+        s.sync({ body: { data: data } })
     )
 }

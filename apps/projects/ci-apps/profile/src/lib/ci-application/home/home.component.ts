@@ -55,7 +55,7 @@ export class HomeComponent implements OnInit {
                 try {
                     if (user && data) {
                         let _data: any = Object.assign(user,
-                            await lastValueFrom(this.userService.syncUser({ body: user }))
+                            await lastValueFrom(this.userService.sync({ body: user }))
                         );
                         delete (_data as IChangeable).__pre;
                         this.daos.prepareToEdit(_data);
