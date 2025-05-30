@@ -1,5 +1,5 @@
 import { Controller, Post } from "@nestjs/common";
-import { ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ChamadaService } from "../service/chamada.service";
 /**
  * Atendimento API
@@ -14,6 +14,9 @@ export class ChamadaController {
     ) { }
     @ApiResponse({ description: 'NovaChamada' })
     @Post('NovaChamada')
+    @ApiOperation({
+        operationId: "NovaChamada"
+    })
     async NovaChamada() {
         return await this.atendimentoService.IniciarChamada();
     }

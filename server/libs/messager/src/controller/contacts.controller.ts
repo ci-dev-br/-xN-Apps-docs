@@ -6,9 +6,9 @@ import { LazyListRollBack } from "@ci/core/data-io/lazy-list-roll-back";
 @Controller('Contacts')
 export class ContactController {
     constructor() { }
-    @Post('FindByNameOrPhonenumber')
+    @Post('FindByNameOrPhonenumberContacts')
     @ApiResponse({
-        description: 'FindByNameOrPhonenumber',
+        description: 'FindByNameOrPhonenumberContacts',
     })
     async FindByNameOrPhonenumber(input: ContactFindInput) {
         return new LazyListRollBack();
