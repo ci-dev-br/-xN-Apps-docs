@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkItem } from './models/work-item.entity';
 import { Cliente } from './models/cliente.entity';
 import { CasdastroModule } from '@ci/cadastro';
+import { ProjetoService } from './service/projeto.service';
+import { ProjetoController } from './controller/projeto.controller';
 export const ProjetosEntities = [
   Projeto,
   WorkItem,
@@ -22,9 +24,13 @@ export const ProjetosEntities = [
   ],
   providers: [
     ProjetosService,
+    ProjetoService,
   ],
   exports: [
     ProjetosService,
   ],
+  controllers: [
+    ProjetoController,
+  ]
 })
 export class ProjetosModule { }
