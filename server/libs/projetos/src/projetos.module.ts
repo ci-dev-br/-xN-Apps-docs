@@ -7,6 +7,7 @@ import { Cliente } from './models/cliente.entity';
 import { CasdastroModule } from '@ci/cadastro';
 import { ProjetoService } from './service/projeto.service';
 import { ProjetoController } from './controller/projeto.controller';
+import { CoreModule } from '@ci/core';
 export const ProjetosEntities = [
   Projeto,
   WorkItem,
@@ -17,10 +18,12 @@ export const ProjetosEntities = [
  */
 @Module({
   imports: [
+    CoreModule,
     TypeOrmModule.forFeature([
       ...ProjetosEntities,
     ]),
     CasdastroModule,
+
   ],
   providers: [
     ProjetosService,
