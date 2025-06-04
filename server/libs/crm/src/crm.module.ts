@@ -13,6 +13,16 @@ import { ProfissionalService } from './service/profissional.service';
 import { PromocaoService } from './service/promocao.service';
 import { ServicoService } from './service/servico.service';
 import { VendaProdutoService } from './service/venda-produto.service';
+import { VendaProdutoController } from './controller/venda-produto.controller';
+import { ServicoController } from './controller/servico.controller';
+import { PromocaoController } from './controller/promocao.controller';
+import { ProfissionalController } from './controller/profissional.controller';
+import { ProdutoController } from './controller/produto.controller';
+import { PagamentoController } from './controller/pagamento.controller';
+import { HistoricoContatoController } from './controller/historico-contato.controller';
+import { ClienteCrmController } from './controller/cliente-crm.controller';
+import { AtendimentoController } from './controller/atendimento.controller';
+import { AgendamentoController } from './controller/agendamento.controller';
 /**
  * Módulo de CRM
  */
@@ -25,7 +35,6 @@ import { VendaProdutoService } from './service/venda-produto.service';
   ],
   providers: [
     CrmService,
-    VendaProdutoService,
     ServicoService,
     PromocaoService,
     ProfissionalService,
@@ -34,7 +43,20 @@ import { VendaProdutoService } from './service/venda-produto.service';
     HistoricoContatoService,
     ClienteCrmService,
     AtendimentoService,
+    VendaProdutoService,
     AgendamentoService,
+  ],
+  controllers: [
+    VendaProdutoController,
+    ServicoController,
+    PromocaoController,
+    ProfissionalController,
+    ProdutoController,
+    PagamentoController,
+    HistoricoContatoController,
+    ClienteCrmController,
+    AtendimentoController,
+    AgendamentoController,
   ],
   exports: [
     CrmService,
