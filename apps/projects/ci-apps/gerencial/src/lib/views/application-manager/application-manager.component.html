@@ -1,4 +1,7 @@
 <mat-toolbar [auto-scroll]="'horizontal'">
+    <button mat-icon-button (click)="carregarListaAplicativos()">
+        <mat-icon>search</mat-icon>
+    </button>
     <button mat-raised-button (click)="novoAplicativo()">
         Novo
     </button>
@@ -23,6 +26,6 @@
     </ng-template>
     }
     @else{
-    <ci-data-grid [options]="gridOptions" [source]="apps"></ci-data-grid>
+    <ci-data-grid (select)="editar($event)" [options]="gridOptions" [source]="apps"></ci-data-grid>
     }
 </ng-container>

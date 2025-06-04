@@ -53,8 +53,8 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
         return this._cached_map.get(prop);
     }
     async novoAplicativo() {
-        let app = {};
-        const data = await this.editar(app);
+        let newApplication = {};
+        const data = await this.editar(newApplication);
         if (!!data?.id)
             this.apps = [data, ...this.apps || []];
     }
@@ -75,7 +75,15 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
         }
     }
     async editar(application: Application) {
-        return await this.janela.open(EditarAplicativoComponent, application)
+        const result = await this.janela.open(EditarAplicativoComponent, application)
+        if (result === null) {
+            const pos = this.apps?.indexOf(application);
+            if (pos && pos > -1) {
+                this.apps?.splice(pos, 1);
+                this.apps = [...(this.apps || [])]
+            }
+        }
+        return result;
     }
     async remover(application: Application) {
         await lastValueFrom(this.applications.delete({ body: application }));

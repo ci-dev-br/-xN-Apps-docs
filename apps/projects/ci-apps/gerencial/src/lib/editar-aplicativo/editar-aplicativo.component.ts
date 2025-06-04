@@ -1,20 +1,26 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, Optional } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { lastValueFrom } from 'rxjs';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { BehaviorSubject, lastValueFrom } from 'rxjs';
 import { Application, FormsService } from '@ci/portal-api';
 import { ApplicationService } from '@ci/portal-api';
 import { IChangeable, DaoService, DaoBuilder } from '@ci/core';
+import { ActionsService, IItemMenu, WindowComponent } from '@ci/components';
+import { DialogRef } from '@angular/cdk/dialog';
 
 @Component({
   selector: 'ci-editar-aplicativo',
   templateUrl: './editar-aplicativo.component.html',
   styleUrls: ['./editar-aplicativo.component.scss'],
+  providers: [
+    // ActionsService,
+  ],
   standalone: false
 })
 export class EditarAplicativoComponent implements OnInit, OnDestroy {
   form?: FormGroup<any>;
   constructor(
+    private readonly ref: MatDialogRef<WindowComponent>,
     private readonly applicationService: ApplicationService,
     private readonly dao: DaoService,
     private readonly daoBuilder: DaoBuilder,
@@ -22,7 +28,18 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
     private readonly formsService: FormsService,
     @Inject(MAT_DIALOG_DATA)
     public readonly data?: Application,
-  ) { }
+    @Optional() @Inject('ACTIONS') actions?: BehaviorSubject<IItemMenu[]>,
+  ) {
+    if (actions) actions.next([...(actions.value || []), {
+
+      label: 'Remover Aplicação',
+      icon: 'delete',
+      onClick: async () => {
+        if (data) await lastValueFrom(this.applicationService.delete({ body: data }));
+        this.ref?.close(null);
+      }
+    }])
+  }
   async ngOnDestroy() {
   }
   async ngOnInit() {
