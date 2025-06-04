@@ -57,6 +57,9 @@ async function DeployFTPApplications(cb) {
                 if (e.deployMode.indexOf('php') > -1) {
                     globs.push('index.php');
                 }
+                // if (e.deployMode.indexOf('mail') > -1) {
+                //     globs.push('mail.php');
+                // }
                 if (e.deployMode.indexOf('assets') > -1) {
                     globs.push('**.txt');
                     globs.push('**.svg');
