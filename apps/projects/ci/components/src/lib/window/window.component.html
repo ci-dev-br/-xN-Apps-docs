@@ -4,7 +4,13 @@
             @if(title){ {{title}} }
         </span>
         <span style="flex: auto;"></span>
+        @if(!!(acts|async)){<ng-container *ngFor="let item of acts|async">
+            <ng-container *ngTemplateOutlet="itemMenu; context: {item: item}"></ng-container>
+        </ng-container>}
         <ng-container *ngFor="let item of menu">
+            <ng-container *ngTemplateOutlet="itemMenu; context: {item: item}"></ng-container>
+        </ng-container>
+        <ng-template #itemMenu let-item="item">
             <ng-container *ngIf="!item.visible || (!!item.visible && item.visible())">
                 <ng-container *ngIf="!!item.onClick">
                     <button mat-icon-button (click)="item.onClick()">
@@ -22,7 +28,7 @@
             <ng-template #contentTmpl>
                 <mat-icon>{{item.icon}}</mat-icon>
             </ng-template>
-        </ng-container>
+        </ng-template>
     </mat-toolbar>
     <mat-progress-bar></mat-progress-bar>
     <div class="content">

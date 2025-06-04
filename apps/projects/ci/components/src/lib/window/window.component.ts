@@ -1,6 +1,8 @@
 import { Component, Inject, Injector, Input, OnDestroy, OnInit, TemplateRef, Type, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DaoService } from '@ci/core';
+import { ActionsService } from '../action/actions.service';
+import { BehaviorSubject } from 'rxjs';
 
 export interface IItemMenu {
   icon?: string;
@@ -24,6 +26,7 @@ export class WindowComponent implements OnInit, OnDestroy {
   @Input()
   title?: string;
   showing = false;
+  acts = new BehaviorSubject<IItemMenu[] | undefined>(undefined);
   menu: IItemMenu[] = [
     { icon: 'done_all', label: 'Confirmar alterações', visible: () => this.changed, onClick: () => this.confirm() },
     { icon: 'close', label: 'Fechar', onClick: () => this.close() },
@@ -31,13 +34,16 @@ export class WindowComponent implements OnInit, OnDestroy {
   @Input()
   component?: Type<any>;
   injector = Injector.create([
-    { provide: MAT_DIALOG_DATA, useValue: this.data.data }
+    { provide: MatDialogRef<WindowComponent>, useValue: this.ref },
+    { provide: MAT_DIALOG_DATA, useValue: this.data.data },
+    { provide: 'ACTIONS', useValue: this.acts },
   ]);
   constructor(
     private readonly daos: DaoService,
     private readonly ref: MatDialogRef<WindowComponent>,
     @Inject(MAT_DIALOG_DATA)
     private data: any,
+    public readonly actions: ActionsService,
   ) { }
   ngOnInit(): void {
     this.showing = true;

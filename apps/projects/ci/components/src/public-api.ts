@@ -16,4 +16,6 @@ export * from './lib/icon/icon.module';
 export * from './lib/navbar/navbar.module';
 export * from './lib/board/board.module';
 export * from './lib/dyn-form/dyn-form.module';
+export * from './lib/action/actions.service';
+export * from './lib/window/window.component';
 export * from './lib/data-detail-view/data-detail-view.module';

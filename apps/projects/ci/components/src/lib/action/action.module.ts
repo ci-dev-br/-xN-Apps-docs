@@ -7,6 +7,7 @@ import { CoreModule } from '@ci/core';
 
 import { ActionComponent } from './action.component';
 import { ActionsComponent } from './actions.component';
+import { ActionsService } from './actions.service';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,9 @@ import { ActionsComponent } from './actions.component';
   exports: [
     ActionComponent,
     ActionsComponent,
+  ],
+  providers: [
+    ActionsService,
   ]
 })
 export class ActionModule { }
