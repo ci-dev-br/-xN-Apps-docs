@@ -6,14 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { SyncPayloadDaoProduct } from '../../models/sync-payload-dao-product';
+import { ObterListaProjeto } from '../../models/obter-lista-projeto';
+import { SyncPayloadDaoProjeto } from '../../models/sync-payload-dao-projeto';
 
-export interface ProductSync$Params {
-      body: SyncPayloadDaoProduct
+export interface GetListProjeto$Params {
+      body: ObterListaProjeto
 }
 
-export function productSync(http: HttpClient, rootUrl: string, params: ProductSync$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoProduct>> {
-  const rb = new RequestBuilder(rootUrl, productSync.PATH, 'post');
+export function getListProjeto(http: HttpClient, rootUrl: string, params: GetListProjeto$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoProjeto>> {
+  const rb = new RequestBuilder(rootUrl, getListProjeto.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -23,9 +24,9 @@ export function productSync(http: HttpClient, rootUrl: string, params: ProductSy
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SyncPayloadDaoProduct>;
+      return r as StrictHttpResponse<SyncPayloadDaoProjeto>;
     })
   );
 }
 
-productSync.PATH = '/Product/Sync';
+getListProjeto.PATH = '/Projeto/GetList';

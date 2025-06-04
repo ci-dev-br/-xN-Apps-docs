@@ -21,3 +21,4 @@ export { UnidadeMedidaService } from './services/unidade-medida.service';
 export { PaisService } from './services/pais.service';
 export { OrganizacaoService } from './services/organizacao.service';
 export { FormsService } from './services/forms.service';
+export { ProjetoService } from './services/projeto.service';

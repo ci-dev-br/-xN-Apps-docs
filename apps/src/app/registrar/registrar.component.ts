@@ -20,6 +20,7 @@ import { AuthModule, UserService } from '@ci/auth';
     RouterModule,
     AuthModule,
   ],
+  standalone: true,
   templateUrl: './registrar.component.html',
   styleUrl: './registrar.component.scss'
 })
@@ -29,6 +30,8 @@ export class RegistrarComponent {
     email: [, Validators.required],
     phone: [, Validators.required],
     password: [, Validators.required],
+    fullName: [, Validators.required],
+    surname: [, Validators.required],
   });
   constructor(
     private readonly fb: FormBuilder,

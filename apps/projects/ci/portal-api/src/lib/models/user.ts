@@ -13,6 +13,7 @@ export interface User {
   photo?: Photo | null;
   refreshToken?: string | null;
   roles?: Array<string> | null;
+  surname?: string | null;
   tenants?: Array<Tenant> | null;
   username?: string | null;
 }

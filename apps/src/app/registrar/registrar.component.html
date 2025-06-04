@@ -5,8 +5,16 @@
         <p>Crie sua conta ci.dev.br para acessar nossos serviços.
         </p>
         <mat-form-field>
+            <mat-label>Identificação</mat-label>
+            <input matInput type="text" placeholder="Nome para acesso" formControlName="identificacao">
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Nome Completo</mat-label>
+            <input matInput type="text" placeholder="Nome Completo" formControlName="fullName">
+        </mat-form-field>
+        <mat-form-field>
             <mat-label>Apelido</mat-label>
-            <input matInput type="text" placeholder="Apelido" formControlName="identificacao">
+            <input matInput type="text" placeholder="Apelido" formControlName="surname">
         </mat-form-field>
         <mat-form-field>
             <mat-label>E-mail</mat-label>
