@@ -1,6 +1,7 @@
-import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import { Component, Injector, Input, OnDestroy, OnInit, Type } from "@angular/core";
 import { IDataGridOptions } from "../models/i-data-grid-options";
-import { DaoBuilder } from "@ci/core";
+import { DaoBuilder, IHaveSync } from "@ci/core";
+import { getServiceAsSchema } from "@ci/portal-api";
 
 
 @Component({
@@ -16,18 +17,26 @@ import { DaoBuilder } from "@ci/core";
     visualizacao: 'table' | 'list' = 'table';
     @Input()
     gridOptions?: IDataGridOptions<I>;
+    @Input()
+    service?: any;
 
     constructor(
         //  private readonly applications: ApplicationService,
         // private readonly janela: WindowService,
         private readonly daoBuilder: DaoBuilder,
+        private readonly injector: Injector,
     ) {
-
     }
     async ngOnDestroy() {
 
     }
     async ngOnInit() {
+        if (this.schemaName) {
+            let service = getServiceAsSchema(this.schemaName);
+            if (!!service) {
+                this.service = this.injector.get(service);
+            }
+        }
         this.loadGrid();
     }
     async loadGrid() {
@@ -48,5 +57,10 @@ import { DaoBuilder } from "@ci/core";
     }
     async carregarLista() {
         //  this.list = await lastValueFrom();
+    }
+    async createNew() {
+        if (this.service && this.service.sync) {
+            /// (this.service.sync as IHaveSync<I>).sync({ body: { data } })
+        }
     }
 }
