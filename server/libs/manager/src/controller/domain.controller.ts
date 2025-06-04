@@ -15,7 +15,7 @@ export class DomainController {
         type: Domain, description: 'Obter um ou mais registros de domínios'
     })
     @ApiOperation({
-        operationId: 'GetDomain', 
+        operationId: 'GetDomain',
     })
     async get(
         @Request() req: Request,
@@ -35,7 +35,7 @@ export class DomainController {
         type: Domain, description: 'Sincronizar Objeto de Aplicação'
     })
     @ApiOperation({
-        operationId: 'SyncDomain', 
+        operationId: 'SyncDomain',
     })
     async sync(
         @Body() domain: Domain
@@ -47,7 +47,7 @@ export class DomainController {
         type: Domain, description: 'Excluir Cadastro de Aplicação'
     })
     @ApiOperation({
-        operationId: 'DeleteDomain', 
+        operationId: 'DeleteDomain',
     })
     async Delete(
         @Body() domain: Domain

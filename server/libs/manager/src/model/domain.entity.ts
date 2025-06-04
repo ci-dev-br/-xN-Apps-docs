@@ -17,14 +17,18 @@ export class Domain extends FullAuditedEntity {
     hostname?: string;
     @ApiProperty({
         title: 'Aplicações correspondentes ao domínio',
-        required: false, nullable: true, type: Application, isArray: true
+        required: false,
+        nullable: true,
+        type: Application,
+        isArray: true
     })
     @ManyToMany(() => Application)
     @JoinTable()
     aplications?: Application[];
     @ApiProperty({
         title: 'Domínio verificado',
-        nullable: true, required: false
+        nullable: true,
+        required: false
     }) @Column({ nullable: true })
     varified?: boolean;
 }

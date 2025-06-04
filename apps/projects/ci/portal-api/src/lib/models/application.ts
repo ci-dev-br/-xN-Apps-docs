@@ -12,6 +12,11 @@ export interface Application {
   domains?: Array<Domain> | null;
   icon?: string | null;
   id?: string | null;
+
+  /**
+   * Logo da aplicação
+   */
+  logo?: string | null;
   menuGroupName?: string | null;
   name?: string | null;
   roles?: Array<string> | null;
