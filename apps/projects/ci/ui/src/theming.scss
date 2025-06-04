@@ -1,3 +1,9 @@
+@import url('./parts.scss');
+
+/* !Imports */
+/* !end */
 @mixin ci-theming($theme) {
-    
+    /* !MixinsTheme */
+    /* !end */
+    @include ci-parts-theme($theme)
 }
