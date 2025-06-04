@@ -1,0 +1,19 @@
+.cards {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+
+    padding: 48px;
+
+}
+
+.card {
+    width: 150px;
+    height: 150px;
+    background-color: white;
+    border-radius: 12px;
+    padding: 12px;
+    color: black;
+
+    cursor: pointer;
+}
