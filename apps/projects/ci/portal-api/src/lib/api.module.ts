@@ -28,9 +28,19 @@ import { PaisService } from './services/pais.service';
 import { OrganizacaoService } from './services/organizacao.service';
 import { FormsService } from './services/forms.service';
 import { ProjetoService } from './services/projeto.service';
+import { VendaProdutoService } from './services/venda-produto.service';
+import { ServicoService } from './services/servico.service';
+import { PromocaoService } from './services/promocao.service';
+import { ProfissionalService } from './services/profissional.service';
+import { ProdutoService } from './services/produto.service';
+import { PagamentoService } from './services/pagamento.service';
+import { HistoricoContatoService } from './services/historico-contato.service';
+import { ClienteCrmService } from './services/cliente-crm.service';
+import { AtendimentoService } from './services/atendimento.service';
+import { AgendamentoService } from './services/agendamento.service';
 
 export function getServiceAsSchema(schema: string): Type<any>{
-  return ({ 'ApiService': ApiService,'SystemService': SystemService,'DeviceService': DeviceService,'MessageService': MessageService,'AuthService': AuthService,'ApplicationService': ApplicationService,'DomainService': DomainService,'ContactsService': ContactsService,'ChamadaService': ChamadaService,'ProductService': ProductService,'PranchetaService': PranchetaService,'UserService': UserService,'PhotoService': PhotoService,'FileExplorerService': FileExplorerService,'VideoService': VideoService,'CadastroService': CadastroService,'EnderecoService': EnderecoService,'InformacaoContatoService': InformacaoContatoService,'PessoaService': PessoaService,'UnidadeMedidaService': UnidadeMedidaService,'PaisService': PaisService,'OrganizacaoService': OrganizacaoService,'FormsService': FormsService,'ProjetoService': ProjetoService, }[ schema + 'Service'] as any) || undefined;
+  return ({ 'ApiService': ApiService,'SystemService': SystemService,'DeviceService': DeviceService,'MessageService': MessageService,'AuthService': AuthService,'ApplicationService': ApplicationService,'DomainService': DomainService,'ContactsService': ContactsService,'ChamadaService': ChamadaService,'ProductService': ProductService,'PranchetaService': PranchetaService,'UserService': UserService,'PhotoService': PhotoService,'FileExplorerService': FileExplorerService,'VideoService': VideoService,'CadastroService': CadastroService,'EnderecoService': EnderecoService,'InformacaoContatoService': InformacaoContatoService,'PessoaService': PessoaService,'UnidadeMedidaService': UnidadeMedidaService,'PaisService': PaisService,'OrganizacaoService': OrganizacaoService,'FormsService': FormsService,'ProjetoService': ProjetoService,'VendaProdutoService': VendaProdutoService,'ServicoService': ServicoService,'PromocaoService': PromocaoService,'ProfissionalService': ProfissionalService,'ProdutoService': ProdutoService,'PagamentoService': PagamentoService,'HistoricoContatoService': HistoricoContatoService,'ClienteCrmService': ClienteCrmService,'AtendimentoService': AtendimentoService,'AgendamentoService': AgendamentoService, }[ schema + 'Service'] as any) || undefined;
 } 
 
 /**
@@ -73,6 +83,16 @@ export class ApiModule {
         OrganizacaoService,
         FormsService,
         ProjetoService,
+        VendaProdutoService,
+        ServicoService,
+        PromocaoService,
+        ProfissionalService,
+        ProdutoService,
+        PagamentoService,
+        HistoricoContatoService,
+        ClienteCrmService,
+        AtendimentoService,
+        AgendamentoService,
         {
           provide: ApiConfiguration,
           useValue: params
