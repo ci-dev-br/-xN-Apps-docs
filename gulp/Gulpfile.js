@@ -70,6 +70,9 @@ async function DeployFTPApplications(cb) {
                 if (e.deployMode.indexOf('js') > -1) {
                     globs.push('**.js');
                 }
+                if (e.extras && Array.isArray(e.extras)) {
+                    globs.push(...e.extras);
+                }
                 if (globs.length > 0) {
                     console.log(e.commonName + ' 🆙 ');
                     let cnt = globs.length;
