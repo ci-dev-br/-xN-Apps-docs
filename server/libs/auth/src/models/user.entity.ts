@@ -18,6 +18,9 @@ export class User {
     @ApiProperty({ required: false, nullable: true })
     @Column({ nullable: true })
     fullName?: string;
+    @ApiProperty({ required: false, nullable: true })
+    @Column({ nullable: true })
+    surname?: string;
     @Column({ nullable: true })
     @Exclude({ toPlainOnly: true })
     password?: string;

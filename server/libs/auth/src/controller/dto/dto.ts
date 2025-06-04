@@ -5,6 +5,10 @@ export class RegistrarInputDto {
     @ApiProperty({ required: false, nullable: true })
     identificacao?: string;
     @ApiProperty({ required: false, nullable: true })
+    fullName?: string;
+    @ApiProperty({ required: false, nullable: true })
+    surname?: string;
+    @ApiProperty({ required: false, nullable: true })
     email?: string;
     @ApiProperty({ required: false, nullable: true })
     password?: string;

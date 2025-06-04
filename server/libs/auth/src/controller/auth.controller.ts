@@ -30,14 +30,29 @@ export class AuthController {
     @Request() req: Request,
     @Body() input?: RegistrarInputDto,
   ) {
-    const created_user = await this.userService.registrar({
-      email: input.email,
-      password: await argon2.hash(input.password),
-      username: input.identificacao,
-      phone: input.phone,
-      passwordMode: 'argon2',
-    });
-    return created_user;
+    try {
+      const created_user = await this.userService.registrar({
+        email: input.email,
+        fullName: input.fullName,
+        emailVerificado: false,
+        surname: input.surname,
+        password: await argon2.hash(input.password),
+        username: input.identificacao,
+        phone: input.phone,
+        passwordMode: 'argon2',
+      });
+      return created_user;
+    } catch (error) {
+      console.trace(error);
+      return {
+        status: 500,
+        message: String(error),
+        error: {
+          severity: error.severity,
+          detail: error.detail,
+        }
+      }
+    }
   }
   @Post('Profile')
   @ApiOperation({ operationId: 'ProfileAuth' })

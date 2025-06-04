@@ -29,7 +29,7 @@ export class ProductController extends ControllerDaoBase<ProductService, Product
             SyncPayloadDaoProduct
     })
     @ApiOperation({
-        operationId: 'ProductSync'
+        operationId: 'SyncProduct'
     })
     override async Sync(
         @Body() input: SyncPayloadDaoProduct,
@@ -44,7 +44,7 @@ export class ProductController extends ControllerDaoBase<ProductService, Product
         isArray: true
     })
     @ApiOperation({
-        operationId: 'ProductGet',
+        operationId: 'GetListProduct',
     })
     override async GetList(
         @Body() input: ProductCotrollerGetInputDto,
