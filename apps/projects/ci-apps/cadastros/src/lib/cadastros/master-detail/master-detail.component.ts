@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Inject, Injector, Input, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatIconModule } from "@angular/material/icon";
@@ -6,8 +6,9 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { GridModule, IColumnOption, IDataGridOptions, WindowModule, WindowService } from "@ci/components";
 import { CoreModule, DaoBuilder } from "@ci/core";
-import { Application } from "@ci/portal-api";
+import { Application, getServiceAsSchema } from "@ci/portal-api";
 import { EditarComponent } from "./editar/editar.component";
+import { lastValueFrom } from "rxjs";
 
 @Component({
     selector: 'ci-master-detail',
@@ -45,11 +46,14 @@ export class MasterDetailComponent<T> implements OnInit {
     schemaName?: string;
     @Input()
     gridOptions?: IDataGridOptions<Application>;
+    service?: any;
     constructor(
         private readonly daoBuilder: DaoBuilder,
         private readonly route: ActivatedRoute,
         private readonly window: WindowService,
+        private readonly injector: Injector,
     ) {
+
     }
     source?: T[] = [{} as any];
     async loadGrid() {
@@ -72,10 +76,28 @@ export class MasterDetailComponent<T> implements OnInit {
         }
     }
     async ngOnInit() {
-        this.route.paramMap.subscribe(params => {
-            this.schemaName = params.get('EntityName') || undefined;
-            this.loadGrid();
+        this.route.data.subscribe(async (data: any) => {
+            if (!!data.schema) {
+                this.schemaName = data.schema;
+                await this.load();
+            }
+        })
+        this.route.paramMap.subscribe(async params => {
+            const schema = params.get('EntityName');
+            if (schema) {
+                this.schemaName = schema;
+                await this.load();
+            }
         });
+    }
+    async load() {
+        await this.loadGrid();
+        if (!!this.schemaName) {
+            let serviceType = getServiceAsSchema(this.schemaName);
+            if (serviceType) {
+                this.service = this.injector.get(serviceType);
+            }
+        }
     }
     async editar(data: T) {
         return await this.window.open(EditarComponent,

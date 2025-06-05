@@ -7,6 +7,11 @@
     justify-content: stretch;
 }
 
+mat-drawer-container {
+    flex: auto;
+    --mat-sidenav-container-width: 250px;
+}
+
 nav {
     display: flex;
     flex-direction: row;
@@ -29,4 +34,8 @@ nav {
     +* {
         flex: auto;
     }
+}
+
+ci-board {
+    flex: auto;
 }
