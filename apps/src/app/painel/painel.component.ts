@@ -104,4 +104,7 @@ export class PainelComponent {
   async repo() {
     window.open('https://github.com/ci-dev-br/-xN-Apps-docs', '_blank')
   }
+  profile() {
+    this.router.navigate(['/Profile'])
+  }
 }
