@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CoreModule } from '@ci/core';
 import { MatChipsModule } from '@angular/material/chips';
+import { DynInputComponent } from './dyn-input/dyn-input.component';
 @NgModule({
   declarations: [
     DynFormComponent
@@ -18,6 +19,7 @@ import { MatChipsModule } from '@angular/material/chips';
     MatIconModule,
     ReactiveFormsModule,
     MatChipsModule,
+    DynInputComponent,
   ],
   providers: [
     FormOptionsBuilder,

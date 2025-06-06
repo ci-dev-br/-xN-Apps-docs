@@ -1,30 +1,10 @@
 @if(!!source && source.fields && formGroup){
 <form [formGroup]="formGroup ">
     @for (field of source.fields; track $index) {
-    @if(!(!formGroup.controls[field?.property||''].value && !!field.readonly)){<mat-form-field>
-        @if(field.label){<mat-label>{{field.label}}</mat-label>}
-        @if(field.isArray === true && !!field && !!field.property){
-        <mat-chip-grid #chipGrid>
-            @for (option of formGroup.controls[field.property].value; track $index) {
-            <mat-chip-row (removed)="removeOption(option, formGroup.controls[field.property].value)">
-                {{option}}
-                <button matChipRemove [attr.aria-label]="'remove ' + option">
-                    <mat-icon>cancel</mat-icon>
-                </button>
-            </mat-chip-row>
-            }
-        </mat-chip-grid>
-        <input matInput [placeholder]="field?.label || ''" [matChipInputFor]="chipGrid" [matChipInputAddOnBlur]="true"
-            (matChipInputTokenEnd)="add(field.property,$event)" [readonly]="field.readonly" />
-        }@else{
-        <ng-container *ngTemplateOutlet="inputTmpl"></ng-container>
-        }
-        <ng-template #inputTmpl>
-            <input matInput [placeholder]="field?.label || ''" [formControlName]="field?.property || null"
-                [readonly]="field.readonly" />
-        </ng-template>
-        @if(field.description){<mat-hint>{{field.description}}</mat-hint>}
-    </mat-form-field>}
+    @if(!(!formGroup.controls[field?.property||''].value && !!field.readonly)){
+    <ci-dyn-input [label]="field.label" [hint]="field.description" [formGroup]="formGroup" [fieldName]="field?.property"
+        [type]="field.type || 'text'"></ci-dyn-input>
+    }
     }
 </form>
 }
