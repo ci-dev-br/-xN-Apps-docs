@@ -3,8 +3,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
 import { DynFormModule } from "@ci/components";
-import { CORE_ENV, CoreModule, DaoBuilder, DaoService, IChangeable, ICoreEnvironment, ISchemaPreset } from "@ci/core";
-import { FormsService } from "@ci/portal-api";
+import { CORE_ENV, CoreModule, DaoBuilder, DaoService, IChangeable, ICoreEnvironment, IHaveSync, ISchemaPreset } from "@ci/core";
+import { FormsService, getServiceAsSchema } from "@ci/portal-api";
+import { lastValueFrom } from "rxjs";
 export interface IDataEditar {
     data: any;
     schemaName: string;
@@ -44,12 +45,20 @@ export class EditarComponent implements OnInit {
     ngOnInit() {
         this.loadFormFromDaoBuilder();
     }
-    private async loadFormFromDaoBuilder() {
+    private async loadService() {
         if (this.schemaName) {
             this.preset = this.config?.servicesCommons?.find(s => s.schemaName === this.schemaName);
             if (!!this.preset?.service)
                 this.service = this.injector.get(this.preset.service);
-
+            if (!this.preset) {
+                const service_by_schema = getServiceAsSchema(this.schemaName);
+                if (service_by_schema) this.service = this.injector.get(service_by_schema);
+            }
+        }
+    }
+    private async loadFormFromDaoBuilder() {
+        if (this.schemaName) {
+            await this.loadService();
             const dao = this.dao;
             const _data = this.data?.data;
             this.form = await this.daoBuilder.getForm(this.schemaName);
@@ -63,12 +72,16 @@ export class EditarComponent implements OnInit {
                             Object.assign(this.data?.data,
                                 await this.preset.sync(this.service, this.data?.data)
                             );
+                        } else if (this.service && this.service.sync) {
+                            let r = await lastValueFrom((this.service as IHaveSync<any>).sync({ body: this.data?.data }))
+                            r = r;
                         }
                         delete (_data as IChangeable).__pre;
                         dao.prepareToEdit(_data);
                         if (form) dao.bindDataForm(_data, form);
                     }
                 } catch (error) {
+                    console.error(error);
                 }
             });
         }
