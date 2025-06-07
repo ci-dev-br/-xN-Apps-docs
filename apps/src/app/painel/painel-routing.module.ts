@@ -30,6 +30,7 @@ const routes: Routes = [
       { path: 'Treinamento', loadChildren: () => import('@ci-apps/Treinamento').then(m => m.CiApplicationModule) },
       { path: 'Vendas', loadChildren: () => import('@ci-apps/Vendas').then(m => m.CiApplicationModule) },
       { path: 'CRM', loadChildren: () => import('@ci-apps/crm').then(m => m.CiApplicationModule) },
+      { path: 'CMS', loadChildren: () => import('@ci-apps/cms').then(m => m.CiApplicationModule) },
       // TODO: Realizar carga dinâmica dos aplicativos
     ]
   }

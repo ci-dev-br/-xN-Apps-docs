@@ -19,3 +19,5 @@ export * from './lib/dyn-form/dyn-form.module';
 export * from './lib/action/actions.service';
 export * from './lib/window/window.component';
 export * from './lib/data-detail-view/data-detail-view.module';
+export * from './lib/master-detail/master-detail.component';
+export * from './lib/master-detail/editar/editar.component';
