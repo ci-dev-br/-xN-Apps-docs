@@ -9,7 +9,7 @@ export interface Atendimento {
   createdBy?: {
 } | null;
   dataFim: string;
-  dataInicio: string;
+  dataInicio: Date;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
   lastModifiedBy?: {

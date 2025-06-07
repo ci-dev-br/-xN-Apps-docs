@@ -5,7 +5,7 @@ export interface HistoricoContato {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
-  dataHora: string;
+  dataHora: Date;
   detalhes: string | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;

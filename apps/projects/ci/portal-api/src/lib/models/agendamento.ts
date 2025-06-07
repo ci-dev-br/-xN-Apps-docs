@@ -5,7 +5,7 @@ export interface Agendamento {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
-  dataHora: string;
+  dataHora: Date;
   duracao: string;
   internalId?: string | null;
   lastModifiedAt?: Date | null;

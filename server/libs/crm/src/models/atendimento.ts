@@ -18,7 +18,7 @@ export class Atendimento extends FullAuditedEntity {
     @OneToOne(() => Agendamento, (agendamento) => agendamento.atendimento, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'agendamentoId' })
     agendamento?: Agendamento;
-    @ApiProperty({ type: 'string', format: 'date-time' })
+    @ApiProperty({ type: 'Date', format: 'date-time' })
     @Column({  })
     dataInicio: Date;
     @ApiProperty({ type: 'string', format: 'date-time' })

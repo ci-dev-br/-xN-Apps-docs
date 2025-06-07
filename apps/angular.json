@@ -1332,6 +1332,39 @@
           }
         }
       }
+    },
+    "@ci-apps/cms": {
+      "projectType": "library",
+      "root": "projects/ci-apps/cms",
+      "sourceRoot": "projects/ci-apps/cms/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/cms/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/cms/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/cms/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ci-apps/cms/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {

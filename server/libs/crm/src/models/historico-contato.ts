@@ -12,7 +12,7 @@ export class HistoricoContato extends FullAuditedEntity {
     @ManyToOne(() => ClienteCrm, (cliente) => cliente.historicoContatos, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'clienteId' })
     cliente: ClienteCrm;
-    @ApiProperty({ type: 'string', format: 'date-time' })
+    @ApiProperty({ type: 'Date', format: 'date-time' })
     @Column({  })
     dataHora: Date;
     @ApiProperty({ enum: TipoContato })

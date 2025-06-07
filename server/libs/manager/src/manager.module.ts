@@ -10,7 +10,7 @@ import { DomainService } from "./service/domain.service";
 import { DomainController } from "./controller/domain.controller";
 import { CoreModule } from "@ci/core";
 import { ServerController } from "./controller";
-import { DinamycPageView } from "./model/page.entity";
+import { DinamycPageView } from "./model/dinamic-page-view.entity";
 import { DNSService } from "./service/dns.service";
 export const ManagerEntities = [
     Application,

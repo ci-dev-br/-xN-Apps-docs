@@ -19,6 +19,8 @@ import { DynInputComponent } from './dyn-input/dyn-input.component';
     MatIconModule,
     ReactiveFormsModule,
     MatChipsModule,
+
+
     DynInputComponent,
   ],
   providers: [

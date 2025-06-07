@@ -9,10 +9,10 @@ export class CampanhaMarketing extends FullAuditedEntity {
     @ApiProperty({ maxLength: 255 })
     @Column({ length: 255 })
     nome: string;
-    @ApiProperty({ type: 'string', format: 'date', nullable: true })
+    @ApiProperty({ type: 'Date', format: 'date', nullable: true })
     @Column({ type: 'date', nullable: true })
     dataInicio?: Date;
-    @ApiProperty({ type: 'string', format: 'date', nullable: true })
+    @ApiProperty({ type: 'Date', format: 'date', nullable: true })
     @Column({ type: 'date', nullable: true })
     dataFim?: Date;
     @ApiProperty({ type: 'string', nullable: true })

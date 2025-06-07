@@ -4,7 +4,7 @@ export interface Profissional {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
-  dataContratacao: string | null;
+  dataContratacao: Date | null;
   email: string | null;
   especialidade: string | null;
   internalId?: string | null;

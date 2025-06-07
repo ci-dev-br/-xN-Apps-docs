@@ -30,7 +30,7 @@ export class Agendamento extends FullAuditedEntity {
     @ManyToOne(() => Profissional, (profissional) => profissional.agendamentos, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'profissionalId' })
     profissional: Profissional;
-    @ApiProperty({ type: 'string', format: 'date-time' })
+    @ApiProperty({ type: 'Date', format: 'date-time' })
     @Column({})
     dataHora: Date;
     @ApiProperty({ type: 'string', format: 'time' })

@@ -8,7 +8,7 @@ export interface ClienteCrm {
   createdBy?: {
 } | null;
   dataCadastro: string;
-  dataNascimento: string | null;
+  dataNascimento: Date | null;
   email: string | null;
   endereco: string | null;
   estado: string | null;

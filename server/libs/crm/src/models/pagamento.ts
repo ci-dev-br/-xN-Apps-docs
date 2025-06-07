@@ -36,8 +36,8 @@ export class Pagamento extends FullAuditedEntity {
     @ManyToOne(() => ClienteCrm, (cliente) => cliente.pagamentos, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'cliente_id' })
     cliente: ClienteCrm;
-    @ApiProperty({ type: 'string', format: 'date-time' })
-    @Column({  })
+    @ApiProperty({ type: 'Date', format: 'date-time' })
+    @Column({})
     dataPagamento: Date;
     @ApiProperty({ type: 'number', format: 'float' })
     @Column({ type: 'decimal', precision: 10, scale: 2 })
@@ -51,8 +51,10 @@ export class Pagamento extends FullAuditedEntity {
     @ApiProperty({ maxLength: 255, nullable: true })
     @Column({ length: 255, nullable: true })
     numeroTransacao?: string;
+    @ApiProperty({ type: 'Date', format: 'date-time' })
     @CreateDateColumn()
     dataCriacao: Date;
     @UpdateDateColumn()
+    @ApiProperty({ type: 'Date', format: 'date-time' })
     dataAtualizacao: Date;
 }

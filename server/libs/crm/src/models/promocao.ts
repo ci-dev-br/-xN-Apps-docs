@@ -13,10 +13,10 @@ export class Promocao extends FullAuditedEntity {
     @ApiProperty({ type: 'string', nullable: true })
     @Column({ type: 'text', nullable: true })
     descricao?: string;
-    @ApiProperty({ type: 'string', format: 'date', nullable: true })
+    @ApiProperty({ type: 'Date', format: 'date', nullable: true })
     @Column({ type: 'date', nullable: true })
     dataInicio?: Date;
-    @ApiProperty({ type: 'string', format: 'date', nullable: true })
+    @ApiProperty({ type: 'Date', format: 'date', nullable: true })
     @Column({ type: 'date', nullable: true })
     dataFim?: Date;
     @ApiProperty({ type: 'number', format: 'float', nullable: true })

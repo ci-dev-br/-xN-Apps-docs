@@ -7,7 +7,9 @@ export interface Pagamento {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
-  dataPagamento: string;
+  dataAtualizacao: Date;
+  dataCriacao: Date;
+  dataPagamento: Date;
   formaPagamento: 'Dinheiro' | 'Cart\xE3o de Cr\xE9dito' | 'Cart\xE3o de D\xE9bito' | 'Pix' | 'Outro';
   internalId?: string | null;
   lastModifiedAt?: Date | null;

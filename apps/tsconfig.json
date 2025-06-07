@@ -75,6 +75,9 @@
       "@ci-apps/blog": [
         "./projects/ci-apps/blog/src/public-api"
       ],
+      "@ci-apps/cms": [
+        "./dist/ci-apps/cms"
+      ],
       "@ci-apps/crm": [
         "./projects/ci-apps/crm/src/public-api"
       ],

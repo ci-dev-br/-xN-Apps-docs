@@ -4,8 +4,8 @@ export interface Promocao {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
-  dataFim: string | null;
-  dataInicio: string | null;
+  dataFim: Date | null;
+  dataInicio: Date | null;
   descontoPercentual: number | null;
   descontoValor: number | null;
   descricao: string | null;

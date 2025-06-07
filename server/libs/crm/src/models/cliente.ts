@@ -18,7 +18,7 @@ export class ClienteCrm extends FullAuditedEntity {
     @ApiProperty()
     @Column({ length: 14, nullable: true })
     cpf?: string;
-    @ApiProperty({ type: 'string', format: 'date', nullable: true })
+    @ApiProperty({ type: 'Date', format: 'date', nullable: true })
     @Column({ type: 'date', nullable: true })
     dataNascimento?: Date;
     @ApiProperty({ maxLength: 255, nullable: true })

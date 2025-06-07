@@ -1,30 +1,57 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, Type } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { DynInputDateComponent } from "./dyn-input-date.component";
+import { CoreModule } from "@ci/core";
+
+const types: any = {
+    'Date': DynInputDateComponent
+}
 
 @Component({
     selector: 'ci-dyn-input',
     standalone: true,
     imports: [
+        CoreModule,
         MatFormFieldModule,
         MatInputModule,
+        DynInputDateComponent,
     ],
     template: `
-        <mat-form-field>
-            <mat-label>{{label || placeholder || ''}}</mat-label>
-            <input matInput type="text" [placeholder]="placeholder || label || ''"  >
-        </mat-form-field>
+            @if(inputComponent !== undefined && !!inputComponent){
+                <ng-container *ngComponentOutlet="inputComponent" ></ng-container>
+            }
+            @else{
+                <mat-form-field>
+                    <mat-label>{{label || placeholder || ''}}</mat-label>
+                    <input matInput type="text" [placeholder]="placeholder || label || ''"  >
+                </mat-form-field>
+            }
+      
     `,
     styleUrl: 'dyn-input.component.scss'
 })
 export class DynInputComponent {
-    @Input() type?: string;
     @Input() fieldName?: string;
     @Input() label?: string;
     @Input() placeholder?: string;
     @Input() hint?: string;
     @Input() formControl?: FormControl;
     @Input() formGroup?: FormGroup;
-    constructor() { }
+    @Input() inputComponent?: Type<any>;
+    private _type?: string | undefined;
+    public get type(): string | undefined {
+        return this._type;
+    }
+    @Input()
+    public set type(value: string | undefined) {
+        if (this._type === value) return;
+        this._type = value;
+        if (!!value && !!types[value])
+            this.inputComponent = types[value];
+    }
+    constructor() {
+
+    }
 }
