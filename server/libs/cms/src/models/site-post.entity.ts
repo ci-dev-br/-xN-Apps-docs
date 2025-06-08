@@ -28,6 +28,6 @@ export class SitePost extends FullAuditedEntity {
     @Column({ nullable: true, unique: true })
     guid?: string;
     @ApiProperty({ nullable: true, required: false, uniqueItems: true })
-    @Column({ nullable: true, default: 0, type: 'inet4' })
+    @Column({ nullable: true, default: 0, type: 'int4' })
     menuOrder?: number;
 }
