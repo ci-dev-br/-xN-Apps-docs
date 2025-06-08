@@ -1,6 +1,6 @@
 import { Column, Entity } from "typeorm";
 import { schema } from "./schema";
-import { Post } from "./post.entity";
+import { SeoPost } from "./seo-post.entity";
 import { ApiProperty } from "@nestjs/swagger";
 export class PostmetaValue {
     @ApiProperty({ nullable: true, required: false })
@@ -9,8 +9,8 @@ export class PostmetaValue {
 @Entity({
     schema
 })
-export class Postmeta {
-    @ApiProperty({ nullable: true, required: false }) @Column({ nullable: true }) post: Post;
+export class SeoPostmeta {
+    @ApiProperty({ nullable: true, required: false }) @Column({ nullable: true }) post: SeoPost;
     key?: string;
     @ApiProperty({ nullable: true, required: false }) @Column({ type: 'jsonb' })
     value?: PostmetaValue;

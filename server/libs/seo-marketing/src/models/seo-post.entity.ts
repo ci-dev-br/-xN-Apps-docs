@@ -5,6 +5,6 @@ import { ApiProperty } from "@nestjs/swagger";
 @Entity({
     schema
 })
-export class Post extends FullAuditedEntity {
+export class SeoPost extends FullAuditedEntity {
     @ApiProperty({ nullable: true, required: false }) @Column({ nullable: true }) url?: string;
 }   

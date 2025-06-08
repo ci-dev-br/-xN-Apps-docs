@@ -2,13 +2,13 @@ import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DaoFullAuditedServiceBase, SnapshotService } from "@ci/manager";
-import { Post } from "../models/post.entity";
+import { SeoPost } from "../models/seo-post.entity";
 @Injectable()
-export class PostService extends DaoFullAuditedServiceBase<Post> {
+export class PostService extends DaoFullAuditedServiceBase<SeoPost> {
     constructor(
         snap: SnapshotService,
-        @InjectRepository(Post)
-        repo: Repository<Post>
+        @InjectRepository(SeoPost)
+        repo: Repository<SeoPost>
     ) {
         super(snap, repo);
     }

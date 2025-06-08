@@ -3,7 +3,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity } from "typeorm";
 import { schema } from "./schema";
 @Entity({ schema })
-export class KeyWord extends FullAuditedEntity {
+export class SeoKeyWord extends FullAuditedEntity {
     @ApiProperty({ required: false, nullable: true }) @Column({ nullable: true }) termo?: string;
     @ApiProperty({ required: false, nullable: true }) @Column({ nullable: true }) voulePesquisa?: number;
     @ApiProperty({ required: false, nullable: true }) @Column({ nullable: true }) dificuldadeClassificacao?: number;
