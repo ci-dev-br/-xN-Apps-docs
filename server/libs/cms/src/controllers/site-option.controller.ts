@@ -3,7 +3,7 @@ import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger
 import { SiteOption } from "../models/site-option.entity";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
 import { FindOptionsWhere } from "typeorm";
-import { SiteOptionService } from "../service/.service";
+import { SiteOptionService } from "../services/site-option.service";
 export class SyncPayloadDaoSiteOption extends SyncPayloadDao<SiteOption> {
     @ApiProperty({ type: SiteOption })
     override data?: SiteOption;
