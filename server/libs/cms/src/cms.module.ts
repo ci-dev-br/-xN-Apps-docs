@@ -10,6 +10,24 @@ import { SitePost } from "./models/site-post.entity";
 import { Term } from "./models/term.entity";
 import { TermMeta } from "./models/term-meta.entity";
 import { SiteOption } from "./models/site-option.entity";
+import { WebsiteController } from "./controllers/website.controller";
+import { SitePageController } from "./controllers/page.controller";
+import { CommentMetaController } from "./controllers/comment-meta.controller";
+import { LinksController } from "./controllers/links.controller";
+import { SiteOptionController } from "./controllers/site-option.controller";
+import { SitePostController } from "./controllers/site-post.controller";
+import { TermController } from "./controllers/term.controller";
+import { TermMetaController } from "./controllers/term-meta.controller";
+import { CommentController } from "./controllers/comment.controller";
+import { WebsiteService } from "./services/website.service";
+import { SitePageService } from "./services/page.service";
+import { CommentMetaService } from "./services/comment-meta.service";
+import { CommentService } from "./services/comment.service";
+import { LinksService } from "./services/links.service";
+import { SiteOptionService } from "./services/site-option.service";
+import { SitePostService } from "./services/site-post.service";
+import { TermService } from "./services/term.service";
+import { TermMetaService } from "./services/term-meta.service";
 export const CmsEntities = [
     Website,
     SitePage,
@@ -25,6 +43,28 @@ export const CmsEntities = [
     imports: [
         TypeOrmModule.forFeature(CmsEntities),
         CoreModule,
+    ],
+    controllers: [
+        WebsiteController,
+        SitePageController,
+        CommentMetaController,
+        CommentController,
+        LinksController,
+        SiteOptionController,
+        SitePostController,
+        TermController,
+        TermMetaController,
+    ],
+    providers: [
+        WebsiteService,
+        SitePageService,
+        CommentMetaService,
+        CommentService,
+        LinksService,
+        SiteOptionService,
+        SitePostService,
+        TermService,
+        TermMetaService,
     ]
 })
 export class CmsModule { }

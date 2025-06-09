@@ -1,0 +1,31 @@
+/* tslint:disable */
+/* eslint-disable */
+import { Pessoa } from '../models/pessoa';
+import { Photo } from '../models/photo';
+import { Tenant } from '../models/tenant';
+export interface Organizacao {
+  createdAt?: Date | null;
+  createdBy?: {
+} | null;
+  internalId?: string | null;
+  lastModifiedAt?: Date | null;
+  lastModifiedBy?: {
+} | null;
+
+  /**
+   * Logomarca da Organização
+   */
+  logo?: Photo | null;
+
+  /**
+   * Nome da Organização
+   */
+  organizatioName?: string | null;
+
+  /**
+   * Pessoa Responsável pelo cadastro da Organização na Plataforma virtual.
+   */
+  responsavel?: Pessoa | null;
+  tenant?: Tenant | null;
+  tenants?: Array<string> | null;
+}

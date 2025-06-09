@@ -35,8 +35,9 @@ import { lastValueFrom } from "rxjs";
         <mat-button-toggle value="list"><mat-icon>grid_view</mat-icon>Lista</mat-button-toggle>
     </mat-button-toggle-group>
 </mat-toolbar>
-    <!-- TODO: Visualização em lista e em tabela permitindo visualização lateral ou em janela dos valores selecionados. -->
+@if(visualizacao === 'table'){
     <ci-data-grid [options]="gridOptions" [source]="source"></ci-data-grid>
+}
     `
 })
 export class MasterDetailComponent<T> implements OnInit {
@@ -89,6 +90,7 @@ export class MasterDetailComponent<T> implements OnInit {
                 await this.load();
             }
         });
+        this.load();
     }
     async load() {
         await this.loadGrid();

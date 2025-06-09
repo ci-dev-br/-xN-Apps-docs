@@ -27,6 +27,15 @@ import { UnidadeMedidaService } from './services/unidade-medida.service';
 import { PaisService } from './services/pais.service';
 import { OrganizacaoService } from './services/organizacao.service';
 import { FormsService } from './services/forms.service';
+import { WebsiteService } from './services/website.service';
+import { SitePageService } from './services/site-page.service';
+import { CommentMetaService } from './services/comment-meta.service';
+import { CommentService } from './services/comment.service';
+import { LinksService } from './services/links.service';
+import { SiteOptionService } from './services/site-option.service';
+import { SitePostService } from './services/site-post.service';
+import { TermService } from './services/term.service';
+import { TermMetaService } from './services/term-meta.service';
 import { ProjetoService } from './services/projeto.service';
 import { VendaProdutoService } from './services/venda-produto.service';
 import { ServicoService } from './services/servico.service';
@@ -40,7 +49,7 @@ import { AtendimentoService } from './services/atendimento.service';
 import { AgendamentoService } from './services/agendamento.service';
 
 export function getServiceAsSchema(schema: string): Type<any>{
-  return ({ 'ApiService': ApiService,'SystemService': SystemService,'DeviceService': DeviceService,'MessageService': MessageService,'AuthService': AuthService,'ApplicationService': ApplicationService,'DomainService': DomainService,'ContactsService': ContactsService,'ChamadaService': ChamadaService,'ProductService': ProductService,'PranchetaService': PranchetaService,'UserService': UserService,'PhotoService': PhotoService,'FileExplorerService': FileExplorerService,'VideoService': VideoService,'CadastroService': CadastroService,'EnderecoService': EnderecoService,'InformacaoContatoService': InformacaoContatoService,'PessoaService': PessoaService,'UnidadeMedidaService': UnidadeMedidaService,'PaisService': PaisService,'OrganizacaoService': OrganizacaoService,'FormsService': FormsService,'ProjetoService': ProjetoService,'VendaProdutoService': VendaProdutoService,'ServicoService': ServicoService,'PromocaoService': PromocaoService,'ProfissionalService': ProfissionalService,'ProdutoService': ProdutoService,'PagamentoService': PagamentoService,'HistoricoContatoService': HistoricoContatoService,'ClienteCrmService': ClienteCrmService,'AtendimentoService': AtendimentoService,'AgendamentoService': AgendamentoService, }[ schema + 'Service'] as any) || undefined;
+  return ({ 'ApiService': ApiService,'SystemService': SystemService,'DeviceService': DeviceService,'MessageService': MessageService,'AuthService': AuthService,'ApplicationService': ApplicationService,'DomainService': DomainService,'ContactsService': ContactsService,'ChamadaService': ChamadaService,'ProductService': ProductService,'PranchetaService': PranchetaService,'UserService': UserService,'PhotoService': PhotoService,'FileExplorerService': FileExplorerService,'VideoService': VideoService,'CadastroService': CadastroService,'EnderecoService': EnderecoService,'InformacaoContatoService': InformacaoContatoService,'PessoaService': PessoaService,'UnidadeMedidaService': UnidadeMedidaService,'PaisService': PaisService,'OrganizacaoService': OrganizacaoService,'FormsService': FormsService,'WebsiteService': WebsiteService,'SitePageService': SitePageService,'CommentMetaService': CommentMetaService,'CommentService': CommentService,'LinksService': LinksService,'SiteOptionService': SiteOptionService,'SitePostService': SitePostService,'TermService': TermService,'TermMetaService': TermMetaService,'ProjetoService': ProjetoService,'VendaProdutoService': VendaProdutoService,'ServicoService': ServicoService,'PromocaoService': PromocaoService,'ProfissionalService': ProfissionalService,'ProdutoService': ProdutoService,'PagamentoService': PagamentoService,'HistoricoContatoService': HistoricoContatoService,'ClienteCrmService': ClienteCrmService,'AtendimentoService': AtendimentoService,'AgendamentoService': AgendamentoService, }[ schema + 'Service'] as any) || undefined;
 } 
 
 /**
@@ -82,6 +91,15 @@ export class ApiModule {
         PaisService,
         OrganizacaoService,
         FormsService,
+        WebsiteService,
+        SitePageService,
+        CommentMetaService,
+        CommentService,
+        LinksService,
+        SiteOptionService,
+        SitePostService,
+        TermService,
+        TermMetaService,
         ProjetoService,
         VendaProdutoService,
         ServicoService,

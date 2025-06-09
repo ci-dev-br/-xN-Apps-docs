@@ -1,21 +1,21 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { Comment } from "../models/comment.entity";
+import { Links } from "../models/links.entity";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
 import { FindOptionsWhere } from "typeorm";
-import { CommentService } from "../services/comment.service";
-export class SyncPayloadDaoComment extends SyncPayloadDao<Comment> {
-    @ApiProperty({ type: Comment })
-    override data?: Comment;
+import { LinksService } from "../services/links.service";
+export class SyncPayloadDaoLinks extends SyncPayloadDao<Links> {
+    @ApiProperty({ type: Links })
+    override data?: Links;
 }
-export class ObterListaComment {
-    // override data?: Comment;
+export class ObterListaLinks {
+    // override data?: Links;
     @ApiProperty({})
     skip?: number;
     @ApiProperty({})
     take?: number;
     @ApiProperty({})
-    where?: FindOptionsWhere<Comment>[] | FindOptionsWhere<Comment>;
+    where?: FindOptionsWhere<Links>[] | FindOptionsWhere<Links>;
 }
 export class PessoaCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
@@ -23,23 +23,23 @@ export class PessoaCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
     limit?: number;
 }
-@ApiTags('Comment')
-@Controller('Comment')
-export class CommentController extends ControllerDaoBase<CommentService, Comment> {
+@ApiTags('Links')
+@Controller('Links')
+export class LinksController extends ControllerDaoBase<LinksService, Links> {
     constructor(
-        service: CommentService
+        service: LinksService
     ) {
         super(service);
     }
     @Post('Sync')
     @ApiResponse({
-        type: Comment,
+        type: Links,
     })
     @ApiOperation({
-        operationId: 'SyncComment'
+        operationId: 'SyncLinks'
     })
     override async Sync(
-        @Body() body: SyncPayloadDaoComment,
+        @Body() body: SyncPayloadDaoLinks,
     ) {
         try {
             return await super.Sync(body)
@@ -54,13 +54,13 @@ export class CommentController extends ControllerDaoBase<CommentService, Comment
     }
     @Post('GetList')
     @ApiResponse({
-        type: Comment, isArray: true
+        type: Links, isArray: true
     })
     @ApiOperation({
-        operationId: 'GetListComment'
+        operationId: 'GetListLinks'
     })
     override async GetList(
-        @Body() input: ObterListaComment,
+        @Body() input: ObterListaLinks,
     ) {
         return super.GetList(input);
     }
