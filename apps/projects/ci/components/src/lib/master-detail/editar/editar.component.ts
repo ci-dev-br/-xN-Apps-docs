@@ -1,11 +1,11 @@
 import { Component, Inject, Injector, Input, OnInit, Optional } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
-import { DynFormModule } from "@ci/components";
+import { DynFormModule, IItemMenu } from "@ci/components";
 import { CORE_ENV, CoreModule, DaoBuilder, DaoService, IChangeable, ICoreEnvironment, IHaveSync, ISchemaPreset } from "@ci/core";
 import { FormsService, getServiceAsSchema } from "@ci/portal-api";
-import { lastValueFrom } from "rxjs";
+import { BehaviorSubject, lastValueFrom } from "rxjs";
 export interface IDataEditar {
     data: any;
     schemaName: string;
@@ -36,11 +36,21 @@ export class EditarComponent implements OnInit {
         private readonly formsService: FormsService,
         private readonly route: ActivatedRoute,
         private readonly injector: Injector,
+        private readonly ref: MatDialogRef<EditarComponent>,
         @Inject(MAT_DIALOG_DATA)
         public readonly data?: IDataEditar,
         @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
+        @Optional() @Inject('ACTIONS') actions?: BehaviorSubject<IItemMenu[]>,
     ) {
         if (data && data.schemaName) this.schemaName = data.schemaName;
+        if (actions) actions.next([...(actions.value || []), {
+            label: 'Remover Aplicação',
+            icon: 'delete',
+            onClick: async () => {
+                if (data) await lastValueFrom(this.service.delete({ body: data }));
+                this.ref?.close(null);
+            }
+        }])
     }
     ngOnInit() {
         this.loadFormFromDaoBuilder();
@@ -63,7 +73,7 @@ export class EditarComponent implements OnInit {
             const _data = this.data?.data;
             this.form = await this.daoBuilder.getForm(this.schemaName);
             const form = this.form;
-            this.dao.prepareToEdit(this.data?.data);
+            await this.dao.prepareToEdit(this.data?.data, { schemaName: this.schemaName });
             if (this.form) this.dao.bindDataForm(this.data?.data, this.form);
             this.dao.confirmation(this.data?.data)?.subscribe(async data => {
                 try {
@@ -77,7 +87,7 @@ export class EditarComponent implements OnInit {
                             r = r;
                         }
                         delete (_data as IChangeable).__pre;
-                        dao.prepareToEdit(_data);
+                        await dao.prepareToEdit(_data);
                         if (form) dao.bindDataForm(_data, form);
                     }
                 } catch (error) {

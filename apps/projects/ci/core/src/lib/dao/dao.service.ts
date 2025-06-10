@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable, SimpleChange, SimpleChanges } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { Subject } from "rxjs";
-import { WsService } from "../core.module";
+import { DaoBuilder, WsService } from "../core.module";
 import { EMITTER } from "../emitter/token";
 
 /**
@@ -31,17 +31,30 @@ export class DaoService {
     private states = new Map<any, any>();
     constructor(
         private readonly ws: WsService,
+        private readonly daoBuilder: DaoBuilder,
     ) { }
     /**
      * Prepara o objeto para ser editado por ReactiveFormsModule ou FormsModule Strategies.
      * 
      */
-    prepareToEdit(data: any, options?: { fieldsId?: string[], onChange?: (changes: SimpleChanges) => void, debounceTime?: number }): /* SerializedObjectData */  IChangeable[] | IChangeable | Date | undefined {
+    async prepareToEdit(data: any, options?: {
+        fieldsId?: string[],
+        onChange?: (changes: SimpleChanges) => void,
+        debounceTime?: number,
+        /**
+         * Optional schema data binding
+         */
+        schemaName?: string,
+    }): /* SerializedObjectData */  Promise<IChangeable[] | IChangeable | Date | undefined> {
         //let emitter;
+        const data_schema = options?.schemaName ? await this.daoBuilder.getSchema(options.schemaName) : undefined;
+
         if (!data) return undefined;
         if (Array.isArray(data)) {
-            return data.map(data_child =>
-                this.prepareToEdit(data_child, options)) as IChangeable[];
+            return data.map(data_child => {
+                this.prepareToEdit(data_child, options);
+                return data_child;
+            });
         }
         this.ws.Atention(data);
         if (data instanceof Date) return data;
@@ -74,28 +87,56 @@ export class DaoService {
                     }
                 }, options?.debounceTime || 500);
             });
-            Object.keys(o_data).forEach(p => {  // {a:1 , b: 2, c: function(){}} ['a', 'b', 'c']
-                try {
-                    delete data[p];
-                    Object.defineProperty(data, p, {
-                        get: () => { return o_data[p]; },
-                        set: (value: any) => {
-                            try {
-                                if (o_data[p] === value) return;
-                                const old_vale = o_data[p];
-                                o_data[p] = value;
-                                if (!!emitter) emitter.emit({
-                                    [p]: new SimpleChange(old_vale, value, false),
-                                });
-                            } catch (error) {
-                                console.error(error);
-                            }
-                        },
-                    });
-                } catch (error) {
-                    console.error(error);
-                }
-            })
+            if (!!data_schema && data_schema.properties) {
+                Object.keys(data_schema.properties).forEach(property => {
+                    if (data_schema?.properties && !!data_schema.properties[property]) {
+                        //  data_schema.properties[property];
+                        try {
+                            delete data[property];
+                            Object.defineProperty(data, property, {
+                                get: () => { return o_data[property]; },
+                                set: (value: any) => {
+                                    try {
+                                        if (o_data[property] === value) return;
+                                        const old_vale = o_data[property];
+                                        o_data[property] = value;
+                                        if (!!emitter) emitter.emit({
+                                            [property]: new SimpleChange(old_vale, value, false),
+                                        });
+                                    } catch (error) {
+                                        console.error(error);
+                                    }
+                                },
+                            });
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    }
+                })
+            } else {
+                Object.keys(o_data).forEach(p => {  // {a:1 , b: 2, c: function(){}} ['a', 'b', 'c']
+                    try {
+                        delete data[p];
+                        Object.defineProperty(data, p, {
+                            get: () => { return o_data[p]; },
+                            set: (value: any) => {
+                                try {
+                                    if (o_data[p] === value) return;
+                                    const old_vale = o_data[p];
+                                    o_data[p] = value;
+                                    if (!!emitter) emitter.emit({
+                                        [p]: new SimpleChange(old_vale, value, false),
+                                    });
+                                } catch (error) {
+                                    console.error(error);
+                                }
+                            },
+                        });
+                    } catch (error) {
+                        console.error(error);
+                    }
+                });
+            }
             Object.defineProperty(data, 'toJSON', {
                 value: () => {
                     try {
@@ -142,7 +183,7 @@ export class DaoService {
             if (data && form) {
                 form.reset(data);
                 Object.keys(form.controls).forEach((v) => {
-                    form.controls[v]?.valueChanges.subscribe(changedValue => {
+                    form.get(v)?.valueChanges.subscribe(changedValue => {
                         try {
                             (data as any)[v] = changedValue;
                         } catch (error) {

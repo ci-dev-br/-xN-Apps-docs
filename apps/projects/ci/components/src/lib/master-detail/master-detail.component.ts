@@ -5,7 +5,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { GridModule, IColumnOption, IDataGridOptions, WindowModule, WindowService } from "@ci/components";
-import { CoreModule, DaoBuilder } from "@ci/core";
+import { CoreModule, DaoBuilder, DaoService } from "@ci/core";
 import { Application, getServiceAsSchema } from "@ci/portal-api";
 import { EditarComponent } from "./editar/editar.component";
 import { lastValueFrom } from "rxjs";
