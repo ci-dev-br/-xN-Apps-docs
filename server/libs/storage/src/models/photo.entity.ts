@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { FullAuditedEntity } from "@ci/core";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity } from "typeorm";
 @Entity()
 export class Photo extends FullAuditedEntity {
     /*  @ApiProperty({ nullable: true, required: false })

@@ -25,7 +25,7 @@ export class User {
     @Exclude({ toPlainOnly: true })
     password?: string;
     @Exclude({ toPlainOnly: true })
-    @Column({nullable: true, default: 'full-text'})
+    @Column({ nullable: true, default: 'full-text' })
     passwordMode?: string;
     @Column({ nullable: true, unique: true })
     @ApiProperty({ required: false, nullable: true })

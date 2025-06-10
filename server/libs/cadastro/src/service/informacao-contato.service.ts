@@ -6,7 +6,7 @@ export class InformacaoContatoService extends DaoFullAuditedServiceBase<Informac
     constructor(
         snap: SnapshotService,
         @InjectRepository(InformacaoContato)
-        repository: Repository<InformacaoContato>
+        repository: Repository<InformacaoContato>,
     ) {
         super(snap, repository);
     }

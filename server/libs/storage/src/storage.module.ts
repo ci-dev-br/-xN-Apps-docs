@@ -26,6 +26,6 @@ export const StorageEntities = [
     ]
 })
 export class StorageModule { }
-export {
-    Photo,
-}
+// export {
+//     Photo,
+// }

@@ -9,6 +9,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deleteWebsite } from '../fn/website/delete-website';
+import { DeleteWebsite$Params } from '../fn/website/delete-website';
 import { getListWebsite } from '../fn/website/get-list-website';
 import { GetListWebsite$Params } from '../fn/website/get-list-website';
 import { syncWebsite } from '../fn/website/sync-website';
@@ -67,6 +69,31 @@ export class WebsiteService extends BaseService {
    */
   getList(params: GetListWebsite$Params, context?: HttpContext): Observable<Array<Website>> {
     return this.getListWebsite$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<Website>>): Array<Website> => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteWebsite()` */
+  static readonly DeleteWebsitePath = '/Website/DeleteWebsite';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteWebsite()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteWebsite$Response(params: DeleteWebsite$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Website>>> {
+    return deleteWebsite(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteWebsite$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteWebsite$Params, context?: HttpContext): Observable<Array<Website>> {
+    return this.deleteWebsite$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Website>>): Array<Website> => r.body)
     );
   }

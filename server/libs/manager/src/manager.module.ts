@@ -12,6 +12,8 @@ import { CoreModule } from "@ci/core";
 import { ServerController } from "./controller";
 import { DinamycPageView } from "./model/dinamic-page-view.entity";
 import { DNSService } from "./service/dns.service";
+// import { UsersModule } from "@ci/user";
+// import { AuthModule } from "@ci/auth/auth.module";
 export const ManagerEntities = [
     Application,
     Domain,
@@ -24,7 +26,9 @@ export const ManagerEntities = [
         forwardRef(() => CoreModule),
         TypeOrmModule.forFeature([
             ...ManagerEntities
-        ])
+        ]),
+        // forwardRef(() => AuthModule),
+        //  UsersModule,
     ],
     controllers: [
         ApplicationController,

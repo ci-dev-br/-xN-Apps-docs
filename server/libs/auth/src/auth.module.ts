@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from "@nestjs/core";
@@ -19,6 +19,8 @@ import { UserCredentialService } from "./service/user-credential.service";
 import { CoreModule } from "@ci/core/core.module";
 import { TwoFactorAuthenticationService } from "./service/two-factors.service";
 import { NotificacaoModule } from "@ci/notification";
+//import { StorageModule } from "@ci/storage";
+// import { StorageModule } from "@ci/storage";
 export const AuthEntities = [
     Policy,
     User,
@@ -36,9 +38,11 @@ export const AuthEntities = [
             secret: jwtConstants.secret,
             signOptions: { expiresIn: '60s' },
         }),
+        // forwardRef(() => StorageModule),
         TenantModule,
         CoreModule,
         NotificacaoModule,
+        // StorageModule,
     ],
     controllers: [
         AuthController,

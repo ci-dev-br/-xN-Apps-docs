@@ -1,10 +1,15 @@
-import { Equal, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, IsNull, Repository } from "typeorm";
+import { DataSource, Equal, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, IsNull, Repository } from "typeorm";
 import { FullAuditedEntity, SnapshotService } from ".";
+// import { UserService } from "@ci/user/service/user.service";
+// import { forwardRef, Inject } from "@nestjs/common";
 
 export abstract class DaoServiceBase<E> {
     constructor(
         protected readonly _snap: SnapshotService,
         protected readonly _repo?: Repository<E>,
+        private readonly _dataSource?: DataSource,
+        // @Inject(forwardRef(() => UserService))
+        // private readonly _userService?: UserService,
     ) {
     }
     async sincronizar(data: E, request?: any) {
@@ -60,12 +65,34 @@ export abstract class DaoServiceBase<E> {
         let _where: FindOptionsWhere<E>[] | FindOptionsWhere<E> = options.where || {};
         if (_where)
             (Array.isArray(_where) ? _where : [_where]).forEach((w: any) => {
-                w.createdBy = { identifiedUser: Equal(request.user.id) };
+                w.createdBy = {
+                    identifiedUser: Equal(request?.user?.id)
+                };
                 w.deleted = IsNull();
                 if (!Array.isArray(_where)) _where = [_where];
                 if (Array.isArray(_where)) _where.push({ ...w, deleted: IsNull() })
             });
-        return ((await this._repo.find({ skip: options.skip, take: options.take, where: _where, relations: { createdBy: true, lastModifiedBy: true } as any, order: options.orderBy })) || [])
+        const result = ((await this._repo.find({
+            skip: options.skip,
+            take: options.take,
+            where: _where,
+            relations: { createdBy: true, lastModifiedBy: true } as any, order: options.orderBy
+        })) || []);
+
+        for (let r of result as any[]) {
+            if (r.createdBy) {
+                r.createdBy = {
+                    id: r.createdBy.id,
+                    // identifiedUser: r.createdBy.identifiedUser,
+                };
+                // if (!!this._dataSource && !!r?.createdBy?.identifiedUser) {
+                //     r.createdBy.user =
+                //         await (this._dataSource.qwuer});
+                // }
+            }
+        }
+
+        return result;
     }
     // abstract getId(data: E): Promise<string | string[]>;
     abstract getById(id: string | string[], request?: any): Promise<E>;

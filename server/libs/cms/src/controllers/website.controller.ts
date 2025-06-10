@@ -62,7 +62,40 @@ export class WebsiteController extends ControllerDaoBase<WebsiteService, Website
     })
     override async GetList(
         @Body() input: ObterListaWebsite,
+        @Request() req: Request,
     ) {
-        return super.GetList(input);
+        try {
+            return super.GetList(input, req);
+        } catch (error) {
+            return {
+                status: 500,
+                message: 'Erro ao obter lista de Website',
+                detahes: error.message,
+                stack: error.stack
+            } as any
+        }
     }
+    @Post('DeleteWebsite')
+    @ApiResponse({
+        type: Website, isArray: true
+    })
+    @ApiOperation({
+        operationId: 'DeleteWebsite'
+    })
+    override async Delete(
+        @Body() input: Website,
+        @Request() req: Request,
+    ) {
+        try {
+            return super.Delete(input, req);
+        } catch (error) {
+            return {
+                status: 500,
+                message: 'Erro ao obter lista de Website',
+                detahes: error.message,
+                stack: error.stack
+            } as any
+        }
+    }
+
 }

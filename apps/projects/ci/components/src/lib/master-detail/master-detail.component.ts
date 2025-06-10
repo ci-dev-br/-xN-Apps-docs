@@ -36,7 +36,7 @@ import { lastValueFrom } from "rxjs";
     </mat-button-toggle-group>
 </mat-toolbar>
 @if(visualizacao === 'table'){
-    <ci-data-grid [options]="gridOptions" [source]="source"></ci-data-grid>
+    <ci-data-grid (select)="editar($event)" [options]="gridOptions" [source]="source"></ci-data-grid>
 }
     `
 })
@@ -100,6 +100,8 @@ export class MasterDetailComponent<T> implements OnInit {
                 this.service = this.injector.get(serviceType);
             }
         }
+        if (this.service && this.service.getList) this.source = await lastValueFrom(this.service.getList());
+        this.source;
     }
     async editar(data: T) {
         return await this.window.open(EditarComponent,
