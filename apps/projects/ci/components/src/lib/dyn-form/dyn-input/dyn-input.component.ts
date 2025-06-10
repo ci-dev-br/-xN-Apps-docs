@@ -1,5 +1,5 @@
 import { Component, Input, Type } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { DynInputDateComponent } from "./dyn-input-date.component";
@@ -17,18 +17,20 @@ const types: any = {
         MatFormFieldModule,
         MatInputModule,
         DynInputDateComponent,
+        ReactiveFormsModule,
     ],
     template: `
-            @if(inputComponent !== undefined && !!inputComponent){
-                <ng-container *ngComponentOutlet="inputComponent" ></ng-container>
-            }
-            @else{
-                <mat-form-field>
-                    <mat-label>{{label || placeholder || ''}}</mat-label>
-                    <input matInput type="text" [placeholder]="placeholder || label || ''"  >
-                </mat-form-field>
-            }
-      
+    @if(!!formGroup && !!fieldName){<form style="display:contents" [formGroup]="formGroup">
+        @if(inputComponent !== undefined && !!inputComponent){
+            <ng-container *ngComponentOutlet="inputComponent" ></ng-container>
+        }
+        @else{
+            <mat-form-field>
+                <mat-label>{{label || placeholder || ''}}</mat-label>
+                <input matInput type="text" [placeholder]="placeholder || label || ''" [formControlName]="fieldName || ''"  >
+            </mat-form-field>
+        }
+    </form>}
     `,
     styleUrl: 'dyn-input.component.scss'
 })
