@@ -144,7 +144,7 @@ export class DaoService {
                             ...this.getChanges(data, { pre })
                         };
                         (options?.fieldsId || ['id', 'internalId']).forEach(p => {
-                            out[p] = data[p];
+                            out[p] = data[p] || undefined;
                         })
                         return out;
                     } catch (error) {
