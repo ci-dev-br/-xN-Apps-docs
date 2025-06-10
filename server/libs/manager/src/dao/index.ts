@@ -12,7 +12,7 @@ export abstract class AuditedEntity {
     @JoinTable()
     tenants?: Tenant[];
     @ApiProperty({ nullable: true, required: false, type: 'Date', readOnly: true })
-    @CreateDateColumn({})
+    @CreateDateColumn()
     createdAt?: Date;
     @ApiProperty({ nullable: true, required: false, readOnly: true })
     @ManyToOne(() => ChaveAcesso, { nullable: true })

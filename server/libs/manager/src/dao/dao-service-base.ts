@@ -11,14 +11,20 @@ export abstract class DaoServiceBase<E> {
         let ___receipt_data = data;
         let ___internal_data: E = null;
         /// if (data instanceof AuditedEntity) {
-        let old_value = this._repo.findOne(this._repo.getId(data));
+        let old_value = null;
+
+        try {
+            old_value = await this._repo.findOne(this._repo.getId(data));
+        } catch (error) {
+            console.error(error);
+        }
 
         if (!old_value) {
             ___internal_data =
                 this._repo.create(data);
             if (request) {
                 if (request.chaveAcesso) {
-                    // ___internal_data.createdBy = { id: request.chaveAcesso };
+                    (___internal_data as any).createdBy = { id: request.chaveAcesso };
                 }
             }
         } else {

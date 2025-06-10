@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Request } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Website } from "../models/website.entity";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
@@ -40,9 +40,10 @@ export class WebsiteController extends ControllerDaoBase<WebsiteService, Website
     })
     override async Sync(
         @Body() body: SyncPayloadDaoWebsite,
+        @Request() req: Request,
     ) {
         try {
-            return await super.Sync(body)
+            return await super.Sync(body, req)
         } catch (error) {
             return {
                 status: 500,

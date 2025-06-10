@@ -8,7 +8,7 @@ import { schema } from "./schema";
 })
 export class Website extends FullAuditedEntity {
     @ApiProperty({ nullable: true, required: false })
-    @Column({ type: 'jsonb' })
+    @Column({ type: 'jsonb', nullable: true })
     atributes: { [atributeCodename: string]: string };
     @ApiProperty({ nullable: true, required: false, title: 'Nome' })
     @Column({ nullable: true })
@@ -20,7 +20,7 @@ export class Website extends FullAuditedEntity {
     @Column({ nullable: true })
     theme?: string;
     @ApiProperty({ nullable: true, required: false, isArray: true, title: 'Módulos' })
-    @Column({ type: 'varchar', array: true })
+    @Column({ type: 'varchar', array: true, nullable: true })
     modules?: string[];
     @ApiProperty({ nullable: true, required: false, type: User, title: 'Administrador' })
     @ManyToMany(type => User)
