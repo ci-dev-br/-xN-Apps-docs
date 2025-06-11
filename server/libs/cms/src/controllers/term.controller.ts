@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Request } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Term } from "../models/term.entity";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
@@ -40,9 +40,10 @@ export class TermController extends ControllerDaoBase<TermService, Term> {
     })
     override async Sync(
         @Body() body: SyncPayloadDaoTerm,
+        @Request() req: Request,
     ) {
         try {
-            return await super.Sync(body)
+            return await super.Sync(body, req)
         } catch (error) {
             return {
                 status: 500,
@@ -61,7 +62,21 @@ export class TermController extends ControllerDaoBase<TermService, Term> {
     })
     override async GetList(
         @Body() input: ObterListaTerm,
+        @Request() req: Request,
     ) {
-        return super.GetList(input);
+        return super.GetList(input, req);
+    }
+    @Post('Delete')
+    @ApiResponse({
+        type: Term, isArray: true
+    })
+    @ApiOperation({
+        operationId: 'DeleteTerm'
+    })
+    override async Delete(
+        @Body() input: Term,
+        @Request() req: Request,
+    ) {
+        return super.Delete(input, req);
     }
 }

@@ -1,4 +1,4 @@
-import { Component, Inject, Injector, Input, OnInit } from "@angular/core";
+import { AfterViewInit, Component, Inject, Injector, Input, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatIconModule } from "@angular/material/icon";
@@ -36,11 +36,13 @@ import { lastValueFrom } from "rxjs";
     </mat-button-toggle-group>
 </mat-toolbar>
 @if(visualizacao === 'table'){
-    <ci-data-grid (select)="editar($event)" [options]="gridOptions" [source]="source"></ci-data-grid>
+    <ci-data-grid (select)="editar($event)" [options]="gridOptions" [source]="source">
+            <div vazio style="flex: auto; text-align: center;">Nenhum item cadastrado</div>
+    </ci-data-grid>
 }
     `
 })
-export class MasterDetailComponent<T> implements OnInit {
+export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
     @Input()
     visualizacao: 'table' | 'list' = 'table';
     @Input()
@@ -76,6 +78,9 @@ export class MasterDetailComponent<T> implements OnInit {
             }
         }
     }
+    async ngAfterViewInit() {
+        this.load();
+    }
     async ngOnInit() {
         this.route.data.subscribe(async (data: any) => {
             if (!!data.schema) {
@@ -90,7 +95,6 @@ export class MasterDetailComponent<T> implements OnInit {
                 await this.load();
             }
         });
-        this.load();
     }
     async load() {
         await this.loadGrid();

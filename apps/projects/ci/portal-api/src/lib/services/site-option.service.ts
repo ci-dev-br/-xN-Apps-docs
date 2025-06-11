@@ -9,6 +9,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deleteSiteOption } from '../fn/site-option/delete-site-option';
+import { DeleteSiteOption$Params } from '../fn/site-option/delete-site-option';
 import { getListSiteOption } from '../fn/site-option/get-list-site-option';
 import { GetListSiteOption$Params } from '../fn/site-option/get-list-site-option';
 import { SiteOption } from '../models/site-option';
@@ -67,6 +69,31 @@ export class SiteOptionService extends BaseService {
    */
   getList(params: GetListSiteOption$Params, context?: HttpContext): Observable<Array<SiteOption>> {
     return this.getListSiteOption$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<SiteOption>>): Array<SiteOption> => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteSiteOption()` */
+  static readonly DeleteSiteOptionPath = '/SiteOption/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteSiteOption()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteSiteOption$Response(params: DeleteSiteOption$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<SiteOption>>> {
+    return deleteSiteOption(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteSiteOption$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteSiteOption$Params, context?: HttpContext): Observable<Array<SiteOption>> {
+    return this.deleteSiteOption$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<SiteOption>>): Array<SiteOption> => r.body)
     );
   }

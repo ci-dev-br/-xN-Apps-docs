@@ -8,5 +8,8 @@ export interface Term {
   lastModifiedAt?: Date | null;
   lastModifiedBy?: {
 } | null;
+  name: string;
+  slug: string;
   tenants?: Array<string> | null;
+  termGroup: string;
 }

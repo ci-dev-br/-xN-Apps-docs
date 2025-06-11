@@ -6,14 +6,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Website } from '../../models/website';
+import { Term } from '../../models/term';
 
-export interface DeleteWebsite$Params {
-      body: Website
+export interface DeleteTerm$Params {
+      body: Term
 }
 
-export function deleteWebsite(http: HttpClient, rootUrl: string, params: DeleteWebsite$Params, context?: HttpContext): Observable<StrictHttpResponse<Website>> {
-  const rb = new RequestBuilder(rootUrl, deleteWebsite.PATH, 'post');
+export function deleteTerm(http: HttpClient, rootUrl: string, params: DeleteTerm$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Term>>> {
+  const rb = new RequestBuilder(rootUrl, deleteTerm.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -23,9 +23,9 @@ export function deleteWebsite(http: HttpClient, rootUrl: string, params: DeleteW
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Website>;
+      return r as StrictHttpResponse<Array<Term>>;
     })
   );
 }
 
-deleteWebsite.PATH = '/Website/DeleteWebsite';
+deleteTerm.PATH = '/Term/Delete';

@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Request } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { SitePage } from "../models/site-page.entity";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
@@ -40,9 +40,10 @@ export class SitePageController extends ControllerDaoBase<SitePageService, SiteP
     })
     override async Sync(
         @Body() body: SyncPayloadDaoSitePage,
+        @Request() req: Request,
     ) {
         try {
-            return await super.Sync(body)
+            return await super.Sync(body, req);
         } catch (error) {
             return {
                 status: 500,
@@ -61,7 +62,23 @@ export class SitePageController extends ControllerDaoBase<SitePageService, SiteP
     })
     override async GetList(
         @Body() input: ObterListaSitePage,
+        @Request() req: Request,
+
     ) {
-        return super.GetList(input);
+        return super.GetList(input, req);
+    }
+    @Post('Delete')
+    @ApiResponse({
+        type: SitePage
+    })
+    @ApiOperation({
+        operationId: 'DeleteSitePage'
+    })
+    override async Delete(
+        @Body() input: SitePage,
+        @Request() req: Request,
+
+    ) {
+        return super.Delete(input, req);
     }
 }

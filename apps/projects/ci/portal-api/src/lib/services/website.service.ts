@@ -82,7 +82,7 @@ export class WebsiteService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  deleteWebsite$Response(params: DeleteWebsite$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Website>>> {
+  deleteWebsite$Response(params: DeleteWebsite$Params, context?: HttpContext): Observable<StrictHttpResponse<Website>> {
     return deleteWebsite(this.http, this.rootUrl, params, context);
   }
 
@@ -92,9 +92,9 @@ export class WebsiteService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  delete(params: DeleteWebsite$Params, context?: HttpContext): Observable<Array<Website>> {
+  delete(params: DeleteWebsite$Params, context?: HttpContext): Observable<Website> {
     return this.deleteWebsite$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<Website>>): Array<Website> => r.body)
+      map((r: StrictHttpResponse<Website>): Website => r.body)
     );
   }
 

@@ -77,7 +77,7 @@ export class WebsiteController extends ControllerDaoBase<WebsiteService, Website
     }
     @Post('DeleteWebsite')
     @ApiResponse({
-        type: Website, isArray: true
+        type: Website
     })
     @ApiOperation({
         operationId: 'DeleteWebsite'

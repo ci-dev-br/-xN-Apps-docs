@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Request } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { TermMeta } from "../models/term-meta.entity";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
@@ -40,6 +40,7 @@ export class TermMetaController extends ControllerDaoBase<TermMetaService, TermM
     })
     override async Sync(
         @Body() body: SyncPayloadDaoTermMeta,
+        @Request() req: Request,
     ) {
         try {
             return await super.Sync(body)
@@ -61,7 +62,21 @@ export class TermMetaController extends ControllerDaoBase<TermMetaService, TermM
     })
     override async GetList(
         @Body() input: ObterListaTermMeta,
+        @Request() req: Request,
     ) {
         return super.GetList(input);
+    }
+    @Post('Delete')
+    @ApiResponse({
+        type: TermMeta
+    })
+    @ApiOperation({
+        operationId: 'DeleteTermMeta'
+    })
+    override async Delete(
+        @Body() input: TermMeta,
+        @Request() req: Request,
+    ) {
+        return super.Delete(input, req);
     }
 }

@@ -9,6 +9,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deleteSitePost } from '../fn/site-post/delete-site-post';
+import { DeleteSitePost$Params } from '../fn/site-post/delete-site-post';
 import { getListSitePost } from '../fn/site-post/get-list-site-post';
 import { GetListSitePost$Params } from '../fn/site-post/get-list-site-post';
 import { SitePost } from '../models/site-post';
@@ -67,6 +69,31 @@ export class SitePostService extends BaseService {
    */
   getList(params: GetListSitePost$Params, context?: HttpContext): Observable<Array<SitePost>> {
     return this.getListSitePost$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<SitePost>>): Array<SitePost> => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteSitePost()` */
+  static readonly DeleteSitePostPath = '/SitePost/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteSitePost()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteSitePost$Response(params: DeleteSitePost$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<SitePost>>> {
+    return deleteSitePost(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteSitePost$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteSitePost$Params, context?: HttpContext): Observable<Array<SitePost>> {
+    return this.deleteSitePost$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<SitePost>>): Array<SitePost> => r.body)
     );
   }

@@ -9,6 +9,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deleteTerm } from '../fn/term/delete-term';
+import { DeleteTerm$Params } from '../fn/term/delete-term';
 import { getListTerm } from '../fn/term/get-list-term';
 import { GetListTerm$Params } from '../fn/term/get-list-term';
 import { syncTerm } from '../fn/term/sync-term';
@@ -67,6 +69,31 @@ export class TermService extends BaseService {
    */
   getList(params: GetListTerm$Params, context?: HttpContext): Observable<Array<Term>> {
     return this.getListTerm$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<Term>>): Array<Term> => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteTerm()` */
+  static readonly DeleteTermPath = '/Term/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteTerm()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteTerm$Response(params: DeleteTerm$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Term>>> {
+    return deleteTerm(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteTerm$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteTerm$Params, context?: HttpContext): Observable<Array<Term>> {
+    return this.deleteTerm$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Term>>): Array<Term> => r.body)
     );
   }

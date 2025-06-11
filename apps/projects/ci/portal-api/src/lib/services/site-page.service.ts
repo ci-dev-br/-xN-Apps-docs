@@ -9,6 +9,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deleteSitePage } from '../fn/site-page/delete-site-page';
+import { DeleteSitePage$Params } from '../fn/site-page/delete-site-page';
 import { getListSitePage } from '../fn/site-page/get-list-site-page';
 import { GetListSitePage$Params } from '../fn/site-page/get-list-site-page';
 import { SitePage } from '../models/site-page';
@@ -68,6 +70,31 @@ export class SitePageService extends BaseService {
   getList(params: GetListSitePage$Params, context?: HttpContext): Observable<Array<SitePage>> {
     return this.getListSitePage$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<SitePage>>): Array<SitePage> => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteSitePage()` */
+  static readonly DeleteSitePagePath = '/SitePage/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteSitePage()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteSitePage$Response(params: DeleteSitePage$Params, context?: HttpContext): Observable<StrictHttpResponse<SitePage>> {
+    return deleteSitePage(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteSitePage$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteSitePage$Params, context?: HttpContext): Observable<SitePage> {
+    return this.deleteSitePage$Response(params, context).pipe(
+      map((r: StrictHttpResponse<SitePage>): SitePage => r.body)
     );
   }
 

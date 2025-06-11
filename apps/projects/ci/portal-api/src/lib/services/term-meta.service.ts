@@ -9,6 +9,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deleteTermMeta } from '../fn/term-meta/delete-term-meta';
+import { DeleteTermMeta$Params } from '../fn/term-meta/delete-term-meta';
 import { getListTermMeta } from '../fn/term-meta/get-list-term-meta';
 import { GetListTermMeta$Params } from '../fn/term-meta/get-list-term-meta';
 import { syncTermMeta } from '../fn/term-meta/sync-term-meta';
@@ -68,6 +70,31 @@ export class TermMetaService extends BaseService {
   getList(params: GetListTermMeta$Params, context?: HttpContext): Observable<Array<TermMeta>> {
     return this.getListTermMeta$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<TermMeta>>): Array<TermMeta> => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteTermMeta()` */
+  static readonly DeleteTermMetaPath = '/TermMeta/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteTermMeta()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteTermMeta$Response(params: DeleteTermMeta$Params, context?: HttpContext): Observable<StrictHttpResponse<TermMeta>> {
+    return deleteTermMeta(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteTermMeta$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteTermMeta$Params, context?: HttpContext): Observable<TermMeta> {
+    return this.deleteTermMeta$Response(params, context).pipe(
+      map((r: StrictHttpResponse<TermMeta>): TermMeta => r.body)
     );
   }
 
