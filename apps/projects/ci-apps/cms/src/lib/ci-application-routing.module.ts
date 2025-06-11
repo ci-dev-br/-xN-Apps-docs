@@ -7,7 +7,7 @@ const models = [
   'CommentMeta',
   'Comment',
   'Links',
-  'Page',
+  'SitePage',
   'SiteOption',
   'SitePost',
   'TermMeta',

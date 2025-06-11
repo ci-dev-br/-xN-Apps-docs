@@ -51,7 +51,7 @@ export class CMSComponent implements OnInit, OnDestroy {
         'CommentMeta',
         'Comment',
         'Links',
-        'Page',
+        'SitePage',
         'SiteOption',
         'SitePost',
         'TermMeta',

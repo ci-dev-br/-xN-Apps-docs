@@ -10,7 +10,8 @@ import { ApiProperty } from "@nestjs/swagger";
 })
 export class SitePage extends FullAuditedEntity {
     @ApiProperty({
-        title: 'Template'
+        title: 'Template',
+        description: '',
     })
     @Column({
         nullable: true,

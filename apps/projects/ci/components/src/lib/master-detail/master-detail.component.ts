@@ -104,13 +104,17 @@ export class MasterDetailComponent<T> implements OnInit {
         this.source;
     }
     async editar(data: T) {
-        return await this.window.open(EditarComponent,
+        const result: number | any = await this.window.open(EditarComponent,
             { schemaName: this.schemaName, data }, this.schemaName)
+        if (result === -1 && this.source) {
+            let pos = this.source.indexOf(data);
+            this.source?.splice(pos, 1);
+        }
     }
     async createNew() {
-        let new_instance: T = {} as T;
-        const data = await this.editar(new_instance);
-        if (!!data?.internalId || !!data?.id) // TODO: revisar esta regra
+        let instance: T = {} as T;
+        const data: number | any = await this.editar(instance);
+        if (!(typeof data === 'number') && (!!data?.internalId || !!data?.id)) // TODO: revisar esta regra
             this.source = [data, ...this.source || []];
     }
 }

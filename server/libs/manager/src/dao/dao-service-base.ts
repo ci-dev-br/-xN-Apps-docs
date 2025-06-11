@@ -53,7 +53,7 @@ export abstract class DaoServiceBase<E> {
                     }
                     // TODO: adicionar usuário modificador
                     if (___internal_data instanceof FullAuditedEntity) {
-                        await this._snap.snapshot(___internal_data);
+                        await this._snap.snapshot(___internal_data, request);
                     }
                 }
             }
@@ -113,7 +113,7 @@ export abstract class DaoServiceBase<E> {
         this._snap.snapshot({
             deleted: true,
             data: old_data,
-        })
+        }, request)
         await this._repo.delete(this._repo.getId(data));
     }
 }

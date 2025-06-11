@@ -47,8 +47,8 @@ export class EditarComponent implements OnInit {
             label: 'Remover Aplicação',
             icon: 'delete',
             onClick: async () => {
-                if (!!this.service && !!data) await lastValueFrom(this.service.delete({ body: { data: data } }));
-                this.ref?.close(null);
+                if (!!this.service && !!data) await lastValueFrom(this.service.delete({ body: data.data }));
+                this.ref?.close(-1);
             }
         }])
     }

@@ -40,7 +40,7 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
                     }
                     // TODO: adicionar usuário modificador
                     if (___internal_data instanceof FullAuditedEntity) {
-                        await this._snap.snapshot(___internal_data);
+                        await this._snap.snapshot(___internal_data, request);
                     }
                 }
             }

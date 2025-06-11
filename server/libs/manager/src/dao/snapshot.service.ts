@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { FullAuditedEntity, Snapshot } from ".";
 import { Repository } from "typeorm";
 import { createHash } from "crypto";
+import { Request } from "express";
 
 /***
  * Serviço de Snapshot
@@ -25,7 +26,7 @@ export class SnapshotService {
         } catch (error) {
         }
     }
-    async snapshot(entidade: FullAuditedEntity | any, request?: Request) {
+    async snapshot(entidade: FullAuditedEntity | any, request: Request) {
         const json_snapshot = JSON.parse(JSON.stringify(entidade, null, 2));
         const moment = new Date().toISOString();
         const hash = createHash('sha256').update([this.lastSnapshotHash || ''] + json_snapshot + moment).digest('hex').toString();
@@ -39,9 +40,9 @@ export class SnapshotService {
         this.lastSnapshotHash = hash;
         this.snapRepo.save(snap);
     }
-    async prepareToSync(entidade: any) {
+    async prepareToSync(entidade: any, request: Request) {
         if (entidade instanceof FullAuditedEntity) {
-            await this.snapshot(entidade);
+            await this.snapshot(entidade, request);
         }
     }
 }

@@ -1,9 +1,9 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { SitePage } from "../models/page.entity";
+import { SitePage } from "../models/site-page.entity";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
 import { FindOptionsWhere } from "typeorm";
-import { SitePageService } from "../services/page.service";
+import { SitePageService } from "../services/site-page.service";
 export class SyncPayloadDaoSitePage extends SyncPayloadDao<SitePage> {
     @ApiProperty({ type: SitePage })
     override data?: SitePage;

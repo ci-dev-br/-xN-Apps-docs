@@ -1,7 +1,7 @@
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DaoFullAuditedServiceBase, SnapshotService } from "@ci/core";
-import { SitePage } from "../models/page.entity";
+import { SitePage } from "../models/site-page.entity";
 import { DaoServiceBase } from "@ci/manager/dao/dao-service-base";
 
 export class SitePageService extends DaoServiceBase<SitePage> {
