@@ -70,7 +70,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
                         return {
                             headerName,
                             fieldName,
-                            hide: fieldName && ['internalId', 'id'].indexOf(fieldName) > -1
+                            hide: fieldName && ['internalId', 'id', 'createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy', 'tenants'].indexOf(fieldName) > -1
 
                         } as IColumnOption<any>
                     })
