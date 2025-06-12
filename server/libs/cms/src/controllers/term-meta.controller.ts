@@ -64,7 +64,17 @@ export class TermMetaController extends ControllerDaoBase<TermMetaService, TermM
         @Body() input: ObterListaTermMeta,
         @Request() req: Request,
     ) {
-        return super.GetList(input);
+        try {
+            return super.GetList(input);
+        } catch (error) {
+            return {
+                status: 500,
+                message: 'Falha',
+                detahes: error.message,
+                stack: error.stack
+            } as any
+        }
+
     }
     @Post('Delete')
     @ApiResponse({
@@ -77,6 +87,15 @@ export class TermMetaController extends ControllerDaoBase<TermMetaService, TermM
         @Body() input: TermMeta,
         @Request() req: Request,
     ) {
-        return super.Delete(input, req);
+        try {
+            return super.Delete(input, req);
+        } catch (error) {
+            return {
+                status: 500,
+                message: 'Falha',
+                detahes: error.message,
+                stack: error.stack
+            } as any
+        }
     }
 }
