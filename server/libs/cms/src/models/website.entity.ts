@@ -7,10 +7,15 @@ import { schema } from "./schema";
     schema,
 })
 export class Website extends FullAuditedEntity {
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({
+        title: 'Atributos',
+        nullable: true, required: false
+    })
     @Column({ type: 'jsonb', nullable: true })
     atributes: { [atributeCodename: string]: string };
-    @ApiProperty({ nullable: true, required: false, title: 'Nome' })
+    @ApiProperty({
+        nullable: true, required: false, title: 'Nome'
+    })
     @Column({ nullable: true })
     name?: string;
     @ApiProperty({ nullable: true, required: false, title: 'Domínio' })

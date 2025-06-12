@@ -11,20 +11,36 @@ export abstract class AuditedEntity {
     @ManyToMany(() => Tenant)
     @JoinTable()
     tenants?: Tenant[];
-    @ApiProperty({ nullable: true, required: false, type: 'Date', readOnly: true })
+    @ApiProperty({
+        title: 'Data de criação',
+        nullable: true,
+        required: false,
+        type: 'Date',
+        readOnly: true
+    })
     @CreateDateColumn()
     createdAt?: Date;
-    @ApiProperty({ nullable: true, required: false, readOnly: true })
+    @ApiProperty({
+        title: 'Criado Por',
+        nullable: true,
+        required: false,
+        readOnly: true
+    })
     @ManyToOne(() => ChaveAcesso, { nullable: true })
     @JoinColumn()
     createdBy?: ChaveAcesso;
-    @ApiProperty({ nullable: true, required: false, type: 'Date', readOnly: true })
+    @ApiProperty({
+        title: 'Ultima modificação em',
+        nullable: true,
+        required: false, type: 'Date', readOnly: true
+    })
     @UpdateDateColumn()
     lastModifiedAt?: Date;
-    @ApiProperty({ nullable: true, required: false, readOnly: true })
+    @ApiProperty({ title: 'Ultima modificação por', nullable: true, required: false, readOnly: true })
     @ManyToOne(() => ChaveAcesso, { nullable: true })
     @JoinColumn()
     lastModifiedBy?: ChaveAcesso;
+    @ApiProperty({ title: 'Deletado', type: 'boolean' })
     @Exclude()
     @Column({ nullable: true })
     deleted?: boolean;
