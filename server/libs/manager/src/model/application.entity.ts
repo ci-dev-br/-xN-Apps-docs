@@ -91,4 +91,16 @@ export class Application {
     @ManyToMany(type => User)
     @JoinTable()
     administrators?: User[];
+    
+    @ApiProperty({
+        title: 'Usuários da Aplicação',
+        description: 'Os usuários da aplicação são aqueles que fizeram registro ou possuem licensa de uso da aplicação. Algumas aplicações podem exigir licença para uso de módulos específicos.',
+        type: User,
+        isArray: true,
+        nullable: true,
+        required: false,
+    })
+    @ManyToMany(type => User)
+    @JoinTable()
+    users?: User[];
 }
