@@ -27,4 +27,9 @@ export interface Application {
   name?: string | null;
   roles?: Array<string> | null;
   url?: string | null;
+
+  /**
+   * Os usuários da aplicação são aqueles que fizeram registro ou possuem licensa de uso da aplicação. Algumas aplicações podem exigir licença para uso de módulos específicos.
+   */
+  users?: Array<User> | null;
 }
