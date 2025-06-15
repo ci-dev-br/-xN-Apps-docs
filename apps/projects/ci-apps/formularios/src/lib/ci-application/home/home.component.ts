@@ -7,7 +7,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { ActionModule, FileComponent } from '@ci/components';
 import { CoreModule } from '@ci/core';
-import { Form, FormsService } from '@ci/portal-api';
+import { Forms, FormsService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
@@ -28,7 +28,7 @@ import { lastValueFrom } from 'rxjs';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
-  forms?: Form[];
+  forms?: Forms[];
   origin = location.origin;
   constructor(
     private readonly formsService: FormsService,
@@ -38,7 +38,7 @@ export class HomeComponent implements OnInit {
     this.find();
   }
   find() {
-    this.formsService?.formsGetList({
+    this.formsService?.getList({
       body: {
         take: 50, skip: 0,
       }
@@ -46,7 +46,7 @@ export class HomeComponent implements OnInit {
   }
   async criarFormulario() {
     if (!this.formsService) return;
-    const form: Form = await lastValueFrom(this.formsService.formsSync({ body: { data: {} } })) as Form;
+    const form: Forms = await lastValueFrom(this.formsService.sync({ body: { data: {} as Forms } })) as Forms;
     if (form.internalId) this.openFormById(form.internalId);
   }
   openFormById(internalId: string) {
@@ -56,7 +56,7 @@ export class HomeComponent implements OnInit {
   }
   async remove(internalId: string) {
     await lastValueFrom(
-      this.formsService.formsDelete({ body: { internalId } })
+      this.formsService.delete({ body: { internalId } })
     );
     this.find();
   }
