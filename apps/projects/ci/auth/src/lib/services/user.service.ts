@@ -28,7 +28,7 @@ export class UserService {
         this.$user.subscribe(user => {
             try {
                 if (!!user) {
-                    const { photo, ...user_info } = user;
+                    const { /* photo,  */...user_info } = user;
                     if (localStorage) localStorage.setItem('CIUSR', btoa(JSON.stringify(user_info, null, 2)));
                 } else {
                     if (localStorage) localStorage.removeItem('CIUSR');

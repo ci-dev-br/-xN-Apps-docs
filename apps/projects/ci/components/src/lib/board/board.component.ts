@@ -73,7 +73,7 @@ export class BoardComponent implements OnInit {
         if (!this.prancheta && !!this.default && ((this.user?.user?.value?.roles || []).indexOf('MASTER') > -1)) {
             this.prancheta = {
                 codigoGlobal: ((this.user?.user?.value?.roles || []).indexOf('MASTER') > -1) ? this.default : undefined,
-            };
+            } as any;
             await lastValueFrom(
                 this.pranchetas.pranchetaControllerSync({ body: { prancheta: this.prancheta } })
             )

@@ -11,7 +11,7 @@ export interface IChangeable {
     /***
      * Snapshot do objeto antes de iniciar as mudanças no objeto.
      */
-    __pre: any;
+    __pre?: any;
     /**
      * Metadados do formulário conectado ao Objeto
      */

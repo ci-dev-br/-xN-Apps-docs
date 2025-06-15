@@ -19,3 +19,5 @@ Responsável: plhx
 ```
 
  ---
+
+Ajustes em modelo de `Aplicação`. Adicionado relações de Usuários com A aplicacação. Lista de Usuários Administradores da Aplicação;

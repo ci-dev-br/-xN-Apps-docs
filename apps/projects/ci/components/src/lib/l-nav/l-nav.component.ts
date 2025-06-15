@@ -17,10 +17,10 @@ interface IBreadcrumb {
 }
 
 @Component({
-    selector: 'ci-l-nav',
-    templateUrl: './l-nav.component.html',
-    styleUrls: ['./l-nav.component.scss'],
-    standalone: false
+  selector: 'ci-l-nav',
+  templateUrl: './l-nav.component.html',
+  styleUrls: ['./l-nav.component.scss'],
+  standalone: false
 })
 export class LNavComponent {
   apps?: Application[];
@@ -70,12 +70,14 @@ export class LNavComponent {
       }
     });
     userService.user.subscribe(user => {
-      if (user?.photo?.originalFile) {
-        const u8 = new Uint8Array((user?.photo?.originalFile as any).data);
-        this.userPhoto = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpeg;base64,' +
-          btoa(this.Uint8ToString(u8))
-        );
-      }
+      // if (user?.photo?.originalFile) {
+      //   
+      //    // TODO: Corrigir esta implementação de foto em usuário
+      //   // const u8 = new Uint8Array((user?.photo?.originalFile as any).data);
+      //   // this.userPhoto = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpeg;base64,' +
+      //   //   btoa(this.Uint8ToString(u8))
+      //   // );
+      // }
     })
   }
   private async updateCpuInfo() {
