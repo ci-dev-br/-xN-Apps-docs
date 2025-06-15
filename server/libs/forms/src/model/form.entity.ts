@@ -42,7 +42,7 @@ export class Perguntas {
     perguntas?: Pergunta[];
 }
 @Entity({ schema: 'forms' })
-export class Form extends FullAuditedEntity {
+export class Forms extends FullAuditedEntity {
     @ApiProperty({
         nullable: true,
         required: false

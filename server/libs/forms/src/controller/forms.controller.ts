@@ -1,11 +1,11 @@
 import { ControllerDaoBase, GetByInternalIdInputDto, SyncPayloadDao } from "@ci/manager";
 import { FormsService } from "../service/forms.service";
-import { Form } from "../model/form.entity";
+import { Forms } from "../model/form.entity";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Body, Controller, Post, Req } from "@nestjs/common";
-export class SyncPayloadDaoForm extends SyncPayloadDao<Form> {
-    @ApiProperty({ type: Form })
-    override data?: Form;
+export class SyncPayloadDaoForm extends SyncPayloadDao<Forms> {
+    @ApiProperty({ type: Forms })
+    override data?: Forms;
 }
 export class FormCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
@@ -19,17 +19,16 @@ export class FormCotrollerGetInputDto {
 }
 @ApiTags('Forms')
 @Controller('Forms')
-export class FormsController extends ControllerDaoBase<FormsService, Form> {
+export class FormsController extends ControllerDaoBase<FormsService, Forms> {
     constructor(service: FormsService) {
         super(service);
     }
     @Post('Sync')
     @ApiResponse({
-        type:
-            SyncPayloadDaoForm
+        type: Forms,
     })
     @ApiOperation({
-        operationId: 'FormsSync'
+        operationId: 'SyncForms'
     })
     override async Sync(
         @Body() input: SyncPayloadDaoForm,
@@ -40,11 +39,11 @@ export class FormsController extends ControllerDaoBase<FormsService, Form> {
     @Post('GetList')
     @ApiResponse({
         type:
-            Form,
+            Forms,
         isArray: true
     })
     @ApiOperation({
-        operationId: 'FormsGetList',
+        operationId: 'GetListForms',
     })
     override async GetList(
         @Body() input: FormCotrollerGetInputDto,
@@ -54,10 +53,10 @@ export class FormsController extends ControllerDaoBase<FormsService, Form> {
     }
     @Post('GetByInternalId')
     @ApiResponse({
-        type: Form,
+        type: Forms,
     })
     @ApiOperation({
-        operationId: 'FormsGetByInternalId',
+        operationId: 'GetByInternalIdForms',
     })
     override async GetByInternalId(
         @Body() input: GetByInternalIdInputDto,
@@ -67,10 +66,10 @@ export class FormsController extends ControllerDaoBase<FormsService, Form> {
     }
     @Post('Delete')
     @ApiResponse({
-        type: Form,
+        type: Forms,
     })
     @ApiOperation({
-        operationId: 'FormsDelete',
+        operationId: 'DeleteForms',
     })
     override async Delete(
         @Body() input: GetByInternalIdInputDto,

@@ -106,7 +106,7 @@ export class AuthController {
         chave = await this.credencialService.obterChaveAcesso(payload.chaveAcesso);
         chave.refreshToken = refreshTokenArg2;
         await this.credencialService.atualizar(chave);
-        const { photo, ...user_payload } = authenticated_user;
+        const { /* photo, */ ...user_payload } = authenticated_user;
         return {
           user: authenticated_user,
           bearer: await this.jwtService.signAsync({

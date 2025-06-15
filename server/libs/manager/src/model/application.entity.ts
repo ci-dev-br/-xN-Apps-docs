@@ -2,6 +2,8 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Domain } from "./domain.entity";
 import { schema } from "../noms";
+import { User } from "@ci/auth/models/user.entity";
+
 @Entity({ schema })
 export class Application {
     @ApiProperty({
@@ -53,5 +55,40 @@ export class Application {
         required: false,
     })
     @ManyToMany(type => Domain, domain => domain.aplications)
-    domains: Domain[]
+    domains: Domain[];
+
+    @ManyToOne(type => User)
+    hoster?: User;
+    /**
+     * Usuários com permissão de alteração no código fonte do sistema de forma direta inretristiva
+     */
+    @ManyToMany(type => User)
+    @JoinTable()
+    responsibility?: User[];
+    /**
+     * Usuários com permissão de gestão dos dados gerados pelos sistema, pemitindo vetação ou ajuste manual, dentre duas permissões e acessos específicos, permissivos ou restritivos.
+     */
+    @ManyToMany(type => User)
+    @JoinTable()
+    managers?: User[];
+    /**
+     * Usuários que podem administrar as permissões de acessos da aplicação
+     */
+    @ManyToMany(type => User)
+    @JoinTable()
+    masters?: User[];
+    /**
+     * Usuários que podem gerenciar e criar usuários para as aplicações e liberar licenças de uso
+     */
+    @ApiProperty({
+        title: 'Administradores da Aplicação',
+        description: 'Usuáriso administradores são responsáveis pelo gerenciamento de acesso dos usuários aos dados gerados pelo sistema.',
+        type: User,
+        isArray: true,
+        nullable: true,
+        required: false,
+    })
+    @ManyToMany(type => User)
+    @JoinTable()
+    administrators?: User[];
 }

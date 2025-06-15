@@ -3,7 +3,7 @@ import { Exclude, Expose } from "class-transformer";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Policy } from "./policy.entity";
 import { Tenant } from "@ci/tenant/models/tenant.entity";
-import { Photo } from "@ci/storage/models/photo.entity";
+// import { Photo } from "@ci/storage/models/photo.entity";
 /**
  *	Usuário Auto-identificado do Sistema
  * */
@@ -50,8 +50,8 @@ export class User {
     @ManyToMany(() => Tenant)
     @JoinTable()
     tenants?: Tenant[];
-    @ApiProperty({ nullable: true, required: false, type: Photo })
-    @ManyToOne(() => Photo)
-    @JoinColumn()
-    photo?: Photo;
+    // @ApiProperty({ nullable: true, required: false, type: Photo })
+    // @ManyToOne(() => Photo)
+    // @JoinColumn()
+    // photo?: Photo;
 }

@@ -40,7 +40,14 @@ export abstract class AuditedEntity {
     @ManyToOne(() => ChaveAcesso, { nullable: true })
     @JoinColumn()
     lastModifiedBy?: ChaveAcesso;
-    @ApiProperty({ title: 'Deletado', type: 'boolean' })
+    @ApiProperty({
+        title: 'Deletado',
+        type: 'boolean',
+        required: false,
+        nullable: true,
+        default: undefined,
+        readOnly: true,
+    })
     @Exclude()
     @Column({ nullable: true })
     deleted?: boolean;
