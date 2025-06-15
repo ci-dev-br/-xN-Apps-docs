@@ -4,6 +4,7 @@ export interface UnidadeMedida {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
+  deleted?: boolean | null;
   description?: string | null;
   externalReferenceUrl?: Array<string> | null;
   internalId?: string | null;

@@ -6,6 +6,7 @@ export interface Promocao {
 } | null;
   dataFim: Date | null;
   dataInicio: Date | null;
+  deleted?: boolean | null;
   descontoPercentual: number | null;
   descontoValor: number | null;
   descricao: string | null;

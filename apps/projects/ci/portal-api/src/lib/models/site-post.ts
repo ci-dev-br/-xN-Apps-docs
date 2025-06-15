@@ -7,6 +7,7 @@ export interface SitePost {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
+  deleted?: boolean | null;
   excerpt?: string | null;
   guid?: string | null;
   internalId?: string | null;

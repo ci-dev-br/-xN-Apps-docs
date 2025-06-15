@@ -4,6 +4,7 @@ export interface InformacaoContato {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
+  deleted?: boolean | null;
   description?: string | null;
   facebook?: string | null;
   instagram?: string | null;

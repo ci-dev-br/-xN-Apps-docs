@@ -1,7 +1,13 @@
 /* tslint:disable */
 /* eslint-disable */
 import { Domain } from '../models/domain';
+import { User } from '../models/user';
 export interface Application {
+
+  /**
+   * Usuáriso administradores são responsáveis pelo gerenciamento de acesso dos usuários aos dados gerados pelo sistema.
+   */
+  administrators?: Array<User> | null;
   categoria?: string | null;
   description?: string | null;
   domain?: Domain | null;

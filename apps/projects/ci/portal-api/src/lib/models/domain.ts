@@ -5,6 +5,7 @@ export interface Domain {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
+  deleted?: boolean | null;
   hostname?: string | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;

@@ -4,6 +4,7 @@ export interface TipoDocumentoIdentificacao {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
+  deleted?: boolean | null;
 
   /**
    * Descrição

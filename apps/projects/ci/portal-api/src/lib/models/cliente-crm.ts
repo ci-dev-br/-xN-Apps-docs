@@ -9,6 +9,7 @@ export interface ClienteCrm {
 } | null;
   dataCadastro: string;
   dataNascimento: Date | null;
+  deleted?: boolean | null;
   email: string | null;
   endereco: string | null;
   estado: string | null;

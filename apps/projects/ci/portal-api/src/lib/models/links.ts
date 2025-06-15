@@ -4,6 +4,7 @@ export interface Links {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
+  deleted?: boolean | null;
   description?: string | null;
   image?: string | null;
   internalId?: string | null;

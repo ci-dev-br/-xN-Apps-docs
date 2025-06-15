@@ -5,6 +5,7 @@ export interface Cliente {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
+  deleted?: boolean | null;
   documento: string | null;
   email: string | null;
   endereco: Array<string> | null;

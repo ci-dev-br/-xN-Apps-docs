@@ -4,6 +4,7 @@ export interface SiteOption {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
+  deleted?: boolean | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
   lastModifiedBy?: {

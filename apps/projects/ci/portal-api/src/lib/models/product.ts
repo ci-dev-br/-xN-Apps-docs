@@ -8,6 +8,7 @@ export interface Product {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
+  deleted?: boolean | null;
   description?: string | null;
   gtin?: string | null;
   internalId?: string | null;

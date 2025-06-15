@@ -15,6 +15,7 @@ export interface Projeto {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
+  deleted?: boolean | null;
 
   /**
    * Descrição

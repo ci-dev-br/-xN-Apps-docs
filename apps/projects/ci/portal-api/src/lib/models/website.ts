@@ -8,6 +8,7 @@ export interface Website {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
+  deleted?: boolean | null;
   domain?: string | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;

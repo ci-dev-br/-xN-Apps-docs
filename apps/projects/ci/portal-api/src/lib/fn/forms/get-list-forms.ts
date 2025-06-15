@@ -6,14 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { SyncPayloadDaoForm } from '../../models/sync-payload-dao-form';
+import { FormCotrollerGetInputDto } from '../../models/form-cotroller-get-input-dto';
+import { Forms } from '../../models/forms';
 
-export interface FormsSync$Params {
-      body: SyncPayloadDaoForm
+export interface GetListForms$Params {
+      body: FormCotrollerGetInputDto
 }
 
-export function formsSync(http: HttpClient, rootUrl: string, params: FormsSync$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoForm>> {
-  const rb = new RequestBuilder(rootUrl, formsSync.PATH, 'post');
+export function getListForms(http: HttpClient, rootUrl: string, params: GetListForms$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Forms>>> {
+  const rb = new RequestBuilder(rootUrl, getListForms.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -23,9 +24,9 @@ export function formsSync(http: HttpClient, rootUrl: string, params: FormsSync$P
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SyncPayloadDaoForm>;
+      return r as StrictHttpResponse<Array<Forms>>;
     })
   );
 }
 
-formsSync.PATH = '/Forms/Sync';
+getListForms.PATH = '/Forms/GetList';

@@ -4,6 +4,7 @@ export interface Pais {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
+  deleted?: boolean | null;
   ibgeCode: string;
   internalId?: string | null;
   internationaName: string;

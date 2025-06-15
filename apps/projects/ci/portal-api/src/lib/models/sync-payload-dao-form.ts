@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-import { Form } from '../models/form';
+import { Forms } from '../models/forms';
 export interface SyncPayloadDaoForm {
-  data: Form;
+  data: Forms;
 }

@@ -5,6 +5,7 @@ export interface Profissional {
   createdBy?: {
 } | null;
   dataContratacao: Date | null;
+  deleted?: boolean | null;
   email: string | null;
   especialidade: string | null;
   internalId?: string | null;

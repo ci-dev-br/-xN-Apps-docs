@@ -10,6 +10,7 @@ export interface Atendimento {
 } | null;
   dataFim: string;
   dataInicio: Date;
+  deleted?: boolean | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
   lastModifiedBy?: {

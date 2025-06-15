@@ -6,15 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Form } from '../../models/form';
-import { FormCotrollerGetInputDto } from '../../models/form-cotroller-get-input-dto';
+import { Forms } from '../../models/forms';
+import { GetByInternalIdInputDto } from '../../models/get-by-internal-id-input-dto';
 
-export interface FormsGetList$Params {
-      body: FormCotrollerGetInputDto
+export interface GetByInternalIdForms$Params {
+      body: GetByInternalIdInputDto
 }
 
-export function formsGetList(http: HttpClient, rootUrl: string, params: FormsGetList$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Form>>> {
-  const rb = new RequestBuilder(rootUrl, formsGetList.PATH, 'post');
+export function getByInternalIdForms(http: HttpClient, rootUrl: string, params: GetByInternalIdForms$Params, context?: HttpContext): Observable<StrictHttpResponse<Forms>> {
+  const rb = new RequestBuilder(rootUrl, getByInternalIdForms.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -24,9 +24,9 @@ export function formsGetList(http: HttpClient, rootUrl: string, params: FormsGet
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<Form>>;
+      return r as StrictHttpResponse<Forms>;
     })
   );
 }
 
-formsGetList.PATH = '/Forms/GetList';
+getByInternalIdForms.PATH = '/Forms/GetByInternalId';

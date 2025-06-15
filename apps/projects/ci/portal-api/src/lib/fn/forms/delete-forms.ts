@@ -6,15 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Form } from '../../models/form';
+import { Forms } from '../../models/forms';
 import { GetByInternalIdInputDto } from '../../models/get-by-internal-id-input-dto';
 
-export interface FormsDelete$Params {
+export interface DeleteForms$Params {
       body: GetByInternalIdInputDto
 }
 
-export function formsDelete(http: HttpClient, rootUrl: string, params: FormsDelete$Params, context?: HttpContext): Observable<StrictHttpResponse<Form>> {
-  const rb = new RequestBuilder(rootUrl, formsDelete.PATH, 'post');
+export function deleteForms(http: HttpClient, rootUrl: string, params: DeleteForms$Params, context?: HttpContext): Observable<StrictHttpResponse<Forms>> {
+  const rb = new RequestBuilder(rootUrl, deleteForms.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -24,9 +24,9 @@ export function formsDelete(http: HttpClient, rootUrl: string, params: FormsDele
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Form>;
+      return r as StrictHttpResponse<Forms>;
     })
   );
 }
 
-formsDelete.PATH = '/Forms/Delete';
+deleteForms.PATH = '/Forms/Delete';

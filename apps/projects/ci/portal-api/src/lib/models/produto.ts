@@ -5,6 +5,7 @@ export interface Produto {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
+  deleted?: boolean | null;
   descricao: string | null;
   estoque: number;
   internalId?: string | null;

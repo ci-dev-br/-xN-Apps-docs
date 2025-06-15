@@ -5,6 +5,7 @@ export interface Servico {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
+  deleted?: boolean | null;
   descricao: string | null;
   duracaoEstimada: string | null;
   internalId?: string | null;

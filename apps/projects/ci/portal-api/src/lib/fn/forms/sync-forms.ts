@@ -6,15 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Form } from '../../models/form';
-import { GetByInternalIdInputDto } from '../../models/get-by-internal-id-input-dto';
+import { Forms } from '../../models/forms';
+import { SyncPayloadDaoForm } from '../../models/sync-payload-dao-form';
 
-export interface FormsGetByInternalId$Params {
-      body: GetByInternalIdInputDto
+export interface SyncForms$Params {
+      body: SyncPayloadDaoForm
 }
 
-export function formsGetByInternalId(http: HttpClient, rootUrl: string, params: FormsGetByInternalId$Params, context?: HttpContext): Observable<StrictHttpResponse<Form>> {
-  const rb = new RequestBuilder(rootUrl, formsGetByInternalId.PATH, 'post');
+export function syncForms(http: HttpClient, rootUrl: string, params: SyncForms$Params, context?: HttpContext): Observable<StrictHttpResponse<Forms>> {
+  const rb = new RequestBuilder(rootUrl, syncForms.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -24,9 +24,9 @@ export function formsGetByInternalId(http: HttpClient, rootUrl: string, params: 
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Form>;
+      return r as StrictHttpResponse<Forms>;
     })
   );
 }
 
-formsGetByInternalId.PATH = '/Forms/GetByInternalId';
+syncForms.PATH = '/Forms/Sync';

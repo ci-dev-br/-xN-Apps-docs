@@ -6,6 +6,7 @@ export interface Agendamento {
   createdBy?: {
 } | null;
   dataHora: Date;
+  deleted?: boolean | null;
   duracao: string;
   internalId?: string | null;
   lastModifiedAt?: Date | null;

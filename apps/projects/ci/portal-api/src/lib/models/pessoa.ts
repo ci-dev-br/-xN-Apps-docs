@@ -6,6 +6,7 @@ export interface Pessoa {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
+  deleted?: boolean | null;
   documentos?: Array<DocumentoIdentificacao> | null;
   emailPessoal?: string | null;
   empresa?: string | null;
