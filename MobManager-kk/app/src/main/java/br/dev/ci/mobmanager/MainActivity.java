@@ -8,10 +8,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
+import android.telephony.TelephonyManager;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
@@ -61,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             this.message.setText("Identificando números disponíveis");
         }*/
         try {
-            adicionarGateway("https://192.168.0.8:664/", "wss://192.168.0.8:664/");
+            adicionarGateway("https://srv33.internals.ci.dev.br:664/", "wss://srv33.internals.ci.dev.br:664/");
         }catch(Exception ex){
             this.message.setText("Falha ao conectar");
         }
@@ -90,8 +92,9 @@ public class MainActivity extends AppCompatActivity {
     // @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
     private void identificarNumerosTelefone() {
         if (
+                true
                 /*ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED && */
-                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED
+               //  ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED
                 /* && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED*/ ) {
             try {
                 SubscriptionManager subscriptionManager = null;
@@ -101,6 +104,16 @@ public class MainActivity extends AppCompatActivity {
                 if(subscriptionManager != null) {
                     List<SubscriptionInfo> subscriptionInfoList = null;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
                         subscriptionInfoList = subscriptionManager.getActiveSubscriptionInfoList();
                     }
                     this.phones = ManagerClient.getInstance().getPhones();
@@ -108,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                         phones = new ArrayList<>();
                     }
                     for (SubscriptionInfo subscriptionInfo : subscriptionInfoList) {
-                        // TelephonyManager telephonyManager = ((TelephonyManager) requireContext().getSystemService(Context.TELEPHONY_SERVICE)).createForSubscriptionId(subscriptionId);
+                         // TelephonyManager telephonyManager = ((TelephonyManager) requireContext().getSystemService(Context.TELEPHONY_SERVICE)).createForSubscriptionId(subscriptionId);
                         PhoneNumber phone_number = new PhoneNumber() {{
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                                 setNumber(subscriptionInfo.getNumber());
@@ -119,7 +132,8 @@ public class MainActivity extends AppCompatActivity {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                                 setSubscriptionId(subscriptionInfo.getSubscriptionId());
                             }
-                        }}; //  telephonyManager.getLine1Number();
+                        }};
+                        // telephonyManager.getLine1Number();
                         this.phones.add(phone_number);
                     }
                     ManagerClient.getInstance().setPhones(this.phones);
