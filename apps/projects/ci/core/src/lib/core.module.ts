@@ -14,12 +14,14 @@ import { WsService } from './io/ws.service';
 import { SafePipe } from './pipes/safe.pipe';
 import { ContextMenuServices } from './contextmenu/contextmenu.service';
 import { DaoBuilder, ISchema, ISchemaProperty } from './dao/dao-builder.service';
+import { DaoPipe } from './pipes/dao.pipe';
 
 @NgModule({
   declarations: [
     AutoFocusDirective,
     AutoScollDirective,
     SafePipe,
+    DaoPipe,
   ],
   imports: [
     CommonModule,
@@ -36,6 +38,7 @@ import { DaoBuilder, ISchema, ISchemaProperty } from './dao/dao-builder.service'
   ],
   exports: [
     SafePipe,
+    DaoPipe,
     CommonModule,
     AutoFocusDirective,
     AutoScollDirective,
@@ -56,4 +59,5 @@ export {
   DaoBuilder,
   ISchemaProperty,
   ISchema,
+  DaoPipe,
 }

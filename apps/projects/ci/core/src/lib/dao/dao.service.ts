@@ -144,12 +144,23 @@ export class DaoService {
                             ...this.getChanges(data, { pre })
                         };
                         (options?.fieldsId || ['id', 'internalId']).forEach(p => {
-                            out[p] = data[p] || undefined;
+                            if (data[p]) {
+                                out[p] = data[p] || undefined;
+                            }
                         })
                         return out;
                     } catch (error) {
                         console.error(error);
                     }
+                }
+            });
+            Object.defineProperty(data, 'toString', {
+                value: () => {
+                    return (
+                        data.name || data.nome ||
+                        data.title || data.titulo ||
+                        data.descricao || data.description ||
+                        '(Item sem descrição)');
                 }
             });
             data.complete = () => pre = { ...JSON.parse(JSON.stringify(o_data)) };
@@ -174,6 +185,22 @@ export class DaoService {
             console.error(error);
         }
         return r;
+    }
+    async read(data: any) {
+        if (Array.isArray(data)) {
+            data.forEach(o => this.read(o));
+        } else if (!!data && typeof data === 'object') {
+            Object.defineProperty(data, 'toString', {
+                value: () => {
+                    return (
+                        data.name || data.nome ||
+                        data.title || data.titulo ||
+                        data.descricao || data.description ||
+                        '(Item sem descrição)');
+                }
+            });
+        }
+        return data;
     }
     haveChanges(data?: IChangeable | any) {
         return Object.keys(this.getChanges(data)).length > 0;
