@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+import { Website } from '../models/website';
 export interface SitePage {
 
   /**
@@ -21,4 +22,9 @@ export interface SitePage {
    * Endereço público da página
    */
   urlMatch: string;
+
+  /**
+   * Website correspondente
+   */
+  website: Website;
 }
