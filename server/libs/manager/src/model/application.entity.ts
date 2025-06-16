@@ -56,24 +56,54 @@ export class Application {
     })
     @ManyToMany(type => Domain, domain => domain.aplications)
     domains: Domain[];
-
+    @ApiProperty({
+        title: 'Hoster da Aplicação',
+        description: 'Usuário responsável pelo hosteamento da aplicação.',
+        type: User,
+        nullable: true,
+        required: false,
+    })
     @ManyToOne(type => User)
     hoster?: User;
     /**
-     * Usuários com permissão de alteração no código fonte do sistema de forma direta inretristiva
+     * Usuários Responsáveis técnicos pelo código-fonte.
      */
+    @ApiProperty({
+        title: 'Desenvolvedores',
+        description: 'Usuários com permissão de alteração no código fonte do sistema de forma direta inretristiva.',
+        type: User,
+        isArray: true,
+        nullable: true,
+        required: false,
+    })
     @ManyToMany(type => User)
     @JoinTable()
     responsibility?: User[];
     /**
      * Usuários com permissão de gestão dos dados gerados pelos sistema, pemitindo vetação ou ajuste manual, dentre duas permissões e acessos específicos, permissivos ou restritivos.
      */
+    @ApiProperty({
+        title: 'Gerenciadores',
+        description: 'Usuários com permissão de gestão dos dados gerados pelos sistema, pemitindo vetação ou ajuste manual, dentre duas permissões e acessos específicos, permissivos ou restritivos.',
+        type: User,
+        isArray: true,
+        nullable: true,
+        required: false,
+    })
     @ManyToMany(type => User)
     @JoinTable()
     managers?: User[];
     /**
      * Usuários que podem administrar as permissões de acessos da aplicação
      */
+    @ApiProperty({
+        title: 'Master User',
+        description: ' Usuários que podem administrar as permissões de acessos da aplicação.',
+        type: User,
+        isArray: true,
+        nullable: true,
+        required: false,
+    })
     @ManyToMany(type => User)
     @JoinTable()
     masters?: User[];
@@ -91,7 +121,7 @@ export class Application {
     @ManyToMany(type => User)
     @JoinTable()
     administrators?: User[];
-    
+
     @ApiProperty({
         title: 'Usuários da Aplicação',
         description: 'Os usuários da aplicação são aqueles que fizeram registro ou possuem licensa de uso da aplicação. Algumas aplicações podem exigir licença para uso de módulos específicos.',

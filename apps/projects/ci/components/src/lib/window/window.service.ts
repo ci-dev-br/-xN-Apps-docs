@@ -8,20 +8,29 @@ export class WindowService {
     constructor(
         private readonly dialog: MatDialog,
     ) { }
-    async open(component: Type<any>, data: any, title?: string) {
-        const dialog = await this.dialog.open(WindowComponent, {
-            data: {
-                component: component,
-                data: data,
-            },
-            maxWidth: '90vw',
-        });
-        dialog.componentInstance.title = title;
-        if (dialog.componentRef?.instance) {
-            dialog.componentRef.instance.component = component;
-            //  dialog.componentRef.instance.title = 
+    async open(component: Type<any>, data: any, title?: string, event?: MouseEvent) {
+
+        if (event?.ctrlKey) {
+            event.preventDefault();
+            setTimeout(() => {
+                window.open(location.href, 'PopupWindow' + (data?.internalId | data?.id || ''), "width=600,height=700,resizable=yes,top=100,left=200,");
+            })
+        } else {
+            const dialog = await this.dialog.open(WindowComponent, {
+                data: {
+                    component: component,
+                    data: data,
+                    // ctrlKey: event?.ctrlKey
+                },
+                maxWidth: '90vw',
+            });
+            dialog.componentInstance.title = title;
+            if (dialog.componentRef?.instance) {
+                dialog.componentRef.instance.component = component;
+                //  dialog.componentRef.instance.title = 
+            }
+            return await lastValueFrom(dialog.afterClosed());
         }
-        return await lastValueFrom(dialog.afterClosed());
     }
 
 }

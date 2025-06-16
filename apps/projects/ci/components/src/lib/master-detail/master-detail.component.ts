@@ -36,7 +36,7 @@ import { lastValueFrom } from "rxjs";
     </mat-button-toggle-group>
 </mat-toolbar>
 @if(visualizacao === 'table'){
-    <ci-data-grid (select)="editar($event)" [options]="gridOptions" [source]="source">
+    <ci-data-grid (select)="editar($event[0],$event[1])" [options]="gridOptions" [source]="source">
             <div vazio style="flex: auto; text-align: center;">Nenhum item cadastrado</div>
     </ci-data-grid>
 }
@@ -107,7 +107,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
         if (this.service && this.service.getList) this.source = await lastValueFrom(this.service.getList());
         this.source;
     }
-    async editar(data: T) {
+    async editar(data: T, event?: MouseEvent) {
         const result: number | any = await this.window.open(EditarComponent,
             { schemaName: this.schemaName, data }, this.schemaName)
         if (result === -1 && this.source) {

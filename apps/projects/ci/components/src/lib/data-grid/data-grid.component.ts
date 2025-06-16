@@ -15,7 +15,7 @@ export class DataGridComponent<I> {
     @Output()
     sorted = new EventEmitter<any>();
     @Output()
-    select = new EventEmitter<I | I[]>();
+    select = new EventEmitter<[I | I[], MouseEvent]>();
     @Input()
     selectionMode?: 'cell' | 'row' | 'multi-cell' | 'multi-row' | 'multi' = 'row';
     @Input()
@@ -80,7 +80,7 @@ export class DataGridComponent<I> {
                     return;
                 }
             }
-            this.select.emit(row);
+            this.select.emit([row, event]);
             this.selectedItem = row;
         }
     }

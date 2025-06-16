@@ -37,14 +37,15 @@ export class DynFormComponent implements OnInit {
           fields: [
             ...Object.keys(properties).map(p => {
               const property_info = properties[p];
+              const schema_name = !!(property_info as any).items && (property_info as any).items['$ref'] ? (property_info as any).items['$ref'].replace('#/components/schemas/', '') : !!(property_info as any).allOf && !!(property_info as any).allOf[0] && !!(property_info as any).allOf[0]['$ref'] ? (property_info as any).allOf[0]['$ref'].replace('#/components/schemas/', '') : undefined;
               return {
                 label: property_info.title || p,
                 property: p,
                 description: property_info.description,
                 type: property_info.type,
-                schemaName: !!(property_info as any).items && (property_info as any).items['$ref'] ? (property_info as any).items['$ref'].replace('#/components/schemas/', '') : undefined,
+                schemaName: schema_name,
                 readonly: property_info.readOnly,
-                /// dataService: property_info.type ? getServiceAsSchema(property_info.type) as any : undefined,
+                dataService: schema_name ? getServiceAsSchema(schema_name) as any : undefined,
                 isArray: property_info.type === 'array' || property_info.isArray
               } as IFormFieldDefinition<any>
             })

@@ -4,6 +4,8 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { DynInputDateComponent } from "./dyn-input-date.component";
 import { CoreModule } from "@ci/core";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
 
 const types: any = {
     'Date': DynInputDateComponent
@@ -16,6 +18,8 @@ const types: any = {
         CoreModule,
         MatFormFieldModule,
         MatInputModule,
+        MatIconModule,
+        MatButtonModule,
         DynInputDateComponent,
         ReactiveFormsModule,
     ],
@@ -31,6 +35,12 @@ const types: any = {
             <mat-form-field>
                 <mat-label>{{label || placeholder || ''}}</mat-label>
                 <input matInput type="text" [placeholder]="placeholder || label || ''" [formControlName]="fieldName || ''"  >
+                @if(!!schemaName){<button mat-icon-button matSuffix>
+                    <mat-icon>
+                        search
+                    </mat-icon>
+                </button>}
+
             </mat-form-field>
         }
     </form>

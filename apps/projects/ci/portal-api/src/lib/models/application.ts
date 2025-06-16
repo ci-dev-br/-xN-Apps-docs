@@ -16,6 +16,11 @@ export interface Application {
    * Adicione os domínios que podem responder por esta aplicação.
    */
   domains?: Array<Domain> | null;
+
+  /**
+   * Usuário responsável pelo hosteamento da aplicação.
+   */
+  hoster?: User | null;
   icon?: string | null;
   id?: string | null;
 
@@ -23,8 +28,23 @@ export interface Application {
    * Logo da aplicação
    */
   logo?: string | null;
+
+  /**
+   * Usuários com permissão de gestão dos dados gerados pelos sistema, pemitindo vetação ou ajuste manual, dentre duas permissões e acessos específicos, permissivos ou restritivos.
+   */
+  managers?: Array<User> | null;
+
+  /**
+   * Usuários que podem administrar as permissões de acessos da aplicação.
+   */
+  masters?: Array<User> | null;
   menuGroupName?: string | null;
   name?: string | null;
+
+  /**
+   * Usuários com permissão de alteração no código fonte do sistema de forma direta inretristiva.
+   */
+  responsibility?: Array<User> | null;
   roles?: Array<string> | null;
   url?: string | null;
 

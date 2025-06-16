@@ -29,6 +29,12 @@ export class WindowComponent implements OnInit, OnDestroy {
   acts = new BehaviorSubject<IItemMenu[] | undefined>(undefined);
   menu: IItemMenu[] = [
     { icon: 'done_all', label: 'Confirmar alterações', visible: () => this.changed, onClick: () => this.confirm() },
+    {
+      icon: 'open_in_new', label: 'Abrir em Janela', onClick: () => {
+        window.open(location.href, 'PopupWindow' + (this.data?.data?.internalId || this.data?.data?.id || ''), "width=600,height=700,resizable=yes,top=100,left=200,");
+        this.close();
+      }
+    },
     { icon: 'close', label: 'Fechar', onClick: () => this.close() },
   ];
   @Input()
