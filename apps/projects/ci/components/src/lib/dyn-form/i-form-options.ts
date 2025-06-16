@@ -27,6 +27,7 @@ export interface IFormFieldDefinition<T> {
      * Type represent a abtraction with manipulate, validate, store and apresentation of Classes or primitives data
      */
     type?: TypeFormField;
+    schemaName?: string;
     /**
      * Property name of Object to connect field with propertie view and edit data
      */

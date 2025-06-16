@@ -42,6 +42,7 @@ export class DynFormComponent implements OnInit {
                 property: p,
                 description: property_info.description,
                 type: property_info.type,
+                schemaName: !!(property_info as any).items && (property_info as any).items['$ref'] ? (property_info as any).items['$ref'].replace('#/components/schemas/', '') : undefined,
                 readonly: property_info.readOnly,
                 /// dataService: property_info.type ? getServiceAsSchema(property_info.type) as any : undefined,
                 isArray: property_info.type === 'array' || property_info.isArray

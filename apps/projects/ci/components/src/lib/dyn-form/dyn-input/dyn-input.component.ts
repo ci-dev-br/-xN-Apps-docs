@@ -25,12 +25,17 @@ const types: any = {
             <ng-container *ngComponentOutlet="inputComponent" ></ng-container>
         }
         @else{
+            <!-- 
+                Defafault Input Implementation
+            -->
             <mat-form-field>
                 <mat-label>{{label || placeholder || ''}}</mat-label>
                 <input matInput type="text" [placeholder]="placeholder || label || ''" [formControlName]="fieldName || ''"  >
             </mat-form-field>
         }
-    </form>}
+    </form>
+    @if(false){  <ci-dyn-input-date></ci-dyn-input-date>}
+}
     `,
     styleUrl: 'dyn-input.component.scss'
 })
@@ -42,6 +47,8 @@ export class DynInputComponent {
     @Input() formControl?: FormControl;
     @Input() formGroup?: FormGroup;
     @Input() inputComponent?: Type<any>;
+    @Input() isArray?: boolean;
+    @Input() schemaName?: string;
     private _type?: string | undefined;
     public get type(): string | undefined {
         return this._type;
