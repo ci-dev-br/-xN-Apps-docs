@@ -13,7 +13,7 @@ export class WindowService {
         if (event?.ctrlKey) {
             event.preventDefault();
             setTimeout(() => {
-                window.open(location.href, 'PopupWindow' + (data?.internalId | data?.id || ''), "width=600,height=700,resizable=yes,top=100,left=200,");
+                window.open(location.href, 'PopupWindow' + (data?.internalId || data?.id || data?.data?.internalId || data?.data?.id || ''), "width=600,height=700,resizable=yes,top=100,left=200,");
             })
         } else {
             const dialog = await this.dialog.open(WindowComponent, {

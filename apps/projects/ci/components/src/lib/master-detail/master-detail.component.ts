@@ -109,7 +109,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
     }
     async editar(data: T, event?: MouseEvent) {
         const result: number | any = await this.window.open(EditarComponent,
-            { schemaName: this.schemaName, data }, this.schemaName)
+            { schemaName: this.schemaName, data }, this.schemaName, event)
         if (result === -1 && this.source) {
             let pos = this.source.indexOf(data);
             this.source?.splice(pos, 1);
