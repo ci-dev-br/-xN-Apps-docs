@@ -94,7 +94,7 @@ export class UserService {
             }
         } else {
             return await this.userRepo.createQueryBuilder('user')
-                .leftJoinAndSelect('user.photo', 'photo')
+                //  .leftJoinAndSelect('user.photo', 'photo')
                 .leftJoinAndSelect('user.tenants', 'tenant')
                 .where(`"user".id::varchar = :user_id::varchar and encode(sha512(concat(encode(sha512("user".password::bytea),'hex'), :chave_acesso::varchar )::bytea),'hex') = :ass_pass::varchar`)
                 .setParameter('user_id', userId)
@@ -128,7 +128,12 @@ export class UserService {
         // }
     }
     async findById(userId: string) {
-        const user = await this.userRepo.findOne({ where: { id: userId }, relations: ['photo', 'tenants'] })
+        const user = await this.userRepo.findOne({
+            where: { id: userId },
+            relations: [/* 'photo',  */
+                'tenants',
+            ]
+        })
         return user;
     }
     /**
