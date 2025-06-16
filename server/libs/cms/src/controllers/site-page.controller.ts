@@ -23,6 +23,10 @@ export class PessoaCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
     limit?: number;
 }
+export class FiltersSitePageOutput {
+    @ApiProperty({ nullable: true, required: false, isArray: true })
+    reuired = ['website'];
+}
 @ApiTags('SitePage')
 @Controller('SitePage')
 export class SitePageController extends ControllerDaoBase<SitePageService, SitePage> {
@@ -65,7 +69,16 @@ export class SitePageController extends ControllerDaoBase<SitePageService, SiteP
         @Request() req: Request,
 
     ) {
-        return super.GetList(input, req);
+        try {
+            return super.GetList(input, req);
+        } catch (error) {
+            return {
+                status: 500,
+                message: 'Erro ao obter lista de Website',
+                detahes: error.message,
+                stack: error.stack
+            } as any
+        }
     }
     @Post('Delete')
     @ApiResponse({
@@ -79,6 +92,39 @@ export class SitePageController extends ControllerDaoBase<SitePageService, SiteP
         @Request() req: Request,
 
     ) {
-        return super.Delete(input, req);
+        try {
+            return super.Delete(input, req);
+        } catch (error) {
+            return {
+                status: 500,
+                message: 'Erro ao obter lista de Website',
+                detahes: error.message,
+                stack: error.stack
+            } as any
+        }
+    }
+    @Post('getFilters')
+    @ApiResponse({
+        type: FiltersSitePageOutput
+    })
+    @ApiOperation({
+        operationId: 'getFiltersSitePage'
+    })
+    /* override */ async getFilters(
+        @Body() input: SitePage,
+        @Request() req: Request,
+
+    ) {
+        try {
+            // return super.getFilters(input, req);
+        } catch (error) {
+            return {
+                status: 500,
+                message: 'Erro ao obter lista de Website',
+                detahes: error.message,
+                stack: error.stack
+            } as any
+        }
+
     }
 }

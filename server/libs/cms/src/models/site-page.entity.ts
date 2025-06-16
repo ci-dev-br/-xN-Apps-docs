@@ -1,7 +1,8 @@
 import { FullAuditedEntity } from "@ci/manager";
-import { Column, Entity } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToOne } from "typeorm";
 import { schema } from "./schema";
 import { ApiProperty } from "@nestjs/swagger";
+import { Website } from "./website.entity";
 /**
  * WebSite Page
  */
@@ -31,4 +32,11 @@ export class SitePage extends FullAuditedEntity {
         nullable: true,
     })
     urlMatch?: string;
+    @ApiProperty({
+        title: 'Website',
+        description: 'Website correspondente',
+        type: Website,
+    })
+    @ManyToOne(() => Website)
+    website?: Website;
 }
