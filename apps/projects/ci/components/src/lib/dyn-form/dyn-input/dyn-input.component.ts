@@ -1,11 +1,14 @@
-import { Component, Input, Type } from "@angular/core";
+import { Component, Injector, Input, Optional, Type } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { DynInputDateComponent } from "./dyn-input-date.component";
-import { CoreModule } from "@ci/core";
+import { CoreModule, DaoBuilder, DaoService } from "@ci/core";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { getServiceAsSchema } from "@ci/portal-api";
+import { lastValueFrom } from "rxjs";
 
 const types: any = {
     'Date': DynInputDateComponent
@@ -19,6 +22,7 @@ const types: any = {
         MatFormFieldModule,
         MatInputModule,
         MatIconModule,
+        MatAutocompleteModule,
         MatButtonModule,
         DynInputDateComponent,
         ReactiveFormsModule,
@@ -34,13 +38,29 @@ const types: any = {
             -->
             <mat-form-field>
                 <mat-label>{{label || placeholder || ''}}</mat-label>
-                <input matInput type="text" [placeholder]="placeholder || label || ''" [formControlName]="fieldName || ''"  >
+                @if(!!service){
+                    <input matInput type="text" 
+                        [placeholder]="placeholder || label || ''" 
+                        [formControlName]="fieldName || ''"  
+                        [matAutocomplete]="autoc"  
+                    >
+                    <mat-autocomplete #autoc="matAutocomplete">
+                     @for (option of list; track option) {
+                         <mat-option [value]="option">{{option.name || option.name || option.title || 'Sem descrição'}}</mat-option>
+                     }    
+                    </mat-autocomplete>
+                }@else{
+                    <input matInput type="text" 
+                        autocomplete="off"
+                        [placeholder]="placeholder || label || ''" 
+                        [formControlName]="fieldName || ''"  
+                    >
+                }
                 @if(!!schemaName){<button mat-icon-button matSuffix>
                     <mat-icon>
                         search
                     </mat-icon>
                 </button>}
-
             </mat-form-field>
         }
     </form>
@@ -58,7 +78,28 @@ export class DynInputComponent {
     @Input() formGroup?: FormGroup;
     @Input() inputComponent?: Type<any>;
     @Input() isArray?: boolean;
-    @Input() schemaName?: string;
+    private _schemaName?: string | undefined;
+    public get schemaName(): string | undefined {
+        return this._schemaName;
+    }
+    @Input()
+    public set schemaName(value: string | undefined) {
+        if (this._schemaName === value) return;
+        this._schemaName = value;
+
+        if (!!this._schemaName) {
+            let serviceType = getServiceAsSchema(this._schemaName);
+            if (serviceType) {
+                this.service = this.injector.get(serviceType);
+                if (this.fieldName) this.formGroup?.get(this.fieldName)?.valueChanges.subscribe(async v => {
+                    if (this.service && this.service.getList)
+                        this.list = await this.daos?.read(await lastValueFrom(this.service.getList()));
+                    this.list;
+                });
+            }
+        }
+
+    }
     private _type?: string | undefined;
     public get type(): string | undefined {
         return this._type;
@@ -70,7 +111,12 @@ export class DynInputComponent {
         if (!!value && !!types[value])
             this.inputComponent = types[value];
     }
-    constructor() {
-
-    }
+    auto?: boolean;
+    list?: any[];
+    service?: any;
+    constructor(
+        private readonly injector: Injector,
+        @Optional() private readonly daoBuilder?: DaoBuilder,
+        @Optional() private readonly daos?: DaoService,
+    ) { }
 }

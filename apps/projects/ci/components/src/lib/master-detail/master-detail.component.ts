@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject, Injector, Input, OnInit } from "@angular/core";
+import { AfterViewInit, Component, Inject, Injector, Input, OnDestroy, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatIconModule } from "@angular/material/icon";
@@ -25,7 +25,10 @@ import { lastValueFrom } from "rxjs";
     ],
     template: `
     <mat-toolbar [auto-scroll]="'horizontal'">
-         {{schemaName || ''}}
+        <!--  {{schemaName || ''}} -->
+    <button mat-raised-button (click)="search()" >
+        Pesquisar
+    </button>
     <button mat-raised-button (click)="createNew()" >
         Novo
     </button>
@@ -42,7 +45,7 @@ import { lastValueFrom } from "rxjs";
 }
     `
 })
-export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
+export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestroy {
     @Input()
     visualizacao: 'table' | 'list' = 'table';
     @Input()
@@ -52,6 +55,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
     service?: any;
     constructor(
         private readonly daoBuilder: DaoBuilder,
+        private readonly daos: DaoService,
         private readonly route: ActivatedRoute,
         private readonly window: WindowService,
         private readonly injector: Injector,
@@ -81,10 +85,15 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
     async ngAfterViewInit() {
         this.load();
     }
+    private oTitle?: string;
+    ngOnDestroy(): void {
+        if (!!document && this.oTitle) document.title = this.oTitle;
+    }
     async ngOnInit() {
         this.route.data.subscribe(async (data: any) => {
             if (!!data.schema) {
                 this.schemaName = data.schema;
+                if (!!document?.title && !this.oTitle) { this.oTitle = document.title; document.title = `${this.oTitle} - ${this.schemaName}` }
                 await this.load();
             }
         })
@@ -104,8 +113,11 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
                 this.service = this.injector.get(serviceType);
             }
         }
-        if (this.service && this.service.getList) this.source = await lastValueFrom(this.service.getList());
+        this.search();
         this.source;
+    }
+    async search() {
+        if (this.service && this.service.getList) this.source = await this.daos.read(await lastValueFrom(this.service.getList()));
     }
     async editar(data: T, event?: MouseEvent) {
         const result: number | any = await this.window.open(EditarComponent,
