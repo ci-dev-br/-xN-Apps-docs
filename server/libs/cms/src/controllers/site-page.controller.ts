@@ -46,16 +46,7 @@ export class SitePageController extends ControllerDaoBase<SitePageService, SiteP
         @Body() body: SyncPayloadDaoSitePage,
         @Request() req: Request,
     ) {
-        try {
-            return await super.Sync(body, req);
-        } catch (error) {
-            return {
-                status: 500,
-                message: 'Falha',
-                detahes: error.message,
-                stack: error.stack
-            } as any
-        }
+        return await super.Sync(body, req);
     }
     @Post('GetList')
     @ApiResponse({
