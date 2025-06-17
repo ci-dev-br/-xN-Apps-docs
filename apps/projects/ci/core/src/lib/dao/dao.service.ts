@@ -49,6 +49,8 @@ export class DaoService {
         //let emitter;
         const data_schema = options?.schemaName ? await this.daoBuilder.getSchema(options.schemaName) : undefined;
 
+        if (Object.getOwnPropertyDescriptor(data, 'toJSON') !== undefined) return data;
+
         if (!data) return undefined;
         if (Array.isArray(data)) {
             return data.map(data_child => {
@@ -92,22 +94,26 @@ export class DaoService {
                     if (data_schema?.properties && !!data_schema.properties[property]) {
                         //  data_schema.properties[property];
                         try {
-                            delete data[property];
-                            Object.defineProperty(data, property, {
-                                get: () => { return o_data[property]; },
-                                set: (value: any) => {
-                                    try {
-                                        if (o_data[property] === value) return;
-                                        const old_vale = o_data[property];
-                                        o_data[property] = value;
-                                        if (!!emitter) emitter.emit({
-                                            [property]: new SimpleChange(old_vale, value, false),
-                                        });
-                                    } catch (error) {
-                                        console.error(error);
-                                    }
-                                },
-                            });
+                            let propery_descriptor = Object.getOwnPropertyDescriptor(data, property);
+                            if (!propery_descriptor?.get && !propery_descriptor?.set) {
+                                delete data[property];
+                                Object.defineProperty(data, property, {
+                                    get: () => { return o_data[property]; },
+                                    set: (value: any) => {
+                                        try {
+                                            if (o_data[property] === value) return;
+                                            const old_vale = o_data[property];
+                                            o_data[property] = value;
+                                            if (!!emitter) emitter.emit({
+                                                [property]: new SimpleChange(old_vale, value, false),
+                                            });
+                                        } catch (error) {
+                                            console.error(error);
+                                        }
+                                    },
+                                });
+                            }
+
                         } catch (error) {
                             console.error(error);
                         }
@@ -154,15 +160,16 @@ export class DaoService {
                     }
                 }
             });
-            Object.defineProperty(data, 'toString', {
-                value: () => {
-                    return (
-                        data.name || data.nome ||
-                        data.title || data.titulo ||
-                        data.descricao || data.description ||
-                        '(Item sem descrição)');
-                }
-            });
+            if (!data.toString)
+                Object.defineProperty(data, 'toString', {
+                    value: () => {
+                        return (
+                            data.name || data.nome ||
+                            data.title || data.titulo ||
+                            data.descricao || data.description ||
+                            '(Item sem descrição)');
+                    }
+                });
             data.complete = () => pre = { ...JSON.parse(JSON.stringify(o_data)) };
             (data as any)[EMITTER] = emitter;
             Object.setPrototypeOf(data, new SerializedObjectData());
@@ -190,6 +197,26 @@ export class DaoService {
         if (Array.isArray(data)) {
             data.forEach(o => this.read(o));
         } else if (!!data && typeof data === 'object') {
+
+            if (!data.toJSON)
+                Object.defineProperty(data, 'toJSON', {
+                    value: () => {
+                        try {
+                            // const out: any = {
+                            //     // ...this.getChanges(data, { pre })
+                            // };
+                            // (options?.fieldsId || ['id', 'internalId']).forEach(p => {
+                            //     if (data[p]) {
+                            //         out[p] = data[p] || undefined;
+                            //     }
+                            // })
+                            return { ...data };
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    }
+                });
+            // if (!data.toString)
             Object.defineProperty(data, 'toString', {
                 value: () => {
                     return (
