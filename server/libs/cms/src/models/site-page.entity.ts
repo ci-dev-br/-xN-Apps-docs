@@ -38,6 +38,5 @@ export class SitePage extends FullAuditedEntity {
         type: Website,
     })
     @ManyToOne(() => Website)
-    @JoinColumn()
     website?: Website;
 }
