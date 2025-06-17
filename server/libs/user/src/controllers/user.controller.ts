@@ -21,7 +21,7 @@ export class UserController {
         }
     }
     @Post('GetList')
-    @ApiOperation({ operationId: 'UserGetList' })
+    @ApiOperation({ operationId: 'GetListUser' })
     @ApiResponse({
         type: User,
         isArray: true
@@ -29,6 +29,15 @@ export class UserController {
     async getList(
         @Req() req: any
     ) {
-        return await this.user.find();
+        return (await this.user.find())?.map(u => {
+            delete u.password;
+            if (!!u.email) {
+                u.email = u.email.substring(0, 3) + '***' + u.email.substring(u.email.length - 8, 3);
+            }
+            delete u.email;
+            delete u.passwordMode;
+
+            return u;
+        });
     }
 }

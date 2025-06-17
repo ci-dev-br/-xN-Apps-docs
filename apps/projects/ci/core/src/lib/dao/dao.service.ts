@@ -4,6 +4,19 @@ import { Subject } from "rxjs";
 import { DaoBuilder, WsService } from "../core.module";
 import { EMITTER } from "../emitter/token";
 
+export function OfString(data: any) {
+    return (
+        data.name || data.nome ||
+        data.title || data.titulo ||
+        data.descricao || data.description ||
+        (() => {
+            const a = Object.keys(data).find(p => p.indexOf('name') > -1 || p.indexOf('nome') > -1);
+            if (a) return data[a]
+        })()
+        ||
+        '(Item sem descrição)')
+}
+
 /**
  * Objeto alterável pela interface do usuário
  */
@@ -163,11 +176,7 @@ export class DaoService {
             if (!data.toString)
                 Object.defineProperty(data, 'toString', {
                     value: () => {
-                        return (
-                            data.name || data.nome ||
-                            data.title || data.titulo ||
-                            data.descricao || data.description ||
-                            '(Item sem descrição)');
+                        return OfString(data);
                     }
                 });
             data.complete = () => pre = { ...JSON.parse(JSON.stringify(o_data)) };
@@ -235,11 +244,7 @@ export class DaoService {
             try {
                 Object.defineProperty(data, 'toString', {
                     value: () => {
-                        return (
-                            data.name || data.nome ||
-                            data.title || data.titulo ||
-                            data.descricao || data.description ||
-                            '(Item sem descrição)');
+                        return OfString(data);
                     }
                 });
             } catch (error) {

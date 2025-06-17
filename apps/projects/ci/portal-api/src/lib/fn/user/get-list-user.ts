@@ -8,11 +8,11 @@ import { RequestBuilder } from '../../request-builder';
 
 import { User } from '../../models/user';
 
-export interface UserGetList$Params {
+export interface GetListUser$Params {
 }
 
-export function userGetList(http: HttpClient, rootUrl: string, params?: UserGetList$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<User>>> {
-  const rb = new RequestBuilder(rootUrl, userGetList.PATH, 'post');
+export function getListUser(http: HttpClient, rootUrl: string, params?: GetListUser$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<User>>> {
+  const rb = new RequestBuilder(rootUrl, getListUser.PATH, 'post');
   if (params) {
   }
 
@@ -26,4 +26,4 @@ export function userGetList(http: HttpClient, rootUrl: string, params?: UserGetL
   );
 }
 
-userGetList.PATH = '/User/GetList';
+getListUser.PATH = '/User/GetList';

@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from "@angular/core";
 
 @Pipe({
     name: 'dao',
+    pure: true,
     standalone: false,
 })
 export class DaoPipe implements PipeTransform {
@@ -10,6 +11,12 @@ export class DaoPipe implements PipeTransform {
             value.name || value.nome ||
             value.title || value.titulo ||
             value.descricao || value.description ||
-            '(Item sem descrição)');
+            value.surname || value.username ||
+                /* (() => {
+                    if (typeof value === 'object') {
+                        const a = Object.keys(value).find(p => p.indexOf('name') > -1 || p.indexOf('nome') > -1);
+                        if (a) return value[a]
+                    }
+                })()  */'Sem descrição')
     }
 }

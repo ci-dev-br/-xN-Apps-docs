@@ -9,11 +9,11 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { getListUser } from '../fn/user/get-list-user';
+import { GetListUser$Params } from '../fn/user/get-list-user';
 import { syncUser } from '../fn/user/sync-user';
 import { SyncUser$Params } from '../fn/user/sync-user';
 import { User } from '../models/user';
-import { userGetList } from '../fn/user/user-get-list';
-import { UserGetList$Params } from '../fn/user/user-get-list';
 
 @Injectable()
 export class UserService extends BaseService {
@@ -46,27 +46,27 @@ export class UserService extends BaseService {
     );
   }
 
-  /** Path part for operation `userGetList()` */
-  static readonly UserGetListPath = '/User/GetList';
+  /** Path part for operation `getListUser()` */
+  static readonly GetListUserPath = '/User/GetList';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `userGetList()` instead.
+   * To access only the response body, use `getListUser()` instead.
    *
    * This method doesn't expect any request body.
    */
-  userGetList$Response(params?: UserGetList$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<User>>> {
-    return userGetList(this.http, this.rootUrl, params, context);
+  getListUser$Response(params?: GetListUser$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<User>>> {
+    return getListUser(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `userGetList$Response()` instead.
+   * To access the full response (for headers, for example), `getListUser$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  userGetList(params?: UserGetList$Params, context?: HttpContext): Observable<Array<User>> {
-    return this.userGetList$Response(params, context).pipe(
+  getList(params?: GetListUser$Params, context?: HttpContext): Observable<Array<User>> {
+    return this.getListUser$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<User>>): Array<User> => r.body)
     );
   }

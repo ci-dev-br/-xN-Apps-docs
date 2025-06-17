@@ -31,7 +31,7 @@ const types: any = {
                     >
                     <mat-autocomplete #autoc="matAutocomplete">
                      @for (option of list; track option) {
-                         <mat-option [value]="option">{{option.name || option.name || option.title || 'Sem descrição'}}</mat-option>
+                         <mat-option [value]="option">{{option | dao}}</mat-option>
                      }    
                     </mat-autocomplete>
                 }@else{

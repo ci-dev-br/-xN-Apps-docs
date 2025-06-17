@@ -13,12 +13,12 @@ export class User {
     @PrimaryGeneratedColumn('uuid')
     id?: string;
     @Column({ unique: true })
-    @ApiProperty({ required: false, nullable: true })
+    @ApiProperty({ name: "Nome Usuário", required: false, nullable: true })
     username?: string;
     @ApiProperty({ required: false, nullable: true })
     @Column({ nullable: true })
     fullName?: string;
-    @ApiProperty({ required: false, nullable: true })
+    @ApiProperty({ name: 'Nome de Tratamento', required: false, nullable: true })
     @Column({ nullable: true })
     surname?: string;
     @Column({ nullable: true })
@@ -50,6 +50,10 @@ export class User {
     @ManyToMany(() => Tenant)
     @JoinTable()
     tenants?: Tenant[];
+
+    get name() {
+        return this.username;
+    }
     // @ApiProperty({ nullable: true, required: false, type: Photo })
     // @ManyToOne(() => Photo)
     // @JoinColumn()

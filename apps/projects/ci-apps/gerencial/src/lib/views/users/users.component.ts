@@ -85,7 +85,7 @@ import { ContainerModule } from "@ci/components";
 
     }
     async find() {
-        this.users = await lastValueFrom(this.userService.userGetList());
+        this.users = await lastValueFrom(this.userService.getList());
     }
 
     async cadastrarNovoUsuario() {
