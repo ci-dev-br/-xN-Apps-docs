@@ -65,7 +65,12 @@ export class WebsiteController extends ControllerDaoBase<WebsiteService, Website
         @Request() req: Request,
     ) {
         try {
-            return super.GetList(input, req);
+            return super.GetList({
+                ...input, relations: {
+                    admin: true,
+                    users: true,
+                }
+            }, req);
         } catch (error) {
             return {
                 status: 500,

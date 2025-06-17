@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { User } from "@ci/auth/models/user.entity";
 import { DaoFullAuditedServiceBase, FullAuditedEntity } from "@ci/core";
-import { Column, Entity, ManyToMany } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne } from "typeorm";
 import { schema } from "./schema";
 @Entity({
     schema,
@@ -28,9 +28,10 @@ export class Website extends FullAuditedEntity {
     @Column({ type: 'varchar', array: true, nullable: true })
     modules?: string[];
     @ApiProperty({ nullable: true, required: false, type: User, title: 'Administrador' })
-    @ManyToMany(type => User)
+    @ManyToOne(type => User)
     admin?: User;
     @ApiProperty({ nullable: true, required: false, type: User, isArray: true, title: 'Usuários Autorizados' })
     @ManyToMany(type => User)
+    @JoinTable()
     users?: User[];
 }

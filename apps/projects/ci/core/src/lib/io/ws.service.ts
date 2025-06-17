@@ -131,6 +131,7 @@ export class WsService {
                     objectRef: {
                         ...objectRef,
                         internalId: objectRef.internalId,
+                        id: objectRef.id,
                     }
                 }
             });
