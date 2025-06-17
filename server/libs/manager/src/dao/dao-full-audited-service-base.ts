@@ -28,10 +28,15 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
                 });
                 if (___internal_data) {
                     // TODO: verificar policy
-                    // const { internalId, } = ___receipt_data
-                    Object.keys(___internal_data)
-                        .filter(p => !['internalId', 'createdAt', 'createdBy'].includes(p))
-                        .forEach(p => ___internal_data[p] = ___receipt_data[p]);
+                    [...new Set([...Object.keys(___receipt_data), ...Object.keys(___internal_data)])]
+                        .filter(p => !['internalId', 'createdAt', 'createdBy', 'id'].includes(p))
+                        .forEach(p => {
+                            if (___receipt_data[p] !== undefined && // receipt undefined apenas deve ignorar atualização da propriedade, para limpar o campo necessário null
+                                ___internal_data[p] !== ___receipt_data[p]
+                            ) {
+                                ___internal_data[p] = ___receipt_data[p];
+                            }
+                        });
                     ___internal_data.lastModifiedAt = new Date();
                     if (request) {
                         if (request.chaveAcesso) {
@@ -45,6 +50,7 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
                 }
             }
         }
+        console.log(___internal_data);
         return await this._repo.save(___internal_data);
         /// }
     }
