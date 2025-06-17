@@ -13,12 +13,12 @@ export class User {
     @PrimaryGeneratedColumn('uuid')
     id?: string;
     @Column({ unique: true })
-    @ApiProperty({ name: "Nome Usuário", required: false, nullable: true })
+    @ApiProperty({ title: "Nome Usuário", required: false, nullable: true })
     username?: string;
     @ApiProperty({ required: false, nullable: true })
     @Column({ nullable: true })
     fullName?: string;
-    @ApiProperty({ name: 'Nome de Tratamento', required: false, nullable: true })
+    @ApiProperty({ title: 'Nome de Tratamento', required: false, nullable: true })
     @Column({ nullable: true })
     surname?: string;
     @Column({ nullable: true })

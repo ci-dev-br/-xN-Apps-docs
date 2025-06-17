@@ -74,7 +74,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
                         return {
                             headerName,
                             fieldName,
-                            hide: fieldName && ['internalId', 'id', 'createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy', 'tenants'].indexOf(fieldName) > -1
+                            hide: fieldName && ['internalId', 'id', 'createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy', 'tenants', 'deleted'].indexOf(fieldName) > -1
 
                         } as IColumnOption<any>
                     })
