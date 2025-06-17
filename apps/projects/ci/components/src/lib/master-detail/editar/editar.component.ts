@@ -13,9 +13,7 @@ export interface IDataEditar {
 @Component({
     selector: 'ci-master-datail--editar',
     styleUrl: 'editar.component.scss',
-    template: `@if(form){
-<ci-dyn-form [formGroup]="form" [schemaName]="schemaName"></ci-dyn-form>
-}`,
+    template: `@if(form){<ci-dyn-form [formGroup]="form" [schemaName]="schemaName"></ci-dyn-form>}`,
     imports: [
         CoreModule,
         ReactiveFormsModule,

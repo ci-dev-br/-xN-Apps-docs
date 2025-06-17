@@ -70,7 +70,11 @@ export class SitePageController extends ControllerDaoBase<SitePageService, SiteP
 
     ) {
         try {
-            return super.GetList(input, req);
+            return super.GetList({
+                ...input, relations: {
+                    website: true,
+                }
+            }, req);
         } catch (error) {
             return {
                 status: 500,

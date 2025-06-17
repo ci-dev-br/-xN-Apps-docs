@@ -57,7 +57,7 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
                 if (!Array.isArray(_where)) _where = [_where];
                 if (Array.isArray(_where)) _where.push({ ...w, deleted: IsNull() })
             });
-        return ((await this._repo.find({ skip: options.skip, take: options.take, where: _where, relations: { createdBy: true, lastModifiedBy: true } as any, order: options.orderBy })) || [])
+        return ((await this._repo.find({ skip: options.skip, take: options.take, where: _where, relations: { createdBy: true, lastModifiedBy: true, ...options.relations } as any, order: options.orderBy })) || [])
     }
     async getByInternalId(internalId: string, request?: any) {
         let where: FindOptionsWhere<E> = {

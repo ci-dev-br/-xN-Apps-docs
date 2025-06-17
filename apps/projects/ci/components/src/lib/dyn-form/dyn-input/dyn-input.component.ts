@@ -92,13 +92,16 @@ export class DynInputComponent {
             if (serviceType) {
                 this.service = this.injector.get(serviceType);
                 if (this.fieldName) this.formGroup?.get(this.fieldName)?.valueChanges.subscribe(async v => {
-                    if (this.service && this.service.getList)
-                        this.list = await this.daos?.read(await lastValueFrom(this.service.getList()));
-                    this.list;
+                    if (typeof v === 'string') {
+                        if (this.service && this.service.getList)
+                            this.list = await this.daos?.read(await lastValueFrom(this.service.getList()));
+                        this.list;
+                    } else {
+                        v;
+                    }
                 });
             }
         }
-
     }
     private _type?: string | undefined;
     public get type(): string | undefined {

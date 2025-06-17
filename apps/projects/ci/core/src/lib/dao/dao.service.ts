@@ -198,7 +198,7 @@ export class DaoService {
             data.forEach(o => this.read(o));
         } else if (!!data && typeof data === 'object') {
 
-            if (!data.toJSON)
+            if (Object.getOwnPropertyDescriptor(data, 'toJSON') === undefined)
                 Object.defineProperty(data, 'toJSON', {
                     value: () => {
                         try {
@@ -210,22 +210,27 @@ export class DaoService {
                             //         out[p] = data[p] || undefined;
                             //     }
                             // })
-                            return { ...data };
+                            const { __confirmation_subject, ...out } = data?.toJSON() || data;
+                            return { ...out };
                         } catch (error) {
                             console.error(error);
                         }
                     }
                 });
             // if (!data.toString)
-            Object.defineProperty(data, 'toString', {
-                value: () => {
-                    return (
-                        data.name || data.nome ||
-                        data.title || data.titulo ||
-                        data.descricao || data.description ||
-                        '(Item sem descrição)');
-                }
-            });
+            try {
+                Object.defineProperty(data, 'toString', {
+                    value: () => {
+                        return (
+                            data.name || data.nome ||
+                            data.title || data.titulo ||
+                            data.descricao || data.description ||
+                            '(Item sem descrição)');
+                    }
+                });
+            } catch (error) {
+                console.error(error);
+            }
         }
         return data;
     }
