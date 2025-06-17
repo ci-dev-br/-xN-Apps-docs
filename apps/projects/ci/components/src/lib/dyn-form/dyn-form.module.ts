@@ -8,9 +8,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CoreModule } from '@ci/core';
 import { MatChipsModule } from '@angular/material/chips';
 import { DynInputComponent } from './dyn-input/dyn-input.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { DynInputDateComponent } from './dyn-input/dyn-input-date.component';
 @NgModule({
   declarations: [
-    DynFormComponent
+    DynFormComponent,
+    DynInputComponent,
+    DynInputDateComponent,
   ],
   imports: [
     CoreModule,
@@ -19,9 +24,11 @@ import { DynInputComponent } from './dyn-input/dyn-input.component';
     MatIconModule,
     ReactiveFormsModule,
     MatChipsModule,
-
-
-    DynInputComponent,
+    MatInputModule,
+    MatIconModule,
+    MatAutocompleteModule,
+    MatButtonModule,
+    ReactiveFormsModule,
   ],
   providers: [
     FormOptionsBuilder,
@@ -41,5 +48,7 @@ export class DynFormModule {
   }
 }
 export {
+  DynInputDateComponent,
   DynFormComponent,
+  DynInputComponent,
 }

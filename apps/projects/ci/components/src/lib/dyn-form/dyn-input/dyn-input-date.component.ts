@@ -1,15 +1,9 @@
 import { Component, Input, Type } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
-import { MatButtonModule } from "@angular/material/button";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
-import { MatInputModule } from "@angular/material/input";
-import { CoreModule } from "@ci/core";
-
-
 
 @Component({
     selector: 'ci-dyn-input-date',
+    standalone: false,
     template: `
         <mat-form-field>
             <mat-label>{{label || placeholder || ''}}</mat-label>
@@ -19,14 +13,14 @@ import { CoreModule } from "@ci/core";
             </button>}
         </mat-form-field>
         `,
-    standalone: true,
+    /* standalone: true,
     imports: [
         CoreModule,
         MatButtonModule,
         MatIconModule,
         MatInputModule,
         MatFormFieldModule,
-    ],
+    ], */
     styles: ':host{display:contents;}'
 })
 export class DynInputDateComponent {

@@ -1,12 +1,7 @@
 import { Component, Injector, Input, Optional, Type } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
 import { DynInputDateComponent } from "./dyn-input-date.component";
-import { CoreModule, DaoBuilder, DaoService } from "@ci/core";
-import { MatIconModule } from "@angular/material/icon";
-import { MatButtonModule } from "@angular/material/button";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { DaoBuilder, DaoService } from "@ci/core";
 import { getServiceAsSchema } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 
@@ -16,17 +11,7 @@ const types: any = {
 
 @Component({
     selector: 'ci-dyn-input',
-    standalone: true,
-    imports: [
-        CoreModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatIconModule,
-        MatAutocompleteModule,
-        MatButtonModule,
-        DynInputDateComponent,
-        ReactiveFormsModule,
-    ],
+    standalone: false,
     template: `
     @if(!!formGroup && !!fieldName){<form style="display:contents" [formGroup]="formGroup">
         @if(inputComponent !== undefined && !!inputComponent){
