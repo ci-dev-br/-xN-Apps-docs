@@ -112,8 +112,8 @@ export class DaoService {
                                         }
                                     },
                                 });
+                                this.read(o_data[property]);
                             }
-
                         } catch (error) {
                             console.error(error);
                         }
@@ -198,7 +198,7 @@ export class DaoService {
             data.forEach(o => this.read(o));
         } else if (!!data && typeof data === 'object') {
 
-            if (Object.getOwnPropertyDescriptor(data, 'toJSON') === undefined)
+            if (Object.getOwnPropertyDescriptor(data, 'toJSON') === undefined) {
                 Object.defineProperty(data, 'toJSON', {
                     value: () => {
                         try {
@@ -217,6 +217,20 @@ export class DaoService {
                         }
                     }
                 });
+                // this.read()
+            }
+
+            try {
+                Object.keys(data).forEach(p => {
+                    try {
+                        this.read(data[p]);
+                    } catch (error) {
+                        console.error(error);
+                    }
+                })
+            } catch (error) {
+                console.error(error);
+            }
             // if (!data.toString)
             try {
                 Object.defineProperty(data, 'toString', {
