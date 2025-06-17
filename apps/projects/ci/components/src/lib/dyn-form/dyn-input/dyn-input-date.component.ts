@@ -13,14 +13,6 @@ import { FormControl, FormGroup } from "@angular/forms";
             </button>}
         </mat-form-field>
         `,
-    /* standalone: true,
-    imports: [
-        CoreModule,
-        MatButtonModule,
-        MatIconModule,
-        MatInputModule,
-        MatFormFieldModule,
-    ], */
     styles: ':host{display:contents;}'
 })
 export class DynInputDateComponent {
