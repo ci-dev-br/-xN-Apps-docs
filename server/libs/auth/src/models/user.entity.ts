@@ -50,10 +50,6 @@ export class User {
     @ManyToMany(() => Tenant)
     @JoinTable()
     tenants?: Tenant[];
-
-    get name() {
-        return this.username;
-    }
     // @ApiProperty({ nullable: true, required: false, type: Photo })
     // @ManyToOne(() => Photo)
     // @JoinColumn()
