@@ -9,12 +9,12 @@ export class SyncPayloadDaoSitePage extends SyncPayloadDao<SitePage> {
     override data?: SitePage;
 }
 export class ObterListaSitePage {
-    // override data?: SitePage;
     @ApiProperty({})
     skip?: number;
     @ApiProperty({})
     take?: number;
-    @ApiProperty({})
+    @ApiProperty({
+    })
     where?: FindOptionsWhere<SitePage>[] | FindOptionsWhere<SitePage>;
 }
 export class PessoaCotrollerGetInputDto {

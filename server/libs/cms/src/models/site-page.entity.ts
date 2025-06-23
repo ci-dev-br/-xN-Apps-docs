@@ -36,6 +36,7 @@ export class SitePage extends FullAuditedEntity {
         title: 'Website',
         description: 'Website correspondente',
         type: Website,
+        required: true,
     })
     @ManyToOne(() => Website)
     website?: Website;
