@@ -42,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
         });
         this.appsButton = findViewById(R.id.apps);
         this.message = findViewById(R.id.message);
-        String api = "http://srv33.internals.ci.dev.br:86/";
-        String ws = "ws://srv33.internals.ci.dev.br:86/";
+        String api = "https://srv33.internals.ci.dev.br:664/";
+        String ws = "wss://srv33.internals.ci.dev.br:664/";
         if(this.message != null){
             permission();
             getPhoneNumber();
