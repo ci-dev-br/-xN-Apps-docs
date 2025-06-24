@@ -16,8 +16,11 @@ public class ManagerClient {
     private MainActivity mainActivity;
     private List<DeviceConnect> connections = new ArrayList<>();
     private static ManagerClient _instance = new ManagerClient();
-    private List<PhoneNumber> phones;
-    public List<PhoneNumber> getPhones() {
+    private ArrayList<PhoneNumber> phones;
+    public ArrayList<PhoneNumber> getPhones() {
+        if(phones == null) {
+            phones = new ArrayList<>();
+        }
         return phones;
     }
     public List<DeviceConnect> getConnections() {
@@ -29,7 +32,7 @@ public class ManagerClient {
     public void setMainActivity(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
-    public void setPhones(List<PhoneNumber> phones) {
+    public void setPhones(ArrayList<PhoneNumber> phones) {
         this.phones = phones;
     }
     public static ManagerClient getInstance(){
@@ -57,12 +60,12 @@ public class ManagerClient {
     private AsyncTask<Device, Void, String> connect(GatewayConnection connection){
         DeviceConnect device_connection = new DeviceConnect(connection,this.getMainActivity());
         connections.add(device_connection);
-        Device device = new Device(){{
-            setMac(getMacAddr());
-            setApplicationId("e60e2ed1-e318-4f38-bdcd-2fceb3d0315d");
-            setName("MobManager-KitKat");
-            setNumbers(getPhones());
-        }};
+
+        Device device = new Device();
+        device.setMac(getMacAddr());
+        device. setApplicationId("f20e2ed5-e318-4f38-bdfd-2fceb5d0315d");
+        device.setName("MobManager-Q10-Java");
+        device.setNumbers(this.getPhones());
         return device_connection.execute(device);
     }
     private  String getMacAddr() {

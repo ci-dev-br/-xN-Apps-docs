@@ -1,5 +1,6 @@
 package br.dev.ci.mobilemanger.client.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Device {
@@ -9,7 +10,7 @@ public class Device {
     private String model;
     private String authentication;
     private String mac;
-    private List<PhoneNumber> numbers;
+    private ArrayList<PhoneNumber> numbers;
     public String getId() {
         return id;
     }
@@ -43,7 +44,7 @@ public class Device {
     public List<PhoneNumber> getNumbers() {
         return numbers;
     }
-    public void setNumbers(List<PhoneNumber> phones) {
+    public void setNumbers(ArrayList<PhoneNumber> phones) {
         this.numbers = phones;
     }
     public void setMac(String value){

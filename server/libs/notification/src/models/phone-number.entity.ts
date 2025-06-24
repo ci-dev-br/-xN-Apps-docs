@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToOne, PrimaryColumn } from "typeorm";
 import { Device } from "./device.entity";
-import { ManagerModule } from "@ci/manager";
 @Entity({
     schema: 'notification'
 })

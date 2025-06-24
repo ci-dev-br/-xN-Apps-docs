@@ -92,10 +92,9 @@ public class MainActivity extends AppCompatActivity {
     // @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
     private void identificarNumerosTelefone() {
         if (
-                true
-                /*ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED && */
-               //  ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED
-                /* && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED*/ ) {
+                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED &&
+                 ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
             try {
                 SubscriptionManager subscriptionManager = null;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
@@ -121,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                         phones = new ArrayList<>();
                     }
                     for (SubscriptionInfo subscriptionInfo : subscriptionInfoList) {
-                         // TelephonyManager telephonyManager = ((TelephonyManager) requireContext().getSystemService(Context.TELEPHONY_SERVICE)).createForSubscriptionId(subscriptionId);
+                          TelephonyManager telephonyManager = ((TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE)).createForSubscriptionId();
                         PhoneNumber phone_number = new PhoneNumber() {{
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                                 setNumber(subscriptionInfo.getNumber());
@@ -133,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                                 setSubscriptionId(subscriptionInfo.getSubscriptionId());
                             }
                         }};
-                        // telephonyManager.getLine1Number();
+                        telephonyManager.getLine1Number();
                         this.phones.add(phone_number);
                     }
                     ManagerClient.getInstance().setPhones(this.phones);

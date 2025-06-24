@@ -91,8 +91,12 @@ public class DeviceConnect extends AsyncTask<Device, Void, String> {
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Accept", "application/json");
             if(data != null){
+                Gson mapper = new Gson();
+                String data_string_json = mapper.toJson(data, data_class);
+
                 try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
-                    String data_string_json = this.readAsStringJson(data,data_class);
+
+
                     os.writeBytes(data_string_json);
                     os.flush();
                 }

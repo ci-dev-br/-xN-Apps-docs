@@ -2,7 +2,7 @@ package br.dev.ci.mobilemanger.client.model;
 
 public class PhoneNumber {
     String number;
-    Device device;
+    // Device device;
     Integer subscriptionId;
     String carrierName;
 
@@ -14,13 +14,13 @@ public class PhoneNumber {
         this.number = number;
     }
 
-    public Device getDevice() {
-        return device;
-    }
+    // public Device getDevice() {
+    //     return device;
+    // }
 
-    public void setDevice(Device device) {
-        this.device = device;
-    }
+    // public void setDevice(Device device) {
+    //    this.device = device;
+    //}
 
     public String getCarrierName() {
         return carrierName;

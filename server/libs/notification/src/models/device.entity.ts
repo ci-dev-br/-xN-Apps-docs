@@ -14,6 +14,7 @@ export class Device {
     @ApiProperty({ nullable: true })
     @Column({ nullable: true })
     type?: string;
+    @ApiProperty({ nullable: true, type: PhoneNumber, isArray: true })
     @OneToMany(() => PhoneNumber, type => type.device)
     @JoinTable()
     numbers?: PhoneNumber[];
