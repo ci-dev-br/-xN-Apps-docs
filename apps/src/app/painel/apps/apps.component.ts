@@ -41,7 +41,7 @@ export class AppsComponent implements OnInit {
       }
     })
   }
-  async appClickHandler(event: MouseEvent, app: any) {
+  async appClickHandler(event: any, app: any) {
     if (event.ctrlKey) {
       window.open(location.href + '/' + app.url, '')
     } else {
