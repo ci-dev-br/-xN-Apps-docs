@@ -93,10 +93,7 @@ public class DeviceConnect extends AsyncTask<Device, Void, String> {
             if(data != null){
                 Gson mapper = new Gson();
                 String data_string_json = mapper.toJson(data, data_class);
-
                 try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
-
-
                     os.writeBytes(data_string_json);
                     os.flush();
                 }
