@@ -15,7 +15,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular/build:application",
           "options": {
             "outputPath": "dist/apps",
             "index": "src/index.html",
@@ -73,7 +73,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "apps:build:production"
@@ -85,10 +85,10 @@
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n"
+          "builder": "@angular/build:extract-i18n"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "codeCoverage": true,
             "polyfills": [
@@ -118,7 +118,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci/portal-api/ng-package.json"
           },
@@ -133,7 +133,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci/portal-api/tsconfig.spec.json",
             "polyfills": [
@@ -151,7 +151,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci/components/ng-package.json"
           },
@@ -166,7 +166,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci/components/tsconfig.spec.json",
             "polyfills": [
@@ -184,7 +184,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci/core/ng-package.json"
           },
@@ -199,7 +199,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci/core/tsconfig.spec.json",
             "polyfills": [
@@ -217,7 +217,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci/data-grid/ng-package.json"
           },
@@ -232,7 +232,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci/data-grid/tsconfig.spec.json",
             "polyfills": [
@@ -250,7 +250,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/arquivos/ng-package.json"
           },
@@ -265,7 +265,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/arquivos/tsconfig.spec.json",
             "polyfills": [
@@ -283,7 +283,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/cadastros/ng-package.json"
           },
@@ -298,7 +298,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/cadastros/tsconfig.spec.json",
             "polyfills": [
@@ -316,7 +316,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/codex/ng-package.json"
           },
@@ -331,7 +331,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/codex/tsconfig.spec.json",
             "polyfills": [
@@ -349,7 +349,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/dev-tools/ng-package.json"
           },
@@ -364,7 +364,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/dev-tools/tsconfig.spec.json",
             "polyfills": [
@@ -382,7 +382,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/dynamic/ng-package.json"
           },
@@ -397,7 +397,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/dynamic/tsconfig.spec.json",
             "polyfills": [
@@ -415,7 +415,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/financeiro/ng-package.json"
           },
@@ -430,7 +430,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/financeiro/tsconfig.spec.json",
             "polyfills": [
@@ -448,7 +448,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/formularios/ng-package.json"
           },
@@ -463,7 +463,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/formularios/tsconfig.spec.json",
             "polyfills": [
@@ -481,7 +481,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/icons/ng-package.json"
           },
@@ -496,7 +496,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/icons/tsconfig.spec.json",
             "polyfills": [
@@ -514,7 +514,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/imersao/ng-package.json"
           },
@@ -529,7 +529,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/imersao/tsconfig.spec.json",
             "polyfills": [
@@ -547,7 +547,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/infra/ng-package.json"
           },
@@ -562,7 +562,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/infra/tsconfig.spec.json",
             "polyfills": [
@@ -580,7 +580,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/instalacao/ng-package.json"
           },
@@ -595,7 +595,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/instalacao/tsconfig.spec.json",
             "polyfills": [
@@ -613,7 +613,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/low-code/ng-package.json"
           },
@@ -628,7 +628,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/low-code/tsconfig.spec.json",
             "polyfills": [
@@ -646,7 +646,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/mensagens/ng-package.json"
           },
@@ -661,7 +661,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/mensagens/tsconfig.spec.json",
             "polyfills": [
@@ -679,7 +679,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/organizacao/ng-package.json"
           },
@@ -694,7 +694,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/organizacao/tsconfig.spec.json",
             "polyfills": [
@@ -712,7 +712,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/produtos/ng-package.json"
           },
@@ -727,7 +727,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/produtos/tsconfig.spec.json",
             "polyfills": [
@@ -745,7 +745,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/profile/ng-package.json"
           },
@@ -760,7 +760,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/profile/tsconfig.spec.json",
             "polyfills": [
@@ -778,7 +778,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/projetos/ng-package.json"
           },
@@ -793,7 +793,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/projetos/tsconfig.spec.json",
             "polyfills": [
@@ -811,7 +811,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/seo/ng-package.json"
           },
@@ -826,7 +826,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/seo/tsconfig.spec.json",
             "polyfills": [
@@ -844,7 +844,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/threejs/ng-package.json"
           },
@@ -859,7 +859,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/threejs/tsconfig.spec.json",
             "polyfills": [
@@ -877,7 +877,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/treinamento/ng-package.json"
           },
@@ -892,7 +892,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/treinamento/tsconfig.spec.json",
             "polyfills": [
@@ -910,7 +910,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/vendas/ng-package.json"
           },
@@ -925,7 +925,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/vendas/tsconfig.spec.json",
             "polyfills": [
@@ -943,7 +943,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/gerencial/ng-package.json"
           },
@@ -958,7 +958,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/gerencial/tsconfig.spec.json",
             "polyfills": [
@@ -976,7 +976,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci/auth/ng-package.json"
           },
@@ -991,7 +991,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci/auth/tsconfig.spec.json",
             "polyfills": [
@@ -1009,7 +1009,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci/organizacao/ng-package.json"
           },
@@ -1024,7 +1024,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci/organizacao/tsconfig.spec.json",
             "polyfills": [
@@ -1042,7 +1042,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/blog/ng-package.json"
           },
@@ -1057,7 +1057,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/blog/tsconfig.spec.json",
             "polyfills": [
@@ -1080,7 +1080,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular/build:application",
           "options": {
             "outputPath": "dist/ci/quase",
             "index": "projects/ci/quase/src/index.html",
@@ -1131,7 +1131,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "@ci/quase:build:production"
@@ -1143,10 +1143,10 @@
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n"
+          "builder": "@angular/build:extract-i18n"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "polyfills": [
               "zone.js",
@@ -1175,7 +1175,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci/ilustrador/ng-package.json"
           },
@@ -1190,7 +1190,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci/ilustrador/tsconfig.spec.json",
             "polyfills": [
@@ -1208,7 +1208,7 @@
       "prefix": "ci-apps",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci/nota/ng-package.json"
           },
@@ -1223,7 +1223,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci/nota/tsconfig.spec.json",
             "polyfills": [
@@ -1241,7 +1241,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/sites/ng-package.json"
           },
@@ -1256,7 +1256,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/sites/tsconfig.spec.json",
             "polyfills": [
@@ -1274,7 +1274,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/documentos/ng-package.json"
           },
@@ -1289,7 +1289,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/documentos/tsconfig.spec.json",
             "polyfills": [
@@ -1307,7 +1307,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/crm/ng-package.json"
           },
@@ -1322,7 +1322,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/crm/tsconfig.spec.json",
             "polyfills": [
@@ -1340,7 +1340,7 @@
       "prefix": "ci",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/ci-apps/cms/ng-package.json"
           },
@@ -1355,7 +1355,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/cms/tsconfig.spec.json",
             "polyfills": [
@@ -1369,5 +1369,31 @@
   },
   "cli": {
     "analytics": "b3d51258-3dc6-489b-a9d9-e2566514fdff"
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
+    }
   }
 }
