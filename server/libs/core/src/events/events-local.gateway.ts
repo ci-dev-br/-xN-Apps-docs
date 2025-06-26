@@ -21,10 +21,8 @@ export class EventsLocalGateway implements OnGatewayInit {
         private readonly events?: EventsGateway,
         private readonly bus?: BusService,
     ) {
-        console.log('Hello')
     }
     afterInit(server: any) {
-        console.log('Hello2')
         server;
     }
     @SubscribeMessage('events')

@@ -3,6 +3,7 @@ import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocke
 import { createHash } from "crypto";
 import { Server } from "ws";
 import { BusService } from "./bus.service";
+import { IEventPayload } from "./events-local.gateway";
 @WebSocketGateway(
     {
         transports: [
@@ -29,44 +30,60 @@ export class EventsGateway implements OnGatewayInit {
     @SubscribeMessage('events')
     onEvent(@ConnectedSocket() client: any, @MessageBody() data: any) {
         if (!this.sing(data)) return;
-        this.set(data.client, client, data.momentum);
+        try {
+            this.set(data.client, client, data.momentum);
+        } catch (error) {
+
+        }
         if (data.momentum && this.mementu.indexOf(data.momentum) !== -1) return;
         this.mementu.push(data.momentum)
-        if (data.type === 'ping') {
-            if (data.lastPing) {
-                this.globalPing = ((this.globalPing + (data.lastPing || 0)) / 2)
-                this.pings.push(data.lastPing)
-                if (this.pings.length > 500) {
-                    this.pings = this.pings.splice(this.pings.length - 500, this.pings.length);
-                }
+        try {
+            if (data.mac) {
+                this.bus.registry(client, data.mac);
             }
-            // TODO: implementar Bus Service
-            // if (!!data.device && typeof data.device === 'string') {
-            //     // TODO: atualizar serviço de devices notificando atividade
-            // }
-            let pm = 0;
-            try {
-                pm = this.pings.reduce((a, b) => a + b) / this.pings.length;
-            } catch (error) {
-            }
-            const waiting = 1000 + Math.random() * 14000;
-            const last = {
-                event: 'events',
-                type: 'pong',
-                wait: waiting,
-                momentum: data.momentum,
-                globalPing: this.globalPing,
-                pingMedium: pm,
-            };
-            setTimeout(() => {
-                const c = this.clients.get(data.client);
-                if (c && data.momentum === c.momentum) {
-                    c.returned = false;
-                    this.clients.delete(data.client);
+        } catch (error) {
+
+        }
+        try {
+
+            if (data.type === 'ping') {
+                if (data.lastPing) {
+                    this.globalPing = ((this.globalPing + (data.lastPing || 0)) / 2)
+                    this.pings.push(data.lastPing)
+                    if (this.pings.length > 500) {
+                        this.pings = this.pings.splice(this.pings.length - 500, this.pings.length);
+                    }
                 }
-            }, waiting + 1000);
-            console.log(' Clients: ' + this.clients.size);
-            return last;
+                // TODO: implementar Bus Service
+                // if (!!data.device && typeof data.device === 'string') {
+                //     // TODO: atualizar serviço de devices notificando atividade
+                // }
+                let pm = 0;
+                try {
+                    pm = this.pings.reduce((a, b) => a + b) / this.pings.length;
+                } catch (error) {
+                }
+                const waiting = 1000 + Math.random() * 14000;
+                const last = {
+                    event: 'events',
+                    type: 'pong',
+                    wait: waiting,
+                    momentum: data.momentum,
+                    globalPing: this.globalPing,
+                    pingMedium: pm,
+                };
+                setTimeout(() => {
+                    const c = this.clients.get(data.client);
+                    if (c && data.momentum === c.momentum) {
+                        c.returned = false;
+                        this.clients.delete(data.client);
+                    }
+                }, waiting + 1000);
+                console.log(' Clients: ' + this.clients.size);
+                return last;
+            }
+        } catch (error) {
+
         }
     }
     @SubscribeMessage('identity')
@@ -156,4 +173,19 @@ export class EventsGateway implements OnGatewayInit {
         }
         else false;
     }
+
+    /* @SubscribeMessage('events')
+    async eventHandler(
+        @ConnectedSocket() client: WebSocket,
+        @MessageBody() data: IEventPayload) {
+        client.send(JSON.stringify({
+            event: 'events',
+            data: {
+                signal: -1,
+            }
+        }))
+        if (data.mac) {
+            this.bus.registry(client, data.mac);
+        }
+    } */
 }
