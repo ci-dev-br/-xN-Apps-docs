@@ -23,7 +23,8 @@ import br.dev.ci.mobilemanger.client.model.GatewayConnection;
  * Conecte o aplicativo com a aplicação Gateway e intercale os
  * serviços entre smartphone e servidor
  */
-public class DeviceConnect extends AsyncTask<Device, Void, String> {
+public class
+DeviceConnect extends AsyncTask<Device, Void, String> {
     private final MainActivity mainActivity;    /**
      *   Gson gson = new Gson();
      *   Pessoa pessoa = gson.fromJson(jsonString, Pessoa.class);

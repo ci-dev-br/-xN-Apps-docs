@@ -34,6 +34,8 @@ public class WebSocketClientConnection extends WebSocketClient {
              *
              */
             Ping();
+            // deviceConnect
+
         } catch (Exception e) {
             e.printStackTrace();
             // throw new RuntimeException(e);
@@ -65,7 +67,6 @@ public class WebSocketClientConnection extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
-        // Definir rotina de recepção das mensagens do web socket.
         try {
             if(message.indexOf("\"type\":\"pong\"") > -1){
                 Gson mapper = new Gson();
@@ -73,15 +74,15 @@ public class WebSocketClientConnection extends WebSocketClient {
                 if(retorno.getType().equals("pong")){
                                     Log.i("tag", "Pong");
                     this.PongHandler();
-
-                    new android.os.Handler(Looper.getMainLooper()).postDelayed(
-                            new Runnable() {
-                                public void run() {
-                                    Log.i("tag", "Ping");
-                                    Ping();
-                                }
-                            },
-                            retorno.getWait().intValue());
+                    if(retorno.getWait() != null){
+                        new android.os.Handler(Looper.getMainLooper()).postDelayed(
+                                new Runnable() {
+                                    public void run() {
+                                        Ping();
+                                    }
+                                },
+                                retorno.getWait().intValue());
+                    }
                 }
             }
         } catch (Exception e) {
