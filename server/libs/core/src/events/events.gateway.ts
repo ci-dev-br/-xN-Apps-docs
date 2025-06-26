@@ -26,19 +26,20 @@ export class EventsGateway implements OnGatewayInit {
     onEvent(@ConnectedSocket() client: any, @MessageBody() data: any) {
         if (!this.sing(data)) return;
         try {
+            if (data.mac) {
+                this.bus.registry(client, data.mac);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+        try {
             this.set(data.client, client, data.momentum);
         } catch (error) {
 
         }
         if (data.momentum && this.mementu.indexOf(data.momentum) !== -1) return;
         this.mementu.push(data.momentum)
-        try {
-            if (data.mac) {
-                this.bus.registry(client, data.mac);
-            }
-        } catch (error) {
 
-        }
         try {
 
             if (data.type === 'ping') {
