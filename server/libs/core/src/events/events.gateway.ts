@@ -134,9 +134,20 @@ export class EventsGateway implements OnGatewayInit {
             })
         }
     }
+    /**
+     * Executa após o início
+     * 
+     */
     afterInit(server: any) {
     }
     lasts: string[] = [];
+    /**
+     * Verifica se a mensagem já foi recebida anteriormente. Quando o 
+     * conteúdo for inédito retorna verdadeiro.
+     * 
+     * @param data 
+     * @returns 
+     */
     sing(data?: any) {
         let s = createHash('md5').update(JSON.stringify(data)).digest('hex');
         if (this.lasts.indexOf(s) === -1) {
