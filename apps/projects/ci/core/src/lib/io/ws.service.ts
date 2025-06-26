@@ -34,7 +34,7 @@ export class WsService {
             this._subject.complete();
         }
 
-        let gateway_api = 'wss://192.168.0.8:664/';
+        let gateway_api = 'wss://srv33.internals.ci.dev.br:664/';
 
         // let efail = localStorage.getItem('e-fail');
         // if (!!efail) {
