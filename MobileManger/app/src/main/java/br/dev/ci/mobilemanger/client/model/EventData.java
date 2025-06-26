@@ -9,6 +9,9 @@ public class EventData  {
     private Long momentum;
     private Long lastPing;
     private String type;
+    private String objectRef;
+    private String setOrigin;
+    private String mac;
 
     public HashMap<String, Change> getChanges() {
         return changes;
@@ -57,5 +60,29 @@ public class EventData  {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getObjectRef() {
+        return objectRef;
+    }
+
+    public void setObjectRef(String objectRef) {
+        this.objectRef = objectRef;
+    }
+
+    public String getSetOrigin() {
+        return setOrigin;
+    }
+
+    public void setSetOrigin(String setOrigin) {
+        this.setOrigin = setOrigin;
+    }
+
+    public String getMac() {
+        return mac;
+    }
+
+    public void setMac(String mac) {
+        this.mac = mac;
     }
 }

@@ -1,9 +1,7 @@
-import { DomainService } from "@ci/manager";
 import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { createHash } from "crypto";
 import { Server } from "ws";
 import { BusService } from "./bus.service";
-import { IEventPayload } from "./events-local.gateway";
 @WebSocketGateway(
     {
         transports: [
@@ -11,14 +9,11 @@ import { IEventPayload } from "./events-local.gateway";
         ],
         cors: [
             '*'
-            //  DomainService.whitelist,
-            // TODO: não pode ser utilizado cliente coringa. Deve ser criada modelo de Domínios permitidos, cada um com suas blacklists de bloqueio se ouver e regras adicionais de política de acesso pode ser necessárias.
         ],
     })
 export class EventsGateway implements OnGatewayInit {
     constructor(
         private readonly bus: BusService,
-        // para que serve o bus services?
     ) {
     }
     pings = [];
@@ -54,10 +49,6 @@ export class EventsGateway implements OnGatewayInit {
                         this.pings = this.pings.splice(this.pings.length - 500, this.pings.length);
                     }
                 }
-                // TODO: implementar Bus Service
-                // if (!!data.device && typeof data.device === 'string') {
-                //     // TODO: atualizar serviço de devices notificando atividade
-                // }
                 let pm = 0;
                 try {
                     pm = this.pings.reduce((a, b) => a + b) / this.pings.length;
@@ -89,6 +80,7 @@ export class EventsGateway implements OnGatewayInit {
     @SubscribeMessage('identity')
     async identity(@ConnectedSocket() client: any, @MessageBody() data: any) {
         if (!this.sing(data)) return;
+        console.log(data);
         client.id = data.client;
         return data;
     }
@@ -101,7 +93,9 @@ export class EventsGateway implements OnGatewayInit {
         if (!!data?.objectRef?.internalId) {
             if (this._atentionDatas.has(data.objectRef.internalId)) {
             } else {
-                this._atentionDatas.set(data.objectRef.internalId, { /* ...data.objectRef */ });
+                this._atentionDatas.set(data.objectRef.internalId, {
+                    // TODO: 
+                });
             }
             const __last_data = this._atentionDatas.get(data.objectRef.internalId);
             if (!__last_data["::CI_INTERNAL.CLIENTS"])
@@ -139,7 +133,6 @@ export class EventsGateway implements OnGatewayInit {
                     }
                 })
             }
-            /// if(data)
             this.clients.forEach((v, k) => {
                 if (
                     (v as any).id !== data.client &&
@@ -173,19 +166,4 @@ export class EventsGateway implements OnGatewayInit {
         }
         else false;
     }
-
-    /* @SubscribeMessage('events')
-    async eventHandler(
-        @ConnectedSocket() client: WebSocket,
-        @MessageBody() data: IEventPayload) {
-        client.send(JSON.stringify({
-            event: 'events',
-            data: {
-                signal: -1,
-            }
-        }))
-        if (data.mac) {
-            this.bus.registry(client, data.mac);
-        }
-    } */
 }

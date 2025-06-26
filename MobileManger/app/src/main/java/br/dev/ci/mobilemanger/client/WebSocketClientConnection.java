@@ -34,11 +34,30 @@ public class WebSocketClientConnection extends WebSocketClient {
              *
              */
             Ping();
+            identity();
             // deviceConnect
 
         } catch (Exception e) {
             e.printStackTrace();
             // throw new RuntimeException(e);
+        }
+    }
+
+    private void identity(){
+        try {
+            EventPayload payload =  new EventPayload();
+            payload.setEvent("events");
+
+            EventData event = new EventData();
+
+            event.setMomentum((new Date()).getTime());
+            event.setMac(ManagerClient.getInstance().getMacAddr());
+
+            payload.setData(event);
+            Gson mapper = new Gson();
+            send(mapper.toJson(payload));
+        }catch (Exception ex){
+            ex.printStackTrace();
         }
     }
 
@@ -58,18 +77,25 @@ public class WebSocketClientConnection extends WebSocketClient {
             send(mapper.toJson(payload));
         }catch (Exception ex){
             ex.printStackTrace();
+            new android.os.Handler(Looper.getMainLooper()).postDelayed(
+                    new Runnable() {
+                        public void run() {
+                            Ping();
+                        }
+                    },
+                    8000);
         }
     }
 
     private void PongHandler(){
-
+        // TODO: pong handler action
     }
 
     @Override
     public void onMessage(String message) {
         try {
+            Gson mapper = new Gson();
             if(message.indexOf("\"type\":\"pong\"") > -1){
-                Gson mapper = new Gson();
                 WSMessage retorno = mapper.fromJson(message, WSMessage.class);
                 if(retorno.getType().equals("pong")){
                                     Log.i("tag", "Pong");
@@ -84,6 +110,8 @@ public class WebSocketClientConnection extends WebSocketClient {
                                 retorno.getWait().intValue());
                     }
                 }
+            }else if(message.indexOf("\"type\":\"events\"") > -1){
+
             }
         } catch (Exception e) {
             e.printStackTrace();
