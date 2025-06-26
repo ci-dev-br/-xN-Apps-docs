@@ -1,5 +1,9 @@
 package br.dev.ci.mobilemanger.client;
 
+import android.os.AsyncTask;
+import android.os.Looper;
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 import org.java_websocket.client.WebSocketClient;
@@ -10,6 +14,7 @@ import java.util.Date;
 
 import br.dev.ci.mobilemanger.client.model.EventData;
 import br.dev.ci.mobilemanger.client.model.EventPayload;
+import br.dev.ci.mobilemanger.client.model.WSMessage;
 
 public class WebSocketClientConnection extends WebSocketClient {
     private final DeviceConnect deviceConnect;
@@ -37,14 +42,16 @@ public class WebSocketClientConnection extends WebSocketClient {
 
     private void Ping(){
         try {
-            EventPayload payload =  new EventPayload(){{
-                setEvent("events");
-                setData(new EventData(){{
-                    setMomentum((new Date()).getTime());
-                    setLastPing(ping);
-                    setType("ping");
-                }});
-            }};
+            EventPayload payload =  new EventPayload();
+            payload.setEvent("events");
+
+            EventData event = new EventData();
+
+            event.setMomentum((new Date()).getTime());
+            event.setLastPing(ping);
+            event.setType("ping");
+
+            payload.setData(event);
             Gson mapper = new Gson();
             send(mapper.toJson(payload));
         }catch (Exception ex){
@@ -52,16 +59,34 @@ public class WebSocketClientConnection extends WebSocketClient {
         }
     }
 
+    private void PongHandler(){
+
+    }
+
     @Override
     public void onMessage(String message) {
-        /// Definir rotina de recepção das mensagens do web socket.
+        // Definir rotina de recepção das mensagens do web socket.
         try {
+            if(message.indexOf("\"type\":\"pong\"") > -1){
+                Gson mapper = new Gson();
+                WSMessage retorno = mapper.fromJson(message, WSMessage.class);
+                if(retorno.getType().equals("pong")){
+                                    Log.i("tag", "Pong");
+                    this.PongHandler();
 
+                    new android.os.Handler(Looper.getMainLooper()).postDelayed(
+                            new Runnable() {
+                                public void run() {
+                                    Log.i("tag", "Ping");
+                                    Ping();
+                                }
+                            },
+                            retorno.getWait().intValue());
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            // throw new RuntimeException(e);
-
-
+            Ping();
         }
     }
 

@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 
 import br.dev.ci.mobilemanger.MainActivity;
 import br.dev.ci.mobilemanger.client.DeviceConnect;
-import br.dev.ci.mobilemanger.MainActivity;
 import br.dev.ci.mobilemanger.client.DeviceConnect;
 
 public class GatewayConnection extends Handler{
