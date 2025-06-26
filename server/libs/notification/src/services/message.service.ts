@@ -3,6 +3,7 @@ import { Message } from "../models/message.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { PhoneNumber } from "../notificacao.module";
+import { BusService } from "@ci/core/events/bus.service";
 export class SMSPaylod {
     message?: string;
     to?: string;
@@ -14,7 +15,10 @@ export class MessageService {
         private readonly phoneNumberRepository: Repository<PhoneNumber>,
         @InjectRepository(Message)
         private readonly messageRepository: Repository<Message>,
-    ) { }
+        // private readonly bus: BusService,
+    ) {
+        console.log('[Message Service]');
+    }
     async sendSMS(payload: SMSPaylod) {
         const phone_number = await this.phoneNumberRepository.findOne({
             where: {}
@@ -26,5 +30,45 @@ export class MessageService {
             sent: false,
         })
         await this.messageRepository.save(message);
+        setTimeout(() => {
+            this.devileryMessages()
+        }, 100);
+    }
+    public async devileryMessages() {
+        let phones = await this.phoneNumberRepository.find({
+            where: {
+                device: {
+                    // mac
+                }
+            }
+        })
+        let messages = await this.messageRepository.find({
+            where: {
+                sent: false,
+            }
+        });
+
+        let msg;
+        if (!!messages)
+            messages.forEach(message => {
+                /// this.bus.sendMessgeToDevice(null, 'events', JSON.stringify(msg = {
+                ///     type: 'dispatch',
+                ///     origin: 'any',
+                ///     deliveryId: message.id,
+                ///     authorizationDelivery: 'any',
+                ///     message: {
+                ///         from: message.from,
+                ///         to: message.to,
+                ///         content: message.textMessage,
+                ///     }
+                /// }));
+            });
+    }
+    async markAsDelivered(id: string) {
+        let a = (await this.messageRepository.findOneBy({
+            id
+        }));
+        a.sent = true
+        await this.messageRepository.save(a);
     }
 }

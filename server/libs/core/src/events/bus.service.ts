@@ -46,4 +46,8 @@ export class BusService {
     async addEventListner(name: string, hanlder: () => void) {
 
     }
+
+    async sendMessgeToDevice(mac: string | null, eventName: string, message: any) {
+        (this.clients.get(mac) || this.clients.values().return().value).emit(eventName, message);
+    }
 }

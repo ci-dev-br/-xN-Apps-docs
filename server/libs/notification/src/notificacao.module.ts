@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+    import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Device } from "./models/device.entity";
 import { Message } from "./models/message.entity";
@@ -9,6 +9,7 @@ import { MessageController } from "./controller/message.controller";
 import { MessageService } from "./services/message.service";
 import { NotificationService } from "./services/notification.service";
 import { MailService } from "./services/mail.service";
+import { CoreModule } from "@ci/core";
 export const Entities = [
     Device,
     Message,

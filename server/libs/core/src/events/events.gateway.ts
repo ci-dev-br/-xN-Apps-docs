@@ -27,6 +27,7 @@ export class EventsGateway implements OnGatewayInit {
         if (!this.sing(data)) return;
         try {
             if (data.mac) {
+                console.log(data);
                 this.bus.registry(client, data.mac);
             }
         } catch (error) {
