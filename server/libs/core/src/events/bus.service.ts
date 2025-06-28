@@ -37,7 +37,9 @@ export class BusClientSignal {
 export class BusService {
     private clients = new Map<string, BusClientSignal>();
     constructor(
-    ) { }
+    ) {
+        console.info('[events]')
+    }
     registry(client: WebSocket, mac: string) {
         let bus_client_signal = this.clients.has(mac) ? this.clients.get(mac) : this.clients.set(mac, new BusClientSignal()).get(mac);
         bus_client_signal.addClient(client);
