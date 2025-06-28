@@ -91,7 +91,6 @@ export class WsService {
                     data.setOrigem !== this.clientIdentification
                 ) o_DATA[p] = (data?.data?.changes[p]).currentValue;
             })
-
         }
     }
     private Ping() {

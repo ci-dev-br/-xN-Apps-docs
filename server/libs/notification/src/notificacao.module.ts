@@ -17,6 +17,7 @@ export const Entities = [
 ];
 @Module({
     imports: [
+        CoreModule,
         TypeOrmModule.forFeature([
             ...Entities,
         ])

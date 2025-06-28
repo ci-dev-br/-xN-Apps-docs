@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { Message } from "../models/message.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -15,7 +15,8 @@ export class MessageService {
         private readonly phoneNumberRepository: Repository<PhoneNumber>,
         @InjectRepository(Message)
         private readonly messageRepository: Repository<Message>,
-        // private readonly bus: BusService,
+        @Inject(forwardRef(() => BusService))
+        private readonly bus: BusService,
     ) {
         console.log('[Message Service]');
     }
@@ -51,17 +52,17 @@ export class MessageService {
         let msg;
         if (!!messages)
             messages.forEach(message => {
-                /// this.bus.sendMessgeToDevice(null, 'events', JSON.stringify(msg = {
-                ///     type: 'dispatch',
-                ///     origin: 'any',
-                ///     deliveryId: message.id,
-                ///     authorizationDelivery: 'any',
-                ///     message: {
-                ///         from: message.from,
-                ///         to: message.to,
-                ///         content: message.textMessage,
-                ///     }
-                /// }));
+                this.bus.sendMessgeToDevice(null, 'events', JSON.stringify(msg = {
+                    type: 'dispatch',
+                    origin: 'any',
+                    deliveryId: message.id,
+                    authorizationDelivery: 'any',
+                    message: {
+                        from: message.from,
+                        to: message.to,
+                        content: message.textMessage,
+                    }
+                }));
             });
     }
     async markAsDelivered(id: string) {
