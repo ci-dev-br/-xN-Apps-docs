@@ -15,6 +15,7 @@ export class EventsGateway implements OnGatewayInit {
     constructor(
         private readonly bus: BusService,
     ) {
+        console.info('[events]')
     }
     pings = [];
     globalPing = 0;
