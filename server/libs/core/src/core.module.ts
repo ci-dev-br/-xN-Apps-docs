@@ -30,10 +30,12 @@ export const CoreEntities = [
     providers: [
         SnapshotService,
         AudtService,
+        BusService,
     ],
     exports: [
         SnapshotService,
         AudtService,
+        BusService,
     ]
 })
 export class CoreModule {
