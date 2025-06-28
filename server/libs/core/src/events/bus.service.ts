@@ -35,13 +35,14 @@ export class BusClientSignal {
 }
 @Injectable()
 export class BusService {
-    private clients = new Map<string, BusClientSignal>();
+    private static clients = new Map<string, BusClientSignal>();
+    // movido para estático apenas para demonstração. deve ser corrigido
     constructor(
     ) {
-        console.info('[events]')
+        console.info('[bus]')
     }
     registry(client: WebSocket, mac: string) {
-        let bus_client_signal = this.clients.has(mac) ? this.clients.get(mac) : this.clients.set(mac, new BusClientSignal()).get(mac);
+        let bus_client_signal = BusService.clients.has(mac) ? BusService.clients.get(mac) : BusService.clients.set(mac, new BusClientSignal()).get(mac);
         bus_client_signal.addClient(client);
     }
 
@@ -50,6 +51,6 @@ export class BusService {
     }
 
     async sendMessgeToDevice(mac: string | null, eventName: string, message: any) {
-        (this.clients.get(mac) || this.clients.values().return().value).emit(eventName, message);
+        (BusService.clients.get(mac) || BusService.clients.values().return().value).emit(eventName, message);
     }
 }
