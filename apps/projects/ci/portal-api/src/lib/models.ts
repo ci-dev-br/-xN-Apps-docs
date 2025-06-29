@@ -12,6 +12,7 @@ export * from './models/cliente';
 export * from './models/cliente-crm';
 export * from './models/comment';
 export * from './models/comment-meta';
+export * from './models/conversation';
 export * from './models/cpu-info';
 export * from './models/device';
 export * from './models/device-payload';

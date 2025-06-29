@@ -6,10 +6,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { PesquisarService } from '../pesquisar-contato/pesquisar-contato.service';
-import { TorusGeometry } from 'three';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ChamadaService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
+import { ChamadaService, Conversation, ConversationService } from '@ci/portal-api';
 
 @Component({
   selector: 'ci-conversas',
@@ -27,14 +26,21 @@ import { lastValueFrom } from 'rxjs';
   styleUrl: './conversas.component.scss'
 })
 export class ConversasComponent {
+  conversas?: Conversation[];
   constructor(
     private readonly pesquisar: PesquisarService,
     private readonly chamada: ChamadaService,
-  ) { }
+    private readonly conversations: ConversationService,
+  ) {
+    this.carregarConversas();
+  }
   async pesquisarContato() {
     return await this.pesquisar.pesquisarContato();
   }
   async iniciarChamada() {
     await lastValueFrom(this.chamada.nova());
+  }
+  async carregarConversas() {
+    this.conversas = await lastValueFrom(this.conversations.getList());
   }
 }

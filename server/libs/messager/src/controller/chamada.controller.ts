@@ -18,6 +18,7 @@ export class ChamadaController {
         operationId: "NovaChamada"
     })
     async NovaChamada() {
-        return await this.atendimentoService.IniciarChamada();
+        // return await this.atendimentoService.IniciarChamada();
     }
+
 }

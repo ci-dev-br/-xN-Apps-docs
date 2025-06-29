@@ -13,6 +13,7 @@ import { ApplicationService } from './services/application.service';
 import { DomainService } from './services/domain.service';
 import { ContactsService } from './services/contacts.service';
 import { ChamadaService } from './services/chamada.service';
+import { ConversationService } from './services/conversation.service';
 import { ProductService } from './services/product.service';
 import { PranchetaService } from './services/prancheta.service';
 import { UserService } from './services/user.service';
@@ -49,7 +50,7 @@ import { AtendimentoService } from './services/atendimento.service';
 import { AgendamentoService } from './services/agendamento.service';
 
 export function getServiceAsSchema(schema: string): Type<any>{
-  return ({ 'ApiService': ApiService,'SystemService': SystemService,'DeviceService': DeviceService,'MessageService': MessageService,'AuthService': AuthService,'ApplicationService': ApplicationService,'DomainService': DomainService,'ContactsService': ContactsService,'ChamadaService': ChamadaService,'ProductService': ProductService,'PranchetaService': PranchetaService,'UserService': UserService,'PhotoService': PhotoService,'FileExplorerService': FileExplorerService,'VideoService': VideoService,'CadastroService': CadastroService,'EnderecoService': EnderecoService,'InformacaoContatoService': InformacaoContatoService,'PessoaService': PessoaService,'UnidadeMedidaService': UnidadeMedidaService,'PaisService': PaisService,'OrganizacaoService': OrganizacaoService,'FormsService': FormsService,'WebsiteService': WebsiteService,'SitePageService': SitePageService,'CommentMetaService': CommentMetaService,'CommentService': CommentService,'LinksService': LinksService,'SiteOptionService': SiteOptionService,'SitePostService': SitePostService,'TermService': TermService,'TermMetaService': TermMetaService,'ProjetoService': ProjetoService,'VendaProdutoService': VendaProdutoService,'ServicoService': ServicoService,'PromocaoService': PromocaoService,'ProfissionalService': ProfissionalService,'ProdutoService': ProdutoService,'PagamentoService': PagamentoService,'HistoricoContatoService': HistoricoContatoService,'ClienteCrmService': ClienteCrmService,'AtendimentoService': AtendimentoService,'AgendamentoService': AgendamentoService, }[ schema + 'Service'] as any) || undefined;
+  return ({ 'ApiService': ApiService,'SystemService': SystemService,'DeviceService': DeviceService,'MessageService': MessageService,'AuthService': AuthService,'ApplicationService': ApplicationService,'DomainService': DomainService,'ContactsService': ContactsService,'ChamadaService': ChamadaService,'ConversationService': ConversationService,'ProductService': ProductService,'PranchetaService': PranchetaService,'UserService': UserService,'PhotoService': PhotoService,'FileExplorerService': FileExplorerService,'VideoService': VideoService,'CadastroService': CadastroService,'EnderecoService': EnderecoService,'InformacaoContatoService': InformacaoContatoService,'PessoaService': PessoaService,'UnidadeMedidaService': UnidadeMedidaService,'PaisService': PaisService,'OrganizacaoService': OrganizacaoService,'FormsService': FormsService,'WebsiteService': WebsiteService,'SitePageService': SitePageService,'CommentMetaService': CommentMetaService,'CommentService': CommentService,'LinksService': LinksService,'SiteOptionService': SiteOptionService,'SitePostService': SitePostService,'TermService': TermService,'TermMetaService': TermMetaService,'ProjetoService': ProjetoService,'VendaProdutoService': VendaProdutoService,'ServicoService': ServicoService,'PromocaoService': PromocaoService,'ProfissionalService': ProfissionalService,'ProdutoService': ProdutoService,'PagamentoService': PagamentoService,'HistoricoContatoService': HistoricoContatoService,'ClienteCrmService': ClienteCrmService,'AtendimentoService': AtendimentoService,'AgendamentoService': AgendamentoService, }[ schema + 'Service'] as any) || undefined;
 } 
 
 /**
@@ -77,6 +78,7 @@ export class ApiModule {
         DomainService,
         ContactsService,
         ChamadaService,
+        ConversationService,
         ProductService,
         PranchetaService,
         UserService,

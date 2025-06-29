@@ -7,6 +7,7 @@ export { ApplicationService } from './services/application.service';
 export { DomainService } from './services/domain.service';
 export { ContactsService } from './services/contacts.service';
 export { ChamadaService } from './services/chamada.service';
+export { ConversationService } from './services/conversation.service';
 export { ProductService } from './services/product.service';
 export { PranchetaService } from './services/prancheta.service';
 export { UserService } from './services/user.service';
