@@ -1,6 +1,9 @@
 @if(form){<ng-container [formGroup]="form">
     <mat-form-field>
         <input matInput type="text" placeholder="Pesquisar nome ou número" formControlName="search">
+        <button mat-icon-button matSuffix matTooltip="Iniciar conversa" (click)="iniciarConversa($event)">
+            <mat-icon>add</mat-icon>
+        </button>
     </mat-form-field>
     <div class="lista">
     </div>

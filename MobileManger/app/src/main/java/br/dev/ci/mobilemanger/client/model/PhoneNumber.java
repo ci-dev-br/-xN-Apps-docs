@@ -14,14 +14,6 @@ public class PhoneNumber {
         this.number = number;
     }
 
-    // public Device getDevice() {
-    //     return device;
-    // }
-
-    // public void setDevice(Device device) {
-    //    this.device = device;
-    //}
-
     public String getCarrierName() {
         return carrierName;
     }

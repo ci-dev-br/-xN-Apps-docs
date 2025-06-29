@@ -7,8 +7,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { PesquisarService } from '../pesquisar-contato/pesquisar-contato.service';
 import { ReactiveFormsModule } from '@angular/forms';
-import { lastValueFrom } from 'rxjs';
-import { ChamadaService, Conversation, ConversationService } from '@ci/portal-api';
+import { Conversation } from '@ci/portal-api';
+import { MessagerService } from '../mensagens.service';
 
 @Component({
   selector: 'ci-conversas',
@@ -29,8 +29,8 @@ export class ConversasComponent {
   conversas?: Conversation[];
   constructor(
     private readonly pesquisar: PesquisarService,
-    private readonly chamada: ChamadaService,
-    private readonly conversations: ConversationService,
+
+    private readonly messager: MessagerService,
   ) {
     this.carregarConversas();
   }
@@ -38,9 +38,9 @@ export class ConversasComponent {
     return await this.pesquisar.pesquisarContato();
   }
   async iniciarChamada() {
-    await lastValueFrom(this.chamada.nova());
+    return this.messager.iniciarChamada();
   }
   async carregarConversas() {
-    this.conversas = await lastValueFrom(this.conversations.getList());
+    this.conversas = await this.messager.carregarConversas();
   }
 }
