@@ -1,0 +1,15 @@
+{
+    "projectId": "br.dev.ci.apps",
+    "version": "1.1.0",
+    "description": "Apps Wordkspace Builder",
+    "project": {
+        "@ci/server": {
+            "path": "server",
+            "type": "@nestjs/cli"
+        },
+        "@ci/apps": {
+            "path": "apps",
+            "type": "@angular/cli"
+        }
+    }
+}
