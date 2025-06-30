@@ -48,7 +48,9 @@ public class MainActivity extends AppCompatActivity {
         this.message = findViewById(R.id.message);
         solicitarPermissoes();
         try {
-            identificarNumerosTelefone();
+            if(this.phones == null || this.phones.size() == 0){
+                identificarNumerosTelefone();
+            }
         } catch( Exception ex){
             if(this.message != null) {
                 this.message.setText("Falha ao identificar números do dispositivo.");
@@ -134,7 +136,11 @@ public class MainActivity extends AppCompatActivity {
                         if(phone_number.getNumber() == null){
                             phone_number.setNumber(telephonyManager.getLine1Number());
                         }
-                        this.phones.add(phone_number);
+                        if(!this.phones.stream().findFirst().stream()
+                                .anyMatch(f -> f.getSubscriptionId().equals(phone_number.getSubscriptionId()))
+                        ){
+                            this.phones.add(phone_number);
+                        }
                     }
                 }
             } catch (Exception e) {
