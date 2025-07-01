@@ -63,13 +63,12 @@ export class WsService {
     }
     emit(name: string, message: any) {
         if (!this.listner.has(name))
-            this.listner.get(name)?.forEach(x => {
+            this.listner.get(name)?.forEach(callBack => {
                 try {
-                    x()
+                    callBack(message);
                 } catch (error) {
-
                 }
-            })
+            });
     }
 
     private async ReceiveData(data?: any) {
@@ -93,6 +92,11 @@ export class WsService {
                     data.setOrigem !== this.clientIdentification
                 ) o_DATA[p] = (data?.data?.changes[p]).currentValue;
             })
+        }
+        if (data.event && typeof data.data === 'object') {
+            this.emit(data.event,
+                { ...data.data }
+            )
         }
     }
     private Ping() {

@@ -94,8 +94,11 @@ export interface DeviceItem {
     ) { }
     async ngOnInit() {
         this.loadDevices();
-        this.events.addMessageListner('attention',(x:any) => {
-
+        this.events.addMessageListner('attention', (data: any) => {
+            if (data.mac) {
+                let d = this.devices?.find(device => device.device?.mac === data.mac);//.status = 1;
+                if (d) d.status = 1;
+            }
         })
     }
     conectarDispositivo() { }
