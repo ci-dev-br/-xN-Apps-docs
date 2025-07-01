@@ -54,12 +54,22 @@ export class WsService {
         });
         this.Emit({ event: 'events', data: { type: 'ping', momentum: (new Date().getTime()) } });
     }
-    listner = new Map<string, EventEmitter<any>>();
-    addMessageListner(name: string, call: () => void) {
-        // this.listner.get(name)?.emit()
+    listner = new Map<string, Array<any>>();
+    addMessageListner(name: string, call: (x?: any) => void) {
+        if (!this.listner.has(name))
+            this.listner.set(name, [call])
+        else
+            this.listner.get(name)?.push(call)
     }
-    emit() {
-        
+    emit(name: string, message: any) {
+        if (!this.listner.has(name))
+            this.listner.get(name)?.forEach(x => {
+                try {
+                    x()
+                } catch (error) {
+
+                }
+            })
     }
 
     private async ReceiveData(data?: any) {
@@ -122,7 +132,8 @@ export class WsService {
     }
     private _atentionDatas: Map<string, any> = new Map();
     /**
-     * Solicitar atenção para um objeto. Mantém o objeto sincronizado com os demais clientes durante modificação. Recebendo retorno dos clientes que estão consumindo os eventos da aplicação.
+
+    * Solicitar atenção para um objeto. Mantém o objeto sincronizado com os demais clientes durante modificação. Recebendo retorno dos clientes que estão consumindo os eventos da aplicação.
      */
     async Atention(objectRef: any) {
         if (objectRef && !!objectRef.internalId) {

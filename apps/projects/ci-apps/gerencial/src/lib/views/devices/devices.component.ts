@@ -94,6 +94,9 @@ export interface DeviceItem {
     ) { }
     async ngOnInit() {
         this.loadDevices();
+        this.events.addMessageListner('attention',(x:any) => {
+
+        })
     }
     conectarDispositivo() { }
     token = 'n2n34u5ifbn2uio34bhf2u34ybf2uy4b5fouy2b45f';
@@ -105,7 +108,6 @@ export interface DeviceItem {
         this.events.Listening('Gerencial.Devices', {
             momentum: Date.now()
         })
-        // this.events.
     }
     updateDevices(devices: Device[]) {
         this.devices = devices.map(device => {
