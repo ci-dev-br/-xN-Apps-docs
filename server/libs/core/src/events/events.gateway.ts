@@ -56,7 +56,7 @@ export class EventsGateway implements OnGatewayInit {
                     pm = this.pings.reduce((a, b) => a + b) / this.pings.length;
                 } catch (error) {
                 }
-                const waiting = 1000 + Math.random() * 14000;
+                const waiting = 1000 + Math.random() * 16000;
                 const last = {
                     event: 'events',
                     type: 'pong',
