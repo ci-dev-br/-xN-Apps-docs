@@ -23,7 +23,6 @@ export class BusClientSignal {
             }
         })
     }
-    // private _last_signal: number = undefined;
     private async silent() {
         let _last_signal = this.signal
         setTimeout(() => {
@@ -39,9 +38,9 @@ export class BusService {
     // movido para estático apenas para demonstração. deve ser corrigido
     constructor(
     ) {
-        console.info('[bus]')
     }
     registry(client: WebSocket, mac: string) {
+        console.log(mac, client);
         let bus_client_signal = BusService.clients.has(mac) ? BusService.clients.get(mac) : BusService.clients.set(mac, new BusClientSignal()).get(mac);
         bus_client_signal.addClient(client);
     }

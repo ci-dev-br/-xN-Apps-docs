@@ -2,6 +2,7 @@ import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocke
 import { createHash } from "crypto";
 import { Server } from "ws";
 import { BusService } from "./bus.service";
+import { Socket } from "socket.io";
 @WebSocketGateway(
     {
         transports: [
@@ -28,7 +29,6 @@ export class EventsGateway implements OnGatewayInit {
         if (!this.sing(data)) return;
         try {
             if (data.mac) {
-                console.log(data);
                 this.bus.registry(client, data.mac);
             }
         } catch (error) {
@@ -37,11 +37,10 @@ export class EventsGateway implements OnGatewayInit {
         try {
             this.set(data.client, client, data.momentum);
         } catch (error) {
-
+            console.error(error);
         }
         if (data.momentum && this.mementu.indexOf(data.momentum) !== -1) return;
         this.mementu.push(data.momentum)
-
         try {
 
             if (data.type === 'ping') {
@@ -86,6 +85,37 @@ export class EventsGateway implements OnGatewayInit {
         console.log(data);
         client.id = data.client;
         return data;
+    }
+    private readonly listeners = new Map<String, ((r?: any) => void)[]>();
+    private addEventListner(eventName: string, callBack: (r?: any) => void) {
+        let l = this.listeners.has(eventName) ? this.listeners.get(eventName) : [];
+        if (!this.listeners.has(eventName)) {
+            this.listeners.set(eventName, l);
+        }
+        l.push(callBack);
+    }
+    private emitEvent(nameEvent: string, data: any) {
+        this.listeners.get(nameEvent)?.forEach(x => {
+            try {
+                x(data)
+            } catch (error) {
+                console.error(error);
+            }
+        });
+    }
+    @SubscribeMessage('listening')
+    async listening(@ConnectedSocket() client: Socket,
+        @MessageBody() data: {
+            name: string,
+        }) {
+        if (!this.sing(data)) return;
+
+        this.addEventListner(data.name, (r) => {
+            client.send(JSON.stringify({
+                emit: 'notice',
+                result: r
+            }))
+        })
     }
     private _atentionDatas: Map<string, any> = new Map();
     @SubscribeMessage('Atention')

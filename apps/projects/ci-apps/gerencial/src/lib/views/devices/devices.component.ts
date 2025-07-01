@@ -3,7 +3,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { NgxQRCodeModule } from '@jonyadamit/ngx-qrcode-ivy';
-import { CoreModule } from '@ci/core';
+import { CoreModule, WsService } from '@ci/core';
 import { Device, DeviceService } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 
@@ -90,6 +90,7 @@ export interface DeviceItem {
 }) export class DevicesComponent implements OnInit {
     constructor(
         private readonly deviceService: DeviceService,
+        private readonly events: WsService,
     ) { }
     async ngOnInit() {
         this.loadDevices();
@@ -101,6 +102,9 @@ export interface DeviceItem {
     }
     async loadDevices() {
         this.updateDevices(await lastValueFrom(this.deviceService.getAll({ body: { query: '' } })))
+        this.events.Listening('Gerencial.Devices', {
+            momentum: Date.now()
+        })
     }
     updateDevices(devices: Device[]) {
         this.devices = devices.map(device => {

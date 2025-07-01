@@ -104,6 +104,18 @@ export class WsService {
         });
     }
     /**
+     * Escutar evento
+     */
+    public async Listening(eventName: string, data?: any) {
+        this.Emit({
+            event: 'listening',
+            data: {
+                name: eventName,
+                ...data
+            },
+        });
+    }
+    /**
      * Emite mensagem para o websocket auto-assinada pela aplicação cliente
      * @param payload 
      */
