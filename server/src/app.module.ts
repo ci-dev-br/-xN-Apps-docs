@@ -118,6 +118,9 @@ process.env.MODULES.split(',').forEach(e => {
 })
 @Module({
   imports: [
+    CoreModule.forRoot({
+      snapshot: true
+    }),
     TypeOrmModule.forRoot({
       type: process.env.DB_TYPE as any,
       host: process.env.DB_HOST,
@@ -138,9 +141,6 @@ process.env.MODULES.split(',').forEach(e => {
       entities: [
         ...LoadedEntities
       ]
-    }),
-    CoreModule.forRoot({
-      snapshot: true
     }),
     ...LoadedModules,
   ],

@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Inject, Injectable, PLATFORM_ID, SimpleChange, SimpleChanges } from "@angular/core";
+import { EventEmitter, Inject, Injectable, PLATFORM_ID, SimpleChange, SimpleChanges } from "@angular/core";
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 
 @Injectable()
@@ -33,24 +33,8 @@ export class WsService {
         if (this._subject) {
             this._subject.complete();
         }
-
         let gateway_api = 'wss://srv33.internals.ci.dev.br:664/';
-
-        // let efail = localStorage.getItem('e-fail');
-        // if (!!efail) {
-        //     try {
-        //         efail = JSON.parse(efail);
-        //     } catch (error) {
-        //         console.error(error);
-        //     }
-        // }
-
-        // if (!!efail) {
-        //     gateway_api = efail.replace('http', 'ws');
-        // }
-
         this._subject = webSocket(gateway_api);
-
         this._subject.subscribe(message => {
             this.status = 'online';
             this.retryWait = 100;
@@ -70,6 +54,14 @@ export class WsService {
         });
         this.Emit({ event: 'events', data: { type: 'ping', momentum: (new Date().getTime()) } });
     }
+    listner = new Map<string, EventEmitter<any>>();
+    addMessageListner(name: string, call: () => void) {
+        // this.listner.get(name)?.emit()
+    }
+    emit() {
+        
+    }
+
     private async ReceiveData(data?: any) {
         if (data.type === 'pong') {
             this.ping = (new Date().getTime()) - Number(data.momentum);

@@ -105,6 +105,7 @@ export interface DeviceItem {
         this.events.Listening('Gerencial.Devices', {
             momentum: Date.now()
         })
+        // this.events.
     }
     updateDevices(devices: Device[]) {
         this.devices = devices.map(device => {

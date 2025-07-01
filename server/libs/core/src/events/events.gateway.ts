@@ -17,6 +17,7 @@ export class EventsGateway implements OnGatewayInit {
         private readonly bus: BusService,
     ) {
         console.info('[events]')
+        bus.events = this;
     }
     pings = [];
     globalPing = 0;
@@ -56,7 +57,7 @@ export class EventsGateway implements OnGatewayInit {
                     pm = this.pings.reduce((a, b) => a + b) / this.pings.length;
                 } catch (error) {
                 }
-                const waiting = 1000 + Math.random() * 16000;
+                const waiting = 1000 + Math.random() * 32000;
                 const last = {
                     event: 'events',
                     type: 'pong',
@@ -94,7 +95,7 @@ export class EventsGateway implements OnGatewayInit {
         }
         l.push(callBack);
     }
-    private emitEvent(nameEvent: string, data: any) {
+    public async emitEvent(nameEvent: string, data: any) {
         this.listeners.get(nameEvent)?.forEach(x => {
             try {
                 x(data)
@@ -104,7 +105,7 @@ export class EventsGateway implements OnGatewayInit {
         });
     }
     @SubscribeMessage('listening')
-    async listening(@ConnectedSocket() client: Socket,
+    public async listening(@ConnectedSocket() client: Socket,
         @MessageBody() data: {
             name: string,
         }) {
