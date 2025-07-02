@@ -50,6 +50,13 @@ export interface DeviceItem {
                 border: solid 2px red;
                 background-color: black;
             }
+            .sims{
+                display: flex;
+                flex-direction: row;
+                position: absolute;
+                left: 10px;
+                bottom: 10px;
+            }
         </style>
          <mat-toolbar>
             <button mat-raised-button (click)="conectarDispositivo()">
@@ -76,9 +83,12 @@ export interface DeviceItem {
                     {{item.device?.mac || ''}} / {{item.device?.type || ''}}          
                     <div class="status" [class.active]="item.status===1" [class.waiting]="item.status===0" [class.offline]="item.status===-1" >
                         </div>      
-                    @if(item?.device?.phones) {@for(phone of item?.device?.phones; track phone){
-                        <mat-icon>sim_card</mat-icon>
-                    }}
+                        <div class="sims">
+                            
+                            @if(item?.device?.phones) {@for(phone of item?.device?.phones; track phone){
+                                <mat-icon>sim_card</mat-icon>
+                            }}
+                            </div>
                 </div>
             } </div>
         }
