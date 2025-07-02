@@ -18,8 +18,13 @@ export class Device {
     @OneToMany(() => PhoneNumber, type => type.device)
     @JoinTable()
     numbers?: PhoneNumber[];
+    @ApiProperty({})
     @CreateDateColumn({})
     createdAt?: Date;
+    @ApiProperty({})
     @UpdateDateColumn()
     changedAt?: Date;
+    @ApiProperty({ type: PhoneNumber, isArray: true })
+    @OneToMany(() => PhoneNumber, pn => pn.device)
+    phones?: PhoneNumber[];
 }

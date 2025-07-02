@@ -61,6 +61,10 @@ export class DeviceService {
         return null;
     }
     async findAll(query?: string) {
-        return await this.repo.find({});
+        return await this.repo.find({
+            relations: {
+                phones: true
+            }
+        });
     }
 }
