@@ -74,7 +74,11 @@ export interface DeviceItem {
            <div class="devices" > @for(item of devices; track item){
                 <div class="device" >
                     {{item.device?.mac || ''}} / {{item.device?.type || ''}}          
-                    <div class="status" [class.active]="item.status===1" [class.waiting]="item.status===0" [class.offline]="item.status===-1" ></div>      
+                    <div class="status" [class.active]="item.status===1" [class.waiting]="item.status===0" [class.offline]="item.status===-1" >
+                        </div>      
+                    @if(item?.device?.phones) {@for(phone of item?.device?.phones; track phone){
+                        <mat-icon>sim_card</mat-icon>
+                    }}
                 </div>
             } </div>
         }
@@ -86,6 +90,7 @@ export interface DeviceItem {
         NgxQRCodeModule,
         MatIconModule,
         MatButtonModule,
+        MatIconModule,
     ]
 }) export class DevicesComponent implements OnInit {
     constructor(
