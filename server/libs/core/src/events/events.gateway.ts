@@ -111,10 +111,10 @@ export class EventsGateway implements OnGatewayInit {
         }) {
         if (!this.sing(data)) return;
 
-        this.addEventListner(data.name, (r) => {
+        this.addEventListner(data.name, (result) => {
             client.send(JSON.stringify({
-                emit: 'notice',
-                result: r
+                event: 'notice',
+                data: result
             }))
         })
     }

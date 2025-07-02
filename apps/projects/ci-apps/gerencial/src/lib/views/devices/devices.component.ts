@@ -94,10 +94,10 @@ export interface DeviceItem {
     ) { }
     async ngOnInit() {
         this.loadDevices();
-        this.events.addMessageListner('attention', (data: any) => {
-            if (data.mac) {
-                let d = this.devices?.find(device => device.device?.mac === data.mac);//.status = 1;
-                if (d) d.status = 1;
+        this.events.addMessageListner('notice', (data: any) => {
+            if (data.device_mac_assign) {
+                let d = this.devices?.find(device => device.device?.mac === data.device_mac_assign);
+                if (d) d.status = data.status;
             }
         })
     }

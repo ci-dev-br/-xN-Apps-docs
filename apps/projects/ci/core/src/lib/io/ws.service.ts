@@ -62,7 +62,7 @@ export class WsService {
             this.listner.get(name)?.push(call)
     }
     emit(name: string, message: any) {
-        if (!this.listner.has(name))
+        if (this.listner.has(name))
             this.listner.get(name)?.forEach(callBack => {
                 try {
                     callBack(message);
