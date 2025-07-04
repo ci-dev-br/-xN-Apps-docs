@@ -55,7 +55,7 @@ export class WsService {
         this.Emit({ event: 'events', data: { type: 'ping', momentum: (new Date().getTime()) } });
     }
     listner = new Map<string, Array<any>>();
-    addMessageListner(name: string, call: (x?: any) => void) {
+    addMessageListner(name: string, call: (data?: any) => void) {
         if (!this.listner.has(name))
             this.listner.set(name, [call])
         else

@@ -43,7 +43,6 @@ export class EventsGateway implements OnGatewayInit {
         if (data.momentum && this.mementu.indexOf(data.momentum) !== -1) return;
         this.mementu.push(data.momentum)
         try {
-
             if (data.type === 'ping') {
                 if (data.lastPing) {
                     this.globalPing = ((this.globalPing + (data.lastPing || 0)) / 2)
@@ -89,16 +88,16 @@ export class EventsGateway implements OnGatewayInit {
     }
     private readonly listeners = new Map<String, ((r?: any) => void)[]>();
     private addEventListner(eventName: string, callBack: (r?: any) => void) {
-        let l = this.listeners.has(eventName) ? this.listeners.get(eventName) : [];
+        let listners = this.listeners.has(eventName) ? this.listeners.get(eventName) : [];
         if (!this.listeners.has(eventName)) {
-            this.listeners.set(eventName, l);
+            this.listeners.set(eventName, listners);
         }
-        l.push(callBack);
+        listners.push(callBack);
     }
-    public async emitEvent(nameEvent: string, data: any) {
-        this.listeners.get(nameEvent)?.forEach(x => {
+    public async emitEvent<E>(nameEvent: string, data?: E) {
+        this.listeners.get(nameEvent)?.forEach(callBack => {
             try {
-                x(data)
+                callBack(data)
             } catch (error) {
                 console.error(error);
             }

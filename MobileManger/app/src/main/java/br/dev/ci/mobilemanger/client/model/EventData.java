@@ -12,6 +12,9 @@ public class EventData  {
     private String objectRef;
     private String setOrigin;
     private String mac;
+    private String contentText;
+    private String contentHtml;
+    private String to;
 
     public HashMap<String, Change> getChanges() {
         return changes;
@@ -84,5 +87,29 @@ public class EventData  {
 
     public void setMac(String mac) {
         this.mac = mac;
+    }
+
+    public String getContentText() {
+        return contentText;
+    }
+
+    public void setContentText(String contentText) {
+        this.contentText = contentText;
+    }
+
+    public String getContentHtml() {
+        return contentHtml;
+    }
+
+    public void setContentHtml(String contentHtml) {
+        this.contentHtml = contentHtml;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
     }
 }

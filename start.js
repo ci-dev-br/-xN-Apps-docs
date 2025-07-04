@@ -16,10 +16,10 @@ async function prov_of_life() {
         mem.tryed++;
         if (mem.tryed === 8) {
             try {
-                require('child_process').execSync('git config --global --add safe.directory C:/projetos/br.dev.ci.apps', { cwd: 'c:\\projetos\\br.dev.ci.apps\\' }).toString()
-                console.log('[Revertendo alterações no git devido a muitas falhas na inicialização]',
-                    require('child_process').execSync('git stash push -u -m stached', { cwd: 'c:\\projetos\\br.dev.ci.apps\\' }).toString()
-                )
+                // require('child_process').execSync('git config --global --add safe.directory C:/projetos/br.dev.ci.apps', { cwd: 'c:\\projetos\\br.dev.ci.apps\\' }).toString()
+                // console.log('[Revertendo alterações no git devido a muitas falhas na inicialização]',
+                //     require('child_process').execSync('git stash push -u -m stached', { cwd: 'c:\\projetos\\br.dev.ci.apps\\' }).toString()
+                // )
             } catch (error) {
                 console.error('[Falha ao tentar realizar stash em git]', error);
             }

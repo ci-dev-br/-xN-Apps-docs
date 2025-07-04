@@ -111,7 +111,11 @@ public class WebSocketClientConnection extends WebSocketClient {
                     }
                 }
             }else if(message.indexOf("\"type\":\"events\"") > -1){
-
+                EventPayload retorno = mapper.fromJson(message, EventPayload.class);
+                if(retorno.getData().getType() == "requestSendSMSMessage"){
+                    if(retorno.getData().getContentText() != null && retorno.getData().getTo() != null ){
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -125,7 +129,6 @@ public class WebSocketClientConnection extends WebSocketClient {
 
         } catch (Exception e) {
             e.printStackTrace();
-            // throw new RuntimeException(e);
         }
     }
 
@@ -135,7 +138,6 @@ public class WebSocketClientConnection extends WebSocketClient {
 
         } catch (Exception e) {
             e.printStackTrace();
-            // throw new RuntimeException(e);
         }
     }
 }

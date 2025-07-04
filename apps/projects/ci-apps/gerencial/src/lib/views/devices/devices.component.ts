@@ -6,6 +6,8 @@ import { NgxQRCodeModule } from '@jonyadamit/ngx-qrcode-ivy';
 import { CoreModule, WsService } from '@ci/core';
 import { Device, DeviceService } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
 
 export interface DeviceItem {
     device?: Device;
@@ -71,6 +73,9 @@ export interface DeviceItem {
                 <mat-icon>phone_android</mat-icon>
                 Fake Mobile Services
             </button>
+            <button mat-raised-button (click)="testarEnvioSMS()" >
+                Testar SMS
+            </button>
         </mat-toolbar>
         @if(!devices){<div style="display: flex; flex-direction: column;align-items: center;justify-content: center;">
             <small>Nenhum dispositivo conectado...</small>
@@ -100,7 +105,8 @@ export interface DeviceItem {
         NgxQRCodeModule,
         MatIconModule,
         MatButtonModule,
-        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
     ]
 }) export class DevicesComponent implements OnInit {
     constructor(
@@ -111,8 +117,8 @@ export interface DeviceItem {
         this.loadDevices();
         this.events.addMessageListner('notice', (data: any) => {
             if (data.device_mac_assign) {
-                let d = this.devices?.find(device => device.device?.mac === data.device_mac_assign);
-                if (d) d.status = data.status;
+                let device_found = this.devices?.find(device => device.device?.mac === data.device_mac_assign);
+                if (device_found && data.status !== undefined) device_found.status = data.status;
             }
         })
     }
@@ -134,6 +140,15 @@ export interface DeviceItem {
                 device,
             }
         });
+    }
+    async testarEnvioSMS() {
+        this.events.Emit({
+            event: 'SMS.Send',
+            data: {
+                to: '41998914179',
+                content: 'Boa noite, seu cadastro foi autorizado com sucesso!'
+            }
+        })
     }
     devices?: DeviceItem[];
 }
