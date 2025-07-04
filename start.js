@@ -4,7 +4,7 @@ const https = require('https');
 async function prov_of_life() {
     if (mem.lived === undefined) mem.lived = 0;
     mem.lived++;
-    https.get('http://localhost:86/', res => {
+    https.get('https://srv33.internals.ci.dev.br:664/', res => {
         console.log(res.statusCode);
         setTimeout(() => prov_of_life(), 10000);
     }).on('error', res => {
