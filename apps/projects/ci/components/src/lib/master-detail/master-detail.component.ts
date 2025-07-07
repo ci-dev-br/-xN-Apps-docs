@@ -23,9 +23,9 @@ import { lastValueFrom } from "rxjs";
         MatButtonModule,
         WindowModule,
     ],
+    styleUrl: 'master-detail.component.scss',
     template: `
-    <mat-toolbar [auto-scroll]="'horizontal'">
-        <!--  {{schemaName || ''}} -->
+<mat-toolbar [auto-scroll]="'horizontal'">
     <button mat-raised-button (click)="search()" >
         Pesquisar
     </button>

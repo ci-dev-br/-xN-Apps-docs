@@ -41,7 +41,9 @@ import { CoreModule } from "@ci/core";
         }
     </mat-drawer>
     <mat-drawer-content>
-        <router-outlet></router-outlet>
+        <div class="inner-container">
+            <router-outlet></router-outlet>
+        </div>
     </mat-drawer-content>
 </mat-drawer-container>
     `

@@ -11,9 +11,6 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { deleteSitePage } from '../fn/site-page/delete-site-page';
 import { DeleteSitePage$Params } from '../fn/site-page/delete-site-page';
-import { FiltersSitePageOutput } from '../models/filters-site-page-output';
-import { getFiltersSitePage } from '../fn/site-page/get-filters-site-page';
-import { GetFiltersSitePage$Params } from '../fn/site-page/get-filters-site-page';
 import { getListSitePage } from '../fn/site-page/get-list-site-page';
 import { GetListSitePage$Params } from '../fn/site-page/get-list-site-page';
 import { SitePage } from '../models/site-page';
@@ -98,31 +95,6 @@ export class SitePageService extends BaseService {
   delete(params: DeleteSitePage$Params, context?: HttpContext): Observable<SitePage> {
     return this.deleteSitePage$Response(params, context).pipe(
       map((r: StrictHttpResponse<SitePage>): SitePage => r.body)
-    );
-  }
-
-  /** Path part for operation `getFiltersSitePage()` */
-  static readonly GetFiltersSitePagePath = '/SitePage/getFilters';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getFiltersSitePage()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  getFiltersSitePage$Response(params: GetFiltersSitePage$Params, context?: HttpContext): Observable<StrictHttpResponse<FiltersSitePageOutput>> {
-    return getFiltersSitePage(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getFiltersSitePage$Response()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  getFilters(params: GetFiltersSitePage$Params, context?: HttpContext): Observable<FiltersSitePageOutput> {
-    return this.getFiltersSitePage$Response(params, context).pipe(
-      map((r: StrictHttpResponse<FiltersSitePageOutput>): FiltersSitePageOutput => r.body)
     );
   }
 

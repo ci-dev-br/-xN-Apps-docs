@@ -39,3 +39,17 @@ nav {
 ci-board {
     flex: auto;
 }
+
+
+mat-drawer-content {
+    .inner-container {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        justify-content: stretch;
+        align-items: stretch;
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+    }
+}

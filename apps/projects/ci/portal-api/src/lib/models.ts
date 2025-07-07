@@ -20,7 +20,6 @@ export * from './models/documento-identificacao';
 export * from './models/domain';
 export * from './models/endereco';
 export * from './models/fiend-client-by-payload';
-export * from './models/filters-site-page-output';
 export * from './models/form-cotroller-get-input-dto';
 export * from './models/forms';
 export * from './models/get-by-internal-id-input-dto';
