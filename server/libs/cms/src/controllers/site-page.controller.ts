@@ -4,11 +4,16 @@ import { SitePage } from "../models/site-page.entity";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
 import { FindOptionsWhere } from "typeorm";
 import { SitePageService } from "../services/site-page.service";
+import { IHaveRequiredToSearch } from "./required-to-search";
 export class SyncPayloadDaoSitePage extends SyncPayloadDao<SitePage> {
     @ApiProperty({ type: SitePage })
     override data?: SitePage;
 }
-export class ObterListaSitePage {
+export class ObterListaSitePage implements IHaveRequiredToSearch {
+    @ApiProperty({
+        enum: ['website'],
+    })
+    requiredToSearch;
     @ApiProperty({})
     skip?: number;
     @ApiProperty({})
