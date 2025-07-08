@@ -9,7 +9,7 @@ import { IListOptions } from '../models/i-list-options';
 })
 export class DataListComponent<I> {
   @Output()
-  select = new EventEmitter<I | I[]>();
+  select = new EventEmitter<[I | I[], Event]>();
   @Input()
   source?: I[];
   @Input()
@@ -29,7 +29,7 @@ export class DataListComponent<I> {
          return;
        }
      } */
-    this.select.emit(row);
+    this.select.emit([row, event]);
     this.selectedItem = row;
   }
   // }

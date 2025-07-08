@@ -8,9 +8,9 @@ export class WindowService {
     constructor(
         private readonly dialog: MatDialog,
     ) { }
-    async open(component: Type<any>, data: any, title?: string, event?: MouseEvent) {
+    async open(component: Type<any>, data: any, title?: string, event?: Event) {
 
-        if (event?.ctrlKey) {
+        if (event instanceof MouseEvent && event?.ctrlKey) {
             event.preventDefault();
             setTimeout(() => {
                 window.open(location.href, 'PopupWindow' + (data?.internalId || data?.id || data?.data?.internalId || data?.data?.id || ''), "width=600,height=700,resizable=yes,top=100,left=200,");

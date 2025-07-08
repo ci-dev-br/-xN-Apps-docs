@@ -4,11 +4,12 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatIconModule } from "@angular/material/icon";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { ActivatedRoute, RouterModule } from "@angular/router";
-import { GridModule, IColumnOption, IDataGridOptions, WindowModule, WindowService } from "@ci/components";
+import { DataListModule, GridModule, IColumnOption, IDataGridOptions, WindowModule, WindowService } from "@ci/components";
 import { CoreModule, DaoBuilder, DaoService } from "@ci/core";
 import { Application, getServiceAsSchema } from "@ci/portal-api";
 import { EditarComponent } from "./editar/editar.component";
 import { lastValueFrom } from "rxjs";
+import { FormsModule } from "@angular/forms";
 
 @Component({
     selector: 'ci-master-detail',
@@ -22,6 +23,8 @@ import { lastValueFrom } from "rxjs";
         MatIconModule,
         MatButtonModule,
         WindowModule,
+        DataListModule,
+        FormsModule,
     ],
     styleUrl: 'master-detail.component.scss',
     template: `
@@ -33,15 +36,18 @@ import { lastValueFrom } from "rxjs";
         Novo
     </button>
     <span style="flex:auto"></span>
-    <mat-button-toggle-group >
+    <mat-button-toggle-group [(ngModel)]="visualizacao" >
         <mat-button-toggle value="table"><mat-icon>view_list</mat-icon>Tabela</mat-button-toggle>
         <mat-button-toggle value="list"><mat-icon>grid_view</mat-icon>Lista</mat-button-toggle>
     </mat-button-toggle-group>
 </mat-toolbar>
 @if(visualizacao === 'table'){
     <ci-data-grid (select)="editar($event[0],$event[1])" [options]="gridOptions" [source]="source">
-            <div vazio style="flex: auto; text-align: center;">Nenhum item cadastrado</div>
+        <div vazio style="flex: auto; text-align: center;">Nenhum item cadastrado</div>
     </ci-data-grid>
+}
+@if(visualizacao === 'list'){
+    <ci-data-list (select)="editar($event[0],$event[1])" > </ci-data-list>
 }
     `
 })
@@ -111,15 +117,15 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
             let serviceType = getServiceAsSchema(this.schemaName);
             if (serviceType) {
                 this.service = this.injector.get(serviceType);
-            }
-        }
-        this.search();
+            }           
+}
+this.search();
         this.source;
     }
     async search() {
         if (this.service && this.service.getList) this.source = await this.daos.read(await lastValueFrom(this.service.getList()));
     }
-    async editar(data: T, event?: MouseEvent) {
+    async editar(data: T, event?: Event) {
         const result: number | any = await this.window.open(EditarComponent,
             { schemaName: this.schemaName, data }, this.schemaName, event)
         if (result === -1 && this.source) {

@@ -25,14 +25,14 @@ import { CoreModule } from "@ci/core";
     <button mat-icon-button (click)="sideMenu.toggle()">
         <mat-icon>menu</mat-icon>
     </button>
-    <button mat-raised-button>
+   <!--  <button mat-raised-button>
         <mat-icon>dashboard</mat-icon>
         Visão Geral
-    </button>
-    <button mat-raised-button>
+    </button> -->
+    <!-- <button mat-raised-button>
         <mat-icon>create</mat-icon>
         Novo
-    </button>
+    </button> -->
 </mat-toolbar>
 <mat-drawer-container >
     <mat-drawer #sideMenu mode="over" opened>
