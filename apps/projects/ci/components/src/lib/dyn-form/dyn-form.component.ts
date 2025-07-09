@@ -43,6 +43,7 @@ export class DynFormComponent implements OnInit {
                 property: p,
                 description: property_info.description,
                 type: property_info.type,
+                items: property_info.items,
                 schemaName: schema_name,
                 readonly: property_info.readOnly,
                 dataService: schema_name ? getServiceAsSchema(schema_name) as any : undefined,

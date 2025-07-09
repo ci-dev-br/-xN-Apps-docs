@@ -21,32 +21,36 @@ const types: any = {
             <!-- 
                 Defafault Input Implementation
             -->
-            <mat-form-field>
-                <mat-label>{{label || placeholder || ''}}</mat-label>
-                @if(!!service){
-                    <input matInput type="text" 
-                        [placeholder]="placeholder || label || ''" 
-                        [formControlName]="fieldName || ''"  
-                        [matAutocomplete]="autoc"  
-                    >
-                    <mat-autocomplete #autoc="matAutocomplete">
-                     @for (option of list; track option) {
-                         <mat-option [value]="option">{{option | dao}}</mat-option>
-                     }    
-                    </mat-autocomplete>
-                }@else{
-                    <input matInput type="text" 
-                        autocomplete="off"
-                        [placeholder]="placeholder || label || ''" 
-                        [formControlName]="fieldName || ''"  
-                    >
+                @if(type === 'html'){
+                    HTML CONTENT
+                }@else {
+                    <mat-form-field>
+                        <mat-label>{{label || placeholder || ''}}</mat-label>
+                        @if(!!service){
+                            <input matInput type="text" 
+                                [placeholder]="placeholder || label || ''" 
+                                [formControlName]="fieldName || ''"  
+                                [matAutocomplete]="autoc"  
+                            >
+                            <mat-autocomplete #autoc="matAutocomplete">
+                             @for (option of list; track option) {
+                                 <mat-option [value]="option">{{option | dao}}</mat-option>
+                             }    
+                            </mat-autocomplete>
+                        }@else{
+                            <input matInput type="text" 
+                                autocomplete="off"
+                                [placeholder]="placeholder || label || ''" 
+                                [formControlName]="fieldName || ''"  
+                            >
+                        }
+                        @if(!!schemaName){<button mat-icon-button matSuffix>
+                            <mat-icon>
+                                search
+                            </mat-icon>
+                        </button>}
+                    </mat-form-field>
                 }
-                @if(!!schemaName){<button mat-icon-button matSuffix>
-                    <mat-icon>
-                        search
-                    </mat-icon>
-                </button>}
-            </mat-form-field>
         }
     </form>
     @if(false){  <ci-dyn-input-date></ci-dyn-input-date>}

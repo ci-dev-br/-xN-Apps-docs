@@ -33,7 +33,7 @@ import { FormsModule } from "@angular/forms";
         Pesquisar
     </button>
     <button mat-raised-button (click)="createNew()" >
-        Novo
+        Cadastrar
     </button>
     <span style="flex:auto"></span>
     <mat-button-toggle-group [(ngModel)]="visualizacao" >
@@ -117,9 +117,9 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
             let serviceType = getServiceAsSchema(this.schemaName);
             if (serviceType) {
                 this.service = this.injector.get(serviceType);
-            }           
-}
-this.search();
+            }
+        }
+        this.search();
         this.source;
     }
     async search() {

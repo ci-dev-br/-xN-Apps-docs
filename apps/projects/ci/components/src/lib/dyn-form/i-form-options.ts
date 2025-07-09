@@ -56,6 +56,10 @@ export interface IFormFieldDefinition<T> {
      *  Serviço do objeto 
      */
     service?: Type<any>;
+    /**
+     * Items type 
+     */
+    items?: { [key: string]: string };
 }
 
 export const FORM_OPTIONS = new InjectionToken<IFormOptions>('PX_FORM_OPTIONS');

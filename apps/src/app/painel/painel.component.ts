@@ -75,6 +75,7 @@ export class PainelComponent {
       treinamento: { url: 'icons/treinamento.svg' },
       vendas: { url: 'icons/vendas.svg' },
       crm: { url: 'icons/crm.svg' },
+      cms: { url: 'icons/cms.svg' },
     });
 
     this.userService.user.subscribe(user => {
