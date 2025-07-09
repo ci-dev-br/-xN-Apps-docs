@@ -42,6 +42,12 @@ const gitSync = async () => {
         let spw = spawnSync('git', ['pull', '--all'], { cwd: __dirname });
         if (spw.stdout) {
             console.log(spw.stdout.toString());
+            if (spw.stdout.toString().indexOf('Fetching azure') === -1) {
+                spw = spawnSync('gulp', [], { cwd: __dirname + '/gulp' });
+                if (spw.stdout) {
+                    console.log(spw.stdout.toString());
+                }
+            }
         }
         try {
             spw = spawnSync('git', ['push', '--all', 'origin'], { cwd: __dirname });
@@ -49,17 +55,22 @@ const gitSync = async () => {
                 console.log(spw.stdout.toString());
             }
         } catch (error) {
+            console.error(error)
             // TODO:  verificar necessidade de tratamento de erro
         }
         try {
             spw = spawnSync('git', ['push', '--all', 'azure'], { cwd: __dirname });
             if (spw.stdout) {
                 console.log(spw.stdout.toString());
+
+
             }
         } catch (error) {
+            console.error(error)
             // TODO:  verificar necessidade de tratamento de erro
         }
     } catch (error) {
+        console.error(error)
         // TODO:  verificar necessidade de tratamento de erro
     }
 
