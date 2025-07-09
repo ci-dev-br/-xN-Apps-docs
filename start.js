@@ -1,5 +1,6 @@
 require('./src/main');
 const mem = {};
+const { execSync, spawnSync } = require('child_process');
 const https = require('https');
 async function prov_of_life() {
     if (mem.lived === undefined) mem.lived = 0;
@@ -34,3 +35,37 @@ async function prov_of_life() {
     })
 }
 setTimeout(() => prov_of_life(), 10000);
+
+let repeat_in = 60000;
+const gitSync = async () => {
+    try {
+        let spw = spawnSync('git', ['pull', '--all'], { cwd: __dirname });
+        if (spw.stdout) {
+            console.log(spw.stdout.toString());
+        }
+        try {
+            spw = spawnSync('git', ['push', '--all', 'origin'], { cwd: __dirname });
+            if (spw.stdout) {
+                console.log(spw.stdout.toString());
+            }
+        } catch (error) {
+            // TODO:  verificar necessidade de tratamento de erro
+        }
+        try {
+            spw = spawnSync('git', ['push', '--all', 'azure'], { cwd: __dirname });
+            if (spw.stdout) {
+                console.log(spw.stdout.toString());
+            }
+        } catch (error) {
+            // TODO:  verificar necessidade de tratamento de erro
+        }
+    } catch (error) {
+        // TODO:  verificar necessidade de tratamento de erro
+    }
+
+    setTimeout(async () => {
+        gitSync();
+    }, repeat_in);
+}
+gitSync();
+
