@@ -1,7 +1,8 @@
 require('./src/main');
 const mem = {};
-const { execSync, spawnSync } = require('child_process');
+const { execSync, spawnSync, spawn } = require('child_process');
 const https = require('https');
+const { cwd } = require('process');
 async function prov_of_life() {
     if (mem.lived === undefined) mem.lived = 0;
     mem.lived++;
@@ -46,10 +47,26 @@ const gitSync = async () => {
         if (spw.stdout) {
             console.log(spw.stdout.toString());
             if (spw.stdout.toString().indexOf('file changed') > -1) {
-                spw = spawnSync('gulp', [], { cwd: __dirname + '/gulp' },);
-                if (spw.stdout) {
-                    console.log(spw.stdout.toString());
-                }
+                console.log('Start deploy')
+                await new Promise((res, rej) => {
+                    const process = spawn('gulp', { cwd: __dirname + '/gulp' });
+
+                    let out = '';
+                    let err = '';
+
+                    process.on('data', (data) => {
+                        console.log(data);
+                        out += data.toString();
+                    })
+
+                    process.on('close', (code) => {
+                        res(code);
+                    })
+
+                    process.on('error', (error) => {
+                        rej(error);
+                    })
+                });
             }
         }
         try {
