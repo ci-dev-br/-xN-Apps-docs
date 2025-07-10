@@ -38,11 +38,13 @@ setTimeout(() => prov_of_life(), 10000);
 
 let repeat_in = 60000;
 const gitSync = async () => {
+    let branch_name;
     try {
-        let spw = spawnSync('git', ['pull', '--all'], { cwd: __dirname });
+        branch_name = spawnSync('git', ['branch', '--show-current'], { cwd: __dirname }).stdout.toString().trim();
+        let spw = spawnSync('git', ['pull', 'azure', branch_name], { cwd: __dirname });
         if (spw.stdout) {
             console.log(spw.stdout.toString());
-            if (spw.stdout.toString().indexOf('Fetching azure') === -1) {
+            if (spw.stdout.toString().indexOf('file changed') > -1) {
                 spw = spawnSync('gulp', [], { cwd: __dirname + '/gulp' });
                 if (spw.stdout) {
                     console.log(spw.stdout.toString());
