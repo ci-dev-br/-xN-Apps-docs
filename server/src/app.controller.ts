@@ -18,7 +18,7 @@ export class AppController {
     // return null;
     console.info(req.hostname);
 
-    this.sitePage.
+    // this.sitePage.
 
 
     if (!!req.path && req.path.indexOf('.') > -1) {
