@@ -14,9 +14,10 @@ export class SitePageService extends DaoFullAuditedServiceBase<SitePage> {
     }
 
 
-    async getPage(domain: string,) {
-        return this._repo.findOne({
+    async getPage(domain: string, path: string) {
+        return await this._repo.findOne({
             where: {
+                urlMatch: Equal(path),
                 website: {
                     domain: Equal(domain),
                 }

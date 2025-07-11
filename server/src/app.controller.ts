@@ -14,12 +14,20 @@ export class AppController {
   }
   @Get()
   @Public()
-  asyncroot(@Req() req: Request, @Res() res: Response) {
-    // return null;
-    console.info(req.hostname);
+  async root(@Req() req: Request, @Res() res: Response) {
+    console.info(req.hostname, req.path);
+    try {
+      let page = await this.sitePage.getPage(req.hostname, req.path);
+      console.log(page);
 
-    // this.sitePage.
+      if (!!page && !!page.content) {
+        res.send(page.content.join('\n'));
+        return;
 
+      }
+    } catch (error) {
+
+    }
 
     if (!!req.path && req.path.indexOf('.') > -1) {
       try {
