@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Optional, Post, Req, Res } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Public } from '../libs/auth/src/decorators/public.decorator';
 import { Request, Response } from 'express';
@@ -9,26 +9,29 @@ import { SitePageService } from '@ci/cms/services/site-page.service';
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly sitePage: SitePageService,
+    @Optional()
+    private readonly sitePage?: SitePageService,
   ) {
   }
   @Get()
   @Public()
   async root(@Req() req: Request, @Res() res: Response) {
     console.info(req.hostname, req.path);
-    try {
-      let page = await this.sitePage.getPage(req.hostname, req.path);
-      console.log(page);
 
-      if (!!page && !!page.content) {
-        res.send(page.content.join('\n'));
-        return;
+    if (this.sitePage) {
+      try {
+        let page = await this.sitePage.getPage(req.hostname, req.path);
+        console.log(page);
+
+        if (!!page && !!page.content) {
+          res.send(page.content.join('\n'));
+          return;
+
+        }
+      } catch (error) {
 
       }
-    } catch (error) {
-
     }
-
     if (!!req.path && req.path.indexOf('.') > -1) {
       try {
         if (existsSync(__dirname + `/../public${req.path}`)) {
