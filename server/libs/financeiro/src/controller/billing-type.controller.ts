@@ -1,56 +1,56 @@
- import { Body, Controller, Post } from "@nestjs/common";
-import { PessoaService } from "../service/conta.service";
+import { Body, Controller, Post } from "@nestjs/common";
+import { BillingTypeService } from "../service/billing-type.service";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/core";
-import { Pessoa } from "../model/pessoa.entity";
+import { BillingType } from "../model/billing-type.entity";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { FindOptionsWhere } from "typeorm";
-export class SyncPayloadDaoPessoa extends SyncPayloadDao<Pessoa> {
-    @ApiProperty({ type: Pessoa })
-    override data?: Pessoa;
+export class SyncPayloadDaoBillingType extends SyncPayloadDao<BillingType> {
+    @ApiProperty({ type: BillingType })
+    override data?: BillingType;
 }
-export class ObterListaPessoa {
-    // override data?: Pessoa;
+export class ObterListaBillingType {
+    // override data?: BillingType;
     @ApiProperty({})
     skip?: number;
     @ApiProperty({})
     take?: number;
     @ApiProperty({})
-    where?: FindOptionsWhere<Pessoa>[] | FindOptionsWhere<Pessoa>;
+    where?: FindOptionsWhere<BillingType>[] | FindOptionsWhere<BillingType>;
 }
-export class PessoaCotrollerGetInputDto {
+export class BillingTypeCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
     query?: string;
     @ApiProperty({ nullable: true, required: false })
     limit?: number;
 }
 /**
- * Pessoa Controller
+ * BillingType Controller
  */
-@ApiTags('Pessoa')
-@Controller('Pessoa')
-export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
+@ApiTags('BillingType')
+@Controller('BillingType')
+export class BillingTypeController extends ControllerDaoBase<BillingTypeService, BillingType> {
     @Post('Sync')
     @ApiResponse({
-        type: SyncPayloadDaoPessoa
+        type: SyncPayloadDaoBillingType
     })
     @ApiOperation({
-        operationId: 'SyncPessoa'
+        operationId: 'SyncBillingType'
     })
     override async Sync(
-        @Body() body: SyncPayloadDaoPessoa,
+        @Body() body: SyncPayloadDaoBillingType,
     ) {
         return await super.Sync(body)
     }
     @Post('GetList')
     @ApiResponse({
         type:
-            SyncPayloadDaoPessoa
+            SyncPayloadDaoBillingType
     })
     @ApiOperation({
-        operationId: 'GetListPessoa'
+        operationId: 'GetListBillingType'
     })
     override async GetList(
-        @Body() input: ObterListaPessoa,
+        @Body() input: ObterListaBillingType,
     ) {
         return super.GetList(input);
     }

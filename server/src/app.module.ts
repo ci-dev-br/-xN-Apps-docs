@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { Entities as NotificacaoEntities, NotificacaoModule } from '@ci/notification';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule, AuthEntities as AuthEntities } from '@ci/auth/auth.module';
@@ -142,6 +142,7 @@ process.env.MODULES.split(',').forEach(e => {
         ...LoadedEntities
       ]
     }),
+    forwardRef(() => CmsModule),
     ...LoadedModules,
   ],
   controllers: [

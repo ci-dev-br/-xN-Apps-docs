@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { Equal, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DaoFullAuditedServiceBase, SnapshotService } from "@ci/core";
 import { SitePage } from "../models/site-page.entity";
@@ -11,5 +11,16 @@ export class SitePageService extends DaoFullAuditedServiceBase<SitePage> {
         repository: Repository<SitePage>
     ) {
         super(snap, repository);
+    }
+
+
+    async getPage(domain: string,) {
+        return this._repo.findOne({
+            where: {
+                website: {
+                    domain: Equal(domain),
+                }
+            }
+        })
     }
 }

@@ -1,14 +1,14 @@
- import { Body, Controller, Post } from "@nestjs/common";
-import { PessoaService } from "../service/conta.service";
+import { Body, Controller, Post } from "@nestjs/common";
+import { LancamentoService } from "../service/lancamento.service";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/core";
 import { Lancamento } from "../model/lancamento.entity";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { FindOptionsWhere } from "typeorm";
-export class SyncPayloadDaoPessoa extends SyncPayloadDao<Lancamento> {
+export class SyncPayloadDaoLancamento extends SyncPayloadDao<Lancamento> {
     @ApiProperty({ type: Lancamento })
     override data?: Lancamento;
 }
-export class ObterListaPessoa {
+export class ObterListaLancamento {
     // override data?: Lancamento;
     @ApiProperty({})
     skip?: number;
@@ -17,7 +17,7 @@ export class ObterListaPessoa {
     @ApiProperty({})
     where?: FindOptionsWhere<Lancamento>[] | FindOptionsWhere<Lancamento>;
 }
-export class PessoaCotrollerGetInputDto {
+export class LancamentoCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
     query?: string;
     @ApiProperty({ nullable: true, required: false })
@@ -28,29 +28,29 @@ export class PessoaCotrollerGetInputDto {
  */
 @ApiTags('Lancamento')
 @Controller('Lancamento')
-export class PessoaController extends ControllerDaoBase<PessoaService, Lancamento> {
+export class LancamentoController extends ControllerDaoBase<LancamentoService, Lancamento> {
     @Post('Sync')
     @ApiResponse({
-        type: SyncPayloadDaoPessoa
+        type: SyncPayloadDaoLancamento
     })
     @ApiOperation({
-        operationId: 'SyncPessoa'
+        operationId: 'SyncLancamento'
     })
     override async Sync(
-        @Body() body: SyncPayloadDaoPessoa,
+        @Body() body: SyncPayloadDaoLancamento,
     ) {
         return await super.Sync(body)
     }
     @Post('GetList')
     @ApiResponse({
         type:
-            SyncPayloadDaoPessoa
+            SyncPayloadDaoLancamento
     })
     @ApiOperation({
-        operationId: 'GetListPessoa'
+        operationId: 'GetListLancamento'
     })
     override async GetList(
-        @Body() input: ObterListaPessoa,
+        @Body() input: ObterListaLancamento,
     ) {
         return super.GetList(input);
     }

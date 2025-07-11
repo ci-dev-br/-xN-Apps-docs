@@ -65,6 +65,17 @@ export const CmsEntities = [
         SitePostService,
         TermService,
         TermMetaService,
+    ],
+    exports: [
+        WebsiteService,
+        SitePageService,
+        CommentMetaService,
+        CommentService,
+        LinksService,
+        SiteOptionService,
+        SitePostService,
+        TermService,
+        TermMetaService,
     ]
 })
 export class CmsModule { }

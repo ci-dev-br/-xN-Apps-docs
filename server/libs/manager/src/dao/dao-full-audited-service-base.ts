@@ -3,8 +3,8 @@ import { FullAuditedEntity, SnapshotService } from ".";
 
 export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
     constructor(
-        private readonly _snap: SnapshotService,
-        private readonly _repo?: Repository<E>,
+        protected readonly _snap: SnapshotService,
+        protected readonly _repo?: Repository<E>,
     ) {
     }
     async sincronizar(data: E, request?: any) {

@@ -4,13 +4,23 @@ import { Public } from '../libs/auth/src/decorators/public.decorator';
 import { Request, Response } from 'express';
 import { resolve } from 'path';
 import { existsSync } from 'fs';
+import { SitePageService } from '@ci/cms/services/site-page.service';
 @Controller('*')
 export class AppController {
-  constructor(private readonly appService: AppService) {
+  constructor(
+    private readonly appService: AppService,
+    private readonly sitePage: SitePageService,
+  ) {
   }
   @Get()
   @Public()
-  root(@Req() req: Request, @Res() res: Response) {
+  asyncroot(@Req() req: Request, @Res() res: Response) {
+    // return null;
+    console.info(req.hostname);
+
+    this.sitePage.
+
+
     if (!!req.path && req.path.indexOf('.') > -1) {
       try {
         if (existsSync(__dirname + `/../public${req.path}`)) {
