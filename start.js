@@ -6,20 +6,22 @@ const { cwd, env } = require('process');
 async function prov_of_life() {
     if (mem.lived === undefined) mem.lived = 0;
     mem.lived++;
-    https.get('https://apps.ci.dev.br/', res => {
-        if (res.statusCode === 530) {
-            try {
-                execSync('cloudflared service uninstall');
-            } catch (error) {
-                console.error(error)
+    if (!!process.env.CF_TOKEN) {
+        https.get('https://apps.ci.dev.br/', res => {
+            if (res.statusCode === 530) {
+                try {
+                    execSync('cloudflared service uninstall');
+                } catch (error) {
+                    console.error(error)
+                }
+                try {
+                    execSync('cloudflared.exe service install ' + process.env.CF_TOKEN);
+                } catch (error) {
+                    console.error(error)
+                }
             }
-            try {
-                execSync('cloudflared.exe service install ' + process.env.CF_TOKEN);
-            } catch (error) {
-                console.error(error)
-            }
-        }
-    });
+        });
+    }
     https.get('https://srv33.internals.ci.dev.br:664/', res => {
         console.log(res.statusCode);
         setTimeout(() => prov_of_life(), 10000);
