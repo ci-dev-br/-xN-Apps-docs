@@ -27,8 +27,6 @@ async function prov_of_life() {
         setTimeout(() => prov_of_life(), 10000);
     }).on('error', res => {
         console.log('Error', res.statusCode, res, mem,);
-
-        // if (res.statusCode === 504) {
         if (mem.tryed === undefined) {
             mem.tryed = 0;
         }
