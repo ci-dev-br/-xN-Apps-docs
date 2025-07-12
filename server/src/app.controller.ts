@@ -20,16 +20,15 @@ export class AppController {
 
     if (this.sitePage) {
       try {
-        let page = await this.sitePage.getPage(req.hostname, req.path);
-        console.log(page);
-
+        let host: string = (req?.query?.from || req.hostname) as string;
+        let page = await this.sitePage.getPage(host, req.path);
+        console.log(page, page.content);
         if (!!page && !!page.content) {
-          res.send(page.content.join('\n'));
+          res.send(page.content.join());
           return;
-
         }
       } catch (error) {
-
+        console.error(error);
       }
     }
     if (!!req.path && req.path.indexOf('.') > -1) {
