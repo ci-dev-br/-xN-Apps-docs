@@ -11,3 +11,4 @@ export * from './lib/io/http.interceptor';
 export * from './lib/io/ws.service';
 export * from './lib/decorators/short-cut.decorator';
 export * from './lib/dao/i-have-sync';
+export * from './lib/routes/route-from-schema';
