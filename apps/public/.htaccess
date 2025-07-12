@@ -10,7 +10,7 @@ RewriteBase /
 # assign with https all 
 RewriteEngine On
 RewriteCond %{HTTPS} !=on
-RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L]
 
 # 1. Permite acesso direto a arquivos existentes
 RewriteCond %{REQUEST_FILENAME} -f
@@ -18,7 +18,7 @@ RewriteRule ^ - [L]
 
 # 2. Reescreve para index.php se a rota não corresponde a um arquivo e não tem extensão
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_URI} !\. [NC] 
+# RewriteCond %{REQUEST_URI} !\. [NC] 
 RewriteRule ^(.*)$ /index.php [L]
 
 # 3. Redireciona demais rotas para recursos internos
