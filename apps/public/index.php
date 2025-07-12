@@ -4,7 +4,7 @@ try {
     $headers = implode("\n", $http_response_header);
     if (preg_match_all("/^content-type\s*:\s*(.*)$/mi", $headers, $matches)) {
         $content_type = end($matches[1]);
-        header("ContentType: $content_type");
+        header("Content-Type: $content_type");
     }
     print($contents);
 } catch (\Throwable $th) {
