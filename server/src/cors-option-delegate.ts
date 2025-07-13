@@ -7,7 +7,8 @@ export const corsOptionsDelegate = (req, callback) => {
     if (whitelist.indexOf(req.header('Origin')) !== -1) {
         corsOptions = {
             origin: true,
-            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE'
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+            allowedHeaders: 'x-From'
         };
     } else {
         corsOptions = { origin: false };
