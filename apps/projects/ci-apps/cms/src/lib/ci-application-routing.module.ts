@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Route, RouterModule, Routes } from '@angular/router';
 import { CMSComponent } from './cms/cms.component';
-import { RouteFromSchema } from '@ci/core';
+import { MasterDetailComponent } from '@ci/components';
 
 const models = [
   'CommentMeta',
@@ -17,7 +17,13 @@ const models = [
 const routes: Routes = [
   {
     path: '', component: CMSComponent, children: [
-      ...models.map(c => RouteFromSchema(c))
+      ...models.map(c => {
+        return {
+          path: `${c}`, component: MasterDetailComponent, data: {
+            schema: `${c}`, title: `${c}`, icon: `svg:${c}`,
+          }
+        } as Route
+      })
     ],
   }
 ];
