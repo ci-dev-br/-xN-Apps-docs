@@ -7,6 +7,7 @@ export interface SitePage {
    * Conteúdo HTML da página
    */
   content: Array<string>;
+  contentType?: string | null;
   createdAt?: Date | null;
   createdBy?: {
 } | null;

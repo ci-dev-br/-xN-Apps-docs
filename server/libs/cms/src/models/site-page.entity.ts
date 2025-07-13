@@ -25,8 +25,11 @@ export class SitePage extends FullAuditedEntity {
         nullable: true, array: true, type: 'varchar'
     })
     content?: string[];
+    @ApiProperty({ nullable: true, required: false, title: 'Content-Type', maxLength: 120 })
+    @Column({ nullable: true, length: 120 })
+    contentType?: string;
     @ApiProperty({
-        title: 'Endereço da página', format: 'html', description: 'Endereço público da página'
+        title: 'Endereço da página', description: 'Endereço público da página'
     })
     @Column({
         nullable: true,

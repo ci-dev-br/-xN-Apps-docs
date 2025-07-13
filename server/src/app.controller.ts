@@ -16,7 +16,7 @@ export class AppController {
   @Get()
   @Public()
   async root(@Req() req: Request, @Res() res: Response) {
-    console.info(req.hostname, req.path);
+    console.info(req.hostname, req.path, req.headers);
 
     if (this.sitePage) {
       try {
