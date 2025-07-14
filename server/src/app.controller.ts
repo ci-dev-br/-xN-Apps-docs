@@ -25,8 +25,9 @@ export class AppController {
         console.log(page, page.content);
         if (!!page && !!page.content) {
           res.send(page.content.join());
-          return;
         }
+        if (page && page.contentType) res.contentType(page.contentType)
+        return;
       } catch (error) {
         console.error(error);
       }
