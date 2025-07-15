@@ -43,7 +43,7 @@ export class BusService {
     ) {
     }
     registry(client: WebSocket, mac: string) {
-        console.log(mac, client);
+        // console.log(mac, client);
         let bus_client_signal = BusService.clients.has(mac) ? BusService.clients.get(mac) : BusService.clients.set(mac, new BusClientSignal()).get(mac);
         bus_client_signal.addClient(client);
         this.events?.emitEvent('Gerencial.Devices', {

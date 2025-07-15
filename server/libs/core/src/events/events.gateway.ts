@@ -16,7 +16,7 @@ export class EventsGateway implements OnGatewayInit {
     constructor(
         private readonly bus: BusService,
     ) {
-        console.info('[events]')
+        // console.info('[events]')
         bus.events = this;
     }
     pings = [];
@@ -72,7 +72,7 @@ export class EventsGateway implements OnGatewayInit {
                         this.clients.delete(data.client);
                     }
                 }, waiting + 1000);
-                console.log(' Clients: ' + this.clients.size);
+                // console.log(' Clients: ' + this.clients.size);
                 return last;
             }
         } catch (error) {
@@ -82,7 +82,7 @@ export class EventsGateway implements OnGatewayInit {
     @SubscribeMessage('identity')
     async identity(@ConnectedSocket() client: any, @MessageBody() data: any) {
         if (!this.sing(data)) return;
-        console.log(data);
+        // console.log(data);
         client.id = data.client;
         return data;
     }

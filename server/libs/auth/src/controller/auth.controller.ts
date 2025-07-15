@@ -30,7 +30,7 @@ export class AuthController {
     @Request() req: Request,
     @Body() input?: RegistrarInputDto,
   ) {
-    console.info(req.headers);
+    // console.info(req.headers);
     try {
       const created_user = await this.userService.registrar({
         email: input.email,

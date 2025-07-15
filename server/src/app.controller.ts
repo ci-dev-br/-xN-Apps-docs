@@ -16,18 +16,19 @@ export class AppController {
   @Get()
   @Public()
   async root(@Req() req: Request, @Res() res: Response) {
-    console.info(req.hostname, req.path, req.headers);
+    // console.info(req.hostname, req.path, req.headers);
 
     if (this.sitePage) {
       try {
         let host: string = (req.header('x-From') || req.hostname) as string;
         let page = await this.sitePage.getPage(host, req.path);
-        console.log(page, page.content);
-        if (!!page && !!page.content) {
-          res.send(page.content.join());
+        if (!!page) {
+          if (!!page.contentType) res.contentType(page.contentType)
+          if (!!page.content) {
+            res.send(page.content.join());
+          }
+          return;
         }
-        if (page && page.contentType) res.contentType(page.contentType)
-        return;
       } catch (error) {
         console.error(error);
       }

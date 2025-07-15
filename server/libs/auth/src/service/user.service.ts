@@ -51,7 +51,7 @@ export class UserService {
                 result.on('data', (result_data) => {
                     if (result_data) {
                         const r = JSON.parse(result_data.toString());
-                        console.log(r);
+                        // console.log(r);
                         if (r.status !== 200) {
                             rej(new Error('Falha no envio do e-mail de confirmação.\n' + (r.message || '')))
                         } else {

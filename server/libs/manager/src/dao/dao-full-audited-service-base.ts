@@ -50,7 +50,7 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
                 }
             }
         }
-        console.log(___internal_data);
+        // console.log(___internal_data);
         return await this._repo.save(___internal_data);
         /// }
     }

@@ -18,7 +18,7 @@ export class MessageService {
         @Inject(forwardRef(() => BusService))
         private readonly bus: BusService,
     ) {
-        console.log('[Message Service]');
+        // console.log('[Message Service]');
     }
     async sendSMS(payload: SMSPaylod) {
         const phone_number = await this.phoneNumberRepository.findOne({

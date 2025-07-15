@@ -28,7 +28,7 @@ export class PranchetaService {
                 console.error(error);
             }
         } else {
-            if (!!options?.req) console.log(options.req.user);
+            //  if (!!options?.req) console.log(options.req.user);
             prancheta_current = await this.prancheta_reppository.create({
                 ...prancheta_untastemented,
                 createdBy: { id: options.req.chaveAcesso },
