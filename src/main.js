@@ -1,13 +1,8 @@
 const { spawn } = require('child_process');
-
 class ServiceBase {
-
 }
-
 class NestSerice extends ServiceBase {
-
 }
-
 /**
  * Cliente da Aplicação
  */
@@ -17,17 +12,14 @@ const cliente_processo = null;
 //     .on('error', m => console.log(m))
 //     .on('message', m => console.log(m))
 //     ;
-
 let processos = [];
 let cliente_status = 0;
 let cliente_message = null;
 cliente_processo?.stdout.on('data', (data) => {
     cliente_status = 0;
     cliente_message = data; 0
-
     if (String(data).indexOf('Compiled successfully') > -1) cliente_status = 2;
 });
-
 /**
  * Serviço da Aplicação
  */
@@ -48,7 +40,6 @@ const service_process = spawn('node',
     .on('error', m => console.log(m))
     .on('message', m => console.log(m))
     ;
-
 let status_service = 0;
 let message_service = null;
 service_process.stdout.on('data', (data) => {
@@ -65,10 +56,9 @@ const Renrer = () => {
         out += `[ client ]: \n${String(cliente_message).trim()}\n`;
     if (message_service)
         out += `[ service ]: \n${String(message_service).trim()}\n`;
-
     if (out != last) {
         last = out;
-        // console.clear();
+        console.clear();
         console.log(out);
     }
     setTimeout(() => Renrer(), 700);
@@ -126,7 +116,6 @@ app.listen(PORT, function () {
     if (e.message.indexOf('EADDRINUSE') > -1) {
         console.log('Parar aplicação!');
         let c = spawn('powershell', ['-ExecutionPolicy', 'ByPass']);
-
     }
 });
 function syncUpAll() {

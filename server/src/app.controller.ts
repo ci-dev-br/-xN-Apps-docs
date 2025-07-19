@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Optional, Post, Req, Res } from '@nestjs/common';
-import { AppService } from './app.service';
+import { CiApplicationService } from './app.service';
 import { Public } from '../libs/auth/src/decorators/public.decorator';
 import { Request, Response } from 'express';
 import { resolve } from 'path';
@@ -8,7 +8,7 @@ import { SitePageService } from '@ci/cms/services/site-page.service';
 @Controller('*')
 export class AppController {
   constructor(
-    private readonly appService: AppService,
+    private readonly appService: CiApplicationService,
     @Optional()
     private readonly sitePage?: SitePageService,
   ) {

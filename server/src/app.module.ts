@@ -26,7 +26,7 @@ import { INPIEntities, INPIModule } from '@ci/inpi/inpi.module';
 import { SeoMarketingEntities, SeoMarketingModule } from '@ci/seo-marketing';
 import { config } from 'dotenv';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { CiApplicationService } from './app.service';
 import { FORMS_ENTITIES, FormsModule } from '@ci/forms';
 import { CmsEntities, CmsModule } from '@ci/cms/cms.module';
 import { I11nEntities, I11nModule } from '@ci/i11n';
@@ -149,7 +149,7 @@ process.env.MODULES.split(',').forEach(e => {
     AppController,
   ],
   providers: [
-    AppService,
+    CiApplicationService,
   ],
 })
 export class AppModule { }

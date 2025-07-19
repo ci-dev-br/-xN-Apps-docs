@@ -2,8 +2,10 @@ require('./src/main');
 const mem = {};
 const { execSync, spawnSync, spawn, exec } = require('child_process');
 const https = require('https');
+const http = require('http');
 const { cwd, env } = require('process');
 async function prov_of_life() {
+    console.log('[prov_of_life]')
     if (mem.lived === undefined) mem.lived = 0;
     mem.lived++;
     if (!!process.env.CF_TOKEN) {
@@ -54,6 +56,7 @@ setTimeout(() => prov_of_life(), 10000);
 
 let repeat_in = 60000;
 const gitSync = async () => {
+    console.log('git sync')
     let branch_name;
     let spw;
     try {
@@ -120,3 +123,13 @@ const gitSync = async () => {
 }
 gitSync();
 
+/* async function verifyInternalRuntime() {
+    https.get('https://srv33.internals.ci.dev.br:664/', res => {
+        if (res.statusCode === 504) {
+            console.error('[precisa rodar novamente ixi]');
+        }
+    });
+} */
+/* setTimeout(() => {
+    verifyInternalRuntime();
+}, 10 * 1000) */
