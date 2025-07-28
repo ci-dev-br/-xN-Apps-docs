@@ -5,4 +5,4 @@
 export * from './lib/ci-application.module';
 
 /* Cards */
-export * from './lib/cards/totalizador.component';
+export * as Cards from './lib/cards';

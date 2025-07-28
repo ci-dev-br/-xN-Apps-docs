@@ -7,12 +7,13 @@ import { BoardModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatMenuModule } from '@angular/material/menu';
+import { models } from '../models';
 @Component({
   selector: 'ci-crm',
   standalone: true,
   imports: [
-    RouterModule,
     CoreModule,
+    RouterModule,
     BoardModule,
     MatToolbarModule,
     MatButtonModule,
@@ -24,22 +25,12 @@ import { MatMenuModule } from '@angular/material/menu';
   styleUrls: ['crm.component.scss']
 })
 export class CrmComponent implements OnInit, OnDestroy {
-  cadastros = [
-    'Agendamento',
-    'Atendimento',
-    'ClienteCrm',
-    'HistoricoContato',
-    'Produto',
-    'Profissional',
-    'Promocao',
-    'Servico',
-    'VendaProduto',
-  ]
-  private t = document.title;
+  cadastros = models;
+  private t?: string;
   ngOnInit(): void {
     document.title = `${this.t} :: CRM`;
   }
   ngOnDestroy(): void {
-    document.title = this.t;
+    if (this.t) document.title = this.t;
   }
 }

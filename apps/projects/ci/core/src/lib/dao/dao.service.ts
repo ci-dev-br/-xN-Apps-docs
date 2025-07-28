@@ -121,14 +121,14 @@ export class DaoService {
                                                 [property]: new SimpleChange(old_vale, value, false),
                                             });
                                         } catch (error) {
-                                            console.error(error);
+                                            console.trace(error);
                                         }
                                     },
                                 });
                                 this.read(o_data[property]);
                             }
                         } catch (error) {
-                            console.error(error);
+                            console.trace(error);
                         }
                     }
                 })

@@ -2,18 +2,9 @@ import { NgModule } from '@angular/core';
 import { Route, RouterModule, Routes } from '@angular/router';
 import { CMSComponent } from './cms/cms.component';
 import { MasterDetailComponent } from '@ci/components';
+import { models } from './models';
+// import { MasterDetailComponent } from '../../../cadastros/src/lib/cadastros/master-detail/master-detail.component';
 
-const models = [
-  'CommentMeta',
-  'Comment',
-  'Links',
-  'SitePage',
-  'SiteOption',
-  'SitePost',
-  'TermMeta',
-  'Term',
-  'Website',
-]
 const routes: Routes = [
   {
     path: '', component: CMSComponent, children: [
@@ -24,11 +15,12 @@ const routes: Routes = [
           }
         } as Route
       })
-    ],
+    ]
   }
 ];
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+  imports: [
+    RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
 export class CiApplicationRoutingModule { }

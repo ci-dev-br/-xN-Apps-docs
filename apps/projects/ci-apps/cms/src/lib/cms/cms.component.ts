@@ -6,65 +6,34 @@ import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { RouterModule } from "@angular/router";
 import { CoreModule } from "@ci/core";
+import { BoardModule, GridModule, WindowModule } from "@ci/components";
+import { models } from "../models";
 
 @Component({
     selector: 'ci-cms',
     imports: [
         CoreModule,
         RouterModule,
+        GridModule,
+        BoardModule,
         MatToolbarModule,
         MatSidenavModule,
         MatIconModule,
         MatButtonModule,
         MatMenuModule,
+        WindowModule,
     ],
     standalone: true,
     styleUrl: 'cms.component.scss',
-    template: `
-<mat-toolbar>
-    <button mat-icon-button (click)="sideMenu.toggle()">
-        <mat-icon>menu</mat-icon>
-    </button>
-   <!--  <button mat-raised-button>
-        <mat-icon>dashboard</mat-icon>
-        Visão Geral
-    </button> -->
-    <!-- <button mat-raised-button>
-        <mat-icon>create</mat-icon>
-        Novo
-    </button> -->
-</mat-toolbar>
-<mat-drawer-container >
-    <mat-drawer #sideMenu mode="over" opened>
-        @for(item of models; track item){
-        <button mat-menu-item [routerLink]="'./' + item">{{item}}</button>
-        }
-    </mat-drawer>
-    <mat-drawer-content>
-        <div class="inner-container">
-            <router-outlet></router-outlet>
-        </div>
-    </mat-drawer-content>
-</mat-drawer-container>
-    `
+    templateUrl: `cms.component.html`
 })
 export class CMSComponent implements OnInit, OnDestroy {
-    models = [
-        'CommentMeta',
-        'Comment',
-        'Links',
-        'SitePage',
-        'SiteOption',
-        'SitePost',
-        'TermMeta',
-        'Term',
-        'Website',
-    ]
-    private t = document.title;
-    ngOnInit(): void {
+    entidades = models;
+    private t?: string;
+    ngOnInit() {
         document.title = `${this.t} :: CMS`;
     }
-    ngOnDestroy(): void {
-        document.title = this.t;
+    ngOnDestroy() {
+        if (this.t) document.title = this.t;
     }
 }

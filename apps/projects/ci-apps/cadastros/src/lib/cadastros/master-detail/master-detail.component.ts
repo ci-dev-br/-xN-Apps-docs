@@ -8,7 +8,6 @@ import { GridModule, IColumnOption, IDataGridOptions, WindowModule, WindowServic
 import { CoreModule, DaoBuilder } from "@ci/core";
 import { Application, getServiceAsSchema } from "@ci/portal-api";
 import { EditarComponent } from "./editar/editar.component";
-import { lastValueFrom } from "rxjs";
 
 @Component({
     selector: 'ci-master-detail',
@@ -36,7 +35,9 @@ import { lastValueFrom } from "rxjs";
     </mat-button-toggle-group>
 </mat-toolbar>
     <!-- TODO: Visualização em lista e em tabela permitindo visualização lateral ou em janela dos valores selecionados. -->
+    @if(visualizacao === 'table'){
     <ci-data-grid [options]="gridOptions" [source]="source"></ci-data-grid>
+    }
     `
 })
 export class MasterDetailComponent<T> implements OnInit {
