@@ -36,6 +36,7 @@ export class HomeComponent implements OnInit {
         roles: [],
         tenants: [],
         username: [],
+        surname: [],
     })
     constructor(
         private readonly formBuilder: FormBuilder,

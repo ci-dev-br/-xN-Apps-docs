@@ -26,7 +26,7 @@
         <ci-icon mode="svg" icon="github"></ci-icon>
     </button>
     <button mat-button [matMenuTriggerFor]="userMenu">
-        {{(user | async)?.username}}
+        {{ (user | async)?.fullName || (user | async)?.username}}
     </button>
     <mat-menu #userMenu>
         <button mat-menu-item (click)="profile()">
