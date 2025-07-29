@@ -99,4 +99,8 @@ async function bootstrap() {
   let service_application = await app.init();
 
 }
-bootstrap();
+try {
+  bootstrap();
+} catch (error) {
+  error.trace('[end]', error);
+}

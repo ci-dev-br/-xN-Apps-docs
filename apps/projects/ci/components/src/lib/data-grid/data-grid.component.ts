@@ -3,6 +3,10 @@ import { DataGridService } from "./data-grid.service";
 import { IDataGridOptions } from "../models/i-data-grid-options";
 import { IColumnOption } from "../models/i-column-options";
 import { ShortCut } from "@ci/core";
+export interface SelectEvent<I> {
+    value?: I;
+    event: MouseEvent | KeyboardEvent | Event;
+}
 
 @Component({
     selector: 'ci-data-grid',
@@ -15,7 +19,7 @@ export class DataGridComponent<I> {
     @Output()
     sorted = new EventEmitter<any>();
     @Output()
-    select = new EventEmitter<[I | I[], MouseEvent]>();
+    select = new EventEmitter<SelectEvent<I>>();
     @Input()
     selectionMode?: 'cell' | 'row' | 'multi-cell' | 'multi-row' | 'multi' = 'row';
     @Input()
@@ -80,7 +84,7 @@ export class DataGridComponent<I> {
                     return;
                 }
             }
-            this.select.emit([row, event]);
+            this.select.emit({ value: row, event });
             this.selectedItem = row;
         }
     }

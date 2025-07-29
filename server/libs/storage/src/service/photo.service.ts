@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Photo } from "../models/photo.entity";
 import { Repository } from "typeorm";
-import { createHash } from "crypto";
 interface PartialData {
     parts: string[];
 }

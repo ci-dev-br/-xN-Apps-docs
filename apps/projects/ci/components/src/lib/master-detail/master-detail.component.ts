@@ -4,10 +4,11 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatIconModule } from "@angular/material/icon";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { ActivatedRoute, RouterModule } from "@angular/router";
-import { GridModule, IColumnOption, IDataGridOptions, } from "@ci/components";
+import { GridModule, IColumnOption, IDataGridOptions, WindowModule, WindowService, } from "@ci/components";
 import { CoreModule, DaoBuilder, DaoService, } from "@ci/core";
 import { FormsModule } from "@angular/forms";
 import { getServiceAsSchema } from "@ci/portal-api";
+import { EditarComponent } from "./editar/editar.component";
 import { lastValueFrom } from "rxjs";
 
 @Component({
@@ -40,7 +41,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
         @Optional() private readonly daoBuilder?: DaoBuilder,
         @Optional() private readonly daos?: DaoService,
         @Optional() private readonly route?: ActivatedRoute,
-        // @Optional() private readonly window?: WindowService,
+        @Optional() private readonly window?: WindowService,
         @Optional() private readonly injector?: Injector,
     ) { }
     source?: T[] = [{} as any];
@@ -55,7 +56,15 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
                         return {
                             headerName,
                             fieldName,
-                            hide: fieldName && ['internalId', 'id', 'createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy', 'tenants', 'deleted'].indexOf(fieldName) > -1
+                            hide: fieldName && [
+                                'internalId',
+                                'id',
+                                'createdAt',
+                                'createdBy',
+                                'lastModifiedAt',
+                                'lastModifiedBy',
+                                'tenants',
+                                'deleted'].indexOf(fieldName) > -1
 
                         } as IColumnOption<any>
                     })
@@ -74,13 +83,12 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
         this.route?.data.subscribe(async (data: any) => {
             if (!!data.schema) {
                 this.schemaName = data.schema;
-
                 await this.load();
             }
         })
     }
     async load() {
-        if (this.schemaName && !!document?.title && !this.oTitle) {
+        if (this.schemaName && !!document?.title && !this.oTitle && this.schemaName) {
             this.oTitle = document.title;
             document.title = `${this.oTitle} - ${this.schemaName}`
         }
@@ -99,12 +107,12 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
             this.source = await this.daos?.read(await lastValueFrom(this.service.getList()));
     }
     async editar(data: T, event?: Event) {
-        // const result: number | any = await this.window?.open(EditarComponent,
-        //     { schgemaName: this.schemaName, data }, this.schemaName, event)
-        // if (result === -1 && this.source) {
-        //     let pos = this.source.indexOf(data);
-        //     this.source?.splice(pos, 1);
-        // }
+        const result: number | any = await this.window?.open(EditarComponent,
+            { schgemaName: this.schemaName, data }, this.schemaName, event)
+        if (result === -1 && this.source) {
+            let pos = this.source.indexOf(data);
+            this.source?.splice(pos, 1);
+        }
     }
     async createNew() {
         let instance: T = {} as T;

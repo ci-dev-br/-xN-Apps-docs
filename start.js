@@ -4,58 +4,71 @@ const { execSync, spawnSync, spawn, exec } = require('child_process');
 const https = require('https');
 const http = require('http');
 const { cwd, env } = require('process');
+
+
+/**
+ * 
+ * Monitoramento externo:
+ * 
+ *  Verifica de tempos em tempos o estado de conexão da aplicação, 
+ * aciona mecanismos para re-estamelecer a normalidade de execução.
+ * 
+ */
 async function prov_of_life() {
-    console.log('[prov_of_life]')
-    if (mem.lived === undefined) mem.lived = 0;
-    mem.lived++;
-    if (!!process.env.CF_TOKEN) {
-        https.get('https://apps.ci.dev.br/', res => {
-            if (res.statusCode === 530) {
-                try {
-                    execSync('cloudflared service uninstall');
-                } catch (error) {
-                    console.error(error)
+    try {
+        console.log('[prov_of_life]')
+        if (mem.lived === undefined) mem.lived = 0;
+        mem.lived++;
+        if (!!process.env.CF_TOKEN) {
+            https.get('https://apps.ci.dev.br/', (res) => {
+                if (res.statusCode === 530) {
+                    try {
+                        execSync('cloudflared service uninstall');
+                    } catch (error) {
+                        console.trace(error)
+                    }
+                    try {
+                        execSync('cloudflared.exe service install ' + process.env.CF_TOKEN);
+                    } catch (error) {
+                        console.trace(error)
+                    }
                 }
+            });
+        }
+        https.get('https://srv33.internals.ci.dev.br:664/', res => {
+            console.log(res.statusCode);
+            setTimeout(() => prov_of_life(), 10000);
+        }).on('error', res => {
+            console.log('Error', res.statusCode, res, mem,);
+            if (mem.tryed === undefined) {
+                mem.tryed = 0;
+            }
+            mem.tryed++;
+            if (mem.tryed === 10) {
                 try {
-                    execSync('cloudflared.exe service install ' + process.env.CF_TOKEN);
+                    // require('child_process').execSync('git config --global --add safe.directory C:/projetos/br.dev.ci.apps', { // cwd: 'c:\\projetos\\br.dev.ci.apps\\' }).toString()
+                    // console.log('[Revertendo alterações no git devido a muitas falhas na inicialização]',
+                    //     require('child_process').execSync('git stash push -u -m stached', { cwd: 'c:\\projetos\\br.dev.ci.// apps\\' }).toString()
+                    // )
                 } catch (error) {
-                    console.error(error)
+                    console.trace('[Falha ao tentar realizar stash em git]', error);
+                }
+                if (!mem.tryed2) mem.tryed2 = 0;
+                mem.tryed2++;
+                if (mem.tryed2 > 3) {
+                    // require('child_process').execSync('shutdown /r');
                 }
             }
-        });
+            //}
+            setTimeout(() => prov_of_life(), 1000);
+        })
+    } catch (error) {
+        console.trace(error);
     }
-    https.get('https://srv33.internals.ci.dev.br:664/', res => {
-        console.log(res.statusCode);
-        setTimeout(() => prov_of_life(), 10000);
-    }).on('error', res => {
-        console.log('Error', res.statusCode, res, mem,);
-        if (mem.tryed === undefined) {
-            mem.tryed = 0;
-        }
-        mem.tryed++;
-        if (mem.tryed === 10) {
-            try {
-                // require('child_process').execSync('git config --global --add safe.directory C:/projetos/br.dev.ci.apps', { // cwd: 'c:\\projetos\\br.dev.ci.apps\\' }).toString()
-                // console.log('[Revertendo alterações no git devido a muitas falhas na inicialização]',
-                //     require('child_process').execSync('git stash push -u -m stached', { cwd: 'c:\\projetos\\br.dev.ci.// apps\\' }).toString()
-                // )
-            } catch (error) {
-                console.error('[Falha ao tentar realizar stash em git]', error);
-            }
-            if (!mem.tryed2) mem.tryed2 = 0;
-            mem.tryed2++;
-            if (mem.tryed2 > 3) {
-                // require('child_process').execSync('shutdown /r');
-            }
-        }
-        //}
-        setTimeout(() => prov_of_life(), 1000);
-    })
 }
 setTimeout(() => prov_of_life(), 10000);
-
 let repeat_in = 60000;
-const gitSync = async () => {
+const gitSyncronize = async () => {
     console.log('git sync')
     let branch_name;
     let spw;
@@ -98,7 +111,7 @@ const gitSync = async () => {
                 console.log(spw.stdout.toString());
             }
         } catch (error) {
-            console.error(error)
+            console.trace(error)
             // TODO:  verificar necessidade de tratamento de erro
         }
         try {
@@ -109,27 +122,16 @@ const gitSync = async () => {
 
             }
         } catch (error) {
-            console.error(error)
+            console.trace(error)
             // TODO:  verificar necessidade de tratamento de erro
         }
     } catch (error) {
-        console.error(error)
+        console.trace(error);
         // TODO:  verificar necessidade de tratamento de erro
     }
 
     setTimeout(async () => {
-        gitSync();
+        gitSyncronize();
     }, repeat_in);
 }
-gitSync();
-
-/* async function verifyInternalRuntime() {
-    https.get('https://srv33.internals.ci.dev.br:664/', res => {
-        if (res.statusCode === 504) {
-            console.error('[precisa rodar novamente ixi]');
-        }
-    });
-} */
-/* setTimeout(() => {
-    verifyInternalRuntime();
-}, 10 * 1000) */
+gitSyncronize();

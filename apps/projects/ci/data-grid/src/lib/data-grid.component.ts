@@ -5,11 +5,8 @@ import { Component, Input } from '@angular/core';
   standalone: true,
   imports: [],
   template: `
-    <p>
-      data-grid works!
-    </p>
+    // TODO: construir componente
   `,
-  styles: ``
 })
 export class DataGridComponent {
   @Input()

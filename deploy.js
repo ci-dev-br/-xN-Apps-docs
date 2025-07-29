@@ -14,7 +14,7 @@
                 });
                 console.log("Arquivos compilados com sucesso.");
             } catch (error) {
-                console.error(error);
+                console.trace(error);
             }
         }
         const sh = async (command, cwd) => {

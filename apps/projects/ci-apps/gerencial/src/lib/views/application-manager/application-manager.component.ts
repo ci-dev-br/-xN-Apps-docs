@@ -74,7 +74,7 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
             ]
         }
     }
-    async editar(application: Application, event?: MouseEvent) {
+    async editar(application: Application, event?: Event) {
         const result = await this.janela.open(EditarAplicativoComponent, application, 'Aplicativo', event)
         if (result === null) {
             const pos = this.apps?.indexOf(application);
