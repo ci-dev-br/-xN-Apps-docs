@@ -16,9 +16,9 @@
 //     }
 //     print($contents);
 //     $step = 1;
-// } catch (\Throwable $th) {
 // }
 // if($step == 0){
+    // } catch (\Throwable $th) {
 //     include 'index.csr.html';
 // }
 include 'index.csr.html';

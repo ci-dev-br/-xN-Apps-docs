@@ -24,4 +24,5 @@ RewriteRule ^(.*)$ /index.php [L]
 # 3. Redireciona todas as rotas que não corresponde a nenhum arquivo ou direório local para apps com o contexto da requisição
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+Header add x-From "%{HTTP_HOST}"
 RewriteRule ^(.*)$ https://apps.ci.dev.br/$1 [L]

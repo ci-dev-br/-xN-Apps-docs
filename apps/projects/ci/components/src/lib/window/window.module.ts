@@ -11,7 +11,7 @@ import { ActionModule } from '../action/action.module';
 
 @NgModule({
   declarations: [
-    WindowComponent
+    WindowComponent,
   ],
   imports: [
     CoreModule,
@@ -26,7 +26,7 @@ import { ActionModule } from '../action/action.module';
     WindowService,
   ],
   exports: [
-    WindowComponent,
+    // WindowComponent,
   ]
 })
 export class WindowModule { }

@@ -31,7 +31,8 @@ export class CMSComponent implements OnInit, OnDestroy {
     entidades = models;
     private t?: string;
     ngOnInit() {
-        document.title = `${this.t} :: CMS`;
+        this.t = document.title;
+        document.title = `${this.t || ''} :: CMS`;
     }
     ngOnDestroy() {
         if (this.t) document.title = this.t;

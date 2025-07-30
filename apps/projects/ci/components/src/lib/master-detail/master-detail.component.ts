@@ -21,11 +21,13 @@ import { lastValueFrom } from "rxjs";
         MatButtonToggleModule,
         MatIconModule,
         MatButtonModule,
-        // WindowModule,
+        WindowModule,
         GridModule,
         // DataListModule,
         FormsModule,
+        EditarComponent,
     ],
+
     styleUrl: 'master-detail.component.scss',
     templateUrl: 'master-detail.component.html'
 })
