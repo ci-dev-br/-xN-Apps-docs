@@ -3,7 +3,7 @@ import { schema } from "./schema";
 import { ApiProperty } from "@nestjs/swagger";
 import { FullAuditedEntity } from "@ci/manager";
 import { Termos } from "../termos";
-import { Cliente } from "./cliente.entity";
+import { ClienteProjeto } from "./cliente-projeto.entity";
 /**
  * Projetos
  */
@@ -36,9 +36,9 @@ export class Projeto extends FullAuditedEntity {
     @Column({ nullable: true })
     controleVersao?: string;
     @ApiProperty({
-        nullable: true, type: Cliente,
+        nullable: true, type: ClienteProjeto,
         description: Termos.Projeto.Cliente.Descrição,
     })
-    @ManyToMany(t => Cliente) @JoinTable()
-    cliente?: Cliente;
+    @ManyToMany(t => ClienteProjeto) @JoinTable()
+    cliente?: ClienteProjeto;
 } 

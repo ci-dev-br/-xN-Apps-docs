@@ -1,17 +1,20 @@
 import { Module } from '@nestjs/common';
-import { ProjetosService } from './projetos.service';
 import { Projeto } from './models/projeto.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkItem } from './models/work-item.entity';
-import { Cliente } from './models/cliente.entity';
+import { ClienteProjeto } from './models/cliente-projeto.entity';
 import { CasdastroModule } from '@ci/cadastro';
 import { ProjetoService } from './service/projeto.service';
 import { ProjetoController } from './controller/projeto.controller';
 import { CoreModule } from '@ci/core';
+import { WorkItemService } from './service/work-item.service';
+import { ClienteProjetoService } from './service/cliente-projeto.service';
+import { ClienteProjetoController } from './controller/cliente-projeto.controller';
+import { WorkItemController } from './controller/work-item.controller';
 export const ProjetosEntities = [
   Projeto,
   WorkItem,
-  Cliente,
+  ClienteProjeto,
 ]
 /**
  * Gerenciamento de Projetos
@@ -26,14 +29,19 @@ export const ProjetosEntities = [
 
   ],
   providers: [
-    ProjetosService,
     ProjetoService,
+    WorkItemService,
+    ClienteProjetoService,
   ],
   exports: [
-    ProjetosService,
+    ProjetoService,
+    WorkItemService,
+    ClienteProjetoService,
   ],
   controllers: [
     ProjetoController,
+    ClienteProjetoController,
+    WorkItemController,
   ]
 })
 export class ProjetosModule { }

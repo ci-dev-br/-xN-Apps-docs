@@ -9,7 +9,7 @@ import { ApiProperty } from "@nestjs/swagger";
 @Entity({
     schema
 })
-export class Cliente extends FullAuditedEntity {
+export class ClienteProjeto extends FullAuditedEntity {
     @ApiProperty({ nullable: true })
     @Column({ nullable: true })
     nome?: string; //  (varchar): Nome completo do cliente (pessoa física ou jurídica).
@@ -30,5 +30,5 @@ export class Cliente extends FullAuditedEntity {
     endereco?: Endereco[]; //  (varchar): Endereço completo do cliente (rua, número, bairro, cidade, estado, CEP).
     @ApiProperty({ type: Pessoa })
     @OneToMany(t => Pessoa, p => null)
-    pessoaResponsavel?: Pessoa;
+    pessoa?: Pessoa;
 } 
