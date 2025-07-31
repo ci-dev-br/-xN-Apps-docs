@@ -3,8 +3,6 @@ import { Route, RouterModule, Routes } from '@angular/router';
 import { CrmComponent } from './crm/crm.component';
 import { MasterDetailComponent } from '../../../cadastros/src/lib/cadastros/master-detail/master-detail.component';
 import { models } from './models';
-
-
 const routes: Routes = [
   {
     path: '', component: CrmComponent, children: [
