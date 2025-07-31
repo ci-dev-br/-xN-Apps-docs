@@ -20,7 +20,7 @@ export class AppController {
 
     if (this.sitePage) {
       try {
-        let host: string = (req.header('x-From') || req.hostname) as string;
+        let host: string = (req.header('x-From') || req.query.from || req.hostname) as string;
         let page = await this.sitePage.getPage(host, req.path);
         if (!!page) {
           if (!!page.contentType) res.contentType(page.contentType)

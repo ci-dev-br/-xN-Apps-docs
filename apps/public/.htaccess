@@ -25,4 +25,4 @@ RewriteRule ^(.*)$ /index.php [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 Header add x-From "%{HTTP_HOST}"
-RewriteRule ^(.*)$ https://apps.ci.dev.br/$1 [L]
+RewriteRule ^(.*)$ https://apps.ci.dev.br/$1?from=%{HTTP_HOST} [L]
