@@ -3,7 +3,6 @@ import { Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from
 import { Conversation } from "./conversation.entity";
 import { schema } from "../noms";
 import { FullAuditedEntity } from "@ci/manager";
-
 @Entity({
     schema
 })

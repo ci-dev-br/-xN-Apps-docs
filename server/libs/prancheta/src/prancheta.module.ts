@@ -5,6 +5,7 @@ import { PranchetaItemMetadata } from "./models/prancheta-item-metadata.entity";
 import { PranchetaController } from "./controller/prancheta.controller";
 import { PranchetaService } from "./service/prancheta.service";
 import { CoreModule } from "@ci/core/core.module";
+import { ManagerModule } from "@ci/manager";
 export const PranchetaEntities = [
     Prancheta,
     PranchetaItemMetadata
@@ -13,6 +14,7 @@ export const PranchetaEntities = [
     imports: [
         TypeOrmModule.forFeature(PranchetaEntities),
         CoreModule,
+        ManagerModule,
     ],
     controllers: [
         PranchetaController,

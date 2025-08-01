@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, PrimaryColumn } from "typeorm";
-
 @Entity()
 export class Policy {
     @ApiProperty({ uniqueItems: true })

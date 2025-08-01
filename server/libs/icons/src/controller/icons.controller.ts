@@ -1,7 +1,6 @@
 import { Role } from "@ci/auth/decorators/role.decorator";
 import { Body, Controller, Post } from "@nestjs/common";
 import { IconGetInput } from "./dto/icon.dto";
-
 @Controller('Icons')
 export class IconsController {
     constructor() { }

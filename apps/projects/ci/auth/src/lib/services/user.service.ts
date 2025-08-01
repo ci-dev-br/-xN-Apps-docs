@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, OnInit, Optional } from "@angular/core";
 import { AuthService, User } from "@ci/portal-api";
 import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
@@ -6,50 +6,67 @@ import { StorageService } from "@ci/core";
 
 @Injectable()
 export class UserService {
-    private $user = new BehaviorSubject<User | undefined>(undefined);
-    constructor(
-        private readonly router: Router,
-        private readonly storage: StorageService,
-        private readonly authService: AuthService,
-    ) {
-        this.$user.subscribe(v => {
+    private $user = new BehaviorSubject<User | null>((() => {
+        if (localStorage) {
+            let stored = localStorage.getItem('CIUSR');
             try {
-                if (v) {
-                    try {
-                        const { photo, ...user_info } = v;
-                        localStorage.setItem('CIUSR', btoa(JSON.stringify(user_info, null, 2)));
-                    } catch (error) {
-                    }
+                if (!!stored) return JSON.parse(atob(stored))
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        return null
+    })());
+    constructor(
+        private readonly authService: AuthService,
+        private readonly router?: Router,
+        private readonly storage?: StorageService,
+    ) {
+        this.init()
+    }
+    async init() {
+        this.$user.subscribe(user => {
+            try {
+                if (!!user) {
+                    const { /* photo,  */...user_info } = user;
+                    if (localStorage) localStorage.setItem('CIUSR', btoa(JSON.stringify(user_info, null, 2)));
                 } else {
-                    try {
-                        localStorage.removeItem('CIUSR');
-                        // router.navigate(['/']);
-                    } catch (error) {
-                    }
+                    if (localStorage) localStorage.removeItem('CIUSR');
                 }
             } catch (error) {
                 console.error(error);
             }
         });
-        (async () => await this.getFromMemory())();
+        if (localStorage)
+            this.getFromMemory();
     }
+
     get user() { return this.$user; }
     async identificarUsuario(user: User) {
-        this.$user.next(user);
+        this.$user.next(await lastValueFrom(this.authService.profile()));
     }
     async sair() {
-        this.storage.clean();
-        setTimeout(() => this.router.navigate(['/']));
-        this.$user.next(undefined);
+        this.storage?.clean();
+        this.$user.next(null);
+        setTimeout(() => this.router?.navigate(['/']));
     }
     private async getFromMemory() {
+        let profile: User | null = null;
         try {
-            let profile = await lastValueFrom(this.authService.profile());
-            if (profile) this.$user.next(profile);
-            return profile;
+            profile = await lastValueFrom(this.authService.profile());
         } catch (error) {
-            this.router.navigate(['/']);
+            console.error(error);
+            // this.router.navigate(['/']);
         }
-        return undefined;
+        if (!!profile) {
+            this.$user.next(profile);
+            return profile;
+        } else {
+            this.$user.next(null);
+            // setTimeout(() => {
+            //     this.router.navigate(['/']);
+            // })
+            return undefined;
+        }
     }
 }

@@ -1,0 +1,10 @@
+.row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    mat-form-field {
+        flex: auto;
+    }
+}

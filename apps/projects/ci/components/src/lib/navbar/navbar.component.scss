@@ -1,0 +1,27 @@
+nav {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    right: 10px;
+    top: 0px;
+    gap: 8px;
+    padding: 12px;
+
+    z-index: 5000;
+
+    ul,
+    li {
+        display: contents;
+    }
+
+    a {
+        padding: 12px;
+        color: white;
+        background-color: black;
+        border-radius: 12px;
+    }
+}
+
+:host ::ng-deep .mat-mdc-form-field-subscript-wrapper{
+    display: none;
+}

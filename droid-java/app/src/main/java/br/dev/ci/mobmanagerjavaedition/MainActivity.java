@@ -2,19 +2,15 @@ package br.dev.ci.mobmanagerjavaedition;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
@@ -30,12 +26,12 @@ import br.dev.ci.mobmanagerjavaedition.client.model.PhoneNumber;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_READ_PHONE_STATE = 1;
-
     private TextView message;
     private Button appsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ManagerClient.getInstance().setActivity(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -46,27 +42,23 @@ public class MainActivity extends AppCompatActivity {
         });
         this.appsButton = findViewById(R.id.apps);
         this.message = findViewById(R.id.message);
-        String api = "http://192.168.0.119:86/";
-        String ws = "http://192.168.0.119:42/";
+        String api = "https://srv33.internals.ci.dev.br:664/";
+        String ws = "wss://srv33.internals.ci.dev.br:664/";
         if(this.message != null){
-            this.message.setText("Iniciando conexção... (1)");
             permission();
             getPhoneNumber();
-            this.message.setText("Identificando números disponíveis");
             adicionarItem(api, ws);
-            this.message.setText("Dipositivo identificado");
         }
-        this.appsButton.setOnClickListener(v -> this.openApps());
+        if(this.appsButton != null){
+            this.appsButton.setOnClickListener(v -> this.openApps());
+        }
     }
 
     public void adicionarItem(String api, String ws) {
         ManagerClient.getInstance().addGateway(api, ws);
-        // this.adapter.notifyDataSetChanged();
     }
 
     private void openApps(){
-
-
         AlertDialog.Builder builder = new  AlertDialog.Builder(this);
         builder
                 .setTitle("Apps")
@@ -87,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_NUMBERS}, REQUEST_READ_PHONE_STATE);
         }
+        message.setText("Autorizado...");
     }
     private List<PhoneNumber> phones;
     private List<GatewayConnection> gateways;

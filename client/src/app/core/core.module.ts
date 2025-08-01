@@ -13,7 +13,6 @@ import { NotificationService } from "./services/notification.service";
 import { ServicesService } from "./services/services.service";
 import { LocalizationService } from "./services/localization.service";
 import { TranslateDirective } from "./i18n/translate.directive";
-
 @NgModule({ declarations: [
         PurePipe,
         AutoFocusDirective,
@@ -35,7 +34,7 @@ export class CoreModule {
             providers: [
                 ...(ApiModule.forRoot({
                     rootUrl: isDevMode() ?
-                        'https://apps.ci.dev.br:446' : location.origin
+                        'https://srv33.internals.ci.dev.br:664' : location.origin
                 }).providers || []),
                 StorageService,
                 TokenService,

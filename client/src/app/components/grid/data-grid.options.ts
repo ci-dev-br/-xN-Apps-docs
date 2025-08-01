@@ -10,7 +10,6 @@ export interface IColumnOption {
     hide?: boolean;
     defaultVisible?: boolean;
 }
-
 export interface DataGridOptions {
     colums: IColumnOption[];
 }

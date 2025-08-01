@@ -1,6 +1,10 @@
 RewriteEngine On
 RewriteBase /
 
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
 # 1. Permite acesso direto a arquivos existentes
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
@@ -8,9 +12,9 @@ RewriteRule ^ - [L]
 # 2. Reescreve para index.php se a rota não corresponde a um arquivo e não tem extensão
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_URI} !\. [NC] 
-RewriteRule ^(.*)$ /index.php [L]
+RewriteRule ^(.*)$ /index.php/$1 [L]
 
 # 3. Redireciona outras rotas
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ https://apps.ci.dev.br:446/$1 [L]
+RewriteRule ^(.*)$ https://apps.ci.dev.br/$1 [L]

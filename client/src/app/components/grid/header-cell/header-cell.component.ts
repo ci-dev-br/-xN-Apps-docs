@@ -1,7 +1,6 @@
 import { Component, HostListener, Input, TemplateRef, ViewChild, ViewContainerRef } from "@angular/core";
 import { IColumnOption } from "../data-grid.options";
 import { DataGridService } from "../data-grid.service";
-
 /*export interface IColumns {
     headerName: string;
     propertyName: string;
@@ -41,7 +40,6 @@ export class HeaderCellRenderer {
     ) { }
     @Input()
     column?: IColumnOption;
-
     @HostListener('click')
     clickHandler() {
         if (!this.sort) this.sort = 'ASC';

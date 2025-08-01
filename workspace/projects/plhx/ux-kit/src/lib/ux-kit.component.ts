@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 @Component({
   selector: 'px-ux-kit',
   standalone: true,
@@ -12,5 +11,4 @@ import { Component } from '@angular/core';
   styles: ``
 })
 export class UxKitComponent {
-
 }

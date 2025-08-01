@@ -10,18 +10,19 @@ import { AuthService } from '@ci/portal-api';
 import { AuthModule, UserService } from '@ci/auth';
 
 @Component({
-    selector: 'ci-registrar',
-    imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        ReactiveFormsModule,
-        MatCheckboxModule,
-        RouterModule,
-        AuthModule,
-    ],
-    templateUrl: './registrar.component.html',
-    styleUrl: './registrar.component.scss'
+  selector: 'ci-registrar',
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    ReactiveFormsModule,
+    MatCheckboxModule,
+    RouterModule,
+    AuthModule,
+  ],
+  standalone: true,
+  templateUrl: './registrar.component.html',
+  styleUrl: './registrar.component.scss'
 })
 export class RegistrarComponent {
   form: FormGroup = this.fb.group({
@@ -29,6 +30,8 @@ export class RegistrarComponent {
     email: [, Validators.required],
     phone: [, Validators.required],
     password: [, Validators.required],
+    fullName: [, Validators.required],
+    surname: [, Validators.required],
   });
   constructor(
     private readonly fb: FormBuilder,
@@ -45,6 +48,6 @@ export class RegistrarComponent {
     if (!this.validar()) return this.form.markAllAsTouched();
     const user = await lastValueFrom(this.authService.registrar({ body: { ...this.form.getRawValue() } }));
     this.userService.identificarUsuario(user);
-    setTimeout(() => this.router.navigate(['/']));
+    // setTimeout(() => this.router.navigate(['/'])); // para que serve isto?
   }
 }

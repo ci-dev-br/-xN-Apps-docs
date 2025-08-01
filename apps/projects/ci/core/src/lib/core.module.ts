@@ -13,12 +13,15 @@ import { ThemeService } from './theme/theme.service';
 import { WsService } from './io/ws.service';
 import { SafePipe } from './pipes/safe.pipe';
 import { ContextMenuServices } from './contextmenu/contextmenu.service';
+import { DaoBuilder, ISchema, ISchemaProperty } from './dao/dao-builder.service';
+import { DaoPipe } from './pipes/dao.pipe';
 
 @NgModule({
   declarations: [
     AutoFocusDirective,
     AutoScollDirective,
     SafePipe,
+    DaoPipe,
   ],
   imports: [
     CommonModule,
@@ -31,9 +34,11 @@ import { ContextMenuServices } from './contextmenu/contextmenu.service';
     Damn,
     ConsoleService,
     ContextMenuServices,
+    DaoBuilder,
   ],
   exports: [
     SafePipe,
+    DaoPipe,
     CommonModule,
     AutoFocusDirective,
     AutoScollDirective,
@@ -51,4 +56,8 @@ export {
   ThemeService,
   WsService,
   SafePipe,
+  DaoBuilder,
+  ISchemaProperty,
+  ISchema,
+  DaoPipe,
 }

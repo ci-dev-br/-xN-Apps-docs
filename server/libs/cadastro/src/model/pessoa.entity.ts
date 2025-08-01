@@ -1,27 +1,27 @@
 import { FullAuditedEntity } from "@ci/core";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 import { Endereco } from "./endereco.entity";
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiExtraModels, ApiProperty, ApiTags } from "@nestjs/swagger";
 import { InformacaoContato } from "./informacao-contato.entity";
 import { DocumentoIdentificacao } from "./documento-identificacao.entity";
 import { t } from "@ci/core";
-
+import { schema } from "./schema";
 /**
  * Cadastro de Pessoa, Entidade Física ou Jurídica, representada, ou não por instituição de outrem
  * 
  */
-@Entity({ schema: 'cadastro' })
+@Entity({ schema })
 export class Pessoa extends FullAuditedEntity {
     /**
      * Nome
      */
-    @ApiProperty({ required: false, nullable: true, description: 'Nome' })
+    @ApiProperty({ required: false, nullable: true, title: 'Nome', description: 'Nome' })
     @Column({ nullable: true, length: 120 })
     nome?: string;
     /**
      * Sobrenome
      */
-    @ApiProperty({ required: false, nullable: true, description: 'Sobrenome' })
+    @ApiProperty({ required: false, nullable: true, title: 'Sobrenome', description: 'Sobrenome' })
     @Column({ nullable: true, length: 120 })
     sobrenome?: string;
     /**
@@ -76,7 +76,9 @@ export class Pessoa extends FullAuditedEntity {
     @ApiProperty({
         title: 'Endereço',
         required: false,
-        nullable: true
+        nullable: true,
+        type: Endereco,
+        isArray: true,
     })
     @ManyToMany(() => Endereco)
     @JoinTable()
@@ -101,7 +103,6 @@ export class Pessoa extends FullAuditedEntity {
     })
     @Column({ nullable: true, enum: ['F', 'J'], length: 1 })
     tipoJuridico?: string;
-
     /**
      * 
      */

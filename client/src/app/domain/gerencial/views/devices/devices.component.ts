@@ -4,7 +4,6 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { NgxQRCodeModule } from "@jonyadamit/ngx-qrcode-ivy";
 import { CoreModule } from "src/app/core/core.module";
-
 @Component({
     selector: 'ci-devices',
     template: `

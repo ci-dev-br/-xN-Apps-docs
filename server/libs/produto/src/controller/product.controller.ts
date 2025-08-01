@@ -3,7 +3,6 @@ import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/core";
 import { Product } from "../models/product.entity";
 import { ProductService } from "../service/product.service";
-
 export class SyncPayloadDaoProduct extends SyncPayloadDao<Product> {
     @ApiProperty({ type: Product })
     override data?: Product;
@@ -30,7 +29,7 @@ export class ProductController extends ControllerDaoBase<ProductService, Product
             SyncPayloadDaoProduct
     })
     @ApiOperation({
-        operationId: 'ProductSync'
+        operationId: 'SyncProduct'
     })
     override async Sync(
         @Body() input: SyncPayloadDaoProduct,
@@ -38,7 +37,6 @@ export class ProductController extends ControllerDaoBase<ProductService, Product
     ) {
         return await super.Sync(input, req);
     }
-
     @Post('Get')
     @ApiResponse({
         type:
@@ -46,8 +44,7 @@ export class ProductController extends ControllerDaoBase<ProductService, Product
         isArray: true
     })
     @ApiOperation({
-        operationId: 'ProductGet',
-
+        operationId: 'GetListProduct',
     })
     override async GetList(
         @Body() input: ProductCotrollerGetInputDto,

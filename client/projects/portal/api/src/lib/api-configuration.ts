@@ -1,7 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
 import { Injectable } from '@angular/core';
-
 /**
  * Global configuration
  */
@@ -11,7 +10,6 @@ import { Injectable } from '@angular/core';
 export class ApiConfiguration {
   rootUrl: string = '';
 }
-
 /**
  * Parameters for `ApiModule.forRoot()`
  */

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 @Component({
   selector: 'px-acessar',
   standalone: true,
@@ -8,5 +7,4 @@ import { Component } from '@angular/core';
   styleUrl: './acessar.component.scss'
 })
 export class AcessarComponent {
-
 }

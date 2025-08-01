@@ -51,7 +51,7 @@ ci-logo ::ng-deep img {
     gap: 12px;
 }
 
-@media screen and (mix-width: 750px) {
+@media (mix-width: 750px) {
     .small-container {
         min-width: 750px;
     }

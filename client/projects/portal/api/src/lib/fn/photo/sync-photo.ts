@@ -5,19 +5,15 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
-
 import { Photo } from '../../models/photo';
-
 export interface SyncPhoto$Params {
       body: Photo
 }
-
 export function syncPhoto(http: HttpClient, rootUrl: string, params: SyncPhoto$Params, context?: HttpContext): Observable<StrictHttpResponse<Photo>> {
   const rb = new RequestBuilder(rootUrl, syncPhoto.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
-
   return http.request(
     rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
@@ -27,5 +23,4 @@ export function syncPhoto(http: HttpClient, rootUrl: string, params: SyncPhoto$P
     })
   );
 }
-
 syncPhoto.PATH = '/Photo/Sync';

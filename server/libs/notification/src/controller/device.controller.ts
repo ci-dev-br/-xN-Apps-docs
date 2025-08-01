@@ -4,7 +4,9 @@ import { DevicePayload } from "./dto/device-payload";
 import { DeviceService } from "../services/device.service";
 import { Public } from "@ci/auth/decorators/public.decorator";
 import { PoolDto } from "./dto/pool.dto";
-
+import { GetDeviceInput } from "./dto/get-device-input";
+import { Device } from "../models/device.entity";
+import { Role } from "@ci/auth/decorators/role.decorator";
 /**
  * Dispositivo Auto-Declarado
  * 
@@ -24,10 +26,10 @@ export class DeviceController {
     public async connectDevice(@Body() input: DevicePayload) {
         console.log(input);
         return await this.deviceService.connect({
-            mac: input.id,
+            mac: input.mac,
             type: input.name,
             numbers: input.numbers
-            //  numbers: (input.numbers || []).filter(e => !!e.number && e.number.length > 0),
+            // numbers: (input.numbers || []).filter(e => !!e.number && e.number.length > 0),
         });
     }
     @Public()
@@ -38,5 +40,13 @@ export class DeviceController {
         let pool = new PoolDto();
         pool.messages = [];
         return await pool;
+    }
+
+    @ApiOperation({ operationId: 'GetAll' })
+    @Post('GetAll')
+    @Role('ADMIN')
+    @ApiResponse({ type: Device, isArray: true })
+    public async GetAll(@Body() input?: GetDeviceInput) {
+        return await this.deviceService.findAll(input?.query);
     }
 }

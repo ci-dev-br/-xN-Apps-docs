@@ -11,6 +11,7 @@ import { NodeRedComponent } from './node-red/node-red.component';
         BlocksMakerComponent,
         NodeRedComponent,
     ],
+    standalone: true,
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss'
 })

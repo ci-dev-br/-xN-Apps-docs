@@ -1,0 +1,13 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    justify-content: stretch;
+    align-items: stretch;
+
+    flex: auto;
+}
+
+ci-data-grid {
+    flex: auto;
+}

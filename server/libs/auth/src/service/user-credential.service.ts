@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { AccessCredential } from "../models/user-credential.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-
 @Injectable()
 export class UserCredentialService {
     constructor(
@@ -26,8 +25,6 @@ export class UserCredentialService {
                 userIdentification: userId,
             })
         }
-
-
         // return await ()
     }
 }

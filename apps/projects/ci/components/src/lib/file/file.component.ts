@@ -14,6 +14,7 @@ import { MatButtonModule } from "@angular/material/button";
         MatMenuModule,
         MatButtonModule,
     ],
+    standalone: true,
     selector: 'ci-file',
     template: `
         <mat-card>

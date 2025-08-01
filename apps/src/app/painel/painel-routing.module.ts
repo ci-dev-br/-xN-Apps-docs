@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { PainelComponent } from './painel.component';
 
 const routes: Routes = [
+  { path: 'prancheta', loadChildren: () => import('./board/board.module').then(m => m.BoardModule) },
   {
     path: '', component: PainelComponent, children: [
       { path: 'meus-apps', loadChildren: () => import('./apps/apps.module').then(m => m.AppsModule) },
@@ -28,7 +29,9 @@ const routes: Routes = [
       { path: 'Threejs', loadChildren: () => import('@ci-apps/Threejs').then(m => m.CiApplicationModule) },
       { path: 'Treinamento', loadChildren: () => import('@ci-apps/Treinamento').then(m => m.CiApplicationModule) },
       { path: 'Vendas', loadChildren: () => import('@ci-apps/Vendas').then(m => m.CiApplicationModule) },
-      { path: '**', redirectTo: '/meus-apps', pathMatch: 'full' },
+      { path: 'CRM', loadChildren: () => import('@ci-apps/crm').then(m => m.CiApplicationModule) },
+      { path: 'CMS', loadChildren: () => import('@ci-apps/cms').then(m => m.CiApplicationModule) },
+      // TODO: Realizar carga dinâmica dos aplicativos
     ]
   }
 ];

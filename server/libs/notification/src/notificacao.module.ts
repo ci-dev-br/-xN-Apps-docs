@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+    import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Device } from "./models/device.entity";
 import { Message } from "./models/message.entity";
@@ -8,6 +8,8 @@ import { DeviceService } from "./services/device.service";
 import { MessageController } from "./controller/message.controller";
 import { MessageService } from "./services/message.service";
 import { NotificationService } from "./services/notification.service";
+import { MailService } from "./services/mail.service";
+import { CoreModule } from "@ci/core";
 export const Entities = [
     Device,
     Message,
@@ -15,6 +17,7 @@ export const Entities = [
 ];
 @Module({
     imports: [
+        CoreModule,
         TypeOrmModule.forFeature([
             ...Entities,
         ])
@@ -23,14 +26,15 @@ export const Entities = [
         DeviceService,
         MessageService,
         NotificationService,
+        MailService,
     ],
     controllers: [
-        MessageController,
         DeviceController,
         MessageController,
     ],
     exports: [
         MessageService,
+        MailService,
     ]
 })
 export class NotificacaoModule { }

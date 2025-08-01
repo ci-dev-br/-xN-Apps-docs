@@ -1,7 +1,6 @@
-import { Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { PhoneNumber } from "./phone-number.entity";
-
 @Entity({
     schema: 'notification'
 })
@@ -15,7 +14,17 @@ export class Device {
     @ApiProperty({ nullable: true })
     @Column({ nullable: true })
     type?: string;
+    @ApiProperty({ nullable: true, type: PhoneNumber, isArray: true })
     @OneToMany(() => PhoneNumber, type => type.device)
     @JoinTable()
-    numbers?:PhoneNumber[];    
+    numbers?: PhoneNumber[];
+    @ApiProperty({})
+    @CreateDateColumn({})
+    createdAt?: Date;
+    @ApiProperty({})
+    @UpdateDateColumn()
+    changedAt?: Date;
+    @ApiProperty({ type: PhoneNumber, isArray: true })
+    @OneToMany(() => PhoneNumber, pn => pn.device)
+    phones?: PhoneNumber[];
 }

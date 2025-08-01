@@ -1,0 +1,23 @@
+<mat-toolbar>
+    <button mat-icon-button (click)="sideMenu.toggle()">
+        <mat-icon>menu</mat-icon>
+    </button>
+    <!--  <button mat-raised-button>
+        <mat-icon>dashboard</mat-icon>
+        Visão Geral
+    </button> -->
+    <!--  <button mat-raised-button>
+        <mat-icon>create</mat-icon>
+        Novo
+    </button> -->
+</mat-toolbar>
+<mat-drawer-container>
+    <mat-drawer #sideMenu mode="over" opened>
+        @for(item of cadastros; track item){
+        <button mat-menu-item [routerLink]="'./' + item">{{item}}</button>
+        }
+    </mat-drawer>
+    <mat-drawer-content>
+        <router-outlet></router-outlet>
+    </mat-drawer-content>
+</mat-drawer-container>

@@ -1,27 +1,75 @@
 import { FullAuditedEntity } from "@ci/core";
-import { Entity } from "typeorm";
+import { ApiProperty } from "@nestjs/swagger";
+import {
+    Column,
+    Entity
+} from "typeorm";
+import { schema } from "./schema";
+/**
+ * Endereço 
+ */
+@Entity({ schema })
 
-@Entity({schema: 'cadastro'})
 export class Endereco extends FullAuditedEntity {
     /**
      * Logradouro
      */
-    logradouro: string;
+    @ApiProperty({
+        title: 'Logradouro',
+        nullable: true, required: false
+    })
+    @Column({
+        nullable: true
+    })
+    logradouro?: string;
     /**
      * Endereço
      */
-    address: string;
+    @ApiProperty({
+        title: 'Endereço',
+        nullable: true,
+        required: false
+    })
+    @Column({
+        nullable: true
+    })
+    address?: string;
     /**
      * Número
      */
-    addressNumber: string;
+    @ApiProperty({
+        title: 'Número',
+
+        nullable: true,
+        required: false
+    })
+    @Column({
+        nullable: true
+    })
+    addressNumber?: string;
     /**
      * Complemento
      */
-    complement: string;
+    @ApiProperty({
+        title: 'Complemento',
+
+        nullable: true,
+        required: false
+    })
+    @Column({
+        nullable: true
+    })
+    complement?: string;
     /**
      * Bairro
      */
-    province: string;
-
+    @ApiProperty({
+        title: 'Município',
+        nullable: true,
+        required: false
+    })
+    @Column({
+        nullable: true
+    })
+    province?: string;
 }

@@ -47,7 +47,7 @@ public class HomeFragment extends Fragment {
         final EditText url_input = binding.urlInput;
         final Button addButton = binding.addButton;
         this.servidoresLista = binding.lista;
-        url_input.setText("http://192.168.0.119:86/");
+        url_input.setText("http://192.168.0.2:86/");
         addButton.setOnClickListener(v -> {
             String url = url_input.getText().toString();
             adicionarItem(url);

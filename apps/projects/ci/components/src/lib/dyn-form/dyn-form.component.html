@@ -1,0 +1,11 @@
+@if(!!source && source.fields && formGroup){
+<form [formGroup]="formGroup ">
+    @for (field of source.fields; track $index) {
+    @if(!(!formGroup.controls[field?.property||''].value && !!field.readonly)){
+    <ci-dyn-input [label]="field.label" [hint]="field.description" [formGroup]="formGroup" [fieldName]="field?.property"
+        [type]="field.type || 'text'" [isArray]="field.isArray" [schemaName]="field.schemaName"></ci-dyn-input>
+    <!--  {{field.schemaName || ''}} -->
+    }
+    }
+</form>
+}

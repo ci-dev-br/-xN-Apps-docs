@@ -1,0 +1,14 @@
+import { ISchemaPreset } from "@ci/core";
+import { UnidadeMedida, UnidadeMedidaService } from "@ci/portal-api";
+import { lastValueFrom } from "rxjs";
+export const UnidadeMedidaPreset: ISchemaPreset<UnidadeMedidaService, UnidadeMedida> = {
+    schemaName: 'UnidadeMedida',
+    primary: 'internationalCode',
+    service: UnidadeMedidaService,
+    get: async (s) => await lastValueFrom(
+        s.getList({ body: { skip: 0, take: 10, where: {} } })
+    ),
+    sync: async (s, data: UnidadeMedida) => await lastValueFrom(
+        s.sync({ body: { data: data } })
+    )
+}

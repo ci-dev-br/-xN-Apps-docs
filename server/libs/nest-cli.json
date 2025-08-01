@@ -1,0 +1,16 @@
+{
+  "projects": {
+    "web-dex": {
+      "type": "library",
+      "root": "libs/web-dex",
+      "entryFile": "index",
+      "sourceRoot": "libs/web-dex/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/web-dex/tsconfig.lib.json"
+      }
+    }
+  },
+  "compilerOptions": {
+    "webpack": true
+  }
+}

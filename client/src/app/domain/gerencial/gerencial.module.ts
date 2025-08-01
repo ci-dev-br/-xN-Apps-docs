@@ -26,7 +26,6 @@ import { ApplicationManagerComponent } from "./views/application-manager/applica
 import { GerecialSettingsComponent } from "./views/settings/gerecial-settigns.component";
 import { UsersComponent } from "./views/users/users.component";
 import { DevicesComponent } from "./views/devices/devices.component";
-
 @NgModule({
     declarations: [
         GerencialComponent,

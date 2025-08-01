@@ -5,6 +5,7 @@ import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 
 @Component({
     selector: 'ci-code-editor',
+    standalone: true,
     imports: [
         CoreModule,
         NuMonacoEditorModule,

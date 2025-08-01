@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { DataGroupModule } from 'src/app/components/data-group/data-group.module';
 import { LNavModule } from 'src/app/components/l-nav/l-nav.module';
-
 @Component({
   selector: 'ci-inbox',
   standalone: true,

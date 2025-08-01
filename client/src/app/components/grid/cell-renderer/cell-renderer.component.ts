@@ -1,7 +1,6 @@
 import { Component, Input, TemplateRef, ViewChild, ViewContainerRef } from "@angular/core";
 import { IColumnOption } from "../data-grid.options";
 import { DataGridService } from "../data-grid.service";
-
 /*export interface IColumns {
     headerName: string;
     propertyName: string;

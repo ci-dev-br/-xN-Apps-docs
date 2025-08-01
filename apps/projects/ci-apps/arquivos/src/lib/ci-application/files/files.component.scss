@@ -12,36 +12,77 @@
 
 .folders,
 .files {
+    $size: 48px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    align-items: normal;
+    justify-content: start;
 
-    gap: 6px;
+    gap: 12px;
+    padding: 12px;
 
+    flex: unset;
+    // min-width: 100%;
+    // min-height: 100%;
+    margin: 0;
 
     .folder,
     .file {
+        flex: 0;
+
         display: flex;
         flex-direction: column;
 
+        cursor: pointer;
+
         align-items: center;
         justify-content: center;
+        // width: #{$size + 24};
+        // height: #{$size + 24};
+        //height: fit-content;
 
         mat-icon {
-            width: 120px;
-            height: 120px;
-            font-size: 120px;
+            width: #{$size};
+            height: #{$size};
+            font-size: #{$size};
+            line-height: #{$size};
         }
 
-        gap: 6px;
-
+        gap: 4px;
         border: solid 1px #cecece;
-        padding: 12px;
-
+        padding: 4px;
         border-radius: 8px;
 
         &:hover {
             background: rgba(0, 0, 0, .2);
+        }
+    }
+
+    .folder-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        // max-width: #{$size + 48};
+        // width: #{$size + 48};
+        // height: #{$size + 80};
+        align-items: center;
+        justify-content: center;
+        flex: 0;
+
+        height: fit-content;
+
+        .title {
+            flex: unset;
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            text-wrap: balance;
+            white-space: normal;
+
+            font-size: 8px;
+            margin: 0;
+            padding: 0;
         }
     }
 }
@@ -56,7 +97,6 @@ input.navegacao {
 
 .scoller {
     flex: auto;
-
     display: flex;
     overflow: auto;
     flex-direction: column;

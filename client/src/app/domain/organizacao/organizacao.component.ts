@@ -12,7 +12,6 @@ import { CoreModule } from 'src/app/core/core.module';
 import { UserService } from 'src/app/services/user.service';
 import { MessageService } from 'src/app/components/message/message.service';
 import { MessageModule } from 'src/app/components/message/message.module';
-
 @Component({
   selector: 'ci-organizacao',
   standalone: true,

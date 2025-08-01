@@ -1,80 +1,19 @@
-<!-- <ci-l-nav></ci-l-nav> -->
-<!-- <mat-toolbar color="primary">
-    <button mat-icon-button>
-        <mat-icon>menu</mat-icon>
-    </button>
-    Cadastros do Sistema
-    <span style="flex: auto;"></span>
-    <button mat-icon-button>
-        <mat-icon>menu</mat-icon>
-    </button>
-</mat-toolbar> -->
-<div class="draw">
-    <div class="sidenav">
-        <ng-container *ngFor="let item of menu">
-            <button mat-raised-button (click)="abrirItemMenu(item.title ||'')">
-                <!-- <div class="icon --cadastro-pessoa"></div> -->
-                {{item.title}}
-            </button>
-        </ng-container>
-        <!-- <button mat-raised-button>
-            <div class="icon --cadastro-pessoa"></div>
-            Contatos
-        </button> -->
-        <!-- <button mat-raised-button>
-            <div class="icon --endereco"></div>
-            Endereços
-        </button> -->
-        <!--  <button mat-raised-button>
-            <div class="icon --imagens"></div>
-            Fotos
-        </button> -->
-        <!--  <button mat-raised-button>
-            <div class="icon --cliente"></div>
-            Clientes
-        </button> -->
-    </div>
-    <div class="container">
-        <p>Bem-vindo ao Portal do Colaborador!
-            Este é o seu espaço exclusivo para gerenciar seus dados e acessar informações importantes da [Nome da
-            Organização].</p>
-
-        <p>Aqui você poderá:</p>
-
-        <p> Atualizar seus dados cadastrais: mantenha seu endereço, telefone e informações de contato sempre
-            atualizados.
-            Acessar seus contracheques e holerites: consulte seus rendimentos e histórico de pagamentos de forma rápida
-            e segura.
-            Solicitar férias e acompanhar suas pendências: planeje suas folgas e tenha uma visão clara de suas
-            solicitações.
-            Consultar o calendário de eventos e comunicados: fique por dentro das novidades da empresa e datas
-            importantes.
-            Acessar documentos e formulários úteis: encontre modelos de documentos e formulários para facilitar seu dia
-            a dia.
-            E muito mais!
-            Navegue pelas opções do menu e aproveite todas as funcionalidades que preparamos para você.
-
-        <p>Em caso de dúvidas, entre em contato com o RH através do email [endereço de email do RH] ou telefone
-            [telefone do RH].</p>
-
-        <p>[Nome da Organização] - Valorizando você em cada detalhe.</p>
-
-        <!--  <header>
-            <h1>
-                Cadastros
-            </h1>
-            <div class="row">
-                <p></p>
-            </div>
-        </header> -->
-        <!--  <section>
-            <p>cadastros works!</p>
-        </section> -->
-        <ng-container *ngIf="currentForm">
-            <!--  <ci-cadastro [dynamicForm]="currentForm" /> -->
-        </ng-container>
-    </div>
-</div>
-<nav class="status">
-    Status OK
-</nav>
+<mat-drawer-container class="container">
+    <mat-drawer [mode]="!(isSmallScreen | async)?.matches ? 'side' : 'over'" opened auto-scroll="vertical">
+        <div class="menu">
+            <ng-container *ngFor="let item of menu">
+                <button mat-menu-item (click)="abrirItemMenu(item.path ||'')">
+                    <mat-icon>person</mat-icon>{{item.title}}
+                </button>
+            </ng-container>
+        </div>
+    </mat-drawer>
+    <mat-drawer-content>
+        <div class="container">
+            <router-outlet></router-outlet>
+        </div>
+        <nav class="status">
+            <!-- TODO: barra de status -->
+        </nav>
+    </mat-drawer-content>
+</mat-drawer-container>

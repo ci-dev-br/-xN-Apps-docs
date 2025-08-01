@@ -1,5 +1,4 @@
 import { Entity, PrimaryColumn } from "typeorm";
-
 @Entity({
     schema: 'sys'
 })

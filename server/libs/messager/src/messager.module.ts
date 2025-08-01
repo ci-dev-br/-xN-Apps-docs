@@ -7,13 +7,18 @@ import { ContactService } from "./service/contact.service";
 import { Contact } from "./model/contact.entity";
 import { TenantModule } from "@ci/tenant";
 import { CoreModule } from "@ci/core";
-
+import { Chamada } from "./model/chamada.entity";
+import { ChamadaService } from "./service/chamada.service";
+import { ChamadaController } from "./controller/chamada.controller";
+import { NotificacaoModule } from "@ci/notification";
+import { ConversationController } from "./controller/conversation.controller";
+import { ConversationService } from "./service/conversation.service";
 export const Entities = [
     Conversation,
     DirectMessage,
     Contact,
+    Chamada,
 ];
-
 @Module({
     imports: [
         TypeOrmModule.forFeature([
@@ -21,17 +26,23 @@ export const Entities = [
         ]),
         TenantModule,
         CoreModule,
+        NotificacaoModule,
     ],
     providers: [
         ContactService,
+        ChamadaService,
+        ConversationService,
     ],
     controllers: [
         ContactController,
+        ChamadaController,
+        ConversationController,
     ],
 })
 export class MessagerModule { }
 export {
     Conversation,
-    DirectMessage as Message,
+    DirectMessage,
     Contact,
+    ConversationService,
 }

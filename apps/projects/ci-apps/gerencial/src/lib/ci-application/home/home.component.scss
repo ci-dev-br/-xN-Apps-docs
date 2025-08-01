@@ -1,7 +1,10 @@
 :host {
+    flex: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
+    align-self: stretch;
+    justify-self: stretch;
 }
 
 .container {

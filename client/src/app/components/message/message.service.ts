@@ -1,7 +1,6 @@
 import { ComponentRef, Injectable, TemplateRef } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MessageTemplateComponent } from "./message-template.component";
-
 @Injectable()
 export class MessageService {
     constructor(
@@ -14,7 +13,6 @@ export class MessageService {
         component?: ComponentRef<T>,
     }) {
         const component_base = options?.template ? MessageTemplateComponent : null;
-
         if (!component_base) return;
         let dialog = this.dialog.open(component_base, {
             data: {

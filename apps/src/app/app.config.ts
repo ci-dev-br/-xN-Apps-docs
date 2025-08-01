@@ -6,9 +6,26 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideServiceWorker } from '@angular/service-worker';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { AuthorizationHttpInterceptor, CoreModule, coreProvider, StorageService } from '@ci/core';
+import { AuthorizationHttpInterceptor, coreProvider, StorageService } from '@ci/core';
 import { ApiModule } from '@ci/portal-api';
 import { provideNuMonacoEditorConfig } from '@ng-util/monaco-editor';
+import { CardSetting } from '@ci/components';
+import { Cards } from './cards';
+import { UnidadeMedidaPreset } from '../../projects/ci-apps/cadastros/src/lib/presets';
+
+const SETUP = {
+  API_URL_GATEWAY: 'https://apps.ci.dev.br',
+  ALTERN_GATEWAYS: [
+    // 'https://lorelei.ci.dev.br',
+    // 'https://srv33.internals.ci.dev.br:446',
+    // 'https://srv33.internals.ci.dev.br:664',
+    // 'wss://srv33.internals.ci.dev.br:664',
+    // 'ws://srv33.internals.ci.dev.br:87',
+    // 'wss://apps.ci.dev.br:446',
+    // 'ws://apps.ci.dev.br:87',
+  ],
+  UNSATLY_WS_COMMON: 'wss://192.168.0.8:664',
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,12 +40,23 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
     }),
-    ...(ApiModule.forRoot({ rootUrl: 'https://apps.ci.dev.br:446' }).providers as []),
+    ...(ApiModule.forRoot(
+      {
+        rootUrl: SETUP.API_URL_GATEWAY,
+      }).providers as []),
     StorageService,
     provideHttpClient(
       withInterceptorsFromDi(),
     ),
     { provide: HTTP_INTERCEPTORS, useClass: AuthorizationHttpInterceptor, multi: true }, provideAnimationsAsync(),
-    coreProvider({ gateway: 'ws://apps.ci.dev.br:87' }),
+    coreProvider({
+      gateway: SETUP.UNSATLY_WS_COMMON,
+      rootApi: SETUP.API_URL_GATEWAY,
+      alternativeApiGateways: SETUP.ALTERN_GATEWAYS,
+      servicesCommons: [
+        UnidadeMedidaPreset
+      ]
+    }),
+    { provide: CardSetting, useValue: Cards }
   ],
 };

@@ -11,6 +11,7 @@ export class ApplicationService {
     async find(roles?: string[]) {
         return this.repo.find({
             order: { name: 'ASC' },
+            relations: ['domain'],
             where: [
                 ...(roles ? roles.map(r => {
                     return {
@@ -20,9 +21,9 @@ export class ApplicationService {
             ]
         })
     }
-    async sync(application: Application) {
+    async sync(application: Application, req?: Request) {
         let { id, ...changes } = application;
-        let ref = !!application.id ? await this.repo.findOneBy({ id: application.id }) : await this.repo.create(application);
+        let ref = !!application.id && application.id.trim().length > 0 ? await this.repo.findOneBy({ id: application.id }) : await this.repo.create(application);
         Object.assign(ref, changes);
         return await this.repo.save(ref);
     }

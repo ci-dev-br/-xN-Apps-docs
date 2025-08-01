@@ -1,0 +1,12 @@
+:host {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+mat-tab-group,
+mat-tab {
+    flex: auto;
+    height: 100%;
+}

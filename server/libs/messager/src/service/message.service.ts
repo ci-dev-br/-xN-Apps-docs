@@ -3,7 +3,6 @@ import { Repository } from "typeorm";
 import { DirectMessage } from "../model/direct-message.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Conversation } from "../messager.module";
-
 /**
  *  Servico para envio de mensagens para conversas
  */
@@ -14,6 +13,5 @@ export class MessageService {
         private readonly repo: Repository<DirectMessage>
     ) { }
     async SendMessage(payload: { message: string, conversa: Conversation }) {
-
     }
 }

@@ -240,6 +240,33 @@
       "compilerOptions": {
         "tsConfigPath": "libs/forms/tsconfig.lib.json"
       }
+    },
+    "i11n": {
+      "type": "library",
+      "root": "libs/i11n",
+      "entryFile": "index",
+      "sourceRoot": "libs/i11n/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/i11n/tsconfig.lib.json"
+      }
+    },
+    "projetos": {
+      "type": "library",
+      "root": "libs/projetos",
+      "entryFile": "index",
+      "sourceRoot": "libs/projetos/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/projetos/tsconfig.lib.json"
+      }
+    },
+    "crm": {
+      "type": "library",
+      "root": "libs/crm",
+      "entryFile": "index",
+      "sourceRoot": "libs/crm/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/crm/tsconfig.lib.json"
+      }
     }
   }
 }

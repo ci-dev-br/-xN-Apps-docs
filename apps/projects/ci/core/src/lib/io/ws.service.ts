@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Inject, Injectable, PLATFORM_ID, SimpleChange, SimpleChanges } from "@angular/core";
+import { EventEmitter, Inject, Injectable, PLATFORM_ID, SimpleChange, SimpleChanges } from "@angular/core";
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 
 @Injectable()
@@ -33,14 +33,13 @@ export class WsService {
         if (this._subject) {
             this._subject.complete();
         }
-        this._subject = webSocket('wss://apps.ci.dev.br:446');
+        let gateway_api = 'wss://srv33.internals.ci.dev.br:664/';
+        this._subject = webSocket(gateway_api);
         this._subject.subscribe(message => {
             this.status = 'online';
             this.retryWait = 100;
             this.ReceiveData(message)
         }, erros => {
-            erros;
-            console.error('erro', erros)
             if (erros instanceof CloseEvent || (erros instanceof Event && erros.type === 'error')) {
                 if (this._subject) this._subject?.complete();
                 this._subject = undefined;
@@ -55,6 +54,23 @@ export class WsService {
         });
         this.Emit({ event: 'events', data: { type: 'ping', momentum: (new Date().getTime()) } });
     }
+    listner = new Map<string, Array<any>>();
+    addMessageListner(name: string, call: (data?: any) => void) {
+        if (!this.listner.has(name))
+            this.listner.set(name, [call])
+        else
+            this.listner.get(name)?.push(call)
+    }
+    emit(name: string, message: any) {
+        if (this.listner.has(name))
+            this.listner.get(name)?.forEach(callBack => {
+                try {
+                    callBack(message);
+                } catch (error) {
+                }
+            });
+    }
+
     private async ReceiveData(data?: any) {
         if (data.type === 'pong') {
             this.ping = (new Date().getTime()) - Number(data.momentum);
@@ -76,7 +92,11 @@ export class WsService {
                     data.setOrigem !== this.clientIdentification
                 ) o_DATA[p] = (data?.data?.changes[p]).currentValue;
             })
-
+        }
+        if (data.event && typeof data.data === 'object') {
+            this.emit(data.event,
+                { ...data.data }
+            )
         }
     }
     private Ping() {
@@ -86,6 +106,18 @@ export class WsService {
                 type: 'ping',
                 momentum: (new Date().getTime()),
                 lastPing: this.ping,
+            },
+        });
+    }
+    /**
+     * Escutar evento
+     */
+    public async Listening(eventName: string, data?: any) {
+        this.Emit({
+            event: 'listening',
+            data: {
+                name: eventName,
+                ...data
             },
         });
     }
@@ -104,7 +136,8 @@ export class WsService {
     }
     private _atentionDatas: Map<string, any> = new Map();
     /**
-     * Solicitar atenção para um objeto. Mantém o objeto sincronizado com os demais clientes durante modificação. Recebendo retorno dos clientes que estão consumindo os eventos da aplicação.
+
+    * Solicitar atenção para um objeto. Mantém o objeto sincronizado com os demais clientes durante modificação. Recebendo retorno dos clientes que estão consumindo os eventos da aplicação.
      */
     async Atention(objectRef: any) {
         if (objectRef && !!objectRef.internalId) {
@@ -116,6 +149,7 @@ export class WsService {
                     objectRef: {
                         ...objectRef,
                         internalId: objectRef.internalId,
+                        id: objectRef.id,
                     }
                 }
             });

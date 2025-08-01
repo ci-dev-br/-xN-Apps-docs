@@ -4,11 +4,9 @@ import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
 import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
-
 import { organizacaoFind } from '../fn/organizacao/organizacao-find';
 import { OrganizacaoFind$Params } from '../fn/organizacao/organizacao-find';
 import { OrganizacaoFindResult } from '../models/organizacao-find-result';
@@ -17,16 +15,13 @@ import { OrganizacaoGetCurrent$Params } from '../fn/organizacao/organizacao-get-
 import { organizacaoSync } from '../fn/organizacao/organizacao-sync';
 import { OrganizacaoSync$Params } from '../fn/organizacao/organizacao-sync';
 import { Tenant } from '../models/tenant';
-
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class OrganizacaoService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
   }
-
   /** Path part for operation `organizacaoSync()` */
   static readonly OrganizacaoSyncPath = '/Organizacao/Sync';
-
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `organizacaoSync()` instead.
@@ -36,7 +31,6 @@ export class OrganizacaoService extends BaseService {
   organizacaoSync$Response(params: OrganizacaoSync$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
     return organizacaoSync(this.http, this.rootUrl, params, context);
   }
-
   /**
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `organizacaoSync$Response()` instead.
@@ -48,10 +42,8 @@ export class OrganizacaoService extends BaseService {
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
-
   /** Path part for operation `organizacaoGetCurrent()` */
   static readonly OrganizacaoGetCurrentPath = '/Organizacao/GetCurrent';
-
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `organizacaoGetCurrent()` instead.
@@ -61,7 +53,6 @@ export class OrganizacaoService extends BaseService {
   organizacaoGetCurrent$Response(params?: OrganizacaoGetCurrent$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Tenant>>> {
     return organizacaoGetCurrent(this.http, this.rootUrl, params, context);
   }
-
   /**
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `organizacaoGetCurrent$Response()` instead.
@@ -73,10 +64,8 @@ export class OrganizacaoService extends BaseService {
       map((r: StrictHttpResponse<Array<Tenant>>): Array<Tenant> => r.body)
     );
   }
-
   /** Path part for operation `organizacaoFind()` */
   static readonly OrganizacaoFindPath = '/Organizacao/Find';
-
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `organizacaoFind()` instead.
@@ -86,7 +75,6 @@ export class OrganizacaoService extends BaseService {
   organizacaoFind$Response(params: OrganizacaoFind$Params, context?: HttpContext): Observable<StrictHttpResponse<OrganizacaoFindResult>> {
     return organizacaoFind(this.http, this.rootUrl, params, context);
   }
-
   /**
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `organizacaoFind$Response()` instead.
@@ -98,5 +86,4 @@ export class OrganizacaoService extends BaseService {
       map((r: StrictHttpResponse<OrganizacaoFindResult>): OrganizacaoFindResult => r.body)
     );
   }
-
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { Entities as NotificacaoEntities, NotificacaoModule } from '@ci/notification';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule, AuthEntities as AuthEntities } from '@ci/auth/auth.module';
@@ -25,25 +25,37 @@ import { OrganizacaoEntities, OrganizacaoModule } from '@ci/organizacao/organiza
 import { INPIEntities, INPIModule } from '@ci/inpi/inpi.module';
 import { SeoMarketingEntities, SeoMarketingModule } from '@ci/seo-marketing';
 import { config } from 'dotenv';
-
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { CiApplicationService } from './app.service';
 import { FORMS_ENTITIES, FormsModule } from '@ci/forms';
 import { CmsEntities, CmsModule } from '@ci/cms/cms.module';
-
+import { I11nEntities, I11nModule } from '@ci/i11n';
+import { ProjetosEntities, ProjetosModule } from '@ci/projetos';
+import { L10nEntities, L10nModule } from '@ci/core/l10n/l10n.module';
+import { CrmEntities } from '@ci/crm/models';
+import { CrmModule } from '@ci/crm';
+/**
+ * Adicione os módulos que podem ser carregados pela configfuração do environment;
+ * Nesta versão a compilação possui todos os módulos mesmo não estando indicados no .env
+ * isso faz com que módulos implementar módulos de forma ativa. Isso deve ser revisto nas
+ * verões futuras, sendo gerado apenas o fonte dos módulos indicados no .env, impedindo uso
+ * direto entre módulos. Para integrar módulos crie um módulo raiz.
+ */
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
 const LoadedEntities = [
 ];
 const LoadedModules = [
 ]
+/***
+ * Trecho auto-gerado, não modificar manualmente «
+ */
 const _entities_name = {
   Notificacao: NotificacaoEntities,
   Auth: AuthEntities,
   Manager: ManagerEntities,
   Messager: MessageEntities,
   Product: ProductEntities,
-  CodeX: CodeXEntities,
   Globalization: GlobalizationEntities,
   Prancheta: PranchetaEntities,
   Icons: IconEntities,
@@ -62,15 +74,19 @@ const _entities_name = {
   SeoMarketing: SeoMarketingEntities,
   Cms: CmsEntities,
   Forms: FORMS_ENTITIES,
+  I11n: I11nEntities,
+  Projetos: ProjetosEntities,
+  CodeX: CodeXEntities,
+  L10n: L10nEntities,
+  CRM: CrmEntities,
 }
 const _modules_name = {
   System: SystemModule,
   Notificacao: NotificacaoModule,
   Auth: AuthModule,
   Manager: ManagerModule,
-Messager: MessagerModule,
+  Messager: MessagerModule,
   Produto: ProdutoModule,
-  Codex: CodexModule,
   Globalization: GlobalizationModule,
   Prancheta: PranchetaModule,
   Icons: IconsModule,
@@ -87,13 +103,24 @@ Messager: MessagerModule,
   SeoMarketing: SeoMarketingModule,
   Forms: FormsModule,
   Cms: CmsModule,
-} 
+  I11n: I11nModule,
+  Projetos: ProjetosModule,
+  Codex: CodexModule,
+  L10n: L10nModule,
+  CRM: CrmModule,
+}
+/**
+ * « end
+ */
 process.env.MODULES.split(',').forEach(e => {
   if (_entities_name[e]) LoadedEntities.push(..._entities_name[e]);
   if (_modules_name[e]) LoadedModules.push(_modules_name[e]);
 })
 @Module({
   imports: [
+    CoreModule.forRoot({
+      snapshot: true
+    }),
     TypeOrmModule.forRoot({
       type: process.env.DB_TYPE as any,
       host: process.env.DB_HOST,
@@ -115,16 +142,14 @@ process.env.MODULES.split(',').forEach(e => {
         ...LoadedEntities
       ]
     }),
-    CoreModule.forRoot({
-      snapshot: true
-    }),
+    forwardRef(() => CmsModule),
     ...LoadedModules,
   ],
   controllers: [
     AppController,
   ],
   providers: [
-    AppService,
+    CiApplicationService,
   ],
 })
 export class AppModule { }

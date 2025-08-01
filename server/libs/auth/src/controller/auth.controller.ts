@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import { AuthService } from '../service/auth.service';
 import { TwoFactorAuthenticationService } from '../service/two-factors.service';
+import * as argon2 from 'argon2';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -21,7 +22,7 @@ export class AuthController {
   ) { }
   @Public()
   @Post('Registrar')
-  @ApiOperation({ operationId: 'Registrar' })
+  @ApiOperation({ operationId: 'RegistrarAuth' })
   @ApiResponse({
     type: User
   })
@@ -29,28 +30,54 @@ export class AuthController {
     @Request() req: Request,
     @Body() input?: RegistrarInputDto,
   ) {
-    const created_user = await this.userService.registrar({
-      email: input.email,
-      password: input.password,
-      username: input.identificacao,
-      phone: input.phone
-    });
-    return created_user;
+    // console.info(req.headers);
+    try {
+      const created_user = await this.userService.registrar({
+        email: input.email,
+        fullName: input.fullName,
+        emailVerificado: false,
+        surname: input.surname,
+        password: await argon2.hash(input.password),
+        username: input.identificacao,
+        phone: input.phone,
+        passwordMode: 'argon2',
+      });
+      return created_user;
+    } catch (error) {
+      console.trace(error);
+      return {
+        status: 500,
+        message: String(error),
+        error: {
+          severity: error.severity,
+          detail: error.detail,
+        }
+      }
+    }
   }
   @Post('Profile')
-  @ApiOperation({ operationId: 'Profile' })
+  @ApiOperation({ operationId: 'ProfileAuth' })
   @ApiResponse({
     type: User
   })
   async profile(
     @Request() req: Request,
   ) {
-    let { refreshToken, password, ...user } = await this.userService.findById((req as any).user.id);
-    return user;
+    try {
+      let { refreshToken, password, ...user } = await this.userService.findById((req as any).user.id);
+      return user;
+    } catch (error) {
+      return {
+        status: 500,
+        message: 'Falha',
+        detahes: error.message,
+        stack: error.stack
+      } as any
+    }
   }
   @Public()
   @Post('Acessar')
-  @ApiOperation({ operationId: 'Acessar' })
+  @ApiOperation({ operationId: 'AcessarAuth' })
   @ApiResponse({
     type: AcessoPayload
   })
@@ -58,91 +85,122 @@ export class AuthController {
     @Ip() ip,
     @Body() payload: AcessoPayload
   ) {
-    if (payload?.chaveAcesso && payload?.password) {
-      let chave = await this.credencialService.obterChaveAcesso(payload.chaveAcesso);
-      if (chave?.valid) {
-        let { password, /* fullName,  */ username, email, phone,
-          ...authenticated_user } = await this.userService.verificarAssinaturaAutenticacao(
-            chave.identifiedUser, payload.password, chave.id
+    try {
+      if (payload?.chaveAcesso && payload?.password) {
+        let chave = await this.credencialService.obterChaveAcesso(payload.chaveAcesso);
+        if (chave?.valid) {
+          let { password, /* fullName,  */ username, email, phone,
+            ...authenticated_user } = await this.userService.verificarAssinaturaAutenticacao(
+              chave.identifiedUser, payload.password, chave.id
+            );
+          if (!authenticated_user) {
+            throw new UnauthorizedException();
+          }
+          chave.valid = false;
+          chave.alive = true;
+          await this.credencialService.atualizar(chave);
+          const permission_uuid = randomUUID();
+          const refresh_token = await this.jwtService.signAsync(
+            {
+              try: btoa(JSON.stringify({
+                permission: permission_uuid
+              }, null, 2))
+            },
+            {
+              // TODO: obter chave para criptografia do jwt para o usuário,
+              // secret: jwtConstants.secret,
+              expiresIn: '90d',
+            },
           );
-        if (!authenticated_user) {
-          throw new UnauthorizedException();
+          // authenticated_user.refreshToken = refresh_token;
+          const refreshTokenArg2 = await this.userService.updateRefreshToken(authenticated_user.id, permission_uuid);
+          chave = await this.credencialService.obterChaveAcesso(payload.chaveAcesso);
+          chave.refreshToken = refreshTokenArg2;
+          await this.credencialService.atualizar(chave);
+          const { /* photo, */ ...user_payload } = authenticated_user;
+          return {
+            user: authenticated_user,
+            bearer: await this.jwtService.signAsync({
+              id: user_payload.id,
+              chaveAcesso: chave.id,
+              tenants: user_payload.tenants,
+            }),
+            refreshToken: refresh_token
+          } as AcessoPayload;
         }
-        chave.valid = false;
-        chave.alive = true;
-        await this.credencialService.atualizar(chave);
-        const permission_uuid = randomUUID();
-        const refresh_token = await this.jwtService.signAsync(
-          {
-            try: btoa(JSON.stringify({
-              permission: permission_uuid
-            }, null, 2))
-          },
-          {
-            // TODO: obter chave para criptografia do jwt para o usuário,
-            // secret: jwtConstants.secret,
-            expiresIn: '7d',
-          },
-        );
-        authenticated_user.refreshToken = refresh_token;
-        await this.userService.updateRefreshToken(authenticated_user.id, permission_uuid);
-        const { photo, ...user_payload } = authenticated_user;
-        return {
-          user: authenticated_user,
-          bearer: await this.jwtService.signAsync({
-            id: user_payload.id,
-            chaveAcesso: chave.id,
-            tenants: user_payload.tenants,
-          }),
-          refreshToken: refresh_token
-        } as AcessoPayload;
-      }
-    } else if (payload?.chaveAcesso) {
-      let chave = await this.credencialService.obterChaveAcesso(payload.chaveAcesso);
-      const identified_user = await this.userService.existsUserByIdentification(payload.identificacao, chave.id);
-      // if(!identified_user) throw ('')
-      // O que fazer quando o usuário não é identificado?
-      if (identified_user) {
-        await this.credencialService.eliminarChaves(identified_user.id);
-        //const two_factory_autentication = await this.twoFactorAuthenticationService.requestTwoFactorAuthentication(identified_user);
-        //if (!two_factory_autentication) {
-        //  return {
-        //    chaveAcesso: chave.id,
-        //    stage: 'Authorization Code'
-        //  }
-        //}
-        chave.identifiedUser = identified_user.id;
-        chave = await this.credencialService.atualizar(chave);
-        return new AcessoPayload({ ...chave, id: undefined });
+      } else if (payload?.chaveAcesso) {
+        let chave = await this.credencialService.obterChaveAcesso(payload.chaveAcesso);
+        const identified_user = await this.userService.existsUserByIdentification(payload.identificacao, chave.id);
+        // if(!identified_user) throw ('')
+        // O que fazer quando o usuário não é identificado?
+        if (identified_user) {
+          await this.credencialService.eliminarChaves(identified_user.id);
+          //const two_factory_autentication = await this.twoFactorAuthenticationService.requestTwoFactorAuthentication(identified_user);
+          //if (!two_factory_autentication) {
+          //  return {
+          //    chaveAcesso: chave.id,
+          //    stage: 'Authorization Code'
+          //  }
+          //}
+          chave.identifiedUser = identified_user.id;
+          chave = await this.credencialService.atualizar(chave);
+          return new AcessoPayload({ ...chave, id: undefined }, identified_user.passwordMode);
+        } else {
+          throw new Error('Falha ao localizar chave de acesso.');
+        }
       } else {
-        throw new Error('Falha ao localizar chave de acesso.');
+        const chaveAcesso = (await this.credencialService.solicitarCredencial({
+          ip: ip
+        }));
+        return {
+          chaveAcesso: chaveAcesso.id,
+        };
       }
-    } else {
-      const chaveAcesso = (await this.credencialService.solicitarCredencial({
-        ip: ip
-      }));
+
+    } catch (error) {
       return {
-        chaveAcesso: chaveAcesso.id,
-      };
+        status: 500,
+        message: 'Falha',
+        detahes: error.message,
+        stack: error.stack,
+        datail: error
+      } as any
     }
   }
   @Post('Logout')
-  @ApiOperation({ operationId: 'Logout' })
+  @ApiOperation({ operationId: 'LogoutAuth' })
   async logout(@Req() req) {
-    this.userService.logout(null)
+    try {
+      return await this.userService.logout(null)
+    } catch (error) {
+      return {
+        status: 500,
+        message: 'Falha',
+        detahes: error.message,
+        stack: error.stack
+      } as any
+    }
   }
   @Public()
   @Post('Refresh')
   @ApiResponse({ type: AuthorizationOutput })
-  @ApiOperation({ operationId: 'Refresh' })
+  @ApiOperation({ operationId: 'RefreshAuth' })
   async refresh(
     @Req() req: Request,
     @Body() payload: RefreshPayloadInputDto,
     @Ip() ip,
   ) {
-
-    return await this.authService.refreshToken(
-      null, payload.refreshToken, req, ip
-    );
+    try {
+      return await this.authService.refreshToken(
+        null, payload.refreshToken, req, ip
+      );
+    } catch (error) {
+      return {
+        status: 500,
+        message: 'Falha',
+        detahes: error.message,
+        stack: error.stack
+      } as any
+    }
   }
 }

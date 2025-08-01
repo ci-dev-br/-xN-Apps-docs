@@ -2,14 +2,12 @@ import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProduces, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { UserService } from "@ci/auth/auth.module";
 import { User } from "@ci/auth/models/user.entity";
-
 @ApiTags('User')
 @Controller('User')
 export class UserController {
     constructor(
         private readonly user?: UserService,
     ) { }
-
     @Post('Sync')
     @ApiOperation({ operationId: 'SyncUser' })
     @ApiResponse({
@@ -22,9 +20,8 @@ export class UserController {
             return await this.user.sync(user);
         }
     }
-
     @Post('GetList')
-    @ApiOperation({ operationId: 'UserGetList' })
+    @ApiOperation({ operationId: 'GetListUser' })
     @ApiResponse({
         type: User,
         isArray: true
@@ -32,6 +29,15 @@ export class UserController {
     async getList(
         @Req() req: any
     ) {
-        return await this.user.find();
+        return (await this.user.find())?.map(u => {
+            delete u.password;
+            if (!!u.email) {
+                u.email = u.email.substring(0, 3) + '***' + u.email.substring(u.email.length - 8, 3);
+            }
+            delete u.email;
+            delete u.passwordMode;
+
+            return u;
+        });
     }
 }

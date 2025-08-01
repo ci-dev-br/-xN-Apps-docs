@@ -4,14 +4,12 @@ import { RouterModule } from "@angular/router";
 import { RolesService } from "./roles.service";
 import { CoreModule } from "../core/core.module";
 import { FinderService } from "./finder.service";
-
 @NgModule({
     imports: [
         CoreModule,
         RouterModule,
     ],
     exports: [
-
     ],
     providers: [
         UserService,

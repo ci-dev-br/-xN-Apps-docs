@@ -75,8 +75,17 @@
       "@ci-apps/blog": [
         "./projects/ci-apps/blog/src/public-api"
       ],
+      "@ci-apps/cms": [
+        "./projects/ci-apps/cms/src/public-api"
+      ],
+      "@ci-apps/crm": [
+        "./projects/ci-apps/crm/src/public-api"
+      ],
+      "@ci-apps/documentos": [
+        "./projects/ci-apps/documentos/src/public-api"
+      ],
       "@ci-apps/sites": [
-        "./dist/ci-apps/sites"
+        "./projects/ci-apps/sites/src/public-api"
       ],
       "@ci/auth": [
         "./projects/ci/auth"
@@ -91,10 +100,10 @@
         "./projects/ci/data-grid"
       ],
       "@ci/ilustrador": [
-        "./dist/ci/ilustrador"
+        "./projects/ci-apps/ilustrador/src/public-api"
       ],
       "@ci/nota": [
-        "./dist/ci/nota"
+        "./projects/ci-apps/nota/src/public-api"
       ],
       "@ci/organizacao": [
         "./projects/ci/organizacao"

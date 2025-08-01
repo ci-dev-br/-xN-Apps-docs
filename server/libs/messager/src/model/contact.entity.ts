@@ -2,7 +2,6 @@ import { Column, Entity, JoinTable, ManyToMany } from "typeorm";
 import { schema } from "../noms";
 import { User } from "@ci/auth/models/user.entity";
 import { FullAuditedEntity } from "@ci/manager";
-
 @Entity({
     schema
 })

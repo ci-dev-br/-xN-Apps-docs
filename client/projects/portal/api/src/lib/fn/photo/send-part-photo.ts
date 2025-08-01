@@ -5,20 +5,16 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
-
 import { PartPayloadDto } from '../../models/part-payload-dto';
 import { Photo } from '../../models/photo';
-
 export interface SendPartPhoto$Params {
       body: PartPayloadDto
 }
-
 export function sendPartPhoto(http: HttpClient, rootUrl: string, params: SendPartPhoto$Params, context?: HttpContext): Observable<StrictHttpResponse<Photo>> {
   const rb = new RequestBuilder(rootUrl, sendPartPhoto.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
-
   return http.request(
     rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
@@ -28,5 +24,4 @@ export function sendPartPhoto(http: HttpClient, rootUrl: string, params: SendPar
     })
   );
 }
-
 sendPartPhoto.PATH = '/Photo/SendPart';

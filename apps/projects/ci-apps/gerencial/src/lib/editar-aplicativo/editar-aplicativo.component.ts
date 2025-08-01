@@ -1,43 +1,54 @@
-import { DIALOG_DATA } from '@angular/cdk/dialog';
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { lastValueFrom } from 'rxjs';
-import { Application } from '@ci/portal-api';
+import { Component, Inject, OnDestroy, OnInit, Optional } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { BehaviorSubject, lastValueFrom } from 'rxjs';
+import { Application, FormsService } from '@ci/portal-api';
 import { ApplicationService } from '@ci/portal-api';
-import { IChangeable, DaoService } from '@ci/core';
+import { IChangeable, DaoService, DaoBuilder } from '@ci/core';
+import { ActionsService, IItemMenu, WindowComponent } from '@ci/components';
+import { DialogRef } from '@angular/cdk/dialog';
 
 @Component({
-    selector: 'ci-editar-aplicativo',
-    templateUrl: './editar-aplicativo.component.html',
-    styleUrls: ['./editar-aplicativo.component.scss'],
-    standalone: false
+  selector: 'ci-editar-aplicativo',
+  templateUrl: './editar-aplicativo.component.html',
+  styleUrls: ['./editar-aplicativo.component.scss'],
+  providers: [
+    // ActionsService,
+  ],
+  standalone: false
 })
 export class EditarAplicativoComponent implements OnInit, OnDestroy {
-  form = this.fb.group({
-    id: ['', []],
-    name: ['', []],
-    description: ['', []],
-    icon: ['', []],
-    url: ['', []],
-    menuGroupName: ['', []],
-  });
+  form?: FormGroup<any>;
   constructor(
+    private readonly ref: MatDialogRef<WindowComponent>,
     private readonly applicationService: ApplicationService,
     private readonly dao: DaoService,
+    private readonly daoBuilder: DaoBuilder,
     private readonly fb: FormBuilder,
+    private readonly formsService: FormsService,
     @Inject(MAT_DIALOG_DATA)
     public readonly data?: Application,
+    @Optional() @Inject('ACTIONS') actions?: BehaviorSubject<IItemMenu[]>,
+  ) {
+    if (actions) actions.next([...(actions.value || []), {
 
-  ) { }
-  ngOnDestroy(): void {
+      label: 'Remover Aplicação',
+      icon: 'delete',
+      onClick: async () => {
+        if (data) await lastValueFrom(this.applicationService.delete({ body: data }));
+        this.ref?.close(null);
+      }
+    }])
   }
-  ngOnInit(): void {
+  async ngOnDestroy() {
+  }
+  async ngOnInit() {
     const dao = this.dao;
     const _data = this.data;
+    this.form = await this.daoBuilder.getForm('Application');
     const form = this.form;
     this.dao.prepareToEdit(this.data);
-    this.dao.bindDataForm(this.data, this.form);
+    if (this.form) this.dao.bindDataForm(this.data, this.form);
     this.dao.confirmation(this.data)?.subscribe(async data => {
       try {
         if (this.data && data) {
@@ -46,7 +57,7 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
           );
           delete (_data as IChangeable).__pre;
           dao.prepareToEdit(_data);
-          dao.bindDataForm(_data, form);
+          if (form) dao.bindDataForm(_data, form);
         }
       } catch (error) {
 
@@ -71,7 +82,6 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
         }
       }, 0);
   }
-
   get changes() {
     return this.dao.getChanges(this.data as IChangeable);
   }

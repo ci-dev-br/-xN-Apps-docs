@@ -1,22 +1,31 @@
 {
-  "name": "notificacao",
+  "name": "ci-loader",
   "version": "1.0.0",
   "description": "[Versão Develop Publicada](https://npm.plhx.com.br:3090/) | [git](https://101.ci.dev.br:444/git/Repository/Detail/94e95210-26d3-4884-a691-0fb9ddbfccda) | [jira]()",
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://101.ci.dev.br:444/git/portal.git"
+  },
+  "license": "MIT",
+  "author": "plhx",
+  "type": "commonjs",
   "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
   "scripts": {
     "build:client": "cd client && ng build -c production",
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy": "node deploy",
     "sync": "git push --all origin && git push --all azure && git pull --all"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://101.ci.dev.br:444/git/portal.git"
+  "dependencies": {
+    "d3-scale": "^4.0.2",
+    "d3-selection": "^3.0.0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
+    "@google/genai": "^1.12.0",
     "@types/d3-scale": "^4.0.8",
     "@types/d3-selection": "^3.0.10",
     "@types/sha256": "^0.2.2",
@@ -26,10 +35,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "fs-extra": "^11.2.0",
+    "node-windows": "1.0.0-beta.8",
     "sha256": "^0.2.0"
-  },
-  "dependencies": {
-    "d3-scale": "^4.0.2",
-    "d3-selection": "^3.0.0"
   }
 }

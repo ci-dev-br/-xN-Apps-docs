@@ -21,11 +21,12 @@ export const routes: Routes = [
     },
     {
         path: '',
-        canMatch: [authGuard], loadChildren: () => import('./painel/painel.module').then(m => m.PainelModule),
+        loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule)
     },
     {
         path: '',
-        loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule)
+        canMatch: [authGuard], loadChildren: () => import('./painel/painel.module').then(m => m.PainelModule),
     },
-    // { path: '**', redirectTo: '/acessar', pathMatch: 'full' },
+
+    { path: '**', redirectTo: '/acessar', pathMatch: 'full' },
 ];

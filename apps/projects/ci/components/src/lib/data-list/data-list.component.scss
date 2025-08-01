@@ -1,0 +1,17 @@
+:host {}
+
+
+.list {
+    display: flex;
+    flex-direction: column;
+
+    .item {
+        min-height: 48px;
+        display: flex;
+        flex-direction: row;
+
+        &.--selected-item {
+            background-color: rgba(0, 0, 200, .15);
+        }
+    }
+}

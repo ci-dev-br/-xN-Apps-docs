@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { UserService } from './services/user.service';
+import { CoreModule } from '@ci/core';
+import { RouterModule } from '@angular/router';
 @NgModule({
-  declarations: [],
   imports: [
-    CommonModule
+    CoreModule,
+    RouterModule,
   ],
   providers: [
-    UserService,
   ]
 })
 export class AuthModule { }

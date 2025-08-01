@@ -3,21 +3,23 @@
 import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
-
 import { ApiService } from './services/api.service';
 import { SystemService } from './services/system.service';
+import { MessageService } from './services/message.service';
 import { DeviceService } from './services/device.service';
 import { AuthService } from './services/auth.service';
 import { ApplicationService } from './services/application.service';
 import { DomainService } from './services/domain.service';
+import { ContactsService } from './services/contacts.service';
 import { ProductService } from './services/product.service';
 import { PranchetaService } from './services/prancheta.service';
 import { UserService } from './services/user.service';
 import { PhotoService } from './services/photo.service';
+import { FileExplorerService } from './services/file-explorer.service';
 import { CadastroService } from './services/cadastro.service';
 import { PessoaService } from './services/pessoa.service';
 import { OrganizacaoService } from './services/organizacao.service';
-
+import { FormsService } from './services/forms.service';
 /**
  * Module that provides all services and configuration.
  */
@@ -28,17 +30,21 @@ import { OrganizacaoService } from './services/organizacao.service';
   providers: [
     ApiService,
     SystemService,
+    MessageService,
     DeviceService,
     AuthService,
     ApplicationService,
     DomainService,
+    ContactsService,
     ProductService,
     PranchetaService,
     UserService,
     PhotoService,
+    FileExplorerService,
     CadastroService,
     PessoaService,
     OrganizacaoService,
+    FormsService,
     ApiConfiguration
   ],
 })
@@ -54,7 +60,6 @@ export class ApiModule {
       ]
     }
   }
-
   constructor( 
     @Optional() @SkipSelf() parentModule: ApiModule,
     @Optional() http: HttpClient

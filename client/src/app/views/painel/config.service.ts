@@ -4,7 +4,6 @@ import { Card, Prancheta } from "@portal/api";
 import { BehaviorSubject } from "rxjs";
 import { IWidget } from "src/app/widgets/i-widget";
 import { Widgets } from "src/app/widgets/widgets";
-
 export interface IWidgetLoadedData {
     widget_info?: IWidget;
     settings?: any;
@@ -12,7 +11,6 @@ export interface IWidgetLoadedData {
     _form?: FormGroup;
     __grid_template?: string;
 }
-
 @Injectable()
 export class PranchetaService {
     constructor(
@@ -49,16 +47,13 @@ export class PranchetaService {
                 settings: card.settings,
                 widget_info: Widgets.find(w => w.title === card.componentName),
             } as IWidgetLoadedData;
-
             a._form = this.getForm(a);
             a._form?.reset(a.settings);
-
             if (a._form) {
                 a._form.valueChanges.subscribe(values => {
                     a.settings = values;
                 })
             }
-
             loaded_widgets.push(a);
         })
         this._loaded_widgets.set(prancheta, loaded_widgets);
@@ -77,7 +72,6 @@ export class PranchetaService {
                 } as Card
             }) as Card[] || undefined;
     }
-
     getForm(widget: IWidgetLoadedData) {
         if (widget.widget_info?.settings) {
             const group: any = {

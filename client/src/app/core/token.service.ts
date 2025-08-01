@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { UserService } from "../services/user.service";
-
 @Injectable()
 export class TokenService {
     constructor(
@@ -16,27 +15,23 @@ export class TokenService {
     hasRefreshToken() {
         return !!this.RefreshToken;
     }
-
     get Token() {
         return this.get('token');
     }
     get RefreshToken() {
         return this.get('refresh_token');
     }
-
     set Token(value: string) {
         this.set('token', value);
     }
     set RefreshToken(value: string) {
         this.set('refresh_token', value);
     }
-
     private getStorage() {
         let storage_data = undefined;
         try {
             storage_data = localStorage.getItem('0');
         } catch (error) {
-
         }
         if (!storage_data) return {};
         return JSON.parse(atob(storage_data));
@@ -50,7 +45,6 @@ export class TokenService {
                 if (snapshot !== JSON.stringify(this.__))
                     localStorage.setItem('0', btoa(JSON.stringify(this.__, null, 2)))
             } catch (error) {
-
             }
         }, 0);
         return this.__;

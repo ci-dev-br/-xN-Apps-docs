@@ -1,1 +1,11 @@
-<p>home works!</p>
+<mat-tab-group>
+    <mat-tab [label]="'Organizações'">
+        <h4>No momento seu projeto não é parte de uma Organização</h4>
+        <button mat-raised-button>
+            Procurar por Organização existente
+        </button>
+        <button mat-raised-button (click)="cadastrarOrganizacao()" >
+            Cadastrar nova Organização
+        </button>
+    </mat-tab>
+</mat-tab-group>

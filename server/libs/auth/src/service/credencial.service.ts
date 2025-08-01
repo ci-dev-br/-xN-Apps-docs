@@ -4,7 +4,6 @@ import { ChaveAcesso } from "@ci/core";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserService } from "./user.service";
 import { JwtService } from "@nestjs/jwt";
-
 @Injectable()
 export class CredencialService {
     constructor(
@@ -35,6 +34,14 @@ export class CredencialService {
         return await this.chaveAcessoRepo.createQueryBuilder('chave_acesso')
             .where(`encode(sha512(chave_acesso.id::varchar::bytea), 'hex') = :id`)
             .setParameter('id', assinatura)
+            .getOne();
+    }
+    async obterChaveAcessoPorId(
+        chave_acesso_id?: string,
+    ) {
+        return await this.chaveAcessoRepo.createQueryBuilder('chave_acesso')
+            .where(`chave_acesso.id = :id`)
+            .setParameter('id', chave_acesso_id)
             .getOne();
     }
     async atualizar(

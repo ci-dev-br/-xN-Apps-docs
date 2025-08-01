@@ -7,15 +7,16 @@ import { WindowService } from '@ci/components';
 import { CoreModule } from '@ci/core';
 
 @Component({
-    selector: 'ci-home',
-    imports: [
-        CoreModule,
-        RouterModule,
-        MatTabsModule,
-        MatIconModule,
-    ],
-    templateUrl: './home.component.html',
-    styleUrl: './home.component.scss'
+  selector: 'ci-home',
+  standalone: true,
+  imports: [
+    CoreModule,
+    RouterModule,
+    MatTabsModule,
+    MatIconModule,
+  ],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.scss'
 })
 export class HomeComponent {
   abas?: { label: string, path: string, icon: string }[];
@@ -24,7 +25,7 @@ export class HomeComponent {
     // private readonly dialog: MatDialog,
     // private readonly janela: WindowService,
   ) {
-    
+
     this.abas = route.routeConfig?.children?.map(r => {
       return {
         label: (r?.data as any)?.title || r.path,

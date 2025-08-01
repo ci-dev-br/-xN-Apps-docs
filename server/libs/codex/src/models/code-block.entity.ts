@@ -1,11 +1,22 @@
 import { FullAuditedEntity } from "@ci/core";
 import { Column, Entity } from "typeorm";
-
-@Entity({ schema: 'codex' })
+import { schema } from "./schema";
+import { ApiProperty } from "@nestjs/swagger";
+@Entity({ schema })
 export class CodeBlock extends FullAuditedEntity {
+    @ApiProperty({
+        title: 'Linguagem'
+    })
     @Column({ nullable: true })
-    lang?: string;
+    language?: string;
+    @ApiProperty({
+        title: 'Linguagem'
+    })
     @Column({ nullable: true })
-    code?: string;
-
+    sourceCode?: string;
+    @ApiProperty({
+        title: 'Versão'
+    })
+    @Column({ nullable: true })
+    version?: string;
 }

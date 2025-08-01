@@ -1,7 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { ApiConfiguration } from "@portal/api";
-
 @Injectable()
 export class ServicesService {
     constructor(
@@ -23,14 +22,12 @@ export class ServicesService {
                     try {
                         delete (document as any)[e];
                     } catch (error) {
-
                     }
                 });
                 [...Object.keys(window)].forEach(e => {
                     try {
                         delete (window as any)[e];
                     } catch (error) {
-
                     }
                 });
                 try {
@@ -38,10 +35,8 @@ export class ServicesService {
                     console.info = () => { }
                     console.error = () => { }
                     window.eval = () => { }
-
                     console.clear();
                     console.clear = () => { }
-
                     console.warn('ACESSO NEGADO...');
                     console.warn = () => { }
                 } catch (error) {
@@ -51,7 +46,6 @@ export class ServicesService {
         }) */
     }
     compartilhar() {
-
     }
     private init() {
         this.http.post(this.apiConfig.rootUrl + '/wakeUp', {}).subscribe(r => {

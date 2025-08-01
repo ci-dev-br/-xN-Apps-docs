@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+/**
+ * # CI Application Service
+ * 
+ */
 @Injectable()
-export class AppService {
+export class CiApplicationService {
+    constructor() { }
 }

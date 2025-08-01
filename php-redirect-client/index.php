@@ -1,4 +1,4 @@
 <?php
-$jsonData = file_get_contents('http://191.177.241.48:86/index.html');
+$jsonData = file_get_contents('https://apps.ci.dev.br'.$_SERVER['REQUEST_URI'].'?from='.$_SERVER['HTTP_HOST']);
 print $jsonData;
 ?>

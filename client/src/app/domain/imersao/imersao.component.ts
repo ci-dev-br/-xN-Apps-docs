@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 @Component({
   selector: 'ci-imersao',
   standalone: true,
@@ -8,5 +7,4 @@ import { Component } from '@angular/core';
   styleUrl: './imersao.component.scss'
 })
 export class ImersaoComponent {
-
 }

@@ -5,8 +5,10 @@ import { AudtService } from "./audt/audt.service";
 import { ChaveAcesso } from "./audt/chave-acesso.entity";
 import { DamnService } from "./damn/damn.service";
 import { EventsGateway } from "./events/events.gateway";
+// import { EventsLocalGateway } from "./events/events-local.gateway";
+import { BusService } from "./events/bus.service";
 import { EventsLocalGateway } from "./events/events-local.gateway";
-import { BusService } from "./events/events.service";
+import { Log } from "./logger/log.entity";
 // import { t } from "./i18n/t";
 // import { IAutentication } from "./auth/auth";
 // import { Status } from "./system/model/status";
@@ -14,6 +16,7 @@ import { BusService } from "./events/events.service";
 export const CoreEntities = [
     Snapshot,
     ChaveAcesso,
+    Log,
 ]
 /**
  * Módulo Core
@@ -27,10 +30,12 @@ export const CoreEntities = [
     providers: [
         SnapshotService,
         AudtService,
+        BusService,
     ],
     exports: [
         SnapshotService,
         AudtService,
+        BusService,
     ]
 })
 export class CoreModule {

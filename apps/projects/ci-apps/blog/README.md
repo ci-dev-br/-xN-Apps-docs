@@ -1,24 +1,45 @@
-# Blog
+# apps.ci.dev.br - Blog
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.0.
+---
 
-## Code scaffolding
+## Recursos principais do Blog
 
-Run `ng generate component component-name --project blog` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project blog`.
-> Note: Don't forget to add `--project blog` or else it will be added to the default project in your `angular.json` file. 
+### Editor de Conteúdo Intuitivo WYSIWYG e MARKDOWN
 
-## Build
+### Gerenciamento de Posts
 
-Run `ng build blog` to build the project. The build artifacts will be stored in the `dist/` directory.
+### Gerenciamento de Media
 
-## Publishing
+### Estrutura de URL Amigável
 
-After building your library with `ng build blog`, go to the dist folder `cd dist/blog` and run `npm publish`.
+### Comentários e compatilhamento em redes sociais
 
-## Running unit tests
+### Designs Responsivos e personalizaveis
 
-Run `ng test blog` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Marketplace de comercialização de Templates, Componentes e Etc
 
-## Further help
+### Segurança contra Span
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Recursos Premium
+
+### Personalização Avançada de Temas
+
+### Plugins de Integração
+
+### Importação de Plugins de Terceiros (wordpress, joomla, native, vanilla) 
+
+### Funcionalidade de Marketing
+
+### Suporte ao Cliente Prioritário
+
+### Recurso de Membros (Membership)
+
+### Suporte ao Cliente Prioritário
+
+### Análise de Estatísticas Avançadas
+
+### Backup e Restauração
+
+### Importação de Blogs e Medias Sociais
+
+### Teste A/B

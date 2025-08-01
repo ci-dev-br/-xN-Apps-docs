@@ -7,13 +7,15 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CoreModule } from '@ci/core';
+import { ActionModule } from '../action/action.module';
 
 @NgModule({
   declarations: [
-    WindowComponent
+    WindowComponent,
   ],
   imports: [
     CoreModule,
+    ActionModule,
     MatToolbarModule,
     MatIconModule,
     MatDialogModule,
@@ -24,7 +26,7 @@ import { CoreModule } from '@ci/core';
     WindowService,
   ],
   exports: [
-    WindowComponent,
+    // WindowComponent,
   ]
 })
 export class WindowModule { }

@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { DaoService, IChangeable } from '@ci/core';
-import { Form, FormsService, Pergunta } from '@ci/portal-api';
+import { Forms, FormsService, Pergunta } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
 @Component({
   selector: 'ci-edit',
@@ -12,12 +12,12 @@ import { lastValueFrom } from 'rxjs';
   standalone: false
 })
 export class EditComponent implements OnInit {
-  private _formulario?: Form | undefined;
-  public get formulario(): Form | undefined {
+  private _formulario?: Forms | undefined;
+  public get formulario(): Forms | undefined {
     return this._formulario;
   }
   @Input()
-  public set formulario(value: Form | undefined) {
+  public set formulario(value: Forms | undefined) {
     if (this._formulario === value) return;
     this._formulario = value;
 
@@ -34,7 +34,7 @@ export class EditComponent implements OnInit {
     private readonly snap: MatSnackBar,
   ) { }
   async ngOnInit() {
-    this.formsService.formsGetByInternalId({ body: { internalId: this.route.snapshot.paramMap.get('FormId') } }).subscribe(form_data => {
+    this.formsService.getByInternalId({ body: { internalId: this.route.snapshot.paramMap.get('FormId') } }).subscribe(form_data => {
       this.formulario = form_data;
       this.daos.prepareToEdit(this.formulario);
       this.daos.bindDataForm(this.formulario, this.formGroup);
@@ -42,7 +42,7 @@ export class EditComponent implements OnInit {
         try {
           if (this.formulario && data) {
             let _data: any = Object.assign(this.formulario,
-              await lastValueFrom(this.formsService.formsSync({ body: { data: data } }))
+              await lastValueFrom(this.formsService.sync({ body: { data: data } }))
             );
             delete (_data as IChangeable).__pre;
             this.daos.prepareToEdit(_data);
@@ -55,7 +55,9 @@ export class EditComponent implements OnInit {
     });
   }
   get changes() {
-    return this.daos.getChanges(this.formulario as IChangeable);
+    if (!!this.formulario)
+      return this.daos.getChanges(this.formulario as IChangeable);
+    else return undefined;
   }
   @HostListener('keydown', ['$event'])
   shortcutKeyHandler(event: KeyboardEvent) {
@@ -90,5 +92,8 @@ export class EditComponent implements OnInit {
         this.formulario.perguntas.perguntas = [...this.formulario.perguntas.perguntas];
       }
     }
+  }
+  async compartilhar() {
+
   }
 }

@@ -1,4 +1,11 @@
 /* tslint:disable */
 /* eslint-disable */
-export interface CardOption {
+export interface ICardOption {
+}
+export class CardOption implements ICardOption {
+  static typeName = 'CardOption';
+  toJSON(): ICardOption{
+    return {
+    }
+  }
 }

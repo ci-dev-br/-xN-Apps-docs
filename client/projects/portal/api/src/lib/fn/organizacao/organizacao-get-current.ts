@@ -5,17 +5,13 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
-
 import { Tenant } from '../../models/tenant';
-
 export interface OrganizacaoGetCurrent$Params {
 }
-
 export function organizacaoGetCurrent(http: HttpClient, rootUrl: string, params?: OrganizacaoGetCurrent$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Tenant>>> {
   const rb = new RequestBuilder(rootUrl, organizacaoGetCurrent.PATH, 'post');
   if (params) {
   }
-
   return http.request(
     rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
@@ -25,5 +21,4 @@ export function organizacaoGetCurrent(http: HttpClient, rootUrl: string, params?
     })
   );
 }
-
 organizacaoGetCurrent.PATH = '/Organizacao/GetCurrent';

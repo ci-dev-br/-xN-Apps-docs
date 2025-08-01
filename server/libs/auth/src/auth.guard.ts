@@ -10,11 +10,14 @@ import { Request } from 'express';
 import { jwtConstants } from './constants';
 import { IS_PUBLIC_KEY } from './decorators/public.decorator';
 import { ROLE_KEY } from './decorators/role.decorator';
-
+import { CredencialService } from './service/credencial.service';
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private reflector: Reflector) { }
-
+  constructor(
+    private jwtService: JwtService,
+    private reflector: Reflector,
+    private credencial: CredencialService,
+  ) { }
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
@@ -28,7 +31,6 @@ export class AuthGuard implements CanActivate {
       // 💡 See this condition
       return true;
     }
-
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
@@ -40,11 +42,14 @@ export class AuthGuard implements CanActivate {
       });
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
-      console.log('ROLE', role)
-      console.log('PAYLOAD', payload)
+      // console.log('ROLE', role)
+      // console.log('PAYLOAD', payload)
       request['user'] = { id: payload.id };
       request['chaveAcesso'] = payload.chaveAcesso;
-
+      let chave_acesso_local = await this.credencial.obterChaveAcessoPorId(payload.chaveAcesso);
+      if (!chave_acesso_local || (!chave_acesso_local.alive)) {
+        throw new UnauthorizedException('Acesso revogado, favor autenticar novamente.');
+      }
       if (!!role) {
         if (!payload || !payload.roles.includes(role)) throw new UnauthorizedException('Acesso negado. Não corresponde ao nível de acesso necessário.');
       }
@@ -53,7 +58,6 @@ export class AuthGuard implements CanActivate {
     }
     return true;
   }
-
   private extractTokenFromHeader(request: Request): string | undefined {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;

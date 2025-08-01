@@ -5,19 +5,15 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
-
 import { Application } from '../../models/application';
-
 export interface Sync$Params {
       body: Application
 }
-
 export function sync(http: HttpClient, rootUrl: string, params: Sync$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
   const rb = new RequestBuilder(rootUrl, sync.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
-
   return http.request(
     rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
@@ -27,5 +23,4 @@ export function sync(http: HttpClient, rootUrl: string, params: Sync$Params, con
     })
   );
 }
-
 sync.PATH = '/Application/Sync';

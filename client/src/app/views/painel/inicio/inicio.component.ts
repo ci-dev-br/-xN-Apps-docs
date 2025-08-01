@@ -6,7 +6,6 @@ import { WidgetService } from "./widget.service";
 import { Prancheta } from "@portal/api";
 import { IWidgetLoadedData, PranchetaService } from "../config.service";
 import { FormBuilder, Validators } from "@angular/forms";
-
 @Component({
     selector: 'px-inicio',
     templateUrl: 'inicio.component.html',
@@ -48,19 +47,15 @@ export class InicioComponent {
         event.stopPropagation();
     }
     editWidgetCard() {
-
     }
     confirmEditingWidgetCard() {
-
     }
     adicionarCard() {
         this.window.open(AdicionarWidgetComponent, {});
     }
     criarWidget() {
-
     }
     instalarWidget() {
-
     }
     loadWidgets(prancheta: Prancheta) {
         return this.pranchetaService.loadWidgets(prancheta);
@@ -80,7 +75,6 @@ export class InicioComponent {
     updateCards() {
         this.pranchetaService.updateCards();
     }
-
     getTemplate(structure: string) {
         let cnt = 0;
         return structure.split('-').map(v => Array(Number(v)).fill('').map(c => 'w' + cnt++)).map(a => a.join(' ')).map(l => `"${l}"`).join('\n');
@@ -100,7 +94,6 @@ export class InicioComponent {
             title: a.title || '',
             structure: a.structure || ''
         })
-
         if (!this.pranchetas) this.pranchetas = []
         this.pranchetas.push(prancheta);
     }

@@ -8,7 +8,6 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { FormGroup } from "@angular/forms";
 import { CoreModule } from "src/app/core/core.module";
 import { lastValueFrom } from "rxjs";
-
 @Component({
     selector: 'ci-editar-produto',
     template: `<ci-dyn-form [source]="formOptions" [formGroup]="form" ></ci-dyn-form> {{data | json}}`,
@@ -33,7 +32,6 @@ export class EditarProdutoComponent {
             { label: 'Descrição curta', property: 'shortDescription', type: 'text' },
             // { label: 'Sub Grupo', property: 'subGrupo', type: 'text' },
             { label: 'URL Site Oficial', property: 'urlWebsiteOficial', type: 'text' },
-
             // { label: 'createdAt', property: 'createdAt', },
             // { label: 'createdBy', property: 'createdBy', },
             // { label: 'internalId', property: 'internalId', },
@@ -66,9 +64,7 @@ export class EditarProdutoComponent {
                     if (this.form) dao.bindDataForm(this.data, this.form);
                 }
             } catch (error) {
-
             }
         });
     }
-
 }

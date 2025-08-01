@@ -1,14 +1,30 @@
 :host {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
     align-content: center;
-
+    align-items: center;
+    justify-content: center;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
 .termo {
-    max-width: 70vw;
-    color: white;
+    margin: 48px;
+    max-width: 80vw;
+    color: black;
+    text-justify: distribute;
+    text-align: justify;
+}
+
+footer {
+    width: 100%;
+    padding: 48px;
+    background: #111;
+    text-align: center;
+    *,
+    a,
+    a:link,
+    a:visited {
+        color: #cecece;
+    }
 }

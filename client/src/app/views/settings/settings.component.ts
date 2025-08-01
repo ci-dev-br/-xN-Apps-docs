@@ -1,7 +1,6 @@
 import { Component } from "@angular/core";
 import { WindowService } from "src/app/components/window/window.service";
 import { CoreModule } from "src/app/core/core.module";
-
 @Component({
     standalone: true,
     selector: 'ci-settings',
@@ -12,7 +11,6 @@ import { CoreModule } from "src/app/core/core.module";
             
     `
 })
-
 export class SettingsComponent {
     // title = 'Configurações';
     constructor(

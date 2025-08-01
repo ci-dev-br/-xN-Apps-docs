@@ -1,6 +1,5 @@
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { PhoneNumber } from "./phone-number.entity";
-
 @Entity({
     schema: 'notification'
 })

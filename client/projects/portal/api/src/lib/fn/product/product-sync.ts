@@ -5,19 +5,15 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
-
 import { SyncPayloadDaoProduct } from '../../models/sync-payload-dao-product';
-
 export interface ProductSync$Params {
       body: SyncPayloadDaoProduct
 }
-
 export function productSync(http: HttpClient, rootUrl: string, params: ProductSync$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoProduct>> {
   const rb = new RequestBuilder(rootUrl, productSync.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
-
   return http.request(
     rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
@@ -27,5 +23,4 @@ export function productSync(http: HttpClient, rootUrl: string, params: ProductSy
     })
   );
 }
-
 productSync.PATH = '/Product/Sync';

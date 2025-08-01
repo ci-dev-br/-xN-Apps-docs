@@ -14,7 +14,7 @@
                 });
                 console.log("Arquivos compilados com sucesso.");
             } catch (error) {
-                console.error(error);
+                console.trace(error);
             }
         }
         const sh = async (command, cwd) => {
@@ -28,7 +28,7 @@
                     console.info(data.toString());
                     const r = data.toString();
                     // if (String(r).indexOf('todos') > -1) {
-                        console.log(c.stdin.write('t'));
+                    console.log(c.stdin.write('t'));
                     // }
                     if (String(r).indexOf('Application bundle generation complete') > -1) {
                         deployDist();

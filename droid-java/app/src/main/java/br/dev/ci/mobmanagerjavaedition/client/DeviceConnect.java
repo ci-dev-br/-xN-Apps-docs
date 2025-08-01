@@ -24,7 +24,7 @@ public class DeviceConnect extends AsyncTask<Device, Void, String> {
             URL url = new URL(this.url_gateway.getUrl() + "Device/Connect");
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            // connection.set
+
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/json");

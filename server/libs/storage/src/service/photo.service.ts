@@ -2,12 +2,9 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Photo } from "../models/photo.entity";
 import { Repository } from "typeorm";
-import { createHash } from "crypto";
-
 interface PartialData {
     parts: string[];
 }
-
 @Injectable()
 export class PhotoService {
     private static partialDataSendingBook = new Map<string, PartialData>();
@@ -33,7 +30,6 @@ export class PhotoService {
     async Get(query: string,) {
         return await this.userRepo.find({
             where: {
-
             }
         })
     }

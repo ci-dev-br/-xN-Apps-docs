@@ -1,7 +1,7 @@
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, TableForeignKey } from "typeorm";
 import { Application } from "@ci/manager";
 import { ApiProperty } from "@nestjs/swagger";
-
+import { User } from "@ci/auth/models/user.entity";
 @Entity()
 export class ChaveAcesso {
     @ApiProperty({ required: false }) @PrimaryGeneratedColumn('uuid') id?: string;
@@ -11,5 +11,7 @@ export class ChaveAcesso {
     @ApiProperty({ required: false }) @Column({ nullable: true }) createdFromIp?: string;
     @Column({ nullable: true, default: false }) valid?: boolean;
     @Column({ nullable: true, default: false }) alive?: boolean;
-
+    @Column({ nullable: true }) refreshToken?: string;
+    @ApiProperty({ required: false, nullable: true })
+    user?: any;
 }

@@ -1,0 +1,15 @@
+<mat-toolbar>
+    <button mat-icon-button (click)="sideMenu.toggle()">
+        <mat-icon>menu</mat-icon>
+    </button>
+</mat-toolbar>
+<mat-drawer-container>
+    <mat-drawer #sideMenu mode="over" opened>
+        @for(item of entidades; track item){
+        <button mat-menu-item [routerLink]="'./' + item">{{item}}</button>
+        }
+    </mat-drawer>
+    <mat-drawer-content>
+        <router-outlet></router-outlet>
+    </mat-drawer-content>
+</mat-drawer-container>

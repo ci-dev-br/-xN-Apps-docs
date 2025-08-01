@@ -11,26 +11,28 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { APPS } from './apps/apps';
 import { AuthModule, UserService } from '@ci/auth';
-import { LogoComponent } from '@ci/components';
+import { LogoComponent, IconModule } from '@ci/components';
 @Component({
-    selector: 'ci-painel',
-    imports: [
-        CoreModule,
-        MatToolbarModule,
-        MatButtonModule,
-        MatIconModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatMenuModule,
-        MatSidenavModule,
-        RouterModule,
-        AuthModule,
-        MatTooltipModule,
-        LogoComponent,
-        LoadIconsModule,
-    ],
-    templateUrl: './painel.component.html',
-    styleUrl: './painel.component.scss'
+  selector: 'ci-painel',
+  imports: [
+    CoreModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatMenuModule,
+    MatSidenavModule,
+    RouterModule,
+    AuthModule,
+    MatTooltipModule,
+    LogoComponent,
+    LoadIconsModule,
+    IconModule,
+  ],
+  standalone: true,
+  templateUrl: './painel.component.html',
+  styleUrl: './painel.component.scss'
 })
 export class PainelComponent {
   user = this.userService.user
@@ -72,6 +74,8 @@ export class PainelComponent {
       tradutor: { url: 'icons/tradutor.svg' },
       treinamento: { url: 'icons/treinamento.svg' },
       vendas: { url: 'icons/vendas.svg' },
+      crm: { url: 'icons/crm.svg' },
+      cms: { url: 'icons/cms.svg' },
     });
 
     this.userService.user.subscribe(user => {
@@ -83,20 +87,25 @@ export class PainelComponent {
 
   async appClickHandler(event: MouseEvent, app: any) {
     if (event.ctrlKey) {
-      window.open(location.href + '/' + app.url, '')
+      // window.open(location.href + '/' + app.url, '')
     } else {
-      this.router.navigate(['/' + app.url], { relativeTo: this.route.root })
+      // this.router.navigate(['/' + app.url], { relativeTo: this.route.root })
     }
     setTimeout(() => document.body.click(), 300)
   }
 
   async sair() {
     this.userService.sair();
-    setTimeout(() =>
-      this.router.navigate(['/'])
-    );
+    // Foi removido pois o sair() já realiza o roteamento na saída.
+    // Aqui está correto por enquanto
+    // setTimeout(() =>
+    //   this.router.navigate(['/'])
+    // );
   }
   async repo() {
     window.open('https://github.com/ci-dev-br/-xN-Apps-docs', '_blank')
+  }
+  profile() {
+    this.router.navigate(['/Profile'])
   }
 }

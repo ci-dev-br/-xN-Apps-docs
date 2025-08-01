@@ -1,7 +1,6 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { User } from "./user.entity";
 import { ApiProperty } from "@nestjs/swagger";
-
 /**
  * 
  */

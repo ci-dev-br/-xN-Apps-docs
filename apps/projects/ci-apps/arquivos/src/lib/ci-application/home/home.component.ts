@@ -3,6 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 
@@ -15,7 +16,9 @@ import { RouterModule } from '@angular/router';
         MatIconModule,
         MatMenuModule,
         RouterModule,
+        MatToolbarModule,
     ],
+    standalone: true,
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss'
 })

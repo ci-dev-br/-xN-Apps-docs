@@ -1,15 +1,37 @@
 import { FullAuditedEntity } from "@ci/manager";
 import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity } from "typeorm";
-
+export class Option {
+    @ApiProperty({
+        nullable: true,
+        required: false
+    })
+    label?: string;
+    @ApiProperty({
+        nullable: true,
+        required: false
+    })
+    type?: string;
+}
 export class Pergunta {
     @ApiProperty({
         nullable: true,
         required: false
     })
     questao?: string;
+    @ApiProperty({
+        nullable: true,
+        required: false
+    })
+    type?: string;
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        type: Option,
+        isArray: true,
+    })
+    options: Option[];
 }
-
 export class Perguntas {
     @ApiProperty({
         nullable: true,
@@ -19,9 +41,8 @@ export class Perguntas {
     })
     perguntas?: Pergunta[];
 }
-
 @Entity({ schema: 'forms' })
-export class Form extends FullAuditedEntity {
+export class Forms extends FullAuditedEntity {
     @ApiProperty({
         nullable: true,
         required: false

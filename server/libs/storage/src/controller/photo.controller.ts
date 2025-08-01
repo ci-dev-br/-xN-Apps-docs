@@ -5,13 +5,11 @@ import { Photo } from "../models/photo.entity";
 import { UserService } from "@ci/auth/auth.module";
 import { AudtService } from "@ci/core";
 import { Role } from "@ci/auth/decorators/role.decorator";
-
 export class PhotoGetPaylodInputDto {
     @ApiProperty({ nullable: true, required: false }) query: string;
     @ApiProperty({ nullable: true, required: false }) limit: string;
     @ApiProperty({ nullable: true, required: false }) offset: string;
 }
-
 export class PartPayloadDto {
     @ApiProperty({ nullable: true, required: false }) md5Part?: string;
     @ApiProperty({ nullable: true, required: false }) md5Full?: string;
@@ -19,7 +17,6 @@ export class PartPayloadDto {
     @ApiProperty({ nullable: true, required: false }) currentPart?: number;
     @ApiProperty({ nullable: true, required: false }) TotalParts?: number;
 }
-
 @Role('USER')
 @ApiTags('Photo')
 @Controller('Photo')
@@ -29,7 +26,6 @@ export class PhotoController {
         private readonly userService: UserService,
         private readonly audt: AudtService,
     ) { }
-
     @Post('Sync')
     @ApiOperation({ operationId: 'SyncPhoto' })
     @ApiResponse({

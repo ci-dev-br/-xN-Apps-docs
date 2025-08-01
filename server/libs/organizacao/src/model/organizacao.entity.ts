@@ -5,20 +5,17 @@ import { Photo } from "@ci/storage/models/photo.entity";
 import { Tenant } from "@ci/tenant/models/tenant.entity";
 import { Column, Entity, JoinTable, ManyToOne, } from "typeorm";
 import { schema } from "../termos";
-
 /**
  * Entidade que representa uma Organização Informacional
  */
 @Entity({ schema })
 export class Organizacao extends FullAuditedEntity {
-
     /**
      * # Organização Name
      */
     @ApiProperty({ nullable: true, required: false, description: 'Nome da Organização' })
     @Column({ nullable: true })
     organizatioName?: string;
-
     /**
      * Logo of Organization
      */
@@ -46,24 +43,17 @@ export class Organizacao extends FullAuditedEntity {
     @ManyToOne(type => Tenant, { nullable: true })
     @JoinTable()
     tenant?: Tenant;
-
     /**
      * Cadastro de Pessoa Física ou Pessoa Jurídica que representa uma determinada Organização
+     */
+    /**
+     * Responsável pelo cadastro da Organização
      */
     @ApiProperty({
         title: 'Responsável pela Organização',
         description: 'Pessoa Responsável pelo cadastro da Organização na Plataforma virtual.',
         type: Pessoa, nullable: true,
         required: false
-    })
-
-    /**
-     * Responsável pelo cadastro da Organização
-     */
-    @ApiProperty({
-        title: '',
-        name: '',
-        example: '',
     })
     @ManyToOne(type => Pessoa, { nullable: true })
     @JoinTable()

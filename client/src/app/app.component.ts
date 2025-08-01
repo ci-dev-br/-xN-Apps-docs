@@ -1,7 +1,6 @@
 import { Component, Inject, Optional, isDevMode } from '@angular/core';
-import { ChildActivationStart, NavigationError, Router } from '@angular/router';
+import { NavigationError, Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
-import { map } from 'rxjs';
 import { UserService } from './services/user.service';
 import { PaginaErroComponent } from './views/pagina-erro/pagina-erro.component';
 import { LocalizationService } from './core/services/localization.service';
@@ -24,7 +23,7 @@ export class AppComponent {
     router.events.subscribe(v => {
       try {
         if (v instanceof NavigationError) {
-          router.navigate(['/']);
+          // router.navigate(['/']); // TODO: para que serve
         }
         console.log(v.constructor.name);
         if (!!(v as any)?.snapshot?.data?.name) {

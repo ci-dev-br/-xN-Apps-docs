@@ -4,8 +4,8 @@ import { MatIcon, MatIconModule } from "@angular/material/icon";
 import { MatTableModule } from "@angular/material/table";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { Application, ApplicationService } from "@ci/portal-api";
-import { CoreModule } from "@ci/core";
-import { DataListModule, WindowService, GridModule, IDataGridOptions } from "@ci/components";
+import { CoreModule, DaoBuilder } from "@ci/core";
+import { DataListModule, WindowService, GridModule, IDataGridOptions, IColumnOption } from "@ci/components";
 import { lastValueFrom } from "rxjs";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
@@ -17,6 +17,7 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
     selector: 'ci-application-manager',
     templateUrl: 'application-manager.component.html',
     styleUrls: ['application-manager.component.scss'],
+    standalone: true,
     imports: [
         CoreModule,
         MatIconModule,
@@ -37,22 +38,13 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
     visualizacao: 'table' | 'list' = 'table';
     filtrarPapel?: string = 'all';
     apps?: Application[];
-    gridOptions?: IDataGridOptions<Application> = {
-        columns: [
-            { headerName: 'ID', fieldName: 'id', hide: true },
-            { headerName: 'Nome ', fieldName: 'name' },
-            { headerName: 'Ícone ', fieldName: 'icon', component: MatIcon },
-            { headerName: 'Rota', fieldName: 'url' },
-            { headerName: 'Descrição', fieldName: 'description' },
-            { headerName: 'Grupo', fieldName: 'menuGroupName' },
-            { headerName: 'Papéis', fieldName: 'roles' },
-        ]
-    };
+    gridOptions?: IDataGridOptions<Application>;
     constructor(
         private readonly applications: ApplicationService,
         private readonly janela: WindowService,
-        // private readonly liust: 
+        private readonly daoBuilder: DaoBuilder,
     ) {
+        (async () => this.loadGrid())();
         (async () => this.carregarListaAplicativos())();
     }
     private cache(prop: string, value: () => any) {
@@ -61,13 +53,37 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
         return this._cached_map.get(prop);
     }
     async novoAplicativo() {
-        let app = {};
-        const data = await this.editar(app);
+        let newApplication = {};
+        const data = await this.editar(newApplication);
         if (!!data?.id)
             this.apps = [data, ...this.apps || []];
     }
-    async editar(application: Application) {
-        return await this.janela.open(EditarAplicativoComponent, application)
+    async loadGrid() {
+        const properties = await (await this.daoBuilder.getSchema('Application')).properties
+        this.gridOptions = {
+            columns: [
+                ...Object.keys(properties || {}).map(property => {
+                    const headerName = properties ? properties[property].title : property;
+                    const fieldName = property;
+                    return {
+                        headerName,
+                        fieldName,
+                        hide: fieldName && ['internalId', 'id'].indexOf(fieldName) > -1
+                    } as IColumnOption<any>
+                })
+            ]
+        }
+    }
+    async editar(application: Application, event?: Event) {
+        const result = await this.janela.open(EditarAplicativoComponent, application, 'Aplicativo', event)
+        if (result === null) {
+            const pos = this.apps?.indexOf(application);
+            if (pos && pos > -1) {
+                this.apps?.splice(pos, 1);
+                this.apps = [...(this.apps || [])]
+            }
+        }
+        return result;
     }
     async remover(application: Application) {
         await lastValueFrom(this.applications.delete({ body: application }));
@@ -78,5 +94,4 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
     async carregarListaAplicativos() {
         this.apps = await lastValueFrom(this.applications.get({ body: { all: true } }));
     }
-
 }

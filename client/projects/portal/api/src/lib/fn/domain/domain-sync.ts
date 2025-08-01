@@ -5,19 +5,15 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
-
 import { Domain } from '../../models/domain';
-
 export interface DomainSync$Params {
       body: Domain
 }
-
 export function domainSync(http: HttpClient, rootUrl: string, params: DomainSync$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
   const rb = new RequestBuilder(rootUrl, domainSync.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
-
   return http.request(
     rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
@@ -27,5 +23,4 @@ export function domainSync(http: HttpClient, rootUrl: string, params: DomainSync
     })
   );
 }
-
 domainSync.PATH = '/Domain/Sync';

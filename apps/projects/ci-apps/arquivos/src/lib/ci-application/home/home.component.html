@@ -1,5 +1,13 @@
+<mat-toolbar>
+    <button mat-icon-button (click)="sideMenu.toggle()">
+        <mat-icon>menu</mat-icon>
+    </button>
+    <button mat-raised-button (click)="sideMenu.toggle()">
+        Carregar Arquivo
+    </button>
+</mat-toolbar>
 <mat-drawer-container class="container">
-    <mat-drawer mode="side" opened>
+    <mat-drawer #sideMenu>
         <button mat-menu-item>
             <mat-icon>home</mat-icon>
             Home
@@ -18,6 +26,7 @@
         </button>
     </mat-drawer>
     <mat-drawer-content>
+
         <router-outlet></router-outlet>
     </mat-drawer-content>
 </mat-drawer-container>

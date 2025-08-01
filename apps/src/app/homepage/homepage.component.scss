@@ -15,27 +15,6 @@
 
 header {
     position: relative;
-
-    nav {
-        display: flex;
-        flex-direction: row;
-        position: absolute;
-        right: 10px;
-        top: 0px;
-        gap: 8px;
-
-        ul,
-        li {
-            display: contents;
-        }
-
-        a {
-            padding: 12px;
-            color: white;
-            background-color: black;
-            border-radius: 12px;
-        }
-    }
 }
 
 .container {
@@ -45,13 +24,16 @@ header {
     flex-direction: column;
     align-self: center;
     padding: 24px;
+
+    flex: auto;
+    height: auto;
 }
 
 footer {
     display: flex;
     flex-direction: column;
     padding: 24px;
-    flex: auto;
+    flex: 0;
 
     color: white;
     background: rgba(0, 0, 0, .99);

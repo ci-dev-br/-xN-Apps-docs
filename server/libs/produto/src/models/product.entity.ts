@@ -2,8 +2,11 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { FullAuditedEntity } from "@ci/core";
 import { Marca } from "@ci/inpi/model/marca.entity";
-
-@Entity()
+import { schema } from "./schema";
+import { UnidadeMedida } from "@ci/cadastro/model/unidade-medida.entity";
+@Entity({
+    schema
+})
 export class Product extends FullAuditedEntity {
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })
@@ -25,6 +28,9 @@ export class Product extends FullAuditedEntity {
     description?: string;
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })
+    name?: string;
+    @ApiProperty({ nullable: true, required: false })
+    @Column({ nullable: true })
     shortDescription?: string;
     @ApiProperty({ nullable: true, required: false, description: 'URL do site' })
     @Column({ nullable: true })
@@ -34,7 +40,15 @@ export class Product extends FullAuditedEntity {
     @JoinTable()
     marca?: Marca;
     @ApiProperty({ nullable: true, required: false, })
-    subGrupo: string;
+    subGrupo?: string;
+    @ApiProperty({ nullable: true, required: false, })
+    @Column({ length: 3, nullable: true, default: 'BRL' })
+    moeda?: string;
+    @ApiProperty({ title: 'Unidade de Medida', nullable: true, required: false, type: UnidadeMedida })
+    @ManyToOne(type => UnidadeMedida)
+    @JoinTable()
+    unidadeMedida?: UnidadeMedida;
+    // categoria:Catego
     /* @ApiProperty({ nullable: true, required: false })
     @ManyToOne(() => Tenant)
     @JoinTable()

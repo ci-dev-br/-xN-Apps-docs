@@ -5,7 +5,6 @@ import { Product, ProductService } from '@portal/api';
 import { lastValueFrom } from 'rxjs';
 import { DataGridOptions } from 'src/app/components/grid/data-grid.options';
 import { t } from 'src/app/core/i18n/t.service';
-
 @Component({
   selector: 'ci-seo',
   templateUrl: './seo.component.html',
@@ -19,7 +18,6 @@ export class SeoComponent implements OnInit {
   }
   grid: DataGridOptions = {
     colums: [
-
       { fieldName: 'sku', headerName: t`SKU` },
       
     ]

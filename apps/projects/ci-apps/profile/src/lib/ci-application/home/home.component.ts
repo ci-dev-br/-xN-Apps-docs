@@ -36,6 +36,7 @@ export class HomeComponent implements OnInit {
         roles: [],
         tenants: [],
         username: [],
+        surname: [],
     })
     constructor(
         private readonly formBuilder: FormBuilder,
@@ -44,17 +45,18 @@ export class HomeComponent implements OnInit {
         private readonly authUserService: AuthUserService,
     ) { }
     ngOnInit(): void {
-        this.authUserService.user.subscribe(user => { this.hasUser(user) })
+        this.authUserService.user.subscribe(user => { this.hasUser(user || undefined) })
     }
     hasUser(user?: User) {
         if (!!user) {
+            // TODO: separar bloco
             this.daos.prepareToEdit(user);
             this.daos.bindDataForm(user, this.form);
             this.daos.confirmation(user)?.subscribe(async data => {
                 try {
                     if (user && data) {
                         let _data: any = Object.assign(user,
-                            await lastValueFrom(this.userService.syncUser({ body: user }))
+                            await lastValueFrom(this.userService.sync({ body: user }))
                         );
                         delete (_data as IChangeable).__pre;
                         this.daos.prepareToEdit(_data);

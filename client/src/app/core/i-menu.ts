@@ -4,5 +4,4 @@ export interface IMenuItem {
     route?: string;
     icon?: string;
 }
-
 export type IMenu = IMenuItem[];

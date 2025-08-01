@@ -5,20 +5,16 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
-
 import { ObterListaPessoa } from '../../models/obter-lista-pessoa';
 import { SyncPayloadDaoPessoa } from '../../models/sync-payload-dao-pessoa';
-
 export interface PessoaGet$Params {
       body: ObterListaPessoa
 }
-
 export function pessoaGet(http: HttpClient, rootUrl: string, params: PessoaGet$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoPessoa>> {
   const rb = new RequestBuilder(rootUrl, pessoaGet.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
-
   return http.request(
     rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
@@ -28,5 +24,4 @@ export function pessoaGet(http: HttpClient, rootUrl: string, params: PessoaGet$P
     })
   );
 }
-
 pessoaGet.PATH = '/Pessoa/Get';

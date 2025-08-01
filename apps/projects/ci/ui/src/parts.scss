@@ -1,0 +1,6 @@
+@mixin ci-parts-theme($theme) {
+    :root {
+        --normals-spacing: 8px; // Espaçamento padrão
+        --background-default: red;
+    }
+}

@@ -4,7 +4,6 @@ import { Repository } from "typeorm";
 import { Status } from "./model/status";
 import { cpuUsage, memoryUsage } from 'process';
 import { ApiProperty } from "@nestjs/swagger";
-
 export class CPUInfo {
     @ApiProperty({ nullable: true, required: false }) system?: number;
     @ApiProperty({ nullable: true, required: false }) user?: number;
@@ -14,7 +13,6 @@ export class CPUInfo {
     @ApiProperty({ nullable: true, required: false }) rss?: number;
     @ApiProperty({ nullable: true, required: false }) external?: number;
 }
-
 @Injectable()
 export class SystemService {
     private _cpu_cached_history?: CPUInfo[] = [];

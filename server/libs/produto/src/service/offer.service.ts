@@ -3,21 +3,18 @@ import { ILike, In, Repository } from "typeorm";
 import { Product } from "../models/product.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { IAutentication } from "@ci/core"
-
 export interface IOptions {
     offset?: number;
     limit?: number;
     query?: string;
     autentication?: IAutentication;
 }
-
 @Injectable()
 export class ProdutoService {
     constructor(
         @InjectRepository(Product)
         private readonly repo: Repository<Product>,
     ) { }
-
     /**
      * Sincronizar objeto
      * @param data 

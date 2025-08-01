@@ -1,14 +1,12 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-    selector: 'ci-data-grid',
-    imports: [],
-    template: `
-    <p>
-      data-grid works!
-    </p>
+  selector: 'ci-data-grid',
+  standalone: true,
+  imports: [],
+  template: `
+    // TODO: construir componente
   `,
-    styles: ``
 })
 export class DataGridComponent {
   @Input()

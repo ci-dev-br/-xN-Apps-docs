@@ -4,11 +4,18 @@
         <button mat-icon-button [matTooltip]="'Nova conversa'" (click)="pesquisarContato()">
             <mat-icon>new_window</mat-icon>
         </button>
+        <button mat-raised-button (click)="iniciarChamada()">
+            Iniciar Chamada
+        </button>
     </h1>
     <mat-form-field>
         <input matInput type="text" placeholder="Pesquisar">
     </mat-form-field>
     <div class="conversas-list">
-
+        @for (item of conversas; track $index) {
+        <div class="item conversa">
+            {{item.title || 'Conversa'}}
+        </div>
+        }
     </div>
 </div>

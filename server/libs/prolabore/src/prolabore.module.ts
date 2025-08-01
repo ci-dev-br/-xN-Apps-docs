@@ -30,13 +30,16 @@ export const ProlaboreEntities = [
         TypeOrmModule.forFeature(ProlaboreEntities)
     ],
     exports: [
-
     ],
     controllers: [
-
     ],
     providers: [
-
+        {
+            provide: 'CLIENT.MODEL.EDITABLES',
+            useValue: [
+                ...(ProlaboreEntities.map(e => e.name))
+            ]
+        }
     ]
 })
 export class ProlaboreModule { }

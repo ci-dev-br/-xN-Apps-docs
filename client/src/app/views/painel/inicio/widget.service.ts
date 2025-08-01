@@ -5,7 +5,6 @@ import { DaoService, SerializedObjectData } from "src/app/core/dao/dao.service";
 import { IWidget } from "src/app/widgets/i-widget";
 import { PranchetaService } from "../config.service";
 import { StringOrNumberOrDate } from "@swimlane/ngx-charts";
-
 @Injectable()
 export class WidgetService {
     private _$update = new EventEmitter<void>();
@@ -14,7 +13,6 @@ export class WidgetService {
         private readonly pranchetaApiService: PranchetaApiService,
         private readonly daoService: DaoService,
         private readonly prancheta: PranchetaService,
-
     ) {
         this.pranchetas();
     }

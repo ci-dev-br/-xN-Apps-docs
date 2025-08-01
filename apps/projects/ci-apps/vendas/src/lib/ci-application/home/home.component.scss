@@ -1,0 +1,11 @@
+:host {
+    display: flex;
+    flex: auto;
+
+    flex-direction: column;
+    overflow: auto;
+
+    * {
+        font-weight: 100 !important;
+    }
+}
