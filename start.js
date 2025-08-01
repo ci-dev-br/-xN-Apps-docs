@@ -1,10 +1,10 @@
+require('./src/main');
 const { execSync, spawnSync, spawn, exec } = require('child_process');
 const https = require('https');
 const http = require('http');
 const { cwd, env } = require('process');
 const { config } = require('dotenv');
 config();
-
 /**
  * mem - objeto de memória para armazenar informações temporárias
  */
@@ -50,7 +50,6 @@ async function prov_of_life() {
             if (mem.tryed === 10) {
                 try {
                     // TODO: verificar necessidade de reinicialização do serviço
-
                     // // require('child_process').execSync('git config --global --add safe.directory C:/projetos/br.dev.ci.apps', // { // cwd: 'c:\\projetos\\br.dev.ci.apps\\' }).toString()
                     // // console.log('[Revertendo alterações no git devido a muitas falhas na inicialização]',
                     // //     require('child_process').execSync('git stash push -u -m stached', { cwd: 'c:\\projetos\\br.dev.ci.// // apps\\' }).toString()
@@ -94,19 +93,15 @@ const gitSyncronize = async () => {
                         cwd: __dirname + '/gulp',
                         env: env
                     });
-
                     let out = '';
                     let err = '';
-
                     process.on('data', (data) => {
                         console.log(data);
                         out += data.toString();
                     })
-
                     process.on('close', (code) => {
                         res(code);
                     })
-
                     process.on('error', (error) => {
                         rej(error);
                     })
@@ -135,13 +130,11 @@ const gitSyncronize = async () => {
         console.trace(error);
         // TODO:  verificar necessidade de tratamento de erro
     }
-
     setTimeout(async () => {
         gitSyncronize();
     }, repeat_in);
 }
-// gitSyncronize();
-
+gitSyncronize();
 /**
  * ComitterAssistent
  * 
@@ -173,22 +166,17 @@ async function ComitterAssistent() {
                 \`\`\`
                     ${status.stdout.toString().trim()}
                 \`\`\`
-
                 status
                 \`\`\`
                     ${status.stdout.toString().trim()}
                 \`\`\`
-
                 Instruções adiconais: 
                 A mensagem deve ser uma mensagem final, sem opções, escolha a melhor alternativa
                 para as informações fornecidas. Você também pode adicionar uma consideração final
                 ou até mesmo comentários ou piada se achar pertinente. 
-
                 A mensagem deve ser o mais completa possível, com o mínimo de redundância.
-
                 Adicione também referências externas como wikipedia ou artigos cientificos públicos que relatam 
                 e discorrem sobre o mesmo assunto quando ouver essa possibilidade.
-
                 Ao final, sugira a próxima ação a ser tomada no projeto.
                 `,
             })).text;
@@ -211,17 +199,15 @@ async function ComitterAssistent() {
             if (pushCommand.stdout) {
                 console.log(pushCommand.stdout.toString());
             }
-
         } else {
             console.log('GEMINI_TOKEN_ASSISTANT not set, skipping commit');
         }
     } catch (error) {
         console.error('Error in ComitterAssistent:', error);
     }
-
-    setTimeout(() => {
-        ComitterAssistent();
-    }, 10000);
+    // setTimeout(() => {
+    //     ComitterAssistent();
+    // }, 10000);
 }
 setTimeout(() => {
     ComitterAssistent();
