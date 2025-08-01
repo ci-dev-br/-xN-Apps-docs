@@ -183,6 +183,8 @@ A mensagem deve ser o mais completa possível, com o mínimo de redundância.
 Adicione também referências externas como wikipedia ou artigos cientificos públicos que relatam 
 e discorrem sobre o mesmo assunto quando ouver essa possibilidade.cc
 Ao final, sugira a próxima ação a ser tomada no projeto.
+
+PS.: Retorne diretamente a mensagem de commit, sem formatação adicional ou explicações. Considere escrever como se você fosse o autor da alteração.
 `,
             })).text;
             const statusOutput = status.stdout.toString().trim();
