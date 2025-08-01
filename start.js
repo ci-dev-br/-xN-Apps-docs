@@ -147,10 +147,10 @@ async function ComitterAssistent() {
     await new Promise(async (resolve, reject) => {
         try {
             if (process.env.GEMINI_TOKEN_ASSISTANT) {
-                const spw = spawnSync('git', ['add', '.'], { cwd: __dirname });
-                if (spw.stdout) {
-                    console.log(spw.stdout.toString());
-                }
+                // const spw = spawnSync('git', ['add', '.'], { cwd: __dirname });
+                // if (spw.stdout) {
+                //     console.log(spw.stdout.toString());
+                // }
                 let commitMessage;
                 const status = spawnSync('git', ['status', '--porcelain'], { cwd: __dirname });
                 if (status.stdout.toString().trim() === '') {
