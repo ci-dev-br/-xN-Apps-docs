@@ -165,7 +165,7 @@ async function ComitterAssistent() {
 
 ### Mensagem de diff:
 sh\`\`\`
-    ${status.stdout.toString().trim()}
+    ${diff.stdout.toString().trim()}
 \`\`\`
 
 ### Mensagem de status:
