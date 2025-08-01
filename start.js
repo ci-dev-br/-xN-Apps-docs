@@ -219,7 +219,7 @@ PS.: Retorne diretamente a mensagem de commit, sem formatação adicional ou exp
     });
     setTimeout(() => {
         ComitterAssistent();
-    }, 10000);
+    }, 60000);
 }
 setTimeout(() => {
     ComitterAssistent();
