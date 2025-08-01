@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { LancamentoFinanceiro } from "./model/lancamento.entity";
+import { LancamentoFinanceiro } from "./model/lancamento-financeiro.entity";
 import { BillingType } from "./model/billing-type.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Category } from "../../cadastro/src/model/category.entity";

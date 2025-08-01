@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { LancamentoService } from "../service/lancamento.service";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/core";
-import { LancamentoFinanceiro } from "../model/lancamento.entity";
+import { LancamentoFinanceiro } from "../model/lancamento-financeiro.entity";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { FindOptionsWhere } from "typeorm";
 export class SyncPayloadDaoLancamento extends SyncPayloadDao<LancamentoFinanceiro> {
