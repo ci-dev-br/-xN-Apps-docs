@@ -1,14 +1,17 @@
-require('./src/main');
-const mem = {};
 const { execSync, spawnSync, spawn, exec } = require('child_process');
 const https = require('https');
 const http = require('http');
 const { cwd, env } = require('process');
-
+const { config } = require('dotenv');
+config();
 
 /**
+ * mem - objeto de memória para armazenar informações temporárias
+ */
+const mem = {};
+/**
  * 
- * Monitoramento externo:
+ * Monitoramento de conexao externa:
  * 
  *  Verifica de tempos em tempos o estado de conexão da aplicação, 
  * aciona mecanismos para re-estamelecer a normalidade de execução.
@@ -16,7 +19,7 @@ const { cwd, env } = require('process');
  */
 async function prov_of_life() {
     try {
-        console.log('[prov_of_life]')
+        console.log('[Prov of liv]')
         if (mem.lived === undefined) mem.lived = 0;
         mem.lived++;
         if (!!process.env.CF_TOKEN) {
@@ -46,10 +49,12 @@ async function prov_of_life() {
             mem.tryed++;
             if (mem.tryed === 10) {
                 try {
-                    // require('child_process').execSync('git config --global --add safe.directory C:/projetos/br.dev.ci.apps', { // cwd: 'c:\\projetos\\br.dev.ci.apps\\' }).toString()
-                    // console.log('[Revertendo alterações no git devido a muitas falhas na inicialização]',
-                    //     require('child_process').execSync('git stash push -u -m stached', { cwd: 'c:\\projetos\\br.dev.ci.// apps\\' }).toString()
-                    // )
+                    // TODO: verificar necessidade de reinicialização do serviço
+
+                    // // require('child_process').execSync('git config --global --add safe.directory C:/projetos/br.dev.ci.apps', // { // cwd: 'c:\\projetos\\br.dev.ci.apps\\' }).toString()
+                    // // console.log('[Revertendo alterações no git devido a muitas falhas na inicialização]',
+                    // //     require('child_process').execSync('git stash push -u -m stached', { cwd: 'c:\\projetos\\br.dev.ci.// // apps\\' }).toString()
+                    // // )
                 } catch (error) {
                     console.trace('[Falha ao tentar realizar stash em git]', error);
                 }
@@ -57,6 +62,7 @@ async function prov_of_life() {
                 mem.tryed2++;
                 if (mem.tryed2 > 3) {
                     // require('child_process').execSync('shutdown /r');
+                    // TODO: verificar necessidade de reinicialização do serviço
                 }
             }
             //}
@@ -68,6 +74,9 @@ async function prov_of_life() {
 }
 setTimeout(() => prov_of_life(), 10000);
 let repeat_in = 60000;
+/**
+ * gitSyncronize - Função para sincronizar o repositório git
+ */
 const gitSyncronize = async () => {
     console.log('git sync')
     let branch_name;
@@ -81,7 +90,6 @@ const gitSyncronize = async () => {
                 console.log('Start deploy')
                 console.log(__dirname + '/gulp')
                 await new Promise((res, rej) => {
-
                     const process = exec('gulp', {
                         cwd: __dirname + '/gulp',
                         env: env
@@ -118,8 +126,6 @@ const gitSyncronize = async () => {
             spw = spawnSync('git', ['push', '--all', 'azure'], { cwd: __dirname });
             if (spw.stdout) {
                 console.log(spw.stdout.toString());
-
-
             }
         } catch (error) {
             console.trace(error)
@@ -134,4 +140,84 @@ const gitSyncronize = async () => {
         gitSyncronize();
     }, repeat_in);
 }
-gitSyncronize();
+// gitSyncronize();
+
+/**
+ * ComitterAssistent
+ * 
+ * This function automates the process of committing changes to a git repository.
+ * It adds all changes, generates a commit message using the Gemini AI model, commits the changes with that message.
+ * 
+ * @returns 
+ */
+async function ComitterAssistent() {
+    try {
+        if (process.env.GEMINI_TOKEN_ASSISTANT) {
+            const spw = spawnSync('git', ['add', '.'], { cwd: __dirname });
+            if (spw.stdout) {
+                console.log(spw.stdout.toString());
+            }
+            let commitMessage;
+            /* Obter status do git e gerar mensagem de commit com gemini a partir de api */
+            const diff = spawnSync('git', ['--no-pager', 'diff'], { cwd: __dirname });
+            const status = spawnSync('git', ['status', '--porcelain'], { cwd: __dirname });
+            const { GoogleGenAI } = require("@google/genai");
+            const ai = new GoogleGenAI({
+                apiKey: process.env.GEMINI_TOKEN_ASSISTANT,
+            });
+            commitMessage = (await ai.models.generateContent({
+                model: "gemini-2.5-flash",
+                contents: `
+                Crie uma mensagem de commit para o git a partir do seguinte status e diff:
+                
+                diff
+                \`\`\`
+                    ${status.stdout.toString().trim()}
+                \`\`\`
+
+                status
+                \`\`\`
+                    ${status.stdout.toString().trim()}
+                \`\`\`
+                `,
+            })).text;
+            const statusOutput = status.stdout.toString().trim();
+            if (!statusOutput) {
+                console.log('No changes to commit');
+                return;
+            }
+
+            // Criar commit adicionando mensagem a um arquivo chamado COMMIT, realizar
+            // o commit com a flag -F referenciando o arquivo COMMIT e 
+            // remover o arquivo COMMIT após o commit ser realizado.
+            const commitFilePath = __dirname + '/COMMIT';
+            require('fs').writeFileSync(commitFilePath, commitMessage);
+            const commitCommand = spawnSync('git', ['commit', '-F', commitFilePath], { cwd: __dirname });
+            if (commitCommand.stdout) {
+                console.log(commitCommand.stdout.toString());
+            }
+            if (commitCommand.stderr) {
+                console.error(commitCommand.stderr.toString());
+            }
+            // Remover o arquivo COMMIT após o commit ser realizado.
+            require('fs').unlinkSync(commitFilePath);
+            // Enviar as alterações para o repositório remoto
+            const pushCommand = spawnSync('git', ['push', 'origin', 'HEAD'], { cwd: __dirname });
+            if (pushCommand.stdout) {
+                console.log(pushCommand.stdout.toString());
+            }
+
+        } else {
+            console.log('GEMINI_TOKEN_ASSISTANT not set, skipping commit');
+        }
+    } catch (error) {
+        console.error('Error in ComitterAssistent:', error);
+    }
+
+    setTimeout(() => {
+        ComitterAssistent();
+    }, 10000);
+}
+setTimeout(() => {
+    ComitterAssistent();
+}, 1000);

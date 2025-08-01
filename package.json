@@ -7,8 +7,8 @@
     "type": "git",
     "url": "https://101.ci.dev.br:444/git/portal.git"
   },
-  "license": "ISC",
-  "author": "",
+  "license": "MIT",
+  "author": "plhx",
   "type": "commonjs",
   "main": "index.js",
   "directories": {
@@ -25,6 +25,7 @@
     "d3-selection": "^3.0.0"
   },
   "devDependencies": {
+    "@google/genai": "^1.12.0",
     "@types/d3-scale": "^4.0.8",
     "@types/d3-selection": "^3.0.10",
     "@types/sha256": "^0.2.2",
