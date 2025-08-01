@@ -2,6 +2,11 @@ import { Column, Entity } from "typeorm";
 import { schema } from "../norms";
 import { FullAuditedEntity } from "@ci/manager";
 import { ApiProperty } from "@nestjs/swagger";
+
+/**
+ * Represents a financial account entity in the system.
+ * This entity includes properties such as account type, number, balance,
+ */
 @Entity({ schema })
 export class ContaFinanceira extends FullAuditedEntity {
     @ApiProperty({ title: 'Tipo de Conta', nullable: true, required: false })
