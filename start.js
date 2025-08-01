@@ -153,8 +153,11 @@ async function ComitterAssistent() {
                 // }
                 let commitMessage;
                 const status = spawnSync('git', ['status', '--porcelain'], { cwd: __dirname });
-                if (status.stdout.toString().trim() === '') {
+                const status_astring = status.stdout.toString().trim();
+                if (status_astring === '' || status_astring.indexOf('not staged for commit') > -1) {
+                    console.log('squid dib did ');
                     resolve();
+                    return;
                 }
                 const diff = spawnSync('git', ['--no-pager', 'diff', '--staged'], { cwd: __dirname });
                 const { GoogleGenAI } = require("@google/genai");
