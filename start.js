@@ -151,7 +151,7 @@ async function ComitterAssistent() {
                 console.log(spw.stdout.toString());
             }
             let commitMessage;
-            const diff = spawnSync('git', ['--no-pager', 'diff'], { cwd: __dirname });
+            const diff = spawnSync('git', ['--no-pager', 'diff', '--staged'], { cwd: __dirname });
             const status = spawnSync('git', ['status', '--porcelain'], { cwd: __dirname });
             const { GoogleGenAI } = require("@google/genai");
             const ai = new GoogleGenAI({
