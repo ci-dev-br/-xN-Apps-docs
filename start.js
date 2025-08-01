@@ -144,7 +144,7 @@ gitSyncronize();
  * @returns 
  */
 async function ComitterAssistent() {
-    new Promise(async (resolve, reject) => {
+    await new Promise(async (resolve, reject) => {
         try {
             if (process.env.GEMINI_TOKEN_ASSISTANT) {
                 const spw = spawnSync('git', ['add', '.'], { cwd: __dirname });
