@@ -151,6 +151,7 @@ async function ComitterAssistent() {
                 console.log(spw.stdout.toString());
             }
             let commitMessage;
+            spawnSync('git', ['add', '.'], { cwd: __dirname });
             const diff = spawnSync('git', ['--no-pager', 'diff', '--staged'], { cwd: __dirname });
             const status = spawnSync('git', ['status', '--porcelain'], { cwd: __dirname });
             const { GoogleGenAI } = require("@google/genai");
@@ -160,25 +161,29 @@ async function ComitterAssistent() {
             commitMessage = (await ai.models.generateContent({
                 model: "gemini-2.5-flash",
                 contents: `
-                Crie uma mensagem de commit para o git a partir do seguinte status e diff:
-                
-                diff
-                \`\`\`
-                    ${status.stdout.toString().trim()}
-                \`\`\`
-                status
-                \`\`\`
-                    ${status.stdout.toString().trim()}
-                \`\`\`
-                Instruções adiconais: 
-                A mensagem deve ser uma mensagem final, sem opções, escolha a melhor alternativa
-                para as informações fornecidas. Você também pode adicionar uma consideração final
-                ou até mesmo comentários ou piada se achar pertinente. 
-                A mensagem deve ser o mais completa possível, com o mínimo de redundância.
-                Adicione também referências externas como wikipedia ou artigos cientificos públicos que relatam 
-                e discorrem sobre o mesmo assunto quando ouver essa possibilidade.
-                Ao final, sugira a próxima ação a ser tomada no projeto.
-                `,
+# Crie uma mensagem de commit para o git a partir do seguinte status e diff:
+
+### Mensagem de diff:
+sh\`\`\`
+    ${status.stdout.toString().trim()}
+\`\`\`
+
+### Mensagem de status:
+sh\`\`\`
+    ${status.stdout.toString().trim()}
+\`\`\`
+
+---
+Instruções opcionais:
+    
+A mensagem deve ser uma mensagem final, sem opções, escolha a melhor alternativa
+para as informações fornecidas. Você também pode adicionar uma consideração final
+ou até mesmo comentários ou piada se achar pertinente. 
+A mensagem deve ser o mais completa possível, com o mínimo de redundância.
+Adicione também referências externas como wikipedia ou artigos cientificos públicos que relatam 
+e discorrem sobre o mesmo assunto quando ouver essa possibilidade.cc
+Ao final, sugira a próxima ação a ser tomada no projeto.
+`,
             })).text;
             const statusOutput = status.stdout.toString().trim();
             if (!statusOutput) {
