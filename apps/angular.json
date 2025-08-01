@@ -80,6 +80,9 @@
             },
             "development": {
               "buildTarget": "apps:build:development",
+              "allowedHosts": [
+                "https://4200.ci.dev.br/"
+              ]
             }
           },
           "defaultConfiguration": "development"
