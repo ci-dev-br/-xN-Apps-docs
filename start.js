@@ -223,4 +223,4 @@ PS.: Retorne diretamente a mensagem de commit, sem formatação adicional ou exp
 }
 setTimeout(() => {
     ComitterAssistent();
-}, 1000);
+}, 6000);
