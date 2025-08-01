@@ -158,7 +158,6 @@ async function ComitterAssistent() {
                 console.log(spw.stdout.toString());
             }
             let commitMessage;
-            /* Obter status do git e gerar mensagem de commit com gemini a partir de api */
             const diff = spawnSync('git', ['--no-pager', 'diff'], { cwd: __dirname });
             const status = spawnSync('git', ['status', '--porcelain'], { cwd: __dirname });
             const { GoogleGenAI } = require("@google/genai");
@@ -179,6 +178,18 @@ async function ComitterAssistent() {
                 \`\`\`
                     ${status.stdout.toString().trim()}
                 \`\`\`
+
+                Instruções adiconais: 
+                A mensagem deve ser uma mensagem final, sem opções, escolha a melhor alternativa
+                para as informações fornecidas. Você também pode adicionar uma consideração final
+                ou até mesmo comentários ou piada se achar pertinente. 
+
+                A mensagem deve ser o mais completa possível, com o mínimo de redundância.
+
+                Adicione também referências externas como wikipedia ou artigos cientificos públicos que relatam 
+                e discorrem sobre o mesmo assunto quando ouver essa possibilidade.
+
+                Ao final, sugira a próxima ação a ser tomada no projeto.
                 `,
             })).text;
             const statusOutput = status.stdout.toString().trim();
@@ -186,10 +197,6 @@ async function ComitterAssistent() {
                 console.log('No changes to commit');
                 return;
             }
-
-            // Criar commit adicionando mensagem a um arquivo chamado COMMIT, realizar
-            // o commit com a flag -F referenciando o arquivo COMMIT e 
-            // remover o arquivo COMMIT após o commit ser realizado.
             const commitFilePath = __dirname + '/COMMIT';
             require('fs').writeFileSync(commitFilePath, commitMessage);
             const commitCommand = spawnSync('git', ['commit', '-F', commitFilePath], { cwd: __dirname });
@@ -199,9 +206,7 @@ async function ComitterAssistent() {
             if (commitCommand.stderr) {
                 console.error(commitCommand.stderr.toString());
             }
-            // Remover o arquivo COMMIT após o commit ser realizado.
             require('fs').unlinkSync(commitFilePath);
-            // Enviar as alterações para o repositório remoto
             const pushCommand = spawnSync('git', ['push', 'origin', 'HEAD'], { cwd: __dirname });
             if (pushCommand.stdout) {
                 console.log(pushCommand.stdout.toString());
