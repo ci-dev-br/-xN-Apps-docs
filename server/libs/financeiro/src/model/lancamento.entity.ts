@@ -5,12 +5,13 @@ import { Column, Entity, JoinTable, ManyToMany } from "typeorm";
 import { schema } from "../norms";
 import { ContaFinanceira } from "./conta-financeira.entity";
 /**
- * Lançamento 
+ * Represents a financial transaction entry in the system.
+ * This entity includes properties such as value, account, and other financial details.
  */
 @Entity({
     schema
 })
-export class Lancamento extends FullAuditedEntity {
+export class LancamentoFinanceiro extends FullAuditedEntity {
     @ApiProperty({ title: 'Valor', nullable: true, required: false }) @Column({ nullable: true })
     valor?: number;
     // @ApiProperty({ title: 'Conta', nullable: true, required: false }) @ManyToMany(t => Conta) @JoinTable()

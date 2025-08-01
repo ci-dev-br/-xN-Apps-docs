@@ -1,12 +1,12 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { LancamentoService } from "../service/lancamento.service";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/core";
-import { Lancamento } from "../model/lancamento.entity";
+import { LancamentoFinanceiro } from "../model/lancamento.entity";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { FindOptionsWhere } from "typeorm";
-export class SyncPayloadDaoLancamento extends SyncPayloadDao<Lancamento> {
-    @ApiProperty({ type: Lancamento })
-    override data?: Lancamento;
+export class SyncPayloadDaoLancamento extends SyncPayloadDao<LancamentoFinanceiro> {
+    @ApiProperty({ type: LancamentoFinanceiro })
+    override data?: LancamentoFinanceiro;
 }
 export class ObterListaLancamento {
     // override data?: Lancamento;
@@ -15,7 +15,7 @@ export class ObterListaLancamento {
     @ApiProperty({})
     take?: number;
     @ApiProperty({})
-    where?: FindOptionsWhere<Lancamento>[] | FindOptionsWhere<Lancamento>;
+    where?: FindOptionsWhere<LancamentoFinanceiro>[] | FindOptionsWhere<LancamentoFinanceiro>;
 }
 export class LancamentoCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
@@ -28,7 +28,7 @@ export class LancamentoCotrollerGetInputDto {
  */
 @ApiTags('Lancamento')
 @Controller('Lancamento')
-export class LancamentoController extends ControllerDaoBase<LancamentoService, Lancamento> {
+export class LancamentoController extends ControllerDaoBase<LancamentoService, LancamentoFinanceiro> {
     @Post('Sync')
     @ApiResponse({
         type: SyncPayloadDaoLancamento

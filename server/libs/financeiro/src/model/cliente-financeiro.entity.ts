@@ -1,11 +1,11 @@
-import { Request } from '@nestjs/common';
 import { Pessoa } from "@ci/cadastro";
 import { Column, Entity, ManyToMany, OneToMany } from "typeorm";
 import { schema } from "../norms";
 import { FullAuditedEntity } from "@ci/manager";
 import { ApiProperty } from "@nestjs/swagger";
-/***
- * Pessoa física ou jurídica que possui uma ou mais contas
+/**
+ * Represents a financial client entity in the system.
+ * This entity includes properties such as client name, CNPJ or CPF, contact information, and
  */
 @Entity({
     schema
