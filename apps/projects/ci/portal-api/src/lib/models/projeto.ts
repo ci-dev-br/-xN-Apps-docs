@@ -1,12 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
-import { Cliente } from '../models/cliente';
+import { ClienteProjeto } from '../models/cliente-projeto';
 export interface Projeto {
 
   /**
    * Cliente
    */
-  cliente: Cliente | null;
+  cliente: ClienteProjeto | null;
 
   /**
    * Controle de Versão

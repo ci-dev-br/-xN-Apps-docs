@@ -32,6 +32,8 @@ export { PaisService } from './services/pais.service';
 export { OrganizacaoService } from './services/organizacao.service';
 export { FormsService } from './services/forms.service';
 export { ProjetoService } from './services/projeto.service';
+export { ClienteProjetoService } from './services/cliente-projeto.service';
+export { WorkItemService } from './services/work-item.service';
 export { VendaProdutoService } from './services/venda-produto.service';
 export { ServicoService } from './services/servico.service';
 export { PromocaoService } from './services/promocao.service';

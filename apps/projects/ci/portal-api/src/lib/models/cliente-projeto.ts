@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import { Pessoa } from '../models/pessoa';
-export interface Cliente {
+export interface ClienteProjeto {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
@@ -14,7 +14,7 @@ export interface Cliente {
   lastModifiedBy?: {
 } | null;
   nome: string | null;
-  pessoaResponsavel: Pessoa;
+  pessoa: Pessoa;
   telefone: string | null;
   tenants?: Array<string> | null;
   tipo: string | null;
