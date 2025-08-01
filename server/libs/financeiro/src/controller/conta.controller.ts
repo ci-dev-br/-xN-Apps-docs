@@ -1,7 +1,7 @@
  import { Body, Controller, Post } from "@nestjs/common";
 import { ContaService } from "../service/conta.service";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/core";
-import { ContaFinanceira } from "../model/conta.entity";
+import { ContaFinanceira } from "../model/conta-financeira.entity";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { FindOptionsWhere } from "typeorm";
 export class SyncPayloadDaoConta extends SyncPayloadDao<ContaFinanceira> {

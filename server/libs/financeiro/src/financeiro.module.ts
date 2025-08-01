@@ -7,7 +7,7 @@ import { FaturamentoController } from "./controller/faturamento.controller";
 import { Transacao } from "./model/transacao.entity";
 import { I11nModule } from "@ci/i11n";
 import { CasdastroModule } from "@ci/cadastro";
-import { ContaFinanceira } from "./model/conta.entity";
+import { ContaFinanceira } from "./model/conta-financeira.entity";
 export const FinanceiroEntities = [
     Lancamento,
     BillingType,

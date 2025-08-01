@@ -10,7 +10,7 @@ import { ApiProperty } from "@nestjs/swagger";
 @Entity({
     schema
 })
-export class Cliente extends FullAuditedEntity {
+export class ClienteFinanceiro extends FullAuditedEntity {
     @ApiProperty({ title: 'Cadastro de Pessoa', nullable: true, required: false })
     @ManyToMany(t => Pessoa) pessoa?: Pessoa;
     @ApiProperty({ title: 'Nome de tratamento do Cliente', nullable: true, required: false })

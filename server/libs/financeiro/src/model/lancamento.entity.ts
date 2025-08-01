@@ -3,7 +3,7 @@ import { FullAuditedEntity } from "@ci/core";
 import { ContaBancaria } from "@ci/prolabore/models/conta-bancaria.entity";
 import { Column, Entity, JoinTable, ManyToMany } from "typeorm";
 import { schema } from "../norms";
-import { ContaFinanceira } from "./conta.entity";
+import { ContaFinanceira } from "./conta-financeira.entity";
 /**
  * Lançamento 
  */

@@ -1,5 +1,5 @@
 import { Repository } from "typeorm";
-import { ContaFinanceira } from "../model/conta.entity";
+import { ContaFinanceira } from "../model/conta-financeira.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DaoFullAuditedServiceBase, SnapshotService } from "@ci/core";
 export class ContaService extends DaoFullAuditedServiceBase<ContaFinanceira> {
