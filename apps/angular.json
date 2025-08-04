@@ -81,7 +81,8 @@
             "development": {
               "buildTarget": "apps:build:development",
               "allowedHosts": [
-                "https://4200.ci.dev.br/"
+                "https://4200.ci.dev.br/",
+                "4200.ci.dev.br"
               ]
             }
           },

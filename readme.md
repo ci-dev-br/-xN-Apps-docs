@@ -76,4 +76,4 @@ O projeto deve atualizar sozinho corretamente. Porém pode ser que ocorram falha
 
 
 ---
-CiDevBr - Todos os Direitos Reservados - 1993 - 2024
+CiDevBr - Todos os Direitos Reservados - 1993 - 2025
