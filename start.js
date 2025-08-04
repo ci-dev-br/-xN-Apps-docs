@@ -147,17 +147,14 @@ async function ComitterAssistent() {
     await new Promise(async (resolve, reject) => {
         try {
             if (process.env.GEMINI_TOKEN_ASSISTANT) {
-                // const spw = spawnSync('git', ['add', '.'], { cwd: __dirname });
-                // if (spw.stdout) {
-                //     console.log(spw.stdout.toString());
-                // }
                 let commitMessage;
-                const status = spawnSync('git', ['status', '--porcelain'], { cwd: __dirname });
-                const status_astring = status.stdout.toString().trim();
-                if (status_astring === '' || status_astring.indexOf('not staged for commit') > -1) {
-                    console.log('squid dib did ');
-                    resolve();
-                    return;
+                const status_porcelain = spawnSync('git', ['status', '--porcelain'], { cwd: __dirname });
+                const status_porcelain_soutstr = status_porcelain.stdout.toString().trim();
+                const status = spawnSync('git', ['status'], { cwd: __dirname });
+                const status_soutstr = status.stdout.toString().trim();
+                if (/* status_porcelain_soutstr === '' ||  */status_soutstr.indexOf('Changes to be committed') === -1) {
+                    console.info('No changes to commit');
+                    return resolve();
                 }
                 const diff = spawnSync('git', ['--no-pager', 'diff', '--staged'], { cwd: __dirname });
                 const { GoogleGenAI } = require("@google/genai");
@@ -176,7 +173,12 @@ sh\`\`\`
 
 ### Mensagem de status:
 sh\`\`\`
-    ${status.stdout.toString().trim()}
+    ${status_soutstr}
+\`\`\`
+
+### Mensagem de status com flaq --porcelain:
+sh\`\`\`
+    ${status_porcelain_soutstr}
 \`\`\`
 
 ---
@@ -193,7 +195,7 @@ Ao final, sugira a próxima ação a ser tomada no projeto.
 PS.: Retorne diretamente a mensagem de commit, sem formatação adicional ou explicações. Considere escrever como se você fosse o autor da alteração.
 `,
                 })).text;
-                const statusOutput = status.stdout.toString().trim();
+                const statusOutput = status_porcelain.stdout.toString().trim();
                 if (!statusOutput) {
                     console.log('No changes to commit');
                     return;
@@ -222,8 +224,8 @@ PS.: Retorne diretamente a mensagem de commit, sem formatação adicional ou exp
     });
     setTimeout(() => {
         ComitterAssistent();
-    }, 60000);
+    }, 10000);
 }
 setTimeout(() => {
     ComitterAssistent();
-}, 6000);
+}, 1000);
