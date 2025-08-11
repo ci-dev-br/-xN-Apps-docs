@@ -8,3 +8,4 @@ export * from './infra';
 export * from './logging.interceptor';
 export * from './system';
 export * from './webhook';
+export * from './logger/logger';

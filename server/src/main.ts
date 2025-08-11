@@ -1,3 +1,7 @@
+import { Logger, LoggingInterceptor } from '@ci/core';
+new Logger(console);
+
+
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter, NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
@@ -9,7 +13,6 @@ import { config } from 'dotenv';
 import * as express from 'express';
 import { spawnSync } from 'child_process';
 import * as https from 'https';
-import { LoggingInterceptor } from '@ci/core';
 import { WsAdapter } from '@nestjs/platform-ws';
 import { corsOptionsDelegate } from './cors-option-delegate';
 console.clear();

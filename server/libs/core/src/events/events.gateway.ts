@@ -14,7 +14,8 @@ import { Socket } from "socket.io";
     })
 export class EventsGateway implements OnGatewayInit {
     constructor(
-        private readonly bus: BusService,
+        private readonly bus: BusService
+        ,
     ) {
         bus.events = this;
     }
