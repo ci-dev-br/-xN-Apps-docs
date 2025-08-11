@@ -24,7 +24,7 @@ const SETUP = {
     // 'wss://apps.ci.dev.br:446',
     // 'ws://apps.ci.dev.br:87',
   ],
-  UNSATLY_WS_COMMON: 'wss://192.168.0.8:664',
+  UNSATLY_WS_COMMON: 'wss://apps.ci.dev.br',
 }
 
 export const appConfig: ApplicationConfig = {

@@ -11,10 +11,10 @@ export interface IItemAction<T> {
   onAction?: (item: T) => void;
 }
 @Component({
-    selector: 'ci-gerencial',
-    templateUrl: './gerencial.component.html',
-    styleUrls: ['./gerencial.component.scss'],
-    standalone: false
+  selector: 'ci-gerencial',
+  templateUrl: './gerencial.component.html',
+  styleUrls: ['./gerencial.component.scss'],
+  standalone: false
 })
 export class GerencialComponent {
   abas?: { label: string, path: string, icon: string }[];
