@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+// @use '@ci-dev-br/xd' as xd;
 @include mat.elevation-classes();
 @include mat.app-background();
 $apps-theme-light: mat.define-theme((color: (theme-type: light,
@@ -61,3 +62,5 @@ mat-toolbar {
   overflow: hidden;
   flex: none;
 }
+
+// @mixin centralizado {}

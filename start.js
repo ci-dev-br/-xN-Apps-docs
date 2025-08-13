@@ -38,7 +38,7 @@ async function prov_of_life() {
                 }
             });
         }
-        https.get('https://srv33.internals.ci.dev.br:664/', res => {
+        https.get('http://0.0.0.0:86/', res => {
             console.log(res.statusCode);
             setTimeout(() => prov_of_life(), 10000);
         }).on('error', res => {
