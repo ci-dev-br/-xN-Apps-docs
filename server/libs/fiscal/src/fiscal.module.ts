@@ -1,20 +1,22 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { CoreModule } from "@ci/core/core.module";
-import { Document } from "./models/document";
-import { Attachment } from "./models/attachment.entity";
+import { DocumentoFiscal } from "./models/documento-fiscal";
+import { DocumentoFiscalAnexo } from "./models/documento-fiscal-anexo.entity";
+import { ManagerModule } from "@ci/manager";
 export const FiscalEntities = [
-    Document,
-    Attachment,
+    DocumentoFiscal,
+    DocumentoFiscalAnexo,
 ];
 @Module({
     imports: [
         CoreModule,
-        TypeOrmModule.forFeature(FiscalEntities)
+        TypeOrmModule.forFeature(FiscalEntities),
+        ManagerModule,
     ],
 })
 export class FiscalModule { }
 export {
-    Document,
-    Attachment,
+    DocumentoFiscal as Document,
+    DocumentoFiscalAnexo as Attachment,
 }

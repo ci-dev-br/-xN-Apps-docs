@@ -1,5 +1,5 @@
-import { IFile } from "./i-file";
+import { IArquivo } from "./i-file";
 
 export abstract class FileServiceBase {
-    abstract load(): Promise<IFile[]>;
+    abstract load(): Promise<IArquivo[]>;
 }
