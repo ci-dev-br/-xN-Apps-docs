@@ -5,7 +5,8 @@ import { DocumentoFiscalAnexo } from "./documento-fiscal-anexo.entity";
 import { schema } from "./schema";
 
 /***
- * Documento Fiscal - Registro de documento fiscal
+ * # Documento Fiscal
+ * Registro de documento fiscal
  * 
  * O documento fiscal permite registrar documentos vincular a emissão de 
  * taxas existentes. 

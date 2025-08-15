@@ -1,16 +1,12 @@
-<h1>Otimeize o tempo dos seus contadores integrando todas as informações necessárias e reduza a zero as falhas de
-    lançamentos</h1>
-
-<p>O módulo financeiro é moderno. Organizado e estruturado para entregar uma experiência de trabalho de fluxo integrado
-    e automações.</p>
-
-
+<h1>Resumo Financeiro</h1>
+<p>Seu futuro financeiro em um piscar de olhos.</p>
 <div class="row">
-    <button mat-raised-button>
-        Começe a cadastrar as Informações
+    @for (act of actions; track $index) {
+    <button mat-raised-button (click)="act.onClick ? act.onClick($event) : null">
+        <ng-container *ngTemplateOutlet="inner;"></ng-container>
     </button>
-
-    <button mat-raised-button>
-        Procure um consultor
-    </button>
+    <ng-template #inner>
+        {{act.description}}
+    </ng-template>
+    }
 </div>
