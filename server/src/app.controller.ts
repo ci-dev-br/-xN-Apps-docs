@@ -16,11 +16,9 @@ export class AppController {
   @Get()
   @Public()
   async root(@Req() req: Request, @Res() res: Response) {
-    // console.info(req.hostname, req.path, req.headers);
-
     if (this.sitePage) {
       try {
-        let host: string = (req.header('x-From') || req.query.from || req.hostname) as string;
+        let host: string = this.appService.getHost(req);
         let page = await this.sitePage.getPage(host, req.path);
         if (!!page) {
           if (!!page.contentType) res.contentType(page.contentType)
@@ -44,5 +42,35 @@ export class AppController {
       }
     }
     return res.sendFile(resolve('public/index.csr.html'));
+  }
+  @Get()
+  @Public()
+  async ressource(@Req() req: Request, @Res() res: Response) {
+    /* if (this.sitePage) {
+      try {
+        let host: string = this.getHost(req);
+        let page = await this.sitePage.getPage(host, req.path);
+        if (!!page) {
+          if (!!page.contentType) res.contentType(page.contentType)
+          if (!!page.content) {
+            res.send(page.content.join());
+          }
+          return;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    if (!!req.path && req.path.indexOf('.') > -1) {
+      try {
+        if (existsSync(__dirname + `/../public${req.path}`)) {
+          return res.sendFile(resolve(`public${req.path}`));
+        }
+        return res.sendFile(resolve('public/index.csr.html'));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    return res.sendFile(resolve('public/index.csr.html')); */
   }
 }

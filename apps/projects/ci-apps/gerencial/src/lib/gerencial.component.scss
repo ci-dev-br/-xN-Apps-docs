@@ -5,8 +5,8 @@
     justify-content: stretch;
     flex: auto;
     overflow: auto;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
 }
 
 mat-tab-nav-panel {
@@ -15,9 +15,18 @@ mat-tab-nav-panel {
 
     display: flex;
     flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+
+    ::ng-deep {
+        mat-tab-group {
+            display: contents;
+        }
+    }
+
 }
 
-::ng-deep body {
+tab-group::ng-deep body {
     background-position: center center;
     background-repeat: no-repeat;
 }

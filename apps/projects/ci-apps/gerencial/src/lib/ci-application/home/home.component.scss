@@ -2,13 +2,17 @@
     flex: auto;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     align-self: stretch;
-    justify-self: stretch;
 }
 
 .container {
     width: 800px;
     padding: 48px;
     max-width: 60vw;
+}
+
+
+mat-tab-group {
+    flex: auto;
 }

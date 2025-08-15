@@ -3,6 +3,7 @@ autores: plhx
 ## @Apps - Gerencial
 
 ### Correções e implementações:
+
  - [ ]: Proplema no layout inicial;
  - [ ]: A abas de navegação em gerencial estão sem título aparente;
  - [ ]: Implementar cartões de gerencial com serviços reçacionados aos dados já implementados, totalizadores e gráficos;
