@@ -1,10 +1,16 @@
 <ci-navbar></ci-navbar>
-<header class="container">
-    <img class="logo" src="logo-colorida.svg"
-        alt="maraca do 'apps.ci.dev.br' escrita em manuscrito e colida degradê em caixa baixa">
-</header>
-<div class="container ">
-
+<div class="page--wrapper" [style.background-image]="`url(${bg})`">
+    <header class="container">
+        <img class="logo" src="logo-colorida.svg"
+            alt="maraca do 'apps.ci.dev.br' escrita em manuscrito e colida degradê em caixa baixa">
+    </header>
+    <div class="container" [class.apps]="!!(userService.user |async)">
+        @if(!!(userService.user |async)){
+        <mat-card>
+            App/
+        </mat-card>
+        }
+    </div>
 </div>
 <footer>
     <div class="assinatura">

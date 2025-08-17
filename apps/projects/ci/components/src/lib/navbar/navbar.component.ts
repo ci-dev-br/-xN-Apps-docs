@@ -1,5 +1,7 @@
 import { Component } from "@angular/core";
 import { UserService } from "@ci/auth";
+import { IMenuItem } from "./i-menu-item";
+import { MatCardModule } from "@angular/material/card";
 
 @Component({
     selector: 'ci-navbar',
@@ -11,6 +13,7 @@ import { UserService } from "@ci/auth";
 })
 export class NavbarComponent {
     user = this.userService.user;
+    menuItens?: IMenuItem[];
     constructor(
         private readonly userService: UserService,
     ) { }

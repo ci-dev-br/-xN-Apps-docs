@@ -6,17 +6,17 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { CoreModule } from '@ci/core';
 
 @Component({
-    selector: 'ci-blocks-maker',
-    imports: [
-        CoreModule,
-        MatIconModule,
-        MatButtonModule,
-        MatMenuModule,
-        MatToolbarModule,
-    ],
-    templateUrl: './blocks-maker.component.html',
-    styleUrl: './blocks-maker.component.scss'
+  selector: 'ci-blocks-maker',
+  imports: [
+    CoreModule,
+    MatIconModule,
+    MatButtonModule,
+    MatMenuModule,
+    MatToolbarModule,
+  ],
+  templateUrl: './blocks-maker.component.html',
+  styleUrl: './blocks-maker.component.scss'
 })
 export class BlocksMakerComponent {
-  blocos?: any[]
+  protected blocos?: any[];
 }

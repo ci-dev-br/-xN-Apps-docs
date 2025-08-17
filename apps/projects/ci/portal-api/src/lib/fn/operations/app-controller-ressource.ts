@@ -7,11 +7,11 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 
-export interface AppControllerRoot$Params {
+export interface AppControllerRessource$Params {
 }
 
-export function appControllerRoot(http: HttpClient, rootUrl: string, params?: AppControllerRoot$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, appControllerRoot.PATH, 'get');
+export function appControllerRessource(http: HttpClient, rootUrl: string, params?: AppControllerRessource$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, appControllerRessource.PATH, 'get');
   if (params) {
   }
 
@@ -25,4 +25,4 @@ export function appControllerRoot(http: HttpClient, rootUrl: string, params?: Ap
   );
 }
 
-appControllerRoot.PATH = '/*';
+appControllerRessource.PATH = '/*';

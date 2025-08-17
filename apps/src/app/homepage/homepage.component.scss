@@ -2,10 +2,10 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-
     //  text-align: center;
     height: 100vh;
     overflow: auto;
+
 }
 
 .logo {
@@ -18,15 +18,15 @@ header {
 }
 
 .container {
-    max-width: 80vw;
+    ///  max-width: 80vw;
     display: flex;
-    width: 900px;
+    // width: 900px;
     flex-direction: column;
     align-self: center;
     padding: 24px;
-
-    flex: auto;
+    // flex: auto;
     height: auto;
+
 }
 
 footer {
@@ -34,7 +34,6 @@ footer {
     flex-direction: column;
     padding: 24px;
     flex: 0;
-
     color: white;
     background: rgba(0, 0, 0, .99);
 
@@ -42,4 +41,32 @@ footer {
         font-weight: 100;
         font-size: 10px;
     }
+}
+
+.apps {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: center;
+    justify-content: center;
+
+    >mat-card {
+        width: 3cm;
+        height: 3cm;
+    }
+}
+
+.page--wrapper {
+
+    background-position: center center;
+    background-repeat: no-repeat no-repeat;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+
+    flex: auto;
+    overflow: auto;
 }
