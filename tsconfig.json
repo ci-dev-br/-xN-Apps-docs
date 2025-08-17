@@ -6,6 +6,20 @@
         "sourceMap": true,
         "target": "es2021",
         "incremental": true,
-        "module": "commonjs"
-    }
+        "module": "commonjs",
+        "strictNullChecks": true
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "server/**",
+        "apps/**",
+        "client/**",
+        "ci/**",
+        "docs/**",
+        "gulp/**",
+        "workspace/**",
+        "gerenciador-projetos/**",
+    ]
 }
