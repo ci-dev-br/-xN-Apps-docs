@@ -9,3 +9,5 @@ nssm.exe
 **/node_modules
 daemon/*
 daemon/apps.out.log
+dist/*
+tsconfig.tsbuildinfo
