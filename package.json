@@ -21,6 +21,7 @@
     "sync": "git push --all origin && git push --all azure && git pull --all"
   },
   "dependencies": {
+    "@types/node": "^24.3.0",
     "d3-scale": "^4.0.2",
     "d3-selection": "^3.0.0"
   },
