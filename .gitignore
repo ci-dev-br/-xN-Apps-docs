@@ -11,3 +11,4 @@ daemon/*
 daemon/apps.out.log
 dist/*
 tsconfig.tsbuildinfo
+  
