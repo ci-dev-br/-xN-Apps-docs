@@ -4,13 +4,25 @@
         <img class="logo" src="logo-colorida.svg"
             alt="maraca do 'apps.ci.dev.br' escrita em manuscrito e colida degradê em caixa baixa">
     </header>
-    <div class="container" [class.apps]="!!(userService.user |async)">
+    <!-- 
+        Visualização quando autenticado
+    
+    -->
+    <div class="container"><!-- [class.apps]="!!(userService.user |async)" -->
         @if(!!(userService.user |async)){
-        <mat-card>
-            App/
-        </mat-card>
+
+        <div class="apps">
+            @for (item of apps; track $index) {
+
+            <mat-card>
+                {{item.name}}
+            </mat-card>
+            }
+        </div>
         }
     </div>
+
+
 </div>
 <footer>
     <div class="assinatura">

@@ -3,7 +3,7 @@ import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ChamadaService } from "../service/chamada.service";
 /**
  * Atendimento API
- * 
+ * ---
  * 
  */
 @ApiTags('Chamada')
@@ -20,5 +20,6 @@ export class ChamadaController {
     async NovaChamada() {
         // return await this.atendimentoService.IniciarChamada();
     }
-
+    async IniciarChamada() {
+    }
 }

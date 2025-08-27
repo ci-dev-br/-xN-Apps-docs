@@ -13,6 +13,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { FormsModule } from "@angular/forms";
 import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplicativo.component";
+import { Router } from "@angular/router";
 @Component({
     selector: 'ci-application-manager',
     templateUrl: 'application-manager.component.html',
@@ -43,6 +44,7 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
         private readonly applications: ApplicationService,
         private readonly janela: WindowService,
         private readonly daoBuilder: DaoBuilder,
+        private readonly router: Router,
     ) {
         (async () => this.loadGrid())();
         (async () => this.carregarListaAplicativos())();
@@ -93,5 +95,13 @@ import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplica
     }
     async carregarListaAplicativos() {
         this.apps = await lastValueFrom(this.applications.get({ body: { all: true } }));
+    }
+    async adicionarAplicacao() {
+        // TODO: adicionar aplicação.
+        this.router.navigate([], {
+            queryParams: {
+                open: 'FindApplications'
+            }
+        });
     }
 }

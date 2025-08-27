@@ -7,8 +7,8 @@ import { FullAuditedEntity } from "@ci/manager";
     schema
 })
 export class DirectMessage extends FullAuditedEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id?: string;
+    // @PrimaryGeneratedColumn('uuid')
+    // id?: string;
     @JoinTable()
     @ManyToOne(() => User)
     from?: User;
