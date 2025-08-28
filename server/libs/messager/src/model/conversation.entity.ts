@@ -3,6 +3,7 @@ import { Column, Entity, JoinTable, ManyToMany } from "typeorm";
 import { schema } from "../noms";
 import { FullAuditedEntity } from "@ci/manager";
 import { ApiProperty } from "@nestjs/swagger";
+import { Contact } from "./contact.entity";
 @Entity({ schema })
 export class Conversation extends FullAuditedEntity {
     @ApiProperty({
@@ -10,9 +11,9 @@ export class Conversation extends FullAuditedEntity {
         isArray: true,
     })
     @JoinTable()
-    @ManyToMany(() => User)
+    @ManyToMany(() => Contact)
     @JoinTable()
-    participants?: User[];
+    participants?: Contact[];
     @ApiProperty({ title: 'Títutlo', nullable: true, required: false })
     @Column({ nullable: true })
     title?: string;
