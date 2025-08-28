@@ -80,7 +80,7 @@ export class PainelComponent {
 
     this.userService.user.subscribe(user => {
       if (!!user) {
-        this.apps = APPS.filter(app => !!app.roles.find(role => !!user.roles?.find(r => r === role)))
+        this.apps = APPS.filter(app => !!app.roles?.find(role => !!user.roles?.find(r => r === role)))
       }
     })
   }
