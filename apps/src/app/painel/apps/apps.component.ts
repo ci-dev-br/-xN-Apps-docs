@@ -35,7 +35,7 @@ export class AppsComponent implements OnInit {
     this.userService.user.subscribe(user => {
       if (!!user) {
         this.apps = APPS.filter(app => !!this.userService && !!this.userService.user && !!this.userService.user.value ?
-          this.userService.user?.value?.roles?.find(role => app.roles.indexOf(role) > -1) : false);
+          this.userService.user?.value?.roles?.find(role => app.roles && app.roles.indexOf(role) > -1) : false);
       } else {
         // this.router.navigate(['/']);
       }
