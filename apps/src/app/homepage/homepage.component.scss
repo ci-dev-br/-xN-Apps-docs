@@ -23,7 +23,7 @@ header {
     // width: 900px;
     flex-direction: column;
     align-self: center;
-    padding: 24px;
+    // padding: 24px;
     // flex: auto;
     height: auto;
 
@@ -83,4 +83,38 @@ footer {
 
     flex: auto;
     overflow: auto;
+}
+
+.container:has(.sidebar) {
+    display: flex;
+    flex-direction: row;
+    flex: auto;
+    align-items: stretch;
+    justify-content: stretch;
+    width: 100%;
+
+    .sidebar {
+        flex: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        min-width: 200px;
+        background: rgba(0, 0, 0, .5);
+        padding: 24px;
+        gap: 12px;
+    }
+
+    .apps {
+        flex: auto;
+    }
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+
+    &.end {
+        align-items: end;
+        justify-content: flex-end;
+    }
 }

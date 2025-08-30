@@ -1,13 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, ComponentRef, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthModule, UserService } from '@ci/auth';
 import { NavbarModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { Application, User } from '@ci/portal-api';
-const XD = (a: any) => {
-    a.___styles_xd__internals = {
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { SidebarSettings } from './sidebar-settings/sidebar-settings.components';
+import { MatFormFieldModule } from '@angular/material/form-field';
+const XD = <T>(a: T) => {
+    (a as any).___styles_xd__internals = {
         m: { l: 0, r: 0, t: 0, b: 0 },
     };
     return a;
@@ -21,6 +26,10 @@ const XD = (a: any) => {
         AuthModule,
         NavbarModule,
         MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        MatDialogModule,
+        MatFormFieldModule,
     ],
     templateUrl: './homepage.component.html',
     standalone: true,
@@ -31,10 +40,12 @@ export class HomepageComponent implements OnInit {
         protected readonly userService: UserService,
         private render: Renderer2,
         private el: ElementRef<Element>,
-        // private el2: ComponentRef<>,
+        private readonly router: Router,
+        private readonly dialog: MatDialog,
     ) { }
-    apps?: Application[];
-    bgs = [
+    protected categorias?: any[];
+    protected apps?: Application[];
+    protected bgs = [
         '/bg-apps-290847.jpg'
     ]
     ngOnInit(): void {
@@ -48,10 +59,22 @@ export class HomepageComponent implements OnInit {
     private updateUser(user: User | null) {
         //
         this.apps = [
-            XD({ name: 'Lista de Compras' }),
-            XD({ name: 'Lista de Compras' }),
-            XD({ name: 'Lista de Compras' }),
-            XD({ name: 'Lista de Compras' }),
+            XD({ name: 'Meus Apps', url: '/meus-apps' }),
         ]
+    }
+    protected async appClickHandler(event: any, app: any) {
+        if (event.ctrlKey) {
+            window.open(location.href + '/' + app.url, '')
+        } else {
+            this.router.navigate([app.url], {/*  relativeTo: this.route */ });
+        }
+    }
+    protected openSidebarSettings() {
+        this.dialog.open(SidebarSettings, {
+
+            data: {
+                origin: this
+            }
+        });
     }
 }

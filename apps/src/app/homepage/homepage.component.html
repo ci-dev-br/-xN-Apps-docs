@@ -1,28 +1,40 @@
 <ci-navbar></ci-navbar>
 <div class="page--wrapper" [style.background-image]="`url(${bg})`">
-    <header class="container">
-        <img class="logo" src="logo-colorida.svg"
-            alt="maraca do 'apps.ci.dev.br' escrita em manuscrito e colida degradê em caixa baixa">
-    </header>
+    @if(!!(userService.user |async)){
     <!-- 
-        Visualização quando autenticado
-    
-    -->
+            Visualização quando autenticado
+        
+        -->
     <div class="container"><!-- [class.apps]="!!(userService.user |async)" -->
-        @if(!!(userService.user |async)){
+        <div class="sidebar">
+            <button mat-raised-button color="primary" routerLink="/meus-apps">Meus Apps</button>
+            @if(categorias){@for (item of categorias; track $index) {
+            <button mat-button>{{item.name}}</button>
+            }}
+            <span style="flex:auto"></span>
+            <div class="row end">
+                <button mat-icon-button (click)="openSidebarSettings()"><mat-icon>settings</mat-icon></button>
+            </div>
+        </div>
+        <div class="container">
 
+        </div>
         <div class="apps">
             @for (item of apps; track $index) {
-
-            <mat-card>
+            <mat-card (click)="appClickHandler($event, item)">
                 {{item.name}}
             </mat-card>
             }
         </div>
-        }
     </div>
-
-
+    }@else {
+    <header class="container">
+        <figure>
+            <img class="logo" src="logo-colorida.svg"
+                alt-label="Logo 'apps.ci.dev.br' escrita em manuscrito e colida degradê em minúsculo">
+        </figure>
+    </header>
+    }
 </div>
 <footer>
     <div class="assinatura">
