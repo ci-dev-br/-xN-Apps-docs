@@ -2,7 +2,7 @@
 <div class="apps container --flexible">
     @for (app of apps; track $index) {
     <div class="app" [tabindex]="$index" (keydown.enter)="appClickHandler($event, app)"
-        (click)="appClickHandler($event, app)" [attr.aria-labelledby]="app.description" >
+        (click)="appClickHandler($event, app)" [attr.aria-labelledby]="app.description">
         <div class="bg" [style.background]="app.color"></div>
         @if(app.icon){
         @if(app.type === 'svg' && !!app.icon){
