@@ -2,3 +2,9 @@
     App Component
     by: .plhx~
 */
+:host {
+    width: 100dvw;
+    height: 100cqh;
+    overflow: auto;
+    position: fixed;
+}
