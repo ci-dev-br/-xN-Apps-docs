@@ -48,23 +48,26 @@ export class AppsComponent implements OnInit {
       this.router.navigate([app.url], {/*  relativeTo: this.route */ });
     }
   }
+  /// @HostListener('window:contextmenu', ['$event'])
+  contextMenuHanlder(event: MouseEvent | PointerEvent | Event) {
+    event.preventDefault;
+  }
 
+  @HostListener('keyup', ['$event'])
+  keyUpHandler(e: KeyboardEvent) {
+    if (e.key == 'PrintScreen') {
+      navigator.clipboard.writeText('');
+      alert('Screenshots disabled!');
+    }
+  };
 
-  /*  @HostListener('keyup', ['$event'])
-   keyUpHandler(e: KeyboardEvent) {
-     if (e.key == 'PrintScreen') {
-       navigator.clipboard.writeText('');
-       alert('Screenshots disabled!');
-     }
-   };
- 
-   @HostListener('keydown', ['$event'])
-   keyDownHandler(e: KeyboardEvent) {
-     if (e.ctrlKey && e.key == 'p') {
-       alert('This section is not allowed to print or export to PDF');
-       e.cancelBubble = true;
-       e.preventDefault();
-       e.stopImmediatePropagation();
-     }
-   }; */
+  @HostListener('keydown', ['$event'])
+  keyDownHandler(e: KeyboardEvent) {
+    if (e.ctrlKey && e.key == 'p') {
+      alert('This section is not allowed to print or export to PDF');
+      e.cancelBubble = true;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  };
 }
