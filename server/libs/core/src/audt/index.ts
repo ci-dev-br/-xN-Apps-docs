@@ -1,2 +1,2 @@
 export * from './audt.service'
-export * from './chave-acesso.entity'
+export * from './credential.entity'

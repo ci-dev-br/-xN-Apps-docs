@@ -1,9 +1,14 @@
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, TableForeignKey } from "typeorm";
 import { Application } from "@ci/manager";
 import { ApiProperty } from "@nestjs/swagger";
-import { User } from "@ci/auth/models/user.entity";
-@Entity()
-export class ChaveAcesso {
+// import { User } from "@ci/auth/models/user.entity";
+import { schema } from "../shema";
+@Entity(
+    {
+        schema
+    }
+)
+export class Credential {
     @ApiProperty({ required: false }) @PrimaryGeneratedColumn('uuid') id?: string;
     @ApiProperty({ required: false }) @Column({ nullable: true }) identifiedUser?: string;
     @ApiProperty({ required: false }) @CreateDateColumn() createdAt?: Date;

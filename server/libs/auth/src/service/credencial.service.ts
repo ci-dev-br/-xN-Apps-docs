@@ -1,14 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
-import { ChaveAcesso } from "@ci/core";
+import { Credential } from "@ci/core";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserService } from "./user.service";
 import { JwtService } from "@nestjs/jwt";
 @Injectable()
 export class CredencialService {
     constructor(
-        @InjectRepository(ChaveAcesso)
-        private readonly chaveAcessoRepo: Repository<ChaveAcesso>,
+        @InjectRepository(Credential)
+        private readonly chaveAcessoRepo: Repository<Credential>,
         private readonly userService: UserService,
         private readonly jwtService: JwtService,
     ) { }
@@ -45,7 +45,7 @@ export class CredencialService {
             .getOne();
     }
     async atualizar(
-        chave: ChaveAcesso
+        chave: Credential
     ) {
         return await this.chaveAcessoRepo.save(chave);
     }

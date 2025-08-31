@@ -3,7 +3,7 @@ import { UserService } from "./user.service";
 import { JwtService } from "@nestjs/jwt";
 import { UserCredentialService } from "./user-credential.service";
 import { CredencialService } from "./credencial.service";
-import { ChaveAcesso } from "@ci/core";
+import { Credential } from "@ci/core";
 @Injectable()
 export class AuthService {
     constructor(
@@ -31,7 +31,7 @@ export class AuthService {
             confiance: string,
         };
         let permission = null;
-        let chave_acesso: ChaveAcesso = null;
+        let chave_acesso: Credential = null;
         if ('try' in r && r.try && typeof r.try === 'string') {
             permission = JSON.parse(atob(r.try)).permission;
             old_authorization = (await this.jwtService.decode(req.headers['authorization'].replace('Bearer', '').trim())) as any;

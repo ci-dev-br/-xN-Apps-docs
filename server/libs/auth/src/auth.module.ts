@@ -8,7 +8,7 @@ import { User } from "./models/user.entity";
 import { jwtConstants } from "./constants";
 import { AuthGuard } from "./auth.guard";
 import { CredencialService } from "./service/credencial.service";
-import { ChaveAcesso } from "@ci/core";
+import { Credential } from "@ci/core";
 import { Policy } from "./models/policy.entity";
 import { RefreshTokenStrategy } from "./service/refresh-token-strategy";
 import { AuthService } from "./service/auth.service";
@@ -24,7 +24,7 @@ import { NotificacaoModule } from "@ci/notification";
 export const AuthEntities = [
     Policy,
     User,
-    ChaveAcesso,
+    Credential,
     DeviceAuthenticated,
     AccessCredential,
 ];

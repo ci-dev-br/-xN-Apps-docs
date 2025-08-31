@@ -3,7 +3,7 @@ import { User } from '../models/user.entity';
 import { DataSource, Equal, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
-import { ChaveAcesso } from '@ci/core';
+import { Credential } from '@ci/core';
 import { createHash } from 'crypto';
 import { request } from 'https';
 import { readFileSync } from 'fs';
@@ -119,7 +119,7 @@ export class UserService {
             refreshToken: null
         })
     }
-    async updateRefreshToken(userId: string, refreshToken: string, chave?: ChaveAcesso) {
+    async updateRefreshToken(userId: string, refreshToken: string, chave?: Credential) {
         const hashedRefreshToken = await this.hashData(refreshToken);
         return hashedRefreshToken;
         // TODO:  implementar verificação do hash do RefrashToken ...

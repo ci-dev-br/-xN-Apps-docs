@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Tenant } from "@ci/tenant";
-import { ChaveAcesso } from "@ci/core";
+import { Credential } from "@ci/core";
 import { Exclude } from "class-transformer";
 export abstract class AuditedEntity {
     @ApiProperty({ nullable: true, required: false, uniqueItems: true, readOnly: true })
@@ -26,9 +26,9 @@ export abstract class AuditedEntity {
         required: false,
         readOnly: true
     })
-    @ManyToOne(() => ChaveAcesso, { nullable: true })
+    @ManyToOne(() => Credential, { nullable: true })
     @JoinColumn()
-    createdBy?: ChaveAcesso;
+    createdBy?: Credential;
     @ApiProperty({
         title: 'Ultima modificação em',
         nullable: true,
@@ -37,9 +37,9 @@ export abstract class AuditedEntity {
     @UpdateDateColumn()
     lastModifiedAt?: Date;
     @ApiProperty({ title: 'Ultima modificação por', nullable: true, required: false, readOnly: true })
-    @ManyToOne(() => ChaveAcesso, { nullable: true })
+    @ManyToOne(() => Credential, { nullable: true })
     @JoinColumn()
-    lastModifiedBy?: ChaveAcesso;
+    lastModifiedBy?: Credential;
     @ApiProperty({
         title: 'Deletado',
         type: 'boolean',

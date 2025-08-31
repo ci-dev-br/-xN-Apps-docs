@@ -2,7 +2,7 @@ import { DynamicModule, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Snapshot, SnapshotService } from "../../manager/src/dao";
 import { AudtService } from "./audt/audt.service";
-import { ChaveAcesso } from "./audt/chave-acesso.entity";
+import { Credential } from "./audt/credential.entity";
 import { DamnService } from "./damn/damn.service";
 import { EventsGateway } from "./events/events.gateway";
 // import { EventsLocalGateway } from "./events/events-local.gateway";
@@ -15,7 +15,7 @@ import { Log } from "./logger/log.entity";
 // mport { SystemService } from "./system/system.service";
 export const CoreEntities = [
     Snapshot,
-    ChaveAcesso,
+    Credential,
     Log,
 ]
 /**
