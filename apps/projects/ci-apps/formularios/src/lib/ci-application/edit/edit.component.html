@@ -28,13 +28,26 @@
         </mat-card>
     </div>
     }
-    <div class="menu">
-        <button mat-icon-button matTooltip="Adicionar pergunta" matTooltipPosition="left" (click)="adicionarPergunta()">
-            <mat-icon>add</mat-icon>
-        </button>
-        <button mat-icon-button (click)="compartilhar()" >
-            <mat-icon>share</mat-icon>
-        </button>
+    <div class="container-menu">
+        <div class="menu">
+            <h6>Ações</h6>
+            <button mat-icon-button matTooltip="Adicionar pergunta" matTooltipPosition="left"
+                (click)="adicionarPergunta()">
+                <mat-icon>add</mat-icon>
+            </button>
+            <button mat-icon-button [matMenuTriggerFor]="shareMenu">
+                <mat-icon>share</mat-icon>
+            </button>
+            <mat-menu #shareMenu>
+                <button mat-menu-item (click)="compartilhar()">
+                    Compartilhar para Editar
+                </button>
+
+                <button mat-menu-item (click)="compartilhar()">
+                    Publicar fomulário (criar link)
+                </button>
+            </mat-menu>
+        </div>
     </div>
 </div>
 <h4>

@@ -13,6 +13,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { PerguntaItemComponent } from './pergunta-item/pergunta-item.component';
+import { MatMenuModule } from '@angular/material/menu';
 @NgModule({
   declarations: [
     EditComponent,
@@ -32,6 +33,7 @@ import { PerguntaItemComponent } from './pergunta-item/pergunta-item.component';
     MatIconModule,
     MatTooltipModule,
     PerguntaItemComponent,
+    MatMenuModule,
   ],
 })
 export class EditModule { }
