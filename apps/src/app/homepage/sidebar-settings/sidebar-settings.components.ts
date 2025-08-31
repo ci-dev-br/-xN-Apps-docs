@@ -16,24 +16,38 @@ import { CoreModule } from "@ci/core";
         ReactiveFormsModule,
         MatToolbarModule,
         MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
     ],
     selector: 'ci-sidebar-settings',
     standalone: true,
     styles: [
         `
-        form{display: contents;}
-        `
+            form{display: contents;}
+            `
     ],
     template: `
-        <mat-toolbar>
-            <form [formGroup]="pesquisa">
-                <button mat-raised-button >Novo Grupo</button>
-                <mat-form-field>
-                    <input matInput type="text" formControlName="search" placeholder="Procurar aplicativo">
-                </mat-form-field>
-            </form>
-        </mat-toolbar>
-    `
+            <mat-toolbar>
+                <form [formGroup]="pesquisa">
+                    <button mat-raised-button >Novo Grupo</button>
+                    <mat-form-field>
+                        <input matInput type="text" formControlName="search" placeholder="Procurar aplicativo">
+                    </mat-form-field>
+                </form>
+            </mat-toolbar>
+            <div style="display:flex; flex-direction:row; align-items: stretch; justify-content: stretch;">
+                <div style="display:flex; flex-direction:column; align-items: stretch; justify-content: stretch;">
+                    <button mat-raised-button >Categorias</button>
+                </div>  
+                <div>
+                    <form>
+                        <mat-form-field>
+                            <input matInput />
+                        </mat-form-field>
+                    </form> 
+                </div>  
+            </div>
+        `
 })
 export class SidebarSettings {
     pesquisa: FormGroup;

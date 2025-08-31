@@ -59,7 +59,7 @@ export class HomepageComponent implements OnInit {
     private updateUser(user: User | null) {
         //
         this.apps = [
-            XD({ name: 'Meus Apps', url: '/meus-apps' }),
+            // XD({ name: 'Meus Apps', url: '/meus-apps' }),
         ]
     }
     protected async appClickHandler(event: any, app: any) {
