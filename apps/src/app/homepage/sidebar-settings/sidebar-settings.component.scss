@@ -1,0 +1,41 @@
+::ng-deep .mat-mdc-dialog-surface {
+    overflow: hidden
+        /* !important */
+    ;
+    border-radius: 6px;
+    filter: drop-shadow(4px 5px 6px rgba(0, 0, 0, .44));
+    border: solid 1px rgba(60, 60, 60, .88);
+}
+
+form {
+    display: contents;
+
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+mat-toolbar {
+    mat-form-field {
+        padding: 0;
+        --mat-form-field-container-height: 30px;
+        --mat-form-field-container-vertical-padding: 10px;
+
+        position: relative;
+
+        ::ng-deep {
+            .mat-mdc-form-field-subscript-wrapper {
+                position: absolute;
+                bottom: -20px;
+            }
+        }
+    }
+}
+
+@media (prefers-color-scheme:dark) {
+    * {
+        color: white;
+    }
+}

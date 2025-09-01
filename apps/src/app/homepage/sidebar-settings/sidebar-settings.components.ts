@@ -6,6 +6,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { CoreModule } from "@ci/core";
+import { ApiModule, Application, ApplicationService } from "@ci/portal-api";
 
 @Component({
     imports: [
@@ -16,44 +17,23 @@ import { CoreModule } from "@ci/core";
         ReactiveFormsModule,
         MatToolbarModule,
         MatButtonModule,
-        MatFormFieldModule,
         MatInputModule,
     ],
     selector: 'ci-sidebar-settings',
     standalone: true,
-    styles: [
-        `
-            form{display: contents;}
-            `
-    ],
-    template: `
-            <mat-toolbar>
-                <form [formGroup]="pesquisa">
-                    <button mat-raised-button >Novo Grupo</button>
-                    <mat-form-field>
-                        <input matInput type="text" formControlName="search" placeholder="Procurar aplicativo">
-                    </mat-form-field>
-                </form>
-            </mat-toolbar>
-            <div style="display:flex; flex-direction:row; align-items: stretch; justify-content: stretch;">
-                <div style="display:flex; flex-direction:column; align-items: stretch; justify-content: stretch;">
-                    <button mat-raised-button >Categorias</button>
-                </div>  
-                <div>
-                    <form>
-                        <mat-form-field>
-                            <input matInput />
-                        </mat-form-field>
-                    </form> 
-                </div>  
-            </div>
-        `
+    styleUrl: 'sidebar-settings.component.scss',
+    templateUrl: 'sidebar-settings.component.html'
 })
 export class SidebarSettings {
-    pesquisa: FormGroup;
-    constructor(fb: FormBuilder) {
+    protected aplicativos?: Application[];
+    protected pesquisa: FormGroup;
+    protected stage?: 'new-category';
+    constructor(
+        fb: FormBuilder,
+        private readonly aplications: ApplicationService,
+    ) {
         this.pesquisa = fb.group({
             search: []
-        })
+        });
     }
 }
