@@ -27,7 +27,7 @@ import { ApiModule, Application, ApplicationService } from "@ci/portal-api";
 export class SidebarSettings {
     protected aplicativos?: Application[];
     protected pesquisa: FormGroup;
-    protected stage?: 'new-category';
+    protected stage?: 'new-category' | 'add-apps-find';
     protected novaCategoriaForm?: FormGroup;
     constructor(
         private readonly fb: FormBuilder,
@@ -50,7 +50,8 @@ export class SidebarSettings {
             name: [, [Validators.required]],
         })
     }
-    confirmarNovaCategoria() {
-        
+    selecionarAplicatiovos() {
+
+        this.stage = 'add-apps-find';
     }
 }

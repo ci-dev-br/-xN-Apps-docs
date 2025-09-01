@@ -20,8 +20,19 @@
                 <mat-label>Nome da Categoria</mat-label>
                 <input matInput placeholder="Nome da Categoria" formControlName="name" />
             </mat-form-field>
-            <button mat-raised-button>Avançar</button>
+            <button mat-raised-button (click)="selecionarAplicatiovos()">Selecionar aplicativos</button>
         </form>
+        }}@else if (stage === 'add-apps-find') {
+        @if(aplicativos){<div class="apps">
+            @for (aplicativo of aplicativos; track $index) {
+            <div class="app">
+                {{aplicativo.name}}
+                @if(aplicativo.description){<p>
+                    {{aplicativo.description}}
+                </p>}
+            </div>
+            }
+        </div>
         }}
     </div>
 </div>
