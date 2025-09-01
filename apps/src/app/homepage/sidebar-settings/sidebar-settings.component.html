@@ -1,6 +1,6 @@
 <mat-toolbar>
     <form [formGroup]="pesquisa">
-        <button mat-raised-button (click)="stage = 'new-category'">Novo Grupo</button>
+        <button mat-raised-button (click)="novaCategoria()">Novo Grupo</button>
         <mat-form-field appearance="outline" style="flex: auto;">
             <mat-label>Pesquisar</mat-label>
             <input matInput type="text" formControlName="search" placeholder="Procurar aplicativo">
@@ -14,16 +14,14 @@
     </div>
     <div class="container">
         @if(stage === 'new-category'){
-        <form>
+        @if(novaCategoriaForm){<form [formGroup]="novaCategoriaForm">
             <p>Vamos criar um grupo de aplicativos. Primeiramente vamos escolher um nome.</p>
-
             <mat-form-field>
                 <mat-label>Nome da Categoria</mat-label>
-                <input matInput placeholder="Nome da Categoria" />
+                <input matInput placeholder="Nome da Categoria" formControlName="name" />
             </mat-form-field>
-
             <button mat-raised-button>Avançar</button>
         </form>
-        }
+        }}
     </div>
 </div>

@@ -1,10 +1,10 @@
 import { Component } from "@angular/core";
-import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { MatToolbarModule } from "@angular/material/toolbar";
+import { MatToolbarModule, throwToolbarMixedModesError } from "@angular/material/toolbar";
 import { CoreModule } from "@ci/core";
 import { ApiModule, Application, ApplicationService } from "@ci/portal-api";
 
@@ -28,12 +28,29 @@ export class SidebarSettings {
     protected aplicativos?: Application[];
     protected pesquisa: FormGroup;
     protected stage?: 'new-category';
+    protected novaCategoriaForm?: FormGroup;
     constructor(
-        fb: FormBuilder,
+        private readonly fb: FormBuilder,
         private readonly aplications: ApplicationService,
     ) {
         this.pesquisa = fb.group({
             search: []
         });
+    }
+    pesquisarAplicativos() {
+        this.aplications.get({
+            body: {
+
+            }
+        })
+    }
+    novaCategoria() {
+        this.stage = 'new-category';
+        this.novaCategoriaForm = this.fb.group({
+            name: [, [Validators.required]],
+        })
+    }
+    confirmarNovaCategoria() {
+        
     }
 }
