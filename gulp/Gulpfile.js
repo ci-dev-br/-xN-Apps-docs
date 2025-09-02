@@ -102,5 +102,5 @@ exports.default = series(
     CleanOldFiles,
     BuildPClientApplication,
     DeployLocalClient,
-    DeployFTPApplications,
+    // DeployFTPApplications,
 );
