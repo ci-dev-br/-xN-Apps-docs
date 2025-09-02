@@ -1,15 +1,17 @@
-import { RunnerX } from "./runner-x";
-
-const https = require('https');
-const http = require('http');
-const { execSync, spawnSync, spawn, exec } = require('child_process');
-const { cwd, env } = require('process');
+import { RunnerX } from "./comum/runner-x";
 const { config } = require('dotenv');
 
 config();
 export class CiRunner extends RunnerX {
-
-
+    constructor() {
+        super();
+        this.addTask({
+            command: 'nest start --watch --debug',
+            cwd: __dirname + '/../server',
+            name: 'Apps',
+            type: 'nest'
+        });
+    }
     /**
      * Executa verificação de acesso exter da ferramenta para a internet. 
      * Executa processos em caso degativa de acordo com as configurações de inicialização do sistema.
