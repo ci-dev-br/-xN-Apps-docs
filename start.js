@@ -1,4 +1,4 @@
-const { CiRunner } = require('./dist/prov-of-live');
+const { CiRunner } = require('./dist/ci-runner');
 /**
  * mem - objeto de memória para armazenar informações temporárias
  */
