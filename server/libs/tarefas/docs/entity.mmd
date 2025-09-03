@@ -1,0 +1,42 @@
+classDiagram
+    class Tarefa {
+        -id: int
+        -titulo: string
+        -descricao: string
+        -status: Enum (Pendente, Em Progresso, Concluida)
+        -prioridade: Enum (Baixa, Media, Alta)
+        -dataCriacao: Date
+        -dataVencimento: Date
+        -atribuidaA: Usuario
+        +getTitulo(): string
+        +getDescricao(): string
+        +getPrioridade(): Enum
+        +getstatus(): Enum
+        +atualizarStatus(novoStatus: Enum)
+        +atualizarPrioridade(novaPrioridade: Enum)
+    }
+
+    class Usuario {
+        -id: int
+        -nome: string
+        -email: string
+        -senha: string
+        +getNome(): string
+        +getEmail(): string
+        +adicionarTarefa(tarefa: Tarefa)
+        +removerTarefa(tarefa: Tarefa)
+    }
+
+    class GerenciadorDeTarefas {
+        -tarefas: List<Tarefa>
+        +adicionarTarefa(tarefa: Tarefa)
+        +removerTarefa(id: int)
+        +encontrarTarefa(id: int): Tarefa
+        +listarTarefas(): List<Tarefa>
+        +listarTarefasPorUsuario(usuario: Usuario): List<Tarefa>
+        +listarTarefasPorStatus(status: Enum): List<Tarefa>
+    }
+
+    Tarefa "1" --o "1" Usuario : atribuidaA
+    GerenciadorDeTarefas "1" --* "N" Tarefa : gerencia
+    Usuario "1" --* "N" Tarefa : possui

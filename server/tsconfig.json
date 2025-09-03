@@ -192,6 +192,12 @@
       ],
       "@ci/crm/*": [
         "libs/crm/src/*"
+      ],
+      "@ci-apps/tarefas": [
+        "libs/tarefas/src"
+      ],
+      "@ci-apps/tarefas/*": [
+        "libs/tarefas/src/*"
       ]
     }
   }

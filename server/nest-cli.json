@@ -267,6 +267,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/crm/tsconfig.lib.json"
       }
+    },
+    "tarefas": {
+      "type": "library",
+      "root": "libs/tarefas",
+      "entryFile": "index",
+      "sourceRoot": "libs/tarefas/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/tarefas/tsconfig.lib.json"
+      }
     }
   }
 }

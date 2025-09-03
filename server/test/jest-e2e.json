@@ -68,6 +68,8 @@
     "@ci/projetos/(.*)": "<rootDir>/../libs/projetos/src/$1",
     "@ci/projetos": "<rootDir>/../libs/projetos/src",
     "@ci/crm/(.*)": "<rootDir>/../libs/crm/src/$1",
-    "@ci/crm": "<rootDir>/../libs/crm/src"
+    "@ci/crm": "<rootDir>/../libs/crm/src",
+    "@ci-apps/tarefas/(.*)": "<rootDir>/../libs/tarefas/src/$1",
+    "@ci-apps/tarefas": "<rootDir>/../libs/tarefas/src"
   }
 }
