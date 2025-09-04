@@ -10,7 +10,7 @@
         Selection
     </button>
     <mat-menu #fileMenu>
-        <button mat-menu-item>
+        <button mat-menu-item (click)="files.openCreateNew()">
             New
         </button>
         <button mat-menu-item (click)="openProject()">

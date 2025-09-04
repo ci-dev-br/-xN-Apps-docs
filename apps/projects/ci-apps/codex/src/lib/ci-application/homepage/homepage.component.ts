@@ -6,7 +6,6 @@ import { CoreModule } from "@ci/core";
     standalone: true,
     imports: [
         CoreModule,
-
     ],
     selector: 'ci-homepage',
     template: ``

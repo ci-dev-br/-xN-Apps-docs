@@ -7,6 +7,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CoreModule } from '@ci/core';
 import { OpenProjectComponent } from '../open-project/open-project.component';
+import { Files } from '../services/files.service';
 
 export interface IMenu {
   items: IMenuItem[];
@@ -39,7 +40,7 @@ export class NavigationComponent {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly dialog: MatDialog,
-    // private readonly janela: WindowService,
+    protected readonly files: Files,
   ) {
 
     this.abas = route.routeConfig?.children?.map(r => {
