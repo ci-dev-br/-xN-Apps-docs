@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { LoadIconsService } from "./load-icons.service";
+import { IconLoaderSerices } from "./icon-loader.service";
 import { MatIconModule } from "@angular/material/icon";
 import { CommonModule } from "@angular/common";
 import { CI_ICON_PACK, IPack } from "./token";
@@ -10,7 +10,7 @@ import { CI_ICON_PACK, IPack } from "./token";
         MatIconModule,
     ],
     providers: [
-        LoadIconsService,
+        IconLoaderSerices,
     ],
     declarations: [],
     exports: [],
@@ -26,7 +26,8 @@ export class LoadIconsModule {
     } */
 }
 export {
-    LoadIconsService,
+    IconLoaderSerices,
+    IconLoaderSerices as LoadIconsService, // TODO: remover uso depreciado
     IPack,
-    CI_ICON_PACK,   
+    CI_ICON_PACK,
 }

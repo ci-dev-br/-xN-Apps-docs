@@ -4,7 +4,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { CI_ICON_PACK, IPack } from "./token";
 
 @Injectable()
-export class LoadIconsService {
+export class IconLoaderSerices {
     constructor(
         private readonly sz?: DomSanitizer,
         private readonly registry?: MatIconRegistry,
@@ -21,35 +21,3 @@ export class LoadIconsService {
         })
     }
 }
-/**
-agenda
-anotacoes
-cadastros
-carteira
-codex
-dev-tools
-dynamic
-estudos
-files
-financeiro
-formularios
-fotos
-gerencial
-icones
-imersao
-infra
-instalacao
-journal
-low-code
-mail
-mensagens
-organizacao
-perfil
-produtos
-projetos
-seo
-threejs
-tradutor
-treinamento
-vendas
- */
