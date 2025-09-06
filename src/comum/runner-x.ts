@@ -3,9 +3,8 @@ import { get as https_get, } from 'https';
 import { get as http_get } from 'http';
 import { CloudflareIntegration } from '../integration/cloudflare.integration';
 import { ChildProcessWithoutNullStreams, Serializable, spawn } from 'node:child_process';
-const url = process.env.PUBLIC_GATEWAY_API;
-const { cwd, env } = require('process');
-
+// const url = process.env.PUBLIC_GATEWAY_API;
+// const { cwd, env } = require('process');
 export interface RunnerTask {
     name: string;
     type: string;
@@ -13,7 +12,6 @@ export interface RunnerTask {
     cwd: string;
     process?: ChildProcessWithoutNullStreams;
 }
-
 /***
  * RunnerX, orquestra as execuções dos processos iniciais e resolve rotas e 
  * acesso para as aplicações interna e externo a rede para os projetos 
@@ -88,6 +86,13 @@ export abstract class RunnerX {
     }
     private taskDataHandler(message: any, task: RunnerTask) {
         console.log('[task]', message.toString());
+        this.listeners['message'].forEach(cb => {
+            try {
+                cb(message.toString());
+            } catch (error) {
+                console.trace(error);
+            }
+        })
     }
     private taskCloseHandler(code: number | null, task: RunnerTask) {
         console.log('Closed', code);
@@ -101,5 +106,12 @@ export abstract class RunnerX {
         task.process?.on('error', error => this.taskErrorHandler(error, task))
         task.process?.stdout.on('data', message => this.taskDataHandler(message, task))
         task.process?.on('close', code => this.taskCloseHandler(code, task))
+    }
+    private listeners: { [name: string]: ((event: any) => void)[] } = {};
+    addEventLitener(eventName: string, callBack: ((event: any) => void)) {
+        this.listeners[eventName] = [
+            ...(this.listeners[eventName] || []),
+            callBack
+        ];
     }
 } 
