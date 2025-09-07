@@ -5,33 +5,12 @@
     </div>
     <form [formGroup]="form" (ngSubmit)="confirmar()">
         <h1>Inscrever-se</h1>
-        <!--  <mat-form-field appearance="outline">
-            <mat-label>Identificação</mat-label>
-            <input matInput type="text" placeholder="Nome para acesso" formControlName="identificacao">
-        </mat-form-field> -->
-        <!-- <mat-form-field appearance="outline">
-            <mat-label>Nome Completo</mat-label>
-            <input matInput type="text" placeholder="Nome Completo" formControlName="fullName">
-        </mat-form-field> -->
-        <!--  <mat-form-field appearance="outline">
-            <mat-label>Apelido</mat-label>
-            <input matInput type="text" placeholder="Apelido" formControlName="surname">
-        </mat-form-field> -->
         <mat-form-field appearance="outline">
             <mat-label>E-mail</mat-label>
             <input matInput type="text" formControlName="email">
         </mat-form-field>
-        <!-- <small>ou</small> -->
-        <!-- <mat-form-field appearance="outline">
-            <mat-label>Celular (SMS)</mat-label>
-            <input matInput type="text" mask="(00) 0000-0000-0" formControlName="phone">
-        </mat-form-field> -->
-        <!--  <mat-form-field appearance="outline">
-            <mat-label>Senha para acesso</mat-label>
-            <input matInput type="password" formControlName="password">
-        </mat-form-field> -->
-        <!-- <mat-checkbox>Vincular conta a uma Pessoa Física ou Jurídica</mat-checkbox> -->
-        <!-- <mat-checkbox>Receber anúncios de parceiros de acordo com minhas preferências</mat-checkbox> -->
+        <small>Posteriormente você poderá preencher outras informações do seu cadastro.</small>
+        <mat-checkbox>Autorizo o envio de e-mail para validar meu cadastro.</mat-checkbox>
         <button [disabled]="form.invalid" mat-raised-button type="submit" color="accent">Inscrever-se</button>
         <small style="margin-top: 12px;">
             Já possui conta ci.dev.br ? <a routerLink="/acessar" href="/acessar">Acessar</a>
@@ -40,8 +19,11 @@
 
 </header>
 <footer>
-
     <div class="assinatura">
         ci.dev.br {{year}}. Todos os direitos reservados.
+    </div>
+
+    <div class="privacy">
+        Políticas e Termos
     </div>
 </footer>
