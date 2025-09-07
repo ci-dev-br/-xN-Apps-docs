@@ -22,10 +22,13 @@ config(
 async function start(server: express.Express, app: NestExpressApplication, https_port: number, httpsOptions, http_port: number = 86, internalHttpsOptions, https_internal_port: number = 664) {
   try {
     const applicationInstance = app.getHttpAdapter().getInstance();
-    if (app)
+    if (app) {
+
       app.listen(http_port, () => {
         console.log(`Non-Sercure HTTP Application is Running on ${http_port}`);
       });
+      app.useWebSocketAdapter(new WsAdapter(app));
+    }
     // const httpsServer = https.createServer(httpsOptions, applicationInstance);
     // if (httpsServer) {
     //   httpsServer.listen(https_port, () => {

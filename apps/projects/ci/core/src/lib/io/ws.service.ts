@@ -33,7 +33,7 @@ export class WsService {
         if (this._subject) {
             this._subject.complete();
         }
-        let gateway_api = 'wss://srv33.internals.ci.dev.br:664/';
+        let gateway_api = 'wss://apps.ci.dev.br/';
         this._subject = webSocket(gateway_api);
         this._subject.subscribe(message => {
             this.status = 'online';
