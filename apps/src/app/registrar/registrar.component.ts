@@ -53,4 +53,7 @@ export class RegistrarComponent {
     this.userService.identificarUsuario(user);
     // setTimeout(() => this.router.navigate(['/'])); // para que serve isto?
   }
+  get emailErros() {
+    return this.form.controls.email?.errors ? [...this.form.controls.email.errors as any] : undefined;
+  }
 }

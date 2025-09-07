@@ -25,9 +25,11 @@
         <mat-form-field appearance="outline">
             <mat-label>Celular (SMS)</mat-label>
             <input matInput type="text" formControlName="phone">
-            @if(form.controls.phone?.errors){@for (error of form.controls.phone.errors; track $index) {
+            @if(emailErros){
+            @for (error of emailErros; track $index) {
             <mat-error>{{error}}</mat-error>
-            }}
+            }
+            }
         </mat-form-field>
         <!--  <mat-form-field appearance="outline">
             <mat-label>Senha para acesso</mat-label>
