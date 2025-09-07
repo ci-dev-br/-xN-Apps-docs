@@ -56,7 +56,7 @@ const service_process = spawn('node',
         '--debug'
     ],
     {
-        cwd: __dirname + '/../server',
+        cwd: 'C:/projetos/br.dev.ci.apps/server',
         env: {
             NODE_OPTIONS: '--openssl-legacy-provider'
         }

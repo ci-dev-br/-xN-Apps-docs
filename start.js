@@ -1,3 +1,18 @@
+const __error = console.error;
+const __log = console.log;
+const __trace = console.trace;
+function d() {
+    return `[${(new Date()).toLocaleTimeString()}]`;
+}
+console.error = (...arg) => { __error(d(), ...arg); }
+console.log = (...arg) => { __log(d(), ...arg); }
+console.trace = (...arg) => {
+    __trace(d(), ...arg.map(x => {
+        if (x instanceof Buffer)
+            return x.toString('utf8');
+        return x;
+    }));
+}
 const { CiRunner } = require('./dist/ci-runner');
 /**
  * mem - objeto de memória para armazenar informações temporárias

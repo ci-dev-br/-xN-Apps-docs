@@ -1,5 +1,13 @@
 const Service = require('node-windows').Service;
-// Create a new service object
+const __error = console.error;
+const __log = console.log;
+const __trace = console.trace;
+function d() {
+  return `[${(new Date()).toLocaleTimeString()}]`;
+}
+console.error = (...arg) => { __error(d(), ...arg); }
+console.log = (...arg) => { __log(d(), ...arg); }
+console.trace = (...arg) => { __trace(d(), ...arg); }
 var svc = new Service({
   name: 'br.dev.ci.Apps',
   description: 'Web Apps Cloud Services',

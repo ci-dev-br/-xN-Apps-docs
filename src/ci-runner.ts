@@ -1,11 +1,13 @@
 require('dotenv').config();
+import { join } from "node:path";
 import { RunnerX } from "./comum/runner-x";
 export class CiRunner extends RunnerX {
     constructor() {
         super();
+
         this.addTask({
-            command: 'nest start --watch --debug',
-            cwd: __dirname + '/../server',
+            command: 'node node_modules/@nestjs/cli/bin/nest.js start --watch --debug',
+            cwd: join(__dirname, '..', 'server'),
             name: 'Apps',
             type: 'nest'
         });

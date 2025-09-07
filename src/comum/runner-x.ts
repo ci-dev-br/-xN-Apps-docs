@@ -77,13 +77,17 @@ export abstract class RunnerX {
         console.error('[Falha ao executar tarefa]', error);
         console.trace('Falha ao executar tarefa', error);
     }
+    private defaultHandler(error: any, eventName: string, task: RunnerTask) {
+        console.log(`[Retorno ${eventName}]`, error);
+        console.trace((error.toString() || error));
+    }
     private taskDataHandler(message: any, task: RunnerTask) {
-        console.log('[task]', message.toString());
+        console.log('[task]', (message.toString() || message));
         this.listeners['message'].forEach(cb => {
             try {
                 cb(message.toString());
             } catch (error) {
-                console.trace(error);
+                console.trace((error.toString() || error));
             }
         })
     }
@@ -100,12 +104,20 @@ export abstract class RunnerX {
                 env: process.env,
                 shell: true
             });
+            task.process?.on('disconnect', error => this.defaultHandler(error, 'disconnect', task))
+            task.process?.on('spawn', error => this.defaultHandler(error, 'spawn', task))
             task.process?.on('error', error => this.taskErrorHandler(error, task))
             task.process?.stdout.on('data', message => this.taskDataHandler(message, task))
             task.process?.on('close', code => this.taskCloseHandler(code, task))
+            console.log(task);
+            if (task.process) {
+                task.process.stderr.on('data', (chunk) => {
+                    this.defaultHandler(chunk, 'chunk', task);
+                })
+            }
         } catch (error) {
             console.error('[Falha ao iniciar Tarefa]', error);
-            console.trace(error);
+            console.trace((error.toString() || error));
         }
     }
     private listeners: { [name: string]: ((event: any) => void)[] } = {};
