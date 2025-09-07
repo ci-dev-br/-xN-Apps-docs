@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             this.message.setText("Identificando números disponíveis");
         }
         try {
-            adicionarGateway("https://srv33.internals.ci.dev.br:664/", "wss://srv33.internals.ci.dev.br:664/");
+            adicionarGateway("https://apps.ci.dev.br/", "wss://apps.ci.dev.br/");
         }catch(Exception ex){
             this.message.setText("Falha ao conectar");
         }
