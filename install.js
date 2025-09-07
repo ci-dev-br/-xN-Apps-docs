@@ -1,3 +1,4 @@
+const { join } = require('path');
 const Service = require('node-windows').Service;
 const __error = console.error;
 const __log = console.log;
@@ -11,7 +12,7 @@ console.trace = (...arg) => { __trace(d(), ...arg); }
 var svc = new Service({
   name: 'br.dev.ci.Apps',
   description: 'Web Apps Cloud Services',
-  script: __dirname + '/start.js',
+  script: join(__dirname, 'start.js'),
   nodeOptions: [
     '--harmony',
     '--max_old_space_size=4096'

@@ -59,6 +59,8 @@ export abstract class RunnerX {
     }
     // @RequestStatusHandler(530) /// TODO: Implementar decorator para assinar retorno de códido de erro
     private async cloudFlareTunnelInactiveHandler() {
+        console.log('[Configurando Tunel com CloudFlare]')
+        console.log(`status-token: ${!!process.env.CF_TOKEN}`)
         const cloudflare_integration = new CloudflareIntegration({
             token: process.env.CF_TOKEN
         });
@@ -79,7 +81,7 @@ export abstract class RunnerX {
     }
     private defaultHandler(error: any, eventName: string, task: RunnerTask) {
         console.log(`[Retorno ${eventName}]`, error);
-        console.trace((error.toString() || error));
+        console.trace(error);
     }
     private taskDataHandler(message: any, task: RunnerTask) {
         console.log('[task]', (message.toString() || message));
@@ -87,7 +89,7 @@ export abstract class RunnerX {
             try {
                 cb(message.toString());
             } catch (error) {
-                console.trace((error.toString() || error));
+                console.trace(error);
             }
         })
     }
@@ -109,15 +111,23 @@ export abstract class RunnerX {
             task.process?.on('error', error => this.taskErrorHandler(error, task))
             task.process?.stdout.on('data', message => this.taskDataHandler(message, task))
             task.process?.on('close', code => this.taskCloseHandler(code, task))
-            console.log(task);
             if (task.process) {
                 task.process.stderr.on('data', (chunk) => {
                     this.defaultHandler(chunk, 'chunk', task);
                 })
+                task.process.stderr.on('error', (chunk) => {
+                    this.defaultHandler(chunk, 'error', task);
+                })
+                task.process.stderr.on('readable', (chunk) => {
+                    this.defaultHandler(chunk, 'readable', task);
+                })
+                task.process.stderr.on('resume', (chunk) => {
+                    this.defaultHandler(chunk, 'resume', task);
+                })
             }
         } catch (error) {
             console.error('[Falha ao iniciar Tarefa]', error);
-            console.trace((error.toString() || error));
+            console.trace(error);
         }
     }
     private listeners: { [name: string]: ((event: any) => void)[] } = {};

@@ -4,7 +4,6 @@ import { RunnerX } from "./comum/runner-x";
 export class CiRunner extends RunnerX {
     constructor() {
         super();
-
         this.addTask({
             command: 'node node_modules/@nestjs/cli/bin/nest.js start --watch --debug',
             cwd: join(__dirname, '..', 'server'),
