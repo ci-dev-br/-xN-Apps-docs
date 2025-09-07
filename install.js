@@ -16,7 +16,7 @@ var svc = new Service({
     '--harmony',
     '--max_old_space_size=4096'
   ],
-  // allowServiceLogon: true,
+  allowServiceLogon: process.env.ServicesAllowServiceLogon || undefined,
 });
 svc.on('uninstall', function () {
   console.log('Uninstall complete.');
