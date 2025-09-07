@@ -3,8 +3,6 @@ import { get as https_get, } from 'https';
 import { get as http_get } from 'http';
 import { CloudflareIntegration } from '../integration/cloudflare.integration';
 import { ChildProcessWithoutNullStreams, Serializable, spawn } from 'node:child_process';
-// const url = process.env.PUBLIC_GATEWAY_API;
-// const { cwd, env } = require('process');
 export interface RunnerTask {
     name: string;
     type: string;
@@ -20,22 +18,11 @@ export interface RunnerTask {
 export abstract class RunnerX {
     errorCodeListners = {
         530: ((...arg) => this.cloudFlareTunnelInactiveHandler()),
-        200: ((...arg) => console.log('[ok]')),
+        200: ((...arg) => console.log('[Online]')),
+        default: ((...arg) => console.trace('[O que fazer?]', arg)),
     }
     constructor() {
         console.log('[ci.dev.br] Iniciando serviços...');
-        if (process.env.VERIFY_ACCEESS_ON_INITIAL) {
-            const rotas_verificacao
-                = JSON.parse(process.env.VERIFY_ACCEESS_ON_INITIAL);
-            if (Array.isArray(rotas_verificacao))
-                rotas_verificacao.forEach(rota => {
-                    try {
-                        this.adicionarVerificacaoRota(rota);
-                    } catch (error) {
-                        console.error('Falha')
-                    }
-                })
-        }
     }
     protected async adicionarVerificacaoRota(url: string, replayTimeout = (60000)) {
         console.log(`[ verificando rota ]`);
@@ -50,21 +37,25 @@ export abstract class RunnerX {
                     .on('error', e => this.errorHandler(e));
 
         } catch (error) {
-            console.error('Falha')
+            console.error('[Falha na verificação de Rotas de Acesso]', error);
+            console.trace(error);
         }
-
         setTimeout(() => this.adicionarVerificacaoRota(url, replayTimeout), replayTimeout);
     }
     private async incomingMessageHandler(res: IncomingMessage) {
         try {
             if (res.statusCode && this.errorCodeListners[res.statusCode])
                 (this.errorCodeListners[res.statusCode])(res);
+            else
+                (this.errorCodeListners.default)(res);
         } catch (error) {
-            console.error('falha ao receber a mensagem')
+            console.error('[falha ao receber a mensagem]', error);
+            console.trace(error);
         }
     }
     private async errorHandler(error: Error) {
         console.error('Falha ao conectar', error);
+        console.trace(error);
     }
     // @RequestStatusHandler(530) /// TODO: Implementar decorator para assinar retorno de códido de erro
     private async cloudFlareTunnelInactiveHandler() {
@@ -78,11 +69,13 @@ export abstract class RunnerX {
         try {
             this.runTask(task);
         } catch (error) {
-            console.error('Falha ao executar tarefa', error);
+            console.error('[Falha ao Iniciar ao Adicinar tarefa]', error);
+            console.trace('[Falha ao Iniciar ao Adicinar tarefa]', error);
         }
     }
     private taskErrorHandler(error: Error, task: RunnerTask) {
-        console.error('Falha ao executar tarefa', error);
+        console.error('[Falha ao executar tarefa]', error);
+        console.trace('Falha ao executar tarefa', error);
     }
     private taskDataHandler(message: any, task: RunnerTask) {
         console.log('[task]', message.toString());
@@ -95,17 +88,25 @@ export abstract class RunnerX {
         })
     }
     private taskCloseHandler(code: number | null, task: RunnerTask) {
-        console.log('Closed', code);
+        console.log('[closed]', code);
+        setTimeout(() => {
+            this.runTask(task);
+        }, 3000);
     }
     private runTask(task: RunnerTask) {
-        task.process = spawn(task.command, {
-            cwd: task.cwd,
-            env: process.env,
-            shell: true
-        });
-        task.process?.on('error', error => this.taskErrorHandler(error, task))
-        task.process?.stdout.on('data', message => this.taskDataHandler(message, task))
-        task.process?.on('close', code => this.taskCloseHandler(code, task))
+        try {
+            task.process = spawn(task.command, {
+                cwd: task.cwd,
+                env: process.env,
+                shell: true
+            });
+            task.process?.on('error', error => this.taskErrorHandler(error, task))
+            task.process?.stdout.on('data', message => this.taskDataHandler(message, task))
+            task.process?.on('close', code => this.taskCloseHandler(code, task))
+        } catch (error) {
+            console.error(error);
+            console.trace(error);
+        }
     }
     private listeners: { [name: string]: ((event: any) => void)[] } = {};
     addEventLitener(eventName: string, callBack: ((event: any) => void)) {
