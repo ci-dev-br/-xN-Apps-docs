@@ -1,44 +1,46 @@
 <header>
+    <div class="destaque">
+        <img class="logo" src="logo-colorida.svg" alt="">
+        <p>Todos seus <a href="/sobre/acessos">acessos</a>, uma conta. </p>
+    </div>
     <form [formGroup]="form" (ngSubmit)="confirmar()">
-        <h1>Criar conta</h1>
-        <h3>ci.dev.br</h3>
-        <p>Crie sua conta ci.dev.br para acessar nossos serviços.
-        </p>
-        <mat-form-field>
+        <h1>Inscrever-se</h1>
+        <!--  <mat-form-field appearance="outline">
             <mat-label>Identificação</mat-label>
             <input matInput type="text" placeholder="Nome para acesso" formControlName="identificacao">
-        </mat-form-field>
-        <mat-form-field>
+        </mat-form-field> -->
+        <!-- <mat-form-field appearance="outline">
             <mat-label>Nome Completo</mat-label>
             <input matInput type="text" placeholder="Nome Completo" formControlName="fullName">
-        </mat-form-field>
-        <mat-form-field>
+        </mat-form-field> -->
+        <!--  <mat-form-field appearance="outline">
             <mat-label>Apelido</mat-label>
             <input matInput type="text" placeholder="Apelido" formControlName="surname">
-        </mat-form-field>
-        <mat-form-field>
+        </mat-form-field> -->
+        <mat-form-field appearance="outline">
             <mat-label>E-mail</mat-label>
             <input matInput type="text" formControlName="email">
         </mat-form-field>
-        <mat-form-field>
-            <mat-label>Celular</mat-label>
+        <!-- <small>ou</small> -->
+        <mat-form-field appearance="outline">
+            <mat-label>Celular (SMS)</mat-label>
             <input matInput type="text" formControlName="phone">
+            @if(form.controls.phone?.errors){@for (error of form.controls.phone.errors; track $index) {
+            <mat-error>{{error}}</mat-error>
+            }}
         </mat-form-field>
-        <mat-form-field>
+        <!--  <mat-form-field appearance="outline">
             <mat-label>Senha para acesso</mat-label>
             <input matInput type="password" formControlName="password">
-        </mat-form-field>
+        </mat-form-field> -->
         <mat-checkbox>Vincular conta a uma Pessoa Física ou Jurídica</mat-checkbox>
         <mat-checkbox>Receber anúncios de parceiros de acordo com minhas preferências</mat-checkbox>
-        <button mat-raised-button type="submit">Criar conta</button>
+        <button [disabled]="form.invalid" mat-raised-button type="submit" color="accent">Inscrever-se</button>
         <small style="margin-top: 12px;">
             Já possui conta ci.dev.br ? <a routerLink="/acessar" href="/acessar">Acessar</a>
         </small>
     </form>
-    <div class="destaque">
-        <img class="logo" src="logo-colorida.svg" alt="">
-        <p>Acesse todos os espaços ci.dev.br com uma única. </p>
-    </div>
+
 </header>
 <footer>
 

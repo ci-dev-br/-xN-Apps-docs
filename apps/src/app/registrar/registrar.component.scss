@@ -2,11 +2,14 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    justify-content: stretch;
 
     //  text-align: center;
     height: 100vh;
     overflow-x: hidden;
     overflow-y: auto;
+    background: white;
+    color: black;
 }
 
 
@@ -20,10 +23,13 @@ form {
     flex-direction: column;
     align-items: stretch;
     width: 350px;
-    background: rgba(200, 50, 50, .77);
-    color: white;
+    // background: rgba(200, 50, 50, .77);
+    // color: white;
     padding: 40px 24px;
     border-radius: 6px;
+    background: black;
+    color: white;
+
 }
 
 
@@ -40,12 +46,10 @@ form {
 }
 
 header {
-
+    justify-self: center;
+    align-self: center;
 
     width: 100%;
-    // background: url('/ui-ux-representations-with-tablet.jpg')
-    /* rgba(0, 0, 0, .88) */
-    // ;
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -71,8 +75,8 @@ footer {
     flex-direction: column;
     padding: 24px;
 
-    color: white;
-    background: rgba(0, 0, 0, .99);
+    // color: white;
+    // background: rgba(0, 0, 0, .99);
 
     .assinatura {
         font-weight: 100;

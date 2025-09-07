@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -25,13 +25,16 @@ import { AuthModule, UserService } from '@ci/auth';
   styleUrl: './registrar.component.scss'
 })
 export class RegistrarComponent {
-  form: FormGroup = this.fb.group({
-    identificacao: [, Validators.required],
-    email: [, Validators.required],
-    phone: [, Validators.required],
-    password: [, Validators.required],
-    fullName: [, Validators.required],
-    surname: [, Validators.required],
+  form = this.fb.group<{
+    email: any,
+    phone: any
+  }>({
+    email: [, [Validators.required, Validators.email]],
+    phone: [, [Validators.required]],
+    // identificacao: [, Validators.required],
+    // password: [, Validators.required],
+    // fullName: [, Validators.required],
+    // surname: [, Validators.required],
   });
   constructor(
     private readonly fb: FormBuilder,
@@ -46,7 +49,7 @@ export class RegistrarComponent {
 
   async confirmar() {
     if (!this.validar()) return this.form.markAllAsTouched();
-    const user = await lastValueFrom(this.authService.registrar({ body: { ...this.form.getRawValue() } }));
+    const user = await lastValueFrom(this.authService.registrar({ body: { ...(this.form.getRawValue() as any) } }));
     this.userService.identificarUsuario(user);
     // setTimeout(() => this.router.navigate(['/'])); // para que serve isto?
   }
