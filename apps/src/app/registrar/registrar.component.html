@@ -24,19 +24,14 @@
         <!-- <small>ou</small> -->
         <mat-form-field appearance="outline">
             <mat-label>Celular (SMS)</mat-label>
-            <input matInput type="text" formControlName="phone">
-            @if(emailErros){
-            @for (error of emailErros; track $index) {
-            <mat-error>{{error}}</mat-error>
-            }
-            }
+            <input matInput type="text" ngxMask="(00) 0000-0000" formControlName="phone">
         </mat-form-field>
         <!--  <mat-form-field appearance="outline">
             <mat-label>Senha para acesso</mat-label>
             <input matInput type="password" formControlName="password">
         </mat-form-field> -->
-        <mat-checkbox>Vincular conta a uma Pessoa Física ou Jurídica</mat-checkbox>
-        <mat-checkbox>Receber anúncios de parceiros de acordo com minhas preferências</mat-checkbox>
+        <!-- <mat-checkbox>Vincular conta a uma Pessoa Física ou Jurídica</mat-checkbox> -->
+        <!-- <mat-checkbox>Receber anúncios de parceiros de acordo com minhas preferências</mat-checkbox> -->
         <button [disabled]="form.invalid" mat-raised-button type="submit" color="accent">Inscrever-se</button>
         <small style="margin-top: 12px;">
             Já possui conta ci.dev.br ? <a routerLink="/acessar" href="/acessar">Acessar</a>

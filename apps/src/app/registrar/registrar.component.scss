@@ -23,12 +23,22 @@ form {
     flex-direction: column;
     align-items: stretch;
     width: 350px;
-    // background: rgba(200, 50, 50, .77);
-    // color: white;
-    padding: 40px 24px;
+    padding: 12px;
     border-radius: 6px;
-    background: black;
-    color: white;
+    box-shadow: 0px 1px 2px 2px rgba(0, 0, 0, .2);
+
+    ::ng-deep {
+
+        mat-form-field,
+        mat-checkbox {
+
+            &,
+            * {
+                color: black !important;
+            }
+        }
+
+    }
 
 }
 

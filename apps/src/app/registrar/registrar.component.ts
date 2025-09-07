@@ -8,6 +8,7 @@ import { Router, RouterModule } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { AuthService } from '@ci/portal-api';
 import { AuthModule, UserService } from '@ci/auth';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'ci-registrar',
@@ -19,7 +20,9 @@ import { AuthModule, UserService } from '@ci/auth';
     MatCheckboxModule,
     RouterModule,
     AuthModule,
+    NgxMaskDirective,
   ],
+  providers: [provideNgxMask()],
   standalone: true,
   templateUrl: './registrar.component.html',
   styleUrl: './registrar.component.scss'
@@ -52,8 +55,5 @@ export class RegistrarComponent {
     const user = await lastValueFrom(this.authService.registrar({ body: { ...(this.form.getRawValue() as any) } }));
     this.userService.identificarUsuario(user);
     // setTimeout(() => this.router.navigate(['/'])); // para que serve isto?
-  }
-  get emailErros() {
-    return this.form.controls.email?.errors ? [...this.form.controls.email.errors as any] : undefined;
   }
 }
