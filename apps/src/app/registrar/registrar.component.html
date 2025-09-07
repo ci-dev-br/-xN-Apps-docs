@@ -1,7 +1,7 @@
 <header>
     <div class="destaque">
         <img class="logo" src="logo-colorida.svg" alt="">
-        <p>Todos seus <a href="/sobre/acessos">acessos</a>, uma conta. </p>
+        <p>Crie aplicativos incríveis. </p>
     </div>
     <form [formGroup]="form" (ngSubmit)="confirmar()">
         <h1>Inscrever-se</h1>
@@ -22,10 +22,10 @@
             <input matInput type="text" formControlName="email">
         </mat-form-field>
         <!-- <small>ou</small> -->
-        <mat-form-field appearance="outline">
+        <!-- <mat-form-field appearance="outline">
             <mat-label>Celular (SMS)</mat-label>
-            <input matInput type="text" ngxMask="(00) 0000-0000" formControlName="phone">
-        </mat-form-field>
+            <input matInput type="text" mask="(00) 0000-0000-0" formControlName="phone">
+        </mat-form-field> -->
         <!--  <mat-form-field appearance="outline">
             <mat-label>Senha para acesso</mat-label>
             <input matInput type="password" formControlName="password">

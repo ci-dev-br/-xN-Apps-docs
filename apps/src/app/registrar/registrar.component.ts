@@ -30,10 +30,10 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 export class RegistrarComponent {
   form = this.fb.group<{
     email: any,
-    phone: any
+    // phone: any
   }>({
     email: [, [Validators.required, Validators.email]],
-    phone: [, [Validators.required]],
+    // phone: [, [Validators.required]],
     // identificacao: [, Validators.required],
     // password: [, Validators.required],
     // fullName: [, Validators.required],
