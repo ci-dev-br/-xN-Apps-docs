@@ -104,7 +104,7 @@ export abstract class RunnerX {
             task.process?.stdout.on('data', message => this.taskDataHandler(message, task))
             task.process?.on('close', code => this.taskCloseHandler(code, task))
         } catch (error) {
-            console.error(error);
+            console.error('[Falha ao iniciar Tarefa]', error);
             console.trace(error);
         }
     }
