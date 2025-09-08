@@ -11,12 +11,14 @@ import { jwtConstants } from './constants';
 import { IS_PUBLIC_KEY } from './decorators/public.decorator';
 import { ROLE_KEY } from './decorators/role.decorator';
 import { CredencialService } from './service/credencial.service';
+import { UserService } from './auth.module';
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,
     private credencial: CredencialService,
+    private readonly userService: UserService,
   ) { }
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -44,12 +46,12 @@ export class AuthGuard implements CanActivate {
       // so that we can access it in our route handlers
       // console.log('ROLE', role)
       // console.log('PAYLOAD', payload)
-      request['user'] = { id: payload.id };
       request['chaveAcesso'] = payload.chaveAcesso;
       let chave_acesso_local = await this.credencial.obterChaveAcessoPorId(payload.chaveAcesso);
       if (!chave_acesso_local || (!chave_acesso_local.alive)) {
         throw new UnauthorizedException('Acesso revogado, favor autenticar novamente.');
       }
+      request['user'] = await this.userService.findById(payload.id);
       if (!!role) {
         if (!payload || !payload.roles.includes(role)) throw new UnauthorizedException('Acesso negado. Não corresponde ao nível de acesso necessário.');
       }

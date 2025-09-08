@@ -1,5 +1,6 @@
 import { Equal, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, IsNull, Repository } from "typeorm";
 import { FullAuditedEntity, SnapshotService } from ".";
+import { User } from "@ci/auth/models/user.entity";
 
 export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
     constructor(
@@ -54,11 +55,22 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
         return await this._repo.save(___internal_data);
         /// }
     }
-    async obterLista(options?: { skip?: number, take?: number, where?: FindOptionsWhere<E>[] | FindOptionsWhere<E>, relations?: FindOptionsRelations<E> | FindOptionsRelationByString, orderBy?: any }, request?: any) {
+    async obterLista(options?: {
+        skip?: number,
+        take?: number,
+        where?: FindOptionsWhere<E>[] | FindOptionsWhere<E>,
+        relations?: FindOptionsRelations<E> | FindOptionsRelationByString,
+        orderBy?: any
+    }, request?: { user: User }) {
         let _where: FindOptionsWhere<E>[] | FindOptionsWhere<E> = options.where || {};
         if (_where)
             (Array.isArray(_where) ? _where : [_where]).forEach((w: any) => {
-                w.createdBy = { identifiedUser: Equal(request.user.id) };
+                w.createdBy = [{ identifiedUser: Equal(request.user.id) }];
+                if (request?.user?.roles?.indexOf('ADMIN') > -1) {
+                    w.createdBy.push(
+                        { identifiedUser: IsNull() }
+                    )
+                }
                 w.deleted = IsNull();
                 if (!Array.isArray(_where)) _where = [_where];
                 if (Array.isArray(_where)) _where.push({ ...w, deleted: IsNull() })
@@ -66,11 +78,17 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
         return ((await this._repo.find({ skip: options.skip, take: options.take, where: _where, relations: { createdBy: true, lastModifiedBy: true, ...options.relations } as any, order: options.orderBy })) || [])
     }
     async getByInternalId(internalId: string, request?: any) {
-        let where: FindOptionsWhere<E> = {
+        let where/* : FindOptionsWhere<E> */ = [{
             internalId: Equal(internalId),
             deleted: IsNull(),
             createdBy: { identifiedUser: Equal(request.user.id) }
-        } as FindOptionsWhere<E>;
+        },
+        {
+            internalId: Equal(internalId),
+            deleted: IsNull(),
+            createdBy: IsNull()
+        }
+        ] as FindOptionsWhere<E>[];
         return await this._repo.findOne({ where, relations: { createdBy: true, lastModifiedBy: true } as any })
     }
     /**
