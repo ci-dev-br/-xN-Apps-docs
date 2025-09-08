@@ -3,11 +3,11 @@
     "compilerOptions": {
         "rootDir": "./src",
         "outDir": "./dist",
-        "sourceMap": true,
         "target": "es2021",
         "incremental": true,
         "module": "commonjs",
         "strictNullChecks": true,
+        "inlineSourceMap": true
     },
     "include": [
         "src/**/*"
