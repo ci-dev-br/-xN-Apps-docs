@@ -12,6 +12,7 @@ import { IS_PUBLIC_KEY } from './decorators/public.decorator';
 import { ROLE_KEY } from './decorators/role.decorator';
 import { CredencialService } from './service/credencial.service';
 import { UserService } from './auth.module';
+import { IncomingMessage } from 'http';
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
@@ -33,7 +34,7 @@ export class AuthGuard implements CanActivate {
       // 💡 See this condition
       return true;
     }
-    const request = context.switchToHttp().getRequest();
+    const request: IncomingMessage = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
       throw new UnauthorizedException();
@@ -60,7 +61,7 @@ export class AuthGuard implements CanActivate {
     }
     return true;
   }
-  private extractTokenFromHeader(request: Request): string | undefined {
+  private extractTokenFromHeader(request: IncomingMessage): string | undefined {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
   }

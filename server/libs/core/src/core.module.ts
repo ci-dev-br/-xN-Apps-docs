@@ -9,6 +9,7 @@ import { EventsGateway } from "./events/events.gateway";
 import { BusService } from "./events/bus.service";
 import { EventsLocalGateway } from "./events/events-local.gateway";
 import { Log } from "./logger/log.entity";
+import { CredentialAccess } from "./audt/credential-access.entity";
 // import { t } from "./i18n/t";
 // import { IAutentication } from "./auth/auth";
 // import { Status } from "./system/model/status";
@@ -17,7 +18,9 @@ export const CoreEntities = [
     Snapshot,
     Credential,
     Log,
+    CredentialAccess,
 ]
+const OrmModule = TypeOrmModule.forFeature(CoreEntities);
 /**
  * Módulo Core
  *  
@@ -25,7 +28,7 @@ export const CoreEntities = [
  */
 @Module({
     imports: [
-        TypeOrmModule.forFeature(CoreEntities)
+        OrmModule,
     ],
     providers: [
         SnapshotService,
@@ -36,6 +39,7 @@ export const CoreEntities = [
         SnapshotService,
         AudtService,
         BusService,
+        OrmModule,
     ]
 })
 export class CoreModule {

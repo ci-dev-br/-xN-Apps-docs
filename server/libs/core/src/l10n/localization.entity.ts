@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany } fr
 import { Credential } from "../audt";
 import { FullAuditedEntity } from "@ci/manager";
 import { ApiProperty } from "@nestjs/swagger";
-import { schema } from "../shema";
+import { schema } from "../schema";
 @Entity({
     schema
 })

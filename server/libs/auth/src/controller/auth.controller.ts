@@ -83,7 +83,8 @@ export class AuthController {
   })
   async Acessar(
     @Ip() ip,
-    @Body() payload: AcessoPayload
+    @Body() payload: AcessoPayload,
+    @Request() req: Request,
   ) {
     try {
       if (payload?.chaveAcesso && payload?.password) {
@@ -150,7 +151,8 @@ export class AuthController {
         }
       } else {
         const chaveAcesso = (await this.credencialService.solicitarCredencial({
-          ip: ip
+          ip: ip,
+          headers: req.headers
         }));
         return {
           chaveAcesso: chaveAcesso.id,

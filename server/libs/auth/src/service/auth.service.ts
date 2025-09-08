@@ -59,6 +59,7 @@ export class AuthService {
             const chaveAcesso = (await this.credencial.solicitarCredencial({
                 ip: ip,
                 identificacao_inicial: chave_acesso.identifiedUser,  //  old_authorization.id
+                headers: req.headers
             }));
             chaveAcesso.alive = true;
             chaveAcesso.valid = false;

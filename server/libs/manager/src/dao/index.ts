@@ -16,7 +16,7 @@ export abstract class AuditedEntity {
         nullable: true,
         required: false,
         type: 'Date',
-        readOnly: true
+        readOnly: true,
     })
     @CreateDateColumn()
     createdAt?: Date;
@@ -32,7 +32,8 @@ export abstract class AuditedEntity {
     @ApiProperty({
         title: 'Ultima modificação em',
         nullable: true,
-        required: false, type: 'Date', readOnly: true
+        required: false, type: 'Date',
+        readOnly: true,
     })
     @UpdateDateColumn()
     lastModifiedAt?: Date;

@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGenerat
 import { Application } from "@ci/manager";
 import { ApiProperty } from "@nestjs/swagger";
 // import { User } from "@ci/auth/models/user.entity";
-import { schema } from "../shema";
+import { schema } from "../schema";
 @Entity(
     {
         schema
