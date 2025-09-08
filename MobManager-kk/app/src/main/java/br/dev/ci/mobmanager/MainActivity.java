@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             this.message.setText("Identificando números disponíveis");
         }*/
         try {
-            adicionarGateway("https://srv33.internals.ci.dev.br:664/", "wss://srv33.internals.ci.dev.br:664/");
+            adicionarGateway("http://192.168.0.5:86/", "ws://192.168.0.5:86/");
         }catch(Exception ex){
             this.message.setText("Falha ao conectar");
         }
@@ -101,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
                     subscriptionManager = (SubscriptionManager) getApplicationContext().getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
                 }
                 if(subscriptionManager != null) {
-                    List<SubscriptionInfo> subscriptionInfoList = null;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                   //  List<SubscriptionInfo> subscriptionInfoList = null;
+                    /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
                             // TODO: Consider calling
                             //    ActivityCompat#requestPermissions
@@ -114,30 +114,33 @@ public class MainActivity extends AppCompatActivity {
                             return;
                         }
                         subscriptionInfoList = subscriptionManager.getActiveSubscriptionInfoList();
-                    }
+                    }*/
                     this.phones = ManagerClient.getInstance().getPhones();
                     if (phones == null) {
                         phones = new ArrayList<>();
-                    }
-                    for (SubscriptionInfo subscriptionInfo : subscriptionInfoList) {
-                          TelephonyManager telephonyManager = ((TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE)).createForSubscriptionId();
-                        PhoneNumber phone_number = new PhoneNumber() {{
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                                setNumber(subscriptionInfo.getNumber());
-                            }
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                                setCarrierName(subscriptionInfo.getCarrierName().toString());
-                            }
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                                setSubscriptionId(subscriptionInfo.getSubscriptionId());
-                            }
-                        }};
-                        telephonyManager.getLine1Number();
-                        this.phones.add(phone_number);
-                    }
+                    }/*
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        for (SubscriptionInfo subscriptionInfo : subscriptionInfoList) {
+                            TelephonyManager telephonyManager = ((TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE)).createForSubscriptionId(subscriptionInfo.getSubscriptionId());
+                            PhoneNumber phone_number = new PhoneNumber() {{
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                                    setNumber(subscriptionInfo.getNumber());
+                                }
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                                    setCarrierName(subscriptionInfo.getCarrierName().toString());
+                                }
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                                    setSubscriptionId(subscriptionInfo.getSubscriptionId());
+                                }
+                            }};
+                            telephonyManager.getLine1Number();
+                            this.phones.add(phone_number);
+                        }
+                    }*/
                     ManagerClient.getInstance().setPhones(this.phones);
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 // throw new RuntimeException(e);
             }
         }

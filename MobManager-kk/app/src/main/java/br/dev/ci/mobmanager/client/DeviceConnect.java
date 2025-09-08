@@ -1,6 +1,7 @@
 package br.dev.ci.mobmanager.client;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -12,6 +13,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
 
 import br.dev.ci.mobmanager.MainActivity;
 import br.dev.ci.mobmanager.client.model.Device;
@@ -49,6 +57,7 @@ public class DeviceConnect extends AsyncTask<Device, Void, String> {
     }
     private void ConnectDevice(Device device){
         try {
+            System.out.println("[Connect]");
             String response = this.Post(this.url_gateway.getUrl() + "Device/Connect",device, Device.class);
 
             Gson mapper = new Gson();
@@ -66,14 +75,40 @@ public class DeviceConnect extends AsyncTask<Device, Void, String> {
     }
     private WebSocketClientConnection webSocket;
     private void InitializeWebSocket(){
+        WebSocketClientConnection web_socket_ = null;
         try {
             URI websocket_url = new URI(this.url_gateway.getWs());
-            WebSocketClientConnection web_socket = new WebSocketClientConnection(websocket_url, this.url_gateway.getConnect());
-            this.webSocket = web_socket;
-            web_socket.connect();
+            web_socket_ = new WebSocketClientConnection(websocket_url, this.url_gateway.getConnect());
+            this.webSocket = web_socket_;
+            // web_socket_.connectBlocking();
+
+            web_socket_.connect();
+
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            // throw new RuntimeException(e);
         }
+        /*if(web_socket_ != null && web_socket_.getSocket() != null){
+            HostnameVerifier hv = HttpsURLConnection.getDefaultHostnameVerifier();
+            SSLSocket socket = (SSLSocket) web_socket_.getSocket();
+            SSLSession s = socket.getSession();
+            if (!hv.verify("apps.ci.dev.br", s)) {
+                try {
+                    Log.e("Client", "Expected apps.ci.dev.br, found " + s.getPeerPrincipal());
+                } catch (SSLPeerUnverifiedException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    throw new SSLHandshakeException("Expected websocket.org, found " + s.getPeerPrincipal());
+                } catch (SSLHandshakeException e) {
+                    throw new RuntimeException(e);
+                } catch (SSLPeerUnverifiedException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                Log.i("Client", "Success");
+            }
+        }*/
     }
     private String Post(String url, Object data, Class data_class){
         URL url_request = null;
@@ -84,7 +119,8 @@ public class DeviceConnect extends AsyncTask<Device, Void, String> {
             try {
                 connection.setRequestMethod("POST");
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
+                // throw new RuntimeException(e);
             }
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/json");

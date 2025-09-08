@@ -83,7 +83,7 @@ public class WebSocketClientConnection extends WebSocketClient {
                             Ping();
                         }
                     },
-                    8000);
+                    60000);
         }
     }
 

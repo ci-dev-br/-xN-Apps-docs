@@ -77,11 +77,6 @@ public class WebSocketClientConnection extends WebSocketClient {
 
     @Override
     public void onError(Exception ex) {
-        try {
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            // throw new RuntimeException(e);
-        }
+        ex.printStackTrace();
     }
 }
