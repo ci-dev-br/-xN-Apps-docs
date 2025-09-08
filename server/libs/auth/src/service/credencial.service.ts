@@ -23,23 +23,27 @@ export class CredencialService {
             headers?: Headers
         },
     ) {
-        let nova_chave = this.credentialRepository.create({
+        let credential = this.credentialRepository.create({
             identifiedUser: partials?.identificacao_inicial,
             createdFromIp: partials?.ip,
             valid: true,
         });
-        let access_info = this.credentialAccessRepository.create({
-            credential: nova_chave,
-            header: partials?.headers ? partials?.headers : undefined
-        });
-        nova_chave = await this.credentialRepository.save(nova_chave);
+        credential = await this.credentialRepository.save(credential);
         try {
-            access_info = await this.credentialAccessRepository.save(access_info);
+            await this.credentialAccessRepository.save(
+                this.credentialAccessRepository.create({
+                    credential: credential,
+                    header: !!partials?.headers ? JSON.parse(JSON.stringify(partials.headers)) : undefined,
+                    cf_pseudo_ipv4: partials?.headers ? partials?.headers['cf-pseudo-ipv4'] : undefined,
+                    cf_connecting_ip: partials?.headers ? partials?.headers['cf-connecting-ip'] : undefined,
+                    x_forwarded_for: partials?.headers ? partials?.headers['x-forwarded-for'] : undefined,
+                }));
         } catch (error) {
+            console.error("Falha ao registrar headers durante credenciamento.");
             console.trace(error);
             console.trace(partials.headers);
         }
-        return nova_chave;
+        return credential;
     }
     async obterChaveAcesso(
         assinatura?: string,
