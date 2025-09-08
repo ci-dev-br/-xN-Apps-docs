@@ -5,6 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { UserService } from "./user.service";
 import { JwtService } from "@nestjs/jwt";
 import { IncomingMessage } from "http";
+import { createHash } from "crypto";
 @Injectable()
 export class CredencialService {
     constructor(
@@ -30,10 +31,18 @@ export class CredencialService {
         });
         credential = await this.credentialRepository.save(credential);
         try {
+            let headers: any = !!partials?.headers ? JSON.parse(JSON.stringify(partials.headers)) : undefined;
+            if (headers) {
+                Object.keys(headers).forEach(p => {
+                    if (typeof headers[p] === 'string' && headers[p].length > 256) {
+                        headers[p] = 'md5:' + createHash('md5').update(String(headers[p])).digest('hex');
+                    }
+                })
+            }
             await this.credentialAccessRepository.save(
                 this.credentialAccessRepository.create({
                     credential: credential,
-                    header: !!partials?.headers ? JSON.parse(JSON.stringify(partials.headers)) : undefined,
+                    header: headers,
                     cf_pseudo_ipv4: partials?.headers ? partials?.headers['cf-pseudo-ipv4'] : undefined,
                     cf_connecting_ip: partials?.headers ? partials?.headers['cf-connecting-ip'] : undefined,
                     x_forwarded_for: partials?.headers ? partials?.headers['x-forwarded-for'] : undefined,

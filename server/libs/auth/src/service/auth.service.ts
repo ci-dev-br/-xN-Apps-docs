@@ -34,8 +34,8 @@ export class AuthService {
         let chave_acesso: Credential = null;
         if ('try' in r && r.try && typeof r.try === 'string') {
             permission = JSON.parse(atob(r.try)).permission;
-            old_authorization = (await this.jwtService.decode(req.headers['authorization'].replace('Bearer', '').trim())) as any;
-            userId = old_authorization.id;
+            old_authorization = (await this.jwtService.decode(req.headers['authorization']?.replace('Bearer', '').trim())) as any;
+            userId = old_authorization?.id;
             // TODO: verificar validade da chave de acesso 
             try {
                 const chave_acesso_token = old_authorization.chaveAcesso;
@@ -47,10 +47,14 @@ export class AuthService {
                 } else {
                     confiance += 'o';
                 }
+                if (!chave_acesso?.refreshToken) {
+                    confiance += 'e';
+                    throw new UnauthorizedException('Não é possível atualizar sua credencial. Identifique-se novamente.');
+                }
             } catch (error) {
                 console.trace(error);
                 confiance += 'e';
-                throw new UnauthorizedException('Sem autenticidade.');
+                throw new UnauthorizedException('Sem autenticidade.', error);
             }
         }
         const user = await this.userService.findById(userId);

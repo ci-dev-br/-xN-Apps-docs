@@ -203,10 +203,12 @@ export class DaoService {
         return r;
     }
     async read(data: any) {
+        if (data instanceof Date) return data;
         if (Array.isArray(data)) {
             data.forEach(o => this.read(o));
         } else if (!!data && typeof data === 'object') {
-
+            if (!!data.__readed) return data;
+            data.__readed = true;
             if (Object.getOwnPropertyDescriptor(data, 'toJSON') === undefined) {
                 Object.defineProperty(data, 'toJSON', {
                     value: () => {
@@ -219,16 +221,15 @@ export class DaoService {
                             //         out[p] = data[p] || undefined;
                             //     }
                             // })
-                            const { __confirmation_subject, ...out } = data?.toJSON() || data;
+                            // const { __confirmation_subject, ...out } = data?.toJSON() || data;
+                            const { __confirmation_subject, ...out } = JSON.parse(JSON.stringify(data));
                             return { ...out };
                         } catch (error) {
                             console.error(error);
                         }
                     }
                 });
-                // this.read()
             }
-
             try {
                 Object.keys(data).forEach(p => {
                     try {
