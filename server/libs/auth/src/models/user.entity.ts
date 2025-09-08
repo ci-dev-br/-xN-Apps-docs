@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude } from "class-transformer";
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Policy } from "./policy.entity";
 import { Tenant } from "@ci/tenant/models/tenant.entity";
 // import { Photo } from "@ci/storage/models/photo.entity";
@@ -55,4 +55,6 @@ export class User {
     // @ManyToOne(() => Photo)
     // @JoinColumn()
     // photo?: Photo;
+    @ApiProperty({ required: false, nullable: true }) @CreateDateColumn() createdAt?: Date;
+    @ApiProperty({ required: false, nullable: true }) @UpdateDateColumn() updatedAt?: Date;
 }
