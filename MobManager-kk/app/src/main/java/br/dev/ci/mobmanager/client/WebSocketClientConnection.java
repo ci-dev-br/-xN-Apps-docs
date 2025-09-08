@@ -1,5 +1,8 @@
 package br.dev.ci.mobmanager.client;
 
+import android.os.Looper;
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 import org.java_websocket.client.WebSocketClient;
@@ -10,6 +13,7 @@ import java.util.Date;
 
 import br.dev.ci.mobmanager.client.model.EventData;
 import br.dev.ci.mobmanager.client.model.EventPayload;
+import br.dev.ci.mobmanager.client.model.WSMessage;
 
 public class WebSocketClientConnection extends WebSocketClient {
     private final DeviceConnect deviceConnect;
@@ -40,6 +44,7 @@ public class WebSocketClientConnection extends WebSocketClient {
             EventPayload payload =  new EventPayload(){{
                 setEvent("events");
                 setData(new EventData(){{
+                    setClient(this.getMac());
                     setMomentum((new Date()).getTime());
                     setLastPing(ping);
                     setType("ping");
@@ -52,16 +57,39 @@ public class WebSocketClientConnection extends WebSocketClient {
         }
     }
 
+    private void PongHandler(){
+        // TODO: pong handler action
+    }
+
     @Override
     public void onMessage(String message) {
-        /// Definir rotina de recepção das mensagens do web socket.
         try {
-
+            Gson mapper = new Gson();
+            if(message.indexOf("\"type\":\"pong\"") > -1){
+                WSMessage retorno = mapper.fromJson(message, WSMessage.class);
+                if(retorno.getType().equals("pong")){
+                    Log.i("tag", "Pong");
+                    this.PongHandler();
+                    if(retorno.getWait() != null){
+                        new android.os.Handler(Looper.getMainLooper()).postDelayed(
+                                new Runnable() {
+                                    public void run() {
+                                        Ping();
+                                    }
+                                },
+                                retorno.getWait().intValue());
+                    }
+                }
+            }else if(message.indexOf("\"type\":\"events\"") > -1){
+                EventPayload retorno = mapper.fromJson(message, EventPayload.class);
+                if(retorno.getData().getType() == "requestSendSMSMessage"){
+                    if(retorno.getData().getContentText() != null && retorno.getData().getTo() != null ){
+                    }
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            // throw new RuntimeException(e);
-
-
+            Ping();
         }
     }
 
