@@ -149,7 +149,16 @@ export class EventsGateway implements OnGatewayInit {
             });
             ws.addEventListener('close', (ev) => {
                 this.clients.delete((ws as any).id)
-                console.log(ev);
+                // console.log(ev);
+                setTimeout(() => {
+                    this.clients.forEach(client => {
+                        if (client.ws.OPEN) {
+                            client.ws.send(JSON.stringify({
+                                clients: this.clients.size
+                            }))
+                        }
+                    })
+                })
             });
         }
         else {
@@ -157,6 +166,15 @@ export class EventsGateway implements OnGatewayInit {
             c.returned = true;
             if (momentum !== undefined) c.momentum = momentum;
         }
+        setTimeout(() => {
+            this.clients.forEach(client => {
+                if (client.ws.OPEN) {
+                    client.ws.send(JSON.stringify({
+                        clients: this.clients.size
+                    }))
+                }
+            })
+        })
     }
     @SubscribeMessage('Changes')
     async Changes(
