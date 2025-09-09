@@ -65,6 +65,7 @@ export class EventsGateway implements OnGatewayInit {
         try {
             if (data.mac) {
                 this.bus.registry(client, data.mac);
+                (client as any).mac = data.mac;
             }
         } catch (error) {
             console.error(error);
@@ -87,7 +88,6 @@ export class EventsGateway implements OnGatewayInit {
     @SubscribeMessage('identity')
     async identity(@ConnectedSocket() client: any, @MessageBody() data: any) {
         if (!this.sing(data)) return;
-        // console.log(data);
         client.id = data.client;
         return data;
     }
@@ -114,8 +114,8 @@ export class EventsGateway implements OnGatewayInit {
             name: string,
         }) {
         if (!this.sing(data)) return;
-
         this.addEventListner(data.name, (result) => {
+            // (client as any).mac = result.device_mac_assign;
             client.send(JSON.stringify({
                 event: 'notice',
                 data: result
@@ -149,7 +149,6 @@ export class EventsGateway implements OnGatewayInit {
             });
             ws.addEventListener('close', (ev) => {
                 this.clients.delete((ws as any).id)
-                // console.log(ev);
                 setTimeout(() => {
                     this.clients.forEach(client => {
                         if (client.ws.OPEN) {
@@ -170,7 +169,10 @@ export class EventsGateway implements OnGatewayInit {
             this.clients.forEach(client => {
                 if (client.ws.OPEN) {
                     client.ws.send(JSON.stringify({
-                        clients: this.clients.size
+                        clients: this.clients.size,
+                        dispositivos: [...this.clients.values()].map(v => {
+                            return (v.ws as any).mac
+                        }).filter(x => !!x)
                     }))
                 }
             })
