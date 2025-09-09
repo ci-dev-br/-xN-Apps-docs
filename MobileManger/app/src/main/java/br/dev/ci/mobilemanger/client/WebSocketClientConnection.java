@@ -2,6 +2,7 @@ package br.dev.ci.mobilemanger.client;
 
 import android.os.AsyncTask;
 import android.os.Looper;
+import android.telephony.SmsManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -113,7 +114,13 @@ public class WebSocketClientConnection extends WebSocketClient {
             }else if(message.indexOf("\"type\":\"events\"") > -1){
                 EventPayload retorno = mapper.fromJson(message, EventPayload.class);
                 if(retorno.getData().getType() == "requestSendSMSMessage"){
-                    if(retorno.getData().getContentText() != null && retorno.getData().getTo() != null ){
+                    try {
+                        if(retorno.getData().getContentText() != null && retorno.getData().getTo() != null ){
+                            SmsManager smsManager=SmsManager.getDefault();
+                            smsManager.sendTextMessage(retorno.getData().getTo(),null,retorno.getData().getContentText(),null,null);
+                        }
+                    }catch(Exception ex){
+                        ex.printStackTrace();
                     }
                 }
             }
@@ -126,7 +133,7 @@ public class WebSocketClientConnection extends WebSocketClient {
     @Override
     public void onClose(int code, String reason, boolean remote) {
         try {
-
+            this.connect();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -135,7 +142,7 @@ public class WebSocketClientConnection extends WebSocketClient {
     @Override
     public void onError(Exception ex) {
         try {
-
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
