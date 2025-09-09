@@ -187,7 +187,9 @@ export class EventsGateway implements OnGatewayInit {
                     client.ws.send(JSON.stringify({
                         clients: this.clients.size,
                         dispositivos: [...this.clients.values()].map(v => {
-                            return (v.ws as any).mac
+                            let m = (v.ws as any).mac;
+                            if (typeof m === 'string') m = createHash('md5').update(m).digest('hex');
+                            return m
                         }).filter(x => !!x)
                     }))
                 }
