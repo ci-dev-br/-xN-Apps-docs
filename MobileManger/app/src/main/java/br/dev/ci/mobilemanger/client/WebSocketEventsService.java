@@ -1,37 +1,77 @@
 package br.dev.ci.mobilemanger.client;
-import android.content.Context;
 
-import androidx.annotation.NonNull;
-import androidx.work.Worker;
-import androidx.work.WorkerParameters;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.Service;
+import android.content.Intent;
+import android.os.Build;
+import android.os.IBinder;
 
-import br.dev.ci.mobilemanger.client.model.GatewayConnection;
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
-public class Events  extends Worker{
-    private GatewayConnection gateway;
-    public Events(@NonNull Context context, @NonNull WorkerParameters workerParams) {
-        super(context, workerParams);
-        try {
-            this.gateway=ManagerClient.getInstance().getGateways().get(0);
-        } catch (Exception e) {
-            e.printStackTrace();
+import org.java_websocket.client.WebSocketClient;
+
+import java.net.NetworkInterface;
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+
+import br.dev.ci.mobilemanger.R;
+
+public class WebSocketEventsService extends Service {
+    private WebSocketClient webSocketClient;
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    private void startWebSocket() {
+        URI uri = URI.create("wss://apps.ci.dev.br");
+        webSocketClient = new WebSocketClientConnection(uri, null);
+        webSocketClient.connect();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // 4. Inicie o WebSocket
+        startWebSocket();
+
+        // O sistema tentará recriar o serviço se ele for encerrado.
+        return START_STICKY;
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (webSocketClient != null) {
+            webSocketClient.close();
         }
     }
 
-    @NonNull
-    @Override
-    public Result doWork() {
-        // Seu código para a tarefa em segundo plano.
-        // Por exemplo, fazer upload de dados para um servidor.
+    private String getMacAddr() {
         try {
-            if(this.gateway != null && this.gateway.initialized()){
-            }else{
-                this.gateway.tryConnect();
+            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface nif : all) {
+                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
+                byte[] macBytes = nif.getHardwareAddress();
+                if (macBytes == null) {
+                    return "";
+                }
+                StringBuilder res1 = new StringBuilder();
+                for (byte b : macBytes) {
+                    res1.append(Integer.toHexString(b & 0xFF) + ":");
+                }
+                if (res1.length() > 0) {
+                    res1.deleteCharAt(res1.length() - 1);
+                }
+                return res1.toString();
             }
-            return Result.success();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Result.failure();
+        } catch (Exception ex) {
+            //handle exception
         }
+        return "";
     }
 }

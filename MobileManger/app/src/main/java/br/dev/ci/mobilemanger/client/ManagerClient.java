@@ -43,13 +43,16 @@ public class ManagerClient {
     public AsyncTask<Device, Void, String> getTask() {
         return this.task;
     }
-    public AsyncTask<Device, Void, String> setupNewGateway(String url, String ws) {
-        GatewayConnection gateway_connection = new GatewayConnection(){{
-            if(url != null) setUrl(url);
-            if(ws != null) setWs(ws);
-            if(mainActivity != null) setMainActivity(mainActivity);
-        }};
+    public GatewayConnection prepare(String url, String ws){
+        GatewayConnection gateway_connection = new GatewayConnection();
+        gateway_connection.setUrl(url);
+        gateway_connection.setWs(ws);
         this.getGateways().add(gateway_connection);
+        return gateway_connection;
+    }
+    public AsyncTask<Device, Void, String> setupNewGateway(String url, String ws) {
+        GatewayConnection gateway_connection = prepare(url,ws);
+
         this.task = this.connect(gateway_connection);
         return this.task;
     }
@@ -57,7 +60,7 @@ public class ManagerClient {
         if(gateways == null) gateways = new ArrayList<>();
         return this.gateways;
     }
-    private AsyncTask<Device, Void, String> connect(GatewayConnection connection){
+    public AsyncTask<Device, Void, String> connect(GatewayConnection connection){
         DeviceConnect device_connection = new DeviceConnect(connection,this.getMainActivity());
         connections.add(device_connection);
 

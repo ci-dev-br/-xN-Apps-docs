@@ -2,6 +2,7 @@ package br.dev.ci.mobilemanger;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -15,13 +16,19 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import br.dev.ci.mobilemanger.client.WebSocketEventsService;
 import br.dev.ci.mobilemanger.client.ManagerClient;
 import br.dev.ci.mobilemanger.client.model.Device;
 import br.dev.ci.mobilemanger.client.model.PhoneNumber;
@@ -64,7 +71,14 @@ public class MainActivity extends AppCompatActivity {
             this.message.setText("Identificando números disponíveis");
         }
         try {
-            adicionarGateway("https://apps.ci.dev.br/", "wss://apps.ci.dev.br/");
+            // old: adicionarGateway("https://apps.ci.dev.br/", "wss://apps.ci.dev.br/");
+            // TODO: alterar para worker events em segundo plano
+            ManagerClient.getInstance().setupNewGateway("https://apps.ci.dev.br/", "wss://apps.ci.dev.br/");
+
+            // No método onCreate() ou em um listener de clique de botão da sua Activity
+            /// Intent serviceIntent = new Intent(this, WebSocketEventsService.class);
+            /// ContextCompat.startForegroundService(this, serviceIntent);
+
         }catch(Exception ex){
             this.message.setText("Falha ao conectar");
         }

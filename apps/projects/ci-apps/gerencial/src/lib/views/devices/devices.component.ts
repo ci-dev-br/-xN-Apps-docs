@@ -143,8 +143,9 @@ export interface DeviceItem {
     }
     async testarEnvioSMS() {
         this.events.Emit({
-            event: 'SMS.Send',
+            event: 'events',
             data: {
+                type: 'SMS.Send',
                 to: '41998914179',
                 content: 'Boa noite, seu cadastro foi autorizado com sucesso!'
             }

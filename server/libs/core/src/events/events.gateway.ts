@@ -52,6 +52,22 @@ export class EventsGateway implements OnGatewayInit {
     }
     private eventsListeners: { [eventType: string]: (client: WebSocket, data: any) => void } = {
         ping: (client, data) => this.pingHandler(client, data),
+        'SMS.Send': (client, data) => {
+            this.clients.forEach(c => {
+                if ('mac' in c.ws && c.ws.OPEN) {
+                    c.ws.send(JSON.stringify({
+                        event: 'events',
+                        data: {
+                            type: "requestSendSMSMessage",
+                            momentum: Date.now(),
+                            to: data.to,
+                            contentText: data.content
+                        }
+                    }));
+                }
+
+            })
+        }
     };
     pings = [];
     globalPing = 0;
