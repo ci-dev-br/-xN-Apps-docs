@@ -9,7 +9,7 @@ import { Footer } from "./footer.component";
     declarations: [
         Footer,
     ],
-    exports: [Footer,]
+    exports: [Footer]
 })
 export class FooterModule { }
 export {
