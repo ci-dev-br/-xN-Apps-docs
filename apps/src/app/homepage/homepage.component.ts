@@ -3,7 +3,7 @@ import { Component, ComponentRef, ElementRef, OnInit, Renderer2 } from '@angular
 import { MatCardModule } from '@angular/material/card';
 import { Router, RouterModule } from '@angular/router';
 import { AuthModule, UserService } from '@ci/auth';
-import { NavbarModule } from '@ci/components';
+import { FooterModule, NavbarModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { Application, User } from '@ci/portal-api';
 import { MatButtonModule } from "@angular/material/button";
@@ -30,6 +30,7 @@ const XD = <T>(a: T) => {
         MatIconModule,
         MatDialogModule,
         MatFormFieldModule,
+        FooterModule,
     ],
     templateUrl: './homepage.component.html',
     standalone: true,

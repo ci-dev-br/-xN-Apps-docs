@@ -18,15 +18,18 @@ header {
 }
 
 .container {
-    ///  max-width: 80vw;
     display: flex;
-    // width: 900px;
     flex-direction: column;
     align-self: center;
-    // padding: 24px;
-    // flex: auto;
+    padding: 48px;
+    flex: auto;
     height: auto;
+}
 
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
 }
 
 footer {
@@ -85,7 +88,7 @@ footer {
     overflow: auto;
 }
 
-.container:has(.sidebar) {
+.wrapper:has(.sidebar) {
     display: flex;
     flex-direction: row;
     flex: auto;

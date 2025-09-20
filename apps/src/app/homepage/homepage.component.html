@@ -2,10 +2,9 @@
 <div class="page--wrapper" [style.background-image]="`url(${bg})`">
     @if(!!(userService.user |async)){
     <!-- 
-            Visualização quando autenticado
-        
-        -->
-    <div class="container"><!-- [class.apps]="!!(userService.user |async)" -->
+        Visualização quando autenticado
+    -->
+    <div class="wrapper">
         <div class="sidebar">
             <button mat-raised-button color="primary" routerLink="/meus-apps">Meus Apps</button>
             @if(categorias){@for (item of categorias; track $index) {
@@ -17,7 +16,12 @@
             </div>
         </div>
         <div class="container">
-
+            <h1>Utilize o Apps para criar aplicativos incríveis e eficientes que auxiliam suas operações no dia-a-dia.
+            </h1>
+            <p>
+                Gerencie conexões, aplicativos e código-fonte. Integre de forma simples. Configure seu ambiente de
+                desenvolvimento em poucos passos.
+            </p>
         </div>
         <div class="apps">
             @for (item of apps; track $index) {
@@ -39,10 +43,4 @@
     </header>
     }
 </div>
-<footer>
-    <div class="assinatura" style="flex:auto; display:flex; flex-direction: row;">
-        Powered by <a href="https://ci.dev.br" target="_blank">ci.dev.br</a>
-        <span style="flex:auto"></span>
-        <a href="/termos-de-uso">Termos de Uso e Privacidade</a>
-    </div>
-</footer>
+<x-footer />
