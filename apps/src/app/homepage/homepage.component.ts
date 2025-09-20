@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ComponentRef, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import { Component, ComponentRef, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { Router, RouterModule } from '@angular/router';
 import { AuthModule, UserService } from '@ci/auth';
@@ -49,9 +49,12 @@ export class HomepageComponent implements OnInit {
     protected bgs = [
         '/bg-apps-290847.jpg'
     ]
+    @ViewChild('video') protected video?: ElementRef<HTMLVideoElement>;
     ngOnInit(): void {
         this.mountStyle();
-        this.userService.user.subscribe(user => this.updateUser(user))
+        this.userService.user.subscribe(user => this.updateUser(user));
+        // Set the playback speed to 0.5 (half speed)
+        if (this.video?.nativeElement) this.video.nativeElement.playbackRate = 0.1;
     }
     protected bg?: string;
     async mountStyle() {

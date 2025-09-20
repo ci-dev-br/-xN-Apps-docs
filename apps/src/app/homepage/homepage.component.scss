@@ -5,7 +5,7 @@
     //  text-align: center;
     height: 100vh;
     overflow: auto;
-
+    position: relative;
 }
 
 .logo {
@@ -32,19 +32,6 @@ header {
     align-self: center;
 }
 
-footer {
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    flex: 0;
-    color: white;
-    background: rgba(0, 0, 0, .99);
-
-    .assinatura {
-        font-weight: 100;
-        font-size: 10px;
-    }
-}
 
 .apps {
     display: flex;
@@ -86,9 +73,11 @@ footer {
 
     flex: auto;
     overflow: auto;
+
+    position: relative;
 }
 
-.wrapper:has(.sidebar) {
+.qra:has(.sidebar) {
     display: flex;
     flex-direction: row;
     flex: auto;
@@ -133,4 +122,29 @@ footer {
             color: #999;
         }
     }
+}
+
+video {
+    position: absolute;
+    inset: 0;
+    object-fit: cover;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    user-select: none;
+    overflow: hidden;
+    pointer-events: none;
+
+    &::-webkit-media-controls {
+        display: none !important;
+    }
+
+    &::-moz-media-controls {
+        display: none !important;
+    }
+
+    &::-ms-media-controls {
+        display: none !important;
+    }
+
 }

@@ -1,5 +1,8 @@
 <ci-navbar></ci-navbar>
 <div class="page--wrapper" [style.background-image]="`url(${bg})`">
+    <video #video loop controls="false" autoplay>
+        <source src="bg.mp4" type="video/mp4">
+    </video>
     @if(!!(userService.user |async)){
     <!-- 
         Visualização quando autenticado
