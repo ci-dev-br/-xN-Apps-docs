@@ -9,6 +9,7 @@ import { lastValueFrom } from 'rxjs';
 import { AuthService } from '@ci/portal-api';
 import { AuthModule, UserService } from '@ci/auth';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+import { FooterModule } from '@ci/components';
 
 @Component({
   selector: 'ci-registrar',
@@ -21,6 +22,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     RouterModule,
     AuthModule,
     NgxMaskDirective,
+    FooterModule,
   ],
   providers: [provideNgxMask()],
   standalone: true,
@@ -30,14 +32,8 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 export class RegistrarComponent {
   form = this.fb.group<{
     email: any,
-    // phone: any
   }>({
     email: [, [Validators.required, Validators.email]],
-    // phone: [, [Validators.required]],
-    // identificacao: [, Validators.required],
-    // password: [, Validators.required],
-    // fullName: [, Validators.required],
-    // surname: [, Validators.required],
   });
   constructor(
     private readonly fb: FormBuilder,
@@ -50,10 +46,9 @@ export class RegistrarComponent {
     return this.form.valid;
   }
 
-  async confirmar() {
+  async next() {
     if (!this.validar()) return this.form.markAllAsTouched();
     const user = await lastValueFrom(this.authService.registrar({ body: { ...(this.form.getRawValue() as any) } }));
     this.userService.identificarUsuario(user);
-    // setTimeout(() => this.router.navigate(['/'])); // para que serve isto?
   }
 }

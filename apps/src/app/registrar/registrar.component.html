@@ -1,29 +1,23 @@
 <header>
-    <div class="destaque">
+    <figure class="destaque">
         <img class="logo" src="logo-colorida.svg" alt="">
-        <p>Crie aplicativos incríveis. </p>
-    </div>
-    <form [formGroup]="form" (ngSubmit)="confirmar()">
-        <h1>Inscrever-se</h1>
+        <small>Crie aplicativos incríveis. </small>
+    </figure>
+    <form [formGroup]="form" (ngSubmit)="next()">
+        <h1>Inscrição</h1>
+        <p>Realize sua inscrição na plataforma para começar a criar. Forneça seu e-mail ou celular de contato
+            profissional para iniciar seu cadastro.</p>
         <mat-form-field appearance="outline">
-            <mat-label>E-mail</mat-label>
-            <input matInput type="text" formControlName="email">
+            <mat-label>E-mail ou Telefone celular</mat-label>
+            <input matInput type="text" placeholder="Meu e-mail para contato" formControlName="email">
         </mat-form-field>
-        <small>Posteriormente você poderá preencher outras informações do seu cadastro.</small>
+        <p>Posteriormente, você poderá complementar seu cadastro com outras informações.</p>
         <mat-checkbox>Autorizo o envio de e-mail para validar meu cadastro.</mat-checkbox>
-        <button [disabled]="form.invalid" mat-raised-button type="submit" color="accent">Inscrever-se</button>
+        <button [disabled]="form.invalid" mat-raised-button type="submit" color="accent">Pronto!</button>
         <small style="margin-top: 12px;">
-            Já possui conta ci.dev.br ? <a routerLink="/acessar" href="/acessar">Acessar</a>
+            Caso já possua uma conta ci.dev.br, <a routerLink="/acessar" href="/acessar">acesse aqui.</a>
         </small>
     </form>
 
 </header>
-<footer>
-    <div class="assinatura">
-        ci.dev.br {{year}}. Todos os direitos reservados.
-    </div>
-
-    <div class="privacy">
-        Políticas e Termos
-    </div>
-</footer>
+<x-footer></x-footer>

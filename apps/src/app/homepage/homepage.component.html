@@ -1,12 +1,10 @@
+<video #video loop controls="false" autoplay>
+    <source src="bg.mp4" type="video/mp4">
+</video>
 <ci-navbar></ci-navbar>
-<div class="page--wrapper" [style.background-image]="`url(${bg})`">
-    <video #video loop controls="false" autoplay>
-        <source src="bg.mp4" type="video/mp4">
-    </video>
-    @if(!!(userService.user |async)){
-    <!-- 
-        Visualização quando autenticado
-    -->
+<div class="page--wrapper">
+    @if(!!(userService.user | async)){
+
     <div class="wrapper">
         <div class="sidebar">
             <button mat-raised-button color="primary" routerLink="/meus-apps">Meus Apps</button>
@@ -47,3 +45,8 @@
     }
 </div>
 <x-footer />
+<!-- 
+<video #video loop controls="false" autoplay>
+    <source src="bg.mp4" type="video/mp4">
+</video>
+-->
