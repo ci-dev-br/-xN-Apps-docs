@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FullAuditedEntity, Snapshot } from ".";
+import { FullAuditedEntity, Snapshot } from "./entities";
 import { Repository } from "typeorm";
 import { createHash } from "crypto";
 import { Request } from "express";

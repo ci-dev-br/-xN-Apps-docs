@@ -19,6 +19,9 @@ import { UserCredentialService } from "./service/user-credential.service";
 import { CoreModule } from "@ci/core/core.module";
 import { TwoFactorAuthenticationService } from "./service/two-factors.service";
 import { NotificacaoModule } from "@ci/notification";
+import { Register } from "./models/register.entity";
+import { RegisterService } from "./service/register.service";
+import { RegisterController } from "./controller/register.controller";
 //import { StorageModule } from "@ci/storage";
 // import { StorageModule } from "@ci/storage";
 export const AuthEntities = [
@@ -27,6 +30,7 @@ export const AuthEntities = [
     // Credential,
     DeviceAuthenticated,
     AccessCredential,
+    Register,
 ];
 @Module({
     imports: [
@@ -42,10 +46,12 @@ export const AuthEntities = [
         TenantModule,
         CoreModule,
         NotificacaoModule,
+
         // StorageModule,
     ],
     controllers: [
         AuthController,
+        RegisterController,
     ],
     providers: [
         UserService,
@@ -53,6 +59,7 @@ export const AuthEntities = [
         CredencialService,
         UserCredentialService,
         RefreshTokenStrategy,
+        RegisterService,
         TwoFactorAuthenticationService,
         {
             provide: APP_GUARD,

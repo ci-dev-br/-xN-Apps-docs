@@ -2,7 +2,7 @@ import { Column, Entity, JoinTable, ManyToMany } from "typeorm";
 import { Application } from "./application.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { schema } from "../noms";
-import { FullAuditedEntity } from "../dao";
+import { FullAuditedEntity } from "../dao/entities";
 @Entity({ schema })
 export class Domain extends FullAuditedEntity {
     @ApiProperty({

@@ -26,7 +26,6 @@ import { NavbarComponent } from "./navbar.component";
         MatInputModule,
         MatMenuModule,
         RouterModule,
-        // AuthModule,
     ],
     exports: [
         NavbarComponent,

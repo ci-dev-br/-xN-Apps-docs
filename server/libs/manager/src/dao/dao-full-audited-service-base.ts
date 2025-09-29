@@ -1,5 +1,5 @@
 import { Equal, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, IsNull, Repository } from "typeorm";
-import { FullAuditedEntity, SnapshotService } from ".";
+import { FullAuditedEntity, SnapshotService } from "./entities";
 import { User } from "@ci/auth/models/user.entity";
 
 export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {

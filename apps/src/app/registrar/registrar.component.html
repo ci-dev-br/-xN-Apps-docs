@@ -14,10 +14,9 @@
         <p>Posteriormente, você poderá complementar seu cadastro com outras informações.</p>
         <mat-checkbox>Autorizo o envio de e-mail para validar meu cadastro.</mat-checkbox>
         <button [disabled]="form.invalid" mat-raised-button type="submit" color="accent">Pronto!</button>
-        <small style="margin-top: 12px;">
+        <small style="margin-top: 12px;" [stage]="'initial-registring'">
             Caso já possua uma conta ci.dev.br, <a routerLink="/acessar" href="/acessar">acesse aqui.</a>
         </small>
     </form>
-
 </header>
 <x-footer></x-footer>

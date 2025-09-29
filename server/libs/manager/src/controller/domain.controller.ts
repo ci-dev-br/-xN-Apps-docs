@@ -5,7 +5,7 @@ import { Domain } from "../model/domain.entity";
 import { GetInputDtos } from "../dto";
 import { User } from "@ci/auth/models/user.entity";
 import { FindOptionsWhere } from "typeorm";
-import { SyncPayloadDao } from "../dao";
+import { SyncPayloadDao } from "../dao/entities";
 export class SyncPayloadDaoDomain extends SyncPayloadDao<Domain> {
     @ApiProperty({ type: Domain })
     override data?: Domain;

@@ -1,5 +1,5 @@
 import { FindOptionsRelationByString, FindOptionsRelations } from "typeorm";
-import { GetByInternalIdInputDto, SyncPayloadDao } from ".";
+import { GetByInternalIdInputDto, SyncPayloadDao } from "./entities";
 import { DaoFullAuditedServiceBase } from "./dao-full-audited-service-base";
 import { DaoServiceBase } from "./dao-service-base";
 

@@ -26,7 +26,7 @@ import { ActionModule } from '../action/action.module';
     WindowService,
   ],
   exports: [
-    // WindowComponent,
+    WindowComponent,
   ]
 })
 export class WindowModule { }

@@ -1,6 +1,6 @@
 
 export * from './core.module';
-export * from '../../manager/src/dao';
+export * from '../../manager/src/dao/entities';
 export * from './audt';
 export * from './auth';
 export * from './i18n';

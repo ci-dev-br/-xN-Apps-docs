@@ -1,5 +1,5 @@
 import { DataSource, Equal, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, IsNull, Repository } from "typeorm";
-import { FullAuditedEntity, SnapshotService } from ".";
+import { FullAuditedEntity, SnapshotService } from "./entities";
 // import { UserService } from "@ci/user/service/user.service";
 // import { forwardRef, Inject } from "@nestjs/common";
 

@@ -7,6 +7,7 @@ import { Credential } from '@ci/core';
 import { createHash } from 'crypto';
 import { request } from 'https';
 import { readFileSync } from 'fs';
+import { join } from 'path';
 @Injectable()
 export class UserService {
     constructor(
@@ -22,24 +23,35 @@ export class UserService {
             return user_created;
         })
     }
+    async serdMailTemplate(template_html, message_data?: any) {
+
+    }
     async sendEmailConfirmation(registro: User) {
         return await new Promise<void>((res, rej) => {
             const template_data = {
                 ano: null,
                 logo_base64: null,
             }
+            let data = {
+                ano: (new Date()).getFullYear().toString(),
+                mail_sender_status: 'Você está recebendo e-mails do Apps.ci.dev.br.',
+                nome: registro.fullName,
+                mail_confirmation_link: 'https://apps.ci.dev.br/?unsubscrible=zyx',
+                apelidio: registro.fullName,
+                unsubscrible_link: 'https://apps.ci.dev.br/?unsubscrible=zyx',
+                footer_assinatura: 'ci.dev.br - ci.dev.br especialistas em lançamento de aplicativos sob demanda.',
+                footer_message: 'ci.dev.br - Sediada em Curitiba, Paraná, Brasil.<br/> Apps é ci.dev.br.',
+            };
             let send_mail_request_body = JSON.stringify({
                 x: createHash('sha256').update(process.env.mailer_key + '.' + registro.email.trim() + '.apps.ci.dev.br').digest('hex'),
                 to: registro.email.trim(),
                 from: 'contact@ci.dev.br',
                 subject: 'Confirmação de Cadastro',
-                message: readFileSync(__dirname + '/../templates/mail-template.html').toString('utf-8')
-                    .replaceAll('::ano::', (new Date()).getFullYear().toString())
-                    .replaceAll('::mail_sender_status::', 'Você está recebendo e-mails do Apps.ci.dev.br.')
-                    .replaceAll('::nome::', registro.fullName)
-                    .replaceAll('::mail_confirmation_link::', 'https://xx.app.br/confirmation/')
-                    .replaceAll('::apelidio::', registro.fullName)
-                ,
+                message: (() => {
+                    let template_html = readFileSync(join(__dirname, '/../', 'templates/mail-template.html')).toString('utf-8');
+                    Object.keys(data).forEach(property_name => (template_html = template_html.replaceAll(`{{${property_name}}}`, data[property_name])));
+                    return template_html;
+                })(),
             });
             let req = request({
                 host: 'mailer.xx.app.br',

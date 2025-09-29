@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Snapshot, SnapshotService } from "../../manager/src/dao";
+import { Snapshot, SnapshotService } from "../../manager/src/dao/entities";
 import { AudtService } from "./audt/audt.service";
 import { Credential } from "./audt/credential.entity";
 import { DamnService } from "./damn/damn.service";

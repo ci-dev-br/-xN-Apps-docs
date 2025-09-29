@@ -3,8 +3,29 @@ import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, Ma
 import { Tenant } from "@ci/tenant";
 import { Credential } from "@ci/core";
 import { Exclude } from "class-transformer";
-export abstract class AuditedEntity {
-    @ApiProperty({ nullable: true, required: false, uniqueItems: true, readOnly: true })
+/**
+ * Basic Entity catalog
+ */
+export abstract class BasicIdentifiedEntity {
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        uniqueItems: true,
+        readOnly: true,
+    })
+    @PrimaryGeneratedColumn('uuid')
+    internalId?: string;
+}
+/**
+ * Audited Entity
+ */
+export abstract class AuditedEntity extends BasicIdentifiedEntity {
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        uniqueItems: true,
+        readOnly: true
+    })
     @PrimaryGeneratedColumn('uuid')
     internalId?: string;
     @ApiProperty({ nullable: true, required: false })

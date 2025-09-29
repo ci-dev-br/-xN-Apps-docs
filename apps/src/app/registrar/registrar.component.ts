@@ -1,19 +1,21 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, EventEmitter } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Router, RouterModule } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
-import { AuthService } from '@ci/portal-api';
+import { AuthService, RegisterService } from '@ci/portal-api';
 import { AuthModule, UserService } from '@ci/auth';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { FooterModule } from '@ci/components';
+import { CoreModule, StageModule, StageService } from '@ci/core';
 
 @Component({
   selector: 'ci-registrar',
   imports: [
+    CoreModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
@@ -23,6 +25,7 @@ import { FooterModule } from '@ci/components';
     AuthModule,
     NgxMaskDirective,
     FooterModule,
+    StageModule,
   ],
   providers: [provideNgxMask()],
   standalone: true,
@@ -30,6 +33,16 @@ import { FooterModule } from '@ci/components';
   styleUrl: './registrar.component.scss'
 })
 export class RegistrarComponent {
+  stageOutput = new EventEmitter<string>();
+  private _stage = 'initial-registring';
+  public get stage() {
+    return this._stage;
+  }
+  public set stage(value) {
+    if (this._stage === value) return;
+    this._stage = value;
+    this.stageOutput.emit(value);
+  }
   form = this.fb.group<{
     email: any,
   }>({
@@ -40,15 +53,17 @@ export class RegistrarComponent {
     private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly router: Router,
-  ) { }
-  year = (new Date()).getFullYear();
+    private readonly stages: StageService,
+    private readonly regitrar: RegisterService,
+  ) {
+    stages.host = this;
+  }
   validar() {
     return this.form.valid;
   }
-
   async next() {
     if (!this.validar()) return this.form.markAllAsTouched();
-    const user = await lastValueFrom(this.authService.registrar({ body: { ...(this.form.getRawValue() as any) } }));
-    this.userService.identificarUsuario(user);
+    const register = await lastValueFrom(this.authService.registrar({ body: { ...(this.form.getRawValue() as any) } }));
+    this.userService.identificarUsuario(register);
   }
 }
