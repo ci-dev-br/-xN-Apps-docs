@@ -9,12 +9,12 @@ import { RequestBuilder } from '../../request-builder';
 import { Register } from '../../models/register';
 import { RegistrarInputDto } from '../../models/registrar-input-dto';
 
-export interface RegistrarAuth_1$Params {
+export interface RequestRegisterByFistContact$Params {
       body: RegistrarInputDto
 }
 
-export function registrarAuth_1(http: HttpClient, rootUrl: string, params: RegistrarAuth_1$Params, context?: HttpContext): Observable<StrictHttpResponse<Register>> {
-  const rb = new RequestBuilder(rootUrl, registrarAuth_1.PATH, 'post');
+export function requestRegisterByFistContact(http: HttpClient, rootUrl: string, params: RequestRegisterByFistContact$Params, context?: HttpContext): Observable<StrictHttpResponse<Register>> {
+  const rb = new RequestBuilder(rootUrl, requestRegisterByFistContact.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -29,4 +29,4 @@ export function registrarAuth_1(http: HttpClient, rootUrl: string, params: Regis
   );
 }
 
-registrarAuth_1.PATH = '/Register/requestRegisterByFistContact';
+requestRegisterByFistContact.PATH = '/Register/requestRegisterByFistContact';

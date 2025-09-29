@@ -4,6 +4,7 @@
         <small>Crie aplicativos incríveis. </small>
     </figure>
     <form [formGroup]="form" (ngSubmit)="next()">
+        @if(stage==='initial-registring'){
         <h1>Inscrição</h1>
         <p>Realize sua inscrição na plataforma para começar a criar. Forneça seu e-mail ou celular de contato
             profissional para iniciar seu cadastro.</p>
@@ -12,11 +13,17 @@
             <input matInput type="text" placeholder="Meu e-mail para contato" formControlName="email">
         </mat-form-field>
         <p>Posteriormente, você poderá complementar seu cadastro com outras informações.</p>
-        <mat-checkbox>Autorizo o envio de e-mail para validar meu cadastro.</mat-checkbox>
+        <mat-checkbox formControlName="emailAuthorization">Autorizo o envio de e-mail para validar meu
+            cadastro.</mat-checkbox>
         <button [disabled]="form.invalid" mat-raised-button type="submit" color="accent">Pronto!</button>
         <small style="margin-top: 12px;" [stage]="'initial-registring'">
             Caso já possua uma conta ci.dev.br, <a routerLink="/acessar" href="/acessar">acesse aqui.</a>
         </small>
+        }@else if(stage==='checking_email'){
+            Verifique seu e-mail
+        }@else{
+            Preparando sua conta, isso pode levar até 1 minuto...
+        }
     </form>
 </header>
 <x-footer></x-footer>

@@ -14,6 +14,8 @@ export class RegistrarInputDto {
     password?: string;
     @ApiProperty({ required: false, nullable: true })
     phone?: string;
+    @ApiProperty({ required: false, nullable: true })
+    emailAuthorization: boolean;
 }
 export class AcessoPayload {
     @ApiProperty({ required: false, nullable: true })

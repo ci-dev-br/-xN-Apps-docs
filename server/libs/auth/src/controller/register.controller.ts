@@ -14,7 +14,7 @@ export class RegisterController {
     ) { }
     @Public()
     @Post('requestRegisterByFistContact')
-    @ApiOperation({ operationId: 'RegistrarAuth' })
+    @ApiOperation({ operationId: 'requestRegisterByFistContact' })
     @ApiResponse({ type: Register })
     async requestRegisterByFistContact(
         @Request() req: Request,
@@ -22,7 +22,8 @@ export class RegisterController {
     ) {
         if ((!!input.email || !!input.phone) && !input.identificacao) {
             await this.register.register({
-                mail: input.email
+                mail: input.email,
+                emailAuthorization: input.emailAuthorization
             });
             // TODO: solicitar verificação do e-mail de contato do usuário cadastrante (Cliente ou Desenvolvedor).        
         } else {

@@ -8,4 +8,7 @@ export class Register extends BasicIdentifiedEntity {
     @ApiProperty({ nullable: true, required: false }) @CreateDateColumn({ nullable: true }) createdAt?: Date;
     @ApiProperty({ nullable: true, required: false }) @UpdateDateColumn({ nullable: true }) modifiedAt?: Date;
     @ApiProperty({ nullable: true, required: false }) @DeleteDateColumn({ nullable: true }) deletedAt?: Date;
+    @ApiProperty({ nullable: true, required: false })
+    @Column({ nullable: true })
+    emailAuthorization?: boolean;
 }
