@@ -12,7 +12,6 @@
             color: rgba(0, 0, 0, .75);
         }
 
-
         table {}
 
         td {
@@ -40,26 +39,12 @@
             style="width: 80vw; max-width: 550px; margin: 0 auto; background: white; border-radius: 10px; padding-bottom: 48px; box-shadow: 0 10px 20px -10px rgba(0, 0, 0, .5); margin-bottom: 40px;margin-top: 32px;">
             <tbody>
                 <tr>
-                    <td>
-                        <h1>Queremos lhe dar as boas-vindas,<br />{{apelidio}}</h1>
-                        <h4>Confirme seu e-mail e acesse sua conta</h4>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>
-                            Perfeito! Seu cadastro foi realizado com sucesso!
-                        </p>
-                        <p>Para concluír-mos seu cadastro precisamos que você confirme seu e-mail no link a baixo.</p>
-                        <a href="{{mail_confirmation_link}}">Confirmar e-mail</a>
-                    </td>
+
                 </tr>
             </tbody>
         </table>
         <div class="footer">
-            <small>Este e-mail foi enviado a {{nome}}</small><br>
-            <small>{{mail_sender_status}}</small><br>
-            <a hrefs="">Cancelar Inscrição</a> • <a href="">Ajuda-me</a><br>
+            <a hrefs="">Cancelar Inscrição</a><br>
             <small>© {{ano}} {{footer_assinatura}}
                 {{footer_message}}</small><br>
         </div>
