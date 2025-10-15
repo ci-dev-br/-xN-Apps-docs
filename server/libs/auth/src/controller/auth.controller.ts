@@ -206,7 +206,7 @@ export class AuthController {
   ) {
     try {
       return await this.authService.refreshToken(
-        null, payload.refreshToken, req, ip
+        null, payload?.refreshToken, req, ip
       );
     } catch (error) {
       return {

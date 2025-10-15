@@ -7,4 +7,5 @@ export interface Register {
   internalId?: string | null;
   mail?: string | null;
   modifiedAt?: string | null;
+  phone?: string | null;
 }

@@ -6,11 +6,13 @@ import { RegistrarInputDto } from './dto/dto';
 import { ApiOperation } from '@nestjs/swagger';
 import { RegisterService } from "../service/register.service";
 import { Register } from "../models/register.entity";
+import { MailService } from "@ci/notification/services/mail.service";
 @ApiTags('Register')
 @Controller('Register')
 export class RegisterController {
     constructor(
         private readonly register: RegisterService,
+        private readonly mails: MailService,
     ) { }
     @Public()
     @Post('requestRegisterByFistContact')
@@ -20,12 +22,23 @@ export class RegisterController {
         @Request() req: Request,
         @Body() input?: RegistrarInputDto,
     ) {
+        // req.header('Origin')
         if ((!!input.email || !!input.phone) && !input.identificacao) {
             await this.register.register({
                 mail: input.email,
-                emailAuthorization: input.emailAuthorization
+                emailAuthorization: input.emailAuthorization,
+                phone: input.phone,
+                phoneAuthorization: input.phoneAuthorization,
             });
             // TODO: solicitar verificação do e-mail de contato do usuário cadastrante (Cliente ou Desenvolvedor).        
+            if (!!input.email) {
+                this.mails.requestSendMessageToMail({
+                    template_html: 'bem-vindo',
+                    from: 'apps@ci.dev.br',
+                    to: input.email,
+
+                })
+            }
         } else {
             throw new Error('Erro temporário, tente novamente mais tarde.');
         }

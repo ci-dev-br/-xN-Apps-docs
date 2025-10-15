@@ -4,9 +4,10 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { PhoneNumber } from "../notificacao.module";
 import { BusService } from "@ci/core/events/bus.service";
-export class SMSPaylod {
+export class SendMessagePayload {
     message?: string;
     to?: string;
+    templateHtml?: string;
 }
 @Injectable()
 export class MessageService {
@@ -20,7 +21,7 @@ export class MessageService {
     ) {
         // console.log('[Message Service]');
     }
-    async sendSMS(payload: SMSPaylod) {
+    async sendSMS(payload: SendMessagePayload) {
         const phone_number = await this.phoneNumberRepository.findOne({
             where: {}
         })
@@ -34,6 +35,19 @@ export class MessageService {
         setTimeout(() => {
             this.devileryMessages()
         }, 100);
+    }
+    async sendMail(payload: SendMessagePayload) {
+        const message = this.messageRepository.create({
+            textMessage: payload.message,
+            to: payload.to,
+            htmlMessage: payload.templateHtml,
+            type: 'mail',
+            sent: false,
+        });
+        this.messageRepository.save(message);
+        setTimeout(() => {
+            this.devileryMessages()
+        }, Math.floor(5000 * Math.random()));
     }
     public async devileryMessages() {
         let phones = await this.phoneNumberRepository.find({

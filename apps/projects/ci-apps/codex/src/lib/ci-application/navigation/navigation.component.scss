@@ -1,8 +1,18 @@
 :host {
     flex: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    align-self: stretch;
 }
 
 .bar {
     display: flex;
     flex-direction: row;
+}
+
+mat-tab-nav-panel {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
 }

@@ -38,18 +38,20 @@ export class AuthService {
             userId = old_authorization?.id;
             // TODO: verificar validade da chave de acesso 
             try {
-                const chave_acesso_token = old_authorization.chaveAcesso;
+                const chave_acesso_token = old_authorization?.chaveAcesso;
                 chave_acesso = await this.credencial.obterChaveAcessoPorId(chave_acesso_token);
                 chave_acesso;
-                if (userId !== chave_acesso.identifiedUser) {
-                    userId = chave_acesso.identifiedUser;
-                    confiance += 'v';
-                } else {
-                    confiance += 'o';
-                }
-                if (!chave_acesso?.refreshToken) {
-                    confiance += 'e';
-                    throw new UnauthorizedException('Não é possível atualizar sua credencial. Identifique-se novamente.');
+                if (chave_acesso) {
+                    if (userId !== chave_acesso?.identifiedUser) {
+                        userId = chave_acesso?.identifiedUser;
+                        confiance += 'v';
+                    } else {
+                        confiance += 'o';
+                    }
+                    if (!chave_acesso?.refreshToken) {
+                        confiance += 'e';
+                        throw new UnauthorizedException('Não é possível atualizar sua credencial. Identifique-se novamente.');
+                    }
                 }
             } catch (error) {
                 console.trace(error);

@@ -5,17 +5,21 @@ import { Request, Response } from 'express';
 import { resolve } from 'path';
 import { existsSync } from 'fs';
 import { SitePageService } from '@ci/cms/services/site-page.service';
+import { DomainService } from '@ci/manager';
 @Controller('*')
 export class AppController {
   constructor(
     private readonly appService: CiApplicationService,
     @Optional()
     private readonly sitePage?: SitePageService,
+    @Optional() private readonly domain?: DomainService,
   ) {
   }
   @Get()
   @Public()
   async root(@Req() req: Request, @Res() res: Response) {
+    const hostname = req.hostname;
+    const origin = req.headers.origin;
     if (this.sitePage) {
       try {
         let host: string = this.appService.getHost(req);
@@ -26,6 +30,8 @@ export class AppController {
             res.send(page.content.join());
           }
           return;
+        } else {
+
         }
       } catch (error) {
         console.error(error);

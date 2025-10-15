@@ -1,6 +1,7 @@
 <div>
     <mat-form-field>
-        <input matInput #pesquisaInput type="text" placeholder="Pesquisar" (keydown.enter)="find(pesquisaInput.value)">
+        <mat-label>Procurando por ...</mat-label>
+        <input matInput #pesquisaInput type="text" placeholder="Pesquise por nome ou descrição dos cards" (keydown.enter)="find(pesquisaInput.value)">
     </mat-form-field>
 </div>
 <div class="cards">
