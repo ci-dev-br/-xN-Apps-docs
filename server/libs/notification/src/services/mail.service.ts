@@ -125,7 +125,7 @@ export class MailService {
      * para captura do evento de retorno do usuário. 
      * @param message 
      */
-    public async requestSendMessageToMail(message: {
+    public requestSendMessageToMail(message: {
         template_html?: string,
         message_text?: string,
         to?: string,
@@ -135,11 +135,12 @@ export class MailService {
         from_person?: Pessoa,
         need_feedback?: boolean,
     }) {
-        return await new Promise<void>((res, rej) => {
+        return new Promise<void>((res, rej) => {
             const x_hash = hashMailer(message.to);
             const mail_payload = {
                 x_hash,
                 content_payload: {
+                    from: 'apps@ci.dev.br',
                     to: message.to,
                     subject: message.subject || 'apps.ci.dev.br, sua plataforma de Aplicativos',
                     message_html: message.template_html || message.message_text,
@@ -156,26 +157,19 @@ export class MailService {
                 }
             }, (r) => {
                 r.on('data', (data) => {
-                    console.log(data.toString())
                     let result;
+                    console.log(data.toString());
                     try {
                         result = JSON.parse(data);
                     } catch (error) {
-                        console.error(error);
+                        console.trace(error);
                     }
-                    if (result?.status_code === 0) res();
-                    else rej();
+                    if (result?.status_code === 0)
+                        res(result);
                 });
-                r.on('error', error => {
-                    console.error(error);
-                })
             });
-            try {
-                req.write(JSON.stringify(mail_payload));
-                req.end();
-            } catch (error) {
-                console.error(error);
-            }
+            req.write(JSON.stringify(mail_payload));
+            req.end();
         });
     }
 }  

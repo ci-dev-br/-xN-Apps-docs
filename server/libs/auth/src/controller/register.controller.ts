@@ -4,7 +4,7 @@ import { Public } from "../decorators/public.decorator";
 import { Body, Request } from '@nestjs/common';
 import { RegistrarInputDto } from './dto/dto';
 import { ApiOperation } from '@nestjs/swagger';
-import { RegisterService } from "../service/register.service";
+import { RegisterService, registerToMessagePayload } from "../service/register.service";
 import { Register } from "../models/register.entity";
 import { MailService } from "@ci/notification/services/mail.service";
 @ApiTags('Register')
@@ -24,7 +24,7 @@ export class RegisterController {
     ) {
         // req.header('Origin')
         if ((!!input.email || !!input.phone) && !input.identificacao) {
-            await this.register.register({
+            const register = await this.register.register({
                 mail: input.email,
                 emailAuthorization: input.emailAuthorization,
                 phone: input.phone,
@@ -32,12 +32,19 @@ export class RegisterController {
             });
             // TODO: solicitar verificação do e-mail de contato do usuário cadastrante (Cliente ou Desenvolvedor).        
             if (!!input.email) {
-                this.mails.requestSendMessageToMail({
-                    template_html: 'bem-vindo',
-                    from: 'apps@ci.dev.br',
-                    to: input.email,
-
-                })
+                try {
+                    this.mails.requestSendMessageToMail(
+                        registerToMessagePayload(register)
+                    );
+                } catch (error) {
+                    console.trace(error);
+                }
+                // this.mails.requestSendMessageToMail({
+                //     template_html: 'bem-vindo',
+                //     from: 'apps@ci.dev.br',
+                //     to: input.email,
+                // 
+                // })
             }
         } else {
             throw new Error('Erro temporário, tente novamente mais tarde.');

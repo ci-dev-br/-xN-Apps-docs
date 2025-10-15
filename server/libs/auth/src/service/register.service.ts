@@ -3,10 +3,8 @@ import { Repository } from "typeorm";
 import { Register } from "../models/register.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { MailService } from "@ci/notification/services/mail.service";
-import { readFileSync } from "fs";
-import { join } from "path";
 import { templateHtml } from "@ci/core/template/load-template.fn";
-const registerToMessagePayload = (register: Register) => {
+export const registerToMessagePayload = (register: Register) => {
     return {
         template_html: templateHtml('register--initial-confirmation-template', {
             logo_base64: '',
@@ -32,12 +30,6 @@ export class RegisterService {
     async register(register: Register) {
         const register_before_persist = this.repo.create(register);
         const registry_on_requested = await this.repo.save(register_before_persist);
-        try {
-            this.mails.requestSendMessageToMail(
-                registerToMessagePayload(registry_on_requested)
-            );
-        } catch (error) {
-
-        }
+        return registry_on_requested;
     }
 }

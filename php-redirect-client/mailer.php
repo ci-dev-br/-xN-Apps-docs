@@ -11,17 +11,16 @@ $out_result = new stdClass();
 if(!empty($raw_body)){
     $data_object = json_decode($raw_body);
     $status_code = -1;
-    $x_hash = hash('sha256', $HASH_MASTER.'.'.$data->content_payload->to.'.'.$HOST_NAME);
-    $out_result->h = $x_hash;
-    if($data->action === "send_mail_message"){
+    $x_hash = hash('sha256', $HASH_MASTER.'.'.$data_object->content_payload->to.'.'.$HOST_NAME);
+    if($data_object->action === "send_mail_message"){
         $status_code = 2;
-        if($x_hash === $data->x_hash ){
-                $to      = ''.$data->content_payload->to;
-                $subject = ''.$data->content_payload->subject;
-                $message = ''.$data->content_payload->message_html;
+        if($x_hash === $data_object->x_hash ){
+                $to      = ''.$data_object->content_payload->to;
+                $subject = ''.$data_object->content_payload->subject;
+                $message = ''.$data_object->content_payload->message_html;
                 $headers = "MIME-Version: 1.0" . "\r\n";
-                $headers .= "Content-type:".$data->content_payload->content_type. "\r\n";
-                $headers .= 'From: '.$data->content_payload->message_html.''. "\r\n" .'X-Mailer: ci.dev.br' /*  PHP/' . phpversion() */;
+                $headers .= "Content-type:".$data_object->content_payload->content_type. "\r\n";
+                $headers .= 'From: '.$data_object->content_payload->from.''. "\r\n" .'X-Mailer: PHP/' . phpversion() ;
                 mail($to, $subject, $message, $headers);
                 $status_code = 0;
         }else{
