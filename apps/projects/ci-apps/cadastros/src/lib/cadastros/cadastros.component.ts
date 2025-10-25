@@ -17,6 +17,7 @@ interface IMenuItem {
   description?: string | null;
   title?: string | null;
   path?: string | null;
+  icon?: string | null;
 }
 @Component({
   selector: 'ci-cadastros',
