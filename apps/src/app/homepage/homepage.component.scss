@@ -95,12 +95,10 @@ header {
         padding: 24px;
         gap: 12px;
     }
-
     .apps {
         flex: auto;
     }
 }
-
 .row {
     display: flex;
     flex-direction: row;
@@ -110,20 +108,9 @@ header {
         justify-content: flex-end;
     }
 }
-
-footer {
-
-    &,
-    a {
-
-        &,
-        &:hover,
-        &:active {
-            color: #999;
-        }
-    }
+x-footer{
+    z-index: 1;
 }
-
 video {
     position: absolute;
     inset: 0;
