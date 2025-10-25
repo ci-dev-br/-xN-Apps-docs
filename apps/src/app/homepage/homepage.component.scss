@@ -67,7 +67,7 @@ header {
     background-repeat: no-repeat no-repeat;
     background-size: cover;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: stretch;
     justify-content: center;
 
@@ -108,7 +108,7 @@ header {
         justify-content: flex-end;
     }
 }
-x-footer{
+x-footer,ci-navbar{
     z-index: 1;
 }
 video {
