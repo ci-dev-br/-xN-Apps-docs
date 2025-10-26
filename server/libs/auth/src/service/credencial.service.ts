@@ -4,7 +4,6 @@ import { Credential, CredentialAccess } from "@ci/core";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserService } from "./user.service";
 import { JwtService } from "@nestjs/jwt";
-import { IncomingMessage } from "http";
 import { createHash } from "crypto";
 @Injectable()
 export class CredencialService {
@@ -13,8 +12,8 @@ export class CredencialService {
         private readonly credentialAccessRepository: Repository<CredentialAccess>,
         @InjectRepository(Credential)
         private readonly credentialRepository: Repository<Credential>,
-        private readonly userService: UserService,
-        private readonly jwtService: JwtService,
+        // private readonly userService: UserService,
+        // private readonly jwtService: JwtService,
     ) { }
     async solicitarCredencial(
         partials?: {

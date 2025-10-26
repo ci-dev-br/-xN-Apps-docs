@@ -15,7 +15,9 @@ export class Pessoa extends FullAuditedEntity {
     /**
      * Nome
      */
-    @ApiProperty({ required: false, nullable: true, title: 'Nome', description: 'Nome' })
+    @ApiProperty({
+        required: false, nullable: true, title: 'Nome', description: 'Nome'
+    })
     @Column({ nullable: true, length: 120 })
     nome?: string;
     /**
