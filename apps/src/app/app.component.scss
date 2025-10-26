@@ -7,4 +7,37 @@
     height: 100cqh;
     overflow: auto;
     position: fixed;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    overflow: hidden;
+}
+
+div {
+    display: flex;
+    flex: auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    overflow: hidden;
+}
+
+.--dev-mode {
+    border-radius: 8px;
+    border: 1px solid red;
+    // margin: 15px;
+    box-shadow: 0 0 18px 15px rgba(150, 0, 0, .4);
+
+    position: absolute;
+    inset: 15px;
+    background-color: rgb(235, 244, 245);
+
+}
+
+::ng-deep body:has(.--dev-mode) {
+    background-color: black;
 }

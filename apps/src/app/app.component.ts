@@ -1,4 +1,4 @@
-import { Component, OnInit, Optional } from '@angular/core';
+import { Component, isDevMode, OnInit, Optional } from '@angular/core';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { CoreModule, CoreService, WsService } from '@ci/core';
@@ -15,6 +15,7 @@ import { CoreModule, CoreService, WsService } from '@ci/core';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
+  isDevMode = isDevMode();
   title = 'apps';
   constructor(
     private readonly matIconReg: MatIconRegistry,
