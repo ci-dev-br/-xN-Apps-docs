@@ -4,7 +4,6 @@ import { FullAuditedEntity } from "../dao/entities";
 import { schema } from "../noms";
 /**
  * Manager Deploy Options Entity
- * 
  * Stores deployment options for applications
  */
 @Entity({ schema })
