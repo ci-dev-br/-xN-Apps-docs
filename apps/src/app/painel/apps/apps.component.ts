@@ -2,7 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CoreModule } from '@ci/core';
-import { APPS } from './apps';
+import { APPS, IApp } from './apps';
 import { AuthModule, UserService } from '@ci/auth';
 
 @Component({
@@ -25,7 +25,7 @@ import { AuthModule, UserService } from '@ci/auth';
   styleUrl: './apps.component.scss'
 })
 export class AppsComponent implements OnInit {
-  apps?: any[];
+  apps?: IApp[];
   constructor(
     private readonly userService: UserService,
     private readonly router: Router,
