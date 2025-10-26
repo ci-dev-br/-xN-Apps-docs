@@ -4,21 +4,21 @@
 <ci-navbar></ci-navbar>
 <div class="page--wrapper">
     @if(!!(userService.user | async)){
-
-    <div class="wrapper">
-        <div class="sidebar">
-            <button mat-raised-button color="primary" routerLink="/meus-apps">Meus Apps</button>
-            @if(categorias){@for (item of categorias; track $index) {
-            <button mat-button>{{item.name}}</button>
-            }}
-            <span style="flex:auto"></span>
-            <div class="row end">
-                <button mat-icon-button (click)="openSidebarSettings()"><mat-icon>settings</mat-icon></button>
-            </div>
+    <div #sidebarElement class="sidebar" [class.--inactive]="!sidebar" (click)="sidebar=!sidebar"
+        [style.top]="sidebarTop + 'px' " [style.left]="sidebarLeft + 'px'">
+        <button mat-raised-button color="primary" routerLink="/meus-apps">Meus Apps</button>
+        @if(categorias){@for (item of categorias; track $index) {
+        <button mat-button>{{item.name}}</button>
+        }}
+        <span style="flex:auto"></span>
+        <div class="row end">
+            <button mat-icon-button (click)="openSidebarSettings()"><mat-icon>settings</mat-icon></button>
         </div>
+    </div>
+    <div class="wrapper">
         <div class="container">
-            <h1>Utilize o Apps para criar aplicativos incríveis e eficientes que auxiliam suas operações no dia-a-dia.
-            </h1>
+            <h4>Utilize o Apps para criar aplicativos incríveis e eficientes que auxiliam suas operações no dia-a-dia.
+            </h4>
             <p>
                 Gerencie conexões, aplicativos e código-fonte. Integre de forma simples. Configure seu ambiente de
                 desenvolvimento em poucos passos.
