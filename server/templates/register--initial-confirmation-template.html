@@ -37,6 +37,12 @@
             border: none;
             border-radius: 12px;
         }
+
+        .escondido {
+            font-size: 8px;
+            color: rgba(0, 0, 0, .5);
+            margin: 0;
+        }
     </style>
     <div
         style="background: linear-gradient(33deg, #ababab 0%, #ffffff 50%); font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;            text-align: center; padding: 50px;">
@@ -52,39 +58,33 @@
             style="width: 80vw; max-width: 550px; margin: 0 auto; background: white; border-radius: 10px; padding-bottom: 48px; box-shadow: 0 10px 20px -10px rgba(0, 0, 0, .5); margin-bottom: 40px;margin-top: 32px;">
             <tbody>
                 <tr>
-                    <td>
-                        <h1>Plano Ex Pro</h1>
-                        <h2>Experimente tudo por 3 messes grátis, após, pague apenas pelos módulos que lhe interessar.
-                        </h2>
-                        <p>Ideal para pessoas que estão experimentando ferramentas para resolver os problemas de seus
-                            negócios já existentes.</p>
-
-                        <button>Ler mais</button>
+                    <td style="border-bottom: 2px solid #f0f0f0;">
+                        <h1>Bem-vindo de volta,</h1>
+                        <p>Obrigado por se registrar na plataforma CI Apps. Para começar a explorar nossos serviços, por
+                            favor,
+                            confirme seu e-mail clicando no botão abaixo:</p>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <h1>Plano Pequeno Negócio</h1>
-                        <h2>Valor fixo o ano inteiro, experimente módulos quando quiser por 10 dias sem custo, valor aumenta na renovação do contrato</h2>
-                        <p>Realize o pré cadastro e visualize o valor da nossa proposta. O preço pode variar de acordo
-                            com a necessidade de seu negócio.</p>
-                        <button>Ler mais</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h1>Dobrando a meta</h1>
-                        <h2>10 dias grátis. Pague pelo uso no final do mês com vencimento de 30 dias. Experimente novos
-                            módulos gratuítamente por 5 dias sem custo quando quiser, confirmando o valor da fatura no
-                            final se aprovado</h2>
-                        <p>Ideal para quem já possui entendimento de como escalar seu negócio e precise de uma
-                            ferramenta
-                            apta para resolver todos os desafios em tempo recorde.</p>
-
-                        <button>Ler mais</button>
+                        <button
+                            style="margin-top: 24px; padding: 14px 24px; font-size: 16px; font-weight: bold; background: black; color: white; border: none; border-radius: 8px;">
+                            <a href="{{act_url}}" style="text-decoration: none; color: white;">Confirmar
+                                E-mail</a>
+                        </button>
                     </td>
                 </tr>
             </tbody>
+            <tfoot>
+                <tr>
+                    <td>
+                        <div class="escondido">
+                            Encontrou algum problema? Entre em contato com nossa equipe de suporte <a
+                                href="{{new_report_link}}">aqui</a>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
         </table>
         <div class="footer">
             <a href="{{unsubscribe_link}}">Não tenho mais interesse, cancelar inscrição</a><br>
