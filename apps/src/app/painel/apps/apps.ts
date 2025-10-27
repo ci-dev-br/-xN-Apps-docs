@@ -11,6 +11,9 @@ export interface IApp extends Application {
     name?: string;
     description?: string;
 }
+/**
+ * Pre-loaded apps available in the painel
+ */
 export const APPS: IApp[] = [
     {
         categoria: 'System',
@@ -27,6 +30,7 @@ export const APPS: IApp[] = [
         color: getColor(),
         url: '/Cadastros',
         name: 'Cadastros',
+        description: 'Gerenciar cadastros de clientes, fornecedores e parceiros.',
         roles: ['MASTER'],
         icon: 'cadastros',
         type: 'svg'
@@ -35,6 +39,7 @@ export const APPS: IApp[] = [
         color: getColor(),
         url: '/Codex',
         name: 'Codex',
+        description: 'Editor e Gerenciador de Código fonte.',
         roles: ['MASTER'],
         icon: 'codex',
         type: 'svg'
@@ -43,6 +48,7 @@ export const APPS: IApp[] = [
         color: getColor(),
         url: '/DevTools',
         name: 'DevTools',
+        description: 'Ferramentas para desenvolvedores.',
         roles: ['MASTER'],
         icon: 'dev-tools',
         type: 'svg'
@@ -51,6 +57,7 @@ export const APPS: IApp[] = [
         color: getColor(),
         url: '/Dynamic',
         name: 'Dynamic XD',
+        description: 'Ferramenta de design e prototipação.',
         roles: ['MASTER'],
         icon: 'dynamic',
         type: 'svg'
@@ -59,6 +66,7 @@ export const APPS: IApp[] = [
         color: getColor(),
         url: '/Financeiro',
         name: 'Financeiro',
+        description: 'Gerenciar finanças e contabilidade.',
         roles: ['MASTER'],
         icon: 'financeiro',
         type: 'svg'
@@ -67,6 +75,7 @@ export const APPS: IApp[] = [
         color: getColor(),
         url: '/Formularios',
         name: 'Formularios',
+        description: 'Criar e gerenciar formulários personalizados.',
         roles: ['USER',
             'MASTER'],
         icon: 'formularios',
@@ -76,6 +85,7 @@ export const APPS: IApp[] = [
         color: getColor(),
         url: '/Gerencial',
         name: 'Gerencial',
+        description: 'Painel de controle gerencial.',
         roles: ['MASTER'],
         icon: 'gerencial',
         type: 'svg'
@@ -84,6 +94,7 @@ export const APPS: IApp[] = [
         color: getColor(),
         url: '/Icons',
         name: 'Icons',
+        description: 'Biblioteca de ícones para projetos.',
         roles: ['MASTER'],
         icon: 'icones',
         type: 'svg'
@@ -100,6 +111,7 @@ export const APPS: IApp[] = [
         color: getColor(),
         url: '/Infra',
         name: 'Infra',
+        description: 'Gerenciamento de infraestrutura de TI.',
         roles: ['MASTER'],
         icon: 'infra',
         type: 'svg'
@@ -108,6 +120,7 @@ export const APPS: IApp[] = [
         color: getColor(),
         url: '/Instalacao',
         name: 'Instalacao',
+        description: 'Gerenciar processos de instalação de Módulos e Funcionalidades.',
         roles: ['MASTER'],
         icon: 'instalacao',
         type: 'svg'
@@ -116,6 +129,7 @@ export const APPS: IApp[] = [
         color: getColor(),
         url: '/LowCode',
         name: 'LowCode',
+        description: 'Plataforma de desenvolvimento Low-Code.',
         roles: ['MASTER'],
         icon: 'low-code',
         type: 'svg'
