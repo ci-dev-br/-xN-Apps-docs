@@ -6,8 +6,7 @@ import { MailService } from "@ci/notification/services/mail.service";
 import { templateHtml } from "@ci/core/template/load-template.fn";
 import { createHash, Hash } from "node:crypto";
 export const registerToMessagePayload = (register: Register) => {
-    const register_id = ${ createHash('sha256').update(`${register.internalId}${register.mail}`).digest('hex');
-
+    const register_id = createHash('sha256').update(`${register.internalId}${register.mail}`).digest('hex').toString();
     return {
         template_html: templateHtml('register--initial-confirmation-template', {
             logo_base64: '',
