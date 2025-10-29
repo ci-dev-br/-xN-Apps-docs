@@ -14,7 +14,6 @@
 .apps.container {
     dosplay: flex;
     flex-direction: column;
-    overflow: auto;
     flex: auto;
     justify-content: stretch;
     align-items: stretch;
@@ -86,13 +85,13 @@
     }
 }
 
+// TODO: revisar responsividade
 .--flexible {
     &.apps {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
         flex: auto;
-        overflow: auto;
         @include app();
 
     }
