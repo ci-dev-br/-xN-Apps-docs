@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MobManager"
-        tools:targetApi="31">
+        tools:targetApi="kitkat">
         <activity
             android:name=".MainActivity"
             android:exported="true">

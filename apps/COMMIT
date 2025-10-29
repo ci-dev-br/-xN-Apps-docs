@@ -1,0 +1,14 @@
+# Correções 14/08 até 00:00 2025
+autores: plhx
+## @Apps - Gerencial
+
+### Correções e implementações:
+
+ - [>]: Implementar cartões de gerencial com serviços reçacionados aos dados já implementados, totalizadores e gráficos;
+ - [>]: Refatorar: Implementar Gerenciamento de Apps com o componente de Master Detail Padrão;
+
+ ---
+
+## Erros localizados durante as alterações
+
+## Ajustes Gerais

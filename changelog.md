@@ -2,7 +2,10 @@
 ---
 este arquivo é enviado periodicamente
  - [ ]: Compartilhar em App/Formulários, permitir criar link público ou privado para compartilhamento do formulário para apresentação ou edição;
- - [ ]: Refresh Token deve ser validado com argon2 ... este processo foi obfuscado;
+
+
+ ### TASK [2025/2] Implementações no Acesso e Registro da Aplicação
+ - [✔️]: Refresh Token deve ser validado com argon2 ... este processo foi obfuscado;
  - [✔️][FALHA]: Ao executar `node deploy` ocorre falha ao copiar todos os arquivos da distribuição; 
  - [✔️] Implementação de App CodeX para edição de código-fonte ;
  ---
@@ -15,7 +18,7 @@ Dificuldade: 3
 Tempo planejado: 5 horas
 Tempo decorrido:  
 Responsável: plhx
-1% [x     ]
+100% [xxxxxx]
 ```
 
  ---

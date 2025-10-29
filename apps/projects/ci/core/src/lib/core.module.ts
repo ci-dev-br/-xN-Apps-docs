@@ -15,13 +15,15 @@ import { SafePipe } from './pipes/safe.pipe';
 import { ContextMenuServices } from './contextmenu/contextmenu.service';
 import { DaoBuilder, ISchema, ISchemaProperty } from './dao/dao-builder.service';
 import { DaoPipe } from './pipes/dao.pipe';
+import { StageDirective } from './directives/stage.directive';
 
 @NgModule({
   declarations: [
     AutoFocusDirective,
     AutoScollDirective,
-    SafePipe,
     DaoPipe,
+    StageDirective,
+    SafePipe,
   ],
   imports: [
     CommonModule,
@@ -42,22 +44,24 @@ import { DaoPipe } from './pipes/dao.pipe';
     CommonModule,
     AutoFocusDirective,
     AutoScollDirective,
+    StageDirective,
   ]
 })
 export class CoreModule { }
 export {
   AutoFocusDirective,
   CoreService,
-  StorageService,
   DaoService,
-  IChangeable,
-  ServicesService,
-  Localizacao,
-  ThemeService,
-  WsService,
-  SafePipe,
   DaoBuilder,
+  DaoPipe,
+  IChangeable,
   ISchemaProperty,
   ISchema,
-  DaoPipe,
+  Localizacao,
+  StageDirective,
+  StorageService,
+  ServicesService,
+  SafePipe,
+  ThemeService,
+  WsService,
 }

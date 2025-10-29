@@ -60,7 +60,7 @@ public class ManagerClient {
         Device device = new Device(){{
             setMac(getMacAddr());
             setApplicationId("e60e2ed1-e318-4f38-bdcd-2fceb3d0315d");
-            setName("MobManager-KitKat");
+            setName("MobManagerK");
             setNumbers(getPhones());
         }};
         return device_connection.execute(device);

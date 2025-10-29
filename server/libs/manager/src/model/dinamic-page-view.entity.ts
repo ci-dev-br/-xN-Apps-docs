@@ -1,5 +1,5 @@
 import { Column, Entity } from "typeorm";
-import { FullAuditedEntity } from "../dao";
+import { FullAuditedEntity } from "../dao/entities";
 import { ApiProperty } from "@nestjs/swagger";
 import { schema } from "../noms";
 /*@xNê(

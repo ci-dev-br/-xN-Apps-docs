@@ -1,19 +1,33 @@
 <h3>Aplicativos</h3>
 <div class="apps container --flexible">
     @for (app of apps; track $index) {
-    <div class="app" [tabindex]="0" (keydown.enter)="appClickHandler($event, app)" (click)="appClickHandler($event, app)">
-        <div class="bg" [style.background]="app.color"></div>
-        @if(app.icon){
-        @if(app.type === 'svg' && !!app.icon){
-        <mat-icon [svgIcon]="app.icon" [inline]="true"></mat-icon>
-        }@else{
-        <mat-icon [inline]="true">{{app.icon}}</mat-icon>
+    <div class="app" [tabindex]="$index" (contextmenu)="contextMenuHanlder($event)"
+        (keydown.enter)="appClickHandler($event, app)" (click)="appClickHandler($event, app)"
+        [attr.aria-labelledby]="app.description">
+        <div class="bg" [style.border-color]="app.color"></div>
+        <span class="header">
+            @if(app.icon){
+            @if(app.type === 'svg' && !!app.icon){
+            <mat-icon [svgIcon]="app.icon" [inline]="true"></mat-icon>
+            }@else{
+            <mat-icon [inline]="true">{{app.icon}}</mat-icon>
+            }
+            }
+            <span class="label">
+                {{app.name}}
+            </span>
+        </span>
+        @if(!!app?.description){
+        <span class="description">
+            {{app.description}}
+        </span>
         }
-        }
-        {{app.name}}
     </div>
     }
     <div class="app">
         <mat-icon [inline]="true">add</mat-icon>
     </div>
 </div>
+<!-- <footer>
+    rodapé
+</footer> -->

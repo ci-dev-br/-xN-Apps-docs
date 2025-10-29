@@ -26,11 +26,11 @@ import { NavbarComponent } from "./navbar.component";
         MatInputModule,
         MatMenuModule,
         RouterModule,
-        // AuthModule,
     ],
     exports: [
         NavbarComponent,
-    ]
+    ],
+
 })
 export class NavbarModule { }
 export {

@@ -25,40 +25,11 @@
         negócio.
     </p>
     <div class="blocos">
-        <div class="bloco">
-            <h5>Motive o usuário de acordo com o contexto</h5>
-            <p>Imprime uma frase motivacional na tela</p>
-
-            <div class="input"><!-- Context --></div>
-            <div class="output"><!-- emitMessage --></div>
-        </div>
-        <div class="bloco">
-            <h5>Enviar Notificação para Usuário</h5>
-            <p>Envia SMS para o usuário mediante permissão antecedente.</p>
-
-            <div class="input"><!-- Context --></div>
-            <div class="output"><!-- emitMessage --></div>
-        </div>
-        <div class="bloco">
-            <h5>Enviar Notificação por SMS</h5>
-            <p>Envia SMS para o usuário mediante permissão antecedente.</p>
-            <div class="input"><!-- Context --></div>
-            <div class="output"><!-- emitMessage --></div>
-        </div>
-        <div class="bloco">
-            <h5>Enviar Notificação por E-mail</h5>
-            <p>Realizar troca de mensagens por WhatsApp com Usuário mediante permissão antecedente. Para realização de
-                uma
-                reação</p>
-            <div class="input"><!-- Context --></div>
-            <div class="output"><!-- emitMessage --></div>
-        </div>
-        <div class="bloco">
-            <h5>Enviar Notificação por E-mail</h5>
-            <p>Realizar troca de e-mail para com Usuário mediante permissão antecedente. Para realização de uma reação
-            </p>
-            <div class="input"><!-- Context --></div>
-            <div class="output"><!-- emitMessage --></div>
-        </div>
+        @if(blocos){@for (item of blocos; track $index) {}}
+        @else {
+        <small>
+            Nenhum bloco cadastrado
+        </small>
+        }
     </div>
 </section>

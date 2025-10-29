@@ -4,7 +4,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { IFile } from './i-file';
+import { IArquivo } from './i-file';
 import { FileExplorerService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
@@ -25,8 +25,8 @@ import { TechnicolorShader } from 'three/examples/jsm/Addons.js';
   styleUrl: './files.component.scss'
 })
 export class FilesComponent {
-  files?: IFile[];
-  filteredFiles?: IFile[];
+  files?: IArquivo[];
+  filteredFiles?: IArquivo[];
   constructor(
     private readonly fileExplorer: FileExplorerService,
   ) { }
@@ -66,7 +66,7 @@ export class FilesComponent {
     this.ir(r?.join('/') || './')
   }
 
-  async abrir(file: IFile) {
+  async abrir(file: IArquivo) {
     if (file.info) {
       if (file.name?.indexOf('.') === -1) {
         this.ir(file.info.path + '/' + file.name);

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PainelComponent } from './painel.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: 'prancheta', loadChildren: () => import('./board/board.module').then(m => m.BoardModule) },
   {
     path: '', component: PainelComponent, children: [

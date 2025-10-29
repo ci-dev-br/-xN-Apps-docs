@@ -5,6 +5,7 @@ const vfs = require('vinyl-fs');
 const { execSync } = require('child_process');
 require('dotenv').config();
 const map = require('map-stream');
+const https = require('https');
 
 const {
     client_dist_static_public: R734,
@@ -29,10 +30,57 @@ function DeployLocalClient(cb) {
     cb();
 }
 
-// Deploy FTP's application
+/**
+ * Obter Meus Clientes
+ * 
+ * Retornar a lista de clientes para deploy local e ftp 
+ * a partir do serviço APPS.Manager
+ * 
+ */
+function getObterMeusClientes() {
+    return new Promise((resolve, reject) => {
+        /** @type {import('https').RequestOptions}  */
+        const options = {
+            hostname: process.env.APPS_MANAGER_HOSTNAME,
+            path: '/api/v1/Manager/Deployer/Clients',
+        };
+        https.get(options, (res) => {
+            let data = '';
+            res.on('data', (chunk) => {
+                data += chunk;
+            });
+            res.on('end', () => {
+                try {
+                    const parsedData = JSON.parse(data);
+                    resolve(parsedData);
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }).on('error', (err) => {
+            reject(err);
+        });
+    });
+}
+/**
+ * # Deploy FTP Applications
+ * 
+ * Deploy via FTP the client applications
+ * 
+ * @param {*} cb 
+ */
 async function DeployFTPApplications(cb) {
     /** @type {Array<{deployMode:string, commonName?:string, user?:string,  password?:string, host?:string}>}  */
     let clients = JSON.parse(process.env.ftp_clients).clients;
+    try {
+        let clientes_manager = await getObterMeusClientes();
+        
+
+
+    } catch (error) {
+
+    }
+
     for (const e of clients) {
         await new Promise((res, rej) => {
             if (e.deployMode.indexOf('ftp') > -1) {
@@ -102,5 +150,5 @@ exports.default = series(
     CleanOldFiles,
     BuildPClientApplication,
     DeployLocalClient,
-    DeployFTPApplications,
+    // DeployFTPApplications,
 );

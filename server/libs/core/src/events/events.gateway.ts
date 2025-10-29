@@ -14,10 +14,61 @@ import { Socket } from "socket.io";
     })
 export class EventsGateway implements OnGatewayInit {
     constructor(
-        private readonly bus: BusService,
+        private readonly bus: BusService
+        ,
     ) {
         bus.events = this;
     }
+    private pingHandler(client: WebSocket, data: any) {
+        if (data.lastPing) {
+            this.globalPing = ((this.globalPing + (data.lastPing || 0)) / 2)
+            this.pings.push(data.lastPing)
+            if (this.pings.length > 500) {
+                this.pings = this.pings.splice(this.pings.length - 500, this.pings.length);
+            }
+        }
+        let pm = 0;
+        try {
+            pm = this.pings.reduce((a, b) => a + b) / this.pings.length;
+        } catch (error) {
+        }
+        const waiting = 1000 + Math.random() * 32000;
+        const last = {
+            event: 'events',
+            type: 'pong',
+            wait: waiting,
+            momentum: data.momentum,
+            globalPing: this.globalPing,
+            pingMedium: pm,
+        };
+        setTimeout(() => {
+            const c = this.clients.get(data.client);
+            if (c && data.momentum === c.momentum) {
+                c.returned = false;
+                this.clients.delete(data.client);
+            }
+        }, waiting + 1000);
+        return last;
+    }
+    private eventsListeners: { [eventType: string]: (client: WebSocket, data: any) => void } = {
+        ping: (client, data) => this.pingHandler(client, data),
+        'SMS.Send': (client, data) => {
+            this.clients.forEach(c => {
+                if ('mac' in c.ws && c.ws.OPEN) {
+                    c.ws.send(JSON.stringify({
+                        event: 'events',
+                        data: {
+                            type: "requestSendSMSMessage",
+                            momentum: Date.now(),
+                            to: data.to,
+                            contentText: data.content
+                        }
+                    }));
+                }
+
+            })
+        }
+    };
     pings = [];
     globalPing = 0;
     @WebSocketServer()
@@ -25,11 +76,12 @@ export class EventsGateway implements OnGatewayInit {
     mementu = [];
     private clients = new Map<string, { ws: WebSocket, returned: boolean, momentum: number }>();
     @SubscribeMessage('events')
-    onEvent(@ConnectedSocket() client: any, @MessageBody() data: any) {
+    onEvent(@ConnectedSocket() client: WebSocket, @MessageBody() data: any) {
         if (!this.sing(data)) return;
         try {
             if (data.mac) {
                 this.bus.registry(client, data.mac);
+                (client as any).mac = data.mac;
             }
         } catch (error) {
             console.error(error);
@@ -42,46 +94,16 @@ export class EventsGateway implements OnGatewayInit {
         if (data.momentum && this.mementu.indexOf(data.momentum) !== -1) return;
         this.mementu.push(data.momentum)
         try {
-            if (data.type === 'ping') {
-                if (data.lastPing) {
-                    this.globalPing = ((this.globalPing + (data.lastPing || 0)) / 2)
-                    this.pings.push(data.lastPing)
-                    if (this.pings.length > 500) {
-                        this.pings = this.pings.splice(this.pings.length - 500, this.pings.length);
-                    }
-                }
-                let pm = 0;
-                try {
-                    pm = this.pings.reduce((a, b) => a + b) / this.pings.length;
-                } catch (error) {
-                }
-                const waiting = 1000 + Math.random() * 32000;
-                const last = {
-                    event: 'events',
-                    type: 'pong',
-                    wait: waiting,
-                    momentum: data.momentum,
-                    globalPing: this.globalPing,
-                    pingMedium: pm,
-                };
-                setTimeout(() => {
-                    const c = this.clients.get(data.client);
-                    if (c && data.momentum === c.momentum) {
-                        c.returned = false;
-                        this.clients.delete(data.client);
-                    }
-                }, waiting + 1000);
-                // console.log(' Clients: ' + this.clients.size);
-                return last;
+            if (data.type in this.eventsListeners) {
+                return this.eventsListeners[data.type](client, data);
             }
         } catch (error) {
-
+            console.trace(error);
         }
     }
     @SubscribeMessage('identity')
     async identity(@ConnectedSocket() client: any, @MessageBody() data: any) {
         if (!this.sing(data)) return;
-        // console.log(data);
         client.id = data.client;
         return data;
     }
@@ -108,8 +130,8 @@ export class EventsGateway implements OnGatewayInit {
             name: string,
         }) {
         if (!this.sing(data)) return;
-
         this.addEventListner(data.name, (result) => {
+            // (client as any).mac = result.device_mac_assign;
             client.send(JSON.stringify({
                 event: 'notice',
                 data: result
@@ -135,18 +157,44 @@ export class EventsGateway implements OnGatewayInit {
             __last_data["::CI_INTERNAL.CLIENTS"].push(client);
         }
     }
-    set(id: string, ws: any, momentum?: number) {
-        ws.id = id;
-        if (!this.clients.has(id)
-        )
+    set(id: string, ws: WebSocket, momentum?: number) {
+        (ws as any).id = id;
+        if (!this.clients.has(id)) {
             this.clients.set(id, {
                 ws, returned: true, momentum
             });
+            ws.addEventListener('close', (ev) => {
+                this.clients.delete((ws as any).id)
+                setTimeout(() => {
+                    this.clients.forEach(client => {
+                        if (client.ws.OPEN) {
+                            client.ws.send(JSON.stringify({
+                                clients: this.clients.size
+                            }))
+                        }
+                    })
+                })
+            });
+        }
         else {
             const c = this.clients.get(id);
             c.returned = true;
             if (momentum !== undefined) c.momentum = momentum;
         }
+        setTimeout(() => {
+            this.clients.forEach(client => {
+                if (client.ws.OPEN) {
+                    client.ws.send(JSON.stringify({
+                        clients: this.clients.size,
+                        dispositivos: [...this.clients.values()].map(v => {
+                            let m = (v.ws as any).mac;
+                            if (typeof m === 'string') m = createHash('md5').update(m).digest('hex');
+                            return m
+                        }).filter(x => !!x)
+                    }))
+                }
+            })
+        })
     }
     @SubscribeMessage('Changes')
     async Changes(

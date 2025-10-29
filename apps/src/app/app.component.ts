@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, isDevMode, OnInit, Optional } from '@angular/core';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { CoreModule, CoreService, WsService } from '@ci/core';
-
 @Component({
   selector: 'ci-root',
   standalone: true,
@@ -16,6 +15,7 @@ import { CoreModule, CoreService, WsService } from '@ci/core';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
+  isDevMode = isDevMode();
   title = 'apps';
   constructor(
     private readonly matIconReg: MatIconRegistry,
@@ -43,17 +43,20 @@ export class AppComponent implements OnInit {
 
     // This variable will save the event for later use.
     let deferredPrompt;
-    if (window) window.addEventListener('beforeinstallprompt', (e) => {
-      // Prevents the default mini-infobar or install dialog from appearing on mobile
-      e.preventDefault();
-      // Save the event because you'll need to trigger it later.
-      deferredPrompt = e;
-      // Show your customized install prompt for your PWA
-      // Your own UI doesn't have to be a single element, you
-      // can have buttons in different locations, or wait to prompt
-      // as part of a critical journey.
-      // showInAppInstallPromotion();
-    });
+    if (typeof window !== 'undefined') {
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+
+        // Prevents the default mini-infobar or install dialog from appearing on mobile
+        // Save the event because you'll need to trigger it later.
+        // Show your customized install prompt for your PWA
+        // Your own UI doesn't have to be a single element, you
+        // can have buttons in different locations, or wait to prompt
+        // as part of a critical journey.
+        // showInAppInstallPromotion();
+      });
+    }
     // this.worker();
   }
   private showInAppInstallPromotion() {

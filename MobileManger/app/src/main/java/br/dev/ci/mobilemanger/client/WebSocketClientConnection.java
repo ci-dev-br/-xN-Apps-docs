@@ -2,6 +2,7 @@ package br.dev.ci.mobilemanger.client;
 
 import android.os.AsyncTask;
 import android.os.Looper;
+import android.telephony.SmsManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -17,17 +18,16 @@ import br.dev.ci.mobilemanger.client.model.EventPayload;
 import br.dev.ci.mobilemanger.client.model.WSMessage;
 
 public class WebSocketClientConnection extends WebSocketClient {
-    private final DeviceConnect deviceConnect;
     private Long ping = 0L;
+    public WebSocketClientConnection(URI serverUri){
+        super(serverUri);
+    }
     public WebSocketClientConnection(URI serverUri, DeviceConnect deviceConnect) {
         super(serverUri);
-        this.deviceConnect = deviceConnect;
     }
-
     @Override
     public void onOpen(ServerHandshake handshakedata) {
         try {
-
             /*
              *  HandShake
              * 1 -> Identificação da conexão com id do Dispositivo (Device);
@@ -35,24 +35,18 @@ public class WebSocketClientConnection extends WebSocketClient {
              */
             Ping();
             identity();
-            // deviceConnect
 
         } catch (Exception e) {
             e.printStackTrace();
-            // throw new RuntimeException(e);
         }
     }
-
     private void identity(){
         try {
             EventPayload payload =  new EventPayload();
             payload.setEvent("events");
-
             EventData event = new EventData();
-
             event.setMomentum((new Date()).getTime());
             event.setMac(ManagerClient.getInstance().getMacAddr());
-
             payload.setData(event);
             Gson mapper = new Gson();
             send(mapper.toJson(payload));
@@ -60,7 +54,6 @@ public class WebSocketClientConnection extends WebSocketClient {
             ex.printStackTrace();
         }
     }
-
     private void Ping(){
         try {
             EventPayload payload =  new EventPayload();
@@ -83,7 +76,7 @@ public class WebSocketClientConnection extends WebSocketClient {
                             Ping();
                         }
                     },
-                    8000);
+                    60000);
         }
     }
 
@@ -110,10 +103,16 @@ public class WebSocketClientConnection extends WebSocketClient {
                                 retorno.getWait().intValue());
                     }
                 }
-            }else if(message.indexOf("\"type\":\"events\"") > -1){
+            }else if(message.indexOf("\"type\":\"requestSendSMSMessage\"") > -1){
                 EventPayload retorno = mapper.fromJson(message, EventPayload.class);
-                if(retorno.getData().getType() == "requestSendSMSMessage"){
-                    if(retorno.getData().getContentText() != null && retorno.getData().getTo() != null ){
+                if(retorno.getData().getType().equals("requestSendSMSMessage")){
+                    try {
+                        if(retorno.getData().getContentText() != null && retorno.getData().getTo() != null ){
+                            SmsManager smsManager=SmsManager.getDefault();
+                            smsManager.sendTextMessage(retorno.getData().getTo(),null,retorno.getData().getContentText(),null,null);
+                        }
+                    }catch(Exception ex){
+                        ex.printStackTrace();
                     }
                 }
             }
@@ -126,7 +125,7 @@ public class WebSocketClientConnection extends WebSocketClient {
     @Override
     public void onClose(int code, String reason, boolean remote) {
         try {
-
+            this.connect();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -135,7 +134,7 @@ public class WebSocketClientConnection extends WebSocketClient {
     @Override
     public void onError(Exception ex) {
         try {
-
+            
         } catch (Exception e) {
             e.printStackTrace();
         }

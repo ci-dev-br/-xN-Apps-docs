@@ -1,12 +1,12 @@
 import { Repository } from "typeorm";
-import { Lancamento } from "../model/lancamento.entity";
+import { LancamentoFinanceiro } from "../model/lancamento-financeiro.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DaoFullAuditedServiceBase, SnapshotService } from "@ci/core";
-export class LancamentoService extends DaoFullAuditedServiceBase<Lancamento> {
+export class LancamentoService extends DaoFullAuditedServiceBase<LancamentoFinanceiro> {
     constructor(
         snap: SnapshotService,
-        @InjectRepository(Lancamento)
-        repository: Repository<Lancamento>
+        @InjectRepository(LancamentoFinanceiro)
+        repository: Repository<LancamentoFinanceiro>
     ) {
         super(snap, repository);
     }

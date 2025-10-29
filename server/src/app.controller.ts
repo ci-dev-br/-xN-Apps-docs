@@ -5,22 +5,56 @@ import { Request, Response } from 'express';
 import { resolve } from 'path';
 import { existsSync } from 'fs';
 import { SitePageService } from '@ci/cms/services/site-page.service';
+import { DomainService } from '@ci/manager';
 @Controller('*')
 export class AppController {
   constructor(
     private readonly appService: CiApplicationService,
     @Optional()
     private readonly sitePage?: SitePageService,
+    @Optional() private readonly domain?: DomainService,
   ) {
   }
   @Get()
   @Public()
   async root(@Req() req: Request, @Res() res: Response) {
-    // console.info(req.hostname, req.path, req.headers);
-
+    const hostname = req.hostname;
+    const origin = req.headers.origin;
     if (this.sitePage) {
       try {
-        let host: string = (req.header('x-From') || req.query.from || req.hostname) as string;
+        let host: string = this.appService.getHost(req);
+        let page = await this.sitePage.getPage(host, req.path);
+        if (!!page) {
+          if (!!page.contentType) res.contentType(page.contentType)
+          if (!!page.content) {
+            res.send(page.content.join());
+          }
+          return;
+        } else {
+
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    if (!!req.path && req.path.indexOf('.') > -1) {
+      try {
+        if (existsSync(__dirname + `/../public${req.path}`)) {
+          return res.sendFile(resolve(`public${req.path}`));
+        }
+        return res.sendFile(resolve('public/index.csr.html'));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    return res.sendFile(resolve('public/index.csr.html'));
+  }
+  @Get()
+  @Public()
+  async ressource(@Req() req: Request, @Res() res: Response) {
+    /* if (this.sitePage) {
+      try {
+        let host: string = this.getHost(req);
         let page = await this.sitePage.getPage(host, req.path);
         if (!!page) {
           if (!!page.contentType) res.contentType(page.contentType)
@@ -43,6 +77,6 @@ export class AppController {
         console.error(error);
       }
     }
-    return res.sendFile(resolve('public/index.csr.html'));
+    return res.sendFile(resolve('public/index.csr.html')); */
   }
 }

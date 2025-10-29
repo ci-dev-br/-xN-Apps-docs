@@ -1,8 +1,15 @@
+import { Pessoa } from "@ci/cadastro";
 import { Injectable } from "@nestjs/common";
 const Imap = require('imap');
 import { inspect } from "util";
+import { MessageService } from "./message.service";
+import { request } from "https";
+import { hashMailer } from "../hash-mailer";
 @Injectable()
 export class MailService {
+    constructor(
+        private readonly messages: MessageService,
+    ) { }
     private tentativas = 0;
     private imap?: any;
     private openInbox(cb) {
@@ -11,11 +18,13 @@ export class MailService {
     private async readyHandler(REGX?: RegExp) {
         return await new Promise<any>((res, rej) => {
             this.imap.once('ready', () => {
-                this.openInbox((err, box) => {
-                    if (err) throw err;
+                this.openInbox((error, box) => {
+                    if (error) throw error;
                     try {
-                        this.imap.search(['UNSEEN', ['SUBJECT', 'Iniciar sessão no Character.AI']], async (err, results) => {
-                            if (err) return;
+                        this.imap.search(['UNSEEN',
+                            ['SUBJECT', 'Iniciar sessão no Character.AI']
+                        ], async (error, results) => {
+                            if (error) return;
                             results;
                             if (results.length > 0) {
                                 res(await this.fetchHandler(this.imap.fetch(results, { bodies: '1', markSeen: true }), REGX));
@@ -28,8 +37,8 @@ export class MailService {
                     }
                 });
             });
-            this.imap.once('error', (err) => {
-                console.trace(err);
+            this.imap.once('error', (error) => {
+                console.trace(error);
             });
             this.imap.once('end', () => {
                 console.log('Connection ended');
@@ -109,4 +118,58 @@ export class MailService {
             }
         });
     }
-}
+    /**
+     * Registry message to sent by mail. 
+     * Este serviço visa garantir o envio e entrega do e-mail 
+     * com retorno imediato do evento. Tendo uma abordame mista
+     * para captura do evento de retorno do usuário. 
+     * @param message 
+     */
+    public requestSendMessageToMail(message: {
+        template_html?: string,
+        message_text?: string,
+        to?: string,
+        person?: Pessoa,
+        from?: string,
+        subject?: string,
+        from_person?: Pessoa,
+        need_feedback?: boolean,
+    }) {
+        return new Promise<void>((res, rej) => {
+            const x_hash = hashMailer(message.to);
+            const mail_payload = {
+                x_hash,
+                content_payload: {
+                    from: 'apps@ci.dev.br',
+                    to: message.to,
+                    subject: message.subject || 'apps.ci.dev.br, sua plataforma de Aplicativos',
+                    message_html: message.template_html || message.message_text,
+                    content_type: 'text/html;charset=UTF-8'
+                },
+                action: 'send_mail_message'
+            };
+            const req = request({
+                hostname: process.env.CI_APPS_MAILER_HOSTNAME,
+                path: '/mailer/br.dev.ci.apps/index.php',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            }, (r) => {
+                r.on('data', (data) => {
+                    let result;
+                    console.log(data.toString());
+                    try {
+                        result = JSON.parse(data);
+                    } catch (error) {
+                        console.trace(error);
+                    }
+                    if (result?.status_code === 0)
+                        res(result);
+                });
+            });
+            req.write(JSON.stringify(mail_payload));
+            req.end();
+        });
+    }
+}  

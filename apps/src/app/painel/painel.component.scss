@@ -136,7 +136,7 @@ mat-drawer {
     overflow: hidden;
 
     ::ng-deep .mat-drawer-inner-container {
-        padding: 0px 2px;
+        //  padding: 0px 2px;
         overflow: hidden;
     }
 
@@ -161,10 +161,22 @@ mat-drawer-container {
 
 }
 
+.apps {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 2px;
+    padding: 4px 0;
+    overflow: hidden;
+    height: 100%;
+    flex: auto;
+}
+
 button.app {
     display: flex;
     flex-direction: column;
-    font-size: 9px;
+    font-size: 8px;
     align-items: center;
     justify-content: center;
     text-align: center;
@@ -173,4 +185,13 @@ button.app {
     max-height: unset;
     gap: 4px;
     border-radius: 0;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    &:hover {
+        overflow: unset;
+        z-index: 12;
+    }
 }

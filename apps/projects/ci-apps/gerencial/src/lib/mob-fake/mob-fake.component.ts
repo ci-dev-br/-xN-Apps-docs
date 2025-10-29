@@ -57,7 +57,7 @@ export class InnerService {
 export class MobFakeComponent implements OnDestroy {
   private previous_title = document.title;
   form: FormGroup = this.fb.group({
-    url: ['https://apps.ci.dev.br:446/', [Validators.required, Validators.max(512)]]
+    url: ['https://apps.ci.dev.br/', [Validators.required, Validators.max(512)]]
   });
   services?: InnerService[];
   // service?: FakeService;

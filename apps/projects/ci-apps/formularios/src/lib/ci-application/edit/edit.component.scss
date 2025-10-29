@@ -34,15 +34,29 @@ ci-logo ::ng-deep img {
     gap: 12px;
 }
 
+.container-menu {
+    position: sticky;
+    top: 30vh;
+    bottom: 30vh;
+}
+
 .menu {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    padding: 12px;
     border-radius: 6px;
     background-color: var(--mdc-elevated-card-container-color, var(--mat-sys-surface-container-low));
-    position: sticky;
-    top: 100px;
+    box-shadow: 2px 4px 12px rgba(0, 0, 0, .44);
+    position: relative;
+    padding: 12px;
+
+    h6 {
+        position: absolute;
+        text-align: center;
+        top: -50px;
+        left: 0;
+        right: 0;
+    }
 }
 
 .col {
@@ -55,4 +69,11 @@ ci-logo ::ng-deep img {
     .small-container {
         min-width: 750px;
     }
+}
+
+mat-card-footer{
+    padding: 12px;
+}
+.auto{
+    flex: auto;
 }

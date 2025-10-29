@@ -1,0 +1,69 @@
+import {
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    UpdateDateColumn
+} from "typeorm";
+import {
+    schema
+} from "./schema";
+import {
+    ApiProperty
+} from "@nestjs/swagger";
+import {
+    BasicIdentifiedEntity
+} from "@ci/manager";
+/**
+ * Registro de Tentativa de Cadastro
+ * Contato Inicial por E-mail ou Telefone
+ * para posterior verificação e criação de Conta de Usuário
+ * 
+ */
+@Entity({
+    schema
+})
+export class Register extends BasicIdentifiedEntity {
+    @ApiProperty({
+        nullable: true,
+        required: false
+    }) @Column({
+        nullable: true
+    }) phone?: string;
+    @ApiProperty({
+        nullable: true,
+        required: false
+    }) @Column({
+        nullable: true
+    }) mail?: string;
+    @ApiProperty({
+        nullable: true,
+        required: false
+    }) @CreateDateColumn({
+        nullable: true
+    }) createdAt?: Date;
+    @ApiProperty({
+        nullable: true,
+        required: false
+    }) @UpdateDateColumn({
+        nullable: true
+    }) modifiedAt?: Date;
+    @ApiProperty({
+        nullable: true,
+        required: false
+    }) @DeleteDateColumn({
+        nullable: true
+    }) deletedAt?: Date;
+    @ApiProperty({
+        nullable: true,
+        required: false
+    })
+    @Column({
+        nullable: true
+    })
+    emailAuthorization?: boolean;
+    @Column({
+        nullable: true
+    })
+    phoneAuthorization?: boolean;
+}

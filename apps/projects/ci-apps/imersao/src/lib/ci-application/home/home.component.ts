@@ -2,10 +2,10 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import { VRButton } from 'three/addons';
 @Component({
-    selector: 'ci-home',
-    imports: [],
-    templateUrl: './home.component.html',
-    styleUrl: './home.component.scss'
+  selector: 'ci-home',
+  imports: [],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
   @ViewChild('video') video?: ElementRef<HTMLVideoElement>;

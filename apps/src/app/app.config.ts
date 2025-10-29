@@ -12,6 +12,11 @@ import { provideNuMonacoEditorConfig } from '@ng-util/monaco-editor';
 import { CardSetting } from '@ci/components';
 import { Cards } from './cards';
 import { UnidadeMedidaPreset } from '../../projects/ci-apps/cadastros/src/lib/presets';
+import { NgxMaskConfig, NgxMaskDirective, provideEnvironmentNgxMask, provideNgxMask } from 'ngx-mask';
+
+const maskConfig: Partial<NgxMaskConfig> = {
+  validation: false,
+};
 
 const SETUP = {
   API_URL_GATEWAY: 'https://apps.ci.dev.br',
@@ -24,7 +29,7 @@ const SETUP = {
     // 'wss://apps.ci.dev.br:446',
     // 'ws://apps.ci.dev.br:87',
   ],
-  UNSATLY_WS_COMMON: 'wss://192.168.0.8:664',
+  UNSATLY_WS_COMMON: 'wss://apps.ci.dev.br',
 }
 
 export const appConfig: ApplicationConfig = {
@@ -57,6 +62,7 @@ export const appConfig: ApplicationConfig = {
         UnidadeMedidaPreset
       ]
     }),
-    { provide: CardSetting, useValue: Cards }
+    { provide: CardSetting, useValue: Cards },
+    provideEnvironmentNgxMask(maskConfig),
   ],
 };

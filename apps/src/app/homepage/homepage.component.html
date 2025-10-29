@@ -1,13 +1,52 @@
+<video #video loop controls="false" autoplay>
+    <source src="bg.mp4" type="video/mp4">
+</video>
 <ci-navbar></ci-navbar>
-<header class="container">
-    <img class="logo" src="logo-colorida.svg" alt="logo 'apps' escrita em manuscrito e colida degradê">
-</header>
-<div class="container ">
-
-</div>
-<footer>
-    <div class="assinatura">
-        Desenvolvido por <a href="https://ci.dev.br" target="_blank">ci.dev.br</a>, 2025
+<div class="page--wrapper">
+    @if(!!(userService.user | async)){
+    <div #sidebarElement class="sidebar" [class.--inactive]="!sidebar" (click)="sidebar=!sidebar"
+        [style.top]="sidebarTop + 'px' " [style.left]="sidebarLeft + 'px'">
+        <button mat-raised-button color="primary" routerLink="/meus-apps">Meus Apps</button>
+        @if(categorias){@for (item of categorias; track $index) {
+        <button mat-button>{{item.name}}</button>
+        }}
+        <span style="flex:auto"></span>
+        <div class="row end">
+            <button mat-icon-button (click)="openSidebarSettings()"><mat-icon>settings</mat-icon></button>
+        </div>
     </div>
-    <a href="/termos-de-uso">Termos de Uso e Privacidade</a>
-</footer>
+    <div class="wrapper">
+        <div class="container">
+            <h4>Utilize o Apps para criar aplicativos incríveis e eficientes que auxiliam suas operações no dia-a-dia.
+            </h4>
+            <p>
+                Gerencie conexões, aplicativos e código-fonte. Integre de forma simples. Configure seu ambiente de
+                desenvolvimento em poucos passos.
+            </p>
+        </div>
+        <div class="apps">
+            @for (item of apps; track $index) {
+            <mat-card (click)="appClickHandler($event, item)">
+                {{item.name}}
+            </mat-card>
+            }
+        </div>
+    </div>
+    }@else {
+    <!-- 
+        Área do não assinante
+    -->
+    <header class="container">
+        <figure>
+            <img class="logo" src="logo-colorida.svg"
+                alt-label="Logo 'apps.ci.dev.br' escrita em manuscrito e colida degradê em minúsculo">
+        </figure>
+    </header>
+    }
+</div>
+<x-footer />
+<!-- 
+<video #video loop controls="false" autoplay>
+    <source src="bg.mp4" type="video/mp4">
+</video>
+-->

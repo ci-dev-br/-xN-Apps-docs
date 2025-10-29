@@ -2,6 +2,10 @@ import { Column, Entity } from "typeorm";
 import { schema } from "../norms";
 import { FullAuditedEntity } from "@ci/manager";
 import { ApiProperty } from "@nestjs/swagger";
+/**
+ * Represents a financial transaction entity in the system.
+ * This entity includes properties such as date, time, value, type, and description. 
+ */
 @Entity({ schema })
 export class Transacao extends FullAuditedEntity {
     @ApiProperty({ title: 'Data', nullable: true, required: false })

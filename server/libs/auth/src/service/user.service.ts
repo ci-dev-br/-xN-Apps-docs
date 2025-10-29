@@ -3,11 +3,11 @@ import { User } from '../models/user.entity';
 import { DataSource, Equal, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
-import { ChaveAcesso } from '@ci/core';
-import { createHash, Hash } from 'crypto';
+import { Credential } from '@ci/core';
+import { createHash } from 'crypto';
 import { request } from 'https';
 import { readFileSync } from 'fs';
-
+import { join } from 'path';
 @Injectable()
 export class UserService {
     constructor(
@@ -23,20 +23,35 @@ export class UserService {
             return user_created;
         })
     }
+    async serdMailTemplate(template_html, message_data?: any) {
+
+    }
     async sendEmailConfirmation(registro: User) {
         return await new Promise<void>((res, rej) => {
-            let data = JSON.stringify({
+            const template_data = {
+                ano: null,
+                logo_base64: null,
+            }
+            let data = {
+                ano: (new Date()).getFullYear().toString(),
+                mail_sender_status: 'Você está recebendo e-mails do Apps.ci.dev.br.',
+                nome: registro.fullName,
+                mail_confirmation_link: 'https://apps.ci.dev.br/?unsubscrible=zyx',
+                apelidio: registro.fullName,
+                unsubscrible_link: 'https://apps.ci.dev.br/?unsubscrible=zyx',
+                footer_assinatura: 'ci.dev.br - ci.dev.br especialistas em lançamento de aplicativos sob demanda.',
+                footer_message: 'ci.dev.br - Sediada em Curitiba, Paraná, Brasil.<br/> Apps é ci.dev.br.',
+            };
+            let send_mail_request_body = JSON.stringify({
                 x: createHash('sha256').update(process.env.mailer_key + '.' + registro.email.trim() + '.apps.ci.dev.br').digest('hex'),
                 to: registro.email.trim(),
                 from: 'contact@ci.dev.br',
                 subject: 'Confirmação de Cadastro',
-                message: readFileSync(__dirname + '/../templates/mail-template.html').toString('utf-8')
-                    .replaceAll('::ano::', (new Date()).getFullYear().toString())
-                    .replaceAll('::mail_sender_status::', 'Você está recebendo e-mails do Apps.ci.dev.br.')
-                    .replaceAll('::nome::', registro.fullName)
-                    .replaceAll('::mail_confirmation_link::', 'https://xx.app.br/confirmation/')
-                    .replaceAll('::apelidio::', registro.fullName)
-                ,
+                message: (() => {
+                    let template_html = readFileSync(join(__dirname, '/../', 'templates/mail-template.html')).toString('utf-8');
+                    Object.keys(data).forEach(property_name => (template_html = template_html.replaceAll(`{{${property_name}}}`, data[property_name])));
+                    return template_html;
+                })(),
             });
             let req = request({
                 host: 'mailer.xx.app.br',
@@ -44,18 +59,23 @@ export class UserService {
                 method: 'POST',
                 path: '/mailer/send/',
                 headers: {
-                    'Content-Length': Buffer.byteLength(data),
+                    'Content-Length': Buffer.byteLength(send_mail_request_body),
                     'Content-type': 'application/json',
                 }
             }, (result) => {
                 result.on('data', (result_data) => {
                     if (result_data) {
-                        const r = JSON.parse(result_data.toString());
-                        // console.log(r);
-                        if (r.status !== 200) {
-                            rej(new Error('Falha no envio do e-mail de confirmação.\n' + (r.message || '')))
-                        } else {
-                            res();
+                        console.log(result_data.toString());
+                        try {
+                            const response_json = JSON.parse(result_data.toString());
+                            if (response_json.status !== 200) {
+                                rej(new Error('Falha no envio do e-mail de confirmação.\n' + (response_json.message || '')))
+                            } else {
+                                res();
+                            }
+                        } catch (e) {
+
+                            rej(new Error('Falha no envio do e-mail de confirmação.\n' + (e?.message || '')))
                         }
                     }
                 });
@@ -63,7 +83,7 @@ export class UserService {
                     console.log('No more data in response.');
                 });
             });
-            req.write(data);
+            req.write(send_mail_request_body);
             req.end();
         });
     }
@@ -111,21 +131,10 @@ export class UserService {
             refreshToken: null
         })
     }
-    async updateRefreshToken(userId: string, refreshToken: string, chave?: ChaveAcesso) {
+    async updateRefreshToken(userId: string, refreshToken: string, chave?: Credential) {
         const hashedRefreshToken = await this.hashData(refreshToken);
         return hashedRefreshToken;
         // TODO:  implementar verificação do hash do RefrashToken ...
-        // 
-        // if (!!chave) {
-        //     if (!chave.alive && !!chave.valid) {
-        //         chave.refreshToken = hashedRefreshToken;
-        //     }
-        // } else {
-        //     // old
-        //     await this.userRepo.update(userId, {
-        //         refreshToken: hashedRefreshToken
-        //     })
-        // }
     }
     async findById(userId: string) {
         const user = await this.userRepo.findOne({

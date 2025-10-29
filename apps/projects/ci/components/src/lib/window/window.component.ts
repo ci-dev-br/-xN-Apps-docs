@@ -13,7 +13,7 @@ export interface IItemMenu {
   label?: string;
   path?: string;
   children?: IItemMenu[];
-  onClick?: () => void;
+  onClick?: (...args: any) => void;
   visible?: () => boolean;
 }
 /**

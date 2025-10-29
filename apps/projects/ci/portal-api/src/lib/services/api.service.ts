@@ -9,8 +9,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { appControllerRoot } from '../fn/operations/app-controller-root';
-import { AppControllerRoot$Params } from '../fn/operations/app-controller-root';
+import { appControllerRessource } from '../fn/operations/app-controller-ressource';
+import { AppControllerRessource$Params } from '../fn/operations/app-controller-ressource';
 
 @Injectable()
 export class ApiService extends BaseService {
@@ -18,27 +18,27 @@ export class ApiService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `appControllerRoot()` */
-  static readonly AppControllerRootPath = '/*';
+  /** Path part for operation `appControllerRessource()` */
+  static readonly AppControllerRessourcePath = '/*';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `appControllerRoot()` instead.
+   * To access only the response body, use `appControllerRessource()` instead.
    *
    * This method doesn't expect any request body.
    */
-  appControllerRoot$Response(params?: AppControllerRoot$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return appControllerRoot(this.http, this.rootUrl, params, context);
+  appControllerRessource$Response(params?: AppControllerRessource$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return appControllerRessource(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `appControllerRoot$Response()` instead.
+   * To access the full response (for headers, for example), `appControllerRessource$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  appControllerRoot(params?: AppControllerRoot$Params, context?: HttpContext): Observable<void> {
-    return this.appControllerRoot$Response(params, context).pipe(
+  appControllerRessource(params?: AppControllerRessource$Params, context?: HttpContext): Observable<void> {
+    return this.appControllerRessource$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }

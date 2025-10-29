@@ -3,15 +3,24 @@ import { Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from
 import { Conversation } from "./conversation.entity";
 import { schema } from "../noms";
 import { FullAuditedEntity } from "@ci/manager";
+import { Contact } from "./contact.entity";
+import { ApiProperty } from "@nestjs/swagger";
+/***
+ *  Direct Message Default Entity
+ * 
+ */
 @Entity({
     schema
 })
 export class DirectMessage extends FullAuditedEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id?: string;
+    @ApiProperty({ type: Contact })
     @JoinTable()
-    @ManyToOne(() => User)
-    from?: User;
+    @ManyToOne(() => Contact)
+    from?: Contact;
+    @ApiProperty({ type: Contact })
+    @JoinTable()
+    @ManyToOne(() => Contact)
+    to?: Contact;
     @JoinTable()
     @ManyToOne(() => Conversation)
     conversation?: Conversation;

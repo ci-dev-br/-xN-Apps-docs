@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { schema } from "../shema";
+import { schema } from "../schema";
 import { ApiProperty } from "@nestjs/swagger";
 
 /**

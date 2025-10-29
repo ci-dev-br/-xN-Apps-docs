@@ -8,7 +8,7 @@ import { User } from "./models/user.entity";
 import { jwtConstants } from "./constants";
 import { AuthGuard } from "./auth.guard";
 import { CredencialService } from "./service/credencial.service";
-import { ChaveAcesso } from "@ci/core";
+// import { Credential } from "@ci/core";
 import { Policy } from "./models/policy.entity";
 import { RefreshTokenStrategy } from "./service/refresh-token-strategy";
 import { AuthService } from "./service/auth.service";
@@ -19,14 +19,18 @@ import { UserCredentialService } from "./service/user-credential.service";
 import { CoreModule } from "@ci/core/core.module";
 import { TwoFactorAuthenticationService } from "./service/two-factors.service";
 import { NotificacaoModule } from "@ci/notification";
+import { Register } from "./models/register.entity";
+import { RegisterService } from "./service/register.service";
+import { RegisterController } from "./controller/register.controller";
 //import { StorageModule } from "@ci/storage";
 // import { StorageModule } from "@ci/storage";
 export const AuthEntities = [
     Policy,
     User,
-    ChaveAcesso,
+    // Credential,
     DeviceAuthenticated,
     AccessCredential,
+    Register,
 ];
 @Module({
     imports: [
@@ -42,10 +46,12 @@ export const AuthEntities = [
         TenantModule,
         CoreModule,
         NotificacaoModule,
+
         // StorageModule,
     ],
     controllers: [
         AuthController,
+        RegisterController,
     ],
     providers: [
         UserService,
@@ -53,6 +59,7 @@ export const AuthEntities = [
         CredencialService,
         UserCredentialService,
         RefreshTokenStrategy,
+        RegisterService,
         TwoFactorAuthenticationService,
         {
             provide: APP_GUARD,

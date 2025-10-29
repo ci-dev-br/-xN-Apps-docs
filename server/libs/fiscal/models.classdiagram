@@ -1,0 +1,51 @@
+classDiagram
+    class RegistroTransacao {
+        +String transacaoId
+        +DateTime dataHora
+        +BigDecimal valorBruto
+        +BigDecimal valorTotal
+        +AssinaturaDigital assinatura
+        +validarAssinatura()
+    }
+
+    class Participante {
+        +String nome
+        +String identificador
+        +Endereco endereco
+    }
+
+    class Endereco {
+        +String logradouro
+        +String numero
+        +String cidade
+        +String pais
+    }
+
+    class ItemTransacao {
+        +String sku
+        +String descricao
+        +BigDecimal quantidade
+        +BigDecimal valorUnitario
+        +BigDecimal valorLiquido
+        +List<ComponenteFinanceiro> componentes
+    }
+
+    class ComponenteFinanceiro {
+        +String tipo
+        +String descricao
+        +BigDecimal valor
+        +TipoAplicacao aplicacao
+    }
+
+    enum TipoAplicacao {
+        IMPOSTO
+        TAXA
+        DESCONTO
+        COMISSAO
+        CONTRIBUICAO
+    }
+
+    RegistroTransacao "1" -- "2..*" Participante : envolvidos
+    RegistroTransacao "1" -- "1..*" ItemTransacao : itensTransacionados
+    Participante "1" -- "1" Endereco : localizacao
+    ItemTransacao "1" -- "0..*" ComponenteFinanceiro : inclui

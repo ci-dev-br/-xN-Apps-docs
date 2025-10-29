@@ -10,7 +10,7 @@
         Selection
     </button>
     <mat-menu #fileMenu>
-        <button mat-menu-item>
+        <button mat-menu-item (click)="files.openCreateNew()">
             New
         </button>
         <button mat-menu-item (click)="openProject()">
@@ -31,16 +31,7 @@
         {{aba.label}}</a>
     }
     }
-    <!--  <a mat-tab-link disabled>Disabled Link</a> -->
 </nav>
-
-<!-- <div class="apps">
-    @for (item of items; track $index) {
-    <div class="aplicativo">
-        @if(!!item.titulo){<div class="titulo">{{item.titulo}}</div>}
-    </div>
-    }
-</div> -->
 <mat-tab-nav-panel #tabPanel>
     <router-outlet></router-outlet>
 </mat-tab-nav-panel>

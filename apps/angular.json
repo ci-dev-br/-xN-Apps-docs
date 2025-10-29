@@ -79,7 +79,11 @@
               "buildTarget": "apps:build:production"
             },
             "development": {
-              "buildTarget": "apps:build:development"
+              "buildTarget": "apps:build:development",
+              "allowedHosts": [
+                "https://4200.ci.dev.br/",
+                "4200.ci.dev.br"
+              ]
             }
           },
           "defaultConfiguration": "development"
@@ -1137,7 +1141,10 @@
               "buildTarget": "@ci/quase:build:production"
             },
             "development": {
-              "buildTarget": "@ci/quase:build:development"
+              "buildTarget": "@ci/quase:build:development",
+              "allowedHosts": [
+                "https://4200.ci.dev.br/"
+              ]
             }
           },
           "defaultConfiguration": "development"

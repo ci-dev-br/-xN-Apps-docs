@@ -1,0 +1,25 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "rootDir": "./src",
+        "outDir": "./dist",
+        "target": "es2021",
+        "incremental": true,
+        "module": "commonjs",
+        "strictNullChecks": true,
+        "inlineSourceMap": true
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "server/**",
+        "apps/**",
+        "client/**",
+        "ci/**",
+        "docs/**",
+        "gulp/**",
+        "workspace/**",
+        "gerenciador-projetos/**",
+    ]
+}

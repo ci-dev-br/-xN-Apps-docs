@@ -1,0 +1,97 @@
+<html>
+
+<body>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        div.body {}
+
+        * {
+            color: rgba(0, 0, 0, .75);
+        }
+
+        table {}
+
+        td {
+            padding: 15px 12px;
+        }
+
+        .footer {
+            margin: 0 auto;
+            width: 80vw;
+            max-width: 400px;
+            text-align: justify;
+        }
+
+        small {
+            line-height: 24px;
+        }
+
+        button {
+            padding: 14px;
+            font-weight: bold;
+            background: black;
+            color: white;
+            border: none;
+            border-radius: 12px;
+        }
+
+        .escondido {
+            font-size: 8px;
+            color: rgba(0, 0, 0, .5);
+            margin: 0;
+        }
+    </style>
+    <div
+        style="background: linear-gradient(33deg, #ababab 0%, #ffffff 50%); font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;            text-align: center; padding: 50px;">
+        <div class="logo"
+            style=" margin: 0 auto; width: 240px; height: 80px; display: block; background-position: center; background-repeat: no-repeat; background-size: contain;">
+            <img src="{{logo_base64}}">
+        </div>
+        <p>
+            Crie aplicativos incríveis,
+            por preços que cabem na ponta do lápis.
+        </p>
+        <table
+            style="width: 80vw; max-width: 550px; margin: 0 auto; background: white; border-radius: 10px; padding-bottom: 48px; box-shadow: 0 10px 20px -10px rgba(0, 0, 0, .5); margin-bottom: 40px;margin-top: 32px;">
+            <tbody>
+                <tr>
+                    <td style="border-bottom: 2px solid #f0f0f0;">
+                        <h1>Bem-vindo de volta,</h1>
+                        <p>Obrigado por se registrar na plataforma CI Apps. Para começar a explorar nossos serviços, por
+                            favor,
+                            confirme seu e-mail clicando no botão abaixo:</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button
+                            style="margin-top: 24px; padding: 14px 24px; font-size: 16px; font-weight: bold; background: black; color: white; border: none; border-radius: 8px;">
+                            <a href="{{act_url}}" style="text-decoration: none; color: white;">Confirmar
+                                E-mail</a>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>
+                        <div class="escondido">
+                            Encontrou algum problema? Entre em contato com nossa equipe de suporte <a
+                                href="{{new_report_link}}">aqui</a>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        <div class="footer">
+            <a href="{{unsubscribe_link}}">Não tenho mais interesse, cancelar inscrição</a><br>
+            <small>©{{footer_assinatura}} {{ano}}<br>
+                {{footer_message}}</small><br>
+        </div>
+    </div>
+</body>
+
+</html>

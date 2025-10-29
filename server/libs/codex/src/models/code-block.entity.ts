@@ -19,4 +19,6 @@ export class CodeBlock extends FullAuditedEntity {
     })
     @Column({ nullable: true })
     version?: string;
+    @ApiProperty({ nullable: true, required: false }) @Column({ nullable: true })
+    description?: string;
 }

@@ -1,0 +1,10 @@
+{
+    "application-name": "Apps",
+    "id": "414998448689409844894840",
+    "load-modules": [
+        "https://git.plhx.com.br/br.ci.dev.apps.authentication.git"
+    ],
+    "lazy-modules": [
+        "https://git.plhx.com.br/br.com.exemplo.calculadora.git"
+    ]
+}

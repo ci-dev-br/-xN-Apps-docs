@@ -12,6 +12,7 @@ import { CoreModule } from "@ci/core";
 import { ServerController } from "./controller";
 import { DinamycPageView } from "./model/dinamic-page-view.entity";
 import { DNSService } from "./service/dns.service";
+import { ManagerDeployOption } from "./model/deploy-option.entity";
 // import { UsersModule } from "@ci/user";
 // import { AuthModule } from "@ci/auth/auth.module";
 export const ManagerEntities = [
@@ -20,6 +21,7 @@ export const ManagerEntities = [
     Painel,
     ApplicationServer,
     DinamycPageView,
+    ManagerDeployOption,
 ]
 @Module({
     imports: [

@@ -7,8 +7,8 @@ export class NotificationService {
 
     ) { }
     async requestPermission() {
-        this.permission = await Notification.requestPermission();
-
+        // TODO: implementar camada de notificação.sds
+        //  this.permission = await Notification.requestPermission();
     }
 
     private async showNotification(title: string, message: string) {

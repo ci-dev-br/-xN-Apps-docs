@@ -2,10 +2,10 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-
     //  text-align: center;
     height: 100vh;
     overflow: auto;
+    position: relative;
 }
 
 .logo {
@@ -18,28 +18,185 @@ header {
 }
 
 .container {
-    max-width: 80vw;
     display: flex;
-    width: 900px;
     flex-direction: column;
     align-self: center;
-    padding: 24px;
-
+    padding: 48px;
     flex: auto;
     height: auto;
 }
 
-footer {
+.wrapper {
     display: flex;
     flex-direction: column;
-    padding: 24px;
-    flex: 0;
+    align-self: center;
+}
 
-    color: white;
-    background: rgba(0, 0, 0, .99);
 
-    .assinatura {
-        font-weight: 100;
-        font-size: 10px;
+.apps {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+    justify-content: space-evenly;
+    align-items: stretch;
+
+    >mat-card {
+        width: 3cm;
+        height: 3cm;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
     }
+}
+
+.page--wrapper {
+
+    background-position: center center;
+    background-repeat: no-repeat no-repeat;
+    background-size: cover;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+
+    flex: auto;
+    overflow: auto;
+
+    position: relative;
+}
+
+.qra:has(.sidebar) {
+    display: flex;
+    flex-direction: row;
+    flex: auto;
+    align-items: stretch;
+    justify-content: stretch;
+    width: 100%;
+
+    .sidebar {
+        flex: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        min-width: 200px;
+        // background: rgba(0, 0, 0, .5);
+        padding: 24px;
+        gap: 12px;
+
+        background-color: white;
+
+    }
+
+    .apps {
+        flex: auto;
+    }
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+
+    &.end {
+        align-items: end;
+        justify-content: flex-end;
+    }
+}
+
+.sidebar {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    width: 245px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    // bottom: 0;
+    box-shadow: 3px 6px 24px rgba(0, 0, 0, 0.45);
+    padding: 24px;
+    border-radius: 12px;
+    transition: all 1.5s ease;
+
+    >* {
+        transition: opacity .5s ease-in-out;
+        opacity: 1;
+
+    }
+
+    &.--inactive {
+
+        left: 25px;
+        top: 25px;
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
+
+        >* {
+            opacity: 0;
+            user-select: none;
+            pointer-events: none;
+        }
+    }
+}
+
+x-footer,
+ci-navbar {
+    z-index: 1;
+}
+
+video {
+    position: absolute;
+    inset: 0;
+    object-fit: cover;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    user-select: none;
+    overflow: hidden;
+    pointer-events: none;
+
+    &::-webkit-media-controls {
+        display: none !important;
+    }
+
+    &::-moz-media-controls {
+        display: none !important;
+    }
+
+    &::-ms-media-controls {
+        display: none !important;
+    }
+
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
+    padding: 12px;
+}
+
+.container {
+    background-color: white;
+    border-radius: 24px;
+    padding: 0px 24px 24px 24px;
+    width: auto;
+    max-width: 33cqmax;
+    box-shadow: 0 4px 48px rgba(0, 0, 0, 0.9);
 }

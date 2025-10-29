@@ -12,6 +12,7 @@
     </button> -->
 </mat-toolbar>
 <mat-drawer-container>
+    <h4>Registros</h4>
     <mat-drawer #sideMenu mode="over" opened>
         @for(item of cadastros; track item){
         <button mat-menu-item [routerLink]="'./' + item">{{item}}</button>

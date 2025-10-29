@@ -1,0 +1,16 @@
+@Proto: xne.core.FuncionalidadeImpl
+@version: 1.0.0
+@Funcionalidade: Cadastro de Pessoa:
+@Detail: Cadastramento de Pessoa, física e jurídica para gerenciamento de cadastro de pessoas.
+@Models{
+    @import Cadastros.Endereço;
+    @import Cadastros.Identificação;
+    @import Manager.Credential;
+    Pessoa{
+        Nome Completo; 
+        Nome Usual;
+        Documento Identificação(s) as Identificação;
+        Credencial de Acesso as Credential; 
+        Endereços as Endereço;
+    }
+}

@@ -1,8 +1,9 @@
 import { Column, CreateDateColumn, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { PhoneNumber } from "./phone-number.entity";
+import { schema } from "./schema";
 @Entity({
-    schema: 'notification'
+    schema
 })
 export class Device {
     @ApiProperty({ nullable: true })

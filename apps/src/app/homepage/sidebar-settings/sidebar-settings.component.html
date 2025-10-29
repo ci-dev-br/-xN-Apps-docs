@@ -1,0 +1,38 @@
+<mat-toolbar>
+    <form [formGroup]="pesquisa">
+        <button mat-raised-button (click)="novaCategoria()">Novo Grupo</button>
+        <mat-form-field appearance="outline" style="flex: auto;">
+            <mat-label>Pesquisar</mat-label>
+            <input matInput type="text" formControlName="search" placeholder="Procurar aplicativo">
+        </mat-form-field>
+    </form>
+</mat-toolbar>
+<div style="display:flex; flex-direction:row; align-items: stretch; justify-content: stretch;">
+    <div style="display:flex; flex-direction:column; align-items: stretch; gap: 0;">
+        <button mat-button>Grupos</button>
+        <button mat-button>Explorar Aplicativos</button>
+    </div>
+    <div class="container">
+        @if(stage === 'new-category'){
+        @if(novaCategoriaForm){<form [formGroup]="novaCategoriaForm">
+            <p>Vamos criar um grupo de aplicativos. Primeiramente vamos escolher um nome.</p>
+            <mat-form-field>
+                <mat-label>Nome da Categoria</mat-label>
+                <input matInput placeholder="Nome da Categoria" formControlName="name" />
+            </mat-form-field>
+            <button mat-raised-button (click)="selecionarAplicatiovos()">Selecionar aplicativos</button>
+        </form>
+        }}@else if (stage === 'add-apps-find') {
+        @if(aplicativos){<div class="apps">
+            @for (aplicativo of listaLateralFiltrada || aplicativos ; track $index) {
+            <div class="app">
+                {{aplicativo.name}}
+                @if(aplicativo.description){<p>
+                    {{aplicativo.description}}
+                </p>}
+            </div>
+            }
+        </div>
+        }}
+    </div>
+</div>

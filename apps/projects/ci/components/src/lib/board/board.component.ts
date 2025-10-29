@@ -8,6 +8,8 @@ import { lastValueFrom } from "rxjs";
 import { CardFinderComponent } from "./card-finder/card-finder.component";
 import { CardSetting, ImplCard } from "./card";
 import { moveItemInArray } from "@angular/cdk/drag-drop";
+import { WindowService } from "../window/window.service";
+import { SettingsComponent } from "../settings/settings.component";
 
 @Component({
     selector: 'ci-board',
@@ -21,6 +23,7 @@ export class BoardComponent implements OnInit {
     form?: FormGroup;
     @Input() default?: string;
     constructor(
+        private readonly window: WindowService,
         private readonly daoForms: DaoBuilder,
         private readonly user: UserService,
         private readonly pranchetas: PranchetaService,
@@ -127,5 +130,10 @@ export class BoardComponent implements OnInit {
     }
     get layout() {
         return this.prancheta?.layout?.split(',').map(d => Number(d))
+    }
+    async openSettings() {
+        this.window.open(SettingsComponent, {
+
+        })
     }
 }

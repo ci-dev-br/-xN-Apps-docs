@@ -85,6 +85,7 @@ export * from './models/promocao';
 export * from './models/read-directory-input';
 export * from './models/read-directory-output';
 export * from './models/refresh-payload-input-dto';
+export * from './models/register';
 export * from './models/registrar-input-dto';
 export * from './models/send-message-payload';
 export * from './models/servico';

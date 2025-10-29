@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { CoreModule, LoadIconsModule, LoadIconsService, StorageService } from '@ci/core';
+import { Component, inject } from '@angular/core';
+import { CoreModule, LoadIconsModule, IconLoaderSerices, StorageService } from '@ci/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,8 +10,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { APPS } from './apps/apps';
-import { AuthModule, UserService } from '@ci/auth';
-import { LogoComponent, IconModule } from '@ci/components';
+import { AuthModule, USER_MENU, UserService } from '@ci/auth';
+import { LogoComponent, IconModule, IItemMenu } from '@ci/components';
 @Component({
   selector: 'ci-painel',
   imports: [
@@ -37,54 +37,53 @@ import { LogoComponent, IconModule } from '@ci/components';
 export class PainelComponent {
   user = this.userService.user
   apps?: any[];
+  userMenuList?: IItemMenu[] = inject(USER_MENU, { optional: true }) || undefined;
   constructor(
     private readonly router: Router,
     private readonly userService: UserService,
     private readonly route: ActivatedRoute,
-    loadIcons: LoadIconsService,
+    iconLoader: IconLoaderSerices,
   ) {
-    loadIcons.load({
+    iconLoader.load({
       imersao: { url: 'icons/imersao.svg' },
       agenda: { url: 'icons/agenda.svg' },
       anotacoes: { url: 'icons/anotacoes.svg' },
-      cadastros: { url: 'icons/cadastros.svg' },
+      cadastros: { url: 'icons/v2/cadastros.svg' },
       carteira: { url: 'icons/carteira.svg' },
-      codex: { url: 'icons/codex.svg' },
+      codex: { url: 'icons/v2/codex.svg' },
       "dev-tools": { url: 'icons/dev-tools.svg' },
-      dynamic: { url: 'icons/dynamic.svg' },
+      dynamic: { url: 'icons/v2/dynamix-xd.svg' },
       estudos: { url: 'icons/estudos.svg' },
-      files: { url: 'icons/files.svg' },
+      files: { url: 'icons/v2/arquivos.svg' },
       financeiro: { url: 'icons/financeiro.svg' },
       formularios: { url: 'icons/formularios.svg' },
       fotos: { url: 'icons/fotos.svg' },
-      gerencial: { url: 'icons/gerencial.svg' },
-      icones: { url: 'icons/icones.svg' },
-      infra: { url: 'icons/infra.svg' },
+      gerencial: { url: 'icons/v2/gerencial.svg' },
+      icones: { url: 'icons/v2/icons.svg' },
+      infra: { url: 'icons/v2/infra.svg' },
       instalacao: { url: 'icons/instalacao.svg' },
       journal: { url: 'icons/journal.svg' },
-      "low-code": { url: 'icons/low-code.svg' },
+      "low-code": { url: 'icons/v2/low-code.svg' },
       mail: { url: 'icons/mail.svg' },
       mensagens: { url: 'icons/mensagens.svg' },
-      organizacao: { url: 'icons/organizacao.svg' },
-      perfil: { url: 'icons/perfil.svg' },
-      produtos: { url: 'icons/produtos.svg' },
-      projetos: { url: 'icons/projetos.svg' },
+      organizacao: { url: 'icons/v2/organizacao.svg' },
+      perfil: { url: 'icons/v2/profile.svg' },
+      produtos: { url: 'icons/v2/produtos.svg' },
+      projetos: { url: 'icons/v2/projetos.svg' },
       seo: { url: 'icons/seo.svg' },
       threejs: { url: 'icons/threejs.svg' },
       tradutor: { url: 'icons/tradutor.svg' },
-      treinamento: { url: 'icons/treinamento.svg' },
-      vendas: { url: 'icons/vendas.svg' },
-      crm: { url: 'icons/crm.svg' },
-      cms: { url: 'icons/cms.svg' },
+      treinamento: { url: 'icons/v2/treinamento.svg' },
+      vendas: { url: 'icons/v2/vendas.svg' },
+      crm: { url: 'icons/v2/crm.svg' },
+      cms: { url: 'icons/v3/cms.svg' },
     });
-
     this.userService.user.subscribe(user => {
       if (!!user) {
-        this.apps = APPS.filter(app => !!app.roles.find(role => !!user.roles?.find(r => r === role)))
+        this.apps = APPS.filter(app => !!app.roles?.find(role => !!user.roles?.find(r => r === role)))
       }
     })
   }
-
   async appClickHandler(event: MouseEvent, app: any) {
     if (event.ctrlKey) {
       // window.open(location.href + '/' + app.url, '')
@@ -93,19 +92,16 @@ export class PainelComponent {
     }
     setTimeout(() => document.body.click(), 300)
   }
-
   async sair() {
     this.userService.sair();
-    // Foi removido pois o sair() já realiza o roteamento na saída.
-    // Aqui está correto por enquanto
-    // setTimeout(() =>
-    //   this.router.navigate(['/'])
-    // );
   }
   async repo() {
     window.open('https://github.com/ci-dev-br/-xN-Apps-docs', '_blank')
   }
-  profile() {
+  async profile() {
     this.router.navigate(['/Profile'])
+  }
+  protected async itemMenuActionHandler(itemMenu: IItemMenu, event: Event) {
+    if (itemMenu.onClick) itemMenu.onClick(this, event);
   }
 }

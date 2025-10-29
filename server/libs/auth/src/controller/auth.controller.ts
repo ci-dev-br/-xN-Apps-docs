@@ -30,19 +30,31 @@ export class AuthController {
     @Request() req: Request,
     @Body() input?: RegistrarInputDto,
   ) {
+    /***
+     * 
+     * 1 . solicita e-mail / numero celular 
+     * 2 . envia mensagem de confirmação com link para continuação do cadastro
+     * 3 . permite o usuário criar uma senha para acesso rápido ou outra forma de autenticação
+     * 
+     */
     // console.info(req.headers);
     try {
-      const created_user = await this.userService.registrar({
-        email: input.email,
-        fullName: input.fullName,
-        emailVerificado: false,
-        surname: input.surname,
-        password: await argon2.hash(input.password),
-        username: input.identificacao,
-        phone: input.phone,
-        passwordMode: 'argon2',
-      });
-      return created_user;
+      if ((!!input.email || !!input.phone) && !input.identificacao) {
+        // TODO: solicitar verificação do e-mail de contato do usuário cadastrante (Cliente ou Desenvolvedor).        
+      } else {
+        throw new Error('Erro temporário, tente novamente mais tarde.');
+      }
+      /* const created_user = await this.userService.registrar({
+         email: input.email,
+         fullName: input.fullName,
+         emailVerificado: false,
+         surname: input.surname,
+         password: await argon2.hash(input.password),
+         username: input.identificacao,
+         phone: input.phone,
+         passwordMode: 'argon2',
+       });
+       return created_user; */
     } catch (error) {
       console.trace(error);
       return {
@@ -83,7 +95,8 @@ export class AuthController {
   })
   async Acessar(
     @Ip() ip,
-    @Body() payload: AcessoPayload
+    @Body() payload: AcessoPayload,
+    @Request() req: Request,
   ) {
     try {
       if (payload?.chaveAcesso && payload?.password) {
@@ -150,7 +163,8 @@ export class AuthController {
         }
       } else {
         const chaveAcesso = (await this.credencialService.solicitarCredencial({
-          ip: ip
+          ip: ip,
+          headers: req.headers
         }));
         return {
           chaveAcesso: chaveAcesso.id,
@@ -192,7 +206,7 @@ export class AuthController {
   ) {
     try {
       return await this.authService.refreshToken(
-        null, payload.refreshToken, req, ip
+        null, payload?.refreshToken, req, ip
       );
     } catch (error) {
       return {

@@ -7,7 +7,7 @@ import { StorageService } from "@ci/core";
 @Injectable()
 export class UserService {
     private $user = new BehaviorSubject<User | null>((() => {
-        if (localStorage) {
+        if (typeof localStorage !== 'undefined') {
             let stored = localStorage.getItem('CIUSR');
             try {
                 if (!!stored) return JSON.parse(atob(stored))
@@ -28,16 +28,16 @@ export class UserService {
         this.$user.subscribe(user => {
             try {
                 if (!!user) {
-                    const { /* photo,  */...user_info } = user;
+                    const { /* photo,    */...user_info } = user;
                     if (localStorage) localStorage.setItem('CIUSR', btoa(JSON.stringify(user_info, null, 2)));
                 } else {
-                    if (localStorage) localStorage.removeItem('CIUSR');
+                    if (typeof localStorage !== 'undefined') localStorage.removeItem('CIUSR');
                 }
             } catch (error) {
                 console.error(error);
             }
         });
-        if (localStorage)
+        if (typeof localStorage !== 'undefined')
             this.getFromMemory();
     }
 
