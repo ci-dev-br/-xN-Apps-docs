@@ -164,7 +164,7 @@ mat-drawer-container {
 button.app {
     display: flex;
     flex-direction: column;
-    font-size: 9px;
+    font-size: 8px;
     align-items: center;
     justify-content: center;
     text-align: center;
@@ -173,4 +173,13 @@ button.app {
     max-height: unset;
     gap: 4px;
     border-radius: 0;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    &:hover {
+        overflow: unset;
+        z-index: 12;
+    }
 }

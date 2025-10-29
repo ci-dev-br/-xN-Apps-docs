@@ -24,7 +24,7 @@
         </form>
         }}@else if (stage === 'add-apps-find') {
         @if(aplicativos){<div class="apps">
-            @for (aplicativo of aplicativos; track $index) {
+            @for (aplicativo of listaLateralFiltrada || aplicativos ; track $index) {
             <div class="app">
                 {{aplicativo.name}}
                 @if(aplicativo.description){<p>

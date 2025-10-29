@@ -29,6 +29,7 @@ export class SidebarSettings {
     protected pesquisa: FormGroup;
     protected stage?: 'new-category' | 'add-apps-find';
     protected novaCategoriaForm?: FormGroup;
+    protected listaLateralFiltrada?: Application[];
     constructor(
         private readonly fb: FormBuilder,
         private readonly aplications: ApplicationService,
@@ -51,7 +52,6 @@ export class SidebarSettings {
         })
     }
     selecionarAplicatiovos() {
-
         this.stage = 'add-apps-find';
     }
 }
