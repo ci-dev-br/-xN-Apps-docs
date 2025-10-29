@@ -136,7 +136,7 @@ mat-drawer {
     overflow: hidden;
 
     ::ng-deep .mat-drawer-inner-container {
-        padding: 0px 2px;
+        //  padding: 0px 2px;
         overflow: hidden;
     }
 
@@ -159,6 +159,18 @@ mat-drawer-container {
         z-index: -1;
     }
 
+}
+
+.apps {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 2px;
+    padding: 4px 0;
+    overflow: hidden;
+    height: 100%;
+    flex: auto;
 }
 
 button.app {
