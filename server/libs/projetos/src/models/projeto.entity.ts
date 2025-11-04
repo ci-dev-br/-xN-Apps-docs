@@ -41,4 +41,10 @@ export class Projeto extends FullAuditedEntity {
     })
     @ManyToMany(t => ClienteProjeto) @JoinTable()
     cliente?: ClienteProjeto;
+    @ApiProperty({
+        nullable: true, required: false,
+        description: Termos.Projeto.dataInicio.Descrição,
+    })
+    @Column({ nullable: true })
+    dataInicio?: Date;
 } 

@@ -15,6 +15,11 @@ export interface Projeto {
   createdAt?: Date | null;
   createdBy?: {
 } | null;
+
+  /**
+   * Data de Início
+   */
+  dataInicio?: string | null;
   deleted?: boolean | null;
 
   /**
