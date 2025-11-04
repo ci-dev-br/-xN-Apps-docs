@@ -47,35 +47,39 @@
     </ci-actions>
     <div class="row">
         <div class="toolbar">
-            <!-- <button [matMenuTriggerFor]="menu" >Menu</button>
-    <mat-menu #menu> -->
-            <!-- <button (click)="saveSvg()">Export</button>
-    {{selectedTool}}
-    <button (click)="selectedTool = 'rect'">Retângulo</button>
-    <button (click)="selectedTool = 'circle'">Círculo</button>
-    <button (click)="selectedTool = 'ellipse'">Elipse</button>
-    <button (click)="selectedTool = 'polygon'">Polígono</button>
-    <button (click)="selectedTool = 'pencil'">Lápis</button>
-    <input type="color" [(ngModel)]="fillColor">
-    <input type="color" [(ngModel)]="strokeColor">
-    <button (click)="addCircle()">Adicionar Círculo</button>
-    <button (click)="addRectangle()">Adicionar Retângulo</button>
-    <input type="file" (change)="addImage($event)">
-    <button (click)="saveSvg()">Salvar</button> -->
-            <!-- </mat-menu> -->
-
+            <button mat-icon-button [matMenuTriggerFor]="menuN">Menu</button>
+            <mat-menu #menuN>
+                <button (click)="saveSvg()">Export</button>
+                {{selectedTool}}
+                <button (click)="selectedTool = 'rect'">Retângulo</button>
+                <button (click)="selectedTool = 'circle'">Círculo</button>
+                <button (click)="selectedTool = 'ellipse'">Elipse</button>
+                <button (click)="selectedTool = 'polygon'">Polígono</button>
+                <button (click)="selectedTool = 'pencil'">Lápis</button>
+                <input type="color" [(ngModel)]="fillColor">
+                <input type="color" [(ngModel)]="strokeColor">
+                <button (click)="addCircle()">Adicionar Círculo</button>
+                <button (click)="addRectangle()">Adicionar Retângulo</button>
+                <input type="file" (change)="addImage($event)">
+                <button (click)="saveSvg()">Salvar</button>
+            </mat-menu>
             <!-- TODO: Controles -->
         </div>
-        <div class="svg-editor">
-            <svg #svgContainer [attr.width]="width" [attr.height]="height"><!-- (click)="addShape($event)" -->
-                @for(prancheta of pranchetas; track prancheta){
-                {{prancheta | json}}
-                <rect class="prancheta" [attr.x]="prancheta.x" [attr.y]="prancheta.y" [attr.width]="prancheta.width"
-                    [attr.height]="prancheta.height" [attr.fill]="prancheta.fill">
+        <div class="svg-editor"><!-- [attr.width]="width" [attr.height]="height" -->
+            <svg #svgContainer><!-- (click)="addShape($event)" -->
+                @for(artboard of artboards; track artboard){
+                {{artboard | json}}
+                <rect [attr.x]="artboard.x" [attr.y]="artboard.y" [attr.width]="artboard.width"
+                    [attr.height]="artboard.height" [attr.fill]="artboard.fill">
                 </rect>
                 }
             </svg>
-
         </div>
     </div>
+    div.statusbar
+    <svg #cursor class="cursor" [style.left]="mouseX" [style.top]="mouseY" viewBox="0 0 25 25" width="25" heigh="25"
+        xmlns="https://www.w3.org/2000/svg">
+        <path d="M 0,0 
+            10,25 14,13 25,10 z" fill="white" stroke="black" />
+    </svg>
 </div>

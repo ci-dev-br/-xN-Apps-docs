@@ -34,19 +34,21 @@ export class SvgEditorComponent implements OnInit {
     @ViewChild('svgContainer') svgContainer!: ElementRef;
     width = 0;
     height = 0;
+    mouseX?: number;
+    mouseY?: number;
     circles: Circle[] = [];
     rectangles: Rectangle[] = [];
     images: Image[] = [];
     fillColor: string = '#ff0000';
     strokeColor: string = '#000000';
     selectedTool: string = 'rect';
-    pranchetas?: any[] = [];
+    artboards?: any[] = [];
     constructor(
         private readonly el: ElementRef<HTMLElement>
     ) {
     }
     async ngOnInit() {
-        this.pranchetas = [
+        this.artboards = [
             { x: 0, y: 0, width: 500, height: 500, fill: '#ffffff' },
         ]
         let getSize = () => {
@@ -86,6 +88,9 @@ export class SvgEditorComponent implements OnInit {
     }
     @HostListener('mousemove', ['$event'])
     onDrag(event: MouseEvent) {
+        if (event.x) this.mouseX = event.x;
+        if (event.y) this.mouseY = event.y;
+
         if (this.isDragging && this.selectedElement) {
             event.preventDefault();
             event.stopPropagation();

@@ -51,13 +51,14 @@ svg {
     flex: auto;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    justify-content: stretch;
+    align-items: center;
+    justify-content: center;
 }
 
-.prancheta {
-    box-shadow: 0 0 6px rgba(0, 0, 0, 1);
-    border-radius: 5px;
+.artboard {
+    // box-shadow: 0 0 6px rgba(0, 0, 0, 1);
+    // border-radius: 5px;
+    // overflow: hidden;
 }
 
 .row {
@@ -68,4 +69,37 @@ svg {
 .column {
     display: flex;
     flex-direction: column;
+}
+
+.cursor {
+    z-index: 100000;
+    position: fixed;
+    pointer-events: none;
+    cursor: none;
+    user-select: none;
+    filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, .9));
+}
+
+:host {
+
+    &,
+    *,
+    ::ng-deep * {
+        cursor: none !important;
+    }
+
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    align-content: stretch;
+    justify-content: stretch;
+    align-items: stretch;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+    justify-content: stretch;
+    align-items: stretch;
 }
