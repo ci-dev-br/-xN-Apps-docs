@@ -195,3 +195,65 @@ button.app {
         z-index: 12;
     }
 }
+
+.inner {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    >* {
+        flex: 1;
+    }
+
+    .apps {
+        overflow: auto;
+    }
+}
+
+.menu--inner {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+    gap: 24px;
+
+    ::ng-deep * {
+        font-size: medium !important;
+    }
+
+    ::ng-deep button {
+        width: 80px;
+        min-width: unset;
+        max-width: unset;
+        height: 80px;
+        min-height: unset;
+        max-height: unset;
+
+        // box-shadow: 1px 3px 4px -1px black;
+
+        padding: 8px;
+    }
+}
+
+::ng-deep {
+    .mat-mdc-menu-panel:has(.menu--inner) {
+        max-width: 70vw;
+        // background-color: transparent;
+
+        position: relative;
+        margin: 0;
+        padding: 0;
+
+        //  &::before {
+        //  position: absolute;
+        // inset: 0;
+        //content: " ";
+        background: rgba(#000, .3);
+        backdrop-filter: blur(48px);
+        border: solid 1px #444;
+        box-shadow: 1px 3px 6px -1px rgba(#000, .33);
+        // }
+    }
+}
