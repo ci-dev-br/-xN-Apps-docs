@@ -33,10 +33,8 @@
             </button>
             <mat-menu #menuX>
                 <div class="menu--inner">
-
                     @for (app of apps; track $index) {
-                    <button mat-icon-button class="app" [matTooltip]="app.name" [matTooltipPosition]="'right'"
-                        routerLinkActive="side-ativo" [routerLink]="'/' + app.url"
+                    <button mat-icon-button class="app" routerLinkActive="side-ativo" [routerLink]="'/' + app.url"
                         (click)="appClickHandler($event, app)">
                         @if(app.icon){
                         @if(app.type === 'svg'){
@@ -52,8 +50,8 @@
                 </div>
             </mat-menu>
             <div class="apps">
-                @for (app of appsFavoritos; track $index) {
-                <button [style.top]="((app.__presentation_order || 0) * 48) + 'px' " mat-icon-button class="app"
+                @for (app of favs; track $index) {
+                <button [style.margin-top]="((app.__presentation_order || 0) * 48) + 'px' " mat-icon-button class="app"
                     [matTooltip]="app.name" [matTooltipPosition]="'right'" routerLinkActive="side-ativo"
                     [routerLink]="'/' + app.url" (click)="appClickHandler($event, app)">
                     @if(app.icon){

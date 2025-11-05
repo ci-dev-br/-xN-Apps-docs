@@ -149,17 +149,17 @@ mat-drawer-container {
     justify-content: flex-start;
     gap: 2px;
     padding: 4px 0;
-    overflow: hidden;
     height: 80vh;
     flex: auto;
     position: relative;
+    overflow: hidden;
 
     >button {
         position: absolute;
         left: 0;
+        top: 0;
         right: 0;
-        // transition: top ease 1s;
-        transition: top 2s;
+        transition: all ease-in-out 2s !important;
     }
 }
 
@@ -192,10 +192,6 @@ button.app {
 
     >* {
         flex: unset;
-    }
-
-    .apps {
-        overflow: auto;
     }
 }
 
