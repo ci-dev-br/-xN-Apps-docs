@@ -1,16 +1,13 @@
 :host {
     overflow: auto;
     overflow-x: hidden;
-
     display: flex;
     flex-direction: column;
-
     height: 100vh;
     min-height: 100vh;
 }
 
 mat-toolbar {
-
     $size: 40px;
     flex: none;
     overflow: hidden;
@@ -18,7 +15,6 @@ mat-toolbar {
     // backdrop-filter: blur(2px);
     box-shadow: 0px 0px 10px 10px rgba(#000, .33);
     z-index: 1000;
-
     flex-wrap: wrap;
     max-height: none;
     height: auto;
@@ -35,14 +31,8 @@ mat-toolbar {
         flex: auto;
 
         ::ng-deep {
-
             .mdc-floating-label[ng-reflect-floating=true] {
                 background: radial-gradient(#ffffff 0%, rgba(#ffffff, .0) 75%);
-                // box-shadow: 0 0 0 6px #ffffff;
-                //   text-shadow: ;
-                // filter: drop-shadow(0 0 5px #fff);
-                // border-radius: 15px;
-                // padding: 6px;
             }
 
             .mdc-text-field {
@@ -76,7 +66,6 @@ mat-toolbar {
                 min-width: 20px;
                 min-height: 20px;
             }
-
         }
     }
 }
@@ -87,10 +76,8 @@ mat-drawer {
 
 .wrapper {
     flex: auto;
-
     display: flex;
     flex-direction: column;
-
     overflow: auto;
     overflow-x: hidden;
     position: relative;
@@ -99,7 +86,6 @@ mat-drawer {
 .container {
     overflow: auto;
     flex: auto;
-
     --mat-sidenav-container-width: 50px;
 
     mat-drawer-content {
@@ -107,7 +93,6 @@ mat-drawer {
         flex-direction: column;
         align-items: stretch;
         justify-content: stretch;
-
         overflow: auto;
     }
 }
@@ -144,21 +129,17 @@ mat-drawer {
 }
 
 mat-drawer-container {
+
     // margin-left: 60px;
-
-
     &::before {
         position: absolute;
         content: " ";
-
         top: 0;
         bottom: 0;
         width: 50px;
-
         background-color: #ffffff;
         z-index: -1;
     }
-
 }
 
 .apps {
@@ -169,18 +150,17 @@ mat-drawer-container {
     gap: 2px;
     padding: 4px 0;
     overflow: hidden;
-    height: 100vh;
+    height: 80vh;
     flex: auto;
-
     position: relative;
 
     >button {
         position: absolute;
         left: 0;
         right: 0;
-        transition: all ease 1s;
+        // transition: top ease 1s;
+        transition: top 2s;
     }
-
 }
 
 button.app {
@@ -195,9 +175,7 @@ button.app {
     max-height: unset;
     gap: 4px;
     border-radius: 0;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
 
     &:hover {
@@ -241,9 +219,7 @@ button.app {
         height: 80px;
         min-height: unset;
         max-height: unset;
-
         // box-shadow: 1px 3px 4px -1px black;
-
         padding: 8px;
     }
 }
@@ -252,11 +228,9 @@ button.app {
     .mat-mdc-menu-panel:has(.menu--inner) {
         max-width: 70vw;
         // background-color: transparent;
-
         position: relative;
         margin: 0;
         padding: 0;
-
         //  &::before {
         //  position: absolute;
         // inset: 0;

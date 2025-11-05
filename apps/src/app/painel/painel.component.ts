@@ -89,10 +89,14 @@ export class PainelComponent implements OnInit {
     if (!this._appsFavoritos) this.appsFavoritos = this.apps;
     return this._appsFavoritos;
   }
+  favs?: IApp[];
   public set appsFavoritos(value: IApp[] | undefined) {
     let x = [...(value || [])];
-    x = x?.sort((a, b) => (a.__cta_hndlred || 0) > (b.__cta_hndlred || 0) ? -1 : (a.__cta_hndlred || 0) < (b.__cta_hndlred || 0) ? 1 : 0);
-    this._appsFavoritos = [x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12]];
+    let order = [...x];
+    order.sort((a, b) => (a.__cta_hndlred || 0) > (b.__cta_hndlred || 0) ? -1 : (a.__cta_hndlred || 0) < (b.__cta_hndlred || 0) ? 1 : 0);
+    x.forEach((a, i) => a.__presentation_order = order.indexOf(a));
+    this._appsFavoritos = value;
+    if (this.favs !== value) this.favs = value;
     localStorage.setItem('x-menu-cached-favs', JSON.stringify(this.apps?.map(x => x.__cta_hndlred || 0)));
   }
   async appClickHandler(event: MouseEvent, app: any) {
@@ -104,7 +108,7 @@ export class PainelComponent implements OnInit {
     setTimeout(() => document.body.click(), 300);
     if (app.__cta_hndlred === undefined) app.__cta_hndlred = 0;
     app.__cta_hndlred++;
-    this.appsFavoritos = [...(this.apps || [])];
+    this.appsFavoritos = this.apps;
   }
   async sair() {
     this.userService.sair();
