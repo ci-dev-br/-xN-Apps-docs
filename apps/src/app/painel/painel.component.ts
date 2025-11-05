@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CoreModule, LoadIconsModule, IconLoaderSerices, StorageService } from '@ci/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,9 +9,10 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { APPS } from './apps/apps';
+import { APPS, IApp } from './apps/apps';
 import { AuthModule, USER_MENU, UserService } from '@ci/auth';
 import { LogoComponent, IconModule, IItemMenu } from '@ci/components';
+import { If } from 'three/examples/jsm/nodes/Nodes.js';
 @Component({
   selector: 'ci-painel',
   imports: [
@@ -34,7 +35,7 @@ import { LogoComponent, IconModule, IItemMenu } from '@ci/components';
   templateUrl: './painel.component.html',
   styleUrl: './painel.component.scss'
 })
-export class PainelComponent {
+export class PainelComponent implements OnInit {
   user = this.userService.user
   apps?: any[];
   userMenuList?: IItemMenu[] = inject(USER_MENU, { optional: true }) || undefined;
@@ -84,13 +85,27 @@ export class PainelComponent {
       }
     })
   }
+  private _appsFavoritos?: IApp[] | undefined = [];
+  public get appsFavoritos(): IApp[] | undefined {
+    if (!this._appsFavoritos) this.appsFavoritos = this.apps;
+    return this._appsFavoritos;
+  }
+  public set appsFavoritos(value: IApp[] | undefined) {
+    let x = [...(value || [])];
+    x = x?.sort((a, b) => (a.__cta_hndlred || 0) > (b.__cta_hndlred || 0) ? -1 : (a.__cta_hndlred || 0) < (b.__cta_hndlred || 0) ? 1 : 0);
+    this._appsFavoritos = [x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12]];
+    localStorage.setItem('x-menu-cached-favs', JSON.stringify(this.apps?.map(x => x.__cta_hndlred || 0)));
+  }
   async appClickHandler(event: MouseEvent, app: any) {
     if (event.ctrlKey) {
       // window.open(location.href + '/' + app.url, '')
     } else {
       // this.router.navigate(['/' + app.url], { relativeTo: this.route.root })
     }
-    setTimeout(() => document.body.click(), 300)
+    setTimeout(() => document.body.click(), 300);
+    if (app.__cta_hndlred === undefined) app.__cta_hndlred = 0;
+    app.__cta_hndlred++;
+    this.appsFavoritos = [...(this.apps || [])];
   }
   async sair() {
     this.userService.sair();
@@ -103,5 +118,17 @@ export class PainelComponent {
   }
   protected async itemMenuActionHandler(itemMenu: IItemMenu, event: Event) {
     if (itemMenu.onClick) itemMenu.onClick(this, event);
+  }
+
+  ngOnInit(): void {
+    let c: string | number[] | null = localStorage.getItem('x-menu-cached-favs');
+    if (typeof c === 'string') c = JSON.parse(c) as number[];
+    this.apps?.forEach((e, i, a) => {
+      e.__cta_hndlred = (c as any)[i];
+    });
+
+    setTimeout(() => {
+      this.appsFavoritos = [...this.apps || []];
+    })
   }
 }

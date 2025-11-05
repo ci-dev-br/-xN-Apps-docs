@@ -10,6 +10,7 @@ export interface IApp extends Application {
     type?: string;
     name?: string;
     description?: string;
+    __cta_hndlred?: number;
 }
 /**
  * Pre-loaded apps available in the painel
