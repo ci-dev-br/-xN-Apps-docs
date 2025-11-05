@@ -12,7 +12,6 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { APPS, IApp } from './apps/apps';
 import { AuthModule, USER_MENU, UserService } from '@ci/auth';
 import { LogoComponent, IconModule, IItemMenu } from '@ci/components';
-import { If } from 'three/examples/jsm/nodes/Nodes.js';
 @Component({
   selector: 'ci-painel',
   imports: [
