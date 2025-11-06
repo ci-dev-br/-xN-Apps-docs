@@ -1,0 +1,25 @@
+.user-profile-image {
+    width: 48px;
+    height: 48px;
+
+    background: black;
+    border-radius: 50%;
+
+}
+
+
+:host {
+    display: flex;
+    flex-direction: row;
+    padding: 8px;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    ::ng-deep * {
+        color: inherit;
+    }
+}
+
+.row {
+    padding: 12px;
+}
