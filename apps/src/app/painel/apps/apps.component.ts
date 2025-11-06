@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CoreModule } from '@ci/core';
 import { APPS, IApp } from './apps';
 import { AuthModule, UserService } from '@ci/auth';
+import { BoardModule } from '@ci/components';
 
 @Component({
   selector: 'ci-apps',
@@ -11,6 +12,7 @@ import { AuthModule, UserService } from '@ci/auth';
     CoreModule,
     MatIconModule,
     RouterModule,
+    BoardModule,
     AuthModule,
   ],
   standalone: true,

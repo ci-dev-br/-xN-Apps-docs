@@ -9,6 +9,7 @@ export interface IData {
   [key: string]: any;
 }
 export interface IItemMenu {
+  component?: Type<any>;
   icon?: string;
   label?: string;
   path?: string;

@@ -10,12 +10,16 @@
     </button>
     <mat-menu #userMenu>
         @if(!!userMenu){@for(menu_item of userMenuList; track menu_item){
+        @if(menu_item.component !== undefined){
+            <ng-container *ngComponentOutlet="menu_item.component" ></ng-container>
+        }@else{
         @if(!!menu_item.onClick){
         <button mat-menu-item (click)="itemMenuActionHandler(menu_item, $event)">
             <ng-container *ngTemplateOutlet="innerItemMenu"></ng-container>
         </button>
         }@else{
         <ng-container *ngTemplateOutlet="innerItemMenu"></ng-container>
+        }
         }
         <ng-template #innerItemMenu>
             @if(menu_item.label){
