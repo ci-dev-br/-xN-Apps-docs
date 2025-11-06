@@ -20,7 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
         AuthModule,
         MatButtonModule,
         MatIconModule,
-        
+
     ],
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss'
@@ -79,5 +79,8 @@ export class HomeComponent implements OnInit {
         } else {
             this.form.markAllAsTouched();
         }
+    }
+    async takeAPhoto() {
+
     }
 }
