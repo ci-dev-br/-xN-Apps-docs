@@ -7,6 +7,20 @@
 
 }
 
+
+.user-profile {
+    position: relative;
+
+    >div.wrap {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
 .row,
 .col {
     display: flex;
@@ -15,12 +29,14 @@
 
 .row {
     flex-direction: row;
+    align-items: start;
 }
 
 .col {
     flex-direction: column;
     flex: 1;
-    mat-card{
+
+    mat-card {
         width: 100%;
         //  flex: auto;
     }
