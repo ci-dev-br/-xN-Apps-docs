@@ -7,6 +7,7 @@ import { User, UserService } from '@ci/portal-api';
 import { AuthModule, UserService as AuthUserService } from '@ci/auth';
 import { lastValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'ci-home',
@@ -18,6 +19,8 @@ import { MatButtonModule } from '@angular/material/button';
         ReactiveFormsModule,
         AuthModule,
         MatButtonModule,
+        MatIconModule,
+        
     ],
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss'
