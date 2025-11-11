@@ -5,7 +5,7 @@
                 <mat-card-content>
                     <div class="row">
                         <div class="user-profile">
-                            <img src="" alt="" class="user-profile-image" (click)="takeAPhoto()">
+                            <img src="" alt="" class="user-profile-image" (click)="takeAPhoto() ">
                             <div class="wrap">
                                 <button mat-icon-button><mat-icon>photo_camera</mat-icon></button>
                             </div>
@@ -33,8 +33,9 @@
                 <mat-card-content>
                     <div class="row">
                         <div class="content">
-                            <button mat-raised-button [disabled]="!!(form.invalid)" (click)="saveProfile()">Save
-                                Profile</button>
+                            <button mat-raised-button [disabled]="!!(form.invalid)" (click)="saveProfile()">
+                                Save Profile
+                            </button>
                         </div>
                     </div>
                 </mat-card-content>

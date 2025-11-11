@@ -3,7 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
-import { EditarComponent, WindowService } from '@ci/components';
+import { EditarComponent, WindowModule, WindowService } from '@ci/components';
 import { CoreModule, DaoBuilder, DaoService } from '@ci/core';
 import { Organizacao } from '@ci/portal-api';
 
@@ -14,6 +14,7 @@ import { Organizacao } from '@ci/portal-api';
         MatTabsModule,
         MatButtonModule,
         MatDialogModule,
+        WindowModule,
     ],
     standalone: true,
     templateUrl: './home.component.html',
