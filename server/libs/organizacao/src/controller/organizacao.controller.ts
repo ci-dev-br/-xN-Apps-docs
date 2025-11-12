@@ -2,7 +2,6 @@ import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { OrganizacaoService } from "../service/organizacao.service";
 import { Organizacao } from "../model/organizacao.entity";
-import { Status } from "@ci/core";
 import { Tenant } from "@ci/tenant/models/tenant.entity";
 import { UserService } from "@ci/auth/auth.module";
 export class OrganizacaoSyncPayload {
