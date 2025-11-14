@@ -59,7 +59,7 @@ export class HomepageComponent implements OnInit {
         // Set the playback speed to 0.5 (half speed)
         if (this.video?.nativeElement) this.video.nativeElement.playbackRate = 0.1;
 
-        if (!!document && !!document.body && !!window) {
+        if ('document' in this && !!document && !!document.body && !!window) {
             this.animacao();
         }
     }
