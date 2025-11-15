@@ -10,10 +10,12 @@ export class PranchetaService {
         private readonly prancheta_reppository: Repository<Prancheta>,
         private readonly _snap: SnapshotService,
     ) { }
-    async sincronize(prancheta_untastemented: Prancheta, options: {
-        tenant?: string,
-        req?: any,
-    }) {
+    async sincronize(
+        prancheta_untastemented: Prancheta,
+        options: {
+            tenant?: string,
+            req?: any,
+        }) {
         let prancheta_current: Prancheta;
         // if (!(prancheta_untastemented instanceof Prancheta)) throw new Error("Bloqueio por elevação de contexto.");
         if (prancheta_untastemented.internalId) {
@@ -36,7 +38,7 @@ export class PranchetaService {
             })
         }
         if (prancheta_current instanceof FullAuditedEntity) {
-            await this._snap.snapshot(prancheta_current, options.req);
+            this._snap.snapshot(prancheta_current, options.req, this.prancheta_reppository);
         }
         return await this.prancheta_reppository.save(prancheta_current);
     }
