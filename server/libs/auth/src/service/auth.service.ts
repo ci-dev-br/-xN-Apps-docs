@@ -20,7 +20,7 @@ export class AuthService {
         req?: Request,
         ip?: string,
     ) {
-        let confiance: any = 'r';
+        let confiance: string = 'r';
         const r: { try?: string } = await this.jwtService.verifyAsync(refreshToken);
         let old_authorization: {
             id: string,
@@ -50,7 +50,9 @@ export class AuthService {
                     }
                     if (!chave_acesso?.refreshToken) {
                         confiance += 'e';
-                        throw new UnauthorizedException('Não é possível atualizar sua credencial. Identifique-se novamente.');
+                        if (confiance.indexOf('o') === -1) {
+                            throw new UnauthorizedException('Por favor, identifique-se novamente.');
+                        }
                     }
                 }
             } catch (error) {
@@ -64,7 +66,7 @@ export class AuthService {
         if (user) {
             const chaveAcesso = (await this.credencial.solicitarCredencial({
                 ip: ip,
-                identificacao_inicial: chave_acesso.identifiedUser,  //  old_authorization.id
+                identificacao_inicial: chave_acesso?.identifiedUser,  //  old_authorization.id
                 headers: req.headers
             }));
             chaveAcesso.alive = true;
