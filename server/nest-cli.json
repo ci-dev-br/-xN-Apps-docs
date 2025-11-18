@@ -276,6 +276,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/tarefas/tsconfig.lib.json"
       }
+    },
+    "mlms": {
+      "type": "library",
+      "root": "libs/mlms",
+      "entryFile": "index",
+      "sourceRoot": "libs/mlms/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/mlms/tsconfig.lib.json"
+      }
     }
   }
 }

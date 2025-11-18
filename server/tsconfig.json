@@ -198,6 +198,12 @@
       ],
       "@ci-apps/tarefas/*": [
         "libs/tarefas/src/*"
+      ],
+      "@ci/mlms": [
+        "libs/mlms/src"
+      ],
+      "@ci/mlms/*": [
+        "libs/mlms/src/*"
       ]
     }
   }
