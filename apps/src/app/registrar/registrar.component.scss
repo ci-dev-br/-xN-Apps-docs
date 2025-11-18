@@ -25,6 +25,10 @@ form {
     border: solid 4px #efefef;
     box-shadow: 0px 15px 48px -15px rgba(0, 0, 0, .4);
 
+    > * + * {
+        margin-top: 12px;
+    }
+
     ::ng-deep {
 
         mat-form-field,

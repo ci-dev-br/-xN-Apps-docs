@@ -13,3 +13,4 @@ export * from './lib/decorators/short-cut.decorator';
 export * from './lib/dao/i-have-sync';
 export * from './lib/routes/route-from-schema';
 export * from './lib/stage/stage.module';
+export * from './lib/function';

@@ -1,4 +1,4 @@
-import { Component, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,7 +10,7 @@ import { AuthService, Register, RegisterService } from '@ci/portal-api';
 import { AuthModule, UserService } from '@ci/auth';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { FooterModule } from '@ci/components';
-import { CoreModule, StageModule, StageService } from '@ci/core';
+import { CoreModule, IsEmail, IsPhoneNumber, StageModule, StageService } from '@ci/core';
 
 @Component({
   selector: 'ci-registrar',
@@ -23,7 +23,7 @@ import { CoreModule, StageModule, StageService } from '@ci/core';
     MatCheckboxModule,
     RouterModule,
     AuthModule,
-    NgxMaskDirective,
+    // NgxMaskDirective,
     FooterModule,
     StageModule,
   ],
@@ -32,7 +32,11 @@ import { CoreModule, StageModule, StageService } from '@ci/core';
   templateUrl: './registrar.component.html',
   styleUrl: './registrar.component.scss'
 })
-export class RegistrarComponent {
+export class RegistrarComponent implements OnInit {
+  termos = {
+    "M": 'e-mail',
+    "P": 'sms'
+  }
   stageOutput = new EventEmitter<string>();
   private _stage = 'initial-registring';
   public get stage() {
@@ -43,25 +47,47 @@ export class RegistrarComponent {
     this._stage = value;
     this.stageOutput.emit(value);
   }
+  protected emailOrPhoneMask?: string;
   form = this.fb.group<{
-    email: any,
+    // coak: any,
+    emailOrPhone: any,
     emailAuthorization: any,
+    password: any,
+    passwordConfirmation: [],
+    confirmConsequencesOfNegationSendMail: any,
   }>({
-    email: [, [Validators.required, Validators.email]],
+    // coak: [false, Validators.required],
+    emailOrPhone: [, [Validators.required, Validators.email]],
     emailAuthorization: [false, [Validators.required]],
+    password: [],
+    passwordConfirmation: [],
+    confirmConsequencesOfNegationSendMail: [false, [Validators.required]],
   });
+  typeRegister?: 'P' | 'M';
   constructor(
     private readonly fb: FormBuilder,
-    private readonly authService: AuthService,
+    // private readonly authService: AuthService,
     private readonly userService: UserService,
-    private readonly router: Router,
-    private readonly stages: StageService,
+    // private readonly router: Router,
+    /* // private readonly */ stages: StageService,
     private readonly regitrar: RegisterService,
   ) {
     stages.host = this;
   }
   validar() {
     return this.form.valid;
+  }
+  ngOnInit(): void {
+    this.form.controls.emailOrPhone?.valueChanges.subscribe(value => {
+      this.typeRegister = typeof value === 'string' && IsEmail(value) ? 'M' : typeof value === 'string' && IsPhoneNumber(value) ? 'P' : undefined;
+      if (this.typeRegister === 'M') {
+        this.form.controls.emailOrPhone.setValidators([Validators.email]);
+      }
+      if (this.typeRegister === 'P') {
+        this.form.controls.emailOrPhone.setValidators([]);
+      }
+      this.form.updateValueAndValidity();
+    })
   }
   async next() {
     if (!this.validar()) return this.form.markAllAsTouched();
@@ -78,3 +104,4 @@ export class RegistrarComponent {
     this.userService.identificarUsuario(register);
   }
 }
+
