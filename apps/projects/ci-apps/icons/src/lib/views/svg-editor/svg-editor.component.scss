@@ -82,18 +82,21 @@ svg {
 
 :host {
 
+
     &,
     *,
     ::ng-deep * {
         cursor: none !important;
     }
 
-    flex: auto;
-    display: flex;
-    flex-direction: column;
-    align-content: stretch;
-    justify-content: stretch;
-    align-items: stretch;
+    & {
+        flex: auto;
+        display: flex;
+        flex-direction: column;
+        align-content: stretch;
+        justify-content: stretch;
+        align-items: stretch;
+    }
 }
 
 .col {

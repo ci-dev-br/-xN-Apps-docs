@@ -25,7 +25,7 @@ import { lastValueFrom } from "rxjs";
         GridModule,
         // DataListModule,
         FormsModule,
-        EditarComponent,
+        // EditarComponent,
     ],
 
     styleUrl: 'master-detail.component.scss',
