@@ -1,0 +1,7 @@
+export enum JobStatus {
+    PENDING = "PENDING",
+    FETCHING = "FETCHING",
+    BUILDING = "BUILDING",
+    COMPLETED = "COMPLETED",
+    FAILED = "FAILED"
+}
