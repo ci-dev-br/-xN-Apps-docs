@@ -1,10 +1,8 @@
 import { FullAuditedEntity } from "@ci/manager";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity } from "typeorm";
 import { schema } from "./schema";
 @Entity({ schema })
-export class SourceDefinition extends FullAuditedEntity {
-    @PrimaryGeneratedColumn("uuid")
-    id?: string;
+export class DyMSourceDefinition extends FullAuditedEntity {
     @Column()
     repoUrl?: string;
     @Column()

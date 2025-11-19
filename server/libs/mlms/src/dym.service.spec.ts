@@ -1,17 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MlmsService } from './mlms.service';
-
-describe('MlmsService', () => {
-  let service: MlmsService;
-
+import { DyMService as DyMService } from './dym.service';
+describe('SyMService', () => {
+  let service: DyMService;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MlmsService],
+      providers: [DyMService],
     }).compile();
-
-    service = module.get<MlmsService>(MlmsService);
+    service = module.get<DyMService>(DyMService);
   });
-
   it('should be defined', () => {
     expect(service).toBeDefined();
   });

@@ -2,9 +2,7 @@ import { FullAuditedEntity } from "@ci/manager";
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 import { schema } from "./schema";
 @Entity({ schema })
-export class BuildEnvironment extends FullAuditedEntity {
-    @PrimaryGeneratedColumn("uuid")
-    id?: string;
+export class DyMBuildEnvironment extends FullAuditedEntity {
     @Column()
     language?: string; // ex: "typescript", "rust"
     @Column()

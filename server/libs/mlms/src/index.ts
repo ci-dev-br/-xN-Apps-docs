@@ -1,2 +1,2 @@
-export * from './mlms.module';
-export * from './mlms.service';
+export * from './dym.module';
+export * from './dym.service';

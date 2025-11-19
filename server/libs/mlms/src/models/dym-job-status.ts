@@ -1,4 +1,4 @@
-export enum JobStatus {
+export enum DyMJobStatus {
     PENDING = "PENDING",
     FETCHING = "FETCHING",
     BUILDING = "BUILDING",

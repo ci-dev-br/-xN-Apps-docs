@@ -277,13 +277,13 @@
         "tsConfigPath": "libs/tarefas/tsconfig.lib.json"
       }
     },
-    "mlms": {
+    "dym": {
       "type": "library",
-      "root": "libs/mlms",
+      "root": "libs/dym",
       "entryFile": "index",
-      "sourceRoot": "libs/mlms/src",
+      "sourceRoot": "libs/dym/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/mlms/tsconfig.lib.json"
+        "tsConfigPath": "libs/dym/tsconfig.lib.json"
       }
     }
   }

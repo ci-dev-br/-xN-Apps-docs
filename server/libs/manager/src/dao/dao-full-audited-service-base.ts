@@ -65,7 +65,7 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
         let _where: FindOptionsWhere<E>[] | FindOptionsWhere<E> = options.where || {};
         if (_where)
             (Array.isArray(_where) ? _where : [_where]).forEach((w: any) => {
-                w.createdBy = [{ identifiedUser: Equal(request.user.id) }];
+                w.createdBy = [{ identifiedUser: Equal(request && request.user && request.user.id) }];
                 if (request?.user?.roles?.indexOf('ADMIN') > -1) {
                     w.createdBy.push(
                         { identifiedUser: IsNull() }
