@@ -1,7 +1,8 @@
 import { Component, Injector, Input, OnDestroy, OnInit, Type } from "@angular/core";
 import { IDataGridOptions } from "../models/i-data-grid-options";
-import { DaoBuilder, IHaveSync } from "@ci/core";
+import { DaoBuilder, IHaveGetList, IHaveSync } from "@ci/core";
 import { getServiceAsSchema } from "@ci/portal-api";
+import { lastValueFrom } from "rxjs";
 
 
 @Component({
@@ -38,6 +39,7 @@ import { getServiceAsSchema } from "@ci/portal-api";
             }
         }
         this.loadGrid();
+        this.carregarLista();
     }
     async loadGrid() {
         if (!this.schemaName) return;
@@ -56,7 +58,9 @@ import { getServiceAsSchema } from "@ci/portal-api";
         }
     }
     async carregarLista() {
-        //  this.list = await lastValueFrom();
+        this.list = await lastValueFrom(
+            (this.service as IHaveGetList<I>).getList({ body: {} })
+        );
     }
     async createNew() {
         if (this.service && this.service.sync) {

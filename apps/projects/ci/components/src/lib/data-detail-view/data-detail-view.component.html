@@ -15,17 +15,20 @@
         <mat-button-toggle value="list"><mat-icon>grid_view</mat-icon>Lista</mat-button-toggle>
     </mat-button-toggle-group>
 </mat-toolbar>
-<ng-container *ngIf="list">
-    @if(visualizacao==='list'){
-    <ci-data-list [source]="list" [templateItem]="listItem"></ci-data-list>
-    <ng-template #listItem let-item="item">
-        @if(!!item.title){<h6>{{item.title}}</h6>}
-        @if(!!item.description){<small>{{item.description}}</small>}
-    </ng-template>
-    }
-    @else{
-    <ci-data-grid [options]="gridOptions" [source]="list">
-        <div vazio>Não há dados...</div>
-    </ci-data-grid>
-    }
-</ng-container>
+@if(list){
+@if(visualizacao==='list'){
+<ci-data-list [source]="list" [templateItem]="listItem"></ci-data-list>
+<ng-template #listItem let-item="item">
+    @if(!!item.title){<h6>{{item.title}}</h6>}
+    @if(!!item.description){<small>{{item.description}}</small>}
+</ng-template>
+}
+@else{
+<ci-data-grid [options]="gridOptions" [source]="list">
+    <div vazio>Não há dados...</div>
+</ci-data-grid>
+}
+}
+@else{
+<div class="vazio" >Não há dados...</div>
+}
