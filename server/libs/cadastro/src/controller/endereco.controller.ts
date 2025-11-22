@@ -4,7 +4,7 @@ import { Endereco } from "../model/endereco.entity";
 import { ControllerDaoBase } from "@ci/manager";
 import { EnderecoService } from "../service/endereco.service";
 import { SyncPayloadDaoEndereco } from "../dto/sync-payload-dao-endereco";
-import { ObterListaEndereco } from "../dto/ObterListaEndereco";
+import { ObterListaEndereco } from "../dto/obter-lista-endereco";
 @ApiTags('Endereco')
 @Controller('Endereco')
 export class EnderecoController extends ControllerDaoBase<EnderecoService, Endereco> {

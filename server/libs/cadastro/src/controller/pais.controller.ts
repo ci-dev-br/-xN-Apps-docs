@@ -4,7 +4,7 @@ import { Pais } from "../model/pais.entity";
 import { ControllerDaoBase } from "@ci/manager";
 import { PaisService } from "../service/pais.service";
 import { SyncPayloadDaoPais } from "../dto/sync-payload-dao-pais";
-import { ObterListaPais } from "../dto/ObterListaPais";
+import { ObterListaPais } from "../dto/obter-lista-pais";
 @ApiTags('Pais')
 @Controller('Pais')
 export class PaisController extends ControllerDaoBase<PaisService, Pais> {

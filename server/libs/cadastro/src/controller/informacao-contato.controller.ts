@@ -4,7 +4,7 @@ import { ControllerDaoBase } from "@ci/core";
 import { InformacaoContato } from "../model/informacao-contato.entity";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { SyncPayloadDaoInformacaoContato } from "../dto/sync-payload-dao-informacao-contato";
-import { ObterListaInformacaoContato } from "../dto/ObterListaInformacaoContato";
+import { ObterListaInformacaoContato } from "../dto/obter-lista-informacao-contato";
 /**
  * InformacaoContato Controller
  * 
