@@ -24,7 +24,7 @@
 </ng-template>
 }
 @else{
-<ci-data-grid [options]="gridOptions" [source]="list">
+<ci-data-grid [options]="gridOptions" (select)="editar($event.value, $event.event)" [source]="list">
     <div vazio>Não há dados...</div>
 </ci-data-grid>
 }
