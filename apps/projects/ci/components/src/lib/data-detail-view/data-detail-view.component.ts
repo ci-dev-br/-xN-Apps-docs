@@ -22,8 +22,6 @@ import { lastValueFrom } from "rxjs";
     service?: any;
 
     constructor(
-        //  private readonly applications: ApplicationService,
-        // private readonly janela: WindowService,
         private readonly daoBuilder: DaoBuilder,
         private readonly injector: Injector,
     ) {
