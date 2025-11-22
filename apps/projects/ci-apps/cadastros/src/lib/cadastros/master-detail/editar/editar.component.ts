@@ -11,17 +11,15 @@ export interface IDataEditar {
     schemaName: string;
 }
 @Component({
-    selector: 'ci-master-datail--editar',
-    styleUrl: 'editar.component.scss',
-    template: `@if(form){
-<ci-dyn-form [formGroup]="form" [schemaName]="schemaName"></ci-dyn-form>
-}`,
+    standalone: true,
     imports: [
         CoreModule,
         ReactiveFormsModule,
         DynFormModule,
     ],
-    standalone: true,
+    selector: 'ci-master-datail--editar',
+    templateUrl: 'editar.component.html',
+    styleUrl: 'editar.component.scss'
 })
 export class EditarComponent implements OnInit {
     form?: FormGroup<any>;

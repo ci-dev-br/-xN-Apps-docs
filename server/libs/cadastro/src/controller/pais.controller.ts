@@ -9,7 +9,7 @@ import { ObterListaPais } from "../dto/obter-lista-pais";
 @Controller('Pais')
 export class PaisController extends ControllerDaoBase<PaisService, Pais> {
     constructor(
-        service: PaisService
+        service: PaisService,
     ) {
         super(service);
     }

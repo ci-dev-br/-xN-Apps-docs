@@ -12,16 +12,15 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
         let ___receipt_data = data;
         let ___internal_data: E = null;
         /// if (data instanceof AuditedEntity) {
-        if (!data.internalId) {
-            ___internal_data =
-                this._repo.create(data);
-            if (request) {
-                if (request.chaveAcesso) {
+        if (data && !('internalId' in data) && !data.internalId) {
+            ___internal_data = this._repo.create(data);
+            if (!!request) {
+                if (!!request.chaveAcesso) {
                     ___internal_data.createdBy = { id: request.chaveAcesso };
                 }
             }
         } else {
-            if (data && !!data.internalId) {
+            if (!!data && ('internalId' in data) && !!data.internalId) {
                 ___internal_data = await this._repo.findOne({
                     where: {
                         internalId: ___receipt_data.internalId
