@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Optional, Post, Type } from "@nestjs/common";
+import { Body, Controller, Inject, Optional, Post, Req, Type } from "@nestjs/common";
 import { Payload } from "../dto/payload.dto";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CadastroBase, IDynamicForm } from "../service/CadastroBase";
@@ -29,7 +29,7 @@ export class CadastroController {
     async editables() {
         return this._editables;
     }
-    
+
     @ApiResponse({
         type: IDynamicForm,
         isArray: true,
@@ -38,7 +38,9 @@ export class CadastroController {
     @ApiOperation({ operationId: 'GetAllCadastro' })
     async getAll(
         @Body()
-        input?: Payload<void>) {
+        input?: Payload<void>,
+        @Req() req?: any,
+    ) {
         return this.services
             .filter(s => {
                 if (input.by && input.equals) {

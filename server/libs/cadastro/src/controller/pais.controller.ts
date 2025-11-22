@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Pais } from "../model/pais.entity";
 import { ControllerDaoBase } from "@ci/manager";
@@ -22,9 +22,10 @@ export class PaisController extends ControllerDaoBase<PaisService, Pais> {
     })
     override async Sync(
         @Body() body: SyncPayloadDaoPais,
+        @Req() req?: any,
     ) {
         try {
-            return await super.Sync(body)
+            return await super.Sync(body, req)
         } catch (error) {
             return {
                 status: 500,
@@ -43,7 +44,8 @@ export class PaisController extends ControllerDaoBase<PaisService, Pais> {
     })
     override async GetList(
         @Body() input: ObterListaPais,
+        @Req() req?: any,
     ) {
-        return super.GetList(input);
+        return super.GetList(input, req);
     }
 }

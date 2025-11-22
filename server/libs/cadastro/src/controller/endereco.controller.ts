@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Endereco } from "../model/endereco.entity";
 import { ControllerDaoBase } from "@ci/manager";
@@ -18,8 +18,9 @@ export class EnderecoController extends ControllerDaoBase<EnderecoService, Ender
     })
     override async Sync(
         @Body() body: SyncPayloadDaoEndereco,
+        @Req() req?: any,
     ) {
-        return await super.Sync(body)
+        return await super.Sync(body, req)
     }
     @Post('Get')
     @ApiResponse({
@@ -32,7 +33,8 @@ export class EnderecoController extends ControllerDaoBase<EnderecoService, Ender
     })
     override async GetList(
         @Body() input: ObterListaEndereco,
+        @Req() req?: any,
     ) {
-        return super.GetList(input);
+        return super.GetList(input, req);
     }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Req } from "@nestjs/common";
 import { InformacaoContatoService } from "../service/informacao-contato.service";
 import { ControllerDaoBase } from "@ci/core";
 import { InformacaoContato } from "../model/informacao-contato.entity";
@@ -23,8 +23,9 @@ export class InformacaoContatoController extends ControllerDaoBase<InformacaoCon
     })
     override async Sync(
         @Body() body: SyncPayloadDaoInformacaoContato,
+        @Req() req?: any,
     ) {
-        return await super.Sync(body)
+        return await super.Sync(body,req)
     }
     @Post('GetList')
     @ApiResponse({
@@ -36,7 +37,8 @@ export class InformacaoContatoController extends ControllerDaoBase<InformacaoCon
     })
     override async GetList(
         @Body() input: ObterListaInformacaoContato,
+        @Req() req?: any,
     ) {
-        return super.GetList(input);
+        return super.GetList(input,req);
     }
 }
