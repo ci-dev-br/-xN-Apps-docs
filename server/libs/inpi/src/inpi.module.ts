@@ -25,7 +25,7 @@ export const INPIEntities = [
                 icon: '/icons/apps/inpi.svg',
                 title: 'INPI',
                 description: 'Marcas e Patentes',
-                rules: [
+                roles: [
                     'ADMIN'
                 ]
             }

@@ -27,7 +27,7 @@ export class IOptionApplication {
     icon?: string;
     title?: string;
     description?: string;
-    rules?: string[];
+    roles?: string[];
 }
 export class IOptionsApplicationFeatures {
     application?: IOptionApplication;
