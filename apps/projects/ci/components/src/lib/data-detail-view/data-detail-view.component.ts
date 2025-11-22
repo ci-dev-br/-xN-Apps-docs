@@ -50,9 +50,10 @@ import { EditarComponent } from "../master-detail/editar/editar.component";
     async loadGrid() {
         if (!this.schemaName) return;
         const properties = await (await this.daoBuilder.getSchema(this.schemaName)).properties
+        const hidden_columns = ['internalId', 'createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy', 'deleted', 'tenants'];
         this.gridOptions = {
             columns: [
-                ...Object.keys(properties || {}).map(property => {
+                ...Object.keys(properties || {}).filter(col => hidden_columns.indexOf(col) === -1).map(property => {
                     const headerName = properties ? properties[property].title : property;
                     const fieldName = property;
                     return {
@@ -61,7 +62,7 @@ import { EditarComponent } from "../master-detail/editar/editar.component";
                     }
                 })
             ]
-        }
+        };
     }
     async loadDataList() {
         this.list = await lastValueFrom(
