@@ -11,8 +11,8 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
-
-
+import { WindowModule } from "../window/window.module";
+import { EditarComponent } from "../master-detail/editar/editar.component";
 @NgModule({
     declarations: [
         DataDetailViewComponent,
@@ -29,6 +29,8 @@ import { FormsModule } from "@angular/forms";
         MatFormFieldModule,
         MatInputModule,
         FormsModule,
+        WindowModule,
+        EditarComponent,
     ],
     exports: [
         DataDetailViewComponent,
