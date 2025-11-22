@@ -3,8 +3,8 @@ import { PessoaService } from "../service/pessoa.service";
 import { ControllerDaoBase } from "@ci/core";
 import { Pessoa } from "../model/pessoa.entity";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { SyncPayloadDaoPessoa } from "./sync-payload-dao-pessoa";
-import { ObterListaPessoa } from "./obter-list-pessoa";
+import { SyncPayloadDaoPessoa } from "../dto/sync-payload-dao-pessoa";
+import { ObterListaPessoa } from "../dto/obter-list-pessoa";
 /**
  * Pessoa Controller
  */

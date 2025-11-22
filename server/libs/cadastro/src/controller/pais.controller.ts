@@ -1,28 +1,10 @@
 import { Body, Controller, Post } from "@nestjs/common";
-import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Pais } from "../model/pais.entity";
-import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
-import { FindOptionsWhere } from "typeorm";
+import { ControllerDaoBase } from "@ci/manager";
 import { PaisService } from "../service/pais.service";
-export class SyncPayloadDaoPais extends SyncPayloadDao<Pais> {
-    @ApiProperty({ type: Pais })
-    override data?: Pais;
-}
-export class ObterListaPais {
-    // override data?: Pais;
-    @ApiProperty({})
-    skip?: number;
-    @ApiProperty({})
-    take?: number;
-    @ApiProperty({})
-    where?: FindOptionsWhere<Pais>[] | FindOptionsWhere<Pais>;
-}
-export class PessoaCotrollerGetInputDto {
-    @ApiProperty({ nullable: true, required: false })
-    query?: string;
-    @ApiProperty({ nullable: true, required: false })
-    limit?: number;
-}
+import { SyncPayloadDaoPais } from "../dto/sync-payload-dao-pais";
+import { ObterListaPais } from "../dto/ObterListaPais";
 @ApiTags('Pais')
 @Controller('Pais')
 export class PaisController extends ControllerDaoBase<PaisService, Pais> {

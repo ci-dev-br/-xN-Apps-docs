@@ -1,28 +1,10 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { InformacaoContatoService } from "../service/informacao-contato.service";
-import { ControllerDaoBase, SyncPayloadDao } from "@ci/core";
+import { ControllerDaoBase } from "@ci/core";
 import { InformacaoContato } from "../model/informacao-contato.entity";
-import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { FindOptionsWhere } from "typeorm";
-export class SyncPayloadDaoInformacaoContato extends SyncPayloadDao<InformacaoContato> {
-    @ApiProperty({ type: InformacaoContato })
-    override data?: InformacaoContato;
-}
-export class ObterListaInformacaoContato {
-    // override data?: InformacaoContato;
-    @ApiProperty({})
-    skip?: number;
-    @ApiProperty({})
-    take?: number;
-    @ApiProperty({})
-    where?: FindOptionsWhere<InformacaoContato>[] | FindOptionsWhere<InformacaoContato>;
-}
-export class InformacaoContatoCotrollerGetInputDto {
-    @ApiProperty({ nullable: true, required: false })
-    query?: string;
-    @ApiProperty({ nullable: true, required: false })
-    limit?: number;
-}
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { SyncPayloadDaoInformacaoContato } from "../dto/sync-payload-dao-informacao-contato";
+import { ObterListaInformacaoContato } from "../dto/ObterListaInformacaoContato";
 /**
  * InformacaoContato Controller
  * 
