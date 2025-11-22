@@ -22,23 +22,7 @@ import { EditarComponent } from "./editar/editar.component";
         MatButtonModule,
         WindowModule,
     ],
-    template: `
-    <mat-toolbar [auto-scroll]="'horizontal'">
-         {{schemaName || ''}}
-    <button mat-raised-button (click)="createNew()" >
-        Novo
-    </button>
-    <span style="flex:auto"></span>
-    <mat-button-toggle-group >
-        <mat-button-toggle value="table"><mat-icon>view_list</mat-icon>Tabela</mat-button-toggle>
-        <mat-button-toggle value="list"><mat-icon>grid_view</mat-icon>Lista</mat-button-toggle>
-    </mat-button-toggle-group>
-</mat-toolbar>
-    <!-- TODO: Visualização em lista e em tabela permitindo visualização lateral ou em janela dos valores selecionados. -->
-    @if(visualizacao === 'table'){
-    <ci-data-grid [options]="gridOptions" [source]="source"></ci-data-grid>
-    }
-    `
+    templateUrl: 'master-detail.component.html'
 })
 export class MasterDetailComponent<T> implements OnInit {
     @Input()
