@@ -83,4 +83,6 @@ export {
     DocumentoIdentificacao,
     TipoDocumentoIdentificacao,
     Category,
+    PessoaService,
+    PessoaController,
 }
