@@ -1,8 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { ProcessoINPI } from './process-inpi.entity';
+import { schema } from "./schema";
 
-@Entity({ schema: 'INPI' })
+@Entity({ schema })
 export class ClienteINPI {
     @ApiProperty({ description: 'ID do cliente' })
     @PrimaryGeneratedColumn('uuid')

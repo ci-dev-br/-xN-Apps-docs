@@ -8,38 +8,59 @@ import { UnidadeMedida } from "@ci/cadastro/model/unidade-medida.entity";
     schema
 })
 export class Product extends FullAuditedEntity {
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({
+        title: 'Código GTIN',
+        nullable: true,
+        required: false
+    })
     @Column({ nullable: true })
     gtin?: string;
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({
+        title: 'Código de Barras',
+        nullable: true, required: false
+    })
     @Column({ nullable: true })
     codigoBarras?: string;
-    @ApiProperty({ nullable: true, required: false })
-    @Column({ nullable: true })
+    @ApiProperty({
+        title: 'Nosso Código',
+        nullable: true, required: false
+    })
+    @Column({
+        nullable: true
+    })
     nossoCodigo?: string;
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({
+        title: 'Código do Fabricante',
+        nullable: true, required: false
+    })
     @Column({ nullable: true })
     codigoFabricanete?: string;
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({
+        title: 'Código SKU',
+        nullable: true, required: false
+    })
     @Column({ nullable: true })
     sku?: string;
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({ title: 'Descrição', nullable: true, required: false })
     @Column({ nullable: true })
     description?: string;
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({ title: 'Nome', nullable: true, required: false })
     @Column({ nullable: true })
     name?: string;
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({
+        title: 'Descrição Curta',
+        nullable: true, required: false
+    })
     @Column({ nullable: true })
     shortDescription?: string;
-    @ApiProperty({ nullable: true, required: false, description: 'URL do site' })
+    @ApiProperty({ title: 'Site', nullable: true, required: false, description: 'URL do site' })
     @Column({ nullable: true })
     urlWebsiteOficial?: string;
-    @ApiProperty({ type: Marca, nullable: true, required: false, })
+    @ApiProperty({ title: 'Marca', type: Marca, nullable: true, required: false, })
     @ManyToOne(type => Marca)
     @JoinTable()
     marca?: Marca;
-    @ApiProperty({ nullable: true, required: false, })
+    @ApiProperty({ title: 'Sub Grupo', nullable: true, required: false, })
     subGrupo?: string;
     @ApiProperty({ nullable: true, required: false, })
     @Column({ length: 3, nullable: true, default: 'BRL' })

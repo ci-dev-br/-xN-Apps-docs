@@ -9,7 +9,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { StatusPrazo } from './status-prazo';
 import { ProcessoINPI } from './process-inpi.entity';
 
-@Entity({ schema: 'INPI' })
+import { schema } from "./schema";
+@Entity({ schema })
 export class PrazoINPI {
     @ApiProperty({ description: 'ID do prazo' })
     @PrimaryGeneratedColumn('uuid')

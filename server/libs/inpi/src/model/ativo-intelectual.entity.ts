@@ -2,8 +2,9 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn, TableInheritance } from "typeorm";
 import { TipoAtivo } from "./tipo-ativo";
 import { ProcessoINPI } from "./process-inpi.entity";
+import { schema } from "./schema";
 
-@Entity({ schema: 'INPI' })
+@Entity({ schema })
 /* @TableInheritance({
   column: { name: 'tipo', type: 'varchar' }, // Coluna "discriminadora"
   //  pattern: 'STRING',

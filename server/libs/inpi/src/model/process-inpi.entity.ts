@@ -14,7 +14,8 @@ import { AtivoIntelectual } from './ativo-intelectual.entity';
 import { ClienteINPI } from './cliente-inpi.entity';
 import { StatusProcesso } from './status-processo';
 
-@Entity({ schema: 'INPI' })
+import { schema } from "./schema";
+@Entity({ schema })
 export class ProcessoINPI {
     @ApiProperty({ description: 'ID do processo' })
     @PrimaryGeneratedColumn('uuid')

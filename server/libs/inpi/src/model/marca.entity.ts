@@ -1,7 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { FullAuditedEntity } from "@ci/core";
 import { Column, Entity } from "typeorm";
-@Entity({ schema: 'INPI' })
+import { schema } from "./schema";
+@Entity({ schema })
 export class Marca extends FullAuditedEntity {
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })

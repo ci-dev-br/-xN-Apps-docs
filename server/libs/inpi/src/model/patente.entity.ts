@@ -1,7 +1,8 @@
 import { FullAuditedEntity } from "@ci/core";
 import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity } from "typeorm";
-@Entity({ schema: 'INPI' })
+import { schema } from "./schema";
+@Entity({ schema })
 export class Patente extends FullAuditedEntity {
     @ApiProperty({ description: 'Resumo técnico da patente' })
     @Column({ type: 'text' })
