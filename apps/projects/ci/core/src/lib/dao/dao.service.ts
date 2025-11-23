@@ -197,7 +197,7 @@ export class DaoService {
                 if (!options || !options.pre || (!!options && !!options.pre && JSON.stringify((data as any)[p]) !== JSON.stringify(options?.pre[p]))) {
                     r[p] = (data as any)[p];
                 } else {
-                    
+
                 }
             })
         } catch (error) {
@@ -216,19 +216,20 @@ export class DaoService {
                 Object.defineProperty(data, 'toJSON', {
                     value: () => {
                         try {
-                            const out: any = {
-                                ...this.getChanges(data/* , { pre } */)
-                            };
-                            (['id', 'internalId']).forEach(p => {
-                                if (data[p]) {
-                                    out[p] = data[p] || undefined;
-                                }
-                            })
-                            // const { __confirmation_subject, ...out } = data?.toJSON() || data;
-                            // const { __confirmation_subject, ...out } = JSON.parse(JSON.stringify(data));
-                            // console.log(data);
-                            console.log(out);
-                            return out /* { ...out } */;
+                            if ('__confirmation_subject' in data) {
+                                const { __confirmation_subject, ...out } = JSON.parse(JSON.stringify(data));
+                                return out
+                            } else {
+                                const out: any = {
+                                    ...this.getChanges(data/* , { pre } */) // ERRO: parece não estar funcionando nesse contexto...
+                                };
+                                (['id', 'internalId']).forEach(p => {
+                                    if (data[p]) {
+                                        out[p] = data[p] || undefined;
+                                    }
+                                })
+                                return out;
+                            }
                         } catch (error) {
                             console.error(error);
                         }
