@@ -193,8 +193,11 @@ export class DaoService {
         try {
             Object.getOwnPropertyNames(data).forEach(p => {
                 if (p.indexOf('_') === 0 || p.indexOf(':') === 0) return;
-                if (JSON.stringify((data as any)[p]) !== JSON.stringify(options?.pre[p])) {
+                // TODO:  identificar mudança em relação ao pre
+                if (!options || !options.pre || (!!options && !!options.pre && JSON.stringify((data as any)[p]) !== JSON.stringify(options?.pre[p]))) {
                     r[p] = (data as any)[p];
+                } else {
+                    
                 }
             })
         } catch (error) {
@@ -213,17 +216,19 @@ export class DaoService {
                 Object.defineProperty(data, 'toJSON', {
                     value: () => {
                         try {
-                            // const out: any = {
-                            //     // ...this.getChanges(data, { pre })
-                            // };
-                            // (options?.fieldsId || ['id', 'internalId']).forEach(p => {
-                            //     if (data[p]) {
-                            //         out[p] = data[p] || undefined;
-                            //     }
-                            // })
+                            const out: any = {
+                                ...this.getChanges(data/* , { pre } */)
+                            };
+                            (['id', 'internalId']).forEach(p => {
+                                if (data[p]) {
+                                    out[p] = data[p] || undefined;
+                                }
+                            })
                             // const { __confirmation_subject, ...out } = data?.toJSON() || data;
-                            const { __confirmation_subject, ...out } = JSON.parse(JSON.stringify(data));
-                            return { ...out };
+                            // const { __confirmation_subject, ...out } = JSON.parse(JSON.stringify(data));
+                            // console.log(data);
+                            console.log(out);
+                            return out /* { ...out } */;
                         } catch (error) {
                             console.error(error);
                         }
@@ -288,7 +293,7 @@ export class DaoService {
     }
     async confirmChanges(data: any,) {
         try {
-            if (!!data && data?.__confirmation_subject instanceof Subject) {
+            if (!!data && typeof data === 'object' && '__confirmation_subject' in data && data?.__confirmation_subject instanceof Subject) {
                 (data.__confirmation_subject as Subject<any>).next(this.getChanges(data));
             }
             /// TODO: remover assinatura de evento Atention para Objeto quando for abandonado pelo componente.
@@ -300,7 +305,7 @@ export class DaoService {
     confirmation<T>(data: T) {
         // try {
         if (!data) return undefined;
-        if (!(data as any).__confirmation_subject) (data as any).__confirmation_subject = new Subject();
+        if (typeof data === 'object' && '__confirmation_subject' in data && !(data as any).__confirmation_subject) (data as any).__confirmation_subject = new Subject();
         return (data as any).__confirmation_subject as Subject<T>;
         // } catch (error) {
         //     console.error(error);

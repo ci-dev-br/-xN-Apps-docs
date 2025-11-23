@@ -1,4 +1,4 @@
-import { Component, Inject, Injector, Input, OnInit, Optional } from "@angular/core";
+import { AfterViewInit, Component, Inject, Injector, Input, OnInit, Optional } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatIconModule } from "@angular/material/icon";
@@ -24,7 +24,7 @@ import { lastValueFrom } from "rxjs";
     ],
     templateUrl: 'master-detail.component.html'
 })
-export class MasterDetailComponent<T> implements OnInit {
+export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
     @Input()
     visualizacao: 'table' | 'list' = 'table';
     @Input()
@@ -53,13 +53,24 @@ export class MasterDetailComponent<T> implements OnInit {
                         return {
                             headerName,
                             fieldName,
-                            hide: fieldName && ['internalId', 'id'].indexOf(fieldName) > -1
+                            hide: fieldName && [
+                                'internalId',
+                                'id',
+                                'createdAt',
+                                'createdBy',
+                                'lastModifiedAt',
+                                'lastModifiedBy',
+                                'tenants',
+                                'deleted'].indexOf(fieldName) !== -1
 
                         } as IColumnOption<any>
                     })
                 ]
-            }
+            };
+            console.log(this.gridOptions);
         }
+    }
+    ngAfterViewInit(): void {
     }
     async ngOnInit() {
         this.route.data.subscribe(async (data: any) => {
@@ -84,12 +95,13 @@ export class MasterDetailComponent<T> implements OnInit {
                 this.service = this.injector.get(serviceType);
             }
         }
+        this.search();
     }
     async search() {
         if (this.service && this.service.getList)
             this.source = await this.daos?.read(await lastValueFrom(this.service.getList()));
     }
-    async editar(data: T) {
+    async editar(data: T, event?: Event) {
         return await this.window.open(EditarComponent,
             { schemaName: this.schemaName, data }, this.schemaName)
     }
