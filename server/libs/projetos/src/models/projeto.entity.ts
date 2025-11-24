@@ -28,7 +28,12 @@ export class Projeto extends FullAuditedEntity {
         nullable: true, required: false,
         description: Termos.Projeto.visibilidade.Descrição,
     })
-    @Column({ nullable: true, enum: ProjetoVisibilidade, })
+    @Column({
+        type: 'enum',
+        nullable: true,
+        enum: ProjetoVisibilidade,
+        comment: 'PUBLIC, PRIVATE',
+    })
     visibilidade?: ProjetoVisibilidade;
     @ApiProperty({
         description: Termos.Projeto.ControleVersão.Descrição,

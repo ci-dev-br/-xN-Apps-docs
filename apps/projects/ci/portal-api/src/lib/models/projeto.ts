@@ -40,5 +40,6 @@ export interface Projeto {
   /**
    * Visibilidade
    */
-  visibilidade?: string | null;
+  visibilidade?: {
+} | null;
 }

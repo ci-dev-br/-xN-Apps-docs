@@ -49,12 +49,18 @@ public class MainActivity extends AppCompatActivity {
         this.message = findViewById(R.id.message);
         solicitarPermissoes();
         try {
+            adicionarGateway("http://192.168.0.3:86/", "ws://192.168.0.3:86/");
+        }catch(Exception ex){
+            this.message.setText("Falha ao conectar");
+        }
+        try {
             identificarNumerosTelefone();
         } catch( Exception ex){
             if(this.message != null) {
                 this.message.setText("Falha ao identificar números do dispositivo.");
             }
         }
+
         /* if(this.message != null){
             this.message.setText("Iniciando conexção... (1)");
         }*/
@@ -62,11 +68,6 @@ public class MainActivity extends AppCompatActivity {
         /* if(this.message != null){
             this.message.setText("Identificando números disponíveis");
         }*/
-        try {
-            adicionarGateway("http://192.168.0.3:86/", "ws://192.168.0.3:86/");
-        }catch(Exception ex){
-            this.message.setText("Falha ao conectar");
-        }
 
         if(this.appsButton != null){
             this.appsButton.setOnClickListener(v -> this.openApps());
