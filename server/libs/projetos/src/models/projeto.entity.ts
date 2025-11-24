@@ -4,6 +4,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { FullAuditedEntity } from "@ci/manager";
 import { Termos } from "../termos";
 import { ClienteProjeto } from "./cliente-projeto.entity";
+import { ProjetoVisibilidade } from "./visibilidade.enum";
 /**
  * Projetos
  */
@@ -27,8 +28,8 @@ export class Projeto extends FullAuditedEntity {
         nullable: true, required: false,
         description: Termos.Projeto.visibilidade.Descrição,
     })
-    @Column({ nullable: true, enum: ['Visível', 'Invisível'] })
-    visibilidade?: string;
+    @Column({ nullable: true, enum: ProjetoVisibilidade, })
+    visibilidade?: ProjetoVisibilidade;
     @ApiProperty({
         description: Termos.Projeto.ControleVersão.Descrição,
         nullable: true, required: false

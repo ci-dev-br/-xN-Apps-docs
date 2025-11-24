@@ -1,0 +1,12 @@
+{
+  "name": "@ci.dev.br/xne",
+  "version": "1.0.0",
+  "description": "xNë Instalador",
+  "license": "MIT",
+  "author": "plhx",
+  "type": "commonjs",
+  "main": "install.js",
+  "scripts": {
+    "test": "test.js"
+  }
+}

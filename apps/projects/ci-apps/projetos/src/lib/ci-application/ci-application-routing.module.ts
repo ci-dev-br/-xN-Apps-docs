@@ -20,7 +20,8 @@ const routes: Routes = [
           }
         } as Route
       })
-    ]
+    ],
+    title: 'Apps :: Projetos'
   }
 ];
 @NgModule({
