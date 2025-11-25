@@ -17,10 +17,14 @@
 </mat-toolbar>
 @if(list){
 @if(visualizacao==='list'){
-<ci-data-list [source]="list" [templateItem]="listItem"></ci-data-list>
-<ng-template #listItem let-item="item">
-    @if(!!item.title){<h6>{{item.title}}</h6>}
-    @if(!!item.description){<small>{{item.description}}</small>}
+<ci-data-list [source]="list" [templateItem]="itemListTemplate"></ci-data-list>
+<ng-template #itemListTemplate let-item="item">
+    <div class="list-item-content" [class.--active]="!!item.active" >
+        @if(!!item.title){<h6>{{item.title}}</h6>}
+        @if(!!item.description){<small>{{item.description}}</small>}
+        <div class="actions">
+        </div>
+    </div>
 </ng-template>
 }
 @else{
@@ -30,5 +34,5 @@
 }
 }
 @else{
-<div class="vazio" >Não há dados...</div>
+<div class="vazio">Não há dados...</div>
 }

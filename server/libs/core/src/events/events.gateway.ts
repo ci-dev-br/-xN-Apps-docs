@@ -3,6 +3,7 @@ import { createHash } from "crypto";
 import { Server } from "ws";
 import { BusService } from "./bus.service";
 import { Socket } from "socket.io";
+import { ReplaySubject } from "rxjs";
 @WebSocketGateway(
     {
         transports: [
@@ -124,6 +125,7 @@ export class EventsGateway implements OnGatewayInit {
             }
         });
     }
+    private _notices?: ReplaySubject<{ event: string, data: any }> = new ReplaySubject();
     @SubscribeMessage('listening')
     public async listening(@ConnectedSocket() client: Socket,
         @MessageBody() data: {
@@ -132,10 +134,12 @@ export class EventsGateway implements OnGatewayInit {
         if (!this.sing(data)) return;
         this.addEventListner(data.name, (result) => {
             // (client as any).mac = result.device_mac_assign;
-            client.send(JSON.stringify({
+            const event = {
                 event: 'notice',
                 data: result
-            }))
+            };
+            // this._notices.next(event);
+            client.send(JSON.stringify(event));
         })
     }
     private _atentionDatas: Map<string, any> = new Map();

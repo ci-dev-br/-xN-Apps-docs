@@ -1,0 +1,39 @@
+<mat-toolbar>
+    <button mat-raised-button (click)="conectarDispositivo()">
+        <mat-icon>smartphone</mat-icon>
+        Conectar Dispositivo
+    </button>
+    <button mat-raised-button>
+        <mat-icon>travel_explore</mat-icon>
+        Procurar Dispositivo
+    </button>
+    <button mat-raised-button (click)="openFakeMobileService()">
+        <mat-icon>phone_android</mat-icon>
+        Fake Mobile Services
+    </button>
+    <button mat-raised-button (click)="testarEnvioSMS()">
+        Testar SMS
+    </button>
+</mat-toolbar>
+@if(!devices){<div style="display: flex; flex-direction: column;align-items: center;justify-content: center;">
+    <small>Nenhum dispositivo conectado...</small>
+    <ngx-qrcode [value]="token">
+    </ngx-qrcode>
+    <small>Leia o QRCode com o aplicativo para celular para conectar o aparelho aos serviços.</small>
+</div> } @else {
+<div class="devices"> @for(item of devices; track item){
+    <div class="device">
+        {{item.device?.mac || ''}} / {{item.device?.type || ''}}
+        <div class="status" [class.active]="item.status===1" [class.waiting]="item.status===0"
+            [class.offline]="item.status===-1">
+        </div>
+        <div class="sims">
+
+            @if(item?.device?.phones) {@for(phone of item?.device?.phones; track phone){
+            <mat-icon>sim_card</mat-icon>
+            }}
+        </div>
+    </div>
+    }
+</div>
+}
