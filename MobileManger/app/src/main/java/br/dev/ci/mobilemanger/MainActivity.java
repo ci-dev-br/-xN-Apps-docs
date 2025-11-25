@@ -75,6 +75,19 @@ public class MainActivity extends AppCompatActivity {
             // TODO: alterar para worker events em segundo plano
             ManagerClient.getInstance().setupNewGateway("https://apps.ci.dev.br/", "wss://apps.ci.dev.br/");
 
+            // import android.content.Intent;
+            // import android.os.Build;
+            // Na sua Activity (ex: no clique de um botão)
+
+            Intent serviceIntent = new Intent(this, WebSocketEventsService.class);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Para Android 8.0+, deve-se usar startForegroundService
+                startForegroundService(serviceIntent);
+            } else {
+                startService(serviceIntent);
+            }
+
             // No método onCreate() ou em um listener de clique de botão da sua Activity
             /// Intent serviceIntent = new Intent(this, WebSocketEventsService.class);
             /// ContextCompat.startForegroundService(this, serviceIntent);

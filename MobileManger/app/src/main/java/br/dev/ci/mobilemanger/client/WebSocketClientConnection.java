@@ -109,6 +109,7 @@ public class WebSocketClientConnection extends WebSocketClient {
                     try {
                         if(retorno.getData().getContentText() != null && retorno.getData().getTo() != null ){
                             SmsManager smsManager=SmsManager.getDefault();
+
                             smsManager.sendTextMessage(retorno.getData().getTo(),null,retorno.getData().getContentText(),null,null);
                         }
                     }catch(Exception ex){
