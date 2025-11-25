@@ -48,6 +48,9 @@ As mudanças devem estar descritas neste documento para melhor analisar a implem
    - [ ] - Análise de Vendas;
  - [ ] - Implementação de Profile App:
    - [ ] - Alterar informações do Usuário;
+   - [ ] - > Alterar foto de perfil: 
+     - [ ] - > Carregar foto local; 
+     - [ ] - Tirar foto; 
  - [ ] - Implementação de Projetos App:
    - [ ] - Criar novo Projeto para Acompanhamento;
  - [ ] - Implementação de SEO App:

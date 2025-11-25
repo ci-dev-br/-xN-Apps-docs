@@ -12,12 +12,20 @@
     position: relative;
 
     >div.wrap {
+        opacity: 0;
+
         position: absolute;
         inset: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+
+        transition: opacity ease 1s;
+
+        &:hover, &:active {
+            opacity: 1;
+        }
     }
 }
 
