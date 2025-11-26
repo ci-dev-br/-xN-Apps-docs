@@ -80,6 +80,7 @@ export class PainelComponent implements OnInit {
       ADMIN: { url: 'icons/extras/admin mode.svg' },
       USER: { url: 'icons/extras/user mode.svg' },
       MASTER: { url: 'icons/extras/master mode.svg' },
+      GOD: { url: 'icons/extras/god mode.svg' },
     });
     this.userService.user.subscribe(user => {
       if (!!user) {
