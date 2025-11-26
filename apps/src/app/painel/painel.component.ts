@@ -77,6 +77,9 @@ export class PainelComponent implements OnInit {
       vendas: { url: 'icons/v2/vendas.svg' },
       crm: { url: 'icons/v2/crm.svg' },
       cms: { url: 'icons/v3/cms.svg' },
+      ADMIN: { url: 'icons/extras/admin mode.svg' },
+      USER: { url: 'icons/extras/user mode.svg' },
+      MASTER: { url: 'icons/extras/master mode.svg' },
     });
     this.userService.user.subscribe(user => {
       if (!!user) {

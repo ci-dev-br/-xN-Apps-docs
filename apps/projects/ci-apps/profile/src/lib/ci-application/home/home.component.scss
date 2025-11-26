@@ -23,9 +23,27 @@
 
         transition: opacity ease 1s;
 
-        &:hover, &:active {
+        &:hover,
+        &:active {
             opacity: 1;
         }
+    }
+}
+
+.assinaturas {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    mat-icon {
+        $size: 64px;
+
+        font-size: #{$size};
+        width: #{$size};
+        height: #{$size};
+        line-height: #{$size};
     }
 }
 

@@ -52,7 +52,9 @@
             <mat-card-content>
                 <h5>Assinaturas</h5>
                 <div class="assinaturas">
-                    @if(!!user && !!user.roles){@for(role of user.roles;track role){<div class="info">{{role}}</div>}}
+                    @if(!!user && !!user.roles){@for(role of user.roles;track role){<div class="info">
+                        <mat-icon [svgIcon]="role"></mat-icon>
+                    </div>}}
                 </div>
             </mat-card-content>
         </mat-card>
