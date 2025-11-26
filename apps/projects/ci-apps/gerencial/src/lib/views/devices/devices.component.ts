@@ -49,7 +49,7 @@ export interface DeviceItem {
     }
     async LoadDevices() {
         this.UpdateDevices(await lastValueFrom(this.deviceService.getAll({ body: { query: '' } })))
-        this.events.Listening('Gerencial.Devices', {
+        this.events.AddEventListener('Gerencial.Devices', {
             momentum: Date.now()
         })
     }

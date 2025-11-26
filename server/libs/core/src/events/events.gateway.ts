@@ -126,8 +126,16 @@ export class EventsGateway implements OnGatewayInit {
         });
     }
     private _notices?: ReplaySubject<{ event: string, data: any }> = new ReplaySubject();
+
+    /**
+     * Assinar evento permite receber uma lista de eventos a partir de um cliente
+     * @param client 
+     * @param data 
+     * @returns 
+     */
     @SubscribeMessage('listening')
-    public async listening(@ConnectedSocket() client: Socket,
+    public async listening(
+        @ConnectedSocket() client: Socket,
         @MessageBody() data: {
             name: string,
         }) {
@@ -136,6 +144,7 @@ export class EventsGateway implements OnGatewayInit {
             // (client as any).mac = result.device_mac_assign;
             const event = {
                 event: 'notice',
+                // type: 'replay' | 'sign' | 'loop-back', 
                 data: result
             };
             // this._notices.next(event);
