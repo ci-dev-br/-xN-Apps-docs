@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro | Deployer Platform</title>
+    <style>
+        /* --- ESTILOS BASE (IDÊNTICOS AO LOGIN) --- */
+        :root {
+            --bg-color: #0f172a;
+            --surface-color: #1e293b;
+            --primary-color: #38bdf8;
+            --accent-color: #22d3ee;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --input-bg: #020617;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            /* Mudado para min-height para telas menores */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* background-image: radial-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px; */
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            padding: 20px 0;
+            /* Espaço para não colar nas bordas em mobile */
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 450px;
+            /* Um pouco mais largo que o login */
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .login-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .logo span {
+            color: var(--primary-color);
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            color: #0f172a;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .auth-links {
+            display: flex;
+            justify-content: center;
+            margin-top: 24px;
+            font-size: 0.85rem;
+        }
+
+        .auth-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .auth-links a span {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .auth-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .glow-orb {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--primary-color);
+            filter: blur(80px);
+            opacity: 0.15;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        /* --- ESTILOS NOVOS PARA REGISTRO (Checkbox Customizado) --- */
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        /* Esconde o checkbox padrão feio */
+        .custom-checkbox {
+            appearance: none;
+            background-color: var(--input-bg);
+            margin: 0;
+            font: inherit;
+            color: currentColor;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            /* Evita que o checkbox amasse se o texto for longo */
+            transition: all 0.2s;
+        }
+
+        /* Estado checked */
+        .custom-checkbox:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        /* O ícone de check (feito com CSS pseudo-element) */
+        .custom-checkbox::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em var(--bg-color);
+            /* Cor do check */
+            transform-origin: bottom left;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+
+        .custom-checkbox:checked::before {
+            transform: scale(1);
+        }
+
+        .checkbox-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            cursor: pointer;
+        }
+
+        .checkbox-label a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-wrapper">
+        <div class="glow-orb"></div>
+
+        <div class="login-card">
+            <div class="card-header">
+                <div class="logo">apps<span>.deployer</span></div>
+                <p class="subtitle">{{ title }}</p>
+            </div>
+
+            <form action="/auth/register" method="POST">
+                <div class="form-group">
+                    <label class="form-label" for="name">Nome Completo</label>
+                    <input type="text" id="name" name="name" class="form-input" placeholder="Ex: João Silva" required
+                        autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">E-mail Corporativo</label>
+                    <input type="email" id="email" name="email" class="form-input" placeholder="dev@suamepresa.com"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Senha</label>
+                    <input type="password" id="password" name="password" class="form-input"
+                        placeholder="Mínimo 8 caracteres" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="confirm_password">Confirmar Senha</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-input"
+                        placeholder="Repita a senha" required>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" name="terms" class="custom-checkbox" required>
+                    <label for="terms" class="checkbox-label">
+                        Eu concordo com os <a href="#">Termos de Serviço</a> e a <a href="#">Política de Privacidade</a>
+                        da plataforma Apps.
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-primary">Criar Conta</button>
+            </form>
+
+            <div class="auth-links">
+                <a href="/login">Já tem uma conta? <span>Faça Login</span></a>
+            </div>
+        </div>
+
+        <div
+            style="text-align: center; margin-top: 20px; font-size: 0.8rem; color: var(--text-secondary); opacity: 0.6;">
+            &copy; {{ year }} Apps Platform.
+        </div>
+    </div>
+
+</body>
+
+</html>

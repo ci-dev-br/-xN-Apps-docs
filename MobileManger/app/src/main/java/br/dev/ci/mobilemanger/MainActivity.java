@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<PhoneNumber> phones;
     private TextView message;
     private Button appsButton;
+    private WebView myWebView;
     public TextView getMessage(){
         return this.message;
     }
@@ -52,6 +56,19 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        myWebView = findViewById(R.id.minhaWebView);
+
+        WebSettings webSettings = myWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true); // Habilita JavaScript (importante para maioria dos sites)
+        webSettings.setDomStorageEnabled(true); // Habilita armazenamento local (localStorage)
+
+        // 3. Forçar abertura de links DENTRO do app
+        // Se você não adicionar isso, o link abrirá no navegador externo
+        myWebView.setWebViewClient(new WebViewClient());
+
+        // 4. Carregar a URL
+        myWebView.loadUrl("https://apps.ci.dev.br");
+
         this.message = findViewById(R.id.message);
         solicitarPermissoes();
         try {
@@ -66,10 +83,12 @@ public class MainActivity extends AppCompatActivity {
          if(this.message != null){
             this.message.setText("Iniciando conexção... (1)");
         }
-
          if(this.message != null){
             this.message.setText("Identificando números disponíveis");
         }
+
+
+
         try {
             // old: adicionarGateway("https://apps.ci.dev.br/", "wss://apps.ci.dev.br/");
             // TODO: alterar para worker events em segundo plano
