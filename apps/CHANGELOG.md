@@ -2,6 +2,8 @@
 As mudanças devem estar descritas neste documento para melhor analisar a implementação com seu obejtivo a ser atingido. Descreva o que o recurso implementado resolve e o estágio em que ele se encontra para se comparado com os relatórios gerados após enviar se PR.
 # Sprint Maio de 2025
 
+- [ ] Launcher App: Para Mobile Managers e Afins;
+  - [ ] Implementação de webview com carga do web.app;
 - [>] Cadastros: 
     - [>>>] [TASK#1](./tasks/01.md) - Implementar edição e visualização de Cadastros utilizando DaoBuilder, seguindo exemplo de Implementação em Apps\Gerencial\Applications;
 - [ ] - Implementação de Envio de SMS em MobMannager;
