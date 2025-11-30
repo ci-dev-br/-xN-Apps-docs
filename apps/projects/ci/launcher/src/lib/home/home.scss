@@ -23,14 +23,21 @@
     }
 }
 
+:host ::ng-deep * {
+    color: white;
+}
+
 .scroll {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: stretch;
-    overflow: auto;
     justify-self: stretch;
     flex: auto;
+    border-radius: 48px;
+    overflow: auto;
+
+    max-height: 65vh;
 }
 
 h1 {
