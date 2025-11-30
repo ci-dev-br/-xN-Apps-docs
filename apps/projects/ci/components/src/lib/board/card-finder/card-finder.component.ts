@@ -19,7 +19,7 @@ export class CardFinderComponent {
     }
     find(search: string) {
         this.lista = [...this.cards || []]?.filter(c => {
-            return (c.title || '')
+            return (c?.title || '')
                 .toLocaleLowerCase()
                 .indexOf(
                     search.toLowerCase()

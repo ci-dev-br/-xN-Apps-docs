@@ -34,7 +34,9 @@ export class BoardComponent implements OnInit {
         public cardsFound?: ImplCard[],
     ) {
         this.cardsFound?.forEach(c => {
-            this.cards.set(c.componentName || '', c);
+            if (!!c && !!c?.componentName) {
+                this.cards.set((c?.componentName || ''), c);
+            }
         })
     }
     cards = new Map<string, ImplCard>();

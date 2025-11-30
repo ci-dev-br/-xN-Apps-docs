@@ -3,7 +3,7 @@ import { Card, CardOption } from "@ci/portal-api";
 export interface ImplCard extends Card {
     componentName?: string | null;
     componentVersion?: string | null;
-    settings?: CardOption | null;
+    settings?: { [key: string]: CardOption | null };
     componentRef: Type<any>;
     title?: string;
     descricao?: string;
