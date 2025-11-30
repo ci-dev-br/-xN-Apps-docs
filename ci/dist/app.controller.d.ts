@@ -29,4 +29,9 @@ export declare class AppController {
             uptime: string;
         }[];
     };
+    getTermsPage(): {
+        year: number;
+        updatedAt: string;
+        title: string;
+    };
 }

@@ -50,4 +50,20 @@ export class AppController {
       ]
     };
   }
+
+  @Get('terms')
+  @Render('terms')
+  getTermsPage() {
+    const today = new Date();
+    // Formata data ex: "26 de Novembro de 2025"
+    const formattedDate = today.toLocaleDateString('pt-BR', { 
+      day: 'numeric', month: 'long', year: 'numeric' 
+    });
+
+    return { 
+      year: today.getFullYear(),
+      updatedAt: formattedDate,
+      title: 'Termos de Serviço' 
+    };
+  }
 }

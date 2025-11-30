@@ -81,7 +81,7 @@
             "development": {
               "buildTarget": "apps:build:development",
               "allowedHosts": [
-                "https://4200.ci.dev.br/",
+                "http://4200.ci.dev.br:4200/",
                 "4200.ci.dev.br"
               ]
             }
@@ -1365,6 +1365,36 @@
           "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ci-apps/cms/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@ci/Launcher": {
+      "projectType": "library",
+      "root": "projects/ci/launcher",
+      "sourceRoot": "projects/ci/launcher/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci/launcher/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci/launcher/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/ci/launcher/tsconfig.spec.json",
             "polyfills": [
               "zone.js",
               "zone.js/testing"

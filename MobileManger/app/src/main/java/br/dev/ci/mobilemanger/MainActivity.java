@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         // Se você não adicionar isso, o link abrirá no navegador externo
         webView.setWebViewClient(new WebViewClient());
         // 4. Carregar a URL
-        webView.loadUrl("https://apps.ci.dev.br/?from=Mobile");
+        webView.loadUrl("https://apps.ci.dev.br/launcher");
         // webView.addJavascriptInterface(new WebAppInterface(this), "AndroidLauncher");
         this.message = findViewById(R.id.message);
         solicitarPermissoes();

@@ -1,0 +1,14 @@
+<h1>{{agora | date: 'dd MMMM y'}}</h1>
+<div class="horario">
+    <h1>{{agora | date: 'HH'}}</h1>
+    <h1>{{agora | date: 'mm'}}</h1>
+    <h1>{{agora | date: 'ss'}}</h1>
+</div>
+<div class="scroll">
+</div>
+<div class="footer">
+    <span style="flex: auto"></span>
+    <button mat-icon-button [routerLink]="'/meus-apps'">
+        <mat-icon>apps</mat-icon>
+    </button>
+</div>

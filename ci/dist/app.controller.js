@@ -46,6 +46,17 @@ let AppController = class AppController {
             ]
         };
     }
+    getTermsPage() {
+        const today = new Date();
+        const formattedDate = today.toLocaleDateString('pt-BR', {
+            day: 'numeric', month: 'long', year: 'numeric'
+        });
+        return {
+            year: today.getFullYear(),
+            updatedAt: formattedDate,
+            title: 'Termos de Serviço'
+        };
+    }
 };
 exports.AppController = AppController;
 __decorate([
@@ -76,6 +87,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "getDashboard", null);
+__decorate([
+    (0, common_1.Get)('terms'),
+    (0, common_1.Render)('terms'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AppController.prototype, "getTermsPage", null);
 exports.AppController = AppController = __decorate([
     (0, common_1.Controller)()
 ], AppController);
