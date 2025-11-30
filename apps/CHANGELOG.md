@@ -4,6 +4,8 @@ As mudanças devem estar descritas neste documento para melhor analisar a implem
 
 - [ ] Launcher App: Para Mobile Managers e Afins;
   - [ ] Implementação de webview com carga do web.app;
+  - [>] Implementação de Aplicação Launcher em web client restrito:
+  apenas ao acesso via Aplicativo android de aplicação do tipo LAUNCHER;
 - [>] Cadastros: 
     - [>>>] [TASK#1](./tasks/01.md) - Implementar edição e visualização de Cadastros utilizando DaoBuilder, seguindo exemplo de Implementação em Apps\Gerencial\Applications;
 - [ ] - Implementação de Envio de SMS em MobMannager;
