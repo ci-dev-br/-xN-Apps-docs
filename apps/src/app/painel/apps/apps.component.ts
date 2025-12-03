@@ -1,10 +1,11 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { /* ActivatedRoute */ ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CoreModule } from '@ci/core';
-import { APPS, IApp } from './apps';
+// import { APPS, IApp } from './apps';
 import { AuthModule, UserService } from '@ci/auth';
 import { BoardModule } from '@ci/components';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
   selector: 'ci-apps',
@@ -14,6 +15,8 @@ import { BoardModule } from '@ci/components';
     RouterModule,
     BoardModule,
     AuthModule,
+
+    MatTabsModule,
   ],
   standalone: true,
   providers: [
@@ -27,17 +30,25 @@ import { BoardModule } from '@ci/components';
   styleUrl: './apps.component.scss'
 })
 export class AppsComponent implements OnInit {
-  apps?: IApp[];
+  // apps?: IApp[];
+  abas?: { label: string, path: string, icon: string }[];
   constructor(
     private readonly userService: UserService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
   ) { }
   async ngOnInit() {
+    this.abas = this.route.routeConfig?.children?.map(r => {
+      return {
+        label: (r?.data as any)?.title || r.path,
+        path: '/' + r.path,
+        icon: (r?.data as any)?.icon || undefined,
+      } as { label: string, path: string, icon: string }
+    }) || undefined;
     this.userService.user.subscribe(user => {
       if (!!user) {
-        this.apps = APPS.filter(app => !!this.userService && !!this.userService.user && !!this.userService.user.value ?
-          this.userService.user?.value?.roles?.find(role => app.roles && app.roles.indexOf(role) > -1) : false);
+        // this.apps = APPS.filter(app => !!this.userService && !!this.userService.user && !!this.userService.user.value ?
+        // this.userService.user?.value?.roles?.find(role => // app.roles && app.roles.indexOf(role) > -1) : false);
       } else {
         // this.router.navigate(['/']);
       }
