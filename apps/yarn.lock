@@ -2749,6 +2749,13 @@ fast-uri@^3.0.1:
   resolved "https://npm.plhx.com.br:4873/fast-uri/-/fast-uri-3.0.6.tgz"
   integrity sha512-Atfo14OibSv5wAp4VWNsFYE1AchQRTv9cBGWET4pZWHzYshFSS9NQI6I57rdKn9croWVMbYFbLhJ+yJvmZIIHw==
 
+fast-xml-parser@^5.3.2:
+  version "5.3.2"
+  resolved "https://npm.ci.dev.br/fast-xml-parser/-/fast-xml-parser-5.3.2.tgz"
+  integrity sha512-n8v8b6p4Z1sMgqRmqLJm3awW4NX7NkaKPfb3uJIBTSH7Pdvufi3PQ3/lJLQrvxcMYl7JI2jnDO90siPEpD8JBA==
+  dependencies:
+    strnum "^2.1.0"
+
 fdir@^6.4.4, fdir@^6.5.0:
   version "6.5.0"
   resolved "https://npm.ci.dev.br/fdir/-/fdir-6.5.0.tgz"
@@ -5043,6 +5050,11 @@ strip-ansi@^7.0.1, strip-ansi@^7.1.0:
   integrity sha512-iq6eVVI64nQQTRYq2KtEg2d2uU7LElhTJwsH4YzIHZshxlgZms/wIc4VoDQTlG/IvVIrBKG06CrZnp0qv7hkcQ==
   dependencies:
     ansi-regex "^6.0.1"
+
+strnum@^2.1.0:
+  version "2.1.1"
+  resolved "https://npm.ci.dev.br/strnum/-/strnum-2.1.1.tgz"
+  integrity sha512-7ZvoFTiCnGxBtDqJ//Cu6fWtZtc7Y3x+QOirG15wztbdngGSkht27o2pyGWrVy0b4WAy3jbKmnoK6g5VlVNUUw==
 
 supports-color@^7.1.0:
   version "7.2.0"

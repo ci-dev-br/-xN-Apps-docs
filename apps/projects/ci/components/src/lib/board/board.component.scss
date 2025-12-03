@@ -27,12 +27,15 @@
     width: auto;
     min-width: 240px;
     min-height: 120px;
-    overflow: hidden;
+    overflow: unset;
     flex: 1;
     margin: 6px;
+    border: dashed 2px rgba(255, 255, 255, .55);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px 6px rgba(0, 0, 0, .4);
 
     >.inner {
-        position: absolute;
+        position: relative;
         inset: 0;
         background-color: black;
         transition: all ease .45s;
@@ -40,7 +43,7 @@
         border-radius: 12px;
         padding: 6px;
         z-index: 2;
-        overflow: auto;
+        overflow: unset;
     }
 
     >.card-verso {
