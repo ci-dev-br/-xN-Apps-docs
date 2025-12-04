@@ -40,7 +40,7 @@ export class AppsComponent implements OnInit {
   async ngOnInit() {
     this.abas = this.route.routeConfig?.children?.map(r => {
       return {
-        label: (r?.data as any)?.title || r.path,
+        label: r.title || (r?.data as any)?.title || r.path,
         path: '/' + r.path,
         icon: (r?.data as any)?.icon || undefined,
       } as { label: string, path: string, icon: string }
