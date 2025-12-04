@@ -75,6 +75,9 @@ export class EventsGateway implements OnGatewayInit {
     @WebSocketServer()
     server: Server;
     mementu = [];
+    /**
+     * Catálogo de identificador de cliente por conexões
+     */
     private clients = new Map<string, { ws: WebSocket, returned: boolean, momentum: number }>();
     @SubscribeMessage('events')
     onEvent(@ConnectedSocket() client: WebSocket, @MessageBody() data: any) {
