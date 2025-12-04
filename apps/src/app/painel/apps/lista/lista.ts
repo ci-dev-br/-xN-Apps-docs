@@ -7,35 +7,7 @@ import { CoreModule } from "@ci/core";
 import { MatButtonModule } from "@angular/material/button";
 @Component({
     selector: 'ci-apps-lista',
-    template: `
-     @for (app of apps; track $index) {
-    <div class="app" [tabindex]="$index" (contextmenu)="contextMenuHanlder($event)"
-        (keydown.enter)="appClickHandler($event, app)" (click)="appClickHandler($event, app)"
-        [attr.aria-labelledby]="app.description">
-        <div class="bg" [style.border-color]="app.color"></div>
-        <span class="header">
-            @if(app.icon){
-            @if(app.type === 'svg' && !!app.icon){
-            <mat-icon [svgIcon]="app.icon" [inline]="true"></mat-icon>
-            }@else{
-            <mat-icon [inline]="true">{{app.icon}}</mat-icon>
-            }
-            }
-            <span class="label">
-                {{app.name}}
-            </span>
-        </span>
-        @if(!!app?.description){
-        <span class="description">
-            {{app.description}}
-        </span>
-        }
-    </div>
-    }
-    <div class="app">
-        <mat-icon [inline]="true">add</mat-icon>
-    </div>
-    `,
+    templateUrl: 'lista.html',
     standalone: true,
     imports: [
         CoreModule,
