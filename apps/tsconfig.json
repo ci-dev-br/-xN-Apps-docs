@@ -113,6 +113,9 @@
       ],
       "@ci/portal-api": [
         "./projects/ci/portal-api"
+      ],
+      "@ci/components/calendar": [
+        "./projects/ci/components/src/lib/calendar/public-api"
       ]
     },
     "outDir": "./dist/out-tsc",
