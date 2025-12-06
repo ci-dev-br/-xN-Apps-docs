@@ -10,10 +10,19 @@ export interface IDataEditar {
     data: any;
     schemaName: string;
 }
+/**
+ * Componente de Edição de Dados 
+ * Os dados podem ser fornecidos via schema ou injetados em 
+ * tempo de compilação ou execução.
+ * 
+ */
 @Component({
-    selector: 'ci-master-datail--editar',
+    selector: 'ci-master-detail--editar',
     styleUrl: 'editar.component.scss',
-    template: `@if(form){<ci-dyn-form [formGroup]="form" [schemaName]="schemaName"></ci-dyn-form>}`,
+    template: `@if(form){<ci-dyn-form 
+        [formGroup]="form" 
+        [schemaName]="schemaName">
+        </ci-dyn-form>}`,
     imports: [
         CoreModule,
         ReactiveFormsModule,
@@ -35,8 +44,7 @@ export class EditarComponent implements OnInit {
         private readonly route: ActivatedRoute,
         private readonly injector: Injector,
         private readonly ref: MatDialogRef<EditarComponent>,
-        @Inject(MAT_DIALOG_DATA)
-        public readonly data?: IDataEditar,
+        @Optional() @Inject(MAT_DIALOG_DATA) public readonly data?: IDataEditar,
         @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
         @Optional() @Inject('ACTIONS') actions?: BehaviorSubject<IItemMenu[]>,
     ) {
@@ -53,6 +61,9 @@ export class EditarComponent implements OnInit {
     ngOnInit() {
         this.loadFormFromDaoBuilder();
     }
+    /**
+     * Carregar serviços do Objeto em Evidência
+     */
     private async loadService() {
         if (this.schemaName) {
             this.preset = this.config?.servicesCommons?.find(s => s.schemaName === this.schemaName);
@@ -64,6 +75,9 @@ export class EditarComponent implements OnInit {
             }
         }
     }
+    /**
+     * Montar Formulário a partir de DaoBuilder
+     */
     private async loadFormFromDaoBuilder() {
         if (this.schemaName) {
             await this.loadService();
