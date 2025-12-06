@@ -1,14 +1,12 @@
-@if(viewMode==='day'){
-
-}
-@else if(viewMode==='month'){
 <div class="calendar-container">
     <header class="calendar-header">
         <div class="month-title">
             <h2>{{currentViewDate | date: 'MMMM' }} <span>{{ currentViewDate | date: 'yyyy' }}</span></h2>
         </div>
-
         <div class="nav-buttons">
+            <button class="btn-today" (click)="viewMode='day'">Dia</button>
+            <button class="btn-today" (click)="viewMode='month'">Mês</button>
+            <button class="btn-today" (click)="viewMode='year'">Ano</button>
             <button (click)="prevMonth()" aria-label="Mês anterior">
                 <i class="icon-chevron-left">&lt;</i>
             </button>
@@ -18,13 +16,15 @@
             </button>
         </div>
     </header>
+    @if(viewMode==='day'){
 
+    }
+    @else if(viewMode==='month'){
     <div class="weekdays-grid">
         <span *ngFor="let dayName of weekDays" class="weekday">
             {{ dayName }}
         </span>
     </div>
-
     <div class="days-grid">
         <div class="day-cell" *ngFor="let day of days" [class.is-other-month]="!day.isCurrentMonth"
             [class.is-today]="day.isToday" [class.is-selected]="day.isSelected" (click)="selectDate(day)">
@@ -39,9 +39,8 @@
 
         </div>
     </div>
+    }
+    @else if(viewMode==='year'){
 
+    }
 </div>
-}
-@else if(viewMode==='year'){
-
-}
