@@ -5,7 +5,7 @@ import { getServiceAsSchema } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 import { WindowService } from "../window/window.service";
 import { ActivatedRoute } from "@angular/router";
-import { EditarComponent } from "../master-detail/editar/editar.component";
+import { EditarComponent } from "../editar-detail/editar.component";
 
 
 @Component({

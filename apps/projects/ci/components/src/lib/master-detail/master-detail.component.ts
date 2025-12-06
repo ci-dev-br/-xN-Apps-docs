@@ -8,7 +8,7 @@ import { GridModule, IColumnOption, IDataGridOptions, WindowModule, WindowServic
 import { CoreModule, DaoBuilder, DaoService, } from "@ci/core";
 import { FormsModule } from "@angular/forms";
 import { getServiceAsSchema } from "@ci/portal-api";
-import { EditarComponent } from "./editar/editar.component";
+import { EditarComponent } from "../editar-detail/editar.component";
 import { lastValueFrom } from "rxjs";
 
 @Component({
