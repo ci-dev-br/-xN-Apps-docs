@@ -1,7 +1,6 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from "@angular/core";
 import { CoreModule } from "@ci/core";
 import { CalendarDay } from "./calendar-day";
-
 @Component({
     selector: 'ci-calendar',
     imports: [
@@ -11,9 +10,8 @@ import { CalendarDay } from "./calendar-day";
     templateUrl: `calendar.component.html`,
     styleUrl: `calendar.component.scss`,
 })
-export class CalendarComponent implements OnInit {
-
-    currentViewDate: Date = new Date(); // Data de referência para o mês visível
+export class CalendarComponent implements OnInit, OnChanges, OnDestroy {
+    @Input() currentViewDate: Date = new Date(); // Data de referência para o mês visível
     @Input() viewMode?: 'day' | 'month' | 'year';
     @Input() weekDays?: any[] = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
     @Input() days?: CalendarDay[] = [
@@ -21,33 +19,31 @@ export class CalendarComponent implements OnInit {
     ];
     @Input() current?: Date = new Date();
     @Input() selectedDate: Date = new Date();    // Data atualmente selecionada (inicia hoje)
+    markerTopPosition = 0;
+    currentTimeString = '';
+    private timerId: any;
+    // Configuração da Grade
+    hours: number[] = Array.from({ length: 24 }, (_, i) => i); // [0, 1, ..., 23]
+    readonly HOUR_HEIGHT = 20;
     constructor() { }
     private generateCalendar(): void {
         this.days = [];
-
         // 1. Descobrir o primeiro dia do mês atual
         const year = this.currentViewDate.getFullYear();
         const month = this.currentViewDate.getMonth();
-
         // Primeiro dia do mês (ex: 1 de Dezembro)
         const firstDayOfMonth = new Date(year, month, 1);
-
         // Dia da semana em que cai o dia 1 (0 = Domingo, 1 = Segunda...)
         const startingDayOfWeek = firstDayOfMonth.getDay();
-
         // 2. Definir a data inicial da grade (pode ser no mês anterior)
         // Subtraímos os dias necessários para chegar no Domingo anterior
         const startDate = new Date(firstDayOfMonth);
         startDate.setDate(startDate.getDate() - startingDayOfWeek);
-
         // 3. Gerar 42 dias (6 linhas x 7 colunas) para cobrir qualquer mês
         // 42 garante que a altura do calendário nunca muda
         const dateIterator = new Date(startDate);
-
         for (let i = 0; i < 42; i++) {
-
             const isCurrentMonth = dateIterator.getMonth() === month;
-
             this.days.push({
                 date: new Date(dateIterator), // Importante: clonar a data!
                 dayNumber: dateIterator.getDate(),
@@ -56,7 +52,6 @@ export class CalendarComponent implements OnInit {
                 isSelected: this.isSameDay(dateIterator, this.selectedDate),
                 hasEvents: this.checkIfHasEvents(dateIterator) // Lógica mockada
             });
-
             // Avança para o próximo dia
             dateIterator.setDate(dateIterator.getDate() + 1);
         }
@@ -66,27 +61,32 @@ export class CalendarComponent implements OnInit {
             date1.getMonth() === date2.getMonth() &&
             date1.getFullYear() === date2.getFullYear();
     }
-
     // Exemplo simples para simular eventos (ex: dias pares têm eventos)
     private checkIfHasEvents(date: Date): boolean {
         return date.getDate() % 5 === 0;
     }
     ngOnInit() {
         this.generateCalendar();
+        this.updateTimeMarker();
+        this.timerId = setInterval(() => {
+            this.updateTimeMarker();
+        }, 60000);
     }
     // --- Getters para o Cabeçalho ---
-
+    get isToday(): boolean {
+        const now = new Date();
+        return this.selectedDate.getDate() === now.getDate() &&
+            this.selectedDate.getMonth() === now.getMonth() &&
+            this.selectedDate.getFullYear() === now.getFullYear();
+    }
     get currentMonthName(): string {
         // Formata o mês em português (ex: "Dezembro")
         return this.currentViewDate.toLocaleDateString('pt-BR', { month: 'long' });
     }
-
     get currentYear(): number {
         return this.currentViewDate.getFullYear();
     }
-
     // --- Ações do Usuário ---
-
     prevMonth(): void {
         // Subtrai 1 mês da data de visualização
         this.currentViewDate = new Date(
@@ -96,7 +96,6 @@ export class CalendarComponent implements OnInit {
         );
         this.generateCalendar();
     }
-
     nextMonth(): void {
         // Soma 1 mês da data de visualização
         this.currentViewDate = new Date(
@@ -106,25 +105,42 @@ export class CalendarComponent implements OnInit {
         );
         this.generateCalendar();
     }
-
     goToToday(): void {
         this.currentViewDate = new Date(); // Volta a visualização para o mês atual
         this.selectedDate = new Date();    // Seleciona o dia de hoje
         this.generateCalendar();
     }
-
     selectDate(day: CalendarDay): void {
         this.selectedDate = day.date;
-
         // Se clicar num dia cinza (outro mês), muda a visualização para aquele mês
         if (!day.isCurrentMonth) {
             this.currentViewDate = new Date(day.date);
         }
-
         this.generateCalendar(); // Regenera para atualizar a classe .is-selected
-
         // Aqui você emitiria um evento, ex: this.dateSelected.emit(this.selectedDate);
         console.log('Data Selecionada:', this.selectedDate);
     }
-
+    private updateTimeMarker(): void {
+        if (!this.isToday) return;
+        const now = new Date();
+        // Cálculo: (Horas * 60) + Minutos = Total de minutos passados no dia
+        // Como definimos que 1 hora = 60px, então 1 minuto = 1px.
+        // Se quiser alterar a altura, a fórmula é: (minutos * (HOUR_HEIGHT / 60))
+        const minutesPassed = (now.getHours() * 60) + now.getMinutes();
+        // Calcula a posição em pixels baseada na altura da linha (ratio)
+        const pixelsPerMinute = this.HOUR_HEIGHT / 60;
+        this.markerTopPosition = minutesPassed * pixelsPerMinute;
+        // Formata string para mostrar na bolinha (ex: "14:35")
+        this.currentTimeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['viewDate']) {
+            this.updateTimeMarker(); // Recalcula se o usuário trocar de dia
+        }
+    }
+    ngOnDestroy(): void {
+        if (this.timerId) {
+            clearInterval(this.timerId); // Limpa o timer para evitar vazamento de memória
+        }
+    }
 }
