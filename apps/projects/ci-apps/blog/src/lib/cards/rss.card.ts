@@ -8,7 +8,7 @@ import { XMLParser, XMLBuilder, XMLValidator } from 'fast-xml-parser';
 import { lastValueFrom } from "rxjs";
 
 @Component({
-    selector: 'ci-card--crm-totalizador',
+    selector: 'ci-card--rss-card',
     template: `
         @if(stage==='config'){
             <h4>Configure o serviço de RSS</h4>
