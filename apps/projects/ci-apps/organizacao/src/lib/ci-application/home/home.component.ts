@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
-import { EditarComponent, WindowModule, WindowService } from '@ci/components';
+import { EditarDetailComponent, WindowModule, WindowService } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { Organizacao } from '@ci/portal-api';
 @Component({
@@ -27,7 +27,7 @@ export class HomeComponent {
     }
     async editar(data: Organizacao, event?: MouseEvent) {
         const result: number | any = await this.window.open(
-            EditarComponent,
+            EditarDetailComponent,
             { schemaName: 'Organizacao', data },
             'Organizacao',
             event);

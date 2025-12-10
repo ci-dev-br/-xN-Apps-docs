@@ -6,6 +6,9 @@ import { DynFormModule, IItemMenu } from "@ci/components";
 import { CORE_ENV, CoreModule, DaoBuilder, DaoService, IChangeable, ICoreEnvironment, IHaveSync, ISchemaPreset } from "@ci/core";
 import { FormsService, getServiceAsSchema } from "@ci/portal-api";
 import { BehaviorSubject, lastValueFrom } from "rxjs";
+/**
+ * Interface genérica para construção do editor de dados.
+ */
 export interface IDataEditar {
     data: any;
     schemaName: string;
@@ -18,7 +21,7 @@ export interface IDataEditar {
  */
 @Component({
     selector: 'ci-master-detail--editar',
-    styleUrl: 'editar.component.scss',
+    styleUrl: 'editar-detail.component.scss',
     template: `@if(form){<ci-dyn-form 
         [formGroup]="form" 
         [schemaName]="schemaName">
@@ -30,7 +33,7 @@ export interface IDataEditar {
     ],
     standalone: true,
 })
-export class EditarComponent implements OnInit {
+export class EditarDetailComponent implements OnInit {
     form?: FormGroup<any>;
     @Input()
     schemaName?: string;
@@ -43,7 +46,7 @@ export class EditarComponent implements OnInit {
         private readonly formsService: FormsService,
         private readonly route: ActivatedRoute,
         private readonly injector: Injector,
-        private readonly ref: MatDialogRef<EditarComponent>,
+        private readonly ref: MatDialogRef<EditarDetailComponent>,
         @Optional() @Inject(MAT_DIALOG_DATA) public readonly data?: IDataEditar,
         @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
         @Optional() @Inject('ACTIONS') actions?: BehaviorSubject<IItemMenu[]>,

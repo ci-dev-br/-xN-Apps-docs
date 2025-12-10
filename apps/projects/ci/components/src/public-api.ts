@@ -20,6 +20,6 @@ export * from './lib/action/actions.service';
 export * from './lib/window/window.component';
 export * from './lib/data-detail-view/data-detail-view.module';
 export * from './lib/master-detail/master-detail.component';
-export * from './lib/editar-detail/editar.component';
+export * from './lib/editar-detail/src/editar-detail.component';
 export * from './lib/pesquisar/pesquisar.module';
 export * from './lib/footer/footer.module';

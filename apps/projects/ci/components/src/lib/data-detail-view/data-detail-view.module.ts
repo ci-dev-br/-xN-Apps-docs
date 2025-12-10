@@ -12,7 +12,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
 import { WindowModule } from "../window/window.module";
-import { EditarComponent } from "../editar-detail/editar.component";
+import { EditarDetailComponent } from "../editar-detail/src/editar-detail.component";
 @NgModule({
     declarations: [
         DataDetailViewComponent,
@@ -30,7 +30,7 @@ import { EditarComponent } from "../editar-detail/editar.component";
         MatInputModule,
         FormsModule,
         WindowModule,
-        EditarComponent,
+        EditarDetailComponent,
     ],
     exports: [
         DataDetailViewComponent,

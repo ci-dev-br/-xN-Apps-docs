@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { EditarDetailComponent } from './editar-detail.component';
 
 /**
  * Editar Detail Module
@@ -9,10 +10,14 @@ import { CommonModule } from '@angular/common';
 
   ],
   exports: [
-
+    EditarDetailComponent,
   ],
   imports: [
     CommonModule,
+    EditarDetailComponent,
   ]
 })
 export class EditarDetailModule { }
+export {
+  EditarDetailComponent,
+}

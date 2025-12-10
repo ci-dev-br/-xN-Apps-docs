@@ -5,7 +5,7 @@ import { getServiceAsSchema } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 import { WindowService } from "../window/window.service";
 import { ActivatedRoute } from "@angular/router";
-import { EditarComponent } from "../editar-detail/editar.component";
+import { EditarDetailComponent } from "../editar-detail/src/editar-detail.component";
 
 
 @Component({
@@ -70,7 +70,7 @@ import { EditarComponent } from "../editar-detail/editar.component";
         );
     }
     async editar(data: I, event?: Event) {
-        const result: number | any = await this.window?.open(EditarComponent,
+        const result: number | any = await this.window?.open(EditarDetailComponent,
             { schemaName: this.schemaName, data },
             this.schemaName, event)
         if (result === -1 && this.list) {

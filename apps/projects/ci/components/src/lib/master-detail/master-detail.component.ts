@@ -8,8 +8,9 @@ import { GridModule, IColumnOption, IDataGridOptions, WindowModule, WindowServic
 import { CoreModule, DaoBuilder, DaoService, } from "@ci/core";
 import { FormsModule } from "@angular/forms";
 import { getServiceAsSchema } from "@ci/portal-api";
-import { EditarComponent } from "../editar-detail/editar.component";
 import { lastValueFrom } from "rxjs";
+import { EditarDetailComponent, EditarDetailModule } from "@ci/components/editar-detail";
+
 
 @Component({
     selector: 'ci-master-detail',
@@ -25,7 +26,7 @@ import { lastValueFrom } from "rxjs";
         GridModule,
         // DataListModule,
         FormsModule,
-        // EditarComponent,
+        EditarDetailModule,
     ],
 
     styleUrl: 'master-detail.component.scss',
@@ -109,7 +110,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
             this.source = await this.daos?.read(await lastValueFrom(this.service.getList()));
     }
     async editar(data: T, event?: Event) {
-        const result: number | any = await this.window?.open(EditarComponent,
+        const result: number | any = await this.window?.open(EditarDetailComponent,
             { schgemaName: this.schemaName, data }, this.schemaName, event)
         if (result === -1 && this.source) {
             let pos = this.source.indexOf(data);

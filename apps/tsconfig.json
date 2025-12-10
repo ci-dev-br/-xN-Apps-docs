@@ -116,6 +116,15 @@
       ],
       "@ci/components/calendar": [
         "./projects/ci/components/src/lib/calendar/public-api"
+      ],
+      "@ci/components/editar-detail": [
+        "./projects/ci/components/src/lib/editar-detail/public-api"
+      ],
+      "@ci/apps/imersao/games/my-house": [
+        "./projects/ci-apps/imersao/games/my-house/src/public-api"
+      ],
+      "@ci/apps/imersao/bike-racing": [
+        "./projects/ci-apps/imersao/games/bike-racing/src/public-api"
       ]
     },
     "outDir": "./dist/out-tsc",
