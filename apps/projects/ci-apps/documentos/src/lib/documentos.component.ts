@@ -1,15 +1,17 @@
 import { Component } from '@angular/core';
 
+/**
+ * Apps - Documentos
+ * 
+ * Visualize e Edite documentos colaborativamente
+ * 
+ * 
+ */
 @Component({
   selector: 'ci-documentos',
   standalone: false,
-  
-  template: `
-    <p>
-      documentos works!
-    </p>
-  `,
-  styles: ``
+  templateUrl: 'documentos.component.html',
+  styleUrl: 'documentos.component.scss'
 })
 export class DocumentosComponent {
 
