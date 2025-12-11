@@ -1,7 +1,7 @@
 # Changelogs
 As mudanças devem estar descritas neste documento para melhor analisar a implementação com seu obejtivo a ser atingido. Descreva o que o recurso implementado resolve e o estágio em que ele se encontra para se comparado com os relatórios gerados após enviar se PR.
 # Sprint Maio de 2025
-
+- [>>>] Meus Documentos: Implementação de Meus Documentos;
 - [ ] Launcher App: Para Mobile Managers e Afins;
   - [ ] Implementação de webview com carga do web.app;
   - [>] Implementação de Aplicação Launcher em web client restrito:
@@ -19,7 +19,7 @@ As mudanças devem estar descritas neste documento para melhor analisar a implem
     - [ ] - Permitir adicionar foto de perfirl;
 - [ ] - Implementação de Arquivos App:
     - [ ] - Home: Visão geral dos arquivos disponíveis ao acesso do usuário.
-    - [ ] - Este PC: Permite compatilhar informações dos arquivos locais para serem compartilhados ou abertos com Apps especializados.
+    - [ ] - Este PC: 'Permite compatilhar informações dos arquivos locais para serem compartilhados ou abertos com Apps especializados.
     - [ ] - REDE: Permitir ver os arquivos em rede de acordo com as Políticas de acesso do Usuário;
     - [ ] - Informações sobre espaço disponível para o usuário.
  - [ ] - Implementação de Cadastros App:

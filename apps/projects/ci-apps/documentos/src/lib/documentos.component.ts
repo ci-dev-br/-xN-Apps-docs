@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 
 /**
  * Apps - Documentos
- * 
  * Visualize e Edite documentos colaborativamente
  * 
  * 
