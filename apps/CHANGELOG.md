@@ -3,7 +3,7 @@ As mudanças devem estar descritas neste documento para melhor analisar a implem
 # Sprint Maio de 2025
 - [>>>] Meus Documentos: Implementação de Meus Documentos;
 - [ ] Launcher App: Para Mobile Managers e Afins;
-  - [ ] Implementação de webview com carga do web.app;
+  - [OK] Implementação de webview com carga do web.app;
   - [>] Implementação de Aplicação Launcher em web client restrito:
   apenas ao acesso via Aplicativo android de aplicação do tipo LAUNCHER;
 - [>] Cadastros: 
