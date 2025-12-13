@@ -129,6 +129,12 @@ export class EventsGateway implements OnGatewayInit {
             console.trace(error);
         }
     }
+    /**
+     *  Identifica o cliente conectado
+     * @param client 
+     * @param data 
+     * @returns 
+     */
     @SubscribeMessage('identity')
     async identity(@ConnectedSocket() client: any, @MessageBody() data: IDataMessage) {
         if (!this.sing(data)) return;
@@ -143,6 +149,11 @@ export class EventsGateway implements OnGatewayInit {
         }
         listeners.push(callBack);
     }
+    /**
+     *  Emite evento para os listeners cadastrados
+     * @param nameEvent 
+     * @param data 
+     */
     public async emitEvent<E>(nameEvent: string, data?: E) {
         this.listeners.get(nameEvent)?.forEach(callBack => {
             try {
@@ -177,6 +188,12 @@ export class EventsGateway implements OnGatewayInit {
         })
     }
     private _atentionDatas: Map<string, any> = new Map();
+    /**
+     *  Registra atenção de um cliente conectado
+     * @param client 
+     * @param data 
+     * @returns 
+     */
     @SubscribeMessage('Atention')
     async Atention(@ConnectedSocket() client: any, @MessageBody() data: IDataMessage) {
         if (!this.sing(data)) return;
@@ -195,6 +212,12 @@ export class EventsGateway implements OnGatewayInit {
             __last_data["::CI_INTERNAL.CLIENTS"].push(client);
         }
     }
+    /**
+     *  Registra ou atualiza o cliente conectado
+     * @param id 
+     * @param ws 
+     * @param momento 
+     */
     set(id: string, ws: WebSocket, momento?: number) {
         (ws as any).id = id;
         if (!this.clients.has(id)) {
