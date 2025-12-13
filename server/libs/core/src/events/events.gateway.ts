@@ -149,9 +149,7 @@ export class EventsGateway implements OnGatewayInit {
     @SubscribeMessage('listening')
     public async listening(
         @ConnectedSocket() client: Socket,
-        @MessageBody() data: {
-            name: string,
-        }) {
+        @MessageBody() data: IDataMessage) {
         if (!this.sing(data)) return;
         this.addEventListner(data.name, (result) => {
             // (client as any).mac = result.device_mac_assign;
