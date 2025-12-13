@@ -264,7 +264,7 @@ export class EventsGateway implements OnGatewayInit {
      * @param data 
      * @returns 
      */
-    sing(data?: any) {
+    sing(data?: IDataMessage): boolean {
         let s = createHash('md5').update(JSON.stringify(data)).digest('hex');
         if (this.lasts.indexOf(s) === -1) {
             this.lasts.push(s);
