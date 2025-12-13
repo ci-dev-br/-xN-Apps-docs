@@ -4,6 +4,9 @@ import { Server } from "ws";
 import { BusService } from "./bus.service";
 import { Socket } from "socket.io";
 import { ReplaySubject } from "rxjs";
+/**
+ * Gateway de eventos via WebSocket
+ */
 @WebSocketGateway(
     {
         transports: [
