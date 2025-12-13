@@ -47,7 +47,6 @@ export class AppComponent implements OnInit {
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-
         // Prevents the default mini-infobar or install dialog from appearing on mobile
         // Save the event because you'll need to trigger it later.
         // Show your customized install prompt for your PWA
@@ -60,11 +59,11 @@ export class AppComponent implements OnInit {
     // this.worker();
   }
   private showInAppInstallPromotion() {
-    alert("Instala ai tio")
+    alert("Instala ai tio");
   }
   private worker() {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register("https://srv33.internals.ci.dev.br:664/sw.js");
+      navigator.serviceWorker.register("https://apps.ci.dev.br/sw.js");
     }
   }
 }

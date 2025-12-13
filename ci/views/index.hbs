@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deployer | Runtime Modularity Platform</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --surface-color: #1e293b;
+      --primary-color: #38bdf8;
+      /* Sky Blue */
+      --accent-color: #22d3ee;
+      /* Cyan */
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --success: #4ade80;
+      --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-primary);
+      font-family: var(--font-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Utilities */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 32px;
+      border-radius: 6px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      color: #0f172a;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      border: 1px solid var(--text-secondary);
+      color: var(--text-primary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    /* Header */
+    header {
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      position: sticky;
+      top: 0;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -1px;
+    }
+
+    .logo span {
+      color: var(--primary-color);
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      margin-left: 24px;
+      font-size: 0.9rem;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary-color);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 100px 0;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      background: linear-gradient(to right, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+
+    /* Animation Concept: Coupling */
+    .module-demo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      margin-top: 60px;
+      height: 100px;
+    }
+
+    .core,
+    .module {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-family: monospace;
+      font-weight: bold;
+    }
+
+    .core {
+      width: 150px;
+      background: var(--surface-color);
+      border: 2px solid var(--text-secondary);
+      color: var(--text-secondary);
+    }
+
+    .module {
+      width: 100px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 2px dashed var(--primary-color);
+      color: var(--primary-color);
+      animation: couple 3s infinite ease-in-out;
+      position: relative;
+    }
+
+    @keyframes couple {
+      0% {
+        transform: translateX(40px);
+        opacity: 0.5;
+      }
+
+      50% {
+        transform: translateX(-10px);
+        opacity: 1;
+        background: var(--primary-color);
+        color: #000;
+        border-style: solid;
+      }
+
+      100% {
+        transform: translateX(40px);
+        opacity: 0.5;
+      }
+    }
+
+    /* Features */
+    .features {
+      padding: 80px 0;
+      background: var(--surface-color);
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-title h2 {
+      font-size: 2.2rem;
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .card {
+      background: var(--bg-color);
+      padding: 30px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary-color);
+    }
+
+    .card-icon {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+    }
+
+    .card p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    /* Terminal Preview */
+    .terminal-section {
+      padding: 80px 0;
+    }
+
+    .terminal {
+      background: #000;
+      border-radius: 10px;
+      padding: 20px;
+      font-family: 'Courier New', monospace;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      max-width: 800px;
+      margin: 0 auto;
+      border: 1px solid #333;
+    }
+
+    .terminal-header {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .dot.red {
+      background: #ef4444;
+    }
+
+    .dot.yellow {
+      background: #eab308;
+    }
+
+    .dot.green {
+      background: #22c55e;
+    }
+
+    .code-line {
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .prompt {
+      color: var(--success);
+    }
+
+    .cmd {
+      color: var(--text-primary);
+    }
+
+    .output {
+      color: var(--text-secondary);
+    }
+
+    /* Pricing */
+    .pricing {
+      padding: 80px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .price-card {
+      background: var(--surface-color);
+      padding: 40px;
+      border-radius: 16px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+    }
+
+    .price-card.featured {
+      border-color: var(--primary-color);
+      background: rgba(56, 189, 248, 0.05);
+    }
+
+    .price-card.featured::after {
+      content: 'MAIS POPULAR';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary-color);
+      color: #0f172a;
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      border-radius: 20px;
+    }
+
+    .price {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 20px 0;
+    }
+
+    .price span {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .features-list {
+      list-style: none;
+      margin: 30px 0;
+      text-align: left;
+    }
+
+    .features-list li {
+      margin-bottom: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+    }
+
+    .features-list li::before {
+      content: '✓';
+      color: var(--success);
+      margin-right: 10px;
+      font-weight: bold;
+    }
+
+    /* Footer */
+    footer {
+      padding: 40px 0;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .footer-logo {
+      margin-bottom: 20px;
+      display: inline-block;
+      color: var(--text-primary);
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="container">
+      <nav>
+        <div class="logo">apps<span>.deployer</span></div>
+        <div class="nav-links">
+          <a href="#features">Recursos</a>
+          <a href="#how-it-works">Como Funciona</a>
+          <a href="#pricing">Planos</a>
+          <a href="#docs">Docs</a>
+          <a href="/login" class="btn btn-primary" style="margin-left: 20px; padding: 8px 20px;">Entrar</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Acople e Desacople Módulos<br>em Tempo de Execução.</h1>
+      <p>O motor de orquestração definitivo para a plataforma Apps. Atualize lógicas de negócio, integre micro-frontends
+        e gerencie plugins sem downtime.</p>
+
+      <div style="margin-bottom: 40px;">
+        <a href="#pricing" class="btn btn-primary">Começar Agora</a>
+        <a href="#docs" class="btn btn-outline" style="margin-left: 10px;">Ler Documentação</a>
+      </div>
+
+      <div class="module-demo">
+        <div class="core">CORE APP</div>
+        <div class="module">MODULE</div>
+      </div>
+      <p style="font-size: 0.8rem; margin-top: 10px; color: var(--text-secondary);">Hot-swapping ativo</p>
+    </div>
+  </section>
+
+  <section id="features" class="features">
+    <div class="container">
+      <div class="section-title">
+        <h2>Modularidade sem limites</h2>
+        <p>Construído para arquiteturas distribuídas e escaláveis.</p>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <div class="card-icon">⚡</div>
+          <h3>Hot Swapping</h3>
+          <p>Substitua partes da sua aplicação enquanto ela roda. Ideal para correções críticas e A/B testing
+            instantâneo.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🛡️</div>
+          <h3>Isolamento Seguro</h3>
+          <p>Cada módulo roda em sandbox. Se um módulo falhar, o core da sua aplicação continua intacto e operante.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔌</div>
+          <h3>API Universal</h3>
+          <p>Compatível com React, Vue, Node.js e Python. Uma interface padrão para acoplar qualquer stack.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works" class="terminal-section">
+    <div class="container">
+      <div class="section-title">
+        <h2>Integração via CLI</h2>
+        <p>Simples como um comando.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="dot red"></div>
+          <div class="dot yellow"></div>
+          <div class="dot green"></div>
+        </div>
+        <div class="code-line">
+          <span class="prompt">user@apps:~$</span> <span class="cmd">deployer module:attach --src ./payment-v2</span>
+        </div>
+        <div class="code-line">
+          <span class="output">> Verificando compatibilidade... OK</span>
+        </div>
+        <div class="code-line">
+          <span class="output">> Acoplando módulo 'payment-v2' ao Core...</span>
+        </div>
+        <div class="code-line">
+          <span class="output" style="color: var(--success);">> Módulo acoplado com sucesso (Runtime: 12ms)</span>
+        </div>
+        <div class="code-line">
+          <span class="prompt">user@apps:~$</span> <span class="cmd">_</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" class="pricing">
+    <div class="container">
+      <div class="section-title">
+        <h2>Assinatura Deployer</h2>
+        <p>Escolha a capacidade de orquestração que seu projeto precisa.</p>
+      </div>
+      <div class="grid">
+        <div class="price-card">
+          <h3>Starter</h3>
+          <div class="price">R$ 0<span>/mês</span></div>
+          <p>Para projetos pessoais e testes.</p>
+          <ul class="features-list">
+            <li>Até 3 Módulos simultâneos</li>
+            <li>CLI Básico</li>
+            <li>Logs de retenção 24h</li>
+            <li>Suporte da Comunidade</li>
+          </ul>
+          <a href="#" class="btn btn-outline" style="width: 100%">Criar Conta Grátis</a>
+        </div>
+
+        <div class="price-card featured">
+          <h3>Pro</h3>
+          <div class="price">R$ 149<span>/mês</span></div>
+          <p>Para equipes que precisam de escala.</p>
+          <ul class="features-list">
+            <li>Módulos Ilimitados</li>
+            <li>Rollback Automático</li>
+            <li>Dashboard de Métricas</li>
+            <li>Suporte Prioritário</li>
+            <li>SLA 99.9%</li>
+          </ul>
+          <a href="#" class="btn btn-primary" style="width: 100%">Assinar Pro</a>
+        </div>
+
+        <div class="price-card">
+          <h3>Enterprise</h3>
+          <div class="price">Sob Consulta</div>
+          <p>Para arquiteturas de missão crítica.</p>
+          <ul class="features-list">
+            <li>Deploy Híbrido (On-premise)</li>
+            <li>Auditoria de Segurança</li>
+            <li>Gerente de Conta Dedicado</li>
+            <li>SLA Personalizado</li>
+          </ul>
+          <a href="#" class="btn btn-outline" style="width: 100%">Falar com Vendas</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-logo">apps.ci.dev.br</div>
+      <p>&copy; 2025 Apps Platform. Todos os direitos reservados.</p>
+      <div style="margin-top: 20px;">
+        <a href="#" style="color: var(--text-secondary); margin: 0 10px; text-decoration: none;">Status</a>
+        <a href="#" style="color: var(--text-secondary); margin: 0 10px; text-decoration: none;">Privacidade</a>
+        <a href="/terms" style="color: var(--text-secondary); margin: 0 10px; text-decoration: none;">Termos</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>

@@ -45,7 +45,7 @@ public class WebSocketClientConnection extends WebSocketClient {
             EventPayload payload =  new EventPayload();
             payload.setEvent("events");
             EventData event = new EventData();
-            event.setMomentum((new Date()).getTime());
+            event.setMomento((new Date()).getTime());
             event.setMac(ManagerClient.getInstance().getMacAddr());
             payload.setData(event);
             Gson mapper = new Gson();
@@ -61,7 +61,7 @@ public class WebSocketClientConnection extends WebSocketClient {
 
             EventData event = new EventData();
 
-            event.setMomentum((new Date()).getTime());
+            event.setMomento((new Date()).getTime());
             event.setLastPing(ping);
             event.setType("ping");
 
@@ -109,6 +109,7 @@ public class WebSocketClientConnection extends WebSocketClient {
                     try {
                         if(retorno.getData().getContentText() != null && retorno.getData().getTo() != null ){
                             SmsManager smsManager=SmsManager.getDefault();
+
                             smsManager.sendTextMessage(retorno.getData().getTo(),null,retorno.getData().getContentText(),null,null);
                         }
                     }catch(Exception ex){

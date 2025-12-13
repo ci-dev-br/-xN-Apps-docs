@@ -19,5 +19,8 @@ export const Termos = {
         nome: {
             Descrição: 'Nome',
         },
+        dataInicio: {
+            Descrição: 'Data de Início',
+        },
     }
 };

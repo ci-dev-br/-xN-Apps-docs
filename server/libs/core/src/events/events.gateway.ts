@@ -3,6 +3,11 @@ import { createHash } from "crypto";
 import { Server } from "ws";
 import { BusService } from "./bus.service";
 import { Socket } from "socket.io";
+import { ReplaySubject } from "rxjs";
+import { IDataMessage } from "./dtos/i-data-message";
+/**
+ * Gateway de eventos via WebSocket
+ */
 @WebSocketGateway(
     {
         transports: [
@@ -14,12 +19,19 @@ import { Socket } from "socket.io";
     })
 export class EventsGateway implements OnGatewayInit {
     constructor(
-        private readonly bus: BusService
-        ,
+        private readonly bus: BusService,
     ) {
         bus.events = this;
     }
-    private pingHandler(client: WebSocket, data: any) {
+    /**
+     *  Handler de ping do cliente
+     * @param client 
+     * @param data 
+     * @returns 
+     */
+    private pingHandler(
+        client: WebSocket,
+        data: IDataMessage) {
         if (data.lastPing) {
             this.globalPing = ((this.globalPing + (data.lastPing || 0)) / 2)
             this.pings.push(data.lastPing)
@@ -37,13 +49,13 @@ export class EventsGateway implements OnGatewayInit {
             event: 'events',
             type: 'pong',
             wait: waiting,
-            momentum: data.momentum,
+            momento: data.momento,
             globalPing: this.globalPing,
             pingMedium: pm,
         };
         setTimeout(() => {
             const c = this.clients.get(data.client);
-            if (c && data.momentum === c.momentum) {
+            if (c && data.momento === c.momento) {
                 c.returned = false;
                 this.clients.delete(data.client);
             }
@@ -59,7 +71,7 @@ export class EventsGateway implements OnGatewayInit {
                         event: 'events',
                         data: {
                             type: "requestSendSMSMessage",
-                            momentum: Date.now(),
+                            momento: Date.now(),
                             to: data.to,
                             contentText: data.content
                         }
@@ -69,14 +81,29 @@ export class EventsGateway implements OnGatewayInit {
             })
         }
     };
+    /**
+     * Média de ping dos clientes conectados
+     */
     pings = [];
+    /**
+     * Ping médio global dos clientes conectados
+     */
     globalPing = 0;
+    /**
+     * Servidor WebSocket
+     */
     @WebSocketServer()
     server: Server;
-    mementu = [];
-    private clients = new Map<string, { ws: WebSocket, returned: boolean, momentum: number }>();
+    /** 
+     * Lista de momentos já processados
+     */
+    momento = [];
+    /**
+     * Catálogo de identificador de cliente por conexões
+     */
+    private clients = new Map<string, { ws: WebSocket, returned: boolean, momento: number }>();
     @SubscribeMessage('events')
-    onEvent(@ConnectedSocket() client: WebSocket, @MessageBody() data: any) {
+    onEvent(@ConnectedSocket() client: WebSocket, @MessageBody() data: IDataMessage) {
         if (!this.sing(data)) return;
         try {
             if (data.mac) {
@@ -87,12 +114,12 @@ export class EventsGateway implements OnGatewayInit {
             console.error(error);
         }
         try {
-            this.set(data.client, client, data.momentum);
+            this.set(data.client, client, data.momento);
         } catch (error) {
             console.error(error);
         }
-        if (data.momentum && this.mementu.indexOf(data.momentum) !== -1) return;
-        this.mementu.push(data.momentum)
+        if (data.momento && this.momento.indexOf(data.momento) !== -1) return;
+        this.momento.push(data.momento)
         try {
             if (data.type in this.eventsListeners) {
                 return this.eventsListeners[data.type](client, data);
@@ -101,20 +128,31 @@ export class EventsGateway implements OnGatewayInit {
             console.trace(error);
         }
     }
+    /**
+     *  Identifica o cliente conectado
+     * @param client 
+     * @param data 
+     * @returns 
+     */
     @SubscribeMessage('identity')
-    async identity(@ConnectedSocket() client: any, @MessageBody() data: any) {
+    async identity(@ConnectedSocket() client: any, @MessageBody() data: IDataMessage) {
         if (!this.sing(data)) return;
         client.id = data.client;
         return data;
     }
     private readonly listeners = new Map<String, ((r?: any) => void)[]>();
-    private addEventListner(eventName: string, callBack: (r?: any) => void) {
-        let listners = this.listeners.has(eventName) ? this.listeners.get(eventName) : [];
+    private addEventListener(eventName: string, callBack: (r?: any) => void) {
+        let listeners = this.listeners.has(eventName) ? this.listeners.get(eventName) : [];
         if (!this.listeners.has(eventName)) {
-            this.listeners.set(eventName, listners);
+            this.listeners.set(eventName, listeners);
         }
-        listners.push(callBack);
+        listeners.push(callBack);
     }
+    /**
+     *  Emite evento para os listeners cadastrados
+     * @param nameEvent 
+     * @param data 
+     */
     public async emitEvent<E>(nameEvent: string, data?: E) {
         this.listeners.get(nameEvent)?.forEach(callBack => {
             try {
@@ -124,26 +162,42 @@ export class EventsGateway implements OnGatewayInit {
             }
         });
     }
+    private _notices?: ReplaySubject<{ event: string, data: any }> = new ReplaySubject();
+
+    /**
+     * Assinar evento permite receber uma lista de eventos a partir de um cliente
+     * @param client 
+     * @param data 
+     * @returns 
+     */
     @SubscribeMessage('listening')
-    public async listening(@ConnectedSocket() client: Socket,
-        @MessageBody() data: {
-            name: string,
-        }) {
+    public async listening(
+        @ConnectedSocket() client: Socket,
+        @MessageBody() data: IDataMessage) {
         if (!this.sing(data)) return;
-        this.addEventListner(data.name, (result) => {
+        this.addEventListener(data.name, (result) => {
             // (client as any).mac = result.device_mac_assign;
-            client.send(JSON.stringify({
+            const event = {
                 event: 'notice',
+                // type: 'replay' | 'sign' | 'loop-back', 
                 data: result
-            }))
+            };
+            // this._notices.next(event);
+            client.send(JSON.stringify(event));
         })
     }
     private _atentionDatas: Map<string, any> = new Map();
+    /**
+     *  Registra atenção de um cliente conectado
+     * @param client 
+     * @param data 
+     * @returns 
+     */
     @SubscribeMessage('Atention')
-    async Atention(@ConnectedSocket() client: any, @MessageBody() data: any) {
+    async Atention(@ConnectedSocket() client: any, @MessageBody() data: IDataMessage) {
         if (!this.sing(data)) return;
         client.id = data.client;
-        this.set(data.client, client, data.momentum);
+        this.set(data.client, client, data.momento);
         if (!!data?.objectRef?.internalId) {
             if (this._atentionDatas.has(data.objectRef.internalId)) {
             } else {
@@ -157,11 +211,17 @@ export class EventsGateway implements OnGatewayInit {
             __last_data["::CI_INTERNAL.CLIENTS"].push(client);
         }
     }
-    set(id: string, ws: WebSocket, momentum?: number) {
+    /**
+     *  Registra ou atualiza o cliente conectado
+     * @param id 
+     * @param ws 
+     * @param momento 
+     */
+    set(id: string, ws: WebSocket, momento?: number) {
         (ws as any).id = id;
         if (!this.clients.has(id)) {
             this.clients.set(id, {
-                ws, returned: true, momentum
+                ws, returned: true, momento: momento
             });
             ws.addEventListener('close', (ev) => {
                 this.clients.delete((ws as any).id)
@@ -179,7 +239,7 @@ export class EventsGateway implements OnGatewayInit {
         else {
             const c = this.clients.get(id);
             c.returned = true;
-            if (momentum !== undefined) c.momentum = momentum;
+            if (momento !== undefined) c.momento = momento;
         }
         setTimeout(() => {
             this.clients.forEach(client => {
@@ -196,13 +256,19 @@ export class EventsGateway implements OnGatewayInit {
             })
         })
     }
+    /**
+     *  Processa mudanças enviadas por clientes conectados
+     * @param client 
+     * @param data 
+     * @returns 
+     */
     @SubscribeMessage('Changes')
     async Changes(
         @ConnectedSocket() client: any,
-        @MessageBody() data: any,
+        @MessageBody() data: IDataMessage,
     ) {
         if (!this.sing(data)) return;
-        this.set(data.client, client, data.momentum);
+        this.set(data.client, client, data.momento);
         if (!!data?.internalId) {
             const __last_data = this._atentionDatas.get(data.internalId);
             if (data.changes && __last_data) {
@@ -238,7 +304,7 @@ export class EventsGateway implements OnGatewayInit {
      * @param data 
      * @returns 
      */
-    sing(data?: any) {
+    sing(data?: IDataMessage): boolean {
         let s = createHash('md5').update(JSON.stringify(data)).digest('hex');
         if (this.lasts.indexOf(s) === -1) {
             this.lasts.push(s);

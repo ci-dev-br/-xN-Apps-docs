@@ -91,7 +91,7 @@ export class Pessoa extends FullAuditedEntity {
     })
     registroGeralRepublicaBrasileira?: string;
     @ApiProperty({
-        title: 'RG Ógão Emissor'
+        title: t`RG Ógão Emissor`
     })
     @Column({
         comment: t`Registro Geral Órgão Emissor`,
@@ -99,7 +99,7 @@ export class Pessoa extends FullAuditedEntity {
     })
     registroGeralRepublicaBrasileiraOrgaoEmissorOrgaoEmissor?: string;
     @ApiProperty({
-        title: 'E-mail pessoal',
+        title: t`E-mail pessoal`,
         nullable: true,
         required: false,
     })
@@ -109,7 +109,7 @@ export class Pessoa extends FullAuditedEntity {
     })
     emailPessoal?: string;
     @ApiProperty({
-        title: 'Empresa',
+        title: t`Empresa`,
         required: false,
         nullable: true
     })
@@ -122,7 +122,7 @@ export class Pessoa extends FullAuditedEntity {
      * 
      */
     @ApiProperty({
-        title: 'Endereço',
+        title: t`Endereço`,
         required: false,
         nullable: true,
         type: Endereco,
@@ -149,7 +149,7 @@ export class Pessoa extends FullAuditedEntity {
     })
     site?: string;
     @ApiProperty({
-        title: 'Típo de Representação Jurídica',
+        title: t`Típo de Representação Jurídica`,
         nullable: true,
         required: false
     })

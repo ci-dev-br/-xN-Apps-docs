@@ -30,26 +30,29 @@ export class DynFormComponent implements OnInit {
   }
   async getFormOptionsBySchema(name: string): Promise<IFormOptions> {
     if (this.daoBuilder) {
+      const hidden_fields = ['internalId', 'createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy', 'deleted', 'tenants'];
       const properties = await (await this.daoBuilder.getSchema(name)).properties
       if (properties) {
         const options = {
           title: name,
           fields: [
-            ...Object.keys(properties).map(p => {
-              const property_info = properties[p];
-              const schema_name = !!(property_info as any).items && (property_info as any).items['$ref'] ? (property_info as any).items['$ref'].replace('#/components/schemas/', '') : !!(property_info as any).allOf && !!(property_info as any).allOf[0] && !!(property_info as any).allOf[0]['$ref'] ? (property_info as any).allOf[0]['$ref'].replace('#/components/schemas/', '') : undefined;
-              return {
-                label: property_info.title || p,
-                property: p,
-                description: property_info.description,
-                type: property_info.type,
-                items: property_info.items,
-                schemaName: schema_name,
-                readonly: property_info.readOnly,
-                dataService: schema_name ? getServiceAsSchema(schema_name) as any : undefined,
-                isArray: property_info.type === 'array' || property_info.isArray
-              } as IFormFieldDefinition<any>
-            })
+            ...Object.keys(properties)
+              .filter(col => hidden_fields.indexOf(col) === -1)
+              .map(p => {
+                const property_info = properties[p];
+                const schema_name = !!(property_info as any).items && (property_info as any).items['$ref'] ? (property_info as any).items['$ref'].replace('#/components/schemas/', '') : !!(property_info as any).allOf && !!(property_info as any).allOf[0] && !!(property_info as any).allOf[0]['$ref'] ? (property_info as any).allOf[0]['$ref'].replace('#/components/schemas/', '') : undefined;
+                return {
+                  label: property_info.title || p,
+                  property: p,
+                  description: property_info.description,
+                  type: property_info.type,
+                  items: property_info.items,
+                  schemaName: schema_name,
+                  readonly: property_info.readOnly,
+                  dataService: schema_name ? getServiceAsSchema(schema_name) as any : undefined,
+                  isArray: property_info.type === 'array' || property_info.isArray
+                } as IFormFieldDefinition<any>
+              })
           ]
         } as IFormOptions;
         return options;
@@ -57,14 +60,12 @@ export class DynFormComponent implements OnInit {
     }
     return await undefined as any;
   }
-
   removeOption(option: string, list: string[]) {
     const pos = list.indexOf(option);
     if (pos > -1) {
       list.splice(pos, 1);
     }
   }
-
   add(prop: string, event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
     if (value && value.length > 0) {

@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { UnidadeMedida } from "../model/unidade-medida.entity";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
@@ -40,9 +40,10 @@ export class UnidadeMedidaController extends ControllerDaoBase<UnidadeMedidaServ
     })
     override async Sync(
         @Body() body: SyncPayloadDaoUnidadeMedida,
+        @Req() req?: any,
     ) {
         try {
-            return await super.Sync(body)
+            return await super.Sync(body, req);
         } catch (error) {
             return {
                 status: 500,
@@ -61,7 +62,8 @@ export class UnidadeMedidaController extends ControllerDaoBase<UnidadeMedidaServ
     })
     override async GetList(
         @Body() input: ObterListaUnidadeMedida,
+        @Req() req?: any,
     ) {
-        return super.GetList(input);
+        return super.GetList(input, req);
     }
 }

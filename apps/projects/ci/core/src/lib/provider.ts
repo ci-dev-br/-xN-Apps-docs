@@ -2,6 +2,7 @@ import { EnvironmentProviders, InjectionToken, isDevMode, makeEnvironmentProvide
 import { WsService } from "./io/ws.service";
 import { NotificationService } from "./notification/notification.service";
 import { UserService } from "@ci/auth";
+import { ShortcutService } from "./services/shortcut.service";
 export interface ISchemaPreset<T, D> {
     primary?: string | string[];
     schemaName?: string;
@@ -27,6 +28,7 @@ export function coreProvider(
         WsService,
         UserService,
         NotificationService,
+        ShortcutService,
         { provide: CORE_ENV, useValue: options },
     ];
     return makeEnvironmentProviders(providers);

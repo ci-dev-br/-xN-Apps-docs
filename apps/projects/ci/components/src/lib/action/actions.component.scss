@@ -2,11 +2,41 @@
     .container {
         display: flex;
         flex-direction: row;
-        gap: 6px;
+        gap: 1px;
         font-weight: bold;
         background: black;
         color: white;
         padding: 4px;
         gap: 2px;
+
+        ::ng-deep {
+
+
+            button {
+                height: unset;
+                min-height: unset;
+                border-radius: 2px;
+                padding: 0 4px;
+                margin: 0;
+                gap: 0;
+                text-overflow: ellipsis;
+                text-wrap: nowrap;
+                font-size: 10px;
+                font-weight: 100;
+                max-width: unset;
+                width: unset;
+                min-width: unset;
+
+                .mat-mdc-button-touch-target{
+                    margin: 0;
+                    padding: 0;
+                }
+
+                > * {
+                    margin: 0;
+                    padding: 0;
+                }
+            }
+        }
     }
 }

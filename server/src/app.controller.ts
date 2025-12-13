@@ -49,7 +49,7 @@ export class AppController {
     }
     return res.sendFile(resolve('public/index.csr.html'));
   }
-  @Get()
+  @Get()  
   @Public()
   async ressource(@Req() req: Request, @Res() res: Response) {
     /* if (this.sitePage) {

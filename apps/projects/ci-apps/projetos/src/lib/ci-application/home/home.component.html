@@ -1,16 +1,13 @@
 <ci-container>
     <mat-toolbar>
         <mat-toolbar-row>
-            <!--  <button mat-raised-button>
+            Projetos
+            <span style="flex:auto"></span>
+            <button mat-raised-button (click)="CreateNewProject()">
+                <mat-icon>add</mat-icon>
                 Novo projeto
             </button>
-            <button mat-raised-button>
-                Importar Projeto
-            </button> -->
         </mat-toolbar-row>
     </mat-toolbar>
-    <!--  <section>
-        <h1> Gerencie seus projetos</h1>
-    </section> -->
     <router-outlet></router-outlet>
 </ci-container>

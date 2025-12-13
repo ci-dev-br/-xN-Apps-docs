@@ -1,4 +1,4 @@
-import { forwardRef, Module } from "@nestjs/common";
+import { DynamicModule, forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Application } from "./model/application.entity";
 import { ApplicationController } from "./controller/application.controller";
@@ -23,6 +23,15 @@ export const ManagerEntities = [
     DinamycPageView,
     ManagerDeployOption,
 ]
+export class IOptionApplication {
+    icon?: string;
+    title?: string;
+    description?: string;
+    roles?: string[];
+}
+export class IOptionsApplicationFeatures {
+    application?: IOptionApplication;
+}
 @Module({
     imports: [
         forwardRef(() => CoreModule),
@@ -43,4 +52,13 @@ export const ManagerEntities = [
         DNSService,
     ]
 })
-export class ManagerModule { }
+export class ManagerModule {
+    static forApplication(options: IOptionsApplicationFeatures): DynamicModule {
+        return {
+            module: ManagerModule,
+            providers: [
+                { provide: 'CI::OptionsApplicationFeatures', useValue: options }
+            ]
+        }
+    }
+}

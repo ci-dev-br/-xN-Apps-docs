@@ -4,7 +4,17 @@
             <mat-card>
                 <mat-card-content>
                     <div class="row">
-                        <img src="" alt="" class="user-profile-image">
+                        <div class="user-profile">
+                            <img src="" alt="" class="user-profile-image" (click)="takeAPhoto() ">
+                            <div class="wrap">
+                                <button mat-icon-button
+                                    [matMenuTriggerFor]="userPhotoOptions"><mat-icon>photo_camera</mat-icon></button>
+                            </div>
+                            <mat-menu #userPhotoOptions>
+                                <button mat-menu-item>Arquivo local</button>
+                                <button mat-menu-item>Tirar foto</button>
+                            </mat-menu>
+                        </div>
                         <div class="content">
                             <ci-input mode="content-editable" fieldName="fullName" label="Nome Completo"
                                 el="h1"></ci-input>
@@ -28,8 +38,9 @@
                 <mat-card-content>
                     <div class="row">
                         <div class="content">
-                            <button mat-raised-button [disabled]="!!(form.invalid)" (click)="saveProfile()">Save
-                                Profile</button>
+                            <button mat-raised-button [disabled]="!!(form.invalid)" (click)="saveProfile()">
+                                Save Profile
+                            </button>
                         </div>
                     </div>
                 </mat-card-content>
@@ -39,7 +50,12 @@
     <div class="col">
         <mat-card>
             <mat-card-content>
-                Assinaturas
+                <h5>Assinaturas</h5>
+                <div class="assinaturas">
+                    @if(!!user && !!user.roles){@for(role of user.roles;track role){<div class="info">
+                        <mat-icon [svgIcon]="role"></mat-icon>
+                    </div>}}
+                </div>
             </mat-card-content>
         </mat-card>
         <mat-card>

@@ -6,7 +6,7 @@ public class EventData  {
     private String client;
     private String setOrigem;
     private HashMap<String, Change> changes;
-    private Long momentum;
+    private Long momento;
     private Long lastPing;
     private String type;
     private String objectRef;
@@ -40,12 +40,12 @@ public class EventData  {
         this.client = client;
     }
 
-    public Long getMomentum() {
-        return momentum;
+    public Long getMomento() {
+        return momento;
     }
 
-    public void setMomentum(Long momentum) {
-        this.momentum = momentum;
+    public void setMomento(Long momento) {
+        this.momento = momento;
     }
 
     public Long getLastPing() {

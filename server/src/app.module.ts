@@ -34,6 +34,7 @@ import { ProjetosEntities, ProjetosModule } from '@ci/projetos';
 import { L10nEntities, L10nModule } from '@ci/core/l10n/l10n.module';
 import { CrmEntities } from '@ci/crm/models';
 import { CrmModule } from '@ci/crm';
+import { DyMEntities, DyMModule } from '@ci/mlms';
 /**
  * Adicione os módulos que podem ser carregados pela configfuração do environment;
  * Nesta versão a compilação possui todos os módulos mesmo não estando indicados no .env
@@ -79,6 +80,7 @@ const _entities_name = {
   CodeX: CodeXEntities,
   L10n: L10nEntities,
   CRM: CrmEntities,
+  DyM: DyMEntities,
 }
 const _modules_name = {
   System: SystemModule,
@@ -108,6 +110,7 @@ const _modules_name = {
   Codex: CodexModule,
   L10n: L10nModule,
   CRM: CrmModule,
+  DyM: DyMModule,
 }
 /**
  * « end

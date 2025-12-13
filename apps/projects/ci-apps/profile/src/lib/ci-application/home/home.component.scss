@@ -7,6 +7,46 @@
 
 }
 
+
+.user-profile {
+    position: relative;
+
+    >div.wrap {
+        opacity: 0;
+
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        transition: opacity ease 1s;
+
+        &:hover,
+        &:active {
+            opacity: 1;
+        }
+    }
+}
+
+.assinaturas {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    mat-icon {
+        $size: 48px;
+
+        font-size: #{$size};
+        width: #{$size};
+        height: #{$size};
+        line-height: #{$size};
+    }
+}
+
 .row,
 .col {
     display: flex;
@@ -15,12 +55,14 @@
 
 .row {
     flex-direction: row;
+    align-items: start;
 }
 
 .col {
     flex-direction: column;
     flex: 1;
-    mat-card{
+
+    mat-card {
         width: 100%;
         //  flex: auto;
     }

@@ -20,5 +20,5 @@
 @case ('div') {<div><ng-container *ngTemplateOutlet="inner"></ng-container></div>}
 @default {<span><ng-container *ngTemplateOutlet="inner"></ng-container></span>}
 }
-<ng-template #inner>{{value || 'Não possui '+label}}</ng-template>
+<ng-template #inner>{{value || ''}}</ng-template>
 }

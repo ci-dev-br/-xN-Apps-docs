@@ -1,0 +1,120 @@
+:host {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    flex: auto;
+    overflow: auto;
+}
+
+.apps.container {
+    dosplay: flex;
+    flex-direction: column;
+    flex: auto;
+    justify-content: stretch;
+    align-items: stretch;
+    align-content: flex-start;
+    gap: 12px 12px;
+}
+
+@mixin app($size: 100px) {
+    .app {
+        $width: $size;
+        min-width: #{$width};
+        max-width: calc(33% - 32px);
+        max-height: #{$width*2};
+        border-radius: 14px;
+        box-shadow: 0 2px 10px 3px rgba(0, 0, 0, .2);
+        flex: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        cursor: pointer;
+        transition: box-shadow ease .5s;
+
+        padding: 12px;
+        margin: 0;
+
+        position: relative;
+
+        border: transparent;
+
+        .bg {
+            border-radius: 14px;
+
+            background: rgba(255, 255, 255, .05);
+            border: solid 1.9999999409px;
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            opacity: .8;
+        }
+
+        .header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+        }
+
+        gap: 8px;
+
+        .description {
+            font-size: .8rem;
+            text-align: justify;
+            flex: auto;
+        }
+
+        mat-icon {
+            $icon-size: 36px;
+
+            font-size: #{$icon-size};
+            width: #{$icon-size};
+            height: #{$icon-size};
+            line-height: #{$icon-size};
+        }
+
+        &:hover {
+            box-shadow: 0 0px 1px 1px rgba(0, 0, 0, .9);
+        }
+    }
+}
+
+// TODO: revisar responsividade
+.--flexible {
+    &.apps {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        flex: auto;
+        @include app();
+
+    }
+}
+
+
+@media (max-width: 700px) {
+    .--flexible {
+        &.apps {
+            padding: 0;
+            margin: 0;
+
+            @include app(50px);
+            font-size: .7rem;
+        }
+    }
+
+    :host {
+        padding: 0px;
+    }
+
+}
+
+@mixin card($size : 12vw) {
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, .9);
+}

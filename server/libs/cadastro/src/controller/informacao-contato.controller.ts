@@ -1,28 +1,10 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Req } from "@nestjs/common";
 import { InformacaoContatoService } from "../service/informacao-contato.service";
-import { ControllerDaoBase, SyncPayloadDao } from "@ci/core";
+import { ControllerDaoBase } from "@ci/core";
 import { InformacaoContato } from "../model/informacao-contato.entity";
-import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { FindOptionsWhere } from "typeorm";
-export class SyncPayloadDaoInformacaoContato extends SyncPayloadDao<InformacaoContato> {
-    @ApiProperty({ type: InformacaoContato })
-    override data?: InformacaoContato;
-}
-export class ObterListaInformacaoContato {
-    // override data?: InformacaoContato;
-    @ApiProperty({})
-    skip?: number;
-    @ApiProperty({})
-    take?: number;
-    @ApiProperty({})
-    where?: FindOptionsWhere<InformacaoContato>[] | FindOptionsWhere<InformacaoContato>;
-}
-export class InformacaoContatoCotrollerGetInputDto {
-    @ApiProperty({ nullable: true, required: false })
-    query?: string;
-    @ApiProperty({ nullable: true, required: false })
-    limit?: number;
-}
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { SyncPayloadDaoInformacaoContato } from "../dto/sync-payload-dao-informacao-contato";
+import { ObterListaInformacaoContato } from "../dto/obter-lista-informacao-contato";
 /**
  * InformacaoContato Controller
  * 
@@ -41,8 +23,9 @@ export class InformacaoContatoController extends ControllerDaoBase<InformacaoCon
     })
     override async Sync(
         @Body() body: SyncPayloadDaoInformacaoContato,
+        @Req() req?: any,
     ) {
-        return await super.Sync(body)
+        return await super.Sync(body,req)
     }
     @Post('GetList')
     @ApiResponse({
@@ -54,7 +37,8 @@ export class InformacaoContatoController extends ControllerDaoBase<InformacaoCon
     })
     override async GetList(
         @Body() input: ObterListaInformacaoContato,
+        @Req() req?: any,
     ) {
-        return super.GetList(input);
+        return super.GetList(input,req);
     }
 }

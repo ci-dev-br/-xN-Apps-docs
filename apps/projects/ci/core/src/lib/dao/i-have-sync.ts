@@ -14,5 +14,5 @@ export interface IHaveDelete<E> {
     delete(params: { body: ISyncPayloadDao<E> }, context?: HttpContext): Observable<StrictHttpResponse<ISyncPayloadDao<E>>>;
 }
 export interface IHaveGetList<E> {
-    getList(params: { body: ISyncPayloadDao<E> }, context?: HttpContext): Observable<StrictHttpResponse<ISyncPayloadDao<E>>>;
+    getList(params: { body: ISyncPayloadDao<E> }, context?: HttpContext): Observable<E[]>;
 }

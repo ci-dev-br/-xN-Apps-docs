@@ -41,17 +41,16 @@ public class WebSocketClientConnection extends WebSocketClient {
 
     private void Ping(){
         try {
-            EventPayload payload =  new EventPayload(){{
-                setEvent("events");
-                setData(new EventData(){{
-                    setClient(this.getMac());
-                    setMomentum((new Date()).getTime());
-                    setLastPing(ping);
-                    setType("ping");
-                }});
-            }};
+            EventPayload payload = new EventPayload();
+            payload.setEvent("events");
+            payload.setData(new EventData());
+            payload.getData().setClient(payload.getData().getMac());
+            payload.getData().setMomento((new Date()).getTime());
+            payload.getData().setLastPing(ping);
+            payload.getData().setType("ping");
             Gson mapper = new Gson();
-            send(mapper.toJson(payload));
+            String payload_message = mapper.toJson(payload);
+            send(payload_message);
         }catch (Exception ex){
             ex.printStackTrace();
         }

@@ -1,28 +1,10 @@
-import { Body, Controller, Post } from "@nestjs/common";
-import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Post, Req } from "@nestjs/common";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Endereco } from "../model/endereco.entity";
-import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
-import { FindOptionsWhere } from "typeorm";
+import { ControllerDaoBase } from "@ci/manager";
 import { EnderecoService } from "../service/endereco.service";
-export class SyncPayloadDaoEndereco extends SyncPayloadDao<Endereco> {
-    @ApiProperty({ type: Endereco })
-    override data?: Endereco;
-}
-export class ObterListaEndereco {
-    // override data?: Endereco;
-    @ApiProperty({})
-    skip?: number;
-    @ApiProperty({})
-    take?: number;
-    @ApiProperty({})
-    where?: FindOptionsWhere<Endereco>[] | FindOptionsWhere<Endereco>;
-}
-export class PessoaCotrollerGetInputDto {
-    @ApiProperty({ nullable: true, required: false })
-    query?: string;
-    @ApiProperty({ nullable: true, required: false })
-    limit?: number;
-}
+import { SyncPayloadDaoEndereco } from "../dto/sync-payload-dao-endereco";
+import { ObterListaEndereco } from "../dto/obter-lista-endereco";
 @ApiTags('Endereco')
 @Controller('Endereco')
 export class EnderecoController extends ControllerDaoBase<EnderecoService, Endereco> {
@@ -36,8 +18,9 @@ export class EnderecoController extends ControllerDaoBase<EnderecoService, Ender
     })
     override async Sync(
         @Body() body: SyncPayloadDaoEndereco,
+        @Req() req?: any,
     ) {
-        return await super.Sync(body)
+        return await super.Sync(body, req)
     }
     @Post('Get')
     @ApiResponse({
@@ -50,7 +33,8 @@ export class EnderecoController extends ControllerDaoBase<EnderecoService, Ender
     })
     override async GetList(
         @Body() input: ObterListaEndereco,
+        @Req() req?: any,
     ) {
-        return super.GetList(input);
+        return super.GetList(input, req);
     }
 }

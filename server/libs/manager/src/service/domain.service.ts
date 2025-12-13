@@ -37,14 +37,7 @@ export class DomainService implements OnModuleInit {
     async find(roles?: string[]) {
         return this.repo.find({
             order: { hostname: 'ASC' },
-            // where: [
-            // ...(roles ? roles.map(r => {
-            //     return {
-            //         roles: ArrayContains([r])
-            //     }
-            // }) : [])
-            // ]
-        })
+        });
     }
     async requestDomains(hosts?: string | string[]) {
         try {
@@ -68,7 +61,7 @@ export class DomainService implements OnModuleInit {
                         finded.push(find);
                     }
                 }
-            })
+            });
             return finded;
         } catch (error) {
             console.error(error);
@@ -84,6 +77,6 @@ export class DomainService implements OnModuleInit {
         return await this.repo.save(ref);
     }
     async delete(applicationId: string) {
-        return this.repo.delete(applicationId)
+        return this.repo.delete(applicationId);
     }
 }

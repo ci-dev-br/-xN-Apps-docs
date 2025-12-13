@@ -1,0 +1,22 @@
+<h1>{{agora | date: 'dd MMMM y'}}</h1>
+<div class="horario">
+    <h1>{{agora | date: 'HH'}}</h1>
+    <h1>{{agora | date: 'mm'}}</h1>
+    <h1>{{agora | date: 'ss'}}</h1>
+</div>
+<div class="scroll">
+    <ci-board default="Launcher.Board"></ci-board>
+</div>
+@if(x){<img class="bg" [src]="x" />}
+<div class="footer">
+    <button mat-icon-button (click)="load()">
+        <mat-icon>refresh</mat-icon>
+    </button>
+    <!-- <button mat-icon-button (click)="load()">
+        <mat-icon>visualize</mat-icon>
+    </button> -->
+    <span style="flex: auto"></span>
+    <button mat-icon-button [routerLink]="'/meus-apps'">
+        <mat-icon>apps</mat-icon>
+    </button>
+</div>

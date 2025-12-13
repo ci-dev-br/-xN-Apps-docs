@@ -12,16 +12,15 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
         let ___receipt_data = data;
         let ___internal_data: E = null;
         /// if (data instanceof AuditedEntity) {
-        if (!data.internalId) {
-            ___internal_data =
-                this._repo.create(data);
-            if (request) {
-                if (request.chaveAcesso) {
+        if (data && !('internalId' in data) && !data.internalId) {
+            ___internal_data = this._repo.create(data);
+            if (!!request) {
+                if (!!request.chaveAcesso) {
                     ___internal_data.createdBy = { id: request.chaveAcesso };
                 }
             }
         } else {
-            if (data && !!data.internalId) {
+            if (!!data && ('internalId' in data) && !!data.internalId) {
                 ___internal_data = await this._repo.findOne({
                     where: {
                         internalId: ___receipt_data.internalId
@@ -46,7 +45,7 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
                     }
                     // TODO: adicionar usuário modificador
                     if (___internal_data instanceof FullAuditedEntity) {
-                        await this._snap.snapshot(___internal_data, request);
+                        await this._snap.snapshot(___internal_data, request, this._repo);
                     }
                 }
             }
@@ -65,7 +64,7 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
         let _where: FindOptionsWhere<E>[] | FindOptionsWhere<E> = options.where || {};
         if (_where)
             (Array.isArray(_where) ? _where : [_where]).forEach((w: any) => {
-                w.createdBy = [{ identifiedUser: Equal(request.user.id) }];
+                w.createdBy = [{ identifiedUser: Equal(request && request.user && request.user.id) }];
                 if (request?.user?.roles?.indexOf('ADMIN') > -1) {
                     w.createdBy.push(
                         { identifiedUser: IsNull() }

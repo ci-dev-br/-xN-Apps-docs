@@ -1,0 +1,7 @@
+export enum DyMJobStatus {
+    PENDING = "PENDING",
+    FETCHING = "FETCHING",
+    BUILDING = "BUILDING",
+    COMPLETED = "COMPLETED",
+    FAILED = "FAILED"
+}

@@ -7,6 +7,8 @@ import { User, UserService } from '@ci/portal-api';
 import { AuthModule, UserService as AuthUserService } from '@ci/auth';
 import { lastValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
     selector: 'ci-home',
@@ -18,12 +20,14 @@ import { MatButtonModule } from '@angular/material/button';
         ReactiveFormsModule,
         AuthModule,
         MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
     ],
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
-    private user?: User;
+    protected user?: User;
     form: FormGroup = this.formBuilder.group({
         fullName: [],
         email: [],
@@ -68,6 +72,8 @@ export class HomeComponent implements OnInit {
                 }
             });
             this.user = user;
+        } else {
+            this.user = undefined;
         }
     }
     async saveProfile() {
@@ -76,5 +82,8 @@ export class HomeComponent implements OnInit {
         } else {
             this.form.markAllAsTouched();
         }
+    }
+    async takeAPhoto() {
+
     }
 }

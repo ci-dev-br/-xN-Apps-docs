@@ -10,7 +10,6 @@ import { SHA512 } from 'crypto-js';
 import { Router, RouterModule } from '@angular/router';
 import { CoreModule, StorageService } from '@ci/core';
 import { AuthModule, UserService } from '@ci/auth';
-
 @Component({
   selector: 'ci-acessar',
   imports: [

@@ -276,6 +276,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/tarefas/tsconfig.lib.json"
       }
+    },
+    "dym": {
+      "type": "library",
+      "root": "libs/dym",
+      "entryFile": "index",
+      "sourceRoot": "libs/dym/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/dym/tsconfig.lib.json"
+      }
     }
   }
 }

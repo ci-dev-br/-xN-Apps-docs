@@ -1,3 +1,6 @@
+@if(stage==='loading'){
+Carregando...
+}@else {
 <video #video loop controls="false" autoplay>
     <source src="bg.mp4" type="video/mp4">
 </video>
@@ -36,7 +39,7 @@
     <!-- 
         Área do não assinante
     -->
-    <header class="container">
+    <header class="container" style="background: transparent;"><!--  class="container" -->
         <figure>
             <img class="logo" src="logo-colorida.svg"
                 alt-label="Logo 'apps.ci.dev.br' escrita em manuscrito e colida degradê em minúsculo">
@@ -50,3 +53,4 @@
     <source src="bg.mp4" type="video/mp4">
 </video>
 -->
+}

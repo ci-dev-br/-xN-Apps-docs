@@ -20,7 +20,7 @@ export abstract class ControllerDaoBase<Service extends (DaoFullAuditedServiceBa
         }
     }
     async GetList(options?: { skip?: number, take?: number, where?: any, relations?: FindOptionsRelations<E> | FindOptionsRelationByString, orderBy?: any }, request?: any) {
-        return await this._service.obterLista(options, request);
+        return await this._service?.obterLista(options, request);
     }
     async GetByInternalId(payload: GetByInternalIdInputDto, request?: any) {
         if (this._service instanceof DaoFullAuditedServiceBase)

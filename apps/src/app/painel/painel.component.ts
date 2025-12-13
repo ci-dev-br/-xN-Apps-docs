@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CoreModule, LoadIconsModule, IconLoaderSerices, StorageService } from '@ci/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,7 +9,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { APPS } from './apps/apps';
+import { APPS, IApp } from './apps/apps';
 import { AuthModule, USER_MENU, UserService } from '@ci/auth';
 import { LogoComponent, IconModule, IItemMenu } from '@ci/components';
 @Component({
@@ -34,7 +34,7 @@ import { LogoComponent, IconModule, IItemMenu } from '@ci/components';
   templateUrl: './painel.component.html',
   styleUrl: './painel.component.scss'
 })
-export class PainelComponent {
+export class PainelComponent implements OnInit {
   user = this.userService.user
   apps?: any[];
   userMenuList?: IItemMenu[] = inject(USER_MENU, { optional: true }) || undefined;
@@ -77,6 +77,10 @@ export class PainelComponent {
       vendas: { url: 'icons/v2/vendas.svg' },
       crm: { url: 'icons/v2/crm.svg' },
       cms: { url: 'icons/v3/cms.svg' },
+      ADMIN: { url: 'icons/extras/admin mode.svg' },
+      USER: { url: 'icons/extras/user mode.svg' },
+      MASTER: { url: 'icons/extras/master mode.svg' },
+      GOD: { url: 'icons/extras/god mode.svg' },
     });
     this.userService.user.subscribe(user => {
       if (!!user) {
@@ -84,13 +88,31 @@ export class PainelComponent {
       }
     })
   }
+  private _appsFavoritos?: IApp[] | undefined = [];
+  public get appsFavoritos(): IApp[] | undefined {
+    if (!this._appsFavoritos) this.appsFavoritos = this.apps;
+    return this._appsFavoritos;
+  }
+  favs?: IApp[];
+  public set appsFavoritos(value: IApp[] | undefined) {
+    let x = [...(value || [])];
+    let order = [...x];
+    order.sort((a, b) => (a.__cta_hndlred || 0) > (b.__cta_hndlred || 0) ? -1 : (a.__cta_hndlred || 0) < (b.__cta_hndlred || 0) ? 1 : 0);
+    x.forEach((a, i) => a.__presentation_order = order.indexOf(a));
+    this._appsFavoritos = value;
+    if (this.favs !== value) this.favs = value;
+    localStorage.setItem('x-menu-cached-favs', JSON.stringify(this.apps?.map(x => x.__cta_hndlred || 0)));
+  }
   async appClickHandler(event: MouseEvent, app: any) {
     if (event.ctrlKey) {
       // window.open(location.href + '/' + app.url, '')
     } else {
       // this.router.navigate(['/' + app.url], { relativeTo: this.route.root })
     }
-    setTimeout(() => document.body.click(), 300)
+    setTimeout(() => document.body.click(), 300);
+    if (app.__cta_hndlred === undefined) app.__cta_hndlred = 0;
+    app.__cta_hndlred++;
+    this.appsFavoritos = this.apps;
   }
   async sair() {
     this.userService.sair();
@@ -103,5 +125,17 @@ export class PainelComponent {
   }
   protected async itemMenuActionHandler(itemMenu: IItemMenu, event: Event) {
     if (itemMenu.onClick) itemMenu.onClick(this, event);
+  }
+
+  ngOnInit(): void {
+    let c: string | number[] | null = localStorage.getItem('x-menu-cached-favs');
+    if (typeof c === 'string') c = JSON.parse(c) as number[];
+    this.apps?.forEach((e, i, a) => {
+      e.__cta_hndlred = (c as any)[i];
+    });
+
+    setTimeout(() => {
+      this.appsFavoritos = [...this.apps || []];
+    })
   }
 }

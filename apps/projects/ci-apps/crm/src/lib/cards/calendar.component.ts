@@ -1,23 +1,28 @@
-import { Component } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { CoreModule } from "@ci/core";
+import { CalendarComponent } from "@ci/components/calendar";
 
 @Component({
-    selector: 'ci-card--crm-totalizador',
+    selector: 'ci-card--calendar',
     template: `
-        <h3>Calendar</h3>
+        <ci-calendar [viewMode]="viewMode">
+        </ci-calendar>
     `,
     standalone: true,
     imports: [
         CoreModule,
+        CalendarComponent,
     ]
 })
-export class CalendarComponent {
+export class CardCalendarComponent {
+    @Input() viewMode?: 'day' | 'month' | 'year' = 'month';
+
 }
 export const CalendarCardInfo = {
     title: 'Calendar',
     descricao: `Top Agents.`,
     tags: ['CRM', 'Receita', 'List'],
-    componentRef: CalendarComponent,
+    componentRef: CardCalendarComponent,
     componentVersion: '1.0.0',
     componentName: 'CalendarComponent',
     settings: {

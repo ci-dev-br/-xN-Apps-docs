@@ -21,6 +21,13 @@ Responsável: plhx
 100% [xxxxxx]
 ```
 
+# Problemas Identificados no período
+
+## Erro: Problema ao visulizar formulário de edição
+Motivo: à identificar.
+Prioridade alta. Afeta todas as janelas de edição de quaisquer dados;
+
+![alt text](image.png)
  ---
 
 Ajustes em modelo de `Aplicação`. Adicionado relações de Usuários com A aplicacação. Lista de Usuários Administradores da Aplicação;

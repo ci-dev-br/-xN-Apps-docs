@@ -28,12 +28,16 @@ export class WsService {
         this._grant_connection =
             true;
     }
+    /**
+     *  Inicia o canal WebSocket de comunicação com o gateway
+     * @returns 
+     */
     async init() {
         if (!this.isBrowser) return;
         if (this._subject) {
             this._subject.complete();
         }
-        let gateway_api = 'wss://apps.ci.dev.br/';
+        let gateway_api = location.origin.replace('http', 'ws').replace(':4200', ':86');
         this._subject = webSocket(gateway_api);
         this._subject.subscribe(message => {
             this.status = 'online';
@@ -50,17 +54,27 @@ export class WsService {
                 this.retryWait = this.retryWait + 500;
             }
         }, () => {
-            console.info('Fim')
+            console.info('{{Fim do canal de comunicação WebSocket}}');
         });
-        this.Emit({ event: 'events', data: { type: 'ping', momentum: (new Date().getTime()) } });
+        this.Emit({ event: 'events', data: { type: 'ping', momento: (new Date().getTime()) } });
     }
     listner = new Map<string, Array<any>>();
+    /**
+     * Adiciona listener local para eventos recebidos via WebSocket
+     * @param name 
+     * @param call 
+     */
     addMessageListner(name: string, call: (data?: any) => void) {
         if (!this.listner.has(name))
             this.listner.set(name, [call])
         else
             this.listner.get(name)?.push(call)
     }
+    /**
+     * Dispara evento localmente para os listeners cadastrados
+     * @param name 
+     * @param message 
+     */
     emit(name: string, message: any) {
         if (this.listner.has(name))
             this.listner.get(name)?.forEach(callBack => {
@@ -70,10 +84,9 @@ export class WsService {
                 }
             });
     }
-
     private async ReceiveData(data?: any) {
         if (data.type === 'pong') {
-            this.ping = (new Date().getTime()) - Number(data.momentum);
+            this.ping = (new Date().getTime()) - Number(data.momento);
             this.globalPing = data.globalPing;
             this.pingMedium = data.pingMedium;
             setTimeout(() => {
@@ -99,23 +112,53 @@ export class WsService {
             )
         }
     }
+    /**
+     * Aciona evento de ping-pong no socket para medição de latência de sincrinização de dados on-line
+     * 
+     */
     private Ping() {
         this.Emit({
             event: 'events',
             data: {
                 type: 'ping',
-                momentum: (new Date().getTime()),
+                momento: (new Date().getTime()),
                 lastPing: this.ping,
             },
         });
     }
     /**
-     * Escutar evento
+     * Assina evento no canal socket aberto.
      */
-    public async Listening(eventName: string, data?: any) {
+    public async AddEventListener(
+        /**
+         * Nome do Evento
+         */
+        eventName: string,
+        data?: any,
+        /**
+         * Opções adicionais do comportamento da assinatura 
+         */
+        options?: {
+            /**
+             * | Nome do Evento | Descrição |
+             * | --- | --- | 
+             * | replay | recebe a lista de todos os eventos disparados desde o começo |
+             * | loop-back | assina o evento e propaga o consumo da mensagem confirmando leitura |
+             * | sign | assina o evento e propaga o consumo da mensagem |
+             * 
+             * 
+             */
+            type?: 'replay' | 'loop-back' | 'sign',
+            /**
+             * Delay no disparo do evento na recepção
+             */
+            delay?: number,
+        }
+    ) {
         this.Emit({
             event: 'listening',
             data: {
+                __type: options?.type || 'default',
                 name: eventName,
                 ...data
             },
@@ -136,8 +179,9 @@ export class WsService {
     }
     private _atentionDatas: Map<string, any> = new Map();
     /**
-
-    * Solicitar atenção para um objeto. Mantém o objeto sincronizado com os demais clientes durante modificação. Recebendo retorno dos clientes que estão consumindo os eventos da aplicação.
+     * Solicitar atenção para um objeto. Mantém o objeto sincronizado com os demais clientes 
+     * durante modificação. Recebendo retorno dos clientes que estão consumindo os eventos da 
+     * aplicação.
      */
     async Atention(objectRef: any) {
         if (objectRef && !!objectRef.internalId) {

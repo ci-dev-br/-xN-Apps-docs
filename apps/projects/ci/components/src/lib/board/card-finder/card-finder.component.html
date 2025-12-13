@@ -1,17 +1,30 @@
-<div>
+<h2 mat-dialog-title>Adicionar Cartão
+
+
     <mat-form-field>
         <mat-label>Procurando por ...</mat-label>
-        <input matInput #pesquisaInput type="text" placeholder="Pesquise por nome ou descrição dos cards" (keydown.enter)="find(pesquisaInput.value)">
+        <input matInput #pesquisaInput type="text" placeholder="Pesquise por nome ou descrição dos cards"
+            (keydown)="find(pesquisaInput.value)">
     </mat-form-field>
-</div>
-<div class="cards">
-    @for (card of lista; track $index) {
-    <div class="card-preview">
+</h2>
+
+<mat-dialog-content class="mat-typography">
+    <div class="row">
         <div>
-            @if(!!card.title){<h3>{{card.title}}</h3>}
-            @if(!!card.descricao){<p>{{card.descricao}}</p>}
+            <h4>Resultados de Pesquisa:</h4>
         </div>
-        <button mat-raised-button (click)="adicionar(card)">Adicionar Card </button>
+        <div class="cards">
+            @for (card of lista; track $index) {
+            <div class="card-preview">
+                <div class="info">
+                    @if(!!card.title){<h3>{{card.title}}</h3>}
+                    @if(!!card.descricao){<p>{{card.descricao}}</p>}
+                </div>
+                <div class="col">
+                    <button mat-raised-button (click)="adicionar(card)">Adicionar</button>
+                </div>
+            </div>
+            }
+        </div>
     </div>
-    }
-</div>
+</mat-dialog-content>

@@ -87,6 +87,9 @@
       "@ci-apps/sites": [
         "./projects/ci-apps/sites/src/public-api"
       ],
+      "@ci/Launcher": [
+        "./projects/ci/launcher/src/public-api"
+      ],
       "@ci/auth": [
         "./projects/ci/auth"
       ],
@@ -110,6 +113,18 @@
       ],
       "@ci/portal-api": [
         "./projects/ci/portal-api"
+      ],
+      "@ci/components/calendar": [
+        "./projects/ci/components/src/lib/calendar/public-api"
+      ],
+      "@ci/components/editar-detail": [
+        "./projects/ci/components/src/lib/editar-detail/public-api"
+      ],
+      "@ci/apps/imersao/games/my-house": [
+        "./projects/ci-apps/imersao/games/my-house/src/public-api"
+      ],
+      "@ci/apps/imersao/bike-racing": [
+        "./projects/ci-apps/imersao/games/bike-racing/src/public-api"
       ]
     },
     "outDir": "./dist/out-tsc",
@@ -138,5 +153,13 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
+  "references": [
+    {
+      "path": "./projects/ci/launcher/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/ci/launcher/tsconfig.spec.json"
+    }
+  ]
 }

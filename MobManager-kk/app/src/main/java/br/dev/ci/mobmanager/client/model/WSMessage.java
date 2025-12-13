@@ -6,7 +6,7 @@ public class WSMessage {
     private String event;
     private String type;
     private BigDecimal wait;
-    private BigDecimal momentum;
+    private BigDecimal momento;
     private BigDecimal globalPing;
     private BigDecimal pingMedium;
 
@@ -34,12 +34,12 @@ public class WSMessage {
         this.wait = wait;
     }
 
-    public BigDecimal getMomentum() {
-        return momentum;
+    public BigDecimal getMomento() {
+        return momento;
     }
 
-    public void setMomentum(BigDecimal momentum) {
-        this.momentum = momentum;
+    public void setMomento(BigDecimal momento) {
+        this.momento = momento;
     }
 
     public BigDecimal getGlobalPing() {

@@ -12,10 +12,10 @@
     max-width: 80vw;
     max-height: 80vh;
 
-    overflow: auto;
-
-    >* {
+    overflow: unset;
+    ::ng-deep > * {
         flex: unset;
         min-width: 10px;
+        display: contents;
     }
 }

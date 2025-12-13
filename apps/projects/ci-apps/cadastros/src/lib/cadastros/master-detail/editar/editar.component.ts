@@ -11,17 +11,15 @@ export interface IDataEditar {
     schemaName: string;
 }
 @Component({
-    selector: 'ci-master-datail--editar',
-    styleUrl: 'editar.component.scss',
-    template: `@if(form){
-<ci-dyn-form [formGroup]="form" [schemaName]="schemaName"></ci-dyn-form>
-}`,
+    standalone: true,
     imports: [
         CoreModule,
         ReactiveFormsModule,
         DynFormModule,
     ],
-    standalone: true,
+    selector: 'ci-master-datail--editar',
+    templateUrl: 'editar.component.html',
+    styleUrl: 'editar.component.scss'
 })
 export class EditarComponent implements OnInit {
     form?: FormGroup<any>;
@@ -73,7 +71,7 @@ export class EditarComponent implements OnInit {
                                 await this.preset.sync(this.service, this.data?.data)
                             );
                         } else if (this.service && this.service.sync) {
-                            let r = await lastValueFrom((this.service as IHaveSync<any>).sync({ body: this.data?.data }))
+                            let r = await lastValueFrom((this.service as IHaveSync<any>).sync({ body: { data: this.data?.data } }))
                             r = r;
                         }
                         delete (_data as IChangeable).__pre;

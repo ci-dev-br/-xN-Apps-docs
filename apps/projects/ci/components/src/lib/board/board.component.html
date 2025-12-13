@@ -1,10 +1,10 @@
 @if(form){<div class="board-wrap" [formGroup]="form">
-    <ci-input mode="content-editable" fieldName="title" label="Título" el="h1"></ci-input>
+    <ci-input mode="content-editable" fieldName="title" label="Título" el="h1" placeholder=""></ci-input>
     @if(prancheta){
-    <div class="cards-container" cdkDropList (cdkDropListDropped)="drop($event)">
+    <div class="cards-container"><!--  cdkDropList (cdkDropListDropped)="drop($event)" -->
         @for (card of prancheta.cards; track $index) {
         <div class="card-wrapper" (contextmenu)="editCard(card, $event)" [class.editing]="edittingCard === card"
-            cdkDrag>
+            ><!-- cdkDrag -->
             <div class="inner">
                 <ng-container *ngComponentOutlet="component(card).componentRef"></ng-container>
             </div>

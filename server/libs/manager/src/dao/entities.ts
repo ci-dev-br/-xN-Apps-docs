@@ -28,7 +28,13 @@ export abstract class AuditedEntity extends BasicIdentifiedEntity {
     })
     @PrimaryGeneratedColumn('uuid')
     internalId?: string;
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({
+        nullable: true, required: false,/*  properties: {
+            a: {
+                title: 'required',
+            }
+        } */
+    })
     @ManyToMany(() => Tenant)
     @JoinTable()
     tenants?: Tenant[];
@@ -53,7 +59,8 @@ export abstract class AuditedEntity extends BasicIdentifiedEntity {
     @ApiProperty({
         title: 'Ultima modificação em',
         nullable: true,
-        required: false, type: 'Date',
+        required: false,
+        type: 'Date',
         readOnly: true,
     })
     @UpdateDateColumn()

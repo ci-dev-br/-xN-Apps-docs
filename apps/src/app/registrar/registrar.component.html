@@ -10,19 +10,25 @@
             profissional para iniciar seu cadastro.</p>
         <mat-form-field appearance="outline">
             <mat-label>E-mail ou Telefone celular</mat-label>
-            <input matInput type="text" placeholder="Meu e-mail para contato" formControlName="email">
+            <input matInput type="text" placeholder="Meu e-mail para contato" formControlName="emailOrPhone">
         </mat-form-field>
         <p>Posteriormente, você poderá complementar seu cadastro com outras informações.</p>
-        <mat-checkbox formControlName="emailAuthorization">Autorizo o envio de e-mail para validar meu
+        <mat-checkbox formControlName="emailAuthorization">Autorizo o envio de
+            @if(typeRegister){{{termos[typeRegister]}}}@else{mensagem} para validar meu
             cadastro.</mat-checkbox>
-        <button [disabled]="form.invalid" mat-raised-button type="submit" color="accent">Pronto!</button>
+        <mat-checkbox formControlName="confirmConsequencesOfNegationSendMail">Concordo que, ao não autorizar o envio de
+            @if(typeRegister){{{termos[typeRegister]}}}@else{mensagem}, não será possível recupera-lo caso minha senha
+            seja
+            perdida.</mat-checkbox>
+        <button [disabled]="form.invalid||false==form.controls.emailAuthorization.value" mat-raised-button type="submit"
+            color="accent">Pronto!</button>
         <small style="margin-top: 12px;" [stage]="'initial-registring'">
             Caso já possua uma conta ci.dev.br, <a routerLink="/acessar" href="/acessar">acesse aqui.</a>
         </small>
         }@else if(stage==='checking_email'){
-            Verifique seu e-mail
+        Verifique seu e-mail
         }@else{
-            Preparando sua conta, isso pode levar até 1 minuto...
+        Preparando sua conta, isso pode levar até 1 minuto...
         }
     </form>
 </header>

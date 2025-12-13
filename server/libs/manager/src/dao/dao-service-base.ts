@@ -113,7 +113,7 @@ export abstract class DaoServiceBase<E> {
         this._snap.snapshot({
             deleted: true,
             data: old_data,
-        }, request)
+        }, request, this._repo)
         await this._repo.delete(this._repo.getId(data));
     }
 }

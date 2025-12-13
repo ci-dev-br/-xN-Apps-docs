@@ -21,6 +21,9 @@ import java.util.List;
 import br.dev.ci.mobilemanger.R;
 
 public class WebSocketEventsService extends Service {
+    public static final String CHANNEL_ID = "ForegroundServiceChannel";
+
+
     private WebSocketClient webSocketClient;
 
     @Nullable
@@ -37,8 +40,33 @@ public class WebSocketEventsService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        createNotificationChannel();
         // 4. Inicie o WebSocket
         startWebSocket();
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("xNë/CI Mobile Services")
+                .setContentText("Serviços Ativos")
+                .build();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
+            startForeground(1, notification);
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    // Seu loop ou lógica de longa duração
+                    try {
+                        Thread.sleep(5000); // Exemplo
+                        System.out.println("Serviço ainda vivo...");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
 
         // O sistema tentará recriar o serviço se ele for encerrado.
         return START_STICKY;
@@ -73,5 +101,17 @@ public class WebSocketEventsService extends Service {
             //handle exception
         }
         return "";
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "ci.dev.br Services",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(serviceChannel);
+        }
     }
 }

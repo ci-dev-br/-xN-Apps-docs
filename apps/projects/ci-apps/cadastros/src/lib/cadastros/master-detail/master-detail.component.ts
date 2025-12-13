@@ -1,14 +1,14 @@
-import { Component, Inject, Injector, Input, OnInit } from "@angular/core";
+import { AfterViewInit, Component, Inject, Injector, Input, OnInit, Optional } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatIconModule } from "@angular/material/icon";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { GridModule, IColumnOption, IDataGridOptions, WindowModule, WindowService } from "@ci/components";
-import { CoreModule, DaoBuilder } from "@ci/core";
+import { CoreModule, DaoBuilder, DaoService } from "@ci/core";
 import { Application, getServiceAsSchema } from "@ci/portal-api";
 import { EditarComponent } from "./editar/editar.component";
-
+import { lastValueFrom } from "rxjs";
 @Component({
     selector: 'ci-master-detail',
     standalone: true,
@@ -22,25 +22,9 @@ import { EditarComponent } from "./editar/editar.component";
         MatButtonModule,
         WindowModule,
     ],
-    template: `
-    <mat-toolbar [auto-scroll]="'horizontal'">
-         {{schemaName || ''}}
-    <button mat-raised-button (click)="createNew()" >
-        Novo
-    </button>
-    <span style="flex:auto"></span>
-    <mat-button-toggle-group >
-        <mat-button-toggle value="table"><mat-icon>view_list</mat-icon>Tabela</mat-button-toggle>
-        <mat-button-toggle value="list"><mat-icon>grid_view</mat-icon>Lista</mat-button-toggle>
-    </mat-button-toggle-group>
-</mat-toolbar>
-    <!-- TODO: Visualização em lista e em tabela permitindo visualização lateral ou em janela dos valores selecionados. -->
-    @if(visualizacao === 'table'){
-    <ci-data-grid [options]="gridOptions" [source]="source"></ci-data-grid>
-    }
-    `
+    templateUrl: 'master-detail.component.html'
 })
-export class MasterDetailComponent<T> implements OnInit {
+export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
     @Input()
     visualizacao: 'table' | 'list' = 'table';
     @Input()
@@ -53,6 +37,7 @@ export class MasterDetailComponent<T> implements OnInit {
         private readonly route: ActivatedRoute,
         private readonly window: WindowService,
         private readonly injector: Injector,
+        @Optional() private readonly daos?: DaoService,
     ) {
 
     }
@@ -68,13 +53,24 @@ export class MasterDetailComponent<T> implements OnInit {
                         return {
                             headerName,
                             fieldName,
-                            hide: fieldName && ['internalId', 'id'].indexOf(fieldName) > -1
+                            hide: fieldName && [
+                                'internalId',
+                                'id',
+                                'createdAt',
+                                'createdBy',
+                                'lastModifiedAt',
+                                'lastModifiedBy',
+                                'tenants',
+                                'deleted'].indexOf(fieldName) !== -1
 
                         } as IColumnOption<any>
                     })
                 ]
-            }
+            };
+            console.log(this.gridOptions);
         }
+    }
+    ngAfterViewInit(): void {
     }
     async ngOnInit() {
         this.route.data.subscribe(async (data: any) => {
@@ -99,8 +95,13 @@ export class MasterDetailComponent<T> implements OnInit {
                 this.service = this.injector.get(serviceType);
             }
         }
+        this.search();
     }
-    async editar(data: T) {
+    async search() {
+        if (this.service && this.service.getList)
+            this.source = await this.daos?.read(await lastValueFrom(this.service.getList()));
+    }
+    async editar(data: T, event?: Event) {
         return await this.window.open(EditarComponent,
             { schemaName: this.schemaName, data }, this.schemaName)
     }
