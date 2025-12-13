@@ -82,10 +82,22 @@ export class EventsGateway implements OnGatewayInit {
             })
         }
     };
+    /**
+     * Média de ping dos clientes conectados
+     */
     pings = [];
+    /**
+     * Ping médio global dos clientes conectados
+     */
     globalPing = 0;
+    /**
+     * Servidor WebSocket
+     */
     @WebSocketServer()
     server: Server;
+    /** 
+     * Lista de momentos já processados
+     */
     momento = [];
     /**
      * Catálogo de identificador de cliente por conexões
