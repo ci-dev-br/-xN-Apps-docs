@@ -222,6 +222,12 @@ export class EventsGateway implements OnGatewayInit {
             })
         })
     }
+    /**
+     *  Processa mudanças enviadas por clientes conectados
+     * @param client 
+     * @param data 
+     * @returns 
+     */
     @SubscribeMessage('Changes')
     async Changes(
         @ConnectedSocket() client: any,
