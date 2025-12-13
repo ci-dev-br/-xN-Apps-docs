@@ -56,7 +56,7 @@ export class WsService {
         }, () => {
             console.info('{{Fim do canal de comunicação WebSocket}}');
         });
-        this.Emit({ event: 'events', data: { type: 'ping', momentum: (new Date().getTime()) } });
+        this.Emit({ event: 'events', data: { type: 'ping', momento: (new Date().getTime()) } });
     }
     listner = new Map<string, Array<any>>();
     /**
@@ -86,7 +86,7 @@ export class WsService {
     }
     private async ReceiveData(data?: any) {
         if (data.type === 'pong') {
-            this.ping = (new Date().getTime()) - Number(data.momentum);
+            this.ping = (new Date().getTime()) - Number(data.momento);
             this.globalPing = data.globalPing;
             this.pingMedium = data.pingMedium;
             setTimeout(() => {
@@ -121,7 +121,7 @@ export class WsService {
             event: 'events',
             data: {
                 type: 'ping',
-                momentum: (new Date().getTime()),
+                momento: (new Date().getTime()),
                 lastPing: this.ping,
             },
         });

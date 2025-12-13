@@ -45,7 +45,7 @@ public class WebSocketClientConnection extends WebSocketClient {
             payload.setEvent("events");
             payload.setData(new EventData());
             payload.getData().setClient(payload.getData().getMac());
-            payload.getData().setMomentum((new Date()).getTime());
+            payload.getData().setMomento((new Date()).getTime());
             payload.getData().setLastPing(ping);
             payload.getData().setType("ping");
             Gson mapper = new Gson();
