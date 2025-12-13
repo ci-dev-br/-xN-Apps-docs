@@ -19,8 +19,7 @@ import { IDataMessage } from "./dtos/i-data-message";
     })
 export class EventsGateway implements OnGatewayInit {
     constructor(
-        private readonly bus: BusService
-        ,
+        private readonly bus: BusService,
     ) {
         bus.events = this;
     }
