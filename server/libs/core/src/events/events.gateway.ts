@@ -116,7 +116,7 @@ export class EventsGateway implements OnGatewayInit {
         }
     }
     @SubscribeMessage('identity')
-    async identity(@ConnectedSocket() client: any, @MessageBody() data: any) {
+    async identity(@ConnectedSocket() client: any, @MessageBody() data: IDataMessage) {
         if (!this.sing(data)) return;
         client.id = data.client;
         return data;
