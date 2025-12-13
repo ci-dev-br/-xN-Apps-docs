@@ -143,6 +143,9 @@ export class EventsGateway implements OnGatewayInit {
         client.id = data.client;
         return data;
     }
+    /**
+     * Catálogo de listeners de eventos
+     */
     private readonly listeners = new Map<String, ((r?: any) => void)[]>();
     /**
      * Adiciona listener para evento

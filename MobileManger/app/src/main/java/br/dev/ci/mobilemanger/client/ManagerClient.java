@@ -52,7 +52,6 @@ public class ManagerClient {
     }
     public AsyncTask<Device, Void, String> setupNewGateway(String url, String ws) {
         GatewayConnection gateway_connection = prepare(url,ws);
-
         this.task = this.connect(gateway_connection);
         return this.task;
     }
