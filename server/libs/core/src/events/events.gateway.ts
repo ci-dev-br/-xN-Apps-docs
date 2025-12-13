@@ -225,7 +225,7 @@ export class EventsGateway implements OnGatewayInit {
     @SubscribeMessage('Changes')
     async Changes(
         @ConnectedSocket() client: any,
-        @MessageBody() data: any,
+        @MessageBody() data: IDataMessage,
     ) {
         if (!this.sing(data)) return;
         this.set(data.client, client, data.momentum);
