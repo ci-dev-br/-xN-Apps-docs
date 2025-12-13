@@ -60,7 +60,7 @@ public class WebSocketEventsService extends Service {
                     // Seu loop ou lógica de longa duração
                     try {
                         Thread.sleep(5000); // Exemplo
-                        System.out.println("Serviço ainda vivo...");
+                        System.out.println("{{Serviço Ativo}}");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

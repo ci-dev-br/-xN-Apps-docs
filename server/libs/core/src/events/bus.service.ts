@@ -1,11 +1,17 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { EventsGateway } from "./events.gateway";
+/**
+ * Evento do barramento de eventos
+ */
 export class BusEvent {
     readonly name: string = 'event';
     constructor(name?: string, private readonly data?: any) {
         this.name = name;
     }
 }
+/**
+ * Cliente do barramento de eventos
+ */
 export class BusClientSignal {
     signal: number = -2;
     clients: WebSocket[] = [];

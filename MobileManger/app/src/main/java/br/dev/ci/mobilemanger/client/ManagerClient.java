@@ -60,6 +60,11 @@ public class ManagerClient {
         if(gateways == null) gateways = new ArrayList<>();
         return this.gateways;
     }
+    /**
+     * Inicia coneção com o socket
+     * @param connection
+     * @return
+     */
     public AsyncTask<Device, Void, String> connect(GatewayConnection connection){
         DeviceConnect device_connection = new DeviceConnect(connection,this.getMainActivity());
         connections.add(device_connection);
@@ -69,6 +74,7 @@ public class ManagerClient {
         device.setApplicationId("f20e2ed5-e318-4f38-bdfd-2fceb5d0315d");
         device.setName("MobManager-Q10-Java");
         device.setNumbers(this.getPhones());
+
         return device_connection.execute(device);
     }
     public  String getMacAddr() {

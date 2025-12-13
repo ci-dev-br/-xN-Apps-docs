@@ -48,6 +48,12 @@ public class DeviceConnect extends AsyncTask<Device, Void, String> {
         }
         return null;
     }
+
+    /**
+     * Conecta dispositivo com socket do event-bus-services
+     *
+     * @param device
+     */
     private void ConnectDevice(Device device){
         try {
             String response = this.Post(this.url_gateway.getUrl() + "Device/Connect",device, Device.class);
