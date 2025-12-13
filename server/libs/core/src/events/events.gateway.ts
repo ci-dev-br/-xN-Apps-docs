@@ -4,6 +4,7 @@ import { Server } from "ws";
 import { BusService } from "./bus.service";
 import { Socket } from "socket.io";
 import { ReplaySubject } from "rxjs";
+import { IDataMessage } from "./dtos/i-data-message";
 /**
  * Gateway de eventos via WebSocket
  */
@@ -23,6 +24,12 @@ export class EventsGateway implements OnGatewayInit {
     ) {
         bus.events = this;
     }
+    /**
+     *  Handler de ping do cliente
+     * @param client 
+     * @param data 
+     * @returns 
+     */
     private pingHandler(client: WebSocket, data: any) {
         if (data.lastPing) {
             this.globalPing = ((this.globalPing + (data.lastPing || 0)) / 2)
@@ -83,7 +90,7 @@ export class EventsGateway implements OnGatewayInit {
      */
     private clients = new Map<string, { ws: WebSocket, returned: boolean, momentum: number }>();
     @SubscribeMessage('events')
-    onEvent(@ConnectedSocket() client: WebSocket, @MessageBody() data: any) {
+    onEvent(@ConnectedSocket() client: WebSocket, @MessageBody() data: IDataMessage) {
         if (!this.sing(data)) return;
         try {
             if (data.mac) {
