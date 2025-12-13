@@ -28,6 +28,10 @@ export class WsService {
         this._grant_connection =
             true;
     }
+    /**
+     *  Inicia o canal WebSocket de comunicação com o gateway
+     * @returns 
+     */
     async init() {
         if (!this.isBrowser) return;
         if (this._subject) {
@@ -50,17 +54,27 @@ export class WsService {
                 this.retryWait = this.retryWait + 500;
             }
         }, () => {
-            console.info('Fim')
+            console.info('{{Fim do canal de comunicação WebSocket}}');
         });
         this.Emit({ event: 'events', data: { type: 'ping', momentum: (new Date().getTime()) } });
     }
     listner = new Map<string, Array<any>>();
+    /**
+     * Adiciona listener local para eventos recebidos via WebSocket
+     * @param name 
+     * @param call 
+     */
     addMessageListner(name: string, call: (data?: any) => void) {
         if (!this.listner.has(name))
             this.listner.set(name, [call])
         else
             this.listner.get(name)?.push(call)
     }
+    /**
+     * Dispara evento localmente para os listeners cadastrados
+     * @param name 
+     * @param message 
+     */
     emit(name: string, message: any) {
         if (this.listner.has(name))
             this.listner.get(name)?.forEach(callBack => {
