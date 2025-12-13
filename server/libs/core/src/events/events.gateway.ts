@@ -166,7 +166,7 @@ export class EventsGateway implements OnGatewayInit {
     }
     private _atentionDatas: Map<string, any> = new Map();
     @SubscribeMessage('Atention')
-    async Atention(@ConnectedSocket() client: any, @MessageBody() data: any) {
+    async Atention(@ConnectedSocket() client: any, @MessageBody() data: IDataMessage) {
         if (!this.sing(data)) return;
         client.id = data.client;
         this.set(data.client, client, data.momentum);
