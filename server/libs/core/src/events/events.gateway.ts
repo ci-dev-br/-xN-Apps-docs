@@ -255,7 +255,15 @@ export class EventsGateway implements OnGatewayInit {
             this.clients.set(id, {
                 ws, returned: true, momento: momento
             });
+            if ('mac' in ws && typeof ws.mac === 'string') {
+                this._$devices.next([...(this._$devices.value || []), {
+                    mac: ws.mac,
+                }]);
+            }
             ws.addEventListener('close', (ev) => {
+                if ('mac' in ws && typeof ws.mac === 'string') {
+                    this._$devices.next((this._$devices.value || []).filter(d => d.mac !== ws.mac));
+                }
                 this.clients.delete((ws as any).id)
                 setTimeout(() => {
                     this.clients.forEach(client => {
