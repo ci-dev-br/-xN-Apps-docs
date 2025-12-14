@@ -11,9 +11,10 @@
         <mat-icon>phone_android</mat-icon>
         Fake Mobile Services
     </button> -->
-    <button mat-raised-button (click)="TestSendSMS()">
-        Testar SMS
+    <button [disabled]="statusConnection!=='online'" mat-raised-button (click)="TestSendSMS()">
+        Verificar Envio de SMS
     </button>
+    {{statusConnection || '...'}}
 </mat-toolbar>
 @if(!devices){<div style="display: flex; flex-direction: column;align-items: center;justify-content: center;">
     <small>Nenhum dispositivo conectado...</small>

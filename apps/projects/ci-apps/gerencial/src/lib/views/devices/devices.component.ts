@@ -41,7 +41,13 @@ export interface DeviceItem {
                 if (device_found && data.status !== undefined) device_found.status = data.status;
             }
         })
+        this.events.subject?.subscribe(async () => {
+            setTimeout(() => {
+                this.statusConnection = this.events?.status || 'loading';
+            }, 0);
+        });
     }
+    statusConnection = 'loading';
     conectarDispositivo() { }
     token = 'n2n34u5ifbn2uio34bhf2u34ybf2uy4b5fouy2b45f';
     async openFakeMobileService() {

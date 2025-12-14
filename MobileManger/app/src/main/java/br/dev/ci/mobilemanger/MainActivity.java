@@ -50,12 +50,9 @@ public class MainActivity extends AppCompatActivity {
         });
         webView = findViewById(R.id.minhaWebView);
         WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true); // Habilita JavaScript (importante para maioria dos sites)
-        webSettings.setDomStorageEnabled(true); // Habilita armazenamento local (localStorage)
-        // 3. Forçar abertura de links DENTRO do app
-        // Se você não adicionar isso, o link abrirá no navegador externo
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setDomStorageEnabled(true);
         webView.setWebViewClient(new WebViewClient());
-        // 4. Carregar a URL
         webView.loadUrl("https://apps.ci.dev.br/launcher");
         // webView.addJavascriptInterface(new WebAppInterface(this), "AndroidLauncher");
         this.message = findViewById(R.id.message);
@@ -76,9 +73,10 @@ public class MainActivity extends AppCompatActivity {
             this.message.setText("Identificando números disponíveis");
         }
         try {
-            // old: adicionarGateway("https://apps.ci.dev.br/", "wss://apps.ci.dev.br/");
             // TODO: alterar para worker events em segundo plano
-            ManagerClient.getInstance().setupNewGateway("https://apps.ci.dev.br/", "wss://apps.ci.dev.br/");
+            ManagerClient.getInstance().setupNewGateway(
+                    "https://apps.ci.dev.br/",
+                    "wss://apps.ci.dev.br/");
             // import android.content.Intent;
             // import android.os.Build;
             // Na sua Activity (ex: no clique de um botão)

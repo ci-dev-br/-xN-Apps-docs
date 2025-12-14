@@ -3,8 +3,18 @@ import { EventsGateway } from "./events.gateway";
 import { Server } from "ws";
 import { BusService } from "./bus.service";
 // import { DomainService } from "@ci/manager";
+
+/**
+ * Payload do evento
+ */
 export interface IEventPayload {
+    /**
+     * Endereço MAC do dispositivo
+     */
     mac?: string;
+    /**
+     * Identificador do IAM do dispositivo
+     */
     iam?: string;
 }
 @WebSocketGateway(
@@ -15,6 +25,9 @@ export interface IEventPayload {
         // ],
     })
 export class EventsLocalGateway implements OnGatewayInit {
+    /**
+     * Servidor WebSocket
+    */
     @WebSocketServer()
     server: Server;
     constructor(
@@ -22,9 +35,15 @@ export class EventsLocalGateway implements OnGatewayInit {
         private readonly bus?: BusService,
     ) {
     }
+    /**
+     * Inicialização do gateway
+     */
     afterInit(server: any) {
         server;
     }
+    /**
+     * Manipulador de evento 'events'
+     */
     @SubscribeMessage('events')
     async eventHandler(
         @ConnectedSocket() client: WebSocket,

@@ -62,6 +62,9 @@ export class EventsGateway implements OnGatewayInit {
         }, waiting + 1000);
         return last;
     }
+    /**
+     * Mapeamento de listeners de eventos
+     */
     private eventsListeners: { [eventType: string]: (client: WebSocket, data: any) => void } = {
         ping: (client, data) => this.pingHandler(client, data),
         'SMS.Send': (client, data) => {
@@ -140,7 +143,13 @@ export class EventsGateway implements OnGatewayInit {
         client.id = data.client;
         return data;
     }
+    /**
+     * Catálogo de listeners de eventos
+     */
     private readonly listeners = new Map<String, ((r?: any) => void)[]>();
+    /**
+     * Adiciona listener para evento
+     */
     private addEventListener(eventName: string, callBack: (r?: any) => void) {
         let listeners = this.listeners.has(eventName) ? this.listeners.get(eventName) : [];
         if (!this.listeners.has(eventName)) {
@@ -194,7 +203,7 @@ export class EventsGateway implements OnGatewayInit {
      * @returns 
      */
     @SubscribeMessage('Atention')
-    async Atention(@ConnectedSocket() client: any, @MessageBody() data: IDataMessage) {
+    async Attention(@ConnectedSocket() client: any, @MessageBody() data: IDataMessage) {
         if (!this.sing(data)) return;
         client.id = data.client;
         this.set(data.client, client, data.momento);
