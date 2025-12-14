@@ -70,6 +70,15 @@ export class WsService {
         else
             this.listeners.get(name)?.push(call)
     }
+    eventListener(name: string, call: (data?: any) => void) {
+        this.Emit({
+            event: 'events',
+            data: {
+                type: name,
+            },
+        });
+        this.addMessageListener(name, call);
+    }
     /**
      * Dispara evento localmente para os listeners cadastrados
      * @param name 

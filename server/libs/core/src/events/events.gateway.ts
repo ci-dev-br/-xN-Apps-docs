@@ -132,27 +132,39 @@ export class EventsGateway implements OnGatewayInit {
     onEvent(@ConnectedSocket() client: WebSocket, @MessageBody() data: IDataMessage) {
         if (!this.sing(data)) return;
         try {
-            if (data.mac) {
-                this.bus.registry(client, data.mac);
-                (client as any).mac = data.mac;
-            }
-        } catch (error) {
-            console.error(error);
-        }
-        try {
-            this.set(data.client, client, data.momento);
-        } catch (error) {
-            console.error(error);
-        }
-        if (data.momento && this.momento.indexOf(data.momento) !== -1) return;
-        this.momento.push(data.momento)
-        try {
             if (data.type in this.eventsListeners) {
                 return this.eventsListeners[data.type](client, data);
             }
         } catch (error) {
             console.trace(error);
         }
+        try {
+            if (data.mac) {
+                this.bus.registry(client, data.mac);
+                (client as any).mac = data.mac;
+                if ('mac' in client && typeof client.mac === 'string') {
+                    if (this._$devices.value.findIndex(d => d.mac === client.mac) === -1) this._$devices.next([...(this._$devices.value || []), {
+                        mac: client.mac,
+                    }]);
+                    client.addEventListener('close', (ev) => {
+                        if ('mac' in client && typeof client.mac === 'string') {
+                            this._$devices.next([...(this._$devices.value || []).filter(d => d.mac !== client.mac)]);
+                        }
+                    });
+                }
+            }
+        } catch (error) {
+            console.error(error);
+        }
+        try {
+            if (!!data?.client) {
+                this.set(data.client, client, data.momento);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+        if (data.momento && this.momento.indexOf(data.momento) !== -1) return;
+        this.momento.push(data.momento)
     }
     /**
      *  Identifica o cliente conectado
@@ -255,15 +267,16 @@ export class EventsGateway implements OnGatewayInit {
             this.clients.set(id, {
                 ws, returned: true, momento: momento
             });
-            if ('mac' in ws && typeof ws.mac === 'string') {
-                this._$devices.next([...(this._$devices.value || []), {
-                    mac: ws.mac,
-                }]);
-            }
+            /*  if ('mac' in ws && typeof ws.mac === 'string') {
+                 this._$devices.next([...(this._$devices.value || []), {
+                     mac: ws.mac,
+                 }]);
+             } */
+
             ws.addEventListener('close', (ev) => {
-                if ('mac' in ws && typeof ws.mac === 'string') {
-                    this._$devices.next((this._$devices.value || []).filter(d => d.mac !== ws.mac));
-                }
+                /*  if ('mac' in ws && typeof ws.mac === 'string') {
+                     this._$devices.next([...(this._$devices.value || []).filter(d => d.mac !== ws.mac)]);
+                 } */
                 this.clients.delete((ws as any).id)
                 setTimeout(() => {
                     this.clients.forEach(client => {
@@ -281,20 +294,20 @@ export class EventsGateway implements OnGatewayInit {
             c.returned = true;
             if (momento !== undefined) c.momento = momento;
         }
-        setTimeout(() => {
-            this.clients.forEach(client => {
-                if (client.ws.OPEN) {
-                    client.ws.send(JSON.stringify({
-                        clients: this.clients.size,
-                        dispositivos: [...this.clients.values()].map(v => {
-                            let m = (v.ws as any).mac;
-                            if (typeof m === 'string') m = createHash('md5').update(m).digest('hex');
-                            return m
-                        }).filter(x => !!x)
-                    }))
-                }
-            })
-        })
+        // setTimeout(() => {
+        //     this.clients.forEach(client => {
+        //         if (client.ws.OPEN) {
+        //             client.ws.send(JSON.stringify({
+        //                 clients: this.clients.size,
+        //                 dispositivos: [...this.clients.values()].map(v => {
+        //                     let m = (v.ws as any).mac;
+        //                     if (typeof m === 'string') m = createHash// ('md5').update(m).digest('hex');
+        //                     return m
+        //                 }).filter(x => !!x)
+        //             }))
+        //         }
+        //     })
+        // })
     }
     /**
      *  Processa mudanças enviadas por clientes conectados

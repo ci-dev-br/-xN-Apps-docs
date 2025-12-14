@@ -41,6 +41,9 @@ export interface DeviceItem {
                 if (device_found && data.status !== undefined) device_found.status = data.status;
             }
         })
+        this.events.eventListener('Devices', (data: any) => {
+            console.log('Devices event received', data);
+        })
         this.events.subject?.subscribe(async () => {
             setTimeout(() => {
                 this.statusConnection = this.events?.status || 'loading';
