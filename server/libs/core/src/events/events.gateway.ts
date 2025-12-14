@@ -3,8 +3,9 @@ import { createHash } from "crypto";
 import { Server } from "ws";
 import { BusService } from "./bus.service";
 import { Socket } from "socket.io";
-import { ReplaySubject } from "rxjs";
+import { BehaviorSubject, ReplaySubject } from "rxjs";
 import { IDataMessage } from "./dtos/i-data-message";
+import { Device } from "@ci/notification";
 /**
  * Gateway de eventos via WebSocket
  */
@@ -92,21 +93,20 @@ export class EventsGateway implements OnGatewayInit {
     private eventsListeners: { [eventType: string]: (client: WebSocket, data: any) => void } = {
         ping: (client, data) => this.pingHandler(client, data),
         'SMS.Send': (client, data) => this.sendSMSHandler(client, data),
-        'Devices.List': (client, data) => {
-            const devices = [];
-            this.clients.forEach(c => {
-                if ('mac' in c.ws) {
-                    devices.push((c.ws as any).mac);
-                }
-            })
-            return {
-                event: 'events',
-                type: 'Devices.List.Response',
-                momento: data.momento,
-                devices
-            };
+        'Devices': (client, data) => {
+            this._$devices.subscribe(devices => {
+                client.send(JSON.stringify({
+                    event: 'events',
+                    type: 'Devices.List.Response',
+                    momento: Date.now(),
+                    data: {
+                        devices
+                    }
+                }));
+            });
         }
     };
+    private _$devices = new BehaviorSubject<Device[]>([]);
     /**
      * Média de     ping dos clientes conectados
      */
