@@ -93,27 +93,27 @@ export class LNavComponent {
       cpu_infos.forEach(i => {
         x['user'].series.push({
           "value": i.user,
-          "name": i.moment,
+          "name": i.momento,
         },);
         x['system'].series.push({
           "value": i.system,
-          "name": i.moment,
+          "name": i.momento,
         },);
         x['heapTotal'].series.push({
           "value": i.heapTotal,
-          "name": i.moment,
+          "name": i.momento,
         },);
         x['heapUsed'].series.push({
           "value": i.heapUsed,
-          "name": i.moment,
+          "name": i.momento,
         },);
         x['rss'].series.push({
           "value": i.rss,
-          "name": i.moment,
+          "name": i.momento,
         },);
         x['external'].series.push({
           "value": i.external,
-          "name": i.moment,
+          "name": i.momento,
         },);
       });
       this.cpuStatus = [...Object.values(x)];

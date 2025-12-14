@@ -3,8 +3,9 @@ import { createHash } from "crypto";
 import { Server } from "ws";
 import { BusService } from "./bus.service";
 import { Socket } from "socket.io";
-import { ReplaySubject } from "rxjs";
+import { BehaviorSubject, ReplaySubject } from "rxjs";
 import { IDataMessage } from "./dtos/i-data-message";
+import { Device } from "@ci/notification";
 /**
  * Gateway de eventos via WebSocket
  */
@@ -23,6 +24,9 @@ export class EventsGateway implements OnGatewayInit {
     ) {
         bus.events = this;
     }
+    /*
+     *  Default Handlers 
+     */
     /**
      *  Handler de ping do cliente
      * @param client 
@@ -62,30 +66,49 @@ export class EventsGateway implements OnGatewayInit {
         }, waiting + 1000);
         return last;
     }
+
+    /**
+     * Handler de envio de SMS
+     * @param client 
+     * @param data 
+     */
+    private sendSMSHandler(client: WebSocket, data: IDataMessage) {
+        this.clients.forEach(c => {
+            if ('mac' in c.ws && c.ws.OPEN) {
+                c.ws.send(JSON.stringify({
+                    event: 'events',
+                    data: {
+                        type: "requestSendSMSMessage",
+                        momento: Date.now(),
+                        to: data.to,
+                        contentText: data.content
+                    }
+                }));
+            }
+        })
+    }
     /**
      * Mapeamento de listeners de eventos
      */
     private eventsListeners: { [eventType: string]: (client: WebSocket, data: any) => void } = {
         ping: (client, data) => this.pingHandler(client, data),
-        'SMS.Send': (client, data) => {
-            this.clients.forEach(c => {
-                if ('mac' in c.ws && c.ws.OPEN) {
-                    c.ws.send(JSON.stringify({
-                        event: 'events',
-                        data: {
-                            type: "requestSendSMSMessage",
-                            momento: Date.now(),
-                            to: data.to,
-                            contentText: data.content
-                        }
-                    }));
-                }
-
-            })
+        'SMS.Send': (client, data) => this.sendSMSHandler(client, data),
+        'Devices': (client, data) => {
+            this._$devices.subscribe(devices => {
+                client.send(JSON.stringify({
+                    event: 'events',
+                    type: 'Devices.List.Response',
+                    momento: Date.now(),
+                    data: {
+                        devices
+                    }
+                }));
+            });
         }
     };
+    private _$devices = new BehaviorSubject<Device[]>([]);
     /**
-     * Média de ping dos clientes conectados
+     * Média de     ping dos clientes conectados
      */
     pings = [];
     /**
@@ -189,7 +212,7 @@ export class EventsGateway implements OnGatewayInit {
             const event = {
                 event: 'notice',
                 // type: 'replay' | 'sign' | 'loop-back', 
-                data: result
+                data: result,
             };
             // this._notices.next(event);
             client.send(JSON.stringify(event));
@@ -232,7 +255,15 @@ export class EventsGateway implements OnGatewayInit {
             this.clients.set(id, {
                 ws, returned: true, momento: momento
             });
+            if ('mac' in ws && typeof ws.mac === 'string') {
+                this._$devices.next([...(this._$devices.value || []), {
+                    mac: ws.mac,
+                }]);
+            }
             ws.addEventListener('close', (ev) => {
+                if ('mac' in ws && typeof ws.mac === 'string') {
+                    this._$devices.next((this._$devices.value || []).filter(d => d.mac !== ws.mac));
+                }
                 this.clients.delete((ws as any).id)
                 setTimeout(() => {
                     this.clients.forEach(client => {
