@@ -92,9 +92,23 @@ export class EventsGateway implements OnGatewayInit {
     private eventsListeners: { [eventType: string]: (client: WebSocket, data: any) => void } = {
         ping: (client, data) => this.pingHandler(client, data),
         'SMS.Send': (client, data) => this.sendSMSHandler(client, data),
+        'Devices.List': (client, data) => {
+            const devices = [];
+            this.clients.forEach(c => {
+                if ('mac' in c.ws) {
+                    devices.push((c.ws as any).mac);
+                }
+            })
+            return {
+                event: 'events',
+                type: 'Devices.List.Response',
+                momento: data.momento,
+                devices
+            };
+        }
     };
     /**
-     * Média de ping dos clientes conectados
+     * Média de     ping dos clientes conectados
      */
     pings = [];
     /**
