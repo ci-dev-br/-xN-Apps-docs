@@ -170,6 +170,7 @@ public class WebSocketClientConnection extends WebSocketClient {
                                                 try{
                                                     if(isClosed() == true || isClosing() == true){
                                                         tryReconnect();
+
                                                     }
                                                 } catch (Exception e) {
                                                     e.printStackTrace();

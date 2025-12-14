@@ -58,17 +58,17 @@ export class WsService {
         });
         this.Emit({ event: 'events', data: { type: 'ping', momento: (new Date().getTime()) } });
     }
-    listner = new Map<string, Array<any>>();
+    listeners = new Map<string, Array<any>>();
     /**
      * Adiciona listener local para eventos recebidos via WebSocket
      * @param name 
      * @param call 
      */
     addMessageListner(name: string, call: (data?: any) => void) {
-        if (!this.listner.has(name))
-            this.listner.set(name, [call])
+        if (!this.listeners.has(name))
+            this.listeners.set(name, [call])
         else
-            this.listner.get(name)?.push(call)
+            this.listeners.get(name)?.push(call)
     }
     /**
      * Dispara evento localmente para os listeners cadastrados
@@ -76,8 +76,8 @@ export class WsService {
      * @param message 
      */
     emit(name: string, message: any) {
-        if (this.listner.has(name))
-            this.listner.get(name)?.forEach(callBack => {
+        if (this.listeners.has(name))
+            this.listeners.get(name)?.forEach(callBack => {
                 try {
                     callBack(message);
                 } catch (error) {
