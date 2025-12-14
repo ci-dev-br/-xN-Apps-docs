@@ -34,7 +34,7 @@ export class BusClientSignal {
         let _last_signal = this.signal
         setTimeout(() => {
             if (_last_signal === this.signal) {
-                this.emit('silent', { moment: Date.now() })
+                this.emit('silent', { momento: Date.now() })
             }
         }, 5000);
     }

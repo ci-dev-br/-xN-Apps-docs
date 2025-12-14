@@ -173,7 +173,7 @@ export class WsService {
         const PAYLOAD_TO_SEND = { ...INNER_CONTENT_DATA, };
         if (!PAYLOAD_TO_SEND.data) PAYLOAD_TO_SEND.data = {};
         PAYLOAD_TO_SEND.data.client = this.clientIdentification;
-        PAYLOAD_TO_SEND.data.moment = Date.now();
+        PAYLOAD_TO_SEND.data.momento = Date.now();
         if (!PAYLOAD_TO_SEND.data['setOrigem']) PAYLOAD_TO_SEND.data['setOrigem'] = this.clientIdentification;
         this.subject?.next(PAYLOAD_TO_SEND);
     }

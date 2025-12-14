@@ -7,7 +7,7 @@ import { ApiProperty } from "@nestjs/swagger";
 export class CPUInfo {
     @ApiProperty({ nullable: true, required: false }) system?: number;
     @ApiProperty({ nullable: true, required: false }) user?: number;
-    @ApiProperty({ nullable: true, required: false }) moment?: Date;
+    @ApiProperty({ nullable: true, required: false }) momento?: Date;
     @ApiProperty({ nullable: true, required: false }) heapTotal?: number;
     @ApiProperty({ nullable: true, required: false }) heapUsed?: number;
     @ApiProperty({ nullable: true, required: false }) rss?: number;
@@ -26,7 +26,7 @@ export class SystemService {
         const usage = cpuUsage();
         const mem = memoryUsage();
         this._cpu_cached_history.push({
-            ...usage, moment: new Date(),
+            ...usage, momento: new Date(),
             heapTotal: mem.heapTotal,
             heapUsed: mem.heapUsed,
             rss: mem.rss,

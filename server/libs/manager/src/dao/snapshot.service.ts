@@ -28,9 +28,9 @@ export class SnapshotService {
     }
     async snapshot<T extends FullAuditedEntity>(entidade: T | any, request: Request, repo?: Repository<T>) {
         const json_snapshot = JSON.parse(JSON.stringify(entidade, null, 2));
-        const moment = new Date().toISOString();
+        const momento = new Date().toISOString();
         const hash = createHash('sha256')
-            .update([this.lastSnapshotHash || ''] + json_snapshot + moment)
+            .update([this.lastSnapshotHash || ''] + json_snapshot + momento)
             .digest('hex').toString();
         const user_id: string | undefined = (request as any)?.user?.id;
         const chave_acesso = (request as any).chaveAcesso
