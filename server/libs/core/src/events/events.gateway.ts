@@ -143,14 +143,16 @@ export class EventsGateway implements OnGatewayInit {
                 this.bus.registry(client, data.mac);
                 (client as any).mac = data.mac;
                 if ('mac' in client && typeof client.mac === 'string') {
-                    if (this._$devices.value.findIndex(d => d.mac === client.mac) === -1) this._$devices.next([...(this._$devices.value || []), {
-                        mac: client.mac,
-                    }]);
-                    client.addEventListener('close', (ev) => {
-                        if ('mac' in client && typeof client.mac === 'string') {
-                            this._$devices.next([...(this._$devices.value || []).filter(d => d.mac !== client.mac)]);
-                        }
-                    });
+                    if (this._$devices.value.findIndex(d => d.mac === client.mac) === -1) {
+                        this._$devices.next([...(this._$devices.value || []), {
+                            mac: client.mac,
+                        }]);
+                        client.addEventListener('close', (ev) => {
+                            if ('mac' in client && typeof client.mac === 'string') {
+                                this._$devices.next([...(this._$devices.value || []).filter(d => d.mac !== client.mac)]);
+                            }
+                        });
+                    }
                 }
             }
         } catch (error) {
