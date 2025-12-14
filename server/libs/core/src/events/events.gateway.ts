@@ -23,6 +23,9 @@ export class EventsGateway implements OnGatewayInit {
     ) {
         bus.events = this;
     }
+    /*
+     *  Default Handlers 
+     */
     /**
      *  Handler de ping do cliente
      * @param client 
@@ -62,27 +65,33 @@ export class EventsGateway implements OnGatewayInit {
         }, waiting + 1000);
         return last;
     }
+
+    /**
+     * Handler de envio de SMS
+     * @param client 
+     * @param data 
+     */
+    private sendSMSHandler(client: WebSocket, data: IDataMessage) {
+        this.clients.forEach(c => {
+            if ('mac' in c.ws && c.ws.OPEN) {
+                c.ws.send(JSON.stringify({
+                    event: 'events',
+                    data: {
+                        type: "requestSendSMSMessage",
+                        momento: Date.now(),
+                        to: data.to,
+                        contentText: data.content
+                    }
+                }));
+            }
+        })
+    }
     /**
      * Mapeamento de listeners de eventos
      */
     private eventsListeners: { [eventType: string]: (client: WebSocket, data: any) => void } = {
         ping: (client, data) => this.pingHandler(client, data),
-        'SMS.Send': (client, data) => {
-            this.clients.forEach(c => {
-                if ('mac' in c.ws && c.ws.OPEN) {
-                    c.ws.send(JSON.stringify({
-                        event: 'events',
-                        data: {
-                            type: "requestSendSMSMessage",
-                            momento: Date.now(),
-                            to: data.to,
-                            contentText: data.content
-                        }
-                    }));
-                }
-
-            })
-        }
+        'SMS.Send': (client, data) => this.sendSMSHandler(client, data),
     };
     /**
      * Média de ping dos clientes conectados
@@ -189,7 +198,7 @@ export class EventsGateway implements OnGatewayInit {
             const event = {
                 event: 'notice',
                 // type: 'replay' | 'sign' | 'loop-back', 
-                data: result
+                data: result,
             };
             // this._notices.next(event);
             client.send(JSON.stringify(event));
