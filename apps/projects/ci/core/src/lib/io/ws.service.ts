@@ -4,7 +4,7 @@ import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 
 @Injectable()
 export class WsService {
-    private clientIdentification = (Math.random() * 0x16 * Math.random() * 0x16 * Math.random() * 0x16).toString(32);
+    private __clientAutoIdentification = (Math.random() * 0x16 * Math.random() * 0x16 * Math.random() * 0x16).toString(32);
     globalPing?: number = 0;
     pingMedium?: number = 0;
     ping?: number = 0;
@@ -93,7 +93,7 @@ export class WsService {
                 this.Ping();
             }, data.wait);
         }
-        if (data.data?.client === this.clientIdentification) return;
+        if (data.data?.client === this.__clientAutoIdentification) return;
         if (data.event === 'Changes') {
             Object.keys(data.data.changes).forEach(p => {
                 let o_DATA = this._atentionDatas.get(data.data.internalId);
@@ -102,7 +102,7 @@ export class WsService {
                         ||
                         (o_DATA[p] || '').length < ((data?.data?.changes[p] as SimpleChange).previousValue || '').length
                     ) &&
-                    data.setOrigem !== this.clientIdentification
+                    data.setOrigem !== this.__clientAutoIdentification
                 ) o_DATA[p] = (data?.data?.changes[p]).currentValue;
             })
         }
@@ -172,9 +172,9 @@ export class WsService {
         const { toJSON, toString, __constructor__, ...INNER_CONTENT_DATA } = payload;
         const PAYLOAD_TO_SEND = { ...INNER_CONTENT_DATA, };
         if (!PAYLOAD_TO_SEND.data) PAYLOAD_TO_SEND.data = {};
-        PAYLOAD_TO_SEND.data.client = this.clientIdentification;
+        PAYLOAD_TO_SEND.data.client = this.__clientAutoIdentification;
         PAYLOAD_TO_SEND.data.momento = Date.now();
-        if (!PAYLOAD_TO_SEND.data['setOrigem']) PAYLOAD_TO_SEND.data['setOrigem'] = this.clientIdentification;
+        if (!PAYLOAD_TO_SEND.data['setOrigem']) PAYLOAD_TO_SEND.data['setOrigem'] = this.__clientAutoIdentification;
         this.subject?.next(PAYLOAD_TO_SEND);
     }
     private _atentionDatas: Map<string, any> = new Map();
