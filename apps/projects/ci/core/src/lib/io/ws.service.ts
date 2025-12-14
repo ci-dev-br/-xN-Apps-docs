@@ -64,7 +64,7 @@ export class WsService {
      * @param name 
      * @param call 
      */
-    addMessageListner(name: string, call: (data?: any) => void) {
+    addMessageListener(name: string, call: (data?: any) => void) {
         if (!this.listeners.has(name))
             this.listeners.set(name, [call])
         else

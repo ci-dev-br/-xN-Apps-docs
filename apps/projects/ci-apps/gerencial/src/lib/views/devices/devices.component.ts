@@ -35,7 +35,7 @@ export interface DeviceItem {
     ) { }
     async ngOnInit() {
         this.LoadDevices();
-        this.events.addMessageListner('notice', (data: any) => {
+        this.events.addMessageListener('notice', (data: any) => {
             if (data.device_mac_assign) {
                 let device_found = this.devices?.find(device => device.device?.mac === data.device_mac_assign);
                 if (device_found && data.status !== undefined) device_found.status = data.status;
