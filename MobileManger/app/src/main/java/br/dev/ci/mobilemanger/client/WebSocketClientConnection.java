@@ -1,5 +1,4 @@
 package br.dev.ci.mobilemanger.client;
-
 import android.os.AsyncTask;
 import android.os.Looper;
 import android.telephony.SmsManager;
@@ -19,12 +18,16 @@ import br.dev.ci.mobilemanger.client.model.WSMessage;
 
 public class WebSocketClientConnection extends WebSocketClient {
     private Long ping = 0L;
+    private String status;
     public WebSocketClientConnection(URI serverUri){
         super(serverUri);
     }
     public WebSocketClientConnection(URI serverUri, DeviceConnect deviceConnect) {
         super(serverUri);
     }
+    /**
+     * Conexão aberta
+     */
     @Override
     public void onOpen(ServerHandshake handshakedata) {
         try {
@@ -40,6 +43,9 @@ public class WebSocketClientConnection extends WebSocketClient {
             e.printStackTrace();
         }
     }
+    /**
+     * Identificação do dispositivo
+     */
     private void identity(){
         try {
             EventPayload payload =  new EventPayload();
@@ -54,6 +60,9 @@ public class WebSocketClientConnection extends WebSocketClient {
             ex.printStackTrace();
         }
     }
+    /**
+     * Ping
+     */
     private void Ping(){
         try {
             EventPayload payload =  new EventPayload();
@@ -79,11 +88,15 @@ public class WebSocketClientConnection extends WebSocketClient {
                     60000);
         }
     }
-
+    /**
+     * Pong Handler
+     */
     private void PongHandler(){
         // TODO: pong handler action
     }
-
+    /**
+     * Mensagem recebida
+     */
     @Override
     public void onMessage(String message) {
         try {
@@ -122,20 +135,68 @@ public class WebSocketClientConnection extends WebSocketClient {
             Ping();
         }
     }
-
+    /**
+     * Conexão encerrada
+     */
     @Override
     public void onClose(int code, String reason, boolean remote) {
         try {
-            this.connect();
+            this.tryReconnect();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     *  Tentar reconectar ao servidor
+     */
+    private void tryReconnect(){
+        try {
+            if(this.isClosed() != false){
+                try{
+                    this.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            new android.os.Handler(Looper.getMainLooper()).postDelayed(
+                    new Runnable() {
+                        public void run() {
+                            try{
+                                reconnect();
+                                new android.os.Handler(Looper.getMainLooper()).postDelayed(
+                                        new Runnable() {
+                                            public void run() {
+                                                try{
+                                                    if(isClosed() == true || isClosing() == true){
+                                                        tryReconnect();
+                                                    }
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        },
+                                        10000);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    },
+                    1000);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Erro na conexão
+     */
     @Override
     public void onError(Exception ex) {
         try {
-            
+            if(this.isClosed()){
+                this.tryReconnect();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

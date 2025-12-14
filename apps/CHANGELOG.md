@@ -9,10 +9,11 @@ As mudanças devem estar descritas neste documento para melhor analisar a implem
 - [>] Cadastros: 
     - [>>>] [TASK#1](./tasks/01.md) - Implementar edição e visualização de Cadastros utilizando DaoBuilder, seguindo exemplo de Implementação em Apps\Gerencial\Applications;
 - [Implementado][Funciona Parcialmente] - Implementação de Envio de SMS em MobManager;
-- [ ] - Implementação de Notification Bus:
-    - [ ] - Cliente em Mobile Manager;
-    - [ ] - Cliente em PWA;
-    - [ ] - Serviço de Notificação e Event Bus na camada no do NestJS;
+- [x] - Implementação de Notification Bus:
+    - [x] - Cliente em Mobile Manager;
+    - [x] - Cliente em PWA;
+    - [x] - Serviço de Notificação e Event Bus na camada no do NestJS;
+    - [x] - Implementação de auto-reconnect para reestabelecimento da conexão após queda de tempo indeterminado. 
 - [ ] - Implementar Serviço de Tema da aplicação:
     - [>] - Implementar LightMode e Dark Mode;
 - [ ] - Profile: 

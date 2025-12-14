@@ -1,6 +1,7 @@
 package br.dev.ci.mobilemanger.client;
 
 import android.os.AsyncTask;
+import android.os.Build;
 
 import java.net.NetworkInterface;
 import java.util.ArrayList;
@@ -50,6 +51,14 @@ public class ManagerClient {
         this.getGateways().add(gateway_connection);
         return gateway_connection;
     }
+
+    /**
+     * Configurar novo Gateway de comunicação
+     *
+     * @param url
+     * @param ws
+     * @return
+     */
     public AsyncTask<Device, Void, String> setupNewGateway(String url, String ws) {
         GatewayConnection gateway_connection = prepare(url,ws);
         this.task = this.connect(gateway_connection);
@@ -74,8 +83,17 @@ public class ManagerClient {
         device.setName("MobManager-Q10-Java");
         device.setNumbers(this.getPhones());
 
-        return device_connection.execute(device);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+            return device_connection.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,device);
+        }else{
+            return device_connection.execute(device);
+        }
     }
+    /**
+     * Obtem mac adress do dispositivo para verificação de assinatura
+     *
+     * @return
+     */
     public  String getMacAddr() {
         try {
             List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());

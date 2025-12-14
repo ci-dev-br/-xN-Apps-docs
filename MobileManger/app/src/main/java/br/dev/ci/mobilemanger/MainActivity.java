@@ -73,9 +73,10 @@ public class MainActivity extends AppCompatActivity {
             this.message.setText("Identificando números disponíveis");
         }
         try {
-            // old: adicionarGateway("https://apps.ci.dev.br/", "wss://apps.ci.dev.br/");
             // TODO: alterar para worker events em segundo plano
-            ManagerClient.getInstance().setupNewGateway("https://apps.ci.dev.br/", "wss://apps.ci.dev.br/");
+            ManagerClient.getInstance().setupNewGateway(
+                    "https://apps.ci.dev.br/",
+                    "wss://apps.ci.dev.br/");
             // import android.content.Intent;
             // import android.os.Build;
             // Na sua Activity (ex: no clique de um botão)

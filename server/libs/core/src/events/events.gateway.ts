@@ -203,7 +203,7 @@ export class EventsGateway implements OnGatewayInit {
      * @returns 
      */
     @SubscribeMessage('Atention')
-    async Atention(@ConnectedSocket() client: any, @MessageBody() data: IDataMessage) {
+    async Attention(@ConnectedSocket() client: any, @MessageBody() data: IDataMessage) {
         if (!this.sing(data)) return;
         client.id = data.client;
         this.set(data.client, client, data.momento);

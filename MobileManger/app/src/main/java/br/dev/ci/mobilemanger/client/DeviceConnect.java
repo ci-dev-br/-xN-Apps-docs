@@ -12,7 +12,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-
 import br.dev.ci.mobilemanger.MainActivity;
 import br.dev.ci.mobilemanger.client.model.Device;
 import br.dev.ci.mobilemanger.client.model.GatewayConnection;
@@ -24,7 +23,8 @@ import br.dev.ci.mobilemanger.client.model.GatewayConnection;
  * serviços entre smartphone e servidor
  */
 public class DeviceConnect extends AsyncTask<Device, Void, String> {
-    private final MainActivity mainActivity;    /**
+    private final MainActivity mainActivity;
+    /**
      *   Gson gson = new Gson();
      *   Pessoa pessoa = gson.fromJson(jsonString, Pessoa.class);
      */
@@ -42,7 +42,7 @@ public class DeviceConnect extends AsyncTask<Device, Void, String> {
             for (Device devide :devices) {
                 ConnectDevice(devide);
             }
-            return "OK";
+            return "{{OK}}";
         }catch (Exception ex){
             ex.printStackTrace();
         }
@@ -72,10 +72,15 @@ public class DeviceConnect extends AsyncTask<Device, Void, String> {
         }
     }
     private WebSocketClientConnection webSocket;
+
+    /**
+     * Inicia comportamento Padrão do web Socket
+     */
     private void InitializeWebSocket(){
         try {
             URI websocket_url = new URI(this.url_gateway.getWs());
-            WebSocketClientConnection web_socket = new WebSocketClientConnection(websocket_url, this.url_gateway.getConnect());
+            WebSocketClientConnection web_socket = new WebSocketClientConnection(
+                    websocket_url, this.url_gateway.getConnect());
             this.webSocket = web_socket;
             web_socket.connect();
         } catch (Exception e) {
@@ -113,12 +118,10 @@ public class DeviceConnect extends AsyncTask<Device, Void, String> {
         }
         return null;
     }
-
     private String readAsStringJson(Object data, Class data_class){
         Gson mapper = new Gson();
         return mapper.toJson(data, data_class);
     }
-
     @NonNull
     private static String getResponseAsStringJson(HttpURLConnection connection) throws Exception {
         int responseCode = connection.getResponseCode();
