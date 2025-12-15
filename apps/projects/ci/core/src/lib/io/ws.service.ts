@@ -88,11 +88,12 @@ export class WsService {
      * @param message 
      */
     emit(name: string, message: any) {
-        if (this.listeners.has(name))
-            this.listeners.get(name)?.forEach(callBack => {
+        if (this.listeners.has(message.type || name))
+            this.listeners.get(message.type || name)?.forEach(callBack => {
                 try {
                     callBack(message);
                 } catch (error) {
+                    console.error(error);
                 }
             });
     }

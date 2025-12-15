@@ -41,8 +41,13 @@ export interface DeviceItem {
                 if (device_found && data.status !== undefined) device_found.status = data.status;
             }
         })
-        this.events.eventListener('Devices', (data: any) => {
-            console.log('Devices event received', data);
+        this.events.eventListener('Devices', (data: { data: { devices: Device[] } }) => {
+            if (!!data?.data?.devices) {
+                this.devices?.forEach(deviceItem => {
+                    let exists = data.data.devices.find(d => d.mac === deviceItem.device?.mac);
+                    deviceItem.status = exists ? 1 : -1;
+                });
+            }
         })
         this.events.subject?.subscribe(async () => {
             setTimeout(() => {
