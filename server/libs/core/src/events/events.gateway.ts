@@ -23,6 +23,22 @@ export class EventsGateway implements OnGatewayInit {
         private readonly bus: BusService,
     ) {
         bus.events = this;
+        let verifyAndPropagateStatusHandlersOfClients = () => {
+            if (!!this.server?.clients) {
+                let clientes = [...this.server.clients].filter((c) =>
+                    c.readyState === 1 && 'mac' in c);
+                if (this._$devices)
+                    this._$devices.next([...clientes.map((c: any) => {
+                        return {
+                            mac: c.mac,
+                        }
+                    })]);
+            }
+            setTimeout(() => {
+                verifyAndPropagateStatusHandlersOfClients();
+            }, 5000);
+        }
+        verifyAndPropagateStatusHandlersOfClients();
     }
     /*
      *  Default Handlers 
@@ -264,11 +280,13 @@ export class EventsGateway implements OnGatewayInit {
             this.clients.set(id, {
                 ws, returned: true, momento: momento
             });
-            /*  if ('mac' in ws && typeof ws.mac === 'string') {
-                 this._$devices.next([...(this._$devices.value || []), {
-                     mac: ws.mac,
-                 }]);
-             } */
+            if ('mac' in ws && typeof ws.mac === 'string') {
+                if (this._$devices.value.findIndex(d => d.mac === ws.mac) === -1) {
+                    this._$devices.next([...(this._$devices.value || []), {
+                        mac: ws.mac,
+                    }]);
+                }
+            }
             ws.addEventListener('close', (ev) => {
                 if ('mac' in ws && typeof ws.mac === 'string') {
                     this._$devices.next([...(this._$devices.value || []).filter(d => d.mac !== ws.mac)]);

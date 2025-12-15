@@ -68,25 +68,27 @@ public class ManagerClient {
         if(gateways == null) gateways = new ArrayList<>();
         return this.gateways;
     }
+    private DeviceConnect device;
     /**
      * Inicia coneção com o socket
      * @param connection
      * @return
      */
     public AsyncTask<Device, Void, String> connect(GatewayConnection connection){
-        DeviceConnect device_connection = new DeviceConnect(connection,this.getMainActivity());
-        connections.add(device_connection);
-
         Device device = new Device();
         device.setMac(getMacAddr());
         device.setApplicationId("f20e2ed5-e318-4f38-bdfd-2fceb5d0315d");
         device.setName("MobManager-Q10-Java");
         device.setNumbers(this.getPhones());
-
+        if( this.device == null){
+            DeviceConnect device_connection = new DeviceConnect(connection,this.getMainActivity());
+            connections.add(device_connection);
+            this.device = device_connection;
+        }
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
-            return device_connection.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,device);
+            return this.device.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,device);
         }else{
-            return device_connection.execute(device);
+            return this.device.execute(device);
         }
     }
     /**

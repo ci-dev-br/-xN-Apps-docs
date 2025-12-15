@@ -2,6 +2,9 @@ import { isPlatformBrowser } from "@angular/common";
 import { EventEmitter, Inject, Injectable, PLATFORM_ID, SimpleChange, SimpleChanges } from "@angular/core";
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 
+/**
+ * Serviço de comunicação via WebSocket com o gateway
+ */
 @Injectable()
 export class WsService {
     private __clientAutoIdentification = (Math.random() * 0x16 * Math.random() * 0x16 * Math.random() * 0x16).toString(32);
