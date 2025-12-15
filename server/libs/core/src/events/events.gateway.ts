@@ -109,19 +109,24 @@ export class EventsGateway implements OnGatewayInit {
     private eventsListeners: { [eventType: string]: (client: WebSocket, data: any) => void } = {
         ping: (client, data) => this.pingHandler(client, data),
         'SMS.Send': (client, data) => this.sendSMSHandler(client, data),
-        'Devices': (client, data) => {
-            this._$devices.subscribe(devices => {
-                client.send(JSON.stringify({
-                    event: 'events',
-                    type: 'Devices.Response',
-                    momento: Date.now(),
-                    data: {
-                        devices
-                    }
-                }));
-            });
-        }
+        'Devices': (client, data) => this.devicesHandler(client, data),
     };
+    devicesHandler(client, data) {
+        this._$devices.subscribe(devices => {
+            let a = this;
+            a = a;
+            client.send(JSON.stringify({
+                event: 'events',
+                type: 'Devices.Response',
+                momento: Date.now(),
+                data: {
+                    devices: devices.filter(d => [...this.clients.values()].find(c => {
+                        return (c.ws as any).mac === d.mac && c.ws.readyState === c.ws.OPEN;
+                    }))
+                }
+            }));
+        });
+    }
     private _$devices = new BehaviorSubject<Device[]>([]);
     /**
      * Média de     ping dos clientes conectados
