@@ -80,7 +80,7 @@ export class WsService {
                 type: name,
             },
         });
-        // this.addMessageListener(name + '.Response', call);
+        this.addMessageListener(name + '.Response', call);
     }
     /**
      * Dispara evento localmente para os listeners cadastrados
@@ -120,7 +120,9 @@ export class WsService {
         }
         if (data.event && typeof data.data === 'object') {
             this.emit(data.event,
-                { ...data.data }
+                {
+                    ...data,
+                }
             )
         }
     }
