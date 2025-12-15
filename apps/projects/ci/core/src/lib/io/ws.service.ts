@@ -2,6 +2,9 @@ import { isPlatformBrowser } from "@angular/common";
 import { EventEmitter, Inject, Injectable, PLATFORM_ID, SimpleChange, SimpleChanges } from "@angular/core";
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 
+/**
+ * Serviço de comunicação via WebSocket com o gateway
+ */
 @Injectable()
 export class WsService {
     private __clientAutoIdentification = (Math.random() * 0x16 * Math.random() * 0x16 * Math.random() * 0x16).toString(32);
@@ -70,17 +73,27 @@ export class WsService {
         else
             this.listeners.get(name)?.push(call)
     }
+    eventListener(name: string, call: (data?: any) => void) {
+        this.Emit({
+            event: 'events',
+            data: {
+                type: name,
+            },
+        });
+        this.addMessageListener(name + '.Response', call);
+    }
     /**
      * Dispara evento localmente para os listeners cadastrados
      * @param name 
      * @param message 
      */
     emit(name: string, message: any) {
-        if (this.listeners.has(name))
-            this.listeners.get(name)?.forEach(callBack => {
+        if (this.listeners.has(message.type || name))
+            this.listeners.get(message.type || name)?.forEach(callBack => {
                 try {
                     callBack(message);
                 } catch (error) {
+                    console.error(error);
                 }
             });
     }
@@ -96,7 +109,7 @@ export class WsService {
         if (data.data?.client === this.__clientAutoIdentification) return;
         if (data.event === 'Changes') {
             Object.keys(data.data.changes).forEach(p => {
-                let o_DATA = this._atentionDatas.get(data.data.internalId);
+                let o_DATA = this._attentionDatas.get(data.data.internalId);
                 if (o_DATA &&
                     (o_DATA[p] === (data?.data?.changes[p] as SimpleChange).previousValue
                         ||
@@ -108,7 +121,9 @@ export class WsService {
         }
         if (data.event && typeof data.data === 'object') {
             this.emit(data.event,
-                { ...data.data }
+                {
+                    ...data,
+                }
             )
         }
     }
@@ -177,17 +192,17 @@ export class WsService {
         if (!PAYLOAD_TO_SEND.data['setOrigem']) PAYLOAD_TO_SEND.data['setOrigem'] = this.__clientAutoIdentification;
         this.subject?.next(PAYLOAD_TO_SEND);
     }
-    private _atentionDatas: Map<string, any> = new Map();
+    private _attentionDatas: Map<string, any> = new Map();
     /**
      * Solicitar atenção para um objeto. Mantém o objeto sincronizado com os demais clientes 
      * durante modificação. Recebendo retorno dos clientes que estão consumindo os eventos da 
      * aplicação.
      */
-    async Atention(objectRef: any) {
+    async Attention(objectRef: any) {
         if (objectRef && !!objectRef.internalId) {
-            this._atentionDatas.set(objectRef.internalId, objectRef);
+            this._attentionDatas.set(objectRef.internalId, objectRef);
             this.Emit({
-                event: 'Atention',
+                event: 'Attention',
                 data: {
                     now: new Date(),
                     objectRef: {

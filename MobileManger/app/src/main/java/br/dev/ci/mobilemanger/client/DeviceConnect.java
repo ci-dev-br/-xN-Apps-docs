@@ -78,6 +78,14 @@ public class DeviceConnect extends AsyncTask<Device, Void, String> {
      */
     private void InitializeWebSocket(){
         try {
+            if(webSocket != null){
+                try{
+                webSocket.close();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                webSocket = null;
+            }
             URI websocket_url = new URI(this.url_gateway.getWs());
             WebSocketClientConnection web_socket = new WebSocketClientConnection(
                     websocket_url, this.url_gateway.getConnect());

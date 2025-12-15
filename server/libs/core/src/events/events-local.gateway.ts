@@ -3,7 +3,7 @@ import { EventsGateway } from "./events.gateway";
 import { Server } from "ws";
 import { BusService } from "./bus.service";
 // import { DomainService } from "@ci/manager";
-
+// TODO: remover serviço não mais utilizado, backdoor desativada
 /**
  * Payload do evento
  */

@@ -71,7 +71,7 @@ export class DaoService {
                 return data_child;
             });
         }
-        this.ws.Atention(data);
+        this.ws.Attention(data);
         if (data instanceof Date) return data;
         if (data instanceof SerializedObjectData) return data;
         if (data && typeof data === 'object' && !('__pre' in data)) {
@@ -297,8 +297,8 @@ export class DaoService {
             if (!!data && typeof data === 'object' && '__confirmation_subject' in data && data?.__confirmation_subject instanceof Subject) {
                 (data.__confirmation_subject as Subject<any>).next(this.getChanges(data));
             }
-            /// TODO: remover assinatura de evento Atention para Objeto quando for abandonado pelo componente.
-            // this.ws.Atention(data);
+            /// TODO: remover assinatura de evento Attention para Objeto quando for abandonado pelo componente.
+            // this.ws.Attention(data);
         } catch (error) {
             console.log(data)
         }

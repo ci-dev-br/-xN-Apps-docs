@@ -17,6 +17,7 @@ import br.dev.ci.mobilemanger.client.model.EventPayload;
 import br.dev.ci.mobilemanger.client.model.WSMessage;
 
 public class WebSocketClientConnection extends WebSocketClient {
+    private Boolean ativado = false;
     private Long ping = 0L;
     private String status;
     public WebSocketClientConnection(URI serverUri){
@@ -36,7 +37,10 @@ public class WebSocketClientConnection extends WebSocketClient {
              * 1 -> Identificação da conexão com id do Dispositivo (Device);
              *
              */
-            Ping();
+            if(ativado==false){
+                Ping();
+                ativado = true;
+            }
             identity();
 
         } catch (Exception e) {
@@ -104,7 +108,7 @@ public class WebSocketClientConnection extends WebSocketClient {
             if(message.indexOf("\"type\":\"pong\"") > -1){
                 WSMessage retorno = mapper.fromJson(message, WSMessage.class);
                 if(retorno.getType().equals("pong")){
-                                    Log.i("tag", "Pong");
+                                    Log.i("tag", "Ping/Pong");
                     this.PongHandler();
                     if(retorno.getWait() != null){
                         new android.os.Handler(Looper.getMainLooper()).postDelayed(
