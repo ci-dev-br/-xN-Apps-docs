@@ -97,7 +97,7 @@ export class EventsGateway implements OnGatewayInit {
             this._$devices.subscribe(devices => {
                 client.send(JSON.stringify({
                     event: 'events',
-                    type: 'Devices.List.Response',
+                    type: 'Devices.Response',
                     momento: Date.now(),
                     data: {
                         devices
@@ -147,11 +147,6 @@ export class EventsGateway implements OnGatewayInit {
                         this._$devices.next([...(this._$devices.value || []), {
                             mac: client.mac,
                         }]);
-                        client.addEventListener('close', (ev) => {
-                            if ('mac' in client && typeof client.mac === 'string') {
-                                this._$devices.next([...(this._$devices.value || []).filter(d => d.mac !== client.mac)]);
-                            }
-                        });
                     }
                 }
             }
@@ -159,8 +154,8 @@ export class EventsGateway implements OnGatewayInit {
             console.error(error);
         }
         try {
-            if (!!data?.client) {
-                this.set(data.client, client, data.momento);
+            if ('mac' in client || 'id' in client) {
+                this.set((client as any).mac || (client as any).id, client, data.momento);
             }
         } catch (error) {
             console.error(error);
@@ -232,26 +227,26 @@ export class EventsGateway implements OnGatewayInit {
             client.send(JSON.stringify(event));
         })
     }
-    private _atentionDatas: Map<string, any> = new Map();
+    private _attentionDatas: Map<string, any> = new Map();
     /**
      *  Registra atenção de um cliente conectado
      * @param client 
      * @param data 
      * @returns 
      */
-    @SubscribeMessage('Atention')
+    @SubscribeMessage('Attention')
     async Attention(@ConnectedSocket() client: any, @MessageBody() data: IDataMessage) {
         if (!this.sing(data)) return;
         client.id = data.client;
         this.set(data.client, client, data.momento);
         if (!!data?.objectRef?.internalId) {
-            if (this._atentionDatas.has(data.objectRef.internalId)) {
+            if (this._attentionDatas.has(data.objectRef.internalId)) {
             } else {
-                this._atentionDatas.set(data.objectRef.internalId, {
+                this._attentionDatas.set(data.objectRef.internalId, {
                     // TODO: 
                 });
             }
-            const __last_data = this._atentionDatas.get(data.objectRef.internalId);
+            const __last_data = this._attentionDatas.get(data.objectRef.internalId);
             if (!__last_data["::CI_INTERNAL.CLIENTS"])
                 __last_data["::CI_INTERNAL.CLIENTS"] = [];
             __last_data["::CI_INTERNAL.CLIENTS"].push(client);
@@ -274,11 +269,10 @@ export class EventsGateway implements OnGatewayInit {
                      mac: ws.mac,
                  }]);
              } */
-
             ws.addEventListener('close', (ev) => {
-                /*  if ('mac' in ws && typeof ws.mac === 'string') {
-                     this._$devices.next([...(this._$devices.value || []).filter(d => d.mac !== ws.mac)]);
-                 } */
+                if ('mac' in ws && typeof ws.mac === 'string') {
+                    this._$devices.next([...(this._$devices.value || []).filter(d => d.mac !== ws.mac)]);
+                }
                 this.clients.delete((ws as any).id)
                 setTimeout(() => {
                     this.clients.forEach(client => {
@@ -325,7 +319,7 @@ export class EventsGateway implements OnGatewayInit {
         if (!this.sing(data)) return;
         this.set(data.client, client, data.momento);
         if (!!data?.internalId) {
-            const __last_data = this._atentionDatas.get(data.internalId);
+            const __last_data = this._attentionDatas.get(data.internalId);
             if (data.changes && __last_data) {
                 Object.keys(data.changes).forEach(property => {
                     if (data.changes[property].currentValue
