@@ -116,7 +116,7 @@ export class EventsGateway implements OnGatewayInit {
     devicesHandler(client, data) {
         this._$devices.subscribe(devices => {
             let a = this;
-            let tt = (this.tt + 1000) || 1000;
+            let tt = (this.tt + 3500) || 1000;
             a = a;
             [...this.clients.values()].forEach(c => {
                 devices.forEach(device => {
