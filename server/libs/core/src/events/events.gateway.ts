@@ -122,7 +122,7 @@ export class EventsGateway implements OnGatewayInit {
                 devices.forEach(device => {
                     (device as any).tt = this.tt;
                     (device as any).lastTime = (Date.now() - ((c.ws as any).lastTime || Number.MAX_SAFE_INTEGER));
-                    (device as any).status = (device as any).lastTime < tt ? 1 : (device as any).lastTime < 40000 ? 0 : 0;
+                    (device as any).status = (device as any).lastTime < tt ? 1 : (device as any).lastTime < tt + 10000 ? 0 : 0;
                 });
             });
             client.send(JSON.stringify({
