@@ -44,8 +44,8 @@ export interface DeviceItem {
         this.events.eventListener('Devices', (data: { data: { devices: Device[] } }) => {
             if (!!data?.data?.devices) {
                 this.devices?.forEach(deviceItem => {
-                    let exists = data.data.devices.find(d => d.mac === deviceItem.device?.mac);
-                    deviceItem.status = exists ? 1 : -1;
+                    let device_result = data.data.devices.find(d => d.mac === deviceItem.device?.mac);
+                    deviceItem.status = (device_result as any).status;
                 });
             }
         })

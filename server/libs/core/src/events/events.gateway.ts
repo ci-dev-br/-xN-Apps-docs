@@ -63,12 +63,13 @@ export class EventsGateway implements OnGatewayInit {
         try {
             pm = this.pings.reduce((a, b) => a + b) / this.pings.length;
         } catch (error) {
+            console.error(error);
         }
         const waiting = 1000 + Math.random() * 32000;
         const last = {
             event: 'events',
             type: 'pong',
-            wait: waiting,
+            wait: this.tt = waiting,
             momento: data.momento,
             globalPing: this.globalPing,
             pingMedium: pm,
@@ -103,6 +104,7 @@ export class EventsGateway implements OnGatewayInit {
             }
         })
     }
+    private tt?: number;
     /**
      * Mapeamento de listeners de eventos
      */
@@ -114,15 +116,25 @@ export class EventsGateway implements OnGatewayInit {
     devicesHandler(client, data) {
         this._$devices.subscribe(devices => {
             let a = this;
+            let tt = (this.tt + 1000) || 1000;
             a = a;
+            [...this.clients.values()].forEach(c => {
+                devices.forEach(device => {
+                    (device as any).tt = this.tt;
+                    (device as any).lastTime = (Date.now() - ((c.ws as any).lastTime || 1000000000));
+                    (device as any).status = (device as any).lastTime < tt ? 1 : (device as any).lastTime < 60000 ? 0 : 0;
+                });
+            });
             client.send(JSON.stringify({
                 event: 'events',
                 type: 'Devices.Response',
                 momento: Date.now(),
                 data: {
-                    devices: devices.filter(d => [...this.clients.values()].find(c => {
-                        return (c.ws as any).mac === d.mac && c.ws.readyState === c.ws.OPEN;
-                    }))
+                    devices: devices
+                    /*  devices.filter(device => [...this.clients.values()].find(c => {
+                        (device as any).lastTime = (c.ws as any).lastTime;
+                        return (c.ws as any).mac === device.mac && c.ws.readyState === c.ws.OPEN && ((Date.now() - ((c.ws as any).lastTime || 0)) < 20000);
+                    })) */
                 }
             }));
         });
@@ -152,6 +164,7 @@ export class EventsGateway implements OnGatewayInit {
     @SubscribeMessage('events')
     onEvent(@ConnectedSocket() client: WebSocket, @MessageBody() data: IDataMessage) {
         if (!this.sing(data)) return;
+        (client as { lastTime?: number }).lastTime = Date.now();
         try {
             if (data.type in this.eventsListeners) {
                 return this.eventsListeners[data.type](client, data);
