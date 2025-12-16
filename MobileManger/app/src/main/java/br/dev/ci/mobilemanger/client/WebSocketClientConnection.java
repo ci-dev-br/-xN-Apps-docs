@@ -72,9 +72,9 @@ public class WebSocketClientConnection extends WebSocketClient {
         new android.os.Handler(Looper.getMainLooper()).postDelayed(
                 new Runnable() {
                     public void run() {
-                        if(stauts.equals("pong")){
+                        // if(stauts.equals("pong")){
                             Ping();
-                        }
+                        // }
                     }
                 },
                 60000);
