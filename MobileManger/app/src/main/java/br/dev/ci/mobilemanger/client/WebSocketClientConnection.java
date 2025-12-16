@@ -64,20 +64,31 @@ public class WebSocketClientConnection extends WebSocketClient {
             ex.printStackTrace();
         }
     }
+    private String stauts = "out";
     /**
      * Ping
      */
     private void Ping(){
+        new android.os.Handler(Looper.getMainLooper()).postDelayed(
+                new Runnable() {
+                    public void run() {
+                        if(stauts.equals("pong")){
+                            Ping();
+                        }
+                    }
+                },
+                60000);
+        if(this.stauts.equals("ping")) {
+            return;
+        }
         try {
+            this.stauts = "ping";
             EventPayload payload =  new EventPayload();
             payload.setEvent("events");
-
             EventData event = new EventData();
-
             event.setMomento((new Date()).getTime());
             event.setLastPing(ping);
             event.setType("ping");
-
             payload.setData(event);
             Gson mapper = new Gson();
             send(mapper.toJson(payload));
@@ -89,7 +100,7 @@ public class WebSocketClientConnection extends WebSocketClient {
                             Ping();
                         }
                     },
-                    60000);
+                    1000);
         }
     }
     /**
@@ -109,15 +120,16 @@ public class WebSocketClientConnection extends WebSocketClient {
                 WSMessage retorno = mapper.fromJson(message, WSMessage.class);
                 if(retorno.getType().equals("pong")){
                                     Log.i("tag", "Ping/Pong");
+                    this.stauts = "out";
                     this.PongHandler();
                     if(retorno.getWait() != null){
                         new android.os.Handler(Looper.getMainLooper()).postDelayed(
                                 new Runnable() {
                                     public void run() {
+                                        stauts = "pong";
                                         Ping();
                                     }
-                                },
-                                retorno.getWait().intValue());
+                                }, (retorno.getWait() != null ? retorno.getWait().intValue() : 15000));
                     }
                 }
             }else if(message.indexOf("\"type\":\"requestSendSMSMessage\"") > -1){
