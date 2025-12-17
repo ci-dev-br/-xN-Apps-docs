@@ -61,7 +61,7 @@ export class EventsGateway implements OnGatewayInit {
         }
         let pm = 0;
         try {
-            pm = this.pings.reduce((a, b) => a + b) / this.pings.length;
+            pm = !!this.pings && this.pings.length > 0 ? this.pings.reduce((a, b) => a + b) / this.pings.length : 0;
         } catch (error) {
             console.error(error);
         }
