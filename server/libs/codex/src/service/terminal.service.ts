@@ -5,7 +5,7 @@ import * as pty from 'node-pty';
 @Injectable()
 export class TerminalService {
   // Mapa para guardar a sessão de terminal de cada socket conectado
-  private sessions: Map<string, IPty> = new Map();
+  private sessions: Map<string, pty.IPty> = new Map();
   createSession(socketId: string, onData: (data: string) => void) {
     // Detecta o shell padrão do sistema (PowerShell no Win, Bash/Zsh no Linux/Mac)
     const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
