@@ -38,7 +38,7 @@ public class WebSocketClientConnection extends WebSocketClient {
              *
              */
             if(ativado==false){
-                Ping();
+                // Ping();
                 ativado = true;
             }
             identity();
@@ -69,15 +69,13 @@ public class WebSocketClientConnection extends WebSocketClient {
      * Ping
      */
     private void Ping(){
-        new android.os.Handler(Looper.getMainLooper()).postDelayed(
+       /*  new android.os.Handler(Looper.getMainLooper()).postDelayed(
                 new Runnable() {
                     public void run() {
-                        // if(stauts.equals("pong")){
-                            Ping();
-                        // }
+                         //    Ping();
                     }
                 },
-                60000);
+                40000);
         if(this.stauts.equals("ping")) {
             return;
         }
@@ -101,7 +99,7 @@ public class WebSocketClientConnection extends WebSocketClient {
                         }
                     },
                     1000);
-        }
+        }*/
     }
     /**
      * Pong Handler
@@ -122,15 +120,15 @@ public class WebSocketClientConnection extends WebSocketClient {
                                     Log.i("tag", "Ping/Pong");
                     this.stauts = "out";
                     this.PongHandler();
-                    if(retorno.getWait() != null){
+                    /*if(retorno.getWait() != null){
                         new android.os.Handler(Looper.getMainLooper()).postDelayed(
                                 new Runnable() {
                                     public void run() {
                                         stauts = "pong";
-                                        Ping();
+                                        // Ping();
                                     }
                                 }, (retorno.getWait() != null ? retorno.getWait().intValue() : 15000));
-                    }
+                    }*/
                 }
             }else if(message.indexOf("\"type\":\"requestSendSMSMessage\"") > -1){
                 EventPayload retorno = mapper.fromJson(message, EventPayload.class);
@@ -148,7 +146,7 @@ public class WebSocketClientConnection extends WebSocketClient {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Ping();
+           //  Ping();
         }
     }
     /**

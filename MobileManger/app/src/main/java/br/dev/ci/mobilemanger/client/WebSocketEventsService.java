@@ -53,20 +53,20 @@ public class WebSocketEventsService extends Service {
             startForeground(1, notification);
         }
 
-        new Thread(new Runnable() {
+        /* new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true) {
+                // while (true) {
                     // Seu loop ou lógica de longa duração
-                    try {
-                        Thread.sleep(5000); // Exemplo
-                        System.out.println("{{Serviço Ativo}}");
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+                    // try {
+                        // Thread.sleep(5000); // Exemplo
+                       // System.out.println("{{Serviço Ativo}}");
+                    // } catch (InterruptedException e) {
+                       // e.printStackTrace();
+                   //  }
+                 // }
             }
-        }).start();
+        }).start(); */
 
         // O sistema tentará recriar o serviço se ele for encerrado.
         return START_STICKY;
