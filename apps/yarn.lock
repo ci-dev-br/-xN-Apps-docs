@@ -1635,6 +1635,11 @@
   resolved "https://npm.plhx.com.br:4873/@types/webxr/-/webxr-0.5.21.tgz"
   integrity sha512-geZIAtLzjGmgY2JUi6VxXdCrTb99A7yP49lxLr2Nm/uIK0PkkxcEi4OGhoGDO4pxCf3JwGz2GiJL2Ej4K2bKaA==
 
+"@types/xterm@^2.0.3":
+  version "2.0.3"
+  resolved "https://npm.ci.dev.br/@types/xterm/-/xterm-2.0.3.tgz"
+  integrity sha512-Owlz29ThHtn2RQry87juaNYeIc4Dr8ykLLX0JKKt4SdO6ujwJnsXCpBAr6bwo/f4L3xSfM9KA7OnPPf9Xit6tA==
+
 "@vitejs/plugin-basic-ssl@2.1.0":
   version "2.1.0"
   resolved "https://npm.ci.dev.br/@vitejs/plugin-basic-ssl/-/plugin-basic-ssl-2.1.0.tgz"
@@ -5378,6 +5383,16 @@ xhr2@^0.2.0:
   version "0.2.1"
   resolved "https://npm.ci.dev.br/xhr2/-/xhr2-0.2.1.tgz"
   integrity sha512-sID0rrVCqkVNUn8t6xuv9+6FViXjUVXq8H5rWOH2rz9fDNQEd4g0EA2XlcEdJXRz5BMEn4O1pJFdT+z4YHhoWw==
+
+xterm-addon-fit@^0.8.0:
+  version "0.8.0"
+  resolved "https://npm.ci.dev.br/xterm-addon-fit/-/xterm-addon-fit-0.8.0.tgz"
+  integrity sha512-yj3Np7XlvxxhYF/EJ7p3KHaMt6OdwQ+HDu573Vx1lRXsVxOcnVJs51RgjZOouIZOczTsskaS+CpXspK81/DLqw==
+
+xterm@^5.0.0, xterm@^5.3.0:
+  version "5.3.0"
+  resolved "https://npm.ci.dev.br/xterm/-/xterm-5.3.0.tgz"
+  integrity sha512-8QqjlekLUFTrU6x7xck1MsPzPA571K5zNqWm0M0oroYEWVOptZ0+ubQSkQ3uxIEhcIHRujJy6emDWX4A7qyFzg==
 
 y18n@^4.0.0:
   version "4.0.3"

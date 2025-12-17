@@ -117,6 +117,9 @@
       "@ci/components/calendar": [
         "./projects/ci/components/src/lib/calendar/public-api"
       ],
+      "@ci/components/terminal": [
+        "./projects/ci/components/src/lib/terminal/public-api"
+      ],
       "@ci/components/editar-detail": [
         "./projects/ci/components/src/lib/editar-detail/public-api"
       ],
