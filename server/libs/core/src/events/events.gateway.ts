@@ -69,7 +69,7 @@ export class EventsGateway implements OnGatewayInit {
         const last = {
             event: 'events',
             type: 'pong',
-            wait: this.tt = waiting,
+            wait: this.lastWaitingTime = waiting,
             momento: data.momento,
             globalPing: this.globalPing,
             pingMedium: pm,
@@ -104,7 +104,7 @@ export class EventsGateway implements OnGatewayInit {
             }
         })
     }
-    private tt?: number;
+    private lastWaitingTime?: number;
     /**
      * Mapeamento de listeners de eventos
      */
@@ -115,14 +115,13 @@ export class EventsGateway implements OnGatewayInit {
     };
     devicesHandler(client, data) {
         this._$devices.subscribe(devices => {
-            let a = this;
-            let tt = (this.tt + 3500) || 1000;
-            a = a;
+            let self = this;
+            let waiting_time = (this.lastWaitingTime + 3500) || 1000;
             [...this.clients.values()].forEach(c => {
                 devices.forEach(device => {
-                    (device as any).tt = this.tt;
+                    (device as any).tt = this.lastWaitingTime;
                     (device as any).lastTime = (Date.now() - ((c.ws as any).lastTime || Number.MAX_SAFE_INTEGER));
-                    (device as any).status = (device as any).lastTime < tt ? 1 : (device as any).lastTime < tt + 10000 ? 0 : 0;
+                    (device as any).status = (device as any).lastTime < waiting_time ? 1 : (device as any).lastTime < waiting_time + 10000 ? 0 : 0;
                 });
             });
             client.send(JSON.stringify({
