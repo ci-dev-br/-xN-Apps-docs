@@ -6,7 +6,7 @@ import { resolve } from 'path';
 import { existsSync } from 'fs';
 import { SitePageService } from '@ci/cms/services/site-page.service';
 import { DomainService } from '@ci/manager';
-@Controller('*')
+@Controller()
 export class AppController {
   constructor(
     private readonly appService: CiApplicationService,
@@ -49,10 +49,10 @@ export class AppController {
     }
     return res.sendFile(resolve('public/index.csr.html'));
   }
-  @Get()  
+  @Get()
   @Public()
   async ressource(@Req() req: Request, @Res() res: Response) {
-    /* if (this.sitePage) {
+    if (this.sitePage) {
       try {
         let host: string = this.getHost(req);
         let page = await this.sitePage.getPage(host, req.path);
@@ -77,6 +77,6 @@ export class AppController {
         console.error(error);
       }
     }
-    return res.sendFile(resolve('public/index.csr.html')); */
+    return res.sendFile(resolve('public/index.csr.html'));
   }
 }
