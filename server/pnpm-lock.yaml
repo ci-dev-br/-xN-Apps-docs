@@ -48,7 +48,7 @@ importers:
         specifier: ^0.14.0
         version: 0.14.3
       express:
-        specifier: ^5.1.0
+        specifier: ^5.2.1
         version: 5.2.1
       hbs:
         specifier: ^4.2.0
