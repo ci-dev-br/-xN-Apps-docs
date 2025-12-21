@@ -1,1 +1,10 @@
-
+<form>
+    <mat-form-field>
+        <mat-label>Endereço de Email</mat-label>
+        <input matInput placeholder="Digite o email do usuário" [(ngModel)]="email" name="email" required email>
+        <mat-error *ngIf="emailControl.invalid && (emailControl.dirty || emailControl.touched)">
+            Por favor, insira um endereço de email válido.
+        </mat-error>
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="enviarConvite()">Enviar Convite</button>
+</form>

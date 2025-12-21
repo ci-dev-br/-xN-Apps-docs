@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormField, MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -34,10 +35,22 @@ import { MatInputModule } from "@angular/material/input";
         MatFormFieldModule,
         MatInputModule,
         MatButtonModule,
+        FormsModule,
     ],
     templateUrl: './enviar-convite.component.html',
     styleUrls: ['./enviar-convite.component.scss'],
 })
 export class EnviarConviteComponent {
     constructor() { }
+    email: string = '';
+    enviarConvite() {
+        if (this.email) {
+            // Lógica para enviar o convite
+            console.log(`Convite enviado para: ${this.email}`);
+            alert(`Convite enviado para: ${this.email}`);
+            this.email = ''; // Limpa o campo após o envio
+        } else {
+            alert('Por favor, insira um endereço de email válido.');
+        }
+    }
 }
