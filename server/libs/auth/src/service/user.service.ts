@@ -177,8 +177,26 @@ export class UserService {
                 throw new Error('Acesso negado.');
             }
         }
-        return await this.userRepo.find({
+        return (await this.userRepo.find({
             where: where
+        })).map(u => {
+            Object.keys(u).forEach(k => {
+                if (request.user?.roles?.indexOf('GOODNESS') > -1) {
+
+                    if (['password', 'refreshToken', 'tenants', 'roles', 'permission'].indexOf(k) > -1) {
+                        delete u[k]
+                    } else {
+                        u[k] = typeof u[k] === 'string' ? this.ocultaInformacaoSensivel(u[k]) : undefined;
+                    }
+                }
+            });
+            return u;
         }) || undefined;
+    }
+    ocultaInformacaoSensivel(informacao: string): string {
+        if (typeof informacao === 'string' && informacao.length > 4) {
+            return informacao.substring(0, 2) + '****' + informacao.substring(informacao.length - 2, informacao.length);
+        }
+        return informacao;
     }
 }
