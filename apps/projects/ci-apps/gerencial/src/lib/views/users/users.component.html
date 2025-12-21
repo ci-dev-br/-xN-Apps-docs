@@ -8,5 +8,5 @@
     <!-- <button mat-raised-button (click)="enviarConvite()" >enviarConvite</button> -->
 </mat-toolbar>
 <ci-container>
-    <ci-data-grid [options]="gridOptions" [source]="users"></ci-data-grid>
+    <ci-data-grid [options]="gridOptions" (select)="editar($event.value, $event.event)" [source]="users"></ci-data-grid>
 </ci-container>}
