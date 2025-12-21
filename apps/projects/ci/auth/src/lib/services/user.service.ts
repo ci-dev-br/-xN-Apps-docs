@@ -6,6 +6,9 @@ import { StorageService } from "@ci/core";
 
 @Injectable()
 export class UserService {
+    /**
+     * Serviço para gerenciamento do usuário autenticado.
+     */
     private $user = new BehaviorSubject<User | null>((() => {
         if (typeof localStorage !== 'undefined') {
             let stored = localStorage.getItem('CIUSR');
@@ -22,8 +25,11 @@ export class UserService {
         private readonly router?: Router,
         private readonly storage?: StorageService,
     ) {
-        this.init()
+        this.init();
     }
+    /**
+     * Inicializa o serviço de usuário, configurando a assinatura para mudanças no usuário atual.
+     */
     async init() {
         this.$user.subscribe(user => {
             try {
@@ -40,16 +46,28 @@ export class UserService {
         if (typeof localStorage !== 'undefined')
             this.getFromMemory();
     }
-
+    /** 
+     * Retorna o usuário atual como um Observable.
+     */
     get user() { return this.$user; }
+    /**
+     *  Identifica o usuário atual no sistema.
+     * @param user 
+     */
     async identificarUsuario(user: User) {
         this.$user.next(await lastValueFrom(this.authService.profile()));
     }
+    /**
+     * Encerra a sessão do usuário atual.
+     */
     async sair() {
         this.storage?.clean();
         this.$user.next(null);
         setTimeout(() => this.router?.navigate(['/']));
     }
+    /**
+     * Tenta obter o perfil do usuário a partir do serviço de autenticação.
+     */
     private async getFromMemory() {
         let profile: User | null = null;
         try {

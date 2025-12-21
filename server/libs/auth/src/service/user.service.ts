@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '../models/user.entity';
-import { DataSource, Equal, Repository } from 'typeorm';
+import { DataSource, Equal, FindOptionsWhere, Repository, IsNull, } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
 import { Credential } from '@ci/core';
@@ -165,12 +165,20 @@ export class UserService {
     }
     async find(
         tenants?: string[],
+        request?: { user: User }
     ): Promise<User[] | undefined> {
-        return await this.userRepo.find({
-            where: {
-                // tenants:
-                // id: ''
+        let where: FindOptionsWhere<User> | FindOptionsWhere<User>[] = {};
+        if (!request.user) {
+            throw new Error('Acesso negado.');
+        }
+        if (!!request?.user) {
+            if (request.user?.roles?.indexOf('GOODNESS') > -1) {
+            } else {
+                throw new Error('Acesso negado.');
             }
+        }
+        return await this.userRepo.find({
+            where: where
         }) || undefined;
     }
 }

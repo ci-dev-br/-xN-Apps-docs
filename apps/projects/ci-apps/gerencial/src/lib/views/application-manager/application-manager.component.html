@@ -29,6 +29,7 @@
     </ng-template>
     }
     @else{
-    <ci-data-grid (select)="editar($event.value, $event.event)" [options]="gridOptions" [source]="apps"></ci-data-grid>
+    <ci-data-grid (select)="editar($event.value, $event.event)" [options]="gridOptions" [source]="apps">
+    </ci-data-grid>
     }
 </ng-container>

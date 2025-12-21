@@ -1,10 +1,10 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTableModule } from "@angular/material/table";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { CoreModule } from "@ci/core";
-import { GridModule } from "@ci/components";
+import { GridBuilder, GridModule, IDataGridOptions } from "@ci/components";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -16,17 +16,8 @@ import { ContainerModule } from "@ci/components";
 @Component({
     selector: 'ci-users-view',
     standalone: true,
-    template: `
-    <mat-toolbar>
-        <button mat-raised-button (click)="cadastrarNovoUsuario()">Novo</button>
-        <button mat-raised-button (click)="localizarUsuario()">Localizar Usuário</button>
-        <!-- <button mat-raised-button (click)="action('')">Cadastrar</button> -->
-        <!-- <button mat-raised-button (click)="enviarConvite()" >enviarConvite</button> -->
-    </mat-toolbar>
-    <ci-container>
-        <ci-data-grid></ci-data-grid>
-    </ci-container>    
-    `,
+    templateUrl: './users.component.html',
+    styleUrls: ['./users.component.scss'],
     imports: [
         CoreModule,
         MatIconModule,
@@ -42,80 +33,39 @@ import { ContainerModule } from "@ci/components";
         FormsModule,
         ContainerModule,
     ]
-}) export class UsersComponent {
-    // private _cached_map = new Map<string, any>();
+}) export class UsersComponent implements OnInit {
+    stage?: 'loading' | 'ready' | 'damned' = 'loading';
     // visualizacao: 'table' | 'list' = 'table';
     // filtrarPapel?: string = 'all';
+    gridOptions?: IDataGridOptions<User>;
     users?: User[];
-    // get displayedColumns() {
-    //     return this.cache('displayedColumns', () => {
-    //         return [...this.columns.filter(i => !i.hide).map(c => c.headerName), '_act']
-    //     });
-    // }
-    /// columns: IColumns[] = [
-    ///     { headerName: 'ID', propertyName: 'id', hide: true },
-    ///     { headerName: 'Nome ', propertyName: 'name' },
-    ///     { headerName: 'Ícone ', propertyName: 'icon', component: MatIcon },
-    ///     { headerName: 'Rota', propertyName: 'url' },
-    ///     { headerName: 'Descrição', propertyName: 'description' },
-    ///     { headerName: 'Grupo', propertyName: 'menuGroupName' },
-    ///     { headerName: 'Papéis', propertyName: 'roles' },
-    /// ];
-    // actions: IItemAction<Application>[] = [
-    //     {
-    //         icon: 'edit',
-    //         label: 'Editar',
-    //         onAction: (i) => this.editar(i)
-    //     },
-    //     {
-    //         icon: 'delete',
-    //         label: 'Remover',
-    //         onAction: (i) => this.remover(i)
-    //     },
-    // ]
     constructor(
         /// private readonly applications: ApplicationService,
         /// private readonly janela: WindowService,
         private readonly userService: UserService,
+        private readonly gb: GridBuilder,
     ) {
-        // (async () => this.carregarListaAplicativos())();
         (async () => this.find())();
+    }
+    async ngOnInit() {
+        this.gridOptions = await this.gb.FromSchema('User');
+        this.stage = 'ready';
     }
     async adicionar() {
 
     }
     async find() {
-        this.users = await lastValueFrom(this.userService.getList());
+        try {
+            this.users = await lastValueFrom(this.userService.getList());
+            this.stage = 'ready';
+        } catch (error) {
+            this.stage = 'damned';
+        }
     }
-
     async cadastrarNovoUsuario() {
 
     }
     async localizarUsuario() {
 
     }
-    // private cache(prop: string, value: () => any) {
-    //     if (!this._cached_map.has(prop))
-    //         this._cached_map.set(prop, value());
-    //     return this._cached_map.get(prop);
-    // }
-    // async novoAplicativo() {
-    //     let app = {};
-    //     const data = await this.editar(app);
-    //     if (!!data?.id)
-    //         this.apps = [data, ...this.apps || []];
-    // }
-    // async editar(application: Application) {
-    //     return await this.janela.open(EditarAplicativoComponent, application)
-    // }
-    // async remover(application: Application) {
-    //     await lastValueFrom(this.applications.delete({ body: application }));
-    //     let app = this.apps || [];
-    //     app.splice(app.indexOf(application), 1);
-    //     this.apps = [...app];
-    // }
-    // async carregarListaAplicativos() {
-    //     this.apps = await lastValueFrom(this.applications.get({ body: { all: true } }));
-    // }
-
 }

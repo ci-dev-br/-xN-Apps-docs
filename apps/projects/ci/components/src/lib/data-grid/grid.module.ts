@@ -10,6 +10,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { IColumnOption } from "../models/i-column-options";
 import { IDataGridOptions } from "../models/i-data-grid-options";
+import { GridBuilder } from "./grid-builder";
 
 @NgModule({
     declarations: [
@@ -30,7 +31,7 @@ import { IDataGridOptions } from "../models/i-data-grid-options";
         DataGridComponent,
     ],
     providers: [
-
+        GridBuilder,
     ]
 })
 export class GridModule { }
@@ -41,4 +42,5 @@ export {
     HeaderCellRenderer,
     IColumnOption,
     IDataGridOptions,
+    GridBuilder,
 }

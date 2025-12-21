@@ -132,7 +132,6 @@ process.env.MODULES.split(',').forEach(e => {
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       synchronize: Boolean(process.env.DB_SYNCHRONIZE || false),
-      logging: false,
       autoSave: true,
       cache: true,
       maxQueryExecutionTime: 100,

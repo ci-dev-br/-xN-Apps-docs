@@ -8,6 +8,12 @@ export class UserController {
     constructor(
         private readonly user?: UserService,
     ) { }
+    /**
+     *  Sincroniza as informações do usuário.
+     * @param req 
+     * @param user 
+     * @returns 
+     */
     @Post('Sync')
     @ApiOperation({ operationId: 'SyncUser' })
     @ApiResponse({
@@ -20,6 +26,11 @@ export class UserController {
             return await this.user.sync(user);
         }
     }
+    /**
+     *  Obtém a lista de usuários do sistema.
+     * @param req 
+     * @returns 
+     */
     @Post('GetList')
     @ApiOperation({ operationId: 'GetListUser' })
     @ApiResponse({
@@ -29,15 +40,25 @@ export class UserController {
     async getList(
         @Req() req: any
     ) {
-        return (await this.user.find())?.map(u => {
-            delete u.password;
-            if (!!u.email) {
-                u.email = u.email.substring(0, 3) + '***' + u.email.substring(u.email.length - 8, 3);
-            }
-            delete u.email;
-            delete u.passwordMode;
+        try {
+            let users = (await this.user.find(undefined, req))
+                ?.map(u => {
+                    try {
+                        delete u.password;
+                        if (!!u.email) {
+                            u.email = u.email.substring(0, 3) + '***' + u.email.substring(u.email.length - 8, 3);
+                        }
+                        delete u.email;
+                        delete u.passwordMode;
+                    } catch (error) {
+                        console.error('Erro ao ocultar dados do usuário.', error);
+                    }
+                    return u;
+                });
 
-            return u;
-        });
+            return users;
+        } catch (error) {
+            throw error;
+        }
     }
 }
