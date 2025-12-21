@@ -81,10 +81,10 @@ PS.: Retorne diretamente a mensagem de commit, sem formatação adicional ou exp
         }
         resolve();
     });
-    setTimeout(() => {
-        AssistenteCommit();
-    }, 60000);
+    /*   setTimeout(() => {
+          AssistenteCommit();
+      }, 60000); */
 }
 setTimeout(() => {
     AssistenteCommit();
-}, 6000);
+}, 0);
