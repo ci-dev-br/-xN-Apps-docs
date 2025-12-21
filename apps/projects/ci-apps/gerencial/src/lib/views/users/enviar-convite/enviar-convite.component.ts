@@ -26,7 +26,7 @@ import { MatInputModule } from "@angular/material/input";
  * módulos Angular Material para estilização e funcionalidade.
  * 
  *  
- */
+ **/
 @Component({
     selector: 'ci-enviar-convite',
     standalone: true,
