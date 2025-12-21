@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { FormBuilder, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormField, MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -36,12 +36,19 @@ import { MatInputModule } from "@angular/material/input";
         MatInputModule,
         MatButtonModule,
         FormsModule,
+        ReactiveFormsModule,
     ],
     templateUrl: './enviar-convite.component.html',
     styleUrls: ['./enviar-convite.component.scss'],
 })
 export class EnviarConviteComponent {
-    constructor() { }
+    protected form = this.fb.group({
+        email: [''],
+        mensagem: [''],
+    });
+    constructor(
+        private readonly fb: FormBuilder,
+    ) { }
     email: string = '';
     enviarConvite() {
         if (this.email) {
