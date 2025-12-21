@@ -4,7 +4,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatTableModule } from "@angular/material/table";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { CoreModule } from "@ci/core";
-import { GridBuilder, GridModule, IDataGridOptions } from "@ci/components";
+import { GridBuilder, GridModule, IDataGridOptions, WindowModule, WindowService } from "@ci/components";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -13,6 +13,7 @@ import { FormsModule } from "@angular/forms";
 import { User, UserService } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 import { ContainerModule } from "@ci/components";
+import { EditarComponent } from "./editar/editar.component";
 @Component({
     selector: 'ci-users-view',
     standalone: true,
@@ -32,6 +33,7 @@ import { ContainerModule } from "@ci/components";
         MatIconModule,
         FormsModule,
         ContainerModule,
+        WindowModule,
     ]
 }) export class UsersComponent implements OnInit {
     stage?: 'loading' | 'ready' | 'damned' = 'loading';
@@ -40,10 +42,9 @@ import { ContainerModule } from "@ci/components";
     gridOptions?: IDataGridOptions<User>;
     users?: User[];
     constructor(
-        /// private readonly applications: ApplicationService,
-        /// private readonly janela: WindowService,
         private readonly userService: UserService,
         private readonly gb: GridBuilder,
+        private readonly window: WindowService,
     ) {
         (async () => this.find())();
     }
@@ -67,5 +68,15 @@ import { ContainerModule } from "@ci/components";
     }
     async localizarUsuario() {
 
+    }
+    async editar(data: User, event?: Event) {
+        return await this.window.open(EditarComponent,
+            { schemaName: 'User', data }, 'User')
+    }
+    async createNew() {
+        let new_instance: User = {} as User;
+        const data = await this.editar(new_instance);
+        if (!!data?.internalId || !!data?.id) // TODO: revisar esta regra
+            this.users = [data, ...this.users || []];
     }
 }
