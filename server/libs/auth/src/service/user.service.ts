@@ -197,6 +197,8 @@ export class UserService {
     ocultaInformacaoSensivel(informacao: string): string {
         if (typeof informacao === 'string' && informacao.length > 4) {
             return informacao.substring(0, 2) + '****' + informacao.substring(informacao.length - 2, informacao.length);
+        } else if (typeof informacao === 'string' && informacao.length <= 4) {
+            return informacao.substring(0, 1) + '***';
         }
         return informacao;
     }
