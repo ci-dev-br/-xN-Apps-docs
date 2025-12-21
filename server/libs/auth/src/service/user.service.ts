@@ -184,7 +184,7 @@ export class UserService {
                 if (request.user?.roles?.indexOf('GOODNESS') > -1) {
                     if (['password', 'refreshToken', 'tenants', 'roles', 'permission'].indexOf(k) > -1) {
                         delete u[k]
-                    } else if (['internalId'].indexOf(k) === -1) {
+                    } else if (['internalId', 'id'].indexOf(k) === -1) {
                         if (typeof u[k] === 'string') {
                             u[k] = typeof u[k] === 'string' ? this.ocultaInformacaoSensivel(u[k]) : undefined;
                         }
