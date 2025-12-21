@@ -1,7 +1,5 @@
 const { spawnSync } = require('child_process');
-
 require('dotenv').config();
-
 /**
  * ComitterAssistent
  * 
@@ -10,14 +8,10 @@ require('dotenv').config();
  * 
  * @returns 
  */
-async function ComitterAssistent() {
+async function AssistenteCommit() {
     await new Promise(async (resolve, reject) => {
         try {
             if (process.env.GEMINI_TOKEN_ASSISTANT) {
-                // const spw = spawnSync('git', ['add', '.'], { cwd: __dirname });
-                // if (spw.stdout) {
-                //     console.log(spw.stdout.toString());
-                // }
                 let commitMessage;
                 const status = spawnSync('git', ['status', '--porcelain'], { cwd: __dirname });
                 const status_astring = status.stdout.toString().trim();
@@ -47,17 +41,17 @@ sh\`\`\`
 \`\`\`
 
 ---
-InstruÃ§Ãµes opcionais:
+Instruções opcionais:
     
-A mensagem deve ser uma mensagem final, sem opÃ§Ãµes, escolha a melhor alternativa
-para as informaÃ§Ãµes fornecidas. VocÃª tambÃ©m pode adicionar uma consideraÃ§Ã£o final
-ou atÃ© mesmo comentÃ¡rios ou piada se achar pertinente. 
-A mensagem deve ser o mais completa possÃ­vel, com o mÃ­nimo de redundÃ¢ncia.
-Adicione tambÃ©m referÃªncias externas como wikipedia ou artigos cientificos pÃºblicos que relatam 
-e discorrem sobre o mesmo assunto quando ouver essa possibilidade.cc
-Ao final, sugira a prÃ³xima aÃ§Ã£o a ser tomada no projeto.
+A mensagem deve ser uma mensagem final, sem opções, escolha a melhor alternativa
+para as informações fornecidas. Você também pode adicionar uma consideração final
+ou até mesmo comentários ou piada se achar pertinente. 
+A mensagem deve ser o mais completa possível, com o mínimo de redundância.
+Adicione também referências externas como Wikipedia ou artigos científicos públicos que relatam 
+e discorrem sobre o mesmo assunto quando houver essa possibilidade.cc
+Ao final, sugira a próxima ação a ser tomada no projeto.
 
-PS.: Retorne diretamente a mensagem de commit, sem formataÃ§Ã£o adicional ou explicaÃ§Ãµes. Considere escrever como se vocÃª fosse o autor da alteraÃ§Ã£o.
+PS.: Retorne diretamente a mensagem de commit, sem formatação adicional ou explicações. Considere escrever como se você fosse o autor da alteração.
 `,
                 })).text;
                 const statusOutput = status.stdout.toString().trim();
@@ -83,14 +77,14 @@ PS.: Retorne diretamente a mensagem de commit, sem formataÃ§Ã£o adicional ou
                 console.log('GEMINI_TOKEN_ASSISTANT not set, skipping commit');
             }
         } catch (error) {
-            console.error('Error in ComitterAssistent:', error);
+            console.error('Falha ao executar assistente de commit:', error);
         }
         resolve();
     });
     setTimeout(() => {
-        ComitterAssistent();
+        AssistenteCommit();
     }, 60000);
 }
 setTimeout(() => {
-    ComitterAssistent();
+    AssistenteCommit();
 }, 6000);
