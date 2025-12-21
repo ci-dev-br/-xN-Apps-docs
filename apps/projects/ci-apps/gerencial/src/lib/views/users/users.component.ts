@@ -38,7 +38,8 @@ import { EditarComponent } from "./editar/editar.component";
 }) export class UsersComponent implements OnInit {
     stage?: 'loading' | 'ready' | 'damned' = 'loading';
     // visualizacao: 'table' | 'list' = 'table';
-    // filtrarPapel?: string = 'all';
+    filtrarPapel?: string;
+    papeis: string[] = ['ADMIN', 'GOODNESS', 'USER'];
     gridOptions?: IDataGridOptions<User>;
     users?: User[];
     constructor(
@@ -52,9 +53,6 @@ import { EditarComponent } from "./editar/editar.component";
         this.gridOptions = await this.gb.FromSchema('User');
         this.stage = 'ready';
     }
-    async adicionar() {
-
-    }
     async find() {
         try {
             this.users = await lastValueFrom(this.userService.getList());
@@ -63,20 +61,21 @@ import { EditarComponent } from "./editar/editar.component";
             this.stage = 'damned';
         }
     }
-    async cadastrarNovoUsuario() {
-
-    }
-    async localizarUsuario() {
-
-    }
     async editar(data: User, event?: Event) {
         return await this.window.open(EditarComponent,
-            { schemaName: 'User', data }, 'User')
+            { schemaName: 'User', data }, 'User');
     }
     async createNew() {
         let new_instance: User = {} as User;
         const data = await this.editar(new_instance);
         if (!!data?.internalId || !!data?.id) // TODO: revisar esta regra
             this.users = [data, ...this.users || []];
+    }
+    /**
+     * Enviar convite para novo usuário
+     */
+    async enviarConvite() {
+        // Abrir dialog para obter email ou número sms para envio de convite
+        
     }
 }
