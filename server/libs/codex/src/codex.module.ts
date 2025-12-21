@@ -9,6 +9,7 @@ import { Terminoligia } from "./models/termo";
 import { CodigoFonte } from "./models/codigo-fonte.entity";
 import { Lexico } from "./models/lexico";
 import { File } from "./models/file.entity";
+import { TerminalService } from './service/terminal.service';
 export const CodeXEntities = [
     // Agent,
     // CodeBlock,
@@ -29,6 +30,7 @@ export const CodeXEntities = [
     ],
     providers: [
         // CodexService,
+        TerminalService,
     ],
 })
 export class CodexModule { }
