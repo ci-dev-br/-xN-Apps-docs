@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { FormBuilder, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormField, MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -43,7 +43,7 @@ import { MatInputModule } from "@angular/material/input";
 })
 export class EnviarConviteComponent {
     protected form = this.fb.group({
-        email: [''],
+        email: ['', [Validators.required, Validators.email]],
         mensagem: [''],
     });
     constructor(

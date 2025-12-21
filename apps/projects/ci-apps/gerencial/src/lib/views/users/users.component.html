@@ -4,7 +4,7 @@
 <mat-toolbar>
     <button mat-raised-button (click)="createNew()">Novo</button>
     <!--  <button mat-raised-button (click)="localizarUsuario()">Localizar Usuário</button> -->
-    <button mat-raised-button (click)="enviarConvite()">Enviar Convites</button>
+    <button mat-raised-button (click)="enviarConvite()">Enviar Convite</button>
 </mat-toolbar>
 <ci-container>
     <ci-data-grid [options]="gridOptions" (select)="editar($event.value, $event.event)" [source]="users"></ci-data-grid>
