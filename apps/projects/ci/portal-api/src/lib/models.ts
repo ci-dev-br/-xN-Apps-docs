@@ -87,6 +87,7 @@ export * from './models/read-directory-output';
 export * from './models/refresh-payload-input-dto';
 export * from './models/register';
 export * from './models/registrar-input-dto';
+export * from './models/send-invitation-payload';
 export * from './models/send-message-payload';
 export * from './models/servico';
 export * from './models/site-option';

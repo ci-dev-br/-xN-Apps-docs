@@ -1,8 +1,11 @@
 import { Component } from "@angular/core";
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
+import { MatDialogRef } from "@angular/material/dialog";
 import { MatFormField, MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { UserService } from "@ci/portal-api";
+import { lastValueFrom } from "rxjs";
 
 /**
  *  Componente para enviar convite a novos usuários
@@ -45,19 +48,34 @@ export class EnviarConviteComponent {
     protected form = this.fb.group({
         email: ['', [Validators.required, Validators.email]],
         mensagem: [''],
+        friendlyName: [''],
     });
     constructor(
         private readonly fb: FormBuilder,
+        private readonly users: UserService,
+        private dialogRef: MatDialogRef<EnviarConviteComponent>
     ) { }
-    email: string = '';
-    enviarConvite() {
-        if (this.email) {
-            // Lógica para enviar o convite
-            console.log(`Convite enviado para: ${this.email}`);
-            alert(`Convite enviado para: ${this.email}`);
-            this.email = ''; // Limpa o campo após o envio
+    /**
+     *  Envia o convite para o e-mail especificado no formulário.
+     */
+    async enviarConvite() {
+        if (this.form.valid) {
+            try {
+                await lastValueFrom(this.users.sendInvitation({
+                    body: {
+                        email: this.form.value.email!,
+                        mensagem: this.form.value.mensagem!,
+                        friendlyName: this.form.value.friendlyName!,
+                    }
+                }));
+                this.form.reset();
+                this.dialogRef.close(true);
+            } catch (error) {
+                this.form.setErrors({ envioFalhou: true });
+                this.form.markAllAsTouched();
+            }
         } else {
-            alert('Por favor, insira um endereço de email válido.');
+            this.form.markAllAsTouched();
         }
     }
 }

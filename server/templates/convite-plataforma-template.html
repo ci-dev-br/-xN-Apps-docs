@@ -1,0 +1,71 @@
+<html>
+
+<body>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        div.body {}
+
+        * {
+            color: rgba(0, 0, 0, .75);
+        }
+
+
+        table {}
+
+        td {
+            padding: 15px 12px;
+        }
+
+        .footer {
+            margin: 0 auto;
+            width: 80vw;
+            max-width: 400px;
+            text-align: justify;
+        }
+
+        small {
+            line-height: 24px;
+        }
+    </style>
+    <div
+        style="background: linear-gradient(33deg, #ababab 0%, #ffffff 50%); font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;            text-align: center; padding: 50px;">
+        <div class="logo"
+            style=" margin: 0 auto; width: 240px; height: 80px; display: block; background-position: center; background-repeat: no-repeat; background-size: contain;">
+            <img src="{{logo_base64}}">
+        </div>
+        <table
+            style="width: 80vw; max-width: 550px; margin: 0 auto; background: white; border-radius: 10px; padding-bottom: 48px; box-shadow: 0 10px 20px -10px rgba(0, 0, 0, .5); margin-bottom: 40px;margin-top: 32px;">
+            <tbody>
+                <tr>
+                    <td>
+                        <h1>Você foi convidado para a Plataforma de Apps</h1>
+                        <h4>Seu amigo te convidou para participar da plataforma de aplicativos</h4>
+
+                        <p>
+                            Olá {{nome}}, você recebeu um convite para participar da plataforma de aplicativos.
+                        </p>
+                        <p>
+                            Para aceitar o convite, por favor clique no link abaixo:
+                            <a href="{{link_aceitar_convite}}">"link abaixo"</a>
+                        </p>
+                        <p>
+                            Se você não solicitou este convite, por favor ignore este e-mail.
+                        </p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="footer">
+            <small>Este e-mail foi enviado a {{nome}}</small><br>
+            <small>{{mail_sender_status}}</small><br>
+            <a hrefs="{{unsubscrible_link}}">Cancelar Inscrição</a><br>
+            <small>© {{ano}} {{footer_assinatura}}</small>
+            <small>{{footer_message}}</small><br>
+        </div>
+    </div>
+</body>
+
+</html>

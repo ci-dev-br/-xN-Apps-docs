@@ -2,6 +2,8 @@ import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProduces, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { UserService } from "@ci/auth/auth.module";
 import { User } from "@ci/auth/models/user.entity";
+import { SendInvitationPayload } from "../dto/i-send-invitation.payload";
+import { Request } from "express";
 @ApiTags('User')
 @Controller('User')
 export class UserController {
@@ -60,5 +62,20 @@ export class UserController {
         } catch (error) {
             throw error;
         }
+    }
+    /**
+     *  Envia convite para usuário.
+     * @param req 
+     * @param user 
+     * @returns 
+     */
+    @Post('SendInvitation')
+    @ApiOperation({ operationId: 'SendInvitation' })
+    async sendInvitation(
+        @Body() payload: SendInvitationPayload,
+        @Req() req: Request) {
+        // if (!!req.user?.id && req.user?.id === user.id) {
+        return await this.user.sendInvitation(req.user as User);
+        // }
     }
 }
