@@ -8,12 +8,15 @@ import { createHash } from 'crypto';
 import { request } from 'https';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { MailService } from '@ci/notification/services/mail.service';
+import { conviteToMessagePayload } from '../to/a';
 @Injectable()
 export class UserService {
     constructor(
         private readonly dataSource: DataSource,
         @InjectRepository(User)
         private readonly userRepo: Repository<User>,
+        private readonly mailer: MailService,
     ) { }
     async registrar(registro: User) {
         return await this.dataSource.transaction(async (manager) => {
@@ -203,11 +206,23 @@ export class UserService {
         return informacao;
     }
 
-    async sendInvitation(user: User) {
+    async sendInvitation(registro: {
+        email: string,
+        friendlyName: string,
+        mensagem: string,
+    },
+        invitedByUser?: User,
+    ) {
         return await new Promise<void>((res, rej) => {
-            // Implementar envio de convite por e-mail
-            res();
-        }
-        );
+            if (!!registro.email) {
+                this.mailer.requestSendMessageToMail(
+                    conviteToMessagePayload({
+                        ...registro,
+                        invite: 'INVITE-' + createHash('sha256').update(`${Date.now()}${registro.email}`).digest('hex').toString(),
+                    })
+                );
+                res();
+            }
+        });
     }
 }
