@@ -202,4 +202,12 @@ export class UserService {
         }
         return informacao;
     }
+
+    async sendInvitation(user: User) {
+        return await new Promise<void>((res, rej) => {
+            // Implementar envio de convite por e-mail
+            res();
+        }
+        );
+    }
 }

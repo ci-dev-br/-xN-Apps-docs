@@ -75,7 +75,7 @@ import { EditarComponent } from "./editar/editar.component";
      * Enviar convite para novo usuário
      */
     async enviarConvite() {
-        // Abrir dialog para obter email ou número sms para envio de convite
-        
+        this.window.open(await import('./enviar-convite/enviar-convite.component').then(m => m.EnviarConviteComponent),
+            {}, 'Enviar Convite');
     }
 }

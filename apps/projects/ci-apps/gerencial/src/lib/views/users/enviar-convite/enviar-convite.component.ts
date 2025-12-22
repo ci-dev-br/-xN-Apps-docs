@@ -1,7 +1,11 @@
 import { Component } from "@angular/core";
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
+import { MatDialogRef } from "@angular/material/dialog";
 import { MatFormField, MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { UserService } from "@ci/portal-api";
+import { lastValueFrom } from "rxjs";
 
 /**
  *  Componente para enviar convite a novos usuários
@@ -34,10 +38,44 @@ import { MatInputModule } from "@angular/material/input";
         MatFormFieldModule,
         MatInputModule,
         MatButtonModule,
+        FormsModule,
+        ReactiveFormsModule,
     ],
     templateUrl: './enviar-convite.component.html',
     styleUrls: ['./enviar-convite.component.scss'],
 })
 export class EnviarConviteComponent {
-    constructor() { }
+    protected form = this.fb.group({
+        email: ['', [Validators.required, Validators.email]],
+        mensagem: [''],
+        friendlyName: [''],
+    });
+    constructor(
+        private readonly fb: FormBuilder,
+        private readonly users: UserService,
+        private dialogRef: MatDialogRef<EnviarConviteComponent>
+    ) { }
+    /**
+     *  Envia o convite para o e-mail especificado no formulário.
+     */
+    async enviarConvite() {
+        if (this.form.valid) {
+            try {
+                await lastValueFrom(this.users.sendInvitation({
+                    body: {
+                        email: this.form.value.email!,
+                        mensagem: this.form.value.mensagem!,
+                        friendlyName: this.form.value.friendlyName!,
+                    }
+                }));
+                this.form.reset();
+                this.dialogRef.close(true);
+            } catch (error) {
+                this.form.setErrors({ envioFalhou: true });
+                this.form.markAllAsTouched();
+            }
+        } else {
+            this.form.markAllAsTouched();
+        }
+    }
 }

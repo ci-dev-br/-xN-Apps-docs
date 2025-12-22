@@ -1,1 +1,26 @@
-
+<form [formGroup]="form">
+    <p>
+        Insira o endereço de email do usuário que você deseja convidar para a plataforma.
+    </p>
+    <p>
+        Você também pode adicionar uma mensagem personalizada que será incluída no convite.
+    </p>
+    <mat-form-field>
+        <mat-label>Endereço de Email</mat-label>
+        <input matInput placeholder=" Digite o email do usuário" formControlName="email" required>
+        <!--   <mat-error *ngIf="emailControl.invalid && (emailControl.dirty || emailControl.touched)"> -->
+        <!--   <mat-error *ngIf="emailControl.invalid && (emailControl.dirty || emailControl.touched)"> -->
+        <!--   Por favor, insira um endereço de email válido.
+        </mat-error> -->
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Nome do Usuário</mat-label>
+        <input matInput placeholder="Digite o nome do usuário" formControlName="friendlyName" required>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Mensagem Personalizada</mat-label>
+        <textarea matInput placeholder="Digite uma mensagem personalizada (opcional)" formControlName="mensagem"
+            rows="4"></textarea>
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="enviarConvite()">Enviar Convite</button>
+</form>

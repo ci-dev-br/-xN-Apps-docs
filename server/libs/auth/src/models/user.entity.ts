@@ -6,7 +6,7 @@ import { Tenant } from "@ci/tenant/models/tenant.entity";
 // import { Photo } from "@ci/storage/models/photo.entity";
 /**
  *	Usuário Auto-identificado do Sistema
- * */
+ */
 @Entity()
 export class User {
     @ApiProperty({ required: false, nullable: true })
