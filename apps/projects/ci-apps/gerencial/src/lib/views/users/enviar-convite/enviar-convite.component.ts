@@ -4,7 +4,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatDialogRef } from "@angular/material/dialog";
 import { MatFormField, MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { UserService } from "@ci/portal-api";
+import { InviteService, UserService } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 
 /**
@@ -52,7 +52,7 @@ export class EnviarConviteComponent {
     });
     constructor(
         private readonly fb: FormBuilder,
-        private readonly users: UserService,
+        private readonly invites: InviteService,
         private dialogRef: MatDialogRef<EnviarConviteComponent>
     ) { }
     /**
@@ -61,7 +61,7 @@ export class EnviarConviteComponent {
     async enviarConvite() {
         if (this.form.valid) {
             try {
-                await lastValueFrom(this.users.sendInvitation({
+                await lastValueFrom(this.invites.sendInvitation({
                     body: {
                         email: this.form.value.email!,
                         mensagem: this.form.value.mensagem!,

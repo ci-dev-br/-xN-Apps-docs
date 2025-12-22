@@ -1,9 +1,9 @@
 import { SendInvitationPayload } from "@ci/user/dto/i-send-invitation.payload";
 import { Body, Controller, Post, Req } from "@nestjs/common";
-import { ApiOperation } from "@nestjs/swagger";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { InviteService } from "../service/invite.service";
 import { User } from "../models/user.entity";
-
+@ApiTags('Invite')
 @Controller('Invite')
 export class InviteController {
     constructor(
