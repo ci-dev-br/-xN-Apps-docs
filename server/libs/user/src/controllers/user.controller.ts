@@ -74,8 +74,10 @@ export class UserController {
     async sendInvitation(
         @Body() payload: SendInvitationPayload,
         @Req() req: Request) {
-        // if (!!req.user?.id && req.user?.id === user.id) {
-        return await this.user.sendInvitation(req.user as User);
-        // }
+        this.user.sendInvitation({
+            email: payload.email!,
+            friendlyName: payload.friendlyName!,
+            mensagem: payload.mensagem!,
+        }, req.user as User);
     }
 }
