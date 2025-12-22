@@ -33,12 +33,13 @@ export class InviteService {
     },
         invitedByUser?: User,
     ) {
+        let invite = await this.createInvite(registro.email, invitedByUser.id);
         return await new Promise<void>((res, rej) => {
             if (!!registro.email) {
                 this.mailer.requestSendMessageToMail(
                     conviteToMessagePayload({
                         ...registro,
-                        invite: 'INVITE-' + createHash('sha256').update(`${Date.now()}${registro.email}`).digest('hex').toString(),
+                        invite: 'INVITE-' + createHash('sha256').update(`${invite.createdAt}${invite.email}`).digest('hex').toString(),
                     })
                 );
                 res();

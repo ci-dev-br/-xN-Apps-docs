@@ -63,21 +63,4 @@ export class UserController {
             throw error;
         }
     }
-    /**
-     *  Envia convite para usuário.
-     * @param req 
-     * @param user 
-     * @returns 
-     */
-    @Post('SendInvitation')
-    @ApiOperation({ operationId: 'SendInvitation' })
-    async sendInvitation(
-        @Body() payload: SendInvitationPayload,
-        @Req() req: Request) {
-        this.user.sendInvitation({
-            email: payload.email!,
-            friendlyName: payload.friendlyName!,
-            mensagem: payload.mensagem!,
-        }, req.user as User);
-    }
 }
