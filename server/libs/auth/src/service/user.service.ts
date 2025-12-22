@@ -9,7 +9,7 @@ import { request } from 'https';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { MailService } from '@ci/notification/services/mail.service';
-import { conviteToMessagePayload } from '../to/a';
+import { conviteToMessagePayload } from '../functions/convite-to-message-payload';
 @Injectable()
 export class UserService {
     constructor(

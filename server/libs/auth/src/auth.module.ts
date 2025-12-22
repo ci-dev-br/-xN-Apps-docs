@@ -22,6 +22,7 @@ import { NotificacaoModule } from "@ci/notification";
 import { Register } from "./models/register.entity";
 import { RegisterService } from "./service/register.service";
 import { RegisterController } from "./controller/register.controller";
+import { Invite } from "./models/invite.entity";
 //import { StorageModule } from "@ci/storage";
 // import { StorageModule } from "@ci/storage";
 export const AuthEntities = [
@@ -31,6 +32,7 @@ export const AuthEntities = [
     DeviceAuthenticated,
     AccessCredential,
     Register,
+    Invite,
 ];
 @Module({
     imports: [
