@@ -13,9 +13,27 @@
     max-height: 80vh;
 
     overflow: unset;
-    ::ng-deep > * {
+
+    ::ng-deep>* {
         flex: unset;
         min-width: 10px;
         display: contents;
+    }
+}
+
+:host ::ng-deep ci-dyn-form {
+
+    & {
+        display: contents;
+
+    }
+
+    form {
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        >* {
+            flex: 1 1 200px ;
+        }
     }
 }
