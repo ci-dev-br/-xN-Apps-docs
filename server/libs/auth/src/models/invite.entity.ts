@@ -37,7 +37,7 @@ export class Invite extends FullAuditedEntity {
      */
     @ApiProperty({ nullable: true, required: false }) @Column({ nullable: true })
     phoneSMS?: string;
-    /***
+    /**
      * Telefone para envio de WhatsApp.
      */
     @ApiProperty({ nullable: true, required: false }) @Column({ nullable: true })
