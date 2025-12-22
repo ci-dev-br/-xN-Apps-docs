@@ -164,8 +164,11 @@ export class MailService {
                     } catch (error) {
                         console.trace(error);
                     }
-                    if (result?.status_code === 0)
+                    if (result?.code === 0)
                         res(result);
+                    else {
+                        rej(new Error('Falha no envio do e-mail.\n' + (result?.message || '')));
+                    }
                 });
             });
             req.write(JSON.stringify(mail_payload));
