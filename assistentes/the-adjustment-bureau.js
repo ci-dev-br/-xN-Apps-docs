@@ -1,6 +1,7 @@
-const path = require('path');
 const { Assistant } = require('./assistent');
-
+const { spawnSync } = require('child_process');
+const { Git } = require('./git');
+const path = require('path');
 
 /**
  *  * The Adjustment Bureau Assistant
@@ -38,8 +39,7 @@ class TheAdjustmentBureau {
      * prepara o comando para atualizar e atualiza quando a prancheta estiver limpa. 
      */
     async findUpdate() {
-        const { spawnSync } = require('child_process');
-        const { Git } = require('./git');
+
 
         console.log('Checking for updates...');
 
@@ -51,7 +51,10 @@ class TheAdjustmentBureau {
         }
 
         // Executa ng update para verificar atualizações
-        const ngUpdateCheck = spawnSync('ng', ['update'], { encoding: 'utf-8', cwd: path(__dirname, '..', 'apps') });
+        const ngUpdateCheck = spawnSync('ng', ['update'], {
+            encoding: 'utf-8',
+            cwd: path(__dirname, '..', 'apps')
+        });
 
         if (ngUpdateCheck.error) {
             console.error('Error running ng update:', ngUpdateCheck.error);
@@ -76,7 +79,10 @@ class TheAdjustmentBureau {
                 if (decision.toLowerCase().includes('yes')) {
                     console.log(`Applying update: ${update}`);
                     const packageName = update.split(' ')[2]; // Extrai o nome do pacote
-                    const ngUpdateApply = spawnSync('ng', ['update', packageName, '--allow-dirty', '--force'], { encoding: 'utf-8', cwd: path(__dirname, '..', 'apps') });
+                    const ngUpdateApply = spawnSync('ng', ['update', packageName, '--allow-dirty', '--force'], {
+                        encoding: 'utf-8',
+                        cwd: path(__dirname, '..', 'apps')
+                    });
 
                     if (ngUpdateApply.error) {
                         console.error(`Error applying update ${packageName}:`, ngUpdateApply.error);
