@@ -1,3 +1,6 @@
+const { config } = require("dotenv");
+
+config('.env');
 
 class Assistant {
     async gpt(prompt) {
