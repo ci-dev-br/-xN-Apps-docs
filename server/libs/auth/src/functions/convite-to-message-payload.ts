@@ -15,7 +15,7 @@ export const conviteToMessagePayload = (registro: {
     return {
         template_html: templateHtml('convite-plataforma-template', {
             nome: registro.friendlyName,
-            link_aceitar_convite: 'https://apps.ci.dev.br/registro/' + registro.invite,
+            link_aceitar_convite: 'https://apps.ci.dev.br/registrar/' + registro.invite,
             logo_base64: '',
             ano: (new Date()).getFullYear(),
             footer_assinatura: 'ci.dev.br',
