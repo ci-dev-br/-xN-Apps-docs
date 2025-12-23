@@ -50,7 +50,7 @@ class TheAdjustmentBureau {
         }
 
         // Executa ng update para verificar atualizações
-        const ngUpdateCheck = spawnSync('ng', ['update'], { encoding: 'utf-8', cwd: process.cwd() });
+        const ngUpdateCheck = spawnSync('ng', ['update'], { encoding: 'utf-8', cwd: path(__dirname, '..', 'apps') });
 
         if (ngUpdateCheck.error) {
             console.error('Error running ng update:', ngUpdateCheck.error);
@@ -75,7 +75,7 @@ class TheAdjustmentBureau {
                 if (decision.toLowerCase().includes('yes')) {
                     console.log(`Applying update: ${update}`);
                     const packageName = update.split(' ')[2]; // Extrai o nome do pacote
-                    const ngUpdateApply = spawnSync('ng', ['update', packageName, '--allow-dirty', '--force'], { encoding: 'utf-8' });
+                    const ngUpdateApply = spawnSync('ng', ['update', packageName, '--allow-dirty', '--force'], { encoding: 'utf-8', cwd: path(__dirname, '..', 'apps') });
 
                     if (ngUpdateApply.error) {
                         console.error(`Error applying update ${packageName}:`, ngUpdateApply.error);
