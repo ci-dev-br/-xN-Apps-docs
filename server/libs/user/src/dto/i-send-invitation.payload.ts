@@ -3,7 +3,7 @@ import { ApiProperty } from "@nestjs/swagger";
 /**
  * Payload para envio de convite de novo usuário.
  */
-export class SendInvitationPayload {
+export class InvitationPayload {
     /**
      * E-mail do usuário a ser convidado.
      */
@@ -19,4 +19,9 @@ export class SendInvitationPayload {
      */
     @ApiProperty({ required: false, title: 'Mensagem adicional no convite' })
     mensagem?: string;
+    /**
+     *  
+     */
+    @ApiProperty({ required: false, title: 'Convite' })
+    convite?: string;
 }

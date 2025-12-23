@@ -13,6 +13,7 @@ export { DeviceService } from './services/device.service';
 export { MessageService } from './services/message.service';
 export { AuthService } from './services/auth.service';
 export { RegisterService } from './services/register.service';
+export { InviteService } from './services/invite.service';
 export { ApplicationService } from './services/application.service';
 export { DomainService } from './services/domain.service';
 export { ContactsService } from './services/contacts.service';

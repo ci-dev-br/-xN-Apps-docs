@@ -28,4 +28,4 @@ export function sendInvitation(http: HttpClient, rootUrl: string, params: SendIn
   );
 }
 
-sendInvitation.PATH = '/User/SendInvitation';
+sendInvitation.PATH = '/Invite/SendInvitation';

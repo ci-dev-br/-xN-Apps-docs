@@ -11,8 +11,6 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { getListUser } from '../fn/user/get-list-user';
 import { GetListUser$Params } from '../fn/user/get-list-user';
-import { sendInvitation } from '../fn/user/send-invitation';
-import { SendInvitation$Params } from '../fn/user/send-invitation';
 import { syncUser } from '../fn/user/sync-user';
 import { SyncUser$Params } from '../fn/user/sync-user';
 import { User } from '../models/user';
@@ -70,31 +68,6 @@ export class UserService extends BaseService {
   getList(params?: GetListUser$Params, context?: HttpContext): Observable<Array<User>> {
     return this.getListUser$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<User>>): Array<User> => r.body)
-    );
-  }
-
-  /** Path part for operation `sendInvitation()` */
-  static readonly SendInvitationPath = '/User/SendInvitation';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `sendInvitation()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  sendInvitation$Response(params: SendInvitation$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return sendInvitation(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `sendInvitation$Response()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  sendInvitation(params: SendInvitation$Params, context?: HttpContext): Observable<void> {
-    return this.sendInvitation$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 

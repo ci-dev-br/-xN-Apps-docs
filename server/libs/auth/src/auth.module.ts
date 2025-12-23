@@ -22,15 +22,16 @@ import { NotificacaoModule } from "@ci/notification";
 import { Register } from "./models/register.entity";
 import { RegisterService } from "./service/register.service";
 import { RegisterController } from "./controller/register.controller";
-//import { StorageModule } from "@ci/storage";
-// import { StorageModule } from "@ci/storage";
+import { Invite } from "./models/invite.entity";
+import { InviteService } from "./service/invite.service";
+import { InviteController } from "./controller/invite.controller";
 export const AuthEntities = [
     Policy,
     User,
-    // Credential,
     DeviceAuthenticated,
     AccessCredential,
     Register,
+    Invite,
 ];
 @Module({
     imports: [
@@ -40,18 +41,20 @@ export const AuthEntities = [
         JwtModule.register({
             global: true,
             secret: jwtConstants.secret,
-            signOptions: { expiresIn: '60s' },
+            signOptions: {
+                expiresIn: '60s'
+            },
         }),
         // forwardRef(() => StorageModule),
         TenantModule,
         CoreModule,
         NotificacaoModule,
-
         // StorageModule,
     ],
     controllers: [
         AuthController,
         RegisterController,
+        InviteController,
     ],
     providers: [
         UserService,
@@ -65,6 +68,7 @@ export const AuthEntities = [
             provide: APP_GUARD,
             useClass: AuthGuard,
         },
+        InviteService,
     ],
     exports: [
         UserService,
@@ -77,4 +81,5 @@ export {
     UserService,
     CredencialService,
     AuthService,
+    InviteService,
 }

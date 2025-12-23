@@ -135,7 +135,7 @@ export class MailService {
         from_person?: Pessoa,
         need_feedback?: boolean,
     }) {
-        return new Promise<void>((res, rej) => {
+        return new Promise<void>((resulte, reject) => {
             const x_hash = hashMailer(message.to);
             const mail_payload = {
                 x_hash,
@@ -164,8 +164,11 @@ export class MailService {
                     } catch (error) {
                         console.trace(error);
                     }
-                    if (result?.status_code === 0)
-                        res(result);
+                    if (result?.code === 0)
+                        resulte(result);
+                    else {
+                        reject(new Error('Falha no envio do e-mail.\n' + (result?.message || '')));
+                    }
                 });
             });
             req.write(JSON.stringify(mail_payload));

@@ -1,5 +1,10 @@
 import { templateHtml } from "@ci/core/template/load-template.fn";
 
+/**
+ * Converte os dados de convite em um payload para envio de mensagem.
+ * @param registro 
+ * @returns 
+ */
 export const conviteToMessagePayload = (registro: {
     email: string,
     friendlyName: string,

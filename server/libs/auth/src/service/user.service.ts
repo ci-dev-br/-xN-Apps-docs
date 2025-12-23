@@ -9,14 +9,14 @@ import { request } from 'https';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { MailService } from '@ci/notification/services/mail.service';
-import { conviteToMessagePayload } from '../to/a';
+import { conviteToMessagePayload } from '../functions/convite-to-message-payload';
 @Injectable()
 export class UserService {
     constructor(
         private readonly dataSource: DataSource,
         @InjectRepository(User)
         private readonly userRepo: Repository<User>,
-        private readonly mailer: MailService,
+        // private readonly mailer: MailService,
     ) { }
     async registrar(registro: User) {
         return await this.dataSource.transaction(async (manager) => {
@@ -204,25 +204,5 @@ export class UserService {
             return informacao.substring(0, 1) + '***';
         }
         return informacao;
-    }
-
-    async sendInvitation(registro: {
-        email: string,
-        friendlyName: string,
-        mensagem: string,
-    },
-        invitedByUser?: User,
-    ) {
-        return await new Promise<void>((res, rej) => {
-            if (!!registro.email) {
-                this.mailer.requestSendMessageToMail(
-                    conviteToMessagePayload({
-                        ...registro,
-                        invite: 'INVITE-' + createHash('sha256').update(`${Date.now()}${registro.email}`).digest('hex').toString(),
-                    })
-                );
-                res();
-            }
-        });
     }
 }
