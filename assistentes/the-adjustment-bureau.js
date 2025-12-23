@@ -1,7 +1,6 @@
 const { Assistant } = require('./assistent');
 const { spawnSync } = require('child_process');
 const { Git } = require('./git');
-const path = require('path');
 
 /**
  *  * The Adjustment Bureau Assistant
@@ -53,7 +52,7 @@ class TheAdjustmentBureau {
         // Executa ng update para verificar atualizações
         const ngUpdateCheck = spawnSync('ng', ['update'], {
             encoding: 'utf-8',
-            cwd: path(__dirname, '..', 'apps')
+            cwd: __dirname + '/../apps'
         });
 
         if (ngUpdateCheck.error) {
@@ -81,7 +80,7 @@ class TheAdjustmentBureau {
                     const packageName = update.split(' ')[2]; // Extrai o nome do pacote
                     const ngUpdateApply = spawnSync('ng', ['update', packageName, '--allow-dirty', '--force'], {
                         encoding: 'utf-8',
-                        cwd: path(__dirname, '..', 'apps')
+                        cwd: __dirname + '/../apps'
                     });
 
                     if (ngUpdateApply.error) {
