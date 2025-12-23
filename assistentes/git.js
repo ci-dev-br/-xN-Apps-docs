@@ -98,5 +98,4 @@ class Git {
         });
     }
 }
-
-module.exports = Git;       
+exports.Git = Git;
