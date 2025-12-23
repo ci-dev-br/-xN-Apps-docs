@@ -50,7 +50,7 @@ class TheAdjustmentBureau {
         }
 
         // Executa ng update para verificar atualizações
-        const ngUpdateCheck = spawnSync('ng', ['update'], { encoding: 'utf-8' });
+        const ngUpdateCheck = spawnSync('ng', ['update'], { encoding: 'utf-8', cwd: process.cwd() });
 
         if (ngUpdateCheck.error) {
             console.error('Error running ng update:', ngUpdateCheck.error);
