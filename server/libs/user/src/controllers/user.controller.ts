@@ -2,7 +2,7 @@ import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProduces, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { UserService } from "@ci/auth/auth.module";
 import { User } from "@ci/auth/models/user.entity";
-import { SendInvitationPayload } from "../dto/i-send-invitation.payload";
+import { InvitationPayload } from "../dto/i-send-invitation.payload";
 import { Request } from "express";
 @ApiTags('User')
 @Controller('User')
