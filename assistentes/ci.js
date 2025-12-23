@@ -13,7 +13,11 @@ let theAdjustmentBureau = new TheAdjustmentBureau();
  * práticas.
  */
 let Try = async () => {
-    await theAdjustmentBureau.findUpdate();
+    try {
+        await theAdjustmentBureau.findUpdate();
+    } catch (error) {
+
+    }
     setTimeout(() => {
         Try()
     }, 10000);

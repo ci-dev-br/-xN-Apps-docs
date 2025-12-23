@@ -50,7 +50,7 @@ class TheAdjustmentBureau {
         }
 
         // Executa ng update para verificar atualizações
-        const ngUpdateCheck = spawnSync('ng', ['update'], {
+        const ngUpdateCheck = spawnSync('node', ['/node_modules/@angular/cli/bin/ng.js', 'update'], {
             encoding: 'utf-8',
             cwd: __dirname + '/../apps'
         });
@@ -78,7 +78,7 @@ class TheAdjustmentBureau {
                 if (decision.toLowerCase().includes('yes')) {
                     console.log(`Applying update: ${update}`);
                     const packageName = update.split(' ')[2]; // Extrai o nome do pacote
-                    const ngUpdateApply = spawnSync('ng', ['update', packageName, '--allow-dirty', '--force'], {
+                    const ngUpdateApply = spawnSync('node', ['/node_modules/@angular/cli/bin/ng.js', 'update', packageName, '--allow-dirty', '--force'], {
                         encoding: 'utf-8',
                         cwd: __dirname + '/../apps'
                     });
