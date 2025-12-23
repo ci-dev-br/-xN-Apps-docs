@@ -24,3 +24,5 @@ class Assistant {
         });
     }
 }
+
+exports.Assistant = Assistant;
