@@ -1,6 +1,5 @@
 <div class="game-container">
   <h2>Turno: <span [style.color]="turn">{{ turn | uppercase }}</span></h2>
-
   <div class="board">
     <div 
       *ngFor="let cell of board" 
@@ -12,6 +11,5 @@
       <div *ngIf="cell.piece" class="piece" [class]="cell.piece"></div>
     </div>
   </div>
-
   <button (click)="initBoard()">Reiniciar Jogo</button>
 </div>

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 @Component({
     selector: 'app-checkers',
     standalone: true,
@@ -12,11 +11,9 @@ export class DamasComponent implements OnInit {
     board: any[] = [];
     selectedCell: any = null;
     turn: 'red' | 'black' = 'red';
-
     ngOnInit() {
         this.initBoard();
     }
-
     initBoard() {
         this.board = [];
         for (let r = 0; r < 8; r++) {
@@ -30,14 +27,12 @@ export class DamasComponent implements OnInit {
             }
         }
     }
-
     selectCell(cell: any) {
         // Selecionar peça do jogador atual
         if (cell.piece === this.turn) {
             this.selectedCell = cell;
             return;
         }
-
         // Tentar mover se uma peça estiver selecionada
         if (this.selectedCell && !cell.piece && (cell.row + cell.col) % 2 !== 0) {
             if (this.isValidMove(this.selectedCell, cell)) {
@@ -45,11 +40,9 @@ export class DamasComponent implements OnInit {
             }
         }
     }
-
     isValidMove(from: any, to: any): boolean {
         const rowDiff = to.row - from.row;
         const colDiff = Math.abs(to.col - from.col);
-
         // Movimento simples (1 casa)
         if (Math.abs(rowDiff) === 1 && colDiff === 1) {
             // Regra de direção (Damas simples não voltam, exceto reis)
@@ -57,23 +50,19 @@ export class DamasComponent implements OnInit {
             if (from.piece === 'black' && rowDiff < 0) return false;
             return true;
         }
-
         // Lógica de Captura (2 casas) - Simplificada
         if (Math.abs(rowDiff) === 2 && colDiff === 2) {
             const midRow = (from.row + to.row) / 2;
             const midCol = (from.col + to.col) / 2;
             const opponent = from.piece === 'red' ? 'black' : 'red';
             const midCell = this.board.find(c => c.row === midRow && c.col === midCol);
-
             if (midCell && midCell.piece === opponent) {
                 midCell.piece = null; // Remove a peça capturada
                 return true;
             }
         }
-
         return false;
     }
-
     movePiece(from: any, to: any) {
         to.piece = from.piece;
         from.piece = null;
