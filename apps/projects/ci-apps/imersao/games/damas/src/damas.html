@@ -1,0 +1,17 @@
+<div class="game-container">
+  <h2>Turno: <span [style.color]="turn">{{ turn | uppercase }}</span></h2>
+
+  <div class="board">
+    <div 
+      *ngFor="let cell of board" 
+      class="cell" 
+      [class.dark]="(cell.row + cell.col) % 2 !== 0"
+      [class.selected]="selectedCell === cell"
+      (click)="selectCell(cell)">
+      
+      <div *ngIf="cell.piece" class="piece" [class]="cell.piece"></div>
+    </div>
+  </div>
+
+  <button (click)="initBoard()">Reiniciar Jogo</button>
+</div>
