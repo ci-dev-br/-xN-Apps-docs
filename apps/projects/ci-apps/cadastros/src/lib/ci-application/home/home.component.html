@@ -1,4 +1,7 @@
 <nav mat-tab-nav-bar [tabPanel]="tabPanel">
+    <button mat-icon-button (click)="menus.opened.next(!menus.opened.value)">
+        <mat-icon>{{menus.opened.value ? 'close' : 'menu'}}</mat-icon>
+    </button>
     @if(abas){
     @for (aba of abas; track aba) {
     <a mat-tab-link [routerLink]="'./' + aba.path">
@@ -8,12 +11,7 @@
         {{aba.label}}</a>
     }
     }
-    <!--  <a mat-tab-link disabled>Disabled Link</a> -->
 </nav>
-<!-- <div class="cadastros">
-    <div class="cadastro-thumnail">
-    </div>
-</div> -->
 <mat-tab-nav-panel #tabPanel>
     <router-outlet></router-outlet>
 </mat-tab-nav-panel>

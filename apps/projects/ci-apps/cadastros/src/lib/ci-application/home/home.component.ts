@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { WindowService } from '@ci/components';
 import { CoreModule } from '@ci/core';
+import { MenuService } from '../../menu-servive';
 
 @Component({
   selector: 'ci-home',
@@ -14,6 +14,7 @@ import { CoreModule } from '@ci/core';
     RouterModule,
     MatTabsModule,
     MatIconModule,
+    MatButtonModule,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
@@ -22,8 +23,7 @@ export class HomeComponent {
   abas?: { label: string, path: string, icon: string }[];
   constructor(
     private readonly route: ActivatedRoute,
-    // private readonly dialog: MatDialog,
-    // private readonly janela: WindowService,
+    public readonly menus: MenuService,
   ) {
 
     this.abas = route.routeConfig?.children?.map(r => {
