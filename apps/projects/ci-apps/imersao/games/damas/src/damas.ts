@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 @Component({
-    selector: 'app-checkers',
+    selector: 'ci-damas',
     standalone: true,
     imports: [CommonModule],
     templateUrl: './damas.html',
