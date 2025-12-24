@@ -14,12 +14,12 @@ import { DamasComponent } from "@ci/apps/imersao/damas";
 export class DamasCard {
 }
 export const DamasPayoutCardInfo = {
-    title: 'DamasPayout',
+    title: 'Damas',
     descricao: `Jogo de Damas`,
-    tags: ['CRM', 'Receita', 'List'],
+    tags: ['Game'],
     componentRef: DamasCard,
     componentVersion: '1.0.0',
-    componentName: 'DamasPayoutComponent',
+    componentName: 'Damas',
     settings: {
 
     }
