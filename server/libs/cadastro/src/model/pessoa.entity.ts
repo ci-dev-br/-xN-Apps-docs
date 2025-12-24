@@ -4,14 +4,11 @@ import {
     Entity,
     JoinTable,
     ManyToMany,
-    ManyToOne,
     OneToMany
 } from "typeorm";
 import { Endereco } from "./endereco.entity";
 import {
-    ApiExtraModels,
     ApiProperty,
-    ApiTags
 } from "@nestjs/swagger";
 import { InformacaoContato } from "./informacao-contato.entity";
 import { DocumentoIdentificacao } from "./documento-identificacao.entity";
