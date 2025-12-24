@@ -157,8 +157,7 @@ export class Pessoa extends FullAuditedEntity {
         title: t`Típo de Representação Jurídica`,
         nullable: true,
         required: false,
-        enum: ['F',
-            'J']
+        enum: ['F', 'J']
     })
     @Column({
         nullable: true,
