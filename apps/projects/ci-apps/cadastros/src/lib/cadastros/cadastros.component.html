@@ -1,5 +1,6 @@
 <mat-drawer-container class="container">
-    <mat-drawer [mode]="!(isSmallScreen | async)?.matches ? 'side' : 'over'" opened auto-scroll="vertical">
+    <mat-drawer [mode]="!(isSmallScreen | async)?.matches ? 'side' : 'over'" [opened]="menus.opened | async"
+        auto-scroll="vertical">
         <div class="menu">
             <ng-container *ngFor="let item of menu">
                 <button mat-menu-item (click)="abrirItemMenu(item.path ||'')">

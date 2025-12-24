@@ -11,6 +11,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { ActivatedRoute, Route, Router, RouterModule } from '@angular/router';
 import { BreakpointObserver, BreakpointState, LayoutModule } from '@angular/cdk/layout';
 import { MatMenuModule } from '@angular/material/menu';
+import { MenuService } from '../menu-servive';
 
 const IS_SMALL = '(max-width: 599px)';
 interface IMenuItem {
@@ -46,6 +47,8 @@ export class CadastrosComponent implements OnInit {
     private readonly router: Router,
     private readonly cadastro: CadastroService,
     breakpointObserver: BreakpointObserver,
+    public readonly menus: MenuService,
+
   ) {
     this.montarMenu();
     breakpointObserver.observe(IS_SMALL).subscribe(v => this.isSmallScreen.next(v));
