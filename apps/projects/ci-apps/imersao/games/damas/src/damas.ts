@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
     styleUrls: ['./damas.scss']
 })
 export class DamasComponent implements OnInit {
+    stage: 'init' | 'game' = 'init'
     board: any[] = [];
     selectedCell: any = null;
     turn: 'red' | 'black' = 'red';
@@ -26,6 +27,7 @@ export class DamasComponent implements OnInit {
                 this.board.push({ row: r, col: c, piece, isKing: false });
             }
         }
+        this.stage = 'game';
     }
     selectCell(cell: any) {
         // Selecionar peça do jogador atual
