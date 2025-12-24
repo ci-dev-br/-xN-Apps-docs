@@ -1105,6 +1105,11 @@
     "@types/connect" "*"
     "@types/node" "*"
 
+"@types/chess.js@^0.13.7":
+  version "0.13.7"
+  resolved "https://registry.npmjs.org/@types/chess.js/-/chess.js-0.13.7.tgz"
+  integrity sha512-o9TeeBdFXelFJXOD9+6sT6bbpBvWG0ZbpOnlIyUNXBjewh7xoFS0+BifGc71T45D5E952io3i8dDsaN6hnLaxw==
+
 "@types/connect@*":
   version "3.4.38"
   resolved "https://npm.plhx.com.br:4873/@types/connect/-/connect-3.4.38.tgz"
@@ -1538,6 +1543,11 @@ chardet@^2.1.1:
   version "2.1.1"
   resolved "https://registry.npmjs.org/chardet/-/chardet-2.1.1.tgz"
   integrity sha512-PsezH1rqdV9VvyNhxxOW32/d75r01NY7TQCmOqomRo15ZSOKbpTFVsfjghxo6JloQUCGnH4k1LGu0R4yCLlWQQ==
+
+chess.js@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/chess.js/-/chess.js-1.4.0.tgz"
+  integrity sha512-BBJgrrtKQOzFLonR0l+k64A98NLemPwNsCskwb+29bRwobUa4iTm51E1kwGPbWXAcfdDa18nad6vpPPKPWarqw==
 
 chokidar@^3.5.1:
   version "3.6.0"

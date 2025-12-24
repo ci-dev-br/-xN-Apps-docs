@@ -1,0 +1,15 @@
+<div class="chess-container">
+    <div class="board">
+        <div *ngFor="let row of board; let i = index" class="row">
+            <div *ngFor="let cell of row; let j = index" class="square" [ngClass]="(i + j) % 2 === 0 ? 'light' : 'dark'"
+                [class.selected]="selectedSquare === getCoords(i, j)" (click)="onSquareClick(i, j)">
+                <span *ngIf="cell" class="piece" [ngClass]="cell.color">
+                    {{ getPieceSymbol(cell) }}
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="status">
+        Vez do jogador: {{ game.turn() === 'w' ? 'Brancas' : 'Pretas' }}
+    </div>
+</div>
