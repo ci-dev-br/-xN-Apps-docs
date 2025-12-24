@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
-export interface SendInvitationPayload {
+export interface InvitationPayload {
+  convite?: string;
   email?: string;
   friendlyName?: string;
   mensagem?: string;

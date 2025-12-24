@@ -36,7 +36,7 @@ export class PesquisarContatoComponent {
   ) { }
   async search() {
   }
-  @HostListener('keydown.enter', ['$event'])
+  @HostListener('keydown.enter')
   async keyDownEnterHandler() {
     this.ref?.close(this.form);
   }

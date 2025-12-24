@@ -1,6 +1,6 @@
 const { Assistant } = require('./assistent');
-
-
+const { spawnSync } = require('child_process');
+const { Git } = require('./git');
 /**
  *  * The Adjustment Bureau Assistant
  *
@@ -31,11 +31,61 @@ class TheAdjustmentBureau {
     constructor() {
         this.assistent = new Assistant();
     }
-
+    /**
+     * Verifica se existe atualização existente a partir de `ng update`
+     * prepara o comando para atualizar e atualiza quando a prancheta estiver limpa. 
+     */
     async findUpdate() {
-
+        console.log('Checking for updates...');
+        // Verifica se há alterações não commitadas
+        const isUpToDate = await Git.isUpToDate();
+        if (!isUpToDate) {
+            console.error('There are uncommitted changes. Please commit or stash them before updating.');
+            return;
+        }
+        // Executa ng update para verificar atualizações
+        const ngUpdateCheck = spawnSync('node', ['./node_modules/@angular/cli/bin/ng.js', 'update'], {
+            encoding: 'utf-8',
+            cwd: __dirname + '/../apps'
+        });
+        if (ngUpdateCheck.error) {
+            console.error('Error running ng update:', ngUpdateCheck.error);
+            return;
+        }
+        const output = ngUpdateCheck.stdout + ngUpdateCheck.stderr;
+        console.log('ng update output:', output);
+        // Analisa a saída para encontrar atualizações disponíveis
+        const updates = output.match(/ng update (@angular\/\w+(?:-\w+)*)(?:@(\d+\.\d+\.\d+))?/g);
+        if (updates && updates.length > 0) {
+            console.log('Updates found:');
+            for (const update of updates) {
+                console.log(`- ${update}`);
+                // Pergunta ao assistente se deve aplicar a atualização
+                const prompt = `Should I apply the following Angular update: "${update}"? Provide a concise "yes" or "no" answer, followed by a brief explanation if "yes".`;
+                const decision = await this.assistent.gpt(prompt);
+                console.log(`Assistant's decision for "${update}": ${decision}`);
+                if (decision.toLowerCase().includes('yes')) {
+                    console.log(`Applying update: ${update}`);
+                    const packageName = update.split(' ')[2]; // Extrai o nome do pacote
+                    const ngUpdateApply = spawnSync('node', ['./node_modules/@angular/cli/bin/ng.js', 'update', packageName, '--allow-dirty', '--force'], {
+                        encoding: 'utf-8',
+                        cwd: __dirname + '/../apps'
+                    });
+                    if (ngUpdateApply.error) {
+                        console.error(`Error applying update ${packageName}:`, ngUpdateApply.error);
+                    } else {
+                        console.log(`Update ${packageName} applied successfully.`);
+                        // Commita a atualização
+                        const commitMessage = `Update ${packageName}`;
+                        await Git.addAll();
+                        await Git.commit(commitMessage);
+                        await Git.push();
+                    }
+                }
+            }
+        } else {
+            console.log('No updates found.');
+        }
     }
 }
-
-
-// await assistent.gpt()
+exports.TheAdjustmentBureau = TheAdjustmentBureau;
