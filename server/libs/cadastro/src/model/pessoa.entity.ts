@@ -59,7 +59,8 @@ export class Pessoa extends FullAuditedEntity {
      */
     @ApiProperty({
         nullable: true,
-        required: false
+        required: false,
+        title: 'Razão Social',
     })
     @Column({
         length: 120,
@@ -71,7 +72,8 @@ export class Pessoa extends FullAuditedEntity {
      */
     @ApiProperty({
         nullable: true,
-        required: false
+        required: false,
+        title: 'Nome Fantasia',
     })
     @Column({
         length: 120,
@@ -84,6 +86,8 @@ export class Pessoa extends FullAuditedEntity {
     @ApiProperty({
         nullable: true,
         required: false,
+        title: 'Registro Geral',
+        description: 'Registro Geral em Caso de Pessoa Física registrada em território Brasileiro de acordo com a Constituição Federal. Obrigatório em casos de recolhimentos automatizados de documentos juntos ao estado. Sendo opcional para casos de alimentação manual de base. Esse documento se torna obrigatório em caso de automações junto ao estado em nome do próprio requerente. Sendo obrigatório a autorização direta do uso de seus dados. Com cancelamento ativo por parte do sistema em contato direto com o solicitante. '
     })
     @Column({
         comment: t`Registro Geral`,
@@ -91,7 +95,9 @@ export class Pessoa extends FullAuditedEntity {
     })
     registroGeralRepublicaBrasileira?: string;
     @ApiProperty({
-        title: t`RG Ógão Emissor`
+        title: t`RG Ógão Emissor`,
+        nullable: true,
+        required: false
     })
     @Column({
         comment: t`Registro Geral Órgão Emissor`,
@@ -102,16 +108,20 @@ export class Pessoa extends FullAuditedEntity {
         title: t`E-mail pessoal`,
         nullable: true,
         required: false,
+        format: 'email'
     })
     @Column({
         nullable: true,
         length: 512
     })
     emailPessoal?: string;
+    /** 
+     * Nome da empresa vinculada
+     */
     @ApiProperty({
         title: t`Empresa`,
         required: false,
-        nullable: true
+        nullable: true,
     })
     @Column({
         nullable: true,
@@ -119,7 +129,7 @@ export class Pessoa extends FullAuditedEntity {
     })
     empresa?: string;
     /**
-     * 
+     * Informação de Endereço
      */
     @ApiProperty({
         title: t`Endereço`,
@@ -131,13 +141,22 @@ export class Pessoa extends FullAuditedEntity {
     @ManyToMany(() => Endereco)
     @JoinTable()
     endereco?: Endereco[];
+    /**
+     * Informação de Contato
+     */
     @ApiProperty({
         nullable: true,
         required: false,
+        title: t`Informações de Contato`,
+        type: InformacaoContato,
+        isArray: true,
     })
     @ManyToMany(() => InformacaoContato)
     @JoinTable()
     informacoesContato?: InformacaoContato[];
+    /**
+     * Site
+     */
     @ApiProperty({
         title: 'Website Institucional ou Portfólio',
         nullable: true,
@@ -151,7 +170,8 @@ export class Pessoa extends FullAuditedEntity {
     @ApiProperty({
         title: t`Típo de Representação Jurídica`,
         nullable: true,
-        required: false
+        required: false,
+        enum: ['F', 'J']
     })
     @Column({
         nullable: true,
@@ -161,17 +181,16 @@ export class Pessoa extends FullAuditedEntity {
     })
     tipoJuridico?: string;
     /**
-     * 
+     * Documentos de identificação
      */
     @ApiProperty({
-        title: '',
+        title: 'Documentos de Identificação',
         nullable: true,
         required: false,
         type: DocumentoIdentificacao,
         isArray: true,
     })
-    @OneToMany(() => DocumentoIdentificacao,
-        documento => documento.pessoa)
+    @OneToMany(() => DocumentoIdentificacao, documento => documento.pessoa)
     @JoinTable()
     documentos?: DocumentoIdentificacao[];
 }
