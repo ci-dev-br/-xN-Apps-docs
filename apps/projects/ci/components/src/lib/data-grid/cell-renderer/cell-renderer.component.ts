@@ -13,10 +13,10 @@ import { IColumnOption } from "../../models/i-column-options";
 @Component({
     selector: 'px-cell-renderer',
     template: `
-    <ng-container *ngIf="column && !column?.component">
+    <ng-container *ngIf="column && !column.component">
        {{value}}
     </ng-container>
-    <ng-container *ngIf="column && !!column?.component">
+    <ng-container *ngIf="column && !!column.component">
         <ng-template #teste>
             {{value}}
         </ng-template>

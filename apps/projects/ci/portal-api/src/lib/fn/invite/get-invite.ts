@@ -8,12 +8,12 @@ import { RequestBuilder } from '../../request-builder';
 
 import { InvitationPayload } from '../../models/invitation-payload';
 
-export interface SendInvitation$Params {
+export interface GetInvite$Params {
       body: InvitationPayload
 }
 
-export function sendInvitation(http: HttpClient, rootUrl: string, params: SendInvitation$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, sendInvitation.PATH, 'post');
+export function getInvite(http: HttpClient, rootUrl: string, params: GetInvite$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, getInvite.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -28,4 +28,4 @@ export function sendInvitation(http: HttpClient, rootUrl: string, params: SendIn
   );
 }
 
-sendInvitation.PATH = '/Invite/SendInvitation';
+getInvite.PATH = '/Invite/GetInvite';
