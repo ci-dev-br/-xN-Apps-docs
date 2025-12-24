@@ -59,7 +59,8 @@ export class Pessoa extends FullAuditedEntity {
      */
     @ApiProperty({
         nullable: true,
-        required: false
+        required: false,
+        title: 'Razão Social',
     })
     @Column({
         length: 120,
@@ -71,7 +72,8 @@ export class Pessoa extends FullAuditedEntity {
      */
     @ApiProperty({
         nullable: true,
-        required: false
+        required: false,
+        title: 'Nome Fantasia',
     })
     @Column({
         length: 120,
@@ -134,6 +136,9 @@ export class Pessoa extends FullAuditedEntity {
     @ApiProperty({
         nullable: true,
         required: false,
+        title: t`Informações de Contato`,
+        type: InformacaoContato,
+        isArray: true,
     })
     @ManyToMany(() => InformacaoContato)
     @JoinTable()
@@ -151,7 +156,9 @@ export class Pessoa extends FullAuditedEntity {
     @ApiProperty({
         title: t`Típo de Representação Jurídica`,
         nullable: true,
-        required: false
+        required: false,
+        enum: ['F',
+            'J']
     })
     @Column({
         nullable: true,
