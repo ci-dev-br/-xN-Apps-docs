@@ -6,4 +6,5 @@ export * from './receita-anual.component';
 export * from './statistics.component';
 export * from './totalizador.component';
 export * from './damas.component';
+export * from './chess.component';
 

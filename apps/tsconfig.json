@@ -132,6 +132,9 @@
       "@ci/apps/imersao/damas": [
         "./projects/ci-apps/imersao/games/damas/public-api"
       ],
+      "@ci/apps/imersao/chess": [
+        "./projects/ci-apps/imersao/games/chess/public-api"
+      ],
     },
     "outDir": "./dist/out-tsc",
     "strict": true,
