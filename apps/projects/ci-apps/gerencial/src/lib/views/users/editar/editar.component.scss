@@ -1,17 +1,13 @@
 :host {
     display: flex;
     flex-direction: row;
-
     align-items: flex-start;
     justify-content: center;
-
     gap: 12px;
-
     padding: 12px;
     flex-wrap: wrap;
     max-width: 80vw;
     max-height: 80vh;
-
     overflow: unset;
 
     ::ng-deep>* {
@@ -22,10 +18,8 @@
 }
 
 :host ::ng-deep ci-dyn-form {
-
     & {
         display: contents;
-
     }
 
     form {
@@ -33,7 +27,7 @@
         flex-wrap: wrap;
 
         >* {
-            flex: 1 1 200px ;
+            flex: 1 1 200px;
         }
     }
 }
