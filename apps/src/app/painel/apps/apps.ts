@@ -16,7 +16,7 @@ export interface IApp extends Application {
 /**
  * Pre-loaded apps available in the painel
  */
-export const APPS: IApp[] = [
+export const CI_STATIC_APPS: IApp[] = [
     {
         categoria: 'System',
         description: 'Explorar arquivos do sistema.',

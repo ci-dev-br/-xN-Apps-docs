@@ -9,7 +9,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { APPS, IApp } from './apps/apps';
+import { CI_STATIC_APPS, IApp } from './apps/apps';
 import { AuthModule, USER_MENU, UserService } from '@ci/auth';
 import { LogoComponent, IconModule, IItemMenu } from '@ci/components';
 @Component({
@@ -84,7 +84,7 @@ export class PainelComponent implements OnInit {
     });
     this.userService.user.subscribe(user => {
       if (!!user) {
-        this.apps = APPS.filter(app => !!app.roles?.find(role => !!user.roles?.find(r => r === role)))
+        this.apps = CI_STATIC_APPS.filter(app => !!app.roles?.find(role => !!user.roles?.find(r => r === role)))
       }
     })
   }

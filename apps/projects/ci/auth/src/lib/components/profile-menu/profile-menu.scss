@@ -1,12 +1,30 @@
-.user-profile-image {
+.user-profile {
     width: 64px;
     height: 64px;
-
     background: black;
     border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 3px 3px 7px rgba(0, 0, 0, .5);
 
+    .user-profile-image {
+        position: absolute;
+        inset: 0;
+        object-fit: contain;
+        object-position: center;
+    }
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 :host {
     display: flex;
@@ -15,6 +33,8 @@
     align-items: center;
     justify-content: center;
     color: white;
+    gap: 12px;
+
     ::ng-deep * {
         color: inherit;
     }
@@ -22,4 +42,11 @@
 
 .row {
     padding: 12px;
+    display: flex;
+    flex-direction: row;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
 }

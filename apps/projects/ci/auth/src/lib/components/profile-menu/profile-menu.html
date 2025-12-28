@@ -1,5 +1,7 @@
-<img src="" alt="" class="user-profile-image">
-<div class="row">
-    <h1>Username</h1>
-    <small>aaa</small>
+<div class="user-profile">
+    <img src="" alt="" class="user-profile-image">
+</div>
+<div class="col">
+    <h1>{{user?.surname || user?.fullName}}</h1>
+    <small>{{user?.username}}</small>
 </div>
