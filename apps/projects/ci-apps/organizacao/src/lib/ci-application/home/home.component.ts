@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
-import { EditarDetailComponent, WindowModule, WindowService } from '@ci/components';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { WindowModule, WindowService } from '@ci/components';
 import { CoreModule } from '@ci/core';
-import { Organizacao } from '@ci/portal-api';
+import { MenuService } from '../menu-servive';
 /**
  * 
  */
@@ -16,29 +18,26 @@ import { Organizacao } from '@ci/portal-api';
         MatButtonModule,
         MatDialogModule,
         WindowModule,
+        MatIconModule,
+        RouterModule,
     ],
     standalone: true,
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss'
 })
 export class HomeComponent {
+    abas?: { label: string, path: string, icon: string }[];
     constructor(
+        private readonly route: ActivatedRoute,
         private readonly window: WindowService,
-    ) { }
-    async cadastrarOrganizacao() {
-        this.createNew();
-    }
-    async editar(data: Organizacao, event?: MouseEvent) {
-        const result: number | any = await this.window.open(
-            EditarDetailComponent,
-            { schemaName: 'Organizacao', data },
-            'Organizacao',
-            event);
-        return result;
-    }
-    async createNew() {
-        let instance: Organizacao = {} as Organizacao;
-        const finalData: number | any = await this.editar(instance);
-        return finalData;
+        protected readonly menus: MenuService,
+    ) {
+        this.abas = route.routeConfig?.children?.map(r => {
+            return {
+                label: (r?.data as any)?.title || r.path,
+                path: '/' + r.path,
+                icon: (r?.data as any)?.icon || undefined,
+            } as { label: string, path: string, icon: string }
+        }) || undefined;
     }
 }
