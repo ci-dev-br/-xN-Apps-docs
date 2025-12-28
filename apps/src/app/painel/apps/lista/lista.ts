@@ -1,5 +1,5 @@
 import { MatIconModule } from "@angular/material/icon";
-import { APPS, IApp } from "../apps";
+import { CI_STATIC_APPS, IApp } from "../apps";
 import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '@ci/auth';
@@ -26,7 +26,7 @@ export class Lista {
     async ngOnInit() {
         this.userService.user.subscribe(user => {
             if (!!user) {
-                this.apps = APPS.filter(app => !!this.userService && !!this.userService.user && !!this.userService.user.value ?
+                this.apps = CI_STATIC_APPS.filter(app => !!this.userService && !!this.userService.user && !!this.userService.user.value ?
                     this.userService.user?.value?.roles?.find(role => app.roles && app.roles.indexOf(role) > -1) : false);
             } else {
                 // this.router.navigate(['/']);
