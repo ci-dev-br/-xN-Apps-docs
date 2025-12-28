@@ -1,38 +1,17 @@
-<mat-tab-group>
-    <mat-tab [label]="'Organizações'">
-        <div class="wrapper">
-            <h1>Bem-vindo ao módulo de gerenciamento de Organizações da Plataforma Apps.</h1>
-            <p>
-                No nosso ecossistema, uma
-                "Organização" é a entidade central que representa sua empresa, seu time ou seu projeto principal. Ela
-                funciona como o contêiner de nível mais alto, agrupando todos os seus recursos, usuários, dados e
-                configurações de forma segura e isolada. Pense nela como a "casa" digital do seu negócio dentro da
-                plataforma.
-            </p>
-            <p>
-                A correta configuração da sua Organização é fundamental, pois é ela que define as fronteiras de acesso e
-                colaboração. É através dela que você gerenciará as permissões globais, controlará o faturamento e
-                garantirá
-                que apenas os membros designados tenham acesso às aplicações e informações pertinentes. Uma Organização
-                bem
-                estruturada é a base para a segurança e a governança eficaz dos seus dados.
-            </p>
-            <p>
-                Esta aplicação permite que você crie, visualize, edite e gerencie os dados cadastrais de todas as
-                Organizações vinculadas à sua conta. Manter essas informações precisas e atualizadas é essencial para o
-                pleno funcionamento das integrações e serviços da Plataforma Apps, garantindo que sua equipe possa
-                operar
-                com máxima eficiência.
-            </p>
-
-            <h4>Até o momento presente seu projeto não faz parte de uma Organização.</h4>
-
-            <button mat-raised-button>
-                Procurar por Organização existente
-            </button>
-            <button mat-raised-button (click)="cadastrarOrganizacao()">
-                Cadastrar nova Organização
-            </button>
-        </div>
-    </mat-tab>
-</mat-tab-group>
+<nav mat-tab-nav-bar [tabPanel]="tabPanel">
+    <button mat-icon-button (click)="menus.opened.next(!menus.opened.value)">
+        <mat-icon>{{menus.opened.value ? 'close' : 'menu'}}</mat-icon>
+    </button>
+    @if(abas){
+    @for (aba of abas; track aba) {
+    <a mat-tab-link [routerLink]="'./' + aba.path">
+        @if(aba.icon){<mat-icon>
+            {{aba.icon}}
+        </mat-icon>}
+        {{aba.label}}</a>
+    }
+    }
+</nav>
+<mat-tab-nav-panel #tabPanel>
+    <router-outlet></router-outlet>
+</mat-tab-nav-panel>
