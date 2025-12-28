@@ -5,6 +5,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { EditarDetailComponent, WindowModule, WindowService } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { Organizacao } from '@ci/portal-api';
+/**
+ * 
+ */
 @Component({
     selector: 'ci-home',
     imports: [
