@@ -112,7 +112,18 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             })
         }) : request;
     }
-    private handlerUnauthorizedError(error: HttpErrorResponse, next: HttpHandler, request: HttpRequest<any>) {
+    /**
+     * 
+     * @param error if caused by uncathch status code and error directive 
+     * @param next 
+     * @param request 
+     * @returns 
+     */
+    private handlerUnauthorizedError(
+        error: HttpErrorResponse,
+        next: HttpHandler,
+        request: HttpRequest<any>
+    ) {
         this.refreshing = true;
         if (error?.status === 401) {
             let user: { authentication: { bearer: string, refreshToken: string } } = this.storage.restore('apps.ci.dev.br.store.User');

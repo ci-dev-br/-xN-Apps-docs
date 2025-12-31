@@ -11,7 +11,23 @@ import { getServiceAsSchema } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 import { EditarDetailComponent, EditarDetailModule } from "@ci/components/editar-detail";
 
-
+/**
+ *  # Componente de Master-Detail para exibição e edição de dados.
+ *
+ * Este componente oferece uma interface para visualizar e gerenciar dados de uma entidade (schema).
+ * Ele pode exibir os dados em formato de tabela (`table`) ou lista (`list`) e permite a edição
+ * e criação de novos registros através de um componente de detalhe (`EditarDetailComponent`).
+ *
+ * ## Funcionalidades:
+ * - **Exibição de Dados:** Carrega e exibe dados de um `schemaName` especificado.
+ * - **Visualização Configurável:** Permite alternar entre visualização em tabela e lista.
+ * - **Edição de Registros:** Abre um modal (`EditarDetailComponent`) para editar um registro existente.
+ * - **Criação de Registros:** Permite criar um novo registro, abrindo o modal de edição com um objeto vazio.
+ * - **Sincronização de Título:** Atualiza o título da página com base no `schemaName` quando o componente é carregado.
+ * - **Integração com DAO:** Utiliza `DaoBuilder` e `DaoService` para interagir com a API e buscar/salvar dados.
+ * - **Configuração de Grid:** Gera automaticamente as colunas da grade com base no esquema da entidade.
+ 
+ */
 @Component({
     selector: 'ci-master-detail',
     standalone: true,
