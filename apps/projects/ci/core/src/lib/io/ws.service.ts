@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from "@angular/common";
-import { EventEmitter, Inject, Injectable, PLATFORM_ID, SimpleChange, SimpleChanges } from "@angular/core";
+import { Inject, Injectable, PLATFORM_ID, SimpleChange, SimpleChanges } from "@angular/core";
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 
 /**
@@ -73,7 +73,12 @@ export class WsService {
         else
             this.listeners.get(name)?.push(call)
     }
-    eventListener(name: string, call: (data?: any) => void) {
+    /**
+     * 
+     * @param name 
+     * @param call 
+     */
+    addEventListener(name: string, call: (data?: any) => void) {
         this.Emit({
             event: 'events',
             data: {

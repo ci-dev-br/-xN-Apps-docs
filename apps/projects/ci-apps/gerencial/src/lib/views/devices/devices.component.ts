@@ -41,7 +41,7 @@ export interface DeviceItem {
                 if (device_found && data.status !== undefined) device_found.status = data.status;
             }
         })
-        this.events.eventListener('Devices', (data: { data: { devices: Device[] } }) => {
+        this.events.addEventListener('Devices', (data: { data: { devices: Device[] } }) => {
             if (!!data?.data?.devices) {
                 this.devices?.forEach(deviceItem => {
                     let device_result = data.data.devices.find(d => d.mac === deviceItem.device?.mac);
