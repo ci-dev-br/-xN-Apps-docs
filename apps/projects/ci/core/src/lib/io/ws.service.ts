@@ -45,7 +45,7 @@ export class WsService {
         this._subject.subscribe(message => {
             this.status = 'online';
             this.retryWait = 100;
-            this.ReceiveData(message)
+            this.ReceiveDataHandler(message)
         }, erros => {
             if (erros instanceof CloseEvent || (erros instanceof Event && erros.type === 'error')) {
                 if (this._subject) this._subject?.complete();
@@ -102,7 +102,12 @@ export class WsService {
                 }
             });
     }
-    private async ReceiveData(data?: any) {
+    /**
+     * 
+     * @param data 
+     * @returns 
+     */
+    private async ReceiveDataHandler(data?: any) {
         if (data.type === 'pong') {
             this.ping = (new Date().getTime()) - Number(data.momento);
             this.globalPing = data.globalPing;
