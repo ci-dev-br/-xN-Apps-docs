@@ -74,7 +74,7 @@ export class WsService {
             this.listeners.get(name)?.push(call)
     }
     /**
-     * 
+     * Escuta evento nomeado e dispara função de chamada sempre que o evento ocorrer.
      * @param name 
      * @param call 
      */
