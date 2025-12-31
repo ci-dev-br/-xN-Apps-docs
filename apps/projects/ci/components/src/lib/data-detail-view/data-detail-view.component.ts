@@ -39,12 +39,11 @@ import { EditarDetailComponent } from "../editar-detail/src/editar-detail.compon
     @Input()
     list?: I[];
     @Input()
-    visualizacao: 'table' | 'list' = 'table';
+    visualizacao?: 'table' | 'list' = 'table';
     @Input()
     gridOptions?: IDataGridOptions<I>;
     @Input()
     service?: any;
-
     constructor(
         private readonly daoBuilder: DaoBuilder,
         private readonly injector: Injector,

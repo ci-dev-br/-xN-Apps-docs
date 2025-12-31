@@ -4,10 +4,10 @@ import { CoreModule } from "@ci/core";
 @Component({
     selector: 'ci-card--crm-totalizador',
     template: `
-        <h4>Total de Vendas</h4>
-        <p>
-            R$ 145,20
-        </p>
+    <p>
+        Nenhuma fonte configurada :(
+            <a (click)="configurarFonte()" >configurar rapidamente.</a>
+    </p>
     `,
     standalone: true,
     imports: [
@@ -15,16 +15,21 @@ import { CoreModule } from "@ci/core";
     ]
 })
 export class TotalizadorComponent {
+    async configurarFonte() {
 
+    }
 }
 export const TotalizadorCardInfo = {
-    title: 'Total de Vendas',
-    descricao: `Verifique o total de vendas realizados durante o período selecionado.`,
-    tags: ['CRM', 'Totalizador', 'Relatório'],
+    title: 'Totalizador',
+    descricao: `Visualize o valor total de registros, adicione filtros e opções de importação.`,
+    tags: ['Totalizadores', 'Cálculo', 'Matemática'],
     componentRef: TotalizadorComponent,
     componentVersion: '1.0.0',
     componentName: 'TotalizadorComponent',
     settings: {
-
+        fonte: {
+            typeOf: 'string',
+            maxLength: 2000,
+        }
     }
 };
