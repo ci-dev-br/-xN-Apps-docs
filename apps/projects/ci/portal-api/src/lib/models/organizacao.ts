@@ -27,6 +27,10 @@ export interface Organizacao {
    * Pessoa Responsável pelo cadastro da Organização na Plataforma virtual.
    */
   responsavel?: Pessoa | null;
+
+  /**
+   * Identificador do Inquilino
+   */
   tenant?: Tenant | null;
   tenants?: Array<string> | null;
 }

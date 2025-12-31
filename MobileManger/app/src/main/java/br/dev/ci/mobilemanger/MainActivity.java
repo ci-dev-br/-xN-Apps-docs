@@ -105,17 +105,30 @@ public class MainActivity extends AppCompatActivity {
     }
     private void solicitarPermissoes() {
         // if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+        try {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_PHONE_STATE}, PackageManager.PERMISSION_GRANTED);
-        // }
+        }catch(Throwable ex){
+
+        }
+        try{
         // if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS}, PackageManager.PERMISSION_GRANTED);
-        // }
-        // if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+        }
+        catch(Throwable ex){
+
+        }
+        try {
+            // if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_SMS}, PackageManager.PERMISSION_GRANTED);
-        // }
+            // }
+        }catch(Exception ex){
+        }
         // if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED) {
+        try {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_PHONE_NUMBERS}, PackageManager.PERMISSION_GRANTED);
-        // }
+        }catch(Throwable ex) {
+
+        }
     }
     // @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
     private void identificarNumerosTelefone() {
