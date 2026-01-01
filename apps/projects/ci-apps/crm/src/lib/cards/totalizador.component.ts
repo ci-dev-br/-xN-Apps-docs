@@ -1,13 +1,16 @@
 import { Component } from "@angular/core";
 import { CoreModule } from "@ci/core";
-
+/**
+ * Cartão com valor total de alguma coisa
+ */
 @Component({
-    selector: 'ci-card--crm-totalizador',
+    selector: 'ci-card-total',
     template: `
     <p>
-        Nenhuma fonte configurada :(
-            <a (click)="configurarFonte()" >configurar rapidamente.</a>
-    </p>
+        Nenhuma fonte configurada 😊 </p>
+        <p>
+        </p>
+        <a href="#" (click)="configurarFonte()" >configurar rapidamente.</a>
     `,
     standalone: true,
     imports: [
@@ -15,6 +18,7 @@ import { CoreModule } from "@ci/core";
     ]
 })
 export class TotalizadorComponent {
+    // constructor(protected readonly settings: Config) { }
     async configurarFonte() {
 
     }
