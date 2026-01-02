@@ -55,11 +55,10 @@ export class Home implements OnInit {
         return;
       }
       if (!this.t) {
-        this.t = true;
-        this.segundos = ('0' + (Number(this.segundos) + 1).toFixed()).substr(-2);
-        if (this.segundos === "61") {
-          this.agora = new Date();
-          this.segundos = "00";
+        let os = ('0' + (new Date()).getSeconds()).substr(-2);
+        if (os !== this.segundos) {
+          this.t = true;
+          this.segundos = os;
         }
       }
     } catch (error) {
