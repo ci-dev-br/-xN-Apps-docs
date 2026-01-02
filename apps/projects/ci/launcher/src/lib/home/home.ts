@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -29,7 +30,7 @@ export class Home implements OnInit {
   x?: string;
   agora = new Date();
   n?: number;
-  segundos?: string = (new Date()).getSeconds().toFixed();
+  segundos?: string = ('0' + ((new Date()).getSeconds().toFixed())).substr(-2);
   y?: string;
   lapse: number = 0;
   t = false;
@@ -37,32 +38,45 @@ export class Home implements OnInit {
     this.agora = new Date();
     this.updateTime();
   }
+  constructor(
+    private readonly http: HttpClient,
+  ) { }
   async updateTime() {
     let o = this.n || 0;
     this.n = Date.now();
     let dec = (this.n - o);
-    this.lapse = Number((this.n / 100).toFixed().substr(-1));
-    setTimeout(() => this.updateTime(), 1 - dec);
-    if (this.lapse !== 0) {
-      if (this.t) this.t = false;
-      return;
-    } // == 0
-    if (!this.t) {
-      this.t = true;
-      this.segundos = (Number(this.segundos) + 1).toFixed();
-      if (this.segundos === "61") {
-        this.agora = new Date();
-        this.segundos = "00";
+    try {
+      this.lapse = Number(((this.n || 0) / 100).toFixed().substr(-1));
+    } catch (error) { }
+    setTimeout(() => { this.updateTime() }, 10);
+    try {
+      if (this.lapse !== 0) {
+        if (!!this.t) this.t = false;
+        return;
       }
+      if (!this.t) {
+        this.t = true;
+        this.segundos = ('0' + (Number(this.segundos) + 1).toFixed()).substr(-2);
+        if (this.segundos === "61") {
+          this.agora = new Date();
+          this.segundos = "00";
+        }
+      }
+    } catch (error) {
+
     }
   }
   async load() {
-    let a = this.g[Math.round(Math.random() * (this.g.length - 1))];
-    if ((await fetch('' + a)).status === 200) {
-      this.x = a;
-      a = this.g[Math.round(Math.random() * (this.g.length - 1))];
-    } else {
-      this.load();
-    }
+    // removidor temporariamente: Esta provocando travamento no contador.
+    // let a = this.g[Math.round(Math.random() * (this.g.length - 1))];
+    // this.http
+    /* fetch('' + a).then((r) => {
+      if (r.status === 200) {
+        this.x = a;
+        a = this.g[Math.round(Math.random() * (this.g.length - 1))];
+      } else {
+        this.load();
+      }
+    }) */
   }
 }
