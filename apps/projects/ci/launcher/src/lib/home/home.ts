@@ -34,7 +34,7 @@ export class Home implements OnInit {
   }
   async updateTime() {
     this.agora = new Date();
-    setTimeout(() => this.updateTime(), 1000);
+    setTimeout(() => this.updateTime(), 500);
   }
   async load() {
     let a = this.g[Math.round(Math.random() * (this.g.length - 1))];
