@@ -28,13 +28,33 @@ export class Home implements OnInit {
   ];
   x?: string;
   agora = new Date();
+  n?: number;
+  segundos?: string = (new Date()).getSeconds().toFixed();
   y?: string;
+  lapse: number = 0;
+  t = false;
   ngOnInit(): void {
+    this.agora = new Date();
     this.updateTime();
   }
   async updateTime() {
-    this.agora = new Date();
-    setTimeout(() => this.updateTime(), 50);
+    let o = this.n || 0;
+    this.n = Date.now();
+    let dec = (this.n - o);
+    this.lapse = Number((this.n / 100).toFixed().substr(-1));
+    setTimeout(() => this.updateTime(), 1 - dec);
+    if (this.lapse !== 0) {
+      if (this.t) this.t = false;
+      return;
+    } // == 0
+    if (!this.t) {
+      this.t = true;
+      this.segundos = (Number(this.segundos) + 1).toFixed();
+      if (this.segundos === "61") {
+        this.agora = new Date();
+        this.segundos = "00";
+      }
+    }
   }
   async load() {
     let a = this.g[Math.round(Math.random() * (this.g.length - 1))];
