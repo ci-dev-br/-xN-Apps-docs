@@ -67,11 +67,12 @@ export class EditComponent implements OnInit {
     }
   }
   async confirm() {
-    if (this.formGroup.invalid) {
+    // o front end pode determinar anteriormente se determinado fluxo é ilegal?
+    /* if (this.formGroup.invalid) {
       this.formGroup.markAllAsTouched();
       this.snap.open('Alguns campos precisam ser corrigidos...')
       return;
-    }
+    } */
     await this.daos.confirmChanges(this.formulario);
     this.snap.open('Alterações confirmadas', 'Ver Histórico')
   }

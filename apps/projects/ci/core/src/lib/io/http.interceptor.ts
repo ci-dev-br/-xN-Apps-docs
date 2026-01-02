@@ -7,6 +7,22 @@ import { AuthService } from "@ci/portal-api";
 import { CORE_ENV, ICoreEnvironment } from "../provider";
 import { Router } from "@angular/router";
 // import { AuthService } from "@ci/portal-api";
+/**
+ *  Interceptador de requisições HTTP para adicionar o token de autorização e tratar erros.
+ * 
+ * ## Descrição:
+ * Este interceptador é responsável por interceptar todas as requisições HTTP feitas pela aplicação. Ele executa as seguintes tarefas:
+
+1. **Adição de Token de Autorização:** Antes de cada requisição, verifica se existe um token de autorização (bearer token) armazenado localmente. Se sim, adiciona este token ao cabeçalho `Authorization` da requisição. Isso garante que as requisições autenticadas sejam enviadas com as credenciais necessárias.
+
+2. **Tratamento de Erros de Rede e API:**
+   - **Timeout:** Aplica um timeout de 1 segundo para cada requisição. Se a requisição não for concluída dentro desse tempo, um `HttpErrorResponse` com status 0 (Interceptor Timeout) é gerado.
+   - **Erros de Conexão (status 0 ou 404):** Se a requisição falhar com status 0 (geralmente indicando problemas de rede ou timeout) ou 404 (recurso não encontrado), o interceptador tenta alternar para um gateway de API alternativo, se configurado. Ele mantém uma lista de `alternativeApiGateways` e tenta a próxima URL na lista. Isso visa melhorar a resiliência da aplicação em caso de falhas de um servidor de API. Um contador `_pipocate` é usado para evitar loops infinitos de tentativas.
+   - **Acesso Negado (mensagem específica):** Se a mensagem de erro indicar "Acesso negado. Não corresponde ao nível de acesso necessário.", o usuário é redirecionado para a página `/meus-apps`.
+   - **Erro de Autorização (status 401):** Se a requisição retornar um status 401 (Não Autorizado) e houver um `refreshToken` disponível, o interceptador tenta renovar o token de acesso usando o `AuthService`. Se a renovação for bem-sucedida, o novo token é armazenado, e a requisição original é repetida com o novo token. Se a renovação falhar, o erro é propagado.
+
+3. **Gerenciamento de `efail`:** A propriedade `efail` é usada para armazenar a URL do gateway de API que está falhando ou sendo testado. Isso permite que o interceptador "lembre" qual gateway tentar em caso de falhas consecutivas. O valor de `efail` é persistido no `localStorage`.  
+ */
 @Injectable()
 export class AuthorizationHttpInterceptor implements HttpInterceptor {
     private refreshing?: boolean;
@@ -96,7 +112,18 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             })
         }) : request;
     }
-    private handlerUnauthorizedError(error: HttpErrorResponse, next: HttpHandler, request: HttpRequest<any>) {
+    /**
+     * 
+     * @param error if caused by uncathch status code and error directive 
+     * @param next 
+     * @param request 
+     * @returns 
+     */
+    private handlerUnauthorizedError(
+        error: HttpErrorResponse,
+        next: HttpHandler,
+        request: HttpRequest<any>
+    ) {
         this.refreshing = true;
         if (error?.status === 401) {
             let user: { authentication: { bearer: string, refreshToken: string } } = this.storage.restore('apps.ci.dev.br.store.User');

@@ -7,7 +7,28 @@ import { WindowService } from "../window/window.service";
 import { ActivatedRoute } from "@angular/router";
 import { EditarDetailComponent } from "../editar-detail/src/editar-detail.component";
 
-
+/**
+ * DataDetailViewComponent
+ *
+ * Componente para visualização de detalhes de dados, com opções de exibição em tabela ou lista.
+ * Permite a edição e criação de novos itens.
+ * 
+ * # Introdução:
+ * // Exemplo de uso em um componente pai
+ * ```ts
+ *  import { Component } from '@angular/core';
+ * @Component({
+ *   selector: 'app-my-component',
+ *   template: `
+ *     <ci-data-detail-view
+ *       [schemaName]="'MySchemaName'"
+ *       [visualizacao]="'table'"
+ *     ></ci-data-detail-view>
+ *   `,
+ * })
+ * export class MyComponent { }
+ *  ```
+ */
 @Component({
     selector: 'ci-data-detail-view',
     standalone: false,
@@ -18,12 +39,11 @@ import { EditarDetailComponent } from "../editar-detail/src/editar-detail.compon
     @Input()
     list?: I[];
     @Input()
-    visualizacao: 'table' | 'list' = 'table';
+    visualizacao?: 'table' | 'list' = 'table';
     @Input()
     gridOptions?: IDataGridOptions<I>;
     @Input()
     service?: any;
-
     constructor(
         private readonly daoBuilder: DaoBuilder,
         private readonly injector: Injector,
@@ -47,6 +67,9 @@ import { EditarDetailComponent } from "../editar-detail/src/editar-detail.compon
         }
         this.loadGrid();
     }
+    /**
+     * Carrega configuração de grid para o objeto projetado.
+     */
     async loadGrid() {
         if (!this.schemaName) return;
         const properties = await (await this.daoBuilder.getSchema(this.schemaName)).properties
@@ -64,11 +87,19 @@ import { EditarDetailComponent } from "../editar-detail/src/editar-detail.compon
             ]
         };
     }
+    /**
+     * Carrega lista de entidades
+     */
     async loadDataList() {
         this.list = await lastValueFrom(
             (this.service as IHaveGetList<I>).getList({ body: {} })
         );
     }
+    /**
+     * Aciona Entidade para Edição
+     * @param data 
+     * @param event 
+     */
     async editar(data: I, event?: Event) {
         const result: number | any = await this.window?.open(EditarDetailComponent,
             { schemaName: this.schemaName, data },
@@ -78,6 +109,9 @@ import { EditarDetailComponent } from "../editar-detail/src/editar-detail.compon
             this.list?.splice(pos, 1);
         }
     }
+    /**
+     * Cria nova Entidade
+     */
     async createNew() {
         if (this.service && this.service.sync) {
             // (this.service.sync as IHaveSync<I>).sync({ body: { data } });
