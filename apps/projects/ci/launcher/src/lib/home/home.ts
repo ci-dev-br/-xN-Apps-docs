@@ -29,7 +29,7 @@ export class Home implements OnInit {
   ];
   x?: string;
   agora = new Date();
-  n?: number;
+  n?: string;
   segundos?: string = ('0' + ((new Date()).getSeconds().toFixed())).substr(-2);
   y?: string;
   lapse: number = 0;
@@ -43,10 +43,9 @@ export class Home implements OnInit {
   ) { }
   async updateTime() {
     let o = this.n || 0;
-    this.n = Date.now();
-    let dec = (this.n - o);
+    this.n = (Date.now()).toString().substr(-3);
     try {
-      this.lapse = Number(((this.n || 0) / 100).toFixed().substr(-1));
+      this.lapse = Number(((Number(this.n) || 0) / 100).toFixed().substr(-1));
     } catch (error) { }
     setTimeout(() => { this.updateTime() }, 10);
     try {

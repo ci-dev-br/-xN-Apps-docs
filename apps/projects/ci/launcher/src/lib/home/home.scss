@@ -39,9 +39,9 @@
     max-height: 65vh;
 }
 
-h1,
-ms {
+h1 {
     margin: 0;
+    padding: 0;
     color: rgb(182, 15, 98);
     text-shadow: 0 3px 3px rgba(0, 0, 0, 0.151);
     mix-blend-mode: exclusion;
@@ -76,6 +76,15 @@ ms {
             }
         }
     }
+
+
+}
+
+.horario .ms {
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+    align-self: flex-end;
 }
 
 .footer {
