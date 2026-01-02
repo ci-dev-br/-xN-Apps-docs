@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, Output } from "@angular/core";
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from "@angular/core";
 import { DataGridService } from "./data-grid.service";
 import { IDataGridOptions } from "../models/i-data-grid-options";
 import { IColumnOption } from "../models/i-column-options";
@@ -24,6 +24,8 @@ export class DataGridComponent<I> {
     selectionMode?: 'cell' | 'row' | 'multi-cell' | 'multi-row' | 'multi' = 'row';
     @Input()
     source?: I[];
+    @ViewChild('gridContainer', { static: true })
+    gridContainer?: ElementRef<HTMLElement>;
     private _selectedItem?: I | undefined;
     /**
      * Indica o item selecionado durante a navegação

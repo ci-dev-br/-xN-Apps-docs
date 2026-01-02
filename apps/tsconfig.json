@@ -123,6 +123,9 @@
       "@ci/components/editar-detail": [
         "./projects/ci/components/src/lib/editar-detail/public-api"
       ],
+      "@ci/components/context-menu": [
+        "./projects/ci/components/src/lib/context-menu/public-api"
+      ],
       "@ci/apps/imersao/games/my-house": [
         "./projects/ci-apps/imersao/games/my-house/src/public-api"
       ],

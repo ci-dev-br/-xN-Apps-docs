@@ -83,4 +83,7 @@ export class AppsComponent implements OnInit {
       e.stopImmediatePropagation();
     }
   };
+  async AddNavigation(event: MouseEvent) {
+    
+  }
 }

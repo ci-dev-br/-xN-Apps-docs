@@ -11,6 +11,7 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
 import { IColumnOption } from "../models/i-column-options";
 import { IDataGridOptions } from "../models/i-data-grid-options";
 import { GridBuilder } from "./grid-builder";
+import { ContextMenuDirective, ContextMenuModule } from "@ci/components/context-menu";
 
 @NgModule({
     declarations: [
@@ -25,6 +26,7 @@ import { GridBuilder } from "./grid-builder";
         MatIconModule,
         MatButtonModule,
         DragDropModule,
+        ContextMenuModule,
     ],
     exports: [
         TextCellRenderer,
