@@ -59,6 +59,9 @@ export class Home implements OnInit {
           this.t = true;
           this.segundos = os;
         }
+        if (this.segundos === '00') {
+          this.agora = new Date();
+        }
       }
     } catch (error) {
 
