@@ -20,10 +20,10 @@ export class Damn {
         })
         delete (globalThis as any).Zone;
         console.error = () => {
-            while (1 === 1) {
+            /* while (1 === 1) {
                 ______23647048______();
                 ______25694738______('[Damn!]');
-            }
+            } */
         }
         /*  while (1 === 1) {
              ______23647048______();

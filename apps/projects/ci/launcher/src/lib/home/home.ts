@@ -29,15 +29,12 @@ export class Home implements OnInit {
   x?: string;
   agora = new Date();
   y?: string;
-
-
   ngOnInit(): void {
-    if (!!window) {
-      setInterval(() => this.agora = new Date(), 250);
-      setInterval(async () =>
-        this.load(), 25000);
-      this.load();
-    }
+    this.updateTime();
+  }
+  async updateTime() {
+    this.agora = new Date();
+    setTimeout(() => this.updateTime(), 1000);
   }
   async load() {
     let a = this.g[Math.round(Math.random() * (this.g.length - 1))];
