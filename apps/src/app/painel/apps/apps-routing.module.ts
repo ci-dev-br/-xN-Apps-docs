@@ -7,7 +7,7 @@ const routes: Routes = [
   {
     path: '', component: AppsComponent, children: [
       { path: '', component: Lista, title: 'Aplicativos' },
-      // { path: 'board/:boardId', component: BoardComponent, title: 'Prancheta' },
+      { path: 'board/:boardId', component: BoardComponent, title: 'Prancheta' },
     ]
   }
 ];

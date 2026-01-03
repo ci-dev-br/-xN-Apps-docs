@@ -38,7 +38,7 @@ export class AppsComponent implements OnInit {
     private readonly route: ActivatedRoute,
   ) { }
   async ngOnInit() {
-    this.abas = this.route.routeConfig?.children?.map(r => {
+    this.abas = this.route.routeConfig?.children?.filter(r => r.path?.indexOf('board') === -1)?.map(r => {
       return {
         label: r.title || (r?.data as any)?.title || r.path,
         path: '/' + r.path,
@@ -84,6 +84,6 @@ export class AppsComponent implements OnInit {
     }
   };
   async AddNavigation(event: MouseEvent) {
-    
+
   }
 }

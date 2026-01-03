@@ -1,6 +1,7 @@
 # Changelogs
 As mudanças devem estar descritas neste documento para melhor analisar a implementação com seu Objetivo a ser atingido. Descreva o que o recurso implementado resolve e o estágio em que ele se encontra para se comparado com os relatórios gerados após enviar se PR.
-# Sprint Maio/Junho/Julho/Agosto/Setembro/Outubro/Novembro/Dezembro de 2025
+
+# Sprint 2026
 - [>>>] Meus Documentos: Implementação de Meus Documentos;
 - [Iniciado] Launcher App: Para Mobile Managers e Afins;
   - [OK] Implementação de webview com carga do web.app;
@@ -16,8 +17,9 @@ As mudanças devem estar descritas neste documento para melhor analisar a implem
     - [x] - Implementação de auto-reconnect para reestabelecimento da conexão após queda de tempo indeterminado. 
 - [ ] - Implementar Serviço de Tema da aplicação:
     - [>] - Implementar LightMode e Dark Mode;
-- [ ] - Profile: 
-    - [ ] - Permitir adicionar foto de perfirl;
+- [>] - Profile: 
+    - [>] - Foto de Perfil;
+    - [OK] - Editar informações do Usuário;
 - [ ] - Implementação de Arquivos App:
     - [ ] - Home: Visão geral dos arquivos disponíveis ao acesso do usuário.
     - [ ] - Este PC: 'Permite compartilhar informações dos arquivos locais para serem compartilhados ou abertos com Apps especializados.
@@ -29,7 +31,7 @@ As mudanças devem estar descritas neste documento para melhor analisar a implem
  - [Iniciado] - Implementação de Dynamic App:
  - [Inciado] - Implementação de Financeiro App:
  - [Parcial] - Implementação de Formulários App:
- - [ ] - Implementação de Gerencial App:
+ - [OK] - Implementação de Gerencial App:
  - [ ] - Implementação de Icons App:
     [ ] - Importar aquivos de Ícones;
     [>] - Criar novo projeto de Ícone ou Fonte;
@@ -45,7 +47,7 @@ As mudanças devem estar descritas neste documento para melhor analisar a implem
    - [ ] - Permitir adicionar usuários a partir do Massager ID. Que é único por usuário e pode ser gerado quando o usuário quiser usar o Messager. Podendo gerar vários Messager ID para propósitos distintos.
    - [ ] - Vincular número de celular e contatos do dispositivo para identificar os usuáios de contato disponíveis ao Usuário.
    - [ ] - Abrir conversa com outro usuário e enviar conteúdo.
- - [ ] - Implementação de Organização App:
+ - [>] - Implementação de Organização App:
    - [ ] - Criar Organização e Viincular a um CNPJ ou CPF;
  - [ ] - Implementação de Produtos App:
    - [ ] - Consultar Estoque;

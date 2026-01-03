@@ -12,13 +12,15 @@
 }
 
 .apps.container {
-    dosplay: flex;
+    display: flex;
     flex-direction: column;
     flex: auto;
     justify-content: stretch;
     align-items: stretch;
     align-content: flex-start;
     gap: 12px 12px;
+
+    //  padding: 24px;
 }
 
 @mixin app($size: 100px) {
@@ -26,7 +28,7 @@
         $width: $size;
         min-width: #{$width};
         max-width: calc(33% - 32px);
-        max-height: #{$width*2};
+        min-height: #{$width*2};
         border-radius: 14px;
         box-shadow: 0 2px 10px 3px rgba(0, 0, 0, .2);
         flex: auto;
@@ -110,7 +112,7 @@
     }
 
     :host {
-        padding: 0px;
+        // padding: 0px;
     }
 
 }

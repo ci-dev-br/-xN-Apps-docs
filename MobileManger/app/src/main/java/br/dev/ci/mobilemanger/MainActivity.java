@@ -66,19 +66,17 @@ public class MainActivity extends AppCompatActivity {
                 this.message.setText("Falha ao identificar números do dispositivo.");
             }
         }
-         if(this.message != null){
+         /* if(this.message != null){
             this.message.setText("Iniciando conexção... (1)");
-        }
-         if(this.message != null){
+        }*/
+         /* if(this.message != null){
             this.message.setText("Identificando números disponíveis");
-        }
-        try {
+        }*/
+        /*try {
             // TODO: alterar para worker events em segundo plano
             ManagerClient.getInstance().setupNewGateway(
                     "https://apps.ci.dev.br/",
                     "wss://apps.ci.dev.br/");
-            // import android.content.Intent;
-            // import android.os.Build;
             // Na sua Activity (ex: no clique de um botão)
             Intent serviceIntent = new Intent(this, WebSocketEventsService.class);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -92,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             /// ContextCompat.startForegroundService(this, serviceIntent);
         }catch(Exception ex){
             this.message.setText("Falha ao conectar");
-        }
+        }*/
         if(this.appsButton != null){
             this.appsButton.setOnClickListener(v -> this.openApps());
         }
