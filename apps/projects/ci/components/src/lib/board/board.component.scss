@@ -17,7 +17,7 @@
     align-items: center;
     justify-content: center;
     gap: 0;
-    margin: 0 6px;
+    margin: 0 0px;
 }
 
 .card-wrapper {
@@ -25,14 +25,22 @@
     pointer-events: all;
     position: relative;
     width: auto;
-    min-width: 240px;
-    min-height: 120px;
+    min-width: 200px;
+    min-height: 100px;
+    max-width: 80vw;
+    // max-height: 40vh;
     overflow: unset;
     flex: 1;
-    margin: 6px;
+    margin: 0px;
     border: dashed 2px rgba(255, 255, 255, .55);
-    border-radius: 12px;
+    border-radius: 6px;
     box-shadow: 0 1px 3px 6px rgba(0, 0, 0, .4);
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    overflow: hidden;
 
     >.inner {
         position: relative;
@@ -40,15 +48,25 @@
         background-color: black;
         transition: all ease .45s;
         transform: rotateY(0deg);
-        border-radius: 12px;
-        padding: 6px;
+        border-radius: 3px;
+        padding: 0px;
         z-index: 2;
         overflow: unset;
+
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: stretch;
+        overflow: auto;
+
+        >* {
+            flex: auto;
+        }
     }
 
     >.card-verso {
-        border-radius: 12px;
-        padding: 6px;
+        border-radius: 6px;
+        padding: 0px;
         position: absolute;
         inset: 0;
         transition: all ease .45s;
