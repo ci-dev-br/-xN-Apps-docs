@@ -306,7 +306,9 @@ export class DaoService {
     confirmation<T>(data: T) {
         // try {
         if (!data) return undefined;
-        if (typeof data === 'object' && '__confirmation_subject' in data && !(data as any).__confirmation_subject) (data as any).__confirmation_subject = new Subject();
+        if (typeof data === 'object' && !(data as any).__confirmation_subject) {
+            (data as any).__confirmation_subject = new Subject();
+        }
         return (data as any).__confirmation_subject as Subject<T>;
         // } catch (error) {
         //     console.error(error);
