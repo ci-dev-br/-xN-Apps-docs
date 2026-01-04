@@ -48,7 +48,7 @@ ci-logo ::ng-deep img {
     background-color: var(--mdc-elevated-card-container-color, var(--mat-sys-surface-container-low));
     box-shadow: 2px 4px 12px rgba(0, 0, 0, .44);
     position: relative;
-    padding: 12px;
+    padding: 6px;
 
     h6 {
         position: absolute;
@@ -71,9 +71,10 @@ ci-logo ::ng-deep img {
     }
 }
 
-mat-card-footer{
-    padding: 12px;
+mat-card-footer {
+    padding: 6px;
 }
-.auto{
+
+.auto {
     flex: auto;
 }
