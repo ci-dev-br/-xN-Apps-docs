@@ -80,7 +80,7 @@ export class DaoService {
             const emitter = /* !!options?.onChange ? */ new EventEmitter<SimpleChanges>() /* : undefined */;
             const ws = this.ws;
             emitter.subscribe(changes => {
-                ws.EmitChanges(data.internalId, changes);
+                ws.EmitChanges(data.internalId, changes, data);
             })
             let ___changes_on_changing: SimpleChanges[] | undefined;
             if (!!emitter) emitter.subscribe(r => {

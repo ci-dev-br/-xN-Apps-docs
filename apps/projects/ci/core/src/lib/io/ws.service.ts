@@ -126,7 +126,11 @@ export class WsService {
                         (o_DATA[p] || '').length < ((data?.data?.changes[p] as SimpleChange).previousValue || '').length
                     ) &&
                     data.setOrigem !== this.__clientAutoIdentification
-                ) o_DATA[p] = (data?.data?.changes[p]).currentValue;
+                ) {
+                    this._updating.add(o_DATA);
+                    o_DATA[p] = (data?.data?.changes[p]).currentValue;
+                    this._updating.delete(o_DATA);
+                }
             })
         }
         if (data.event && typeof data.data === 'object') {
@@ -137,6 +141,7 @@ export class WsService {
             )
         }
     }
+    private _updating: Set<any> = new Set();
     /**
      * Aciona evento de ping-pong no socket para medição de latência de sincrinização de dados on-line
      * 
@@ -230,7 +235,8 @@ export class WsService {
      * @param internalId 
      * @param changes 
      */
-    async EmitChanges(internalId: string, changes: SimpleChanges) {
+    async EmitChanges(internalId: string, changes: SimpleChanges, objectRef?: any) {
+        if (objectRef && this._updating.has(objectRef)) return;
         this.Emit({
             event: 'Changes',
             data: {
