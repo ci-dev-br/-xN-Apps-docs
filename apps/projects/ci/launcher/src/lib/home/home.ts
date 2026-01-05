@@ -5,11 +5,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { BoardModule } from '@ci/components';
+import { CoreModule } from '@ci/core';
 
 @Component({
   selector: 'ci-Home  ',
   imports: [
-    CommonModule,
+    CoreModule,
     MatButtonModule,
     MatIconModule,
     RouterModule,
