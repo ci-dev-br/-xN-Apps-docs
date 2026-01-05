@@ -103,7 +103,7 @@ export class WsService {
             });
     }
     /**
-     * 
+     * Recepção de dados via Socket 
      * @param data 
      * @returns 
      */
@@ -118,17 +118,17 @@ export class WsService {
         }
         if (data.data?.client === this.__clientAutoIdentification) return;
         if (data.event === 'Changes') {
-            Object.keys(data.data.changes).forEach(p => {
+            Object.keys(data.data.changes).forEach(changed_property_name => {
                 let o_DATA = this._attentionDatas.get(data.data.internalId);
                 if (o_DATA &&
-                    (o_DATA[p] === (data?.data?.changes[p] as SimpleChange).previousValue
+                    (o_DATA[changed_property_name] === (data?.data?.changes[changed_property_name] as SimpleChange).previousValue
                         ||
-                        (o_DATA[p] || '').length < ((data?.data?.changes[p] as SimpleChange).previousValue || '').length
+                        (o_DATA[changed_property_name] || '').length < ((data?.data?.changes[changed_property_name] as SimpleChange).previousValue || '').length
                     ) &&
                     data.setOrigem !== this.__clientAutoIdentification
                 ) {
                     this._updating.add(o_DATA);
-                    o_DATA[p] = (data?.data?.changes[p]).currentValue;
+                    o_DATA[changed_property_name] = (data?.data?.changes[changed_property_name]).currentValue;
                     this._updating.delete(o_DATA);
                 }
             })
@@ -230,7 +230,7 @@ export class WsService {
         }
     }
     /**
-     * Emite as mudanças de um objeto a partir do padrão SimpleChanges do Angular
+ * Emite as mudanças de um objeto a partir do padrão SimpleChanges do Angular
      * 
      * @param internalId 
      * @param changes 
