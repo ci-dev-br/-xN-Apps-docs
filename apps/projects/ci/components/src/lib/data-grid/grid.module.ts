@@ -12,6 +12,7 @@ import { IColumnOption } from "../models/i-column-options";
 import { IDataGridOptions } from "../models/i-data-grid-options";
 import { GridBuilder } from "./grid-builder";
 import { ContextMenuDirective, ContextMenuModule } from "@ci/components/context-menu";
+import { MatMenuModule } from "@angular/material/menu";
 
 @NgModule({
     declarations: [
@@ -27,6 +28,7 @@ import { ContextMenuDirective, ContextMenuModule } from "@ci/components/context-
         MatButtonModule,
         DragDropModule,
         ContextMenuModule,
+        MatMenuModule,
     ],
     exports: [
         TextCellRenderer,

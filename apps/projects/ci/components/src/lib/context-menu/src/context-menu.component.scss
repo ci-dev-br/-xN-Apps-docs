@@ -1,0 +1,13 @@
+:host {
+    background: var(--mat-app-background-color);
+    color: var(--mat-app-text-color);
+    border: solid 1px var(--mat-option-selected-state-layer-color);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    box-shadow: var(--mat-app-elevation-shadow-level-9);
+    // padding: 6px;
+    border-radius: 18px;
+    overflow: hidden;
+}
