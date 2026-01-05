@@ -1,8 +1,9 @@
-import { Component, EventEmitter, HostListener, Input, Output } from "@angular/core";
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from "@angular/core";
 import { DataGridService } from "./data-grid.service";
 import { IDataGridOptions } from "../models/i-data-grid-options";
 import { IColumnOption } from "../models/i-column-options";
 import { ShortCut } from "@ci/core";
+import { IContextMenu } from "@ci/components/context-menu";
 export interface SelectEvent<I> {
     value?: I;
     event: MouseEvent | KeyboardEvent | Event;
@@ -24,6 +25,11 @@ export class DataGridComponent<I> {
     selectionMode?: 'cell' | 'row' | 'multi-cell' | 'multi-row' | 'multi' = 'row';
     @Input()
     source?: I[];
+    @ViewChild('gridContainer', { static: true })
+    gridContainer?: ElementRef<HTMLElement>;
+    headerContextMenu?: IContextMenu[] = [
+        { label: 'Editar colunas' }
+    ];
     private _selectedItem?: I | undefined;
     /**
      * Indica o item selecionado durante a navegação

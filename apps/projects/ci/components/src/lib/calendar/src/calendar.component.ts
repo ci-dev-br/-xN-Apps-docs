@@ -1,10 +1,12 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from "@angular/core";
 import { CoreModule } from "@ci/core";
 import { CalendarDay } from "./calendar-day";
+import { Day } from "./day/day";
 @Component({
     selector: 'ci-calendar',
     imports: [
         CoreModule,
+        Day,
     ],
     standalone: true,
     templateUrl: `calendar.component.html`,
@@ -70,7 +72,7 @@ export class CalendarComponent implements OnInit, OnChanges, OnDestroy {
         this.updateTimeMarker();
         this.timerId = setInterval(() => {
             this.updateTimeMarker();
-        }, 60000);
+        }, 1000);
     }
     // --- Getters para o Cabeçalho ---
     get isToday(): boolean {
@@ -120,6 +122,7 @@ export class CalendarComponent implements OnInit, OnChanges, OnDestroy {
         // Aqui você emitiria um evento, ex: this.dateSelected.emit(this.selectedDate);
         console.log('Data Selecionada:', this.selectedDate);
     }
+    currentTime?: Date;
     private updateTimeMarker(): void {
         if (!this.isToday) return;
         const now = new Date();
@@ -131,6 +134,7 @@ export class CalendarComponent implements OnInit, OnChanges, OnDestroy {
         const pixelsPerMinute = this.HOUR_HEIGHT / 60;
         this.markerTopPosition = minutesPassed * pixelsPerMinute;
         // Formata string para mostrar na bolinha (ex: "14:35")
+        this.currentTime = now;
         this.currentTimeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
     ngOnChanges(changes: SimpleChanges): void {

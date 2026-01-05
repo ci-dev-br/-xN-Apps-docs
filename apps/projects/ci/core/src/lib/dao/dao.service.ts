@@ -80,7 +80,7 @@ export class DaoService {
             const emitter = /* !!options?.onChange ? */ new EventEmitter<SimpleChanges>() /* : undefined */;
             const ws = this.ws;
             emitter.subscribe(changes => {
-                ws.EmitChanges(data.internalId, changes);
+                ws.EmitChanges(data.internalId, changes, data);
             })
             let ___changes_on_changing: SimpleChanges[] | undefined;
             if (!!emitter) emitter.subscribe(r => {
@@ -306,7 +306,9 @@ export class DaoService {
     confirmation<T>(data: T) {
         // try {
         if (!data) return undefined;
-        if (typeof data === 'object' && '__confirmation_subject' in data && !(data as any).__confirmation_subject) (data as any).__confirmation_subject = new Subject();
+        if (typeof data === 'object' && !(data as any).__confirmation_subject) {
+            (data as any).__confirmation_subject = new Subject();
+        }
         return (data as any).__confirmation_subject as Subject<T>;
         // } catch (error) {
         //     console.error(error);

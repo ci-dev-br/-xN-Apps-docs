@@ -24,28 +24,33 @@ export class SnapshotService {
             if (!!hash && !!hash.hash)
                 this.lastSnapshotHash = hash.hash;
         } catch (error) {
+            console.error(error);
         }
     }
     async snapshot<T extends FullAuditedEntity>(entidade: T | any, request: Request, repo?: Repository<T>) {
-        const json_snapshot = JSON.parse(JSON.stringify(entidade, null, 2));
-        const momento = new Date().toISOString();
-        const hash = createHash('sha256')
-            .update([this.lastSnapshotHash || ''] + json_snapshot + momento)
-            .digest('hex').toString();
-        const user_id: string | undefined = (request as any)?.user?.id;
-        const chave_acesso = (request as any).chaveAcesso
-        const snap = this.snapRepo.create({
-            snap: json_snapshot,
-            hash: hash,
-            createdBy: chave_acesso,
-        })
-        const snap_saved = await this.snapRepo.save(snap);
-        if (entidade instanceof FullAuditedEntity && repo) {
-            if (!!entidade && !entidade.snapshots) entidade.snapshots = [];
-            entidade.snapshots.push(snap_saved);
-            await repo.save(entidade as T);
+        try {
+            const json_snapshot = JSON.parse(JSON.stringify(entidade, null, 2));
+            const momento = new Date().toISOString();
+            const hash = createHash('sha256')
+                .update([this.lastSnapshotHash || ''] + json_snapshot + momento)
+                .digest('hex').toString();
+            const user_id: string | undefined = (request as any)?.user?.id;
+            const chave_acesso = (request as any).chaveAcesso
+            const snap = this.snapRepo.create({
+                snap: json_snapshot,
+                hash: hash,
+                createdBy: chave_acesso,
+            })
+            const snap_saved = await this.snapRepo.save(snap);
+            if (entidade instanceof FullAuditedEntity && repo) {
+                if (!!entidade && !entidade.snapshots) entidade.snapshots = [];
+                entidade.snapshots.push(snap_saved);
+                await repo.save(entidade as T);
+            }
+            this.lastSnapshotHash = hash;
+        } catch (error) {
+            console.error(error);
         }
-        this.lastSnapshotHash = hash;
     }
     async prepareToSync(entidade: any, request: Request) {
         if (entidade instanceof FullAuditedEntity) {

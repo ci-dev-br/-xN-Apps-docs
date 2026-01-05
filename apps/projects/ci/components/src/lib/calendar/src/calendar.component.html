@@ -17,26 +17,7 @@
         </div>
     </header>
     @if(viewMode==='day'){
-    <div class="day-view-wrapper">
-        <div class="day-header">
-            <h3>{{ selectedDate | date: 'fullDate' }}</h3>
-        </div>
-        <div class="scroll-container">
-            <div class="time-grid">
-                <div *ngIf="isToday" class="current-time-marker" [style.top.px]="markerTopPosition">
-                    <div class="time-bubble">{{ currentTimeString }}</div>
-                    <div class="line"></div>
-                </div>
-                <div class="hour-row" *ngFor="let hour of hours" [style.height.px]="HOUR_HEIGHT">
-                    <div class="time-label">
-                        <span>{{ hour | number:'2.0' }}:00</span>
-                    </div>
-                    <div class="time-slot">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <ci-day></ci-day>
     }
     @else if(viewMode==='month'){
     <div class="weekdays-grid">

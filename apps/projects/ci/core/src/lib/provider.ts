@@ -1,8 +1,12 @@
-import { EnvironmentProviders, InjectionToken, isDevMode, makeEnvironmentProviders, Provider, Type } from "@angular/core";
+import { EnvironmentProviders, InjectionToken, isDevMode, LOCALE_ID, makeEnvironmentProviders, Provider, Type } from "@angular/core";
 import { WsService } from "./io/ws.service";
 import { NotificationService } from "./notification/notification.service";
 import { UserService } from "@ci/auth";
 import { ShortcutService } from "./services/shortcut.service";
+import localePt from '@angular/common/locales/pt';
+import { registerLocaleData } from "@angular/common";
+registerLocaleData(localePt, 'pt-BR');
+
 export interface ISchemaPreset<T, D> {
     primary?: string | string[];
     schemaName?: string;
@@ -30,6 +34,7 @@ export function coreProvider(
         NotificationService,
         ShortcutService,
         { provide: CORE_ENV, useValue: options },
+        { provide: LOCALE_ID, useValue: 'pt-BR' }
     ];
     return makeEnvironmentProviders(providers);
 }

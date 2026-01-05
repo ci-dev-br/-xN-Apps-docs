@@ -38,21 +38,22 @@ export class EditComponent implements OnInit {
       this.formulario = form_data;
       this.daos.prepareToEdit(this.formulario);
       this.daos.bindDataForm(this.formulario, this.formGroup);
-      this.daos.confirmation(this.formulario)?.subscribe(async data => {
-        try {
-          if (this.formulario && data) {
-            let _data: any = Object.assign(this.formulario,
-              await lastValueFrom(this.formsService.sync({ body: { data: data } }))
-            );
-            delete (_data as IChangeable).__pre;
-            this.daos.prepareToEdit(_data);
-            this.daos.bindDataForm(_data, this.formGroup);
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      })
+      this.daos.confirmation(this.formulario)?.subscribe(data => this.confirmationHandler(data))
     });
+  }
+  private async confirmationHandler(data: any) {
+    try {
+      if (this.formulario && data) {
+        let _data: any = Object.assign(this.formulario,
+          await lastValueFrom(this.formsService.sync({ body: { data: data } }))
+        );
+        delete (_data as IChangeable).__pre;
+        this.daos.prepareToEdit(_data);
+        this.daos.bindDataForm(_data, this.formGroup);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
   get changes() {
     if (!!this.formulario)

@@ -6,8 +6,11 @@
             {{aba.icon}}
         </mat-icon>}
         {{aba.label}}</a>
-    }
-    }
+    }}
+    <a mat-tab-link (click)="AddNavigation($event)">
+        <mat-icon>add</mat-icon>
+    </a>
+    <span style="flex:auto;width: 100%;"></span>
 </nav>
 <mat-tab-nav-panel #tabPanel>
     <router-outlet></router-outlet>
