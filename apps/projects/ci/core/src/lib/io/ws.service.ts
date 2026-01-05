@@ -121,8 +121,8 @@ export class WsService {
             Object.keys(data.data.changes).forEach(changed_property_name => {
                 let o_DATA = this._attentionDatas.get(data.data.internalId);
                 if (o_DATA &&
-                    (o_DATA[changed_property_name] === (data?.data?.changes[changed_property_name] as SimpleChange).previousValue
-                        ||
+                    (
+                        // o_DATA[changed_property_name] === (data?.data?.changes[changed_property_name] as SimpleChange).previousValue ||
                         (o_DATA[changed_property_name] || '').length < ((data?.data?.changes[changed_property_name] as SimpleChange).previousValue || '').length
                     ) &&
                     data.setOrigem !== this.__clientAutoIdentification
