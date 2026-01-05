@@ -128,7 +128,11 @@ export class WsService {
                     data.setOrigem !== this.__clientAutoIdentification
                 ) {
                     this._updating.add(o_DATA);
-                    o_DATA[changed_property_name] = (data?.data?.changes[changed_property_name]).currentValue;
+                    try {
+                        o_DATA[changed_property_name] = (data?.data?.changes[changed_property_name]).currentValue;
+                    } catch (error) {
+                        console.error(error);
+                    }
                     this._updating.delete(o_DATA);
                 }
             })
