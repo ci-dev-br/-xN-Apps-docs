@@ -33,3 +33,9 @@
 .piece.b {
     color: #000;
 }
+.menu{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: centers;
+}
