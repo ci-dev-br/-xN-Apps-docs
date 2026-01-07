@@ -1,8 +1,17 @@
 @if(stage==='menu'){
-<div class="menu" >
+<div class="menu">
     <button mat-raised-button (click)="start()">
         Nova Partida!
-    </button><button mat-button>Procurar oponente... </button>
+    </button>
+    <button mat-button>
+        Procurar oponente...
+    </button>
+    <button mat-button>
+        Agendar partida
+    </button>
+    <button mat-button>
+        Notificar-me quando outro jogador estiver procurando por oponente
+    </button>
 </div>
 }
 @else if(stage==='play'){
