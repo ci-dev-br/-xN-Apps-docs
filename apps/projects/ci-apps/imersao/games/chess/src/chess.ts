@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { CoreModule } from '@ci/core';
 import { Chess, Move } from 'chess.js';
 @Component({
@@ -8,6 +10,8 @@ import { Chess, Move } from 'chess.js';
     imports: [
         CoreModule,
         MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
     ],
     templateUrl: './chess.html',
     styleUrls: ['./chess.scss']

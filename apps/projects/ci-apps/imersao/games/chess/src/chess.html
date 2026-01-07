@@ -1,8 +1,8 @@
 @if(stage==='menu'){
-<div class="menu">
+<div class="menu" #ct [style.min-height]="'80vw'">
     <button mat-raised-button (click)="start()">
         Nova Partida!
-    </button>
+    </button><button mat-button>Procurar oponente... </button>
 </div>
 }
 @else if(stage==='play'){
@@ -17,8 +17,19 @@
             </div>
         </div>
     </div>
-    <div class="status">
-        Vez do jogador: {{ game.turn() === 'w' ? 'Brancas' : 'Pretas' }}
+    <div class="row">
+        <div class="status">
+            Vez do jogador: {{ game.turn() === 'w' ? 'Brancas' : 'Pretas' }}
+        </div>
+        <span style="flex: auto;"></span>
+        <button mat-icon-button [matMenuTriggerFor]="optionsMenu">
+            <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #optionsMenu>
+            <button mat-menu-item>
+                Desistir
+            </button>
+        </mat-menu>
     </div>
 </div>
 }
