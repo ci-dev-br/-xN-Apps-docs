@@ -5,9 +5,7 @@ import { Component } from '@angular/core';
   imports: [],
   standalone: true,
   template: `
-    <p>
-      financeiro works!
-    </p>
+   
   `,
   styles: ``
 })

@@ -12,6 +12,10 @@ import { schema } from "../norms";
     schema
 })
 export class LancamentoFinanceiro extends FullAuditedEntity {
-    @ApiProperty({ title: 'Valor', nullable: true, required: false }) @Column({ nullable: true })
+    @ApiProperty({
+        title: 'Valor',
+        nullable: true,
+        required: false
+    }) @Column({ nullable: true })
     valor?: number;
 }

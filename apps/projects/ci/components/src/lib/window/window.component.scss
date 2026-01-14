@@ -8,6 +8,10 @@
     // position: relative;
 }
 
+:host {
+    border: solid 1px red;
+}
+
 ::ng-deep {
     .mat-mdc-dialog-surface {
         background-color: rgba(210, 215, 255, .4);

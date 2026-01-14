@@ -18,7 +18,7 @@ export const routes: Routes = [
       { path: 'Icons', loadChildren: () => import('@ci-apps/Icons').then(m => m.CiApplicationModule) },
       { path: 'Imersao', loadChildren: () => import('@ci-apps/Imersao').then(m => m.CiApplicationModule) },
       { path: 'Infra', loadChildren: () => import('@ci-apps/Infra').then(m => m.CiApplicationModule) },
-      { path: 'Instalacao', loadChildren: () => import('@ci-apps/Instalacao').then(m => m.CiApplicationModule) },
+      { path: 'Installation', loadChildren: () => import('@ci-apps/Instalacao').then(m => m.CiApplicationModule) },
       { path: 'LowCode', loadChildren: () => import('@ci-apps/LowCode').then(m => m.CiApplicationModule) },
       { path: 'Mensagens', loadChildren: () => import('@ci-apps/Mensagens').then(m => m.CiApplicationModule) },
       { path: 'Organizacao', loadChildren: () => import('@ci-apps/Organizacao').then(m => m.CiApplicationModule) },
