@@ -3,7 +3,11 @@ import { Injectable } from "@angular/core";
 import { FormBuilder } from "@angular/forms";
 import { ApiConfiguration } from "@ci/portal-api";
 import { BehaviorSubject, lastValueFrom } from "rxjs";
-
+/**
+ * Aguardar verdadeiro
+ * @param condition 
+ * @returns 
+ */
 async function waitTrue(condition: () => boolean) {
     return new Promise<void>((res, rej) => {
         const repeat = () => {
@@ -23,7 +27,7 @@ async function waitTrue(condition: () => boolean) {
     })
 }
 /**
- * 
+ * # Interface de Schema Property Item
  */
 export interface ISchemaProperty {
     /**
