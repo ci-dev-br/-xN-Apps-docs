@@ -22,7 +22,8 @@ import { lastValueFrom } from "rxjs";
         MatButtonModule,
         WindowModule,
     ],
-    templateUrl: 'master-detail.component.html'
+    templateUrl: 'master-detail.component.html',
+    styleUrl: 'master-detail.component.scss'
 })
 export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
     @Input()
@@ -110,5 +111,8 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
         const data = await this.editar(new_instance);
         if (!!data?.internalId || !!data?.id) // TODO: revisar esta regra
             this.source = [data, ...this.source || []];
+        else {
+            this.search();
+        }
     }
 }
