@@ -3,7 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { /* ActivatedRoute */ ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CoreModule } from '@ci/core';
 // import { APPS, IApp } from './apps';
-import { AuthModule, UserService } from '@ci/auth';
+import { AuthModule, roles, UserService } from '@ci/auth';
 import { BoardModule } from '@ci/components';
 import { MatTabsModule } from '@angular/material/tabs';
 
@@ -49,6 +49,10 @@ export class AppsComponent implements OnInit {
       if (!!user) {
         // this.apps = APPS.filter(app => !!this.userService && !!this.userService.user && !!this.userService.user.value ?
         // this.userService.user?.value?.roles?.find(role => // app.roles && app.roles.indexOf(role) > -1) : false);
+        if (user.roles && user.roles?.indexOf('DEV') > -1) {
+          // TODO: Implementar visão de desenvovedor 
+          // Habilita contexto menu para desenvolvedores.
+        }
       } else {
         // this.router.navigate(['/']);
       }
