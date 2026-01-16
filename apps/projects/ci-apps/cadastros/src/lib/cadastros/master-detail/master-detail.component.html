@@ -1,8 +1,12 @@
 <mat-toolbar [auto-scroll]="'horizontal'">
-    {{schemaName || ''}}
-    <button mat-raised-button (click)="search()">
-        Pesquisar
+    <button mat-raised-button>
+        Filtros
     </button>
+    <!-- TODO: adicionar ação de filtros -->
+    <!-- {{schemaName || ''}} -->
+    <!-- <button mat-raised-button (click)="search()">
+        Pesquisar
+    </button> -->
     <button mat-raised-button (click)="createNew()">
         Novo
     </button>
@@ -13,6 +17,6 @@
     </mat-button-toggle-group>
 </mat-toolbar>
 <!-- TODO: Visualização em lista e em tabela permitindo visualização lateral ou em janela dos valores selecionados. -->
-@if(visualizacao === 'table'){
+@if(visualizationStage === 'table'){
 <ci-data-grid [options]="gridOptions" (select)="editar($event.value, $event.event)" [source]="source"></ci-data-grid>
 }

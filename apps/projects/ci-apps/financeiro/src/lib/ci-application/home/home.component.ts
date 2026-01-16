@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { IAction, WindowModule, WindowService } from '@ci/components';
+import { EditarDetailComponent, IAction, WindowModule, WindowService } from '@ci/components';
+import { EditarDetailModule } from '@ci/components/editar-detail';
 
 @Component({
     selector: 'ci-home',
@@ -12,11 +13,15 @@ import { IAction, WindowModule, WindowService } from '@ci/components';
         MatIconModule,
         MatButtonModule,
         WindowModule,
+        EditarDetailModule,
     ],
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss'
 })
 export class HomeComponent {
+    constructor(
+        private readonly windows: WindowService,
+    ) { }
     entidades = [
 
     ]
@@ -25,8 +30,8 @@ export class HomeComponent {
         {
             description: 'Novo Lançamento',
             onClick: () => {
-                // inject(WindowService)
-                //     .open(EditComponent, null)
+                this.windows
+                    .open(EditarDetailComponent, {});
             }
         }
     ]

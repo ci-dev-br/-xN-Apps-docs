@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { CoreModule } from '@ci/core';
 import { Chess, Move } from 'chess.js';
 @Component({
@@ -6,16 +9,25 @@ import { Chess, Move } from 'chess.js';
     standalone: true,
     imports: [
         CoreModule,
+        MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
     ],
     templateUrl: './chess.html',
     styleUrls: ['./chess.scss']
 })
 export class ChessGameComponent implements OnInit {
+    stage: 'menu' | 'play' | 'viewer' = 'menu';
+    player: 'white' | 'black' = 'white';
     game = new Chess();
     board: any[][] = [];
     selectedSquare: string | null = null;
     ngOnInit() {
         this.updateBoard();
+    }
+    start() {
+        this.stage = 'play';
+        this.game.reset();
     }
     // Atualiza a representação visual do tabuleiro
     updateBoard() {
@@ -52,6 +64,7 @@ export class ChessGameComponent implements OnInit {
     checkGameStatus() {
         if (this.game.isGameOver()) {
             alert('Fim de jogo!');
+            this.stage = 'menu';
         }
     }
     getPieceSymbol(piece: any): string {

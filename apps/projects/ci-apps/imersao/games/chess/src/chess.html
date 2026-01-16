@@ -1,3 +1,20 @@
+@if(stage==='menu'){
+<div class="menu">
+    <button mat-raised-button (click)="start()">
+        Nova Partida!
+    </button>
+    <button mat-button>
+        Procurar oponente...
+    </button>
+    <button mat-button>
+        Agendar partida
+    </button>
+    <button mat-button>
+        Notificar-me quando outro jogador estiver procurando por oponente
+    </button>
+</div>
+}
+@else if(stage==='play'){
 <div class="chess-container">
     <div class="board">
         <div *ngFor="let row of board; let i = index" class="row">
@@ -9,7 +26,19 @@
             </div>
         </div>
     </div>
-    <div class="status">
-        Vez do jogador: {{ game.turn() === 'w' ? 'Brancas' : 'Pretas' }}
+    <div class="row">
+        <div class="status">
+            Vez do jogador: {{ game.turn() === 'w' ? 'Brancas' : 'Pretas' }}
+        </div>
+        <span style="flex: auto;"></span>
+        <button mat-icon-button [matMenuTriggerFor]="optionsMenu">
+            <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #optionsMenu>
+            <button mat-menu-item>
+                Desistir
+            </button>
+        </mat-menu>
     </div>
 </div>
+}

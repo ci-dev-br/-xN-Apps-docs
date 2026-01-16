@@ -22,11 +22,12 @@ import { lastValueFrom } from "rxjs";
         MatButtonModule,
         WindowModule,
     ],
-    templateUrl: 'master-detail.component.html'
+    templateUrl: 'master-detail.component.html',
+    styleUrl: 'master-detail.component.scss'
 })
 export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
     @Input()
-    visualizacao: 'table' | 'list' = 'table';
+    visualizationStage: 'table' | 'list' = 'table';
     @Input()
     schemaName?: string;
     @Input()
@@ -103,12 +104,17 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
     }
     async editar(data: T, event?: Event) {
         return await this.window.open(EditarComponent,
-            { schemaName: this.schemaName, data }, this.schemaName)
+            { schemaName: this.schemaName, data }, this.schemaName).finally(() => {
+                this.search();
+            })
     }
     async createNew() {
         let new_instance: T = {} as T;
-        const data = await this.editar(new_instance);
-        if (!!data?.internalId || !!data?.id) // TODO: revisar esta regra
+        /* const data =  */await this.editar(new_instance);
+        /* if (!!data?.internalId || !!data?.id) // TODO: revisar esta regra
             this.source = [data, ...this.source || []];
+        else {
+            this.search();
+        } */
     }
 }

@@ -216,9 +216,18 @@ export class DaoService {
                 Object.defineProperty(data, 'toJSON', {
                     value: () => {
                         try {
-                            if ('__confirmation_subject' in data) {
-                                const { __confirmation_subject, ...out } = JSON.parse(JSON.stringify(data));
-                                return out
+                            if (!!data && '__confirmation_subject' in data) {
+                                try {
+                                    const { __confirmation_subject, ...out } = JSON.parse(JSON.stringify(data));
+                                    return out
+                                } catch (error) {
+                                    try {
+                                        const { __confirmation_subject, ...out } = data;
+                                        return out
+                                    } catch (error) {
+                                        console.error(error)
+                                    }
+                                }
                             } else {
                                 const out: any = {
                                     ...this.getChanges(data/* , { pre } */) // ERRO: parece não estar funcionando nesse contexto...

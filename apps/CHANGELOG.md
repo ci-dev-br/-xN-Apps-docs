@@ -2,6 +2,11 @@
 As mudanças devem estar descritas neste documento para melhor analisar a implementação com seu Objetivo a ser atingido. Descreva o que o recurso implementado resolve e o estágio em que ele se encontra para se comparado com os relatórios gerados após enviar se PR.
 
 # Sprint 2026
+- [ ] Melhoria: Implementação de MasterDetail, em CRM:
+    - [ ]: Correção do layout interno, distribuir em linha com quebra centralizada;
+    - [ ]: Ajustar campos de @Ref(id) pra visualização correta da informação de acordo com a chave;
+    - [ ]: Implementação de pesquisa básica em campos tipo @Ref();
+    - [ ]: Sub-ações: implementação de sub menu para ação de abrir em janela externa. Ao posicionar o cursor sobre a ação principal do conjunto de ações extras; 
 - [>>>] Meus Documentos: Implementação de Meus Documentos;
 - [Iniciado] Launcher App: Para Mobile Managers e Afins;
   - [OK] Implementação de webview com carga do web.app;

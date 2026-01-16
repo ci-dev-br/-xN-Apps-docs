@@ -1,7 +1,7 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Inject, Injectable, Optional } from "@angular/core";
 import { Observable, throwError } from "rxjs";
-import { catchError, switchMap, timeout } from "rxjs/operators";
+import { catchError, switchMap, tap, timeout } from "rxjs/operators";
 import { StorageService } from "../storage/storage.service";
 import { AuthService } from "@ci/portal-api";
 import { CORE_ENV, ICoreEnvironment } from "../provider";
@@ -68,7 +68,10 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
     }
     private _eTry(request: HttpRequest<any>, next: HttpHandler) {
         return next.handle(this.addBearerToken(request))
-            .pipe(timeout({ each: 1000, with: () => { throw new HttpErrorResponse({ status: 0, statusText: 'Interceptor Timeout' }) } }))
+            .pipe(timeout({
+                each: 1000,
+                with: () => { throw new HttpErrorResponse({ status: 0, statusText: 'Interceptor Timeout' }) }
+            }))
             .pipe(catchError(error => {
                 if (error) {
                     if (error?.error?.message?.indexOf('Acesso negado. Não corresponde ao nível de acesso necessário.') > -1) {
@@ -97,6 +100,8 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                     }
                 }
                 return throwError(error);
+            })).pipe(tap((e) => {
+                console.info('[[tap]]', e);
             }));
     }
     private addBearerToken(request: HttpRequest<any>) {

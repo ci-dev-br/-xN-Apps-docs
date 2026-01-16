@@ -6,15 +6,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Produto } from '../../models/produto';
-import { ProdutoCotrollerGetInputDto } from '../../models/produto-cotroller-get-input-dto';
+import { FileDto } from '../../models/file-dto';
 
-export interface GetListProduto$Params {
-      body: ProdutoCotrollerGetInputDto
+export interface FileExplorerControllerReadFile$Params {
+      body: FileDto
 }
 
-export function getListProduto(http: HttpClient, rootUrl: string, params: GetListProduto$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Produto>>> {
-  const rb = new RequestBuilder(rootUrl, getListProduto.PATH, 'post');
+export function fileExplorerControllerReadFile(http: HttpClient, rootUrl: string, params: FileExplorerControllerReadFile$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<FileDto>>> {
+  const rb = new RequestBuilder(rootUrl, fileExplorerControllerReadFile.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -24,9 +23,9 @@ export function getListProduto(http: HttpClient, rootUrl: string, params: GetLis
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<Produto>>;
+      return r as StrictHttpResponse<Array<FileDto>>;
     })
   );
 }
 
-getListProduto.PATH = '/Produto/Get';
+fileExplorerControllerReadFile.PATH = '/FileExplorer/File';

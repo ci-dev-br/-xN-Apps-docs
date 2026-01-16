@@ -1,35 +1,59 @@
 .board {
     display: flex;
     flex-direction: column;
-    width: 400px;
-    height: 400px;
+    width: 180px;
+    height: 180px;
     border: 2px solid #333;
+    // scale: .5;
 }
+
+:host {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-self: center;
+}
+
 .row {
     display: flex;
     flex: 1;
 }
+
 .square {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
+    font-size: 16px;
     cursor: pointer;
 }
+
 .light {
     background-color: #eedcbe;
 }
+
 .dark {
     background-color: #b58863;
 }
+
 .selected {
     background-color: #7b61ff !important;
 }
+
 .piece.w {
     color: #fff;
     text-shadow: 0 0 2px #000;
 }
+
 .piece.b {
     color: #000;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: centers;
+    min-height: 180px;
 }
