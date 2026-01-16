@@ -83,7 +83,16 @@ export class HomeComponent implements OnInit {
             this.form.markAllAsTouched();
         }
     }
+    /**
+     * Take photo from webcam
+     */
     async takeAPhoto() {
-
+        // TODO: take a photo with webcam
+    }
+    /**
+     * Upload a local image/photo file
+     */
+    async uploadPhoto() {
+        // TODO: take a local file
     }
 }

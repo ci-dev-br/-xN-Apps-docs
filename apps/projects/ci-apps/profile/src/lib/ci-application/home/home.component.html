@@ -11,7 +11,7 @@
                                     [matMenuTriggerFor]="userPhotoOptions"><mat-icon>photo_camera</mat-icon></button>
                             </div>
                             <mat-menu #userPhotoOptions>
-                                <button mat-menu-item>Arquivo local</button>
+                                <button mat-menu-item (click)="uploadPhoto()">Arquivo local</button>
                                 <button mat-menu-item>Tirar foto</button>
                             </mat-menu>
                         </div>
