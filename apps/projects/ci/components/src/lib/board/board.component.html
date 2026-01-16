@@ -3,14 +3,19 @@
     @if(prancheta){
     <div class="cards-container"><!--  cdkDropList (cdkDropListDropped)="drop($event)" -->
         @for (card of prancheta.cards; track $index) {
-        <div class="card-wrapper" (contextmenu)="editCard(card, $event)" [class.editing]="edittingCard === card"
-            ><!-- cdkDrag -->
+        <div class="card-wrapper" [class.editing]="edittingCard === card">
+            <!-- cdkDrag -->
             <div class="inner">
                 <ng-container *ngComponentOutlet="component(card).componentRef"></ng-container>
             </div>
             <div class="card-verso">
                 <button mat-icon-button (click)="removeCard(card)">
                     <mat-icon>delete</mat-icon>
+                </button>
+            </div>
+            <div class="actions">
+                <button mat-icon-button (click)="editCard(card, $event)">
+                    <mat-icon>settings</mat-icon>
                 </button>
             </div>
         </div>

@@ -12,6 +12,7 @@ import { StrictHttpResponse } from '../strict-http-response';
 import { getListProduto } from '../fn/produto/get-list-produto';
 import { GetListProduto$Params } from '../fn/produto/get-list-produto';
 import { Produto } from '../models/produto';
+import { SyncPayloadDaoProduto } from '../models/sync-payload-dao-produto';
 import { syncProduto } from '../fn/produto/sync-produto';
 import { SyncProduto$Params } from '../fn/produto/sync-produto';
 
@@ -30,7 +31,7 @@ export class ProdutoService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  syncProduto$Response(params: SyncProduto$Params, context?: HttpContext): Observable<StrictHttpResponse<Produto>> {
+  syncProduto$Response(params: SyncProduto$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoProduto>> {
     return syncProduto(this.http, this.rootUrl, params, context);
   }
 
@@ -40,14 +41,14 @@ export class ProdutoService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  sync(params: SyncProduto$Params, context?: HttpContext): Observable<Produto> {
+  sync(params: SyncProduto$Params, context?: HttpContext): Observable<SyncPayloadDaoProduto> {
     return this.syncProduto$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Produto>): Produto => r.body)
+      map((r: StrictHttpResponse<SyncPayloadDaoProduto>): SyncPayloadDaoProduto => r.body)
     );
   }
 
   /** Path part for operation `getListProduto()` */
-  static readonly GetListProdutoPath = '/Produto/GetList';
+  static readonly GetListProdutoPath = '/Produto/Get';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

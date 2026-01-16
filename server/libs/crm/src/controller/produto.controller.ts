@@ -1,67 +1,55 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ControllerDaoBase, SyncPayloadDao } from "@ci/core";
 import { Produto } from "../models/produto";
-import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
-import { FindOptionsWhere } from "typeorm";
 import { ProdutoService } from "../service/produto.service";
 export class SyncPayloadDaoProduto extends SyncPayloadDao<Produto> {
     @ApiProperty({ type: Produto })
     override data?: Produto;
 }
-export class ObterListaProduto {
-    // override data?: Produto;
-    @ApiProperty({})
-    skip?: number;
-    @ApiProperty({})
+export class ProdutoCotrollerGetInputDto {
+    @ApiProperty({ nullable: true, required: false })
+    where?: any;
+    @ApiProperty({ nullable: true, required: false })
     take?: number;
-    @ApiProperty({})
-    where?: FindOptionsWhere<Produto>[] | FindOptionsWhere<Produto>;
-}
-export class PessoaCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
-    query?: string;
+    skip?: number;
     @ApiProperty({ nullable: true, required: false })
-    limit?: number;
+    orderBy?: any;
 }
 @ApiTags('Produto')
 @Controller('Produto')
 export class ProdutoController extends ControllerDaoBase<ProdutoService, Produto> {
-    constructor(
-        service: ProdutoService
-    ) {
+    constructor(service: ProdutoService) {
         super(service);
     }
     @Post('Sync')
     @ApiResponse({
-        type: Produto,
+        type:
+            SyncPayloadDaoProduto
     })
     @ApiOperation({
         operationId: 'SyncProduto'
     })
     override async Sync(
-        @Body() body: SyncPayloadDaoProduto,
+        @Body() input: SyncPayloadDaoProduto,
+        @Req() req?: any,
     ) {
-        try {
-            return await super.Sync(body)
-        } catch (error) {
-            return {
-                status: 500,
-                message: 'Falha',
-                detahes: error.message,
-                stack: error.stack
-            } as any
-        }
+        return await super.Sync(input, req);
     }
-    @Post('GetList')
+    @Post('Get')
     @ApiResponse({
-        type: Produto, isArray: true
+        type:
+            Produto,
+        isArray: true
     })
     @ApiOperation({
-        operationId: 'GetListProduto'
+        operationId: 'GetListProduto',
     })
     override async GetList(
-        @Body() input: ObterListaProduto,
+        @Body() input: ProdutoCotrollerGetInputDto,
+        @Req() req,
     ) {
-        return super.GetList(input);
+        return await super.GetList(input, req);
     }
 }

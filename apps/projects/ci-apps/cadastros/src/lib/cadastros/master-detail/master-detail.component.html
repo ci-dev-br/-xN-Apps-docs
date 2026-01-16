@@ -1,5 +1,5 @@
 <mat-toolbar [auto-scroll]="'horizontal'">
-    {{schemaName || ''}}
+    <!-- {{schemaName || ''}} -->
     <button mat-raised-button (click)="search()">
         Pesquisar
     </button>
@@ -13,6 +13,6 @@
     </mat-button-toggle-group>
 </mat-toolbar>
 <!-- TODO: Visualização em lista e em tabela permitindo visualização lateral ou em janela dos valores selecionados. -->
-@if(visualizacao === 'table'){
+@if(visualizationStage === 'table'){
 <ci-data-grid [options]="gridOptions" (select)="editar($event.value, $event.event)" [source]="source"></ci-data-grid>
 }

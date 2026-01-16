@@ -26,7 +26,7 @@ import { lastValueFrom } from "rxjs";
 })
 export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
     @Input()
-    visualizacao: 'table' | 'list' = 'table';
+    visualizationStage: 'table' | 'list' = 'table';
     @Input()
     schemaName?: string;
     @Input()

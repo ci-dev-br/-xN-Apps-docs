@@ -22,3 +22,16 @@ export const CrmEntities = [
     Servico,
     VendaProduto
 ]
+export {
+    Agendamento,
+    Atendimento,
+    CampanhaMarketing,
+    ClienteCrm,
+    HistoricoContato,
+    Pagamento,
+    Produto,
+    Profissional,
+    Promocao,
+    Servico,
+    VendaProduto
+}

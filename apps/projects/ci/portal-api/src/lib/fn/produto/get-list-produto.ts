@@ -6,11 +6,11 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { ObterListaProduto } from '../../models/obter-lista-produto';
 import { Produto } from '../../models/produto';
+import { ProdutoCotrollerGetInputDto } from '../../models/produto-cotroller-get-input-dto';
 
 export interface GetListProduto$Params {
-      body: ObterListaProduto
+      body: ProdutoCotrollerGetInputDto
 }
 
 export function getListProduto(http: HttpClient, rootUrl: string, params: GetListProduto$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Produto>>> {
@@ -29,4 +29,4 @@ export function getListProduto(http: HttpClient, rootUrl: string, params: GetLis
   );
 }
 
-getListProduto.PATH = '/Produto/GetList';
+getListProduto.PATH = '/Produto/Get';

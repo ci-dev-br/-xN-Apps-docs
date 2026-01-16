@@ -23,15 +23,17 @@ import { HistoricoContatoController } from './controller/historico-contato.contr
 import { ClienteCrmController } from './controller/cliente-crm.controller';
 import { AtendimentoController } from './controller/atendimento.controller';
 import { AgendamentoController } from './controller/agendamento.controller';
+import { TenantModule } from '@ci/tenant';
 /**
  * Módulo de CRM
  */
 @Module({
   imports: [
-    CoreModule,
     TypeOrmModule.forFeature([
       ...CrmEntities,
-    ])
+    ]),
+    CoreModule,
+    TenantModule,
   ],
   providers: [
     CrmService,
@@ -63,3 +65,5 @@ import { AgendamentoController } from './controller/agendamento.controller';
   ],
 })
 export class CrmModule { }
+export * from './models';
+
