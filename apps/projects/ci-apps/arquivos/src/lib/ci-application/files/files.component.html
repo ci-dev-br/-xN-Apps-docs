@@ -18,7 +18,7 @@
             <h4>Pastas</h4>
             <div class="folders">
                 @for (file of filteredFiles || files; track $index) {
-                <div class="folder" (click)="abrir(file)">
+                <div [tabIndex]="$index + 1" class="folder" (click)="abrir(file)">
                     <div class="folder-wrapper">
                         <mat-icon>{{file.icon}}</mat-icon>
                         <div class="title">
