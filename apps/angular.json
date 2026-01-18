@@ -80,9 +80,10 @@
             },
             "development": {
               "buildTarget": "apps:build:development",
+              "host": "localhost.ci.dev.br",
               "allowedHosts": [
-                "http://4200.ci.dev.br:4200/",
-                "4200.ci.dev.br"
+                "development.apps.ci.dev.br",
+                "development.ci.dev.br"
               ]
             }
           },

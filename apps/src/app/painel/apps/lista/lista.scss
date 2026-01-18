@@ -2,13 +2,17 @@
     flex: auto;
     display: flex;
     flex-direction: column;
-    padding: 12px;
+    // padding: 12px;
 
-    align-items: flex-start;
-    justify-content: flex-start;
+    align-items: stretch;
+    justify-content: stretch;
 
     flex: auto;
     overflow: auto;
+}
+
+.container {
+    padding: 0 24px;
 }
 
 .apps.container {
@@ -19,8 +23,7 @@
     align-items: stretch;
     align-content: flex-start;
     gap: 12px 12px;
-
-    //  padding: 24px;
+    overflow: auto;
 }
 
 @mixin app($size: 100px) {
