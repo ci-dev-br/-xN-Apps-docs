@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '@ci/auth';
 import { CoreModule } from "@ci/core";
 import { MatButtonModule } from "@angular/material/button";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
 @Component({
     selector: 'ci-apps-lista',
     templateUrl: 'lista.html',
@@ -13,6 +15,8 @@ import { MatButtonModule } from "@angular/material/button";
         CoreModule,
         MatIconModule,
         MatButtonModule,
+        MatInputModule,
+        MatFormFieldModule,
     ],
     styleUrl: 'lista.scss'
 })

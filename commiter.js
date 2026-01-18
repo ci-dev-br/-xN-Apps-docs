@@ -16,7 +16,7 @@ async function AssistenteCommit() {
                 const status = spawnSync('git', ['status', '--porcelain'], { cwd: __dirname });
                 const status_astring = status.stdout.toString().trim();
                 if (status_astring === '' || status_astring.indexOf('not staged for commit') > -1) {
-                    console.log('squid dib did ');
+                    console.log('Não existe alteração para enviar. ');
                     resolve();
                     return;
                 }

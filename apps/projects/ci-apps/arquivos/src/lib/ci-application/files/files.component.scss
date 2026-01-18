@@ -12,7 +12,7 @@
 
 .folders,
 .files {
-    $size: 48px;
+    $size: 100px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -50,12 +50,21 @@
         }
 
         gap: 4px;
-        border: solid 1px #cecece;
+        // border: solid 1px #cecece;
         padding: 4px;
         border-radius: 8px;
+        min-height: 120px;
+        min-width: 120px;
+        border: solid 1px transparent;
 
         &:hover {
             background: rgba(0, 0, 0, .2);
+        }
+
+        &:active,
+        &:focus {
+            background: rgba(#215ad6, .2);
+            border: solid 1px #3c21d6;
         }
     }
 
