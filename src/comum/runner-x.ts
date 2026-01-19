@@ -70,6 +70,7 @@ export abstract class RunnerX {
         this._tasks.push(task);
         try {
             this.runTask(task);
+            this._tasks = [];
         } catch (error) {
             console.error('[Falha ao Iniciar ao Adicinar tarefa]', error);
             console.trace('[Falha ao Iniciar ao Adicinar tarefa]', error);
@@ -101,6 +102,7 @@ export abstract class RunnerX {
     }
     private runTask(task: RunnerTask) {
         try {
+            console.info(`[run task] ${task.name}`);
             task.process = spawn(task.command, {
                 cwd: task.cwd,
                 env: process.env,
@@ -132,9 +134,13 @@ export abstract class RunnerX {
     }
     private listeners: { [name: string]: ((event: any) => void)[] } = {};
     addEventLitener(eventName: string, callBack: ((event: any) => void)) {
-        this.listeners[eventName] = [
-            ...(this.listeners[eventName] || []),
-            callBack
-        ];
+        try {
+            this.listeners[eventName] = [
+                ...(this.listeners[eventName] || []),
+                callBack
+            ];
+        } catch (error) {
+            console.error('Error on add event listener', error)
+        }
     }
 } 
