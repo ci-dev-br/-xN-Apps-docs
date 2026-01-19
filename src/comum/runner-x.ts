@@ -70,7 +70,7 @@ export abstract class RunnerX {
         this._tasks.push(task);
         try {
             this.runTask(task);
-            this._tasks = [];
+            // this._tasks = [];
         } catch (error) {
             console.error('[Falha ao Iniciar ao Adicinar tarefa]', error);
             console.trace('[Falha ao Iniciar ao Adicinar tarefa]', error);

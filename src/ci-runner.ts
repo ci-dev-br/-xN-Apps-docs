@@ -10,9 +10,10 @@ export class CiRunner extends RunnerX {
             name: 'Apps',
             type: 'nest'
         });
-        setInterval(() =>
-            this.GitAdd()
-            , 60 * 1000 * 5);
+        this.GitAdd();
+        this.GitPull();
+        this.GitPush();
+        this.GitStatus();
         this.addEventLitener('message', message => {
             if (message.indexOf('[Domain Service iniciado]') > -1) {
                 if (process.env.PUBLIC_GATEWAY_API)
@@ -30,14 +31,12 @@ export class CiRunner extends RunnerX {
         });
     }
     private GitAdd() {
-        this.GitPull();
         this.addTask({
             command: 'git add .',
             cwd: join(__dirname, '..'),
             name: 'Git add',
             type: 'git'
         });
-        this.GitStatus();
     }
     private GitPull() {
         this.addTask({
