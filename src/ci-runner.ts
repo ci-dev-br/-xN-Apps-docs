@@ -82,7 +82,7 @@ export class CiRunner extends RunnerX {
             type: 'git'
         });
         this.addTask({
-            command: 'git push PR',
+            command: 'git push --all PR',
             cwd: join(__dirname, '..'),
             name: 'Git Status',
             type: 'git'
