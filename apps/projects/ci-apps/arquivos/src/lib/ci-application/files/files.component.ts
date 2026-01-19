@@ -33,6 +33,7 @@ export class FilesComponent {
   ) {
     iconLoader.load({
       'i8-folder': { url: '/icons8/icons8-folder.svg' },
+      'i8-file': { url: '/icons8/icons8-file.svg' },
     });
   }
   endereco?: string;
@@ -59,8 +60,8 @@ export class FilesComponent {
     if (!!files)
       this.files = files.map(f => {
         return {
-          iconType: f.isDirectory ? 'svg' : undefined,
-          icon: f.isDirectory ? 'i8-folder' : f.isFile ? 'draft' : 'unknown_document',
+          iconType: 'svg',
+          icon: f.isDirectory ? 'i8-folder' : f.isFile ? 'i8-file' : 'unknown_document',
           name: f.name || 'UNKNOWN',
           info: f
         }
