@@ -11,39 +11,44 @@ export class CiRunner extends RunnerX {
             name: 'Apps',
             type: 'nest'
         });
-        this.GitAdd();
-        this.GitPull();
-        this.GitPush();
         this.GitStatus();
+        this.GitAdd();
+        /*this.GitPull();
+        this.GitPush(); */
         this.addEventLitener('message', message => {
             if (message.indexOf('[Domain Service iniciado]') > -1) {
                 if (process.env.PUBLIC_GATEWAY_API)
                     this.adicionarVerificacaoRota(process.env.PUBLIC_GATEWAY_API);
-            }
-            if (message.indexOf('Changes to be committed:') > -1) {
+            } else if (message.indexOf('Changes to be committed:') > -1) {
                 (() => {
                     console.info('[Initialize committer]');
-                    const p = spawn('node commiter', {
-                        cwd: join(__dirname, '..'),
-                        env: process.env,
-                        shell: true
-                    });
-                    p.stderr.on('data', (chunk) => {
-                        console.log(chunk);
-                    })
-                    p.stderr.on('error', (chunk) => {
-                        console.log(chunk);
-                    })
-                    p.stderr.on('readable', (chunk) => {
-                        console.log(chunk);
-                    })
-                    p.stderr.on('resume', (chunk) => {
-                        console.log(chunk);
-                    })
-                })
-                /* spawnSync('node commiter', {
-                    cwd: join(__dirname, '..')
-                }); */
+                    try {
+                        this.ignoreTasks('git');
+                        const p = spawn('node commiter', {
+                            cwd: join(__dirname, '..'),
+                            env: process.env,
+                            shell: true
+                        });
+                        p.stderr.on('data', (chunk) => {
+                            console.log(chunk);
+                        })
+                        p.stdout.on('end', (chunk) => {
+                            console.log(chunk);
+                            this.resumeTasks('git');
+                        })
+                        p.stderr.on('error', (chunk) => {
+                            console.log(chunk);
+                        })
+                        p.stderr.on('readable', (chunk) => {
+                            console.log(chunk);
+                        })
+                        p.stderr.on('resume', (chunk) => {
+                            console.log(chunk);
+                        })
+                    } catch (error) {
+
+                    }
+                })();
             }
         });
     }

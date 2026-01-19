@@ -73,12 +73,10 @@ export abstract class RunnerX {
             // this._tasks = [];
         } catch (error) {
             console.error('[Falha ao Iniciar ao Adicinar tarefa]', error);
-            console.trace('[Falha ao Iniciar ao Adicinar tarefa]', error);
         }
     }
     private taskErrorHandler(error: Error, task: RunnerTask) {
         console.error('[Falha ao executar tarefa]', error);
-        console.trace('Falha ao executar tarefa', error);
     }
     protected defaultHandler(error: any, eventName: string, task: RunnerTask) {
         console.log(`[Retorno ${eventName}]`, error);
@@ -94,10 +92,17 @@ export abstract class RunnerX {
             }
         })
     }
-    private taskCloseHandler(code: number | null, task: RunnerTask) {
+    private taskCloseHandler(code: number | null, task: RunnerTask, retry = 0) {
         console.log('[closed]', code);
         setTimeout(() => {
-            this.runTask(task);
+            if (this._ignoretaskstype.indexOf(task.type) === -1)
+                this.runTask(task);
+            else {
+                setTimeout(() => {
+                    console.log('[wait to run task]', task.name);
+                    this.taskCloseHandler(code, task, ++retry);
+                }, 60 * 1000);
+            }
         }, 3000);
     }
     private runTask(task: RunnerTask) {
@@ -141,6 +146,18 @@ export abstract class RunnerX {
             ];
         } catch (error) {
             console.error('Error on add event listener', error)
+        }
+    }
+    private _ignoretaskstype: string[] = [];
+    protected ignoreTasks(taskType: string) {
+        if (this._ignoretaskstype.indexOf(taskType) > -1) {
+            throw new Error('[git em espera]');
+        }
+        this._ignoretaskstype.push(taskType);
+    }
+    protected resumeTasks(taskType: string) {
+        if (this._ignoretaskstype.indexOf(taskType) > -1) {
+            this._ignoretaskstype.splice(this._ignoretaskstype.indexOf(taskType, 1));
         }
     }
 } 
