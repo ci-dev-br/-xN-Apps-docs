@@ -1,6 +1,7 @@
 require('dotenv').config();
 import { join } from "node:path";
 import { RunnerX } from "./comum/runner-x";
+import { spawn, spawnSync } from "node:child_process";
 export class CiRunner extends RunnerX {
     constructor() {
         super();
@@ -20,13 +21,29 @@ export class CiRunner extends RunnerX {
                     this.adicionarVerificacaoRota(process.env.PUBLIC_GATEWAY_API);
             }
             if (message.indexOf('Changes to be committed:') > -1) {
-                console.info('needs commit...');
-                this.addTask({
-                    command: 'node commiter',
-                    cwd: join(__dirname, '..'),
-                    name: 'IA Commit',
-                    type: 'ci'
-                });
+                (() => {
+                    console.info('[Initialize committer]');
+                    const p = spawn('node commiter', {
+                        cwd: join(__dirname, '..'),
+                        env: process.env,
+                        shell: true
+                    });
+                    p.stderr.on('data', (chunk) => {
+                        console.log(chunk);
+                    })
+                    p.stderr.on('error', (chunk) => {
+                        console.log(chunk);
+                    })
+                    p.stderr.on('readable', (chunk) => {
+                        console.log(chunk);
+                    })
+                    p.stderr.on('resume', (chunk) => {
+                        console.log(chunk);
+                    })
+                })
+                /* spawnSync('node commiter', {
+                    cwd: join(__dirname, '..')
+                }); */
             }
         });
     }

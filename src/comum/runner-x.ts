@@ -80,7 +80,7 @@ export abstract class RunnerX {
         console.error('[Falha ao executar tarefa]', error);
         console.trace('Falha ao executar tarefa', error);
     }
-    private defaultHandler(error: any, eventName: string, task: RunnerTask) {
+    protected defaultHandler(error: any, eventName: string, task: RunnerTask) {
         console.log(`[Retorno ${eventName}]`, error);
         console.trace(error);
     }
