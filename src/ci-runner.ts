@@ -13,8 +13,8 @@ export class CiRunner extends RunnerX {
         });
         this.GitStatus();
         this.GitAdd();
-        /*this.GitPull();
-        this.GitPush(); */
+        this.GitPull();
+        this.GitPush();
         this.addEventLitener('message', message => {
             if (message.indexOf('[Domain Service iniciado]') > -1) {
                 if (process.env.PUBLIC_GATEWAY_API)
