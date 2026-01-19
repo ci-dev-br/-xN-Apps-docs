@@ -75,6 +75,18 @@ export class CiRunner extends RunnerX {
             name: 'Git Status',
             type: 'git'
         });
+        this.addTask({
+            command: 'git push --all azure',
+            cwd: join(__dirname, '..'),
+            name: 'Git Status',
+            type: 'git'
+        });
+        this.addTask({
+            command: 'git push PR',
+            cwd: join(__dirname, '..'),
+            name: 'Git Status',
+            type: 'git'
+        });
     }
     private GitStatus() {
         this.addTask({
