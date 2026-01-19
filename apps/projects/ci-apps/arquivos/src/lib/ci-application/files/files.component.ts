@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CoreModule } from '@ci/core';
+import { CoreModule, IconLoaderSerices, LoadIconsModule } from '@ci/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,7 +8,6 @@ import { IArquivo } from './i-file';
 import { FileExplorerService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { TechnicolorShader } from 'three/examples/jsm/Addons.js';
 
 @Component({
   selector: 'ci-files',
@@ -19,6 +18,7 @@ import { TechnicolorShader } from 'three/examples/jsm/Addons.js';
     MatButtonModule,
     MatIconModule,
     FormsModule,
+    LoadIconsModule,
   ],
   standalone: true,
   templateUrl: './files.component.html',
@@ -29,7 +29,12 @@ export class FilesComponent {
   filteredFiles?: IArquivo[];
   constructor(
     private readonly fileExplorer: FileExplorerService,
-  ) { }
+    iconLoader: IconLoaderSerices,
+  ) {
+    iconLoader.load({
+      'i8-folder': { url: '/icons8/icons8-folder.svg' },
+    });
+  }
   endereco?: string;
   private _filtrar?: string | undefined;
   public get filtrar(): string | undefined {
@@ -54,7 +59,8 @@ export class FilesComponent {
     if (!!files)
       this.files = files.map(f => {
         return {
-          icon: f.isDirectory ? 'folder' : f.isFile ? 'draft' : 'unknown_document',
+          iconType: f.isDirectory ? 'svg' : undefined,
+          icon: f.isDirectory ? 'i8-folder' : f.isFile ? 'draft' : 'unknown_document',
           name: f.name || 'UNKNOWN',
           info: f
         }

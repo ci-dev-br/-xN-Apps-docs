@@ -101,9 +101,9 @@ export abstract class RunnerX {
                 setTimeout(() => {
                     console.log('[wait to run task]', task.name);
                     this.taskCloseHandler(code, task, ++retry);
-                }, 60 * 1000);
+                }, 60 * 1000 * 10);
             }
-        }, 3000);
+        }, 60 + 1000 * 2);
     }
     private runTask(task: RunnerTask) {
         try {

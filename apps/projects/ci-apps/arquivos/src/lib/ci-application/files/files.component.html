@@ -20,7 +20,8 @@
                 @for (file of filteredFiles || files; track $index) {
                 <div [tabIndex]="$index + 1" class="folder" (click)="abrir(file)">
                     <div class="folder-wrapper">
-                        <mat-icon>{{file.icon}}</mat-icon>
+                        @if(file.iconType=== 'svg' && !!file.icon){<mat-icon [svgIcon]="file.icon"></mat-icon>}
+                        @else{ <mat-icon>{{file.icon}}</mat-icon> }
                         <div class="title">
                             {{file.name}}
                         </div>
