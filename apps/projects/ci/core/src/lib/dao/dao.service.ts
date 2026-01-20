@@ -4,16 +4,21 @@ import { Subject } from "rxjs";
 import { DaoBuilder, WsService } from "../core.module";
 import { EMITTER } from "../emitter/token";
 
-export function OfString(data: any) {
+export function OfString(data: any): string {
     return (
         data.name || data.nome ||
         data.title || data.titulo ||
         data.descricao || data.description ||
         (() => {
-            const a = Object.keys(data).find(p => p.indexOf('name') > -1 || p.indexOf('nome') > -1);
+            const a = Object.keys(data)
+                .find(p => p.indexOf('name') > -1 || p.indexOf('nome') > -1);
             if (a) return data[a]
-        })()
-        ||
+            return Object.keys(data)
+                .filter(x => x !== 'internalId' && typeof data[x] === 'string')
+                .map(x => {
+                    return data[x]
+                }).join(' ');
+        })() ||
         '(Item sem descrição)')
 }
 
