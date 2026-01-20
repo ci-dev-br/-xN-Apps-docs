@@ -18,32 +18,58 @@ export class ClienteCrm extends FullAuditedEntity {
     @ApiProperty()
     @Column({ length: 14, nullable: true })
     cpf?: string;
-    @ApiProperty({ type: 'Date', format: 'date', nullable: true })
+    @ApiProperty({
+        title: 'Data Nascimento',
+        type: 'Date', format: 'date', nullable: true
+    })
     @Column({ type: 'date', nullable: true })
     dataNascimento?: Date;
-    @ApiProperty({ maxLength: 255, nullable: true })
+    @ApiProperty({
+        title: 'E-mail',
+        maxLength: 255, nullable: true
+    })
     @Column({ length: 255, nullable: true })
     email?: string;
-    @ApiProperty({ maxLength: 20, nullable: true })
+    @ApiProperty({
+        title: 'Telefone',
+        maxLength: 20, nullable: true
+    })
     @Column({ length: 20, nullable: true })
     telefone?: string;
-    @ApiProperty({ maxLength: 255, nullable: true })
+    @ApiProperty({
+        title: 'Endereço',
+        maxLength: 255, nullable: true
+    })
     @Column({ length: 255, nullable: true })
     endereco?: string;
-    @ApiProperty({ maxLength: 100, nullable: true })
+    @ApiProperty({
+        title: 'Cidade',
+        maxLength: 100, nullable: true
+    })
     @Column({ length: 100, nullable: true })
     cidade?: string;
-    @ApiProperty({ maxLength: 2, nullable: true })
+    @ApiProperty({
+        title: 'Estado',
+        maxLength: 2, nullable: true
+    })
     @Column({ length: 2, nullable: true })
     estado?: string;
-    @ApiProperty({ maxLength: 10, nullable: true })
+    @ApiProperty({
+        title: 'CEP',
+        maxLength: 10, nullable: true
+    })
     @Column({ length: 10, nullable: true })
     cep?: string;
     @ApiProperty()
     @CreateDateColumn()
     dataCadastro: Date;
-    @ApiProperty({ type: 'string', nullable: true })
-    @Column({ type: 'text', nullable: true })
+    @ApiProperty({
+        title: 'Observações',
+        type: 'string', nullable: true
+    })
+    @Column({
+        type: 'text', nullable: true
+    })
     observacoes?: string;
     @OneToMany(() => Agendamento, (agendamento) => agendamento.cliente)
     agendamentos: Agendamento[];
