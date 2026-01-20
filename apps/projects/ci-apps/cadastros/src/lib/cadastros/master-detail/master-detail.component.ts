@@ -5,7 +5,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { GridModule, IColumnOption, IDataGridOptions, WindowModule, WindowService } from "@ci/components";
-import { CoreModule, DaoBuilder, DaoService, IHaveSync } from "@ci/core";
+import { CoreModule, DaoBuilder, DaoService, IHaveSync, ISchema } from "@ci/core";
 import { Application, getServiceAsSchema } from "@ci/portal-api";
 import { EditarComponent } from "./editar/editar.component";
 import { lastValueFrom } from "rxjs";
@@ -43,9 +43,11 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
 
     }
     source?: T[] = [{} as any];
+    properties?: ISchema;
     async loadGrid() {
         if (!!this.schemaName) {
             const properties = await (await this.daoBuilder.getSchema(this.schemaName)).properties
+            this.properties = properties;
             this.gridOptions = {
                 columns: [
                     ...Object.keys(properties || {}).map(property => {

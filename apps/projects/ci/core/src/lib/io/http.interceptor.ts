@@ -101,7 +101,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                 }
                 return throwError(error);
             })).pipe(tap((e) => {
-                console.info('[[tap]]', e);
+                //   console.info('[[tap]]', e);
             }));
     }
     private addBearerToken(request: HttpRequest<any>) {

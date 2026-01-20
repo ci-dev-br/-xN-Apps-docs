@@ -10,4 +10,6 @@ export class ObterListaEndereco {
     take?: number;
     @ApiProperty({})
     where?: FindOptionsWhere<Endereco>[] | FindOptionsWhere<Endereco>;
+    @ApiProperty({})
+    relations?: any;
 }

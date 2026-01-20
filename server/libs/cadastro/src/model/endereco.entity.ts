@@ -64,7 +64,7 @@ export class Endereco extends FullAuditedEntity {
     @ApiProperty({
         title: 'Município',
         nullable: true,
-        required: false
+        required: false,
     })
     @Column({
         nullable: true
