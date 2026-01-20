@@ -1,7 +1,6 @@
 require('dotenv').config();
 import { join } from "node:path";
 import { RunnerX } from "./comum/runner-x";
-import { spawn, spawnSync } from "node:child_process";
 export class CiRunner extends RunnerX {
     constructor() {
         super();
@@ -11,15 +10,16 @@ export class CiRunner extends RunnerX {
             name: 'Apps',
             type: 'nest'
         });
-        this.GitStatus();
-        this.GitAdd();
-        this.GitPull();
-        this.GitPush();
+        // TODO: mover para camada e Actions 
+        // this.GitStatus();
+        // this.GitAdd();
+        // this.GitPull();
+        // this.GitPush();
         this.addEventLitener('message', message => {
             if (message.indexOf('[Domain Service iniciado]') > -1) {
                 if (process.env.PUBLIC_GATEWAY_API)
                     this.adicionarVerificacaoRota(process.env.PUBLIC_GATEWAY_API);
-            } else if (message.indexOf('Changes to be committed:') > -1) {
+            } /* else if (message.indexOf('Changes to be committed:') > -1) {
                 (() => {
                     console.info('[Initialize committer]');
                     try {
@@ -49,7 +49,7 @@ export class CiRunner extends RunnerX {
 
                     }
                 })();
-            }
+            } */
         });
     }
     private GitAdd() {
