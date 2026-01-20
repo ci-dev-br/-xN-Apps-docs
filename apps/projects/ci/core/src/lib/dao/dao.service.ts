@@ -212,10 +212,10 @@ export class DaoService {
         }
         return r;
     }
-    async read(data: any) {
+    async read(data: any, schemaName?: string) {
         if (data instanceof Date) return data;
         if (Array.isArray(data)) {
-            data.forEach(o => this.read(o));
+            data.forEach(o => this.read(o, schemaName));
         } else if (!!data && typeof data === 'object') {
             if (!!data.__readed) return data;
             data.__readed = true;
