@@ -15,6 +15,50 @@ export class CiRunner extends RunnerX {
                 if (process.env.PUBLIC_GATEWAY_API)
                     this.adicionarVerificacaoRota(process.env.PUBLIC_GATEWAY_API);
             }
-        })
+        });
+    }
+    private GitAdd() {
+        this.addTask({
+            command: 'git add .',
+            cwd: join(__dirname, '..'),
+            name: 'Git add',
+            type: 'git'
+        });
+    }
+    private GitPull() {
+        this.addTask({
+            command: 'git pull --all',
+            cwd: join(__dirname, '..'),
+            name: 'Git Status',
+            type: 'git'
+        });
+    }
+    private GitPush() {
+        this.addTask({
+            command: 'git push --all',
+            cwd: join(__dirname, '..'),
+            name: 'Git Status',
+            type: 'git'
+        });
+        this.addTask({
+            command: 'git push --all azure',
+            cwd: join(__dirname, '..'),
+            name: 'Git Status',
+            type: 'git'
+        });
+        this.addTask({
+            command: 'git push --all PR',
+            cwd: join(__dirname, '..'),
+            name: 'Git Status',
+            type: 'git'
+        });
+    }
+    private GitStatus() {
+        this.addTask({
+            command: 'git status',
+            cwd: join(__dirname, '..'),
+            name: 'Git Status',
+            type: 'git'
+        });
     }
 }

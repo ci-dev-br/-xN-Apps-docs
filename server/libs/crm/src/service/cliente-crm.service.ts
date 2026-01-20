@@ -1,23 +1,18 @@
-import { DataSource, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import { SnapshotService } from "@ci/core";
+import { DaoFullAuditedServiceBase, SnapshotService } from "@ci/core";
 import { ClienteCrm } from "../models/cliente";
-import { DaoServiceBase } from "@ci/manager/dao/dao-service-base";
-
-export class ClienteCrmService extends DaoServiceBase<ClienteCrm> {
+import { Injectable } from "@nestjs/common";
+/**
+ * Serviço de ClienteCrm de CRM
+ */
+@Injectable()
+export class ClienteCrmService extends DaoFullAuditedServiceBase<ClienteCrm> {
     constructor(
         snap: SnapshotService,
         @InjectRepository(ClienteCrm)
-        repository: Repository<ClienteCrm>,
-        dataSource?: DataSource,
+        repository: Repository<ClienteCrm>
     ) {
-        super(snap, repository, dataSource);
-    }
-    override async getById(id: string, request?: any): Promise<ClienteCrm> {
-        return await this._repo.findOne({
-            where: {
-                internalId: id
-            }
-        })
+        super(snap, repository);
     }
 }

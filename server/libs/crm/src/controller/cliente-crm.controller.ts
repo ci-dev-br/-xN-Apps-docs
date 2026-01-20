@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ClienteCrm } from "../models/cliente";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
@@ -40,9 +40,10 @@ export class ClienteCrmController extends ControllerDaoBase<ClienteCrmService, C
     })
     override async Sync(
         @Body() body: SyncPayloadDaoClienteCrm,
+        @Req() req,
     ) {
         try {
-            return await super.Sync(body)
+            return await super.Sync(body, req)
         } catch (error) {
             return {
                 status: 500,
@@ -61,7 +62,8 @@ export class ClienteCrmController extends ControllerDaoBase<ClienteCrmService, C
     })
     override async GetList(
         @Body() input: ObterListaClienteCrm,
+        @Req() req,
     ) {
-        return super.GetList(input);
+        return super.GetList(input, req);
     }
 }
