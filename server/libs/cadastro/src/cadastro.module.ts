@@ -85,4 +85,6 @@ export {
     Category,
     PessoaService,
     PessoaController,
+    EnderecoService,
+    EnderecoController,
 }

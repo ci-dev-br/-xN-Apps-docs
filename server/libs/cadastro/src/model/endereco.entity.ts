@@ -39,7 +39,6 @@ export class Endereco extends FullAuditedEntity {
      */
     @ApiProperty({
         title: 'Número',
-
         nullable: true,
         required: false
     })
@@ -52,7 +51,6 @@ export class Endereco extends FullAuditedEntity {
      */
     @ApiProperty({
         title: 'Complemento',
-
         nullable: true,
         required: false
     })

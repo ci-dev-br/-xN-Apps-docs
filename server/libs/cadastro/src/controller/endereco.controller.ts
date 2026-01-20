@@ -8,6 +8,11 @@ import { ObterListaEndereco } from "../dto/obter-lista-endereco";
 @ApiTags('Endereco')
 @Controller('Endereco')
 export class EnderecoController extends ControllerDaoBase<EnderecoService, Endereco> {
+    constructor(
+        service: EnderecoService
+    ) {
+        super(service);
+    }
     @Post('Sync')
     @ApiResponse({
         type: SyncPayloadDaoEndereco,
