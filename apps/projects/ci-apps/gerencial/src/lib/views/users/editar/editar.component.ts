@@ -61,7 +61,7 @@ export class EditarComponent implements OnInit {
             const _data = this.data?.data;
             this.form = await this.daoBuilder.getForm(this.schemaName);
             const form = this.form;
-            this.dao.prepareToEdit(this.data?.data);
+            this.dao.prepareToEdit(this.data?.data, { schemaName: this.schemaName });
             if (this.form) this.dao.bindDataForm(this.data?.data, this.form);
             this.dao.confirmation(this.data?.data)?.subscribe(async data => {
                 try {

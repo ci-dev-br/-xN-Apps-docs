@@ -14,12 +14,14 @@ export function OfString(data: any): string {
                 .find(p => p.indexOf('name') > -1 || p.indexOf('nome') > -1);
             if (a) return data[a]
             return Object.keys(data)
-                .filter(x => x !== 'internalId' && typeof data[x] === 'string')
+                .filter(x =>
+                    x !== 'internalId' &&
+                    x.indexOf('At') === -1 &&
+                    typeof data[x] === 'string')
                 .map(x => {
                     return data[x]
                 }).join(' ');
-        })() ||
-        '(Item sem descrição)')
+        })() || '(registro vazio)')
 }
 
 /**
