@@ -5,5 +5,5 @@ import { schema } from "./schema";
     schema
 })
 export class Lexico extends FullAuditedEntity {
-    
+
 }

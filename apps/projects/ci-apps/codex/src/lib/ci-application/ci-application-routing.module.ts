@@ -6,8 +6,25 @@ import { NavigationComponent } from './navigation/navigation.component';
 const routes: Routes = [
   {
     path: '', component: NavigationComponent, children: [
-      { path: '', component: HomepageComponent, data: { title: 'Início', icon: 'home' } },
-      { path: 'editor', component: CodeEditorComponent, data: { title: 'Editor de Código', icon: 'code' } },
+      {
+        path: '', component: HomepageComponent,
+        data: {
+          title: 'Início',
+          icon: 'home'
+        }
+      },
+      {
+        path: 'editor', component: CodeEditorComponent,
+        data: {
+          title: 'Editor de Código',
+          icon: 'code',
+          manifest: {
+            'event:open:*.ts': {
+              component: CodeEditorComponent,
+            }
+          }
+        }
+      },
     ]
   }
 ];
