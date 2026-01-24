@@ -85,11 +85,16 @@ export class ChessGameComponent implements OnInit {
         }
     }
     private getHeuristicMove(moves: any[]): any {
-        return moves.sort((a, b) => {
-            const aValue = a.captured ? PIECE_VALUES[a.captured] : 0;
-            const bValue = b.captured ? PIECE_VALUES[b.captured] : 0;
-            return bValue - aValue; // Ordem decrescente de valor capturado
-        })[0];
+        try {
+            return moves.sort((a, b) => {
+                const aValue = a.captured ? PIECE_VALUES[a.captured] : 0;
+                const bValue = b.captured ? PIECE_VALUES[b.captured] : 0;
+                return bValue - aValue; // Ordem decrescente de valor capturado
+            })[0];
+        } catch (error) {
+            error;
+            debugger;
+        }
     }
     private getBestMoveMinimax(game: Chess, depth: number): any {
         let moves = game.moves({ verbose: true });
