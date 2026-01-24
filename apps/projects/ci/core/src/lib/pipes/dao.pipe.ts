@@ -11,12 +11,6 @@ export class DaoPipe implements PipeTransform {
             value.name || value.nome ||
             value.title || value.titulo ||
             value.descricao || value.description ||
-            value.surname || value.username ||
-                /* (() => {
-                    if (typeof value === 'object') {
-                        const a = Object.keys(value).find(p => p.indexOf('name') > -1 || p.indexOf('nome') > -1);
-                        if (a) return value[a]
-                    }
-                })()  */'Sem descrição')
+            value.surname || value.username || String(value) || 'Sem descrição')
     }
 }

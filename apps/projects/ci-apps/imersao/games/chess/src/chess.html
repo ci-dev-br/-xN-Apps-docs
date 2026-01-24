@@ -6,6 +6,9 @@
     <button mat-button>
         Procurar oponente...
     </button>
+    <button mat-raised-button color="accent" (click)="startVsIA()">
+        Jogar vs IA
+    </button>
     <button mat-button>
         Agendar partida
     </button>
@@ -26,6 +29,7 @@
             </div>
         </div>
     </div>
+    <span *ngIf="isVsIA && game.turn() === 'b'">(IA pensando...)</span>
     <div class="row">
         <div class="status">
             Vez do jogador: {{ game.turn() === 'w' ? 'Brancas' : 'Pretas' }}

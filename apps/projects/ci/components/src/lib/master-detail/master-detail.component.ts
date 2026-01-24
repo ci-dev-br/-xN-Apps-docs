@@ -123,7 +123,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
     }
     async search() {
         if (this.service && this.service.getList)
-            this.source = await this.daos?.read(await lastValueFrom(this.service.getList()));
+            this.source = await this.daos?.read(await lastValueFrom(this.service.getList()), this.schemaName);
     }
     async editar(data: T, event?: Event) {
         const result: number | any = await this.window?.open(EditarDetailComponent,

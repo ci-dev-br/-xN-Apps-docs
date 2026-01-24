@@ -2,6 +2,7 @@
 As mudanças devem estar descritas neste documento para melhor analisar a implementação com seu Objetivo a ser atingido. Descreva o que o recurso implementado resolve e o estágio em que ele se encontra para se comparado com os relatórios gerados após enviar se PR.
 
 # Sprint 2026
+- [x] Master Detail: Correção em duplicação de item novo por não existir internalId;
 - [ ] Melhoria: Implementação de MasterDetail, em CRM:
     - [ ]: Correção do layout interno, distribuir em linha com quebra centralizada;
     - [ ]: Ajustar campos de @Ref(id) pra visualização correta da informação de acordo com a chave;

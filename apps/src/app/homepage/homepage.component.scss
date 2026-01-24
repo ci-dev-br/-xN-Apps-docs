@@ -113,7 +113,7 @@ header {
 }
 
 .sidebar {
-    background-color: white;
+    background-color: var(--mat-app-background-color);
     display: flex;
     flex-direction: column;
     width: 245px;
@@ -125,6 +125,7 @@ header {
     padding: 24px;
     border-radius: 12px;
     transition: all 1.5s ease;
+    overflow: hidden;
 
     >* {
         transition: opacity .5s ease-in-out;

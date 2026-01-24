@@ -1,4 +1,4 @@
-import { Component, Inject, Injector, Input, OnInit, Optional } from "@angular/core";
+import { Component, HostListener, Inject, Injector, Input, OnInit, Optional } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
@@ -61,7 +61,7 @@ export class EditarComponent implements OnInit {
             const _data = this.data?.data;
             this.form = await this.daoBuilder.getForm(this.schemaName);
             const form = this.form;
-            this.dao.prepareToEdit(this.data?.data);
+            this.dao.prepareToEdit(this.data?.data, { schemaName: this.schemaName });
             if (this.form) this.dao.bindDataForm(this.data?.data, this.form);
             this.dao.confirmation(this.data?.data)?.subscribe(async data => {
                 try {
@@ -82,6 +82,13 @@ export class EditarComponent implements OnInit {
                     console.error(error);
                 }
             });
+        }
+    }
+    @HostListener('window:keydown', ['$event'])
+    protected save(event: KeyboardEvent) {
+        if (!!event.ctrlKey && event.code === 'KeyS') {
+            event.preventDefault();
+            this.dao?.confirmChanges(!!this.data?.data?.schemaName ? this.data.data.data : this.data?.data)
         }
     }
 }

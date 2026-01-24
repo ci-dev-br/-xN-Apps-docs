@@ -9,8 +9,10 @@ export class CadastroController {
     private services: CadastroBase[];
     constructor(
         private readonly injector: ModuleRef,
-        @Optional() @Inject('CLIENT.MODEL.EDITABLES') private readonly _editables: string[],
-        @Optional() @Inject('FORM_PROVIDERS') private readonly FORM_PROVIDER_SERVICES?: any[]) {
+        @Optional()
+        @Inject('CLIENT.MODEL.EDITABLES') private readonly _editables: string[],
+        @Optional()
+        @Inject('FORM_PROVIDERS') private readonly FORM_PROVIDER_SERVICES?: any[]) {
         if (this.FORM_PROVIDER_SERVICES) {
             const s = [];
             this.FORM_PROVIDER_SERVICES.forEach(e => {
@@ -25,17 +27,21 @@ export class CadastroController {
         isArray: true,
     })
     @Post('Editables')
-    @ApiOperation({ operationId: 'EditablesCadastro' })
+    @ApiOperation({
+        operationId: 'EditablesCadastro',
+    })
     async editables() {
         return this._editables;
     }
-
     @ApiResponse({
         type: IDynamicForm,
         isArray: true,
     })
     @Post('All')
-    @ApiOperation({ operationId: 'GetAllCadastro' })
+    @ApiOperation({
+        description: `Retorna lista de Cadastros disponíveis para manipulação.`,
+        operationId: 'GetAllCadastro',
+    })
     async getAll(
         @Body()
         input?: Payload<void>,

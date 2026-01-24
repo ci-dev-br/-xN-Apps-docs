@@ -1,12 +1,13 @@
 <mat-form-field>
     <mat-label>Pesquisar Apps, configurações e cadastros.</mat-label>
-    <input matInput type="text" placeholder="Pesquisar Apps, configurações e cadastros.">
+    <input #searchInputElement (keydown.escape)="searchControl.reset()" matInput [formControl]="searchControl" type="text"
+        placeholder="Pesquisar Apps, configurações e cadastros.">
 </mat-form-field>
 <div class="container">
     <h5>Todos os Apps</h5>
 </div>
 <div class="apps container --flexible">
-    @for (app of apps; track $index) {
+    @for (app of (appsFiltered || apps); track $index) {
     <div class="app" [tabindex]="$index" (contextmenu)="contextMenuHanlder($event)"
         (keydown.enter)="appClickHandler($event, app)" (click)="appClickHandler($event, app)"
         [attr.aria-labelledby]="app.description">

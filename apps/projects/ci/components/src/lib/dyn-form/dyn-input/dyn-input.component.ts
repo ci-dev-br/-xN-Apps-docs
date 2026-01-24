@@ -83,7 +83,7 @@ export class DynInputComponent {
                 if (this.fieldName) this.formGroup?.get(this.fieldName)?.valueChanges.subscribe(async v => {
                     if (typeof v === 'string') {
                         if (this.service && this.service.getList)
-                            this.list = await this.daos?.read(await lastValueFrom(this.service.getList()));
+                            this.list = await this.daos?.read(await lastValueFrom(this.service.getList()), this.schemaName);
                         this.list;
                     } else {
                         v;

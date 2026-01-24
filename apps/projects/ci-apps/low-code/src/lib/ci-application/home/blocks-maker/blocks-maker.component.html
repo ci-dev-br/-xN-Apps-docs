@@ -1,23 +1,24 @@
 <mat-toolbar>
     <button mat-raised-button color="primary" [matMenuTriggerFor]="novoMenu">
-        <mat-icon>add</mat-icon>
+        <mat-icon>create</mat-icon>
         Novo
     </button>
+    <!-- <button mat-raised-button>
+        <mat-icon>arrow_downward_alt</mat-icon>
+        Importar
+    </button> -->
     <mat-menu #novoMenu>
-        <button mat-menu-item>
-            Bloco de Construção
+        <button mat-menu-item (click)="createBlock()">
+            Novo Bloco
         </button>
-        <button mat-menu-item>
+        <!-- <button mat-menu-item>
             Bloco de Teste
-        </button>
-        <button mat-menu-item>
+        </button> -->
+        <!-- <button mat-menu-item>
             Bloco de Automação
-        </button>
+        </button> -->
     </mat-menu>
-    <button mat-button>
-        <mat-icon>import</mat-icon>
-        Importar bloco
-    </button>
+
 </mat-toolbar>
 <section>
     <h3>Criador de blocos de construção</h3>

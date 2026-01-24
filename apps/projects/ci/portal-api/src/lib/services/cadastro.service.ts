@@ -50,6 +50,8 @@ export class CadastroService extends BaseService {
   static readonly GetAllCadastroPath = '/Cadastro/All';
 
   /**
+   * Retorna lista de Cadastros disponíveis para manipulação.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `getAllCadastro()` instead.
    *
@@ -60,6 +62,8 @@ export class CadastroService extends BaseService {
   }
 
   /**
+   * Retorna lista de Cadastros disponíveis para manipulação.
+   *
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `getAllCadastro$Response()` instead.
    *

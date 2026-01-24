@@ -19,4 +19,7 @@ import { CoreModule } from '@ci/core';
 })
 export class BlocksMakerComponent {
   protected blocos?: any[];
+  async createBlock() {
+    
+  }
 }

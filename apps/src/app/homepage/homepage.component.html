@@ -1,32 +1,52 @@
 @if(stage==='loading'){
 Carregando...
 }@else {
-<video #video loop controls="false" autoplay>
+<!-- <video #video loop controls="false" autoplay>
     <source src="bg.mp4" type="video/mp4">
-</video>
-<ci-navbar></ci-navbar>
+</video> -->
+<!-- <ci-navbar></ci-navbar> -->
 <div class="page--wrapper">
     @if(!!(userService.user | async)){
+    <!-- User has identification -->
     <div #sidebarElement class="sidebar" [class.--inactive]="!sidebar" (click)="sidebar=!sidebar"
         [style.top]="sidebarTop + 'px' " [style.left]="sidebarLeft + 'px'">
         <button mat-raised-button color="primary" routerLink="/meus-apps">Meus Apps</button>
         @if(categorias){@for (item of categorias; track $index) {
         <button mat-button>{{item.name}}</button>
         }}
+        <div class="row">
+            <button mat-raised-button>
+                Publicar Texto
+            </button>
+            <button mat-raised-button>
+                Publicar Foto
+            </button>
+            <button mat-raised-button>
+                Publicar Vídeo
+            </button>
+        </div>
         <span style="flex:auto"></span>
         <div class="row end">
             <button mat-icon-button (click)="openSidebarSettings()"><mat-icon>settings</mat-icon></button>
         </div>
     </div>
     <div class="wrapper">
-        <div class="container">
+        <div>
+            <p>
+                Nada por perto até o momento,
+            </p>
+            <p>
+                seja o publicar algo por perto!
+            </p>
+        </div>
+        <!--  <div class="container">
             <h4>Utilize o Apps para criar aplicativos incríveis e eficientes que auxiliam suas operações no dia-a-dia.
             </h4>
             <p>
                 Gerencie conexões, aplicativos e código-fonte. Integre de forma simples. Configure seu ambiente de
                 desenvolvimento em poucos passos.
             </p>
-        </div>
+        </div> -->
         <div class="apps">
             @for (item of apps; track $index) {
             <mat-card (click)="appClickHandler($event, item)">

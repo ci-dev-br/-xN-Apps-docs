@@ -4,17 +4,24 @@ import { Subject } from "rxjs";
 import { DaoBuilder, WsService } from "../core.module";
 import { EMITTER } from "../emitter/token";
 
-export function OfString(data: any) {
+export function OfString(data: any): string {
     return (
         data.name || data.nome ||
         data.title || data.titulo ||
         data.descricao || data.description ||
         (() => {
-            const a = Object.keys(data).find(p => p.indexOf('name') > -1 || p.indexOf('nome') > -1);
+            const a = Object.keys(data)
+                .find(p => p.indexOf('name') > -1 || p.indexOf('nome') > -1);
             if (a) return data[a]
-        })()
-        ||
-        '(Item sem descrição)')
+            return Object.keys(data)
+                .filter(x =>
+                    x !== 'internalId' &&
+                    x.indexOf('At') === -1 &&
+                    typeof data[x] === 'string')
+                .map(x => {
+                    return data[x]
+                }).join(' ');
+        })() || '(registro vazio)')
 }
 
 /**
@@ -205,10 +212,10 @@ export class DaoService {
         }
         return r;
     }
-    async read(data: any) {
+    async read(data: any, schemaName?: string) {
         if (data instanceof Date) return data;
         if (Array.isArray(data)) {
-            data.forEach(o => this.read(o));
+            data.forEach(o => this.read(o, schemaName));
         } else if (!!data && typeof data === 'object') {
             if (!!data.__readed) return data;
             data.__readed = true;

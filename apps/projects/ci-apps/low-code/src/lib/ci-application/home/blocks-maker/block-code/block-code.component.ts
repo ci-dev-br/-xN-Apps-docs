@@ -15,6 +15,5 @@ export class CodeBlockComponent {
     @Input() description?: string;
     @Input() inputs?: any[];
     @Input() outputs?: any[];
-
     constructor() { }
 }
