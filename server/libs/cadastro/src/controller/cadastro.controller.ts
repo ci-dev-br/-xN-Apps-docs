@@ -39,6 +39,7 @@ export class CadastroController {
     })
     @Post('All')
     @ApiOperation({
+        description: `Retorna lista de Cadastros disponíveis para manipulação.`,
         operationId: 'GetAllCadastro',
     })
     async getAll(
