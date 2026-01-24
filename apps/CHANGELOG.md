@@ -2,6 +2,8 @@
 As mudanças devem estar descritas neste documento para melhor analisar a implementação com seu Objetivo a ser atingido. Descreva o que o recurso implementado resolve e o estágio em que ele se encontra para se comparado com os relatórios gerados após enviar se PR.
 
 # Sprint 2026
+- [ ]: Master Detail Component: 
+ - [ ]: Pesquisar item: Ao digidar em visão geral, acionar mecanismo de busca em sobre os dados dispostos.
 - [ ] Criar postagem de texto, video etc na página incial para interação social entre os usuários da plataforma: 
   - [ ] Publicar texto: 
       - [ ] Abrir janela de criação de conteúdo em texto[Especificação](../docs/specs/234678.md);
@@ -14,13 +16,13 @@ As mudanças devem estar descritas neste documento para melhor analisar a implem
     - [ ]: Ajustar campos de @Ref(id) pra visualização correta da informação de acordo com a chave;
     - [ ]: Implementação de pesquisa básica em campos tipo @Ref();
     - [ ]: Sub-ações: implementação de sub menu para ação de abrir em janela externa. Ao posicionar o cursor sobre a ação principal do conjunto de ações extras; 
-- [>>>] Meus Documentos: Implementação de Meus Documentos;
+- [>] Meus Documentos: Implementação de Meus Documentos;
 - [Iniciado] Launcher App: Para Mobile Managers e Afins;
   - [OK] Implementação de webview com carga do web.app;
   - [>] Implementação de Aplicação Launcher em web client restrito:
   apenas ao acesso via Aplicativo android de aplicação do tipo LAUNCHER;
 - [>] Cadastros: 
-    - [>>>] [TASK#1](./tasks/01.md) - Implementar edição e visualização de Cadastros utilizando DaoBuilder, seguindo exemplo de Implementação em Apps\Gerencial\Applications;
+    - [>] [TASK#1](./tasks/01.md) - Implementar edição e visualização de Cadastros utilizando DaoBuilder, seguindo exemplo de Implementação em Apps\Gerencial\Applications;
 - [Implementado][Funciona Parcialmente] - Implementação de Envio de SMS em MobManager;
 - [x] - Implementação de Notification Bus:
     - [x] - Cliente em Mobile Manager;
@@ -29,7 +31,7 @@ As mudanças devem estar descritas neste documento para melhor analisar a implem
     - [x] - Implementação de auto-reconnect para reestabelecimento da conexão após queda de tempo indeterminado. 
 - [ ] - Implementar Serviço de Tema da aplicação:
     - [>] - Implementar LightMode e Dark Mode;
-- [>] - Profile: 
+- [>>>] - Profile: 
     - [>] - Foto de Perfil;
     - [OK] - Editar informações do Usuário;
 - [ ] - Implementação de Arquivos App:
@@ -52,10 +54,10 @@ As mudanças devem estar descritas neste documento para melhor analisar a implem
  - [ ] - Implementação de Instalação App:
     - [ ] - Instalação de Novo App, permitir adicionar domínio, logo, e informações de hospedagem como DNS e arquivos da implantação.
  - [ ] - Implementação de LowCode App:
-   - [>>>] - CodeBlocks:
-   - [>>>] - NodeRED:
-   - [>>>] - Blocks Maker:
- - [>>>] - Implementação de Mensagens App:
+   - [>] - CodeBlocks:
+   - [>] - NodeRED:
+   - [>] - Blocks Maker:
+ - [>] - Implementação de Mensagens App:
    - [ ] - Permitir adicionar usuários a partir do Massager ID. Que é único por usuário e pode ser gerado quando o usuário quiser usar o Messager. Podendo gerar vários Messager ID para propósitos distintos.
    - [ ] - Vincular número de celular e contatos do dispositivo para identificar os usuáios de contato disponíveis ao Usuário.
    - [ ] - Abrir conversa com outro usuário e enviar conteúdo.
@@ -79,7 +81,7 @@ As mudanças devem estar descritas neste documento para melhor analisar a implem
  - [>] - Implementação de Treinamento App:
    - [ ] - Gerenciar Alunos;
    - [ ] - Gerenciar Turmas;
- - [ ] - Implementação de Vendas App:
+ - [ ] - Implementação de Vendas App [EPIC#34](https://dev.azure.com/cidevbr/Portal/_workitems/edit/34):
    - [ ] - Criar nova meta de venda
 
 # Sprint Abril de 2025
