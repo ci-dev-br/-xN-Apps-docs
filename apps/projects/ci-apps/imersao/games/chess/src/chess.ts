@@ -34,7 +34,7 @@ export class ChessGameComponent implements OnInit {
     niveis = ['easy',
         'medium',
         'hard',]
-    difficulty: 'easy' | 'medium' | 'hard' = 'medium';
+    difficulty: 'easy' | 'medium' | 'hard' = 'hard';
     ngOnInit() {
         this.updateBoard();
     }
