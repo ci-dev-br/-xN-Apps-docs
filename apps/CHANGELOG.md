@@ -5,6 +5,9 @@ As mudanças devem estar descritas neste documento para melhor analisar a implem
 - [ ] Criar postagem de texto, video etc na página incial para interação social entre os usuários da plataforma: 
   - [ ] Publicar texto: 
       - [ ] Abrir janela de criação de conteúdo em texto[Especificação](../docs/specs/234678.md);
+  - [ ] Publicar citação: 
+  - [ ] Publicar foto: 
+  - [ ] Publicar vídeo: 
 - [x] Master Detail: Correção em duplicação de item novo por não existir internalId;
 - [ ] Melhoria: Implementação de MasterDetail, em CRM:
     - [ ]: Correção do layout interno, distribuir em linha com quebra centralizada;
