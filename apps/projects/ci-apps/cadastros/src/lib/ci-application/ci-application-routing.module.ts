@@ -7,7 +7,9 @@ const home_children: Routes = [
   {
     path: '', component: CadastrosComponent, data: { title: 'Cadastros', icon: 'dashboard' }, children: [
       {
-        path: ':EntityName', component: MasterDetailComponent, data: {
+        path: ':EntityName',
+        component: MasterDetailComponent,
+        data: {
           /// dataType: 'EntityMasterDetail', title: 'Unidade de Medida', icon: 'svg:unidade_medida',
         }
       },

@@ -1,12 +1,13 @@
 import { MatIconModule } from "@angular/material/icon";
 import { CI_STATIC_APPS, IApp } from "../apps";
-import { Component, HostListener } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '@ci/auth';
 import { CoreModule } from "@ci/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 @Component({
     selector: 'ci-apps-lista',
     templateUrl: 'lista.html',
@@ -17,11 +18,16 @@ import { MatFormFieldModule } from "@angular/material/form-field";
         MatButtonModule,
         MatInputModule,
         MatFormFieldModule,
+        ReactiveFormsModule,
     ],
     styleUrl: 'lista.scss'
 })
 export class Lista {
     apps?: IApp[];
+    appsFiltered?: IApp[];
+    searchControl: FormControl = new FormControl(undefined, {
+        validators: [],
+    });
     constructor(
         private readonly userService: UserService,
         private readonly router: Router,
@@ -35,7 +41,20 @@ export class Lista {
             } else {
                 // this.router.navigate(['/']);
             }
-        })
+        });
+        this.searchControl.valueChanges.subscribe((value: string) => {
+            if (!!value && value.trim().length > 0) {
+                this.appsFiltered = this.apps?.filter(x => {
+                    if (JSON.stringify(x).toLocaleLowerCase()
+                        .indexOf(value.toLocaleLowerCase()) > -1)
+                        return true;
+                    else
+                        return false
+                })
+            } else {
+                this.appsFiltered = undefined;
+            }
+        });
     }
     async appClickHandler(event: any, app: any) {
         if (event.ctrlKey) {
@@ -66,4 +85,11 @@ export class Lista {
             e.stopImmediatePropagation();
         }
     };
+    @ViewChild('searchInputElement')
+    searchInputElement?: ElementRef<HTMLInputElement>;
+    @HostListener('window:keydown', ['$event'])
+    focus(ke: KeyboardEvent) {
+        this.searchInputElement?.nativeElement.focus();
+    }
+
 }
