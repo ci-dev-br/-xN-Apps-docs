@@ -4,6 +4,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { CoreModule } from '@ci/core';
 import { Chess, Move } from 'chess.js';
+const PIECE_VALUES: { [key: string]: number } = {
+    p: 10,  // Peão
+    n: 30,  // Cavalo
+    b: 30,  // Bispo
+    r: 50,  // Torre
+    q: 90,  // Dama
+    k: 900  // Rei
+};
 @Component({
     selector: 'ci-chess-game',
     standalone: true,
@@ -23,6 +31,10 @@ export class ChessGameComponent implements OnInit {
     board: any[][] = [];
     selectedSquare: string | null = null;
     isVsIA = false; // Flag para o modo IA
+    niveis = ['easy',
+        'medium',
+        'hard',]
+    difficulty: 'easy' | 'medium' | 'hard' = 'medium';
     ngOnInit() {
         this.updateBoard();
     }
@@ -31,7 +43,6 @@ export class ChessGameComponent implements OnInit {
         this.stage = 'play';
         this.resetGame();
     }
-    // Inicia jogo contra a máquina
     startVsIA() {
         this.isVsIA = true;
         this.resetGame();
@@ -41,20 +52,15 @@ export class ChessGameComponent implements OnInit {
         this.game.reset();
         this.updateBoard();
     }
-    // Atualiza a representação visual do tabuleiro
     updateBoard() {
         this.board = this.game.board();
     }
-    // Lógica de clique na casa
     onSquareClick(rank: number, file: number) {
         if (this.game.isGameOver()) return;
-
-        // Se for turno da IA, bloqueia clique do jogador
         if (this.isVsIA && this.game.turn() === 'b') return;
-
         const coords = this.getCoords(rank, file);
         if (this.selectedSquare) {
-            this.makeMove(this.selectedSquare, coords);
+            this.criarMovimento(this.selectedSquare, coords);
             this.selectedSquare = null;
         } else {
             const piece = this.game.get(coords as any);
@@ -63,15 +69,14 @@ export class ChessGameComponent implements OnInit {
             }
         }
     }
-    makeMove(from: string, to: string) {
+    criarMovimento(from: string, to: string) {
         try {
-            const move = this.game.move({ from, to, promotion: 'q' }); // promoção padrão para dama
-            if (move) {
+            const movimento = this.game.move({ from, to, promotion: 'q' });
+            if (movimento) {
                 this.updateBoard();
                 if (this.game.isGameOver()) {
                     this.checkGameStatus();
                 } else if (this.isVsIA && this.game.turn() === 'b') {
-                    // Pequeno delay para a jogada da IA não ser instantânea
                     setTimeout(() => this.makeAIMove(), 600);
                 }
             }
@@ -79,16 +84,80 @@ export class ChessGameComponent implements OnInit {
             console.log("Movimento inválido");
         }
     }
+    private getHeuristicMove(moves: any[]): any {
+        return moves.sort((a, b) => {
+            const aValue = a.captured ? PIECE_VALUES[a.captured] : 0;
+            const bValue = b.captured ? PIECE_VALUES[b.captured] : 0;
+            return bValue - aValue; // Ordem decrescente de valor capturado
+        })[0];
+    }
+    private getBestMoveMinimax(game: Chess, depth: number): any {
+        let moves = game.moves({ verbose: true });
+        let bestMove = null;
+        let bestValue = -9999;
+        for (let move of moves) {
+            game.move(move);
+            let boardValue = -this.minimax(game, depth - 1, false);
+            game.undo();
+            if (boardValue > bestValue) {
+                bestValue = boardValue;
+                bestMove = move;
+            }
+        }
+        return bestMove;
+    }
+    private minimax(game: Chess, depth: number, isMaximizing: boolean): number {
+        if (depth === 0) return this.evaluateBoard(game);
+        let moves = game.moves();
+        if (isMaximizing) {
+            let best = -9999;
+            for (let m of moves) {
+                game.move(m);
+                best = Math.max(best, this.minimax(game, depth - 1, !isMaximizing));
+                game.undo();
+            }
+            return best;
+        } else {
+            let best = 9999;
+            for (let m of moves) {
+                game.move(m);
+                best = Math.min(best, this.minimax(game, depth - 1, !isMaximizing));
+                game.undo();
+            }
+            return best;
+        }
+    }
+    private evaluateBoard(game: Chess): number {
+        let totalEvaluation = 0;
+        const board = game.board();
+
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                const piece = board[i][j];
+                if (piece) {
+                    const value = PIECE_VALUES[piece.type] || 0;
+                    totalEvaluation += (piece.color === 'w' ? -value : value);
+                }
+            }
+        }
+        return totalEvaluation;
+    }
     makeAIMove() {
-        const possibleMoves = this.game.moves();
-
-        // Se não houver movimentos, o jogo acabou
-        if (possibleMoves.length === 0) return;
-
-        // Escolhe um movimento aleatório (IA Nível 1)
-        const randomIndex = Math.floor(Math.random() * possibleMoves.length);
-        this.game.move(possibleMoves[randomIndex]);
-
+        const possibilidades = this.game.moves({ verbose: true });
+        let move: Move;
+        if (possibilidades.length === 0) return;
+        switch (this.difficulty) {
+            case 'hard':
+                move = this.getBestMoveMinimax(this.game, 3);
+                break;
+            case 'medium':
+                move = this.getHeuristicMove(possibilidades);
+                break;
+            default:
+                const randomIndex = Math.floor(Math.random() * possibilidades.length);
+                move = possibilidades[randomIndex];
+        }
+        this.game.move(move);
         this.updateBoard();
         this.checkGameStatus();
     }
