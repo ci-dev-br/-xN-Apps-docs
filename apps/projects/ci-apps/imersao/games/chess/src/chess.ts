@@ -105,21 +105,26 @@ export class ChessGameComponent implements OnInit {
 
     async makeAIMove() {
         const possibilidades = this.game.moves({ verbose: true });
-        let move: Move;
+        let move = undefined;
         if (possibilidades.length === 0) return;
-        switch (this.difficulty) {
-            case 'hard':
-                let server_play = await lastValueFrom(this.chess.chessMove({ body: { fen: this.game.fen() } }));
-                move = server_play.move as any;
-                break;
-            case 'medium':
-                move = this.getHeuristicMove(possibilidades);
-                break;
-            default:
-                const randomIndex = Math.floor(Math.random() * possibilidades.length);
-                move = possibilidades[randomIndex];
+        try {
+            switch (this.difficulty) {
+                case 'hard':
+                    let server_play = await lastValueFrom(this.chess.chessMove({ body: { fen: this.game.fen() } }));
+                    move = server_play.move as any;
+                    break;
+                case 'medium':
+                    move = this.getHeuristicMove(possibilidades);
+                    break;
+                default:
+                    const randomIndex = Math.floor(Math.random() * possibilidades.length);
+                    move = possibilidades[randomIndex];
+            }
+        } catch (error) {
+            console.error(error);
         }
-        this.game.move(move);
+        if (!!move)
+            this.game.move(move);
         this.updateBoard();
         this.checkGameStatus();
     }

@@ -12,11 +12,14 @@ const PIECE_VALUES: { [key: string]: number } = {
 export class ChessService {
     constructor() { }
     async getMoveByFen(fen: string) {
-        return this.getRandomMovie(fen, 3);
+        return this.getRandomMovie(fen);
     }
-    private async getRandomMovie(fen: string, depth: number) {
+    private async getRandomMovie(fen: string) {
         let game = new Chess(fen);
         let moves = game.moves({ verbose: true });
-        return moves[Math.ceil(Math.random() * moves.length)];
+        if (moves.length > 0)
+            return moves[Math.floor(Math.random() * moves.length)];
+        else
+            return null;
     }
 }
