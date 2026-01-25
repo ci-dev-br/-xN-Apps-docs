@@ -98,6 +98,8 @@ export class ChessGameComponent implements OnInit {
         }
     }
     private getBestMoveMinimax(game: Chess, depth: number): any {
+        let virtual_game = new Chess(game.fen());
+        game = virtual_game;
         let moves = game.moves({ verbose: true });
         let bestMove = null;
         let bestValue = -9999;
