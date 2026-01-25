@@ -24,8 +24,8 @@ export class ChessService {
             let x_moves_adv = x_game_adv.moves({ verbose: true });
             let x_captured_adv = x_moves_adv.filter(m => m.captured);
             let x_promotion_adv = x_moves_adv.filter(m => m.promotion);
-            (move as any).c_adv = x_captured_adv.length;
-            (move as any).p_adv = x_promotion_adv.length;
+            (move as any).c_adv = x_captured_adv.map(m => PIECE_VALUES[m.captured!]).reduce((a, b) => a + b, 0);
+            (move as any).p_adv = x_promotion_adv.map(m => PIECE_VALUES[m.promotion!]).reduce((a, b) => a + b, 0);
             (move as any).ms_adv = x_moves_adv.length;
             if (x_promotion_adv.length > 0) {
                 bad_moves.push(move);
@@ -51,8 +51,8 @@ export class ChessService {
             captured.sort((a, b) => PIECE_VALUES[b.captured!] - PIECE_VALUES[a.captured!]);
             return captured[0];
         }
-        console.log('good', good_moves);
-        console.log('bad', bad_moves);
+        // console.log('good', good_moves);
+        // console.log('bad', bad_moves);
         if (good_moves.length > 0)
             return good_moves[0];
         else if (bad_moves.length > 0)
