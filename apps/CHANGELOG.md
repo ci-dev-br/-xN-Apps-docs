@@ -2,6 +2,8 @@
 As mudanças devem estar descritas neste documento para melhor analisar a implementação com seu Objetivo a ser atingido. Descreva o que o recurso implementado resolve e o estágio em que ele se encontra para se comparado com os relatórios gerados após enviar se PR.
 
 # Sprint 2026
+- [ ]: Janela
+  - [ ]: Abrir objeto em janela externa a partir do (internalId) [SPEC](../docs/specs/123678.md);
 - [ ]: Master Detail Component: 
  - [ ]: Pesquisar item: Ao digidar em visão geral, acionar mecanismo de busca em sobre os dados dispostos.
 - [ ] Criar postagem de texto, video etc na página incial para interação social entre os usuários da plataforma: 

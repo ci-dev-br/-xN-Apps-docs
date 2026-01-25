@@ -40,6 +40,9 @@ export class WindowComponent implements OnInit, OnDestroy {
       onClick: () => this.confirm()
     },
     {
+      visible: () => {
+        return (!!this.data && 'internalId' in this.data);
+      },
       icon: 'open_in_new', label: 'Abrir em Janela', onClick: () => {
         window.open(location.href, 'PopupWindow' + (this.data?.data?.internalId || this.data?.data?.id || ''), "width=600,height=700,resizable=yes,top=100,left=200,");
         this.close();
@@ -58,7 +61,7 @@ export class WindowComponent implements OnInit, OnDestroy {
     @Optional() private readonly daos?: DaoService,
     @Optional() private readonly ref?: MatDialogRef<WindowComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA)
-    private data?: IData,
+    protected data?: IData,
     @Optional() public readonly actions?: ActionsService,
   ) { }
   ngOnInit(): void {
