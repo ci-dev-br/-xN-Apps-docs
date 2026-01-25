@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ComponentRef, ElementRef, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -101,7 +101,12 @@ export class ChessGameComponent implements OnInit {
     }
     constructor(
         private chess: ChessService,
-    ) { }
+        private readonly er: ElementRef<any>,
+        private readonly cr: ComponentRef<any>
+    ) {
+        er;
+        cr
+    }
 
     async makeAIMove() {
         const possibilidades = this.game.moves({ verbose: true });
