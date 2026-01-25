@@ -134,7 +134,16 @@ export class ChessGameComponent implements OnInit {
     }
     checkGameStatus() {
         if (this.game.isGameOver()) {
-            alert(`Game Over! ${this.game.isCheckmate() ? 'Checkmate!' : 'Stalemate!'}\n`);
+            // Informar se ganhou e perdeu
+            if (this.game.isCheckmate()) {
+                const winner = this.game.turn() === 'w' ? 'Black' : 'White';
+                alert(`Checkmate! ${winner} wins!`);
+            } else if (this.game.isDraw()) {
+                alert('Game over! It\'s a draw.');
+            } else {
+                alert('Game over!');
+            }
+            // Reiniciar o jogo
             this.stage = 'menu';
         }
     }
