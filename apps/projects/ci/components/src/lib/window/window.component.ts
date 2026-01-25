@@ -41,10 +41,11 @@ export class WindowComponent implements OnInit, OnDestroy {
     },
     {
       visible: () => {
-        return (!!this.data && 'internalId' in this.data);
+        return (!!this.data?.data?.data && 'internalId' in this.data.data.data);
       },
       icon: 'open_in_new', label: 'Abrir em Janela', onClick: () => {
-        window.open(location.href, 'PopupWindow' + (this.data?.data?.internalId || this.data?.data?.id || ''), "width=600,height=700,resizable=yes,top=100,left=200,");
+        const object_identification = this.data?.data?.data?.internalId || this.data?.data?.data?.id;
+        window.open(location.href + '/Editar/' + object_identification, 'PopupWindow' + (object_identification), "width=600,height=700,resizable=yes,top=100,left=200,");
         this.close();
       }
     },
