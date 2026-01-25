@@ -5,15 +5,18 @@
     height: min(80vw, 80vh);
     border: 2px solid #333;
 }
+
 :host {
     overflow: hidden;
     display: flex;
     flex-direction: column;
 }
+
 .row {
     display: flex;
     flex: 1;
 }
+
 .square {
     flex: 1 1;
     display: flex;
@@ -22,37 +25,38 @@
     font-size: min(6vw, 6vh);
     cursor: pointer;
 }
+
 .light {
     background-color: #eedcbe;
 }
+
 .dark {
     background-color: #b58863;
 }
+
 .selected {
     background-color: #7b61ff !important;
 }
+
 .piece.w {
     color: #fff;
     text-shadow: 0 0 2px #000;
 }
+
 .piece.b {
     color: #000;
 }
+
 .legeng {
     background: var(--mat-app-background-color);
     color: var(--mat-app-text-color);
 }
+
 .menu {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: centers;
     min-height: 180px;
-}
-.status {
-    display: flex;
-    flex: auto;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
+
 }

@@ -1,4 +1,4 @@
-import { Component, ComponentRef, ElementRef, OnInit } from '@angular/core';
+import { Component, ComponentRef, ElementRef, OnInit, Optional } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -101,8 +101,8 @@ export class ChessGameComponent implements OnInit {
     }
     constructor(
         private chess: ChessService,
-        private readonly er: ElementRef<any>,
-        private readonly cr: ComponentRef<any>
+        @Optional() private readonly er: ElementRef<any>,
+        @Optional() private readonly cr: ComponentRef<any>
     ) {
         er;
         cr
@@ -167,5 +167,9 @@ export class ChessGameComponent implements OnInit {
             this.updateBoard();
             this.checkGameStatus();
         }
+    }
+    async desistir() {
+        alert('Você desistiu da partida!');
+        this.stage = 'menu';
     }
 }
