@@ -46,3 +46,4 @@ export { HistoricoContatoService } from './services/historico-contato.service';
 export { ClienteCrmService } from './services/cliente-crm.service';
 export { AtendimentoService } from './services/atendimento.service';
 export { AgendamentoService } from './services/agendamento.service';
+export { ChessService } from './services/chess.service';

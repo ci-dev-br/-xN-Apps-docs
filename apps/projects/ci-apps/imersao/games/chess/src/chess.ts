@@ -3,7 +3,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { CoreModule } from '@ci/core';
+import { ChessService } from '@ci/portal-api';
 import { Chess, Move } from 'chess.js';
+import { lastValueFrom } from 'rxjs';
 const PIECE_VALUES: { [key: string]: number } = {
     p: 10 * 2.1,
     n: 30 * 2.2,
@@ -97,66 +99,18 @@ export class ChessGameComponent implements OnInit {
             debugger;
         }
     }
-    private getBestMoveMinimax(game: Chess, depth: number): any {
-        let virtual_game = new Chess(game.fen());
-        game = virtual_game;
-        let moves = game.moves({ verbose: true });
-        let bestMove = null;
-        let bestValue = -9999;
-        for (let move of moves) {
-            game.move(move);
-            let boardValue = -this.minimax(game, depth - 1, false);
-            game.undo();
-            if (boardValue > bestValue) {
-                bestValue = boardValue;
-                bestMove = move;
-            }
-        }
-        return bestMove;
-    }
-    private minimax(game: Chess, depth: number, isMaximizing: boolean): number {
-        if (depth === 0) return this.evaluateBoard(game);
-        let moves = game.moves();
-        if (isMaximizing) {
-            let best = -9999;
-            for (let m of moves) {
-                game.move(m);
-                best = Math.max(best, this.minimax(game, depth - 1, !isMaximizing));
-                game.undo();
-            }
-            return best;
-        } else {
-            let best = 9999;
-            for (let m of moves) {
-                game.move(m);
-                best = Math.min(best, this.minimax(game, depth - 1, !isMaximizing));
-                game.undo();
-            }
-            return best;
-        }
-    }
-    private evaluateBoard(game: Chess): number {
-        let totalEvaluation = 0;
-        const board = game.board();
+    constructor(
+        private chess: ChessService,
+    ) { }
 
-        for (let i = 0; i < 8; i++) {
-            for (let j = 0; j < 8; j++) {
-                const piece = board[i][j];
-                if (piece) {
-                    const value = PIECE_VALUES[piece.type] || 0;
-                    totalEvaluation += (piece.color === 'w' ? -value : value);
-                }
-            }
-        }
-        return totalEvaluation;
-    }
-    makeAIMove() {
+    async makeAIMove() {
         const possibilidades = this.game.moves({ verbose: true });
         let move: Move;
         if (possibilidades.length === 0) return;
         switch (this.difficulty) {
             case 'hard':
-                move = this.getBestMoveMinimax(this.game, 3);
+                let server_play = await lastValueFrom(this.chess.chessMove({ body: { fen: this.game.fen() } }));
+                move = server_play.move as any;
                 break;
             case 'medium':
                 move = this.getHeuristicMove(possibilidades);

@@ -1,8 +1,8 @@
 .board {
     display: flex;
     flex-direction: column;
-    width: 50vw;
-    height: 50vw;
+    width: min(80vw, 80vh);
+    height: min(80vw, 80vh);
     border: 2px solid #333;
     // scale: .5;
 }
@@ -25,7 +25,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: min(6vw, 6vh);
     cursor: pointer;
 }
 
