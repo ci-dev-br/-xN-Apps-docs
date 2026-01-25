@@ -132,4 +132,16 @@ export class HomepageComponent implements OnInit {
             this.sidebar = false;
         }
     }
+    async newPost() {
+        
+    }
+    async newCitation() {
+
+    }
+    async newPhoto() {
+
+    }
+    async newVideo() {
+
+    }
 }
