@@ -5,12 +5,12 @@ import { MatMenuModule } from '@angular/material/menu';
 import { CoreModule } from '@ci/core';
 import { Chess, Move } from 'chess.js';
 const PIECE_VALUES: { [key: string]: number } = {
-    p: 10,  // Peão
-    n: 30,  // Cavalo
-    b: 30,  // Bispo
-    r: 50,  // Torre
-    q: 90,  // Dama
-    k: 900  // Rei
+    p: 10 * 2.1,
+    n: 30 * 2.2,
+    b: 30 * 2.3,
+    r: 50 * 2.4,
+    q: 90 * 3.5,
+    k: 900 * 2
 };
 @Component({
     selector: 'ci-chess-game',
@@ -28,6 +28,7 @@ export class ChessGameComponent implements OnInit {
     stage: 'menu' | 'play' | 'viewer' = 'menu';
     player: 'white' | 'black' = 'white';
     game = new Chess();
+    virtualGame = new Chess();
     board: any[][] = [];
     selectedSquare: string | null = null;
     isVsIA = false; // Flag para o modo IA
