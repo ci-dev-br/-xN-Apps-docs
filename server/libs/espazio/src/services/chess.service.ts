@@ -51,8 +51,6 @@ export class ChessService {
             captured.sort((a, b) => PIECE_VALUES[b.captured!] - PIECE_VALUES[a.captured!]);
             return captured[0];
         }
-        // console.log('good', good_moves);
-        // console.log('bad', bad_moves);
         if (good_moves.length > 0)
             return good_moves[0];
         else if (bad_moves.length > 0)

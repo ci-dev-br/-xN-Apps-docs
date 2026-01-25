@@ -134,7 +134,7 @@ export class ChessGameComponent implements OnInit {
     }
     checkGameStatus() {
         if (this.game.isGameOver()) {
-            alert('Fim de jogo!');
+            alert(`Game Over! ${this.game.isCheckmate() ? 'Checkmate!' : 'Stalemate!'}\n`);
             this.stage = 'menu';
         }
     }
@@ -145,5 +145,13 @@ export class ChessGameComponent implements OnInit {
             'P': '♟', 'N': '♞', 'B': '♝', 'R': '♜', 'Q': '♛', 'K': '♚'
         };
         return symbols[piece.color === 'w' ? piece.type.toUpperCase() : piece.type];
+    }
+    async ajudaMe() {
+        let jogada = await lastValueFrom(this.chess.chessMove({ body: { fen: this.game.fen() } }));
+        if (!!jogada?.move) {
+            this.game.move(jogada.move as any);
+            this.updateBoard();
+            this.checkGameStatus();
+        }
     }
 }
