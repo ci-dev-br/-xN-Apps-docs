@@ -92,7 +92,7 @@ export class ChessGameComponent implements OnInit {
             return moves.sort((a, b) => {
                 const aValue = a.captured ? PIECE_VALUES[a.captured] : 0;
                 const bValue = b.captured ? PIECE_VALUES[b.captured] : 0;
-                return bValue - aValue; // Ordem decrescente de valor capturado
+                return bValue - aValue;
             })[0];
         } catch (error) {
             error;
