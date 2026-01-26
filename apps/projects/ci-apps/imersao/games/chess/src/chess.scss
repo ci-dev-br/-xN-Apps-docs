@@ -3,13 +3,18 @@
     flex-direction: column;
     width: min(80vw, 80vh);
     height: min(80vw, 80vh);
+    min-width: min(80vw, 80vh);
+    min-height: min(80vw, 80vh);
     border: 2px solid #333;
 }
 
 :host {
-    overflow: hidden;
+    overflow: visible;
     display: flex;
     flex-direction: column;
+    flex: 1;
+    min-width: min(80vw, 80vh);
+    min-height: min(80vw, 80vh);
 }
 
 .row {
@@ -59,4 +64,11 @@
     justify-content: centers;
     min-height: 180px;
 
+}
+
+.status {
+    display: flex;
+    flex-direction: roe;
+    align-items: center;
+    justify-content: center;
 }

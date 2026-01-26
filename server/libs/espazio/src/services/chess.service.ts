@@ -42,7 +42,9 @@ export class ChessService {
         good_moves.sort((a, b) => (a.p_adv || 0) - (b.p_adv || 0));
         good_moves.sort((a, b) => (a.c_adv || 0) - (b.c_adv || 0));
         let captured = moves.filter(move => move.captured && bad_moves.indexOf(move) === -1);
-        let promotion = moves.filter(move => move.promotion && bad_moves.indexOf(move) === -1);
+        let promotion = moves.filter(move =>
+            move.promotion && bad_moves.indexOf(move) === -1);
+
         if (promotion.length > 0) {
             promotion.sort((a, b) => PIECE_VALUES[b.promotion!] - PIECE_VALUES[a.promotion!]);
             return promotion[0];
