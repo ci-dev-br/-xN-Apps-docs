@@ -1,6 +1,7 @@
 @if(stage==='loading'){
 Carregando...
 }@else {
+<ci-navbar></ci-navbar>
 <div class="page--wrapper">
     @if(!!(userService.user | async)){
     <div #sidebarElement class="sidebar" [class.--inactive]="!sidebar" (click)="sidebar=!sidebar"

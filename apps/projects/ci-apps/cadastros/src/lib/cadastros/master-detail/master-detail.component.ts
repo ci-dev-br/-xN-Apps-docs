@@ -46,7 +46,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
     properties?: ISchema;
     async loadGrid() {
         if (!!this.schemaName) {
-            const properties = await (await this.daoBuilder.getSchema(this.schemaName)).properties
+            const properties = (await (await this.daoBuilder.getSchema(this.schemaName)))?.properties;
             this.properties = properties;
             this.gridOptions = {
                 columns: [

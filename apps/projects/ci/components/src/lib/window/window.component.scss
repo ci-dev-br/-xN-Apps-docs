@@ -18,3 +18,8 @@
         backdrop-filter: blur(12px);
     }
 }
+
+.ci-window--title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

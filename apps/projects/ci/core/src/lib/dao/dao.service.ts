@@ -109,10 +109,9 @@ export class DaoService {
                     }
                 }, options?.debounceTime || 500);
             });
-            if (!!data_schema && data_schema.properties) {
-                Object.keys(data_schema.properties).forEach(property => {
-                    if (data_schema?.properties && !!data_schema.properties[property]) {
-                        //  data_schema.properties[property];
+            if (!!data_schema && data_schema?.properties) {
+                Object.keys(data_schema?.properties).forEach(property => {
+                    if (data_schema?.properties && !!data_schema?.properties[property]) {
                         try {
                             let propery_descriptor = Object.getOwnPropertyDescriptor(data, property);
                             if (!propery_descriptor?.get && !propery_descriptor?.set) {

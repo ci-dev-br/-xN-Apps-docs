@@ -8,6 +8,9 @@ const PIECE_VALUES: { [key: string]: number } = {
     q: 90,
     k: 900
 };
+/**
+ * # Chess Services
+ * */
 @Injectable()
 export class ChessService {
     constructor() { }
@@ -44,17 +47,10 @@ export class ChessService {
         let captured = moves.filter(move => move.captured && bad_moves.indexOf(move) === -1);
         let promotion = moves.filter(move =>
             move.promotion && bad_moves.indexOf(move) === -1);
-
-        if (promotion.length > 0) {
-            promotion.sort((a, b) => PIECE_VALUES[b.promotion!] - PIECE_VALUES[a.promotion!]);
-            return promotion[0];
-        }
-        if (captured.length > 0) {
-            captured.sort((a, b) => PIECE_VALUES[b.captured!] - PIECE_VALUES[a.captured!]);
-            return captured[0];
-        }
-        if (good_moves.length > 0)
-            return good_moves[0];
+        if (promotion.length > 0 || captured.length > 0 || good_moves.length > 0)
+            return ((arr) => {
+                return arr[Math.floor(Math.random() * arr.length)];
+            })(promotion.length + captured.length > 0 ? [...(promotion || []), ...(captured || [])] : good_moves);
         else if (bad_moves.length > 0)
             return bad_moves[0];
         else

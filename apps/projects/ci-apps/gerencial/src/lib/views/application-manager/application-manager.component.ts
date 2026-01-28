@@ -61,7 +61,7 @@ import { Router } from "@angular/router";
             this.apps = [data, ...this.apps || []];
     }
     async loadGrid() {
-        const properties = await (await this.daoBuilder.getSchema('Application')).properties
+        const properties = (await (await this.daoBuilder.getSchema('Application')))?.properties
         this.gridOptions = {
             columns: [
                 ...Object.keys(properties || {}).map(property => {

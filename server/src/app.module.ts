@@ -35,7 +35,7 @@ import { L10nEntities, L10nModule } from '@ci/core/l10n/l10n.module';
 import { CrmEntities } from '@ci/crm/models';
 import { CrmModule } from '@ci/crm';
 import { DyMEntities, DyMModule } from '@ci/mlms';
-import { EspazioModule } from '@ci/espazio/espazio.module';
+import { EspazioModule, Entities as EspazioEntities } from '@ci/espazio/espazio.module';
 /**
  * Adicione os módulos que podem ser carregados pela configfuração do environment;
  * Nesta versão a compilação possui todos os módulos mesmo não estando indicados no .env
@@ -82,6 +82,7 @@ const _entities_name = {
   L10n: L10nEntities,
   CRM: CrmEntities,
   DyM: DyMEntities,
+  Espazio: EspazioEntities,
 }
 const _modules_name = {
   System: SystemModule,
