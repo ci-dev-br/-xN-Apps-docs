@@ -1,21 +1,11 @@
-import { CommonModule } from "@angular/common";
 import { Component, Inject, Injector, Input, OnDestroy, OnInit, Optional } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { MatButtonModule } from "@angular/material/button";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { MatIconModule } from "@angular/material/icon";
-import { ActivatedRoute, RouterModule } from "@angular/router";
-import { ActionsService, DynFormModule, GridModule, IItemMenu, LNavModule, WindowModule } from "@ci/components";
+import { ActivatedRoute } from "@angular/router";
+import { ActionsService, DynFormModule, IItemMenu } from "@ci/components";
 import { CORE_ENV, CoreModule, DaoBuilder, DaoService, IChangeable, ICoreEnvironment, IHaveSync, ISchemaPreset } from "@ci/core";
 import { FormsService, getServiceAsSchema } from "@ci/portal-api";
-import { BehaviorSubject, lastValueFrom } from "rxjs";
-import { EditarDetailModule } from "./editar-detail.module";
-import { MatToolbarModule } from "@angular/material/toolbar";
-import { MatButtonToggleModule } from "@angular/material/button-toggle";
-import { AuthModule } from "@ci/auth";
-import { MatSidenavModule } from "@angular/material/sidenav";
-import { LayoutModule } from "@angular/cdk/layout";
-import { MatMenuModule } from "@angular/material/menu";
+import { lastValueFrom } from "rxjs";
 /**
  * Interface genérica para construção do editor de dados.
  */
