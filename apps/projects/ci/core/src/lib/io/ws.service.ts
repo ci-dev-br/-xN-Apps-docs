@@ -40,7 +40,7 @@ export class WsService {
         if (this._subject) {
             this._subject.complete();
         }
-        let gateway_api = location.origin.replace('http', 'ws').replace(':4200', ':86');
+        let gateway_api = 'wss://apps.ci.dev.br' /* location.origin.replace('http', 'ws').replace(':4200', ':86'); */
         this._subject = webSocket(gateway_api);
         this._subject.subscribe(message => {
             this.status = 'online';

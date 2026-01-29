@@ -5,6 +5,7 @@ export interface LancamentoFinanceiro {
   createdBy?: {
 } | null;
   deleted?: boolean | null;
+  description?: string | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
   lastModifiedBy?: {

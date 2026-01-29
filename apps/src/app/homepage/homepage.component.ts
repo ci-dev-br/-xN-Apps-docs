@@ -97,9 +97,8 @@ export class HomepageComponent implements OnInit {
     }
     @ViewChild('sidebarElement') protected sidebarEl?: ElementRef<HTMLElement>;
     private updateUser(user: User | null) {
-        console.log('[A]')
-        //
         this.apps = [
+            // TODO: revisar isto
             // XD({ name: 'Meus Apps', url: '/meus-apps' }),
         ]
         this.stage = 'loaded';
@@ -133,7 +132,7 @@ export class HomepageComponent implements OnInit {
         }
     }
     async newPost() {
-        
+
     }
     async newCitation() {
 
