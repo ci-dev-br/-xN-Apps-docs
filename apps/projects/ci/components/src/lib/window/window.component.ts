@@ -87,7 +87,7 @@ export class WindowComponent implements OnInit, OnDestroy {
     if ((!!event.shiftKey && (event.code === 'Enter' || event.code === 'NumpadEnter')) ||
       (!!event.ctrlKey && (event.code === 'KeyS'))) {
       if (!!event?.preventDefault) event.preventDefault();
-      await this.daos?.confirmChanges(this.data);
+      await this.confirm();
       if (!!event.shiftKey) this.ref?.close()
     }
   }
