@@ -16,8 +16,8 @@ export class LancamentoFinanceiro extends FullAuditedEntity {
         title: 'Valor',
         description: 'Valor incial de do Lançameto',
         nullable: true,
-        required: false
+        required: false,
     })
-    @Column({ nullable: true })
+    @Column({ nullable: true, type: 'numeric', precision: 20, scale: 2 })
     valor?: number;
 }

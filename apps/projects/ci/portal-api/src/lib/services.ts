@@ -31,6 +31,7 @@ export { InformacaoContatoService } from './services/informacao-contato.service'
 export { PessoaService } from './services/pessoa.service';
 export { UnidadeMedidaService } from './services/unidade-medida.service';
 export { PaisService } from './services/pais.service';
+export { LancamentoFinanceiroService } from './services/lancamento-financeiro.service';
 export { OrganizacaoService } from './services/organizacao.service';
 export { FormsService } from './services/forms.service';
 export { ProjetoService } from './services/projeto.service';

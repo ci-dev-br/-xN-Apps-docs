@@ -1,4 +1,4 @@
-import { Component, Inject, Injector, Input, OnDestroy, OnInit, Optional, TemplateRef, Type, ViewChild } from '@angular/core';
+import { Component, HostListener, Inject, Injector, Input, OnDestroy, OnInit, Optional, TemplateRef, Type, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DaoService } from '@ci/core';
 import { ActionsService } from '../action/actions.service';
@@ -81,5 +81,14 @@ export class WindowComponent implements OnInit, OnDestroy {
   close() {
     this.showing = false;
     this.ref?.close(this.data?.data);
+  }
+  @HostListener('keydown', ['$event'])
+  protected async keydownHandler(event: KeyboardEvent) {
+    if ((!!event.shiftKey && (event.code === 'Enter' || event.code === 'NumpadEnter')) ||
+      (!!event.ctrlKey && (event.code === 'KeyS'))) {
+      if (!!event?.preventDefault) event.preventDefault();
+      await this.daos?.confirmChanges(this.data);
+      if (!!event.shiftKey) this.ref?.close()
+    }
   }
 }

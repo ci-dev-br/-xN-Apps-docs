@@ -37,6 +37,7 @@ import { InformacaoContatoService } from './services/informacao-contato.service'
 import { PessoaService } from './services/pessoa.service';
 import { UnidadeMedidaService } from './services/unidade-medida.service';
 import { PaisService } from './services/pais.service';
+import { LancamentoFinanceiroService } from './services/lancamento-financeiro.service';
 import { OrganizacaoService } from './services/organizacao.service';
 import { FormsService } from './services/forms.service';
 import { ProjetoService } from './services/projeto.service';
@@ -55,7 +56,7 @@ import { AgendamentoService } from './services/agendamento.service';
 import { ChessService } from './services/chess.service';
 
 export function getServiceAsSchema(schema: string): Type<any>{
-  return ({ 'ApiService': ApiService,'WebsiteService': WebsiteService,'SitePageService': SitePageService,'CommentMetaService': CommentMetaService,'CommentService': CommentService,'LinksService': LinksService,'SiteOptionService': SiteOptionService,'SitePostService': SitePostService,'TermService': TermService,'TermMetaService': TermMetaService,'SystemService': SystemService,'DeviceService': DeviceService,'MessageService': MessageService,'AuthService': AuthService,'RegisterService': RegisterService,'InviteService': InviteService,'ApplicationService': ApplicationService,'DomainService': DomainService,'ContactsService': ContactsService,'ChamadaService': ChamadaService,'ConversationService': ConversationService,'ProductService': ProductService,'PranchetaService': PranchetaService,'UserService': UserService,'PhotoService': PhotoService,'FileExplorerService': FileExplorerService,'VideoService': VideoService,'CadastroService': CadastroService,'EnderecoService': EnderecoService,'InformacaoContatoService': InformacaoContatoService,'PessoaService': PessoaService,'UnidadeMedidaService': UnidadeMedidaService,'PaisService': PaisService,'OrganizacaoService': OrganizacaoService,'FormsService': FormsService,'ProjetoService': ProjetoService,'ClienteProjetoService': ClienteProjetoService,'WorkItemService': WorkItemService,'VendaProdutoService': VendaProdutoService,'ServicoService': ServicoService,'PromocaoService': PromocaoService,'ProfissionalService': ProfissionalService,'ProdutoService': ProdutoService,'PagamentoService': PagamentoService,'HistoricoContatoService': HistoricoContatoService,'ClienteCrmService': ClienteCrmService,'AtendimentoService': AtendimentoService,'AgendamentoService': AgendamentoService,'ChessService': ChessService, }[ schema + 'Service'] as any) || undefined;
+  return ({ 'ApiService': ApiService,'WebsiteService': WebsiteService,'SitePageService': SitePageService,'CommentMetaService': CommentMetaService,'CommentService': CommentService,'LinksService': LinksService,'SiteOptionService': SiteOptionService,'SitePostService': SitePostService,'TermService': TermService,'TermMetaService': TermMetaService,'SystemService': SystemService,'DeviceService': DeviceService,'MessageService': MessageService,'AuthService': AuthService,'RegisterService': RegisterService,'InviteService': InviteService,'ApplicationService': ApplicationService,'DomainService': DomainService,'ContactsService': ContactsService,'ChamadaService': ChamadaService,'ConversationService': ConversationService,'ProductService': ProductService,'PranchetaService': PranchetaService,'UserService': UserService,'PhotoService': PhotoService,'FileExplorerService': FileExplorerService,'VideoService': VideoService,'CadastroService': CadastroService,'EnderecoService': EnderecoService,'InformacaoContatoService': InformacaoContatoService,'PessoaService': PessoaService,'UnidadeMedidaService': UnidadeMedidaService,'PaisService': PaisService,'LancamentoFinanceiroService': LancamentoFinanceiroService,'OrganizacaoService': OrganizacaoService,'FormsService': FormsService,'ProjetoService': ProjetoService,'ClienteProjetoService': ClienteProjetoService,'WorkItemService': WorkItemService,'VendaProdutoService': VendaProdutoService,'ServicoService': ServicoService,'PromocaoService': PromocaoService,'ProfissionalService': ProfissionalService,'ProdutoService': ProdutoService,'PagamentoService': PagamentoService,'HistoricoContatoService': HistoricoContatoService,'ClienteCrmService': ClienteCrmService,'AtendimentoService': AtendimentoService,'AgendamentoService': AgendamentoService,'ChessService': ChessService, }[ schema + 'Service'] as any) || undefined;
 } 
 
 /**
@@ -107,6 +108,7 @@ export class ApiModule {
         PessoaService,
         UnidadeMedidaService,
         PaisService,
+        LancamentoFinanceiroService,
         OrganizacaoService,
         FormsService,
         ProjetoService,
