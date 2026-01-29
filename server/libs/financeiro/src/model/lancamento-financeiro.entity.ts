@@ -18,4 +18,7 @@ export class LancamentoFinanceiro extends FullAuditedEntity {
     })
     @Column({ nullable: true, type: 'numeric', precision: 20, scale: 2 })
     valor?: number;
+    @ApiProperty({ title: 'Descrição', nullable: true, required: false })
+    @Column({ nullable: true })
+    description?: string;
 }

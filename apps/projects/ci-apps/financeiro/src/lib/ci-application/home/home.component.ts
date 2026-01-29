@@ -63,6 +63,12 @@ export class HomeComponent {
                     },
                         this.schemaName);
             }
+        },
+        {
+            description: 'Consultar Lançamentos',
+            onClick: (e) => {
+
+            }
         }
     ]
 }
