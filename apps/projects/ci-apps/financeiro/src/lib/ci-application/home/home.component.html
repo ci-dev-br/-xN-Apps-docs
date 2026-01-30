@@ -1,12 +1,9 @@
-<h1>Resumo Financeiro</h1>
-<p>Seu futuro financeiro em um piscar de olhos.</p>
-<div class="row">
-    @for (act of actions; track $index) {
-    <button mat-raised-button (click)="act.onClick ? act.onClick($event) : null">
-        <ng-container *ngTemplateOutlet="inner;"></ng-container>
-    </button>
-    <ng-template #inner>
-        {{act.description}}
-    </ng-template>
-    }
-</div>
+@for (act of actions; track $index) {
+<button mat-raised-button (click)="act.onClick ? act.onClick($event) : null">
+    <ng-container *ngTemplateOutlet="inner;"></ng-container>
+</button>
+<ng-template #inner>
+    {{act.description}}
+</ng-template>
+}
+<router-outlet></router-outlet>

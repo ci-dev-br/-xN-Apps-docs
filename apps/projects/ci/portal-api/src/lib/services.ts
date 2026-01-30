@@ -25,6 +25,7 @@ export { UserService } from './services/user.service';
 export { PhotoService } from './services/photo.service';
 export { FileExplorerService } from './services/file-explorer.service';
 export { VideoService } from './services/video.service';
+export { CategoryService } from './services/category.service';
 export { CadastroService } from './services/cadastro.service';
 export { EnderecoService } from './services/endereco.service';
 export { InformacaoContatoService } from './services/informacao-contato.service';

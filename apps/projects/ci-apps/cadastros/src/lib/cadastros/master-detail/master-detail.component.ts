@@ -40,7 +40,19 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
         private readonly injector: Injector,
         @Optional() private readonly daos?: DaoService,
     ) {
-
+        this.route?.data?.subscribe(async (data: any) => {
+            if (!!data.schema) {
+                this.schemaName = data.schema;
+                await this.load();
+            }
+        })
+        this.route?.paramMap?.subscribe(async params => {
+            const schema = params.get('EntityName');
+            if (schema) {
+                this.schemaName = schema;
+                await this.load();
+            }
+        });
     }
     source?: T[] = [{} as any];
     properties?: ISchema;
@@ -76,19 +88,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit {
     ngAfterViewInit(): void {
     }
     async ngOnInit() {
-        this.route.data.subscribe(async (data: any) => {
-            if (!!data.schema) {
-                this.schemaName = data.schema;
-                await this.load();
-            }
-        })
-        this.route.paramMap.subscribe(async params => {
-            const schema = params.get('EntityName');
-            if (schema) {
-                this.schemaName = schema;
-                await this.load();
-            }
-        });
+
     }
     async load() {
         await this.loadGrid();

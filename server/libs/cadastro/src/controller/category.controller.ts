@@ -1,10 +1,10 @@
 import { Body, Controller, Post, Req } from "@nestjs/common";
-import { CategoryService } from "../service/Category.service";
+import { CategoryService } from "../service/category.service";
 import { ControllerDaoBase } from "@ci/core";
-import { Category } from "../model/Category.entity";
+import { Category } from "../model/category.entity";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { CyncPayloadDaoCategory } from "../dto/sync-payload-dao-category";
-import { ObterListaCategorys } from "../dto/obter-list-category";
+import { SyncPayloadDaoCategory } from "../dto/sync-payload-dao-category";
+import { ObterListaCategory } from "../dto/obter-list-category";
 import { GetByInternalIdInputDto } from "./GetByInternalIdInputDto";
 /**
  * Category Controller
@@ -19,13 +19,13 @@ export class CategoryController extends ControllerDaoBase<CategoryService, Categ
     }
     @Post('Sync')
     @ApiResponse({
-        type: CyncPayloadDaoCategory
+        type: SyncPayloadDaoCategory
     })
     @ApiOperation({
         operationId: 'Cynccategory'
     })
     override async Sync(
-        @Body() body: CyncPayloadDaoCategory,
+        @Body() body: SyncPayloadDaoCategory,
         @Req() req?: any,
     ) {
         return await super.Sync(body, req)
@@ -46,13 +46,13 @@ export class CategoryController extends ControllerDaoBase<CategoryService, Categ
     @Post('GetList')
     @ApiResponse({
         type:
-            CyncPayloadDaoCategory
+            SyncPayloadDaoCategory
     })
     @ApiOperation({
         operationId: 'CetListcategory'
     })
     override async GetList(
-        @Body() input: CbterListaCategory,
+        @Body() input: ObterListaCategory,
         @Req() req?: any,
     ) {
         return super.GetList(input, req);

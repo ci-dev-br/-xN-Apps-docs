@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Route, Router, RouterModule } from '@angular/router';
 import { AuthModule } from '@ci/auth';
 import { DynFormModule, EditarDetailComponent, GridModule, IAction, LNavModule, WindowModule, WindowService } from '@ci/components';
 import { EditarDetailModule } from '@ci/components/editar-detail';
@@ -45,6 +45,8 @@ export class HomeComponent {
     constructor(
         private readonly windows: WindowService,
         private readonly service: LancamentoFinanceiroService,
+        private readonly router: Router,
+        private readonly route: ActivatedRoute,
     ) { }
     schemaName = 'LancamentoFinanceiro';
     entidades = [
@@ -67,7 +69,9 @@ export class HomeComponent {
         {
             description: 'Consultar Lançamentos',
             onClick: (e) => {
-
+                this.router.navigate(['LancamentoFinanceiro'], {
+                    relativeTo: this.route
+                })
             }
         }
     ]
