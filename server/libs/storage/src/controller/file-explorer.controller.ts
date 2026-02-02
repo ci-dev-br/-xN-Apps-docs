@@ -1,23 +1,36 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Optional, Post, Req } from "@nestjs/common";
 import { ApiResponse, ApiResponseProperty, ApiTags } from "@nestjs/swagger";
 import { readdirSync, readFileSync } from "fs";
 import { ReadDirectoryInput } from "./dto/read-directory-input.dto";
 import { ReadDirectoryOutput } from "./dto/read-directory-output.dto";
 import { Role } from "@ci/auth/decorators/role.decorator";
 import { FileDto } from "./dto/file-dto";
+import { ConsoleLogEntry } from "selenium-webdriver/bidi/logEntries";
+import { FilePermissionService } from "../service/file-permission.service";
 @Role('SYSADMIN')
 @ApiTags('FileExplorer')
 @Controller('FileExplorer')
 export class FileExplorerController {
-    constructor() { }
+    constructor(
+        @Optional() private readonly filePermissions: FilePermissionService,
+    ) { }
     @ApiResponse({ type: ReadDirectoryOutput, isArray: true })
     @Post('ReadDirectory')
     async readDirectory(
         @Body() input: ReadDirectoryInput,
+        @Req() req: any
     ) {
+        if (!!this.filePermissions) {
+            if (await this.filePermissions.grant(input.path, req)) {
+
+            } else {
+                return null;
+            }
+        }
         return readdirSync(input.path, {
             withFileTypes: true,
         }).map(v => {
+            console.log(v);
             return {
                 ...v,
                 isCharacterDevice: v.isCharacterDevice(),
