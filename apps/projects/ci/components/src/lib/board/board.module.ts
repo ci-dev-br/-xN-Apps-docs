@@ -14,6 +14,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { WindowModule } from "../window/window.module";
 import { SettingsComponent } from "../settings/settings.component";
+import { CardContainerComponent } from "./card-container/card-container.component";
 
 @Pipe({ name: 'cardComponent', pure: true })
 export class CardComponentPipe implements PipeTransform {
@@ -25,7 +26,9 @@ export class CardComponentPipe implements PipeTransform {
         return this.cardsFound?.find(c => c.componentName === value.componentName)
     }
 }
-
+/**
+ * 
+ */
 @NgModule({
     imports: [
         CoreModule,
@@ -44,10 +47,12 @@ export class CardComponentPipe implements PipeTransform {
     declarations: [
         CardFinderComponent,
         BoardComponent,
+        CardContainerComponent,
     ],
     exports: [
         CardFinderComponent,
         BoardComponent,
+        CardContainerComponent,
     ]
 })
 export class BoardModule {

@@ -10,7 +10,9 @@ import { CardSetting, ImplCard } from "./card";
 import { moveItemInArray } from "@angular/cdk/drag-drop";
 import { WindowService } from "../window/window.service";
 import { SettingsComponent } from "../settings/settings.component";
-
+/**
+ * 
+ */
 @Component({
     selector: 'ci-board',
     templateUrl: 'board.component.html',
@@ -110,18 +112,7 @@ export class BoardComponent implements OnInit {
         })
     }
     edittingCard?: Card;
-    async editCard(card: Card, event: Event) {
-        this.edittingCard = card;
-        event.preventDefault();
-        event.stopPropagation();
-    }
-    async removeCard(card: Card) {
-        if (this.prancheta && this.prancheta.cards) {
-            const pos = this.prancheta.cards.indexOf(card);
-            if (pos > -1) this.prancheta.cards.splice(pos, 1);
-        }
-        this.syncPrancheta();
-    }
+    
     @HostListener('window:click')
     clickHandler() {
         this.edittingCard = undefined;

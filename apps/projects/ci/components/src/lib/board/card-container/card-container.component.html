@@ -1,0 +1,19 @@
+<div class="card-wrapper" [class.editing]="board.edittingCard === card">
+    <!-- cdkDrag -->
+    <div class="inner">
+        <!--   <ng-container *ngComponentOutlet="componentRef"></ng-container> -->
+    </div>
+    <div class="card-verso">
+        <!-- @for(setting of settings;track $index){
+
+        } -->
+        <button mat-icon-button (click)="removeCard(card!,$event)">
+            <mat-icon>delete</mat-icon>
+        </button>
+    </div>
+    <div class="actions">
+        <button mat-icon-button (click)="editCard(card!,$event)">
+            <mat-icon>settings</mat-icon>
+        </button>
+    </div>
+</div>

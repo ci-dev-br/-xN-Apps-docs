@@ -1,20 +1,18 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import { Component, ElementRef, Input, OnInit, ViewChild, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
     selector: 'ci-card--iframe',
     template: `
         <div class="iframe-container">
-            <iframe 
-                *ngIf="safeUrl; else emptyState"
-                [src]="safeUrl" 
-                title="External Content"
+            @if(!!safeUrl){<iframe #frameElement
                 width="100%" 
+                [src]="safeUrl"
                 height="100%"
-                frameborder="0"
-                allowfullscreen>
-            </iframe>
+                frameborder="0" >
+            </iframe>}
             
             <ng-template #emptyState>
                 <div style="padding: 20px; text-align: center; color: #888;">
@@ -42,17 +40,18 @@ import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
     ]
 })
 export class IframeCard implements OnInit {
-    // Injetamos o sanitizador para permitir URLs externas
+    private mode = 'incorporate'
     private sanitizer = inject(DomSanitizer);
+    @Input() settings: { url: string } = { url: 'https://paulorettamozo.com' };
 
-    // Recebe as configurações vindas do Dashboard
-    @Input() settings: { url: string } = { url: 'https://tradersunion.com/pt/currencies/forecast/usd-brl/' };
-
+    @ViewChild('frameElement')
+    frameElement?: ElementRef<HTMLIFrameElement>;
     safeUrl: SafeResourceUrl | null = null;
-
-    ngOnInit() {
+    constructor(
+        private readonly http: HttpClient,
+    ) { }
+    async ngOnInit() {
         if (this.settings && this.settings.url) {
-            // Marca a URL como segura para o Angular não bloqueá-la
             this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.settings.url);
         }
     }

@@ -8,6 +8,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CoreModule } from '@ci/core';
 import { OpenProjectComponent } from '../open-project/open-project.component';
 import { Files } from '../services/files.service';
+import { FilesComponent } from '@ci-apps/Arquivos';
 
 export interface IMenu {
   items: IMenuItem[];
@@ -59,5 +60,19 @@ export class NavigationComponent {
     this.dialog.open(OpenProjectComponent, {
       data: {}
     })
+  }
+
+  async openFile() {
+    const dialog_files = this.dialog.open(FilesComponent, {
+      minHeight: '60vh',
+      maxHeight: '70vh',
+      minWidth: '90vw',
+      data: {
+        // acceptedFiles: ['.ts']
+      }
+    })
+    dialog_files.afterClosed().subscribe(value => {
+      value;
+    });
   }
 }

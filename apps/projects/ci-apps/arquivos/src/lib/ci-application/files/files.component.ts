@@ -54,6 +54,7 @@ export class FilesComponent {
     })
   }
   async ir(endereco: string) {
+    let endereco_novo = endereco;
     this.endereco = endereco;
     this.filteredFiles = undefined;
     let files = (await lastValueFrom(this.fileExplorer.fileExplorerControllerReadDirectory({ body: { path: endereco } })));
@@ -68,6 +69,9 @@ export class FilesComponent {
       })
   }
   async voltar() {
+    if (this.endereco && (this.endereco?.lastIndexOf('./') === (this.endereco.length - 2))) {
+      return this.ir(this.endereco + '../');
+    }
     let r = this.endereco?.replaceAll('\\', '/').split('/');
     r?.pop();
     this.ir(r?.join('/') || './')
