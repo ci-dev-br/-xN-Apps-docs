@@ -60,7 +60,7 @@ export class RSSCard implements OnChanges {
             // const builder = new XMLBuilder();
             // const xmlContent = builder.build(json_rss_loaded);
         } catch (error) {
-            console.error(error);
+            console.trace(error);
         }
     }
 }

@@ -62,7 +62,7 @@ export class BoardComponent implements OnInit {
                     _data;
                 }
             } catch (error) {
-                console.error(error);
+                console.trace(error);
             }
             this.syncing = false;
         });

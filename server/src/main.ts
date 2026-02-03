@@ -48,12 +48,12 @@ async function start(server: express.Express, app: NestExpressApplication, https
   } catch (error) {
     if (error.code === 'EADDRINUSE') {
       console.trace(error);
-      console.error("stop services");
+      console.trace("stop services");
       const out = spawnSync('powershell', ['Stop-Service', 'apps.ci.dev.br']);
       console.log(out.error)
       await start(server, app, https_port, httpsOptions, http_port || 86, internalHttpsOptions, https_internal_port);
     } else {
-      console.error('[Falha ao iniciar serviços]');
+      console.trace('[Falha ao iniciar serviços]');
       console.trace(error);
     }
   }

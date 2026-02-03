@@ -8,8 +8,11 @@ console.error = (...arg) => { __error(d(), ...arg); }
 console.log = (...arg) => { __log(d(), ...arg); }
 console.trace = (...arg) => {
     __trace(d(), ...arg.map(x => {
-        if (x instanceof Buffer)
-            return x.toString('utf8');
+        try {
+            if (x instanceof Buffer)
+                return x.toString('utf8');
+        } catch (error) {
+        }
         return x;
     }));
 }

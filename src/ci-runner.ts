@@ -16,7 +16,20 @@ export class CiRunner extends RunnerX {
                 if (process.env.PUBLIC_GATEWAY_API)
                     this.adicionarVerificacaoRota(process.env.PUBLIC_GATEWAY_API);
                 setTimeout(() => {
-                    spawn('npm run apil', { cwd: __dirname + '/../apps', env: process.env, detached: true });
+                    try {
+                        const s = spawn('npm run apil', { cwd: __dirname + '/../apps', env: process.env,/*  detached: true, */ });
+
+                        s.on('error', (error) => {
+                            console.trace(error);
+                        })
+
+                        s.on('message', (message) => {
+                            console.log(message);
+                        })
+
+                    } catch (error) {
+                        console.trace(error);
+                    }
                 })
             }
         });

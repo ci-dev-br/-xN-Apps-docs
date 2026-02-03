@@ -126,7 +126,7 @@ export class ChessGameComponent implements OnInit {
                     move = possibilidades[randomIndex];
             }
         } catch (error) {
-            console.error(error);
+            console.trace(error);
         }
         if (!!move)
             this.game.move(move);

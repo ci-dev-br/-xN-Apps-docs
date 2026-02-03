@@ -109,7 +109,7 @@ export class EditarDetailComponent implements OnInit, OnDestroy {
                         if (form) dao.bindDataForm(_data, form);
                     }
                 } catch (error) {
-                    console.error(error);
+                    console.trace(error);
                 }
             });
         }

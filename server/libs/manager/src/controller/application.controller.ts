@@ -32,7 +32,7 @@ export class ApplicationController {
                 (user?.roles && user?.roles?.includes('ADMIN') && input.all) ?
                     undefined : (user?.roles || []));
         } catch (error) {
-            console.error(error);
+            console.trace(error);
         }
     }
     @Post('Sync')
@@ -51,7 +51,7 @@ export class ApplicationController {
         try {
             return await this.service.sync(application, req);
         } catch (error) {
-            console.error(error);
+            console.trace(error);
             throw error;
         }
     }

@@ -21,7 +21,7 @@ export class DomainService implements OnModuleInit {
             if (!!DomainService._service) await this._service.requestDomains(DomainService._request)
             DomainService._whitelist = ((await this._service.repo.find({ where: { varified: true } })) || []).map(d => d.hostname)
         } catch (error) {
-            console.error(error)
+            console.trace(error)
         }
     }
     constructor(
@@ -54,7 +54,7 @@ export class DomainService implements OnModuleInit {
                     try {
                         this.repo.save(host_to_create);
                     } catch (error) {
-                        console.error(error);
+                        console.trace(error);
                     }
                 } else {
                     if (find && !!find.varified) {
@@ -64,7 +64,7 @@ export class DomainService implements OnModuleInit {
             });
             return finded;
         } catch (error) {
-            console.error(error);
+            console.trace(error);
         }
         return [];
     }

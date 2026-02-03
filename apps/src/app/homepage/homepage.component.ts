@@ -11,6 +11,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { SidebarSettings } from './sidebar-settings/sidebar-settings.components';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormControl } from '@angular/forms';
 const XD = <T>(a: T) => {
     (a as any).___styles_xd__internals = {
         m: { l: 0, r: 0, t: 0, b: 0 },
@@ -31,6 +33,7 @@ const XD = <T>(a: T) => {
         MatDialogModule,
         MatFormFieldModule,
         FooterModule,
+        MatInputModule,
     ],
     templateUrl: './homepage.component.html',
     standalone: true,
@@ -52,6 +55,7 @@ export class HomepageComponent implements OnInit {
     protected bgs = [
         '/bg-apps-290847.jpg'
     ]
+    protected pesquisaControl = new FormControl();
     @ViewChild('video') protected video?: ElementRef<HTMLVideoElement>;
     async ngOnInit() {
         this.mountStyle();

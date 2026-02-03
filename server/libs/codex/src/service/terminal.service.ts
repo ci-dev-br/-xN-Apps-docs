@@ -22,7 +22,7 @@ export class TerminalService {
       onData(data);
     });
     this.sessions.set(socketId, ptyProcess);
-    
+
     console.log(`Sessão de terminal criada para: ${socketId} (PID: ${ptyProcess.pid})`);
   }
   write(socketId: string, data: string) {
@@ -37,7 +37,7 @@ export class TerminalService {
       try {
         session.resize(cols, rows);
       } catch (e) {
-        console.error('Erro ao redimensionar:', e);
+        console.trace('Erro ao redimensionar:', e);
       }
     }
   }

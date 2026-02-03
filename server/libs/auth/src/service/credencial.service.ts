@@ -47,7 +47,7 @@ export class CredencialService {
                     x_forwarded_for: partials?.headers ? partials?.headers['x-forwarded-for'] : undefined,
                 }));
         } catch (error) {
-            console.error("Falha ao registrar headers durante credenciamento.");
+            console.trace("Falha ao registrar headers durante credenciamento.");
             console.trace(error);
             console.trace(partials.headers);
         }

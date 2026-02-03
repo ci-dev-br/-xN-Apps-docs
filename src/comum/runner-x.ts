@@ -37,7 +37,7 @@ export abstract class RunnerX {
                     .on('error', e => this.errorHandler(e));
 
         } catch (error) {
-            console.error('[Falha na verificação de Rotas de Acesso]', error);
+            console.trace('[Falha na verificação de Rotas de Acesso]', error);
             console.trace(error);
         }
         setTimeout(() => this.adicionarVerificacaoRota(url, replayTimeout), replayTimeout);
@@ -49,7 +49,7 @@ export abstract class RunnerX {
             else
                 (this.errorCodeListners.default)(res);
         } catch (error) {
-            console.error('[falha ao receber a mensagem]', error);
+            console.trace('[falha ao receber a mensagem]', error);
             console.trace(error);
         }
     }
@@ -133,8 +133,7 @@ export abstract class RunnerX {
                 })
             }
         } catch (error) {
-            console.error('[Falha ao iniciar Tarefa]', error);
-            console.trace(error);
+            console.trace('[Falha ao iniciar Tarefa]', error);
         }
     }
     private listeners: { [name: string]: ((event: any) => void)[] } = {};

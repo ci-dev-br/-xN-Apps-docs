@@ -98,7 +98,7 @@ export class WsService {
                 try {
                     callBack(message);
                 } catch (error) {
-                    console.error(error);
+                    console.trace(error);
                 }
             });
     }
@@ -131,7 +131,7 @@ export class WsService {
                     try {
                         o_DATA[changed_property_name] = (data?.data?.changes[changed_property_name]).currentValue;
                     } catch (error) {
-                        console.error(error);
+                        console.trace(error);
                     }
                     this._updating.delete(o_DATA);
                 }

@@ -21,7 +21,7 @@ export abstract class DaoServiceBase<E> {
         try {
             old_value = await this._repo.findOne(this._repo.getId(data));
         } catch (error) {
-            console.error(error);
+            console.trace(error);
         }
 
         if (!old_value) {

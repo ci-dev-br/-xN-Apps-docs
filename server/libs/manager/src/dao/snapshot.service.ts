@@ -24,7 +24,7 @@ export class SnapshotService {
             if (!!hash && !!hash.hash)
                 this.lastSnapshotHash = hash.hash;
         } catch (error) {
-            console.error(error);
+            console.trace(error);
         }
     }
     async snapshot<T extends FullAuditedEntity>(entidade: T | any, request: Request, repo?: Repository<T>) {
@@ -49,7 +49,7 @@ export class SnapshotService {
             }
             this.lastSnapshotHash = hash;
         } catch (error) {
-            console.error(error);
+            console.trace(error);
         }
     }
     async prepareToSync(entidade: any, request: Request) {
