@@ -27,8 +27,8 @@
         </button>
     </mat-menu>
 </mat-toolbar>
-}
-@if(!!!((user | async)?.username)){<nav>
+}@else{
+<nav>
     <ul>
         <li>
             <a routerLink="registrar">Registrar</a>
@@ -37,4 +37,5 @@
             <a routerLink="acessar">Entrar</a>
         </li>
     </ul>
-</nav>}
+</nav>
+}

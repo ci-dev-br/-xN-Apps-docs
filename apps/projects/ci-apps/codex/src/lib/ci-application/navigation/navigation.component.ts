@@ -72,7 +72,7 @@ export class NavigationComponent {
       }
     })
     dialog_files.afterClosed().subscribe(value => {
-      value;
+      this.files.openFile(value);
     });
   }
 }

@@ -16,8 +16,8 @@ nav {
 
     a {
         padding: 12px;
-        color: white;
-        background-color: black;
+        // color: white;
+        // background-color: black;
         border-radius: 12px;
     }
 }
@@ -25,12 +25,14 @@ nav {
 :host ::ng-deep .mat-mdc-form-field-subscript-wrapper {
     display: none;
 }
+
 mat-toolbar {
     flex-wrap: wrap;
     height: unset !important;
     max-height: unset !important;
     padding: 12px 12px;
 }
+
 mat-form-field {
     min-width: 150px;
     flex: 1;
