@@ -1,5 +1,5 @@
 import { Body, Controller, Optional, Post, Req } from "@nestjs/common";
-import { ApiResponse, ApiResponseProperty, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiResponse, ApiResponseProperty, ApiTags } from "@nestjs/swagger";
 import { readdirSync, readFileSync } from "fs";
 import { ReadDirectoryInput } from "./dto/read-directory-input.dto";
 import { ReadDirectoryOutput } from "./dto/read-directory-output.dto";
@@ -44,12 +44,30 @@ export class FileExplorerController {
     }
 
     @Post('File')
-    @ApiResponse({ type: FileDto, isArray: true })
+    @ApiOperation({ operationId: 'ReadFile' })
+    @ApiResponse({ type: FileDto })
     async readFile(
         @Body() input: FileDto,
+        @Req() request: Request,
     ) {
-        return readFileSync(input.path, {
-            encoding: input.encoding as any || 'utf-8'
-        })
+        try {
+            if (!!this.filePermissions) {
+                if (await this.filePermissions.grant(input.path, request)) {
+
+                } else {
+                    return null;
+                }
+            }
+            let readed = readFileSync(input.path, {
+                encoding: input.encoding as any || 'utf-8'
+            });
+            input.data = readed.toString();
+            return input;
+        } catch (error) {
+            return {
+                status: 500,
+                cause: error
+            }
+        }
     }
 }

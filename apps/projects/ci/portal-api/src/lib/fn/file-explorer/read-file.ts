@@ -8,12 +8,12 @@ import { RequestBuilder } from '../../request-builder';
 
 import { FileDto } from '../../models/file-dto';
 
-export interface FileExplorerControllerReadFile$Params {
+export interface ReadFile$Params {
       body: FileDto
 }
 
-export function fileExplorerControllerReadFile(http: HttpClient, rootUrl: string, params: FileExplorerControllerReadFile$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<FileDto>>> {
-  const rb = new RequestBuilder(rootUrl, fileExplorerControllerReadFile.PATH, 'post');
+export function readFile(http: HttpClient, rootUrl: string, params: ReadFile$Params, context?: HttpContext): Observable<StrictHttpResponse<FileDto>> {
+  const rb = new RequestBuilder(rootUrl, readFile.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -23,9 +23,9 @@ export function fileExplorerControllerReadFile(http: HttpClient, rootUrl: string
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<FileDto>>;
+      return r as StrictHttpResponse<FileDto>;
     })
   );
 }
 
-fileExplorerControllerReadFile.PATH = '/FileExplorer/File';
+readFile.PATH = '/FileExplorer/File';
