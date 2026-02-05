@@ -34,10 +34,14 @@ export class CodeEditorComponent {
                 }));
                 this.oppenedFile = file_loaded;
                 this.value = file_loaded.data as string;
+                this.editorOptions.language = undefined as any;
             }
         })
     }
     value?: string;
-    editorOptions = { theme: 'vs-dark', language: 'typescript' };
+    editorOptions = {
+        theme: 'vs-dark',
+        language: 'typescript',
+    };
 
 }
