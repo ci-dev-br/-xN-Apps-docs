@@ -30,7 +30,6 @@ export class FileExplorerController {
         return readdirSync(input.path, {
             withFileTypes: true,
         }).map(v => {
-            console.log(v);
             return {
                 ...v,
                 isCharacterDevice: v.isCharacterDevice(),
