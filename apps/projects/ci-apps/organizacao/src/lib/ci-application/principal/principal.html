@@ -1,3 +1,5 @@
+@if(!(load | async)){
+@if(!organizationsCreatedByYou || organizationsCreatedByYou.length > 0){
 <div class="wrapper">
     <h1>Bem-vindo ao módulo de gerenciamento de Organizações da Plataforma Apps.</h1>
     <p>
@@ -34,3 +36,9 @@
         </button>
     </div>
 </div>
+}@else{
+<ci-master-detail schemaName="Organizacao"></ci-master-detail>
+}
+}@else{
+Carregando...
+}

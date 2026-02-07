@@ -1,9 +1,9 @@
-import { Component } from "@angular/core";
+import { AfterViewInit, Component, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
-import { EditarDetailComponent, WindowModule, WindowService } from "@ci/components";
+import { EditarDetailComponent, MasterDetailComponent, WindowModule, WindowService } from "@ci/components";
 import { CoreModule } from "@ci/core";
 import { Organizacao, OrganizacaoService } from "@ci/portal-api";
-import { lastValueFrom } from "rxjs";
+import { BehaviorSubject, lastValueFrom } from "rxjs";
 
 @Component({
     selector: 'ci-org-principal',
@@ -12,11 +12,14 @@ import { lastValueFrom } from "rxjs";
         CoreModule,
         WindowModule,
         MatButtonModule,
+        MasterDetailComponent,
     ],
     styleUrl: 'principal.scss',
     standalone: true,
 })
-export class Principal {
+export class Principal implements AfterViewInit, OnInit {
+    load = new BehaviorSubject(true);
+    organizationsCreatedByYou?: Organizacao[];
     constructor(
         private readonly window: WindowService,
         private readonly organizacao: OrganizacaoService,
@@ -26,6 +29,9 @@ export class Principal {
     async cadastrarOrganizacao() {
         this.createNew();
     }
+    async ngAfterViewInit() {
+
+    }
     async editar(data: Organizacao, event?: MouseEvent) {
         const result: number | any = await this.window.open(
             EditarDetailComponent,
@@ -33,6 +39,18 @@ export class Principal {
             'Organizacao',
             event);
         return result;
+    }
+    async ngOnInit() {
+        try {
+            this.organizationsCreatedByYou = await lastValueFrom(this.organizacao.getList({
+                body: {
+                    where: {}, skip: 0, take: 1
+                }
+            }));
+        } catch (error) {
+            console.error(error);
+        }
+        this.load.next(false);
     }
     async createNew() {
         try {

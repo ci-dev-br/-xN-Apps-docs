@@ -7,13 +7,13 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import { ObterListaOrganizacao } from '../../models/obter-lista-organizacao';
-import { SyncPayloadDaoOrganizacao } from '../../models/sync-payload-dao-organizacao';
+import { Organizacao } from '../../models/organizacao';
 
 export interface GetListOrganizacao$Params {
       body: ObterListaOrganizacao
 }
 
-export function getListOrganizacao(http: HttpClient, rootUrl: string, params: GetListOrganizacao$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoOrganizacao>> {
+export function getListOrganizacao(http: HttpClient, rootUrl: string, params: GetListOrganizacao$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Organizacao>>> {
   const rb = new RequestBuilder(rootUrl, getListOrganizacao.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -24,7 +24,7 @@ export function getListOrganizacao(http: HttpClient, rootUrl: string, params: Ge
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SyncPayloadDaoOrganizacao>;
+      return r as StrictHttpResponse<Array<Organizacao>>;
     })
   );
 }

@@ -83,7 +83,7 @@ export class OrganizacaoService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  getListOrganizacao$Response(params: GetListOrganizacao$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoOrganizacao>> {
+  getListOrganizacao$Response(params: GetListOrganizacao$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Organizacao>>> {
     return getListOrganizacao(this.http, this.rootUrl, params, context);
   }
 
@@ -93,9 +93,9 @@ export class OrganizacaoService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  getList(params: GetListOrganizacao$Params, context?: HttpContext): Observable<SyncPayloadDaoOrganizacao> {
+  getList(params: GetListOrganizacao$Params, context?: HttpContext): Observable<Array<Organizacao>> {
     return this.getListOrganizacao$Response(params, context).pipe(
-      map((r: StrictHttpResponse<SyncPayloadDaoOrganizacao>): SyncPayloadDaoOrganizacao => r.body)
+      map((r: StrictHttpResponse<Array<Organizacao>>): Array<Organizacao> => r.body)
     );
   }
 

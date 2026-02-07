@@ -46,7 +46,8 @@ export class OrganizacaoController extends ControllerDaoBase<OrganizacaoService,
     @Post('GetList')
     @ApiResponse({
         type:
-            SyncPayloadDaoOrganizacao
+            Organizacao,
+        isArray: true
     })
     @ApiOperation({
         operationId: 'GetListOrganizacao'
