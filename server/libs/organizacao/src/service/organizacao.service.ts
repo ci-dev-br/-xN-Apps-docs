@@ -1,4 +1,18 @@
-import { Injectable } from "@nestjs/common";
+import { Repository } from "typeorm";
+import { Organizacao } from "../model/organizacao.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { DaoFullAuditedServiceBase, SnapshotService } from "@ci/core";
+export class OrganizacaoService extends DaoFullAuditedServiceBase<Organizacao> {
+    constructor(
+        snap: SnapshotService,
+        @InjectRepository(Organizacao)
+        repository: Repository<Organizacao>
+    ) {
+        super(snap, repository);
+    }
+}
+
+/* import { Injectable } from "@nestjs/common";
 import { Organizacao } from "../model/organizacao.entity";
 import { Equal, ILike, In, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -16,7 +30,7 @@ export class OrganizacaoService {
             if ('organizatioName' in organizacao) current.organizatioName = organizacao.organizatioName;
             if ('logo' in organizacao) current.logo = organizacao.logo;
             if ('tenant' in organizacao) current.tenant = organizacao.tenant;
-            if ('cadastroPessoa' in organizacao) current.responsavel = organizacao.responsavel;
+            if ('cadastroorganizacao' in organizacao) current.responsavel = organizacao.responsavel;
             return this.repo.save(current);
         } else {
             const nova_organizacao = this.repo.create(organizacao);
@@ -27,7 +41,7 @@ export class OrganizacaoService {
     }
     async Find(query: string) {
         return await this.repo.findAndCount({
-            relations: ['cadastroPessoa', 'logo', 'tenant'],
+            relations: ['cadastroorganizacao', 'logo', 'tenant'],
             where: [
                 {
                     organizatioName: ILike('%' + query + '%'),
@@ -50,4 +64,4 @@ export class OrganizacaoService {
             ]
         })
     }
-}
+} */

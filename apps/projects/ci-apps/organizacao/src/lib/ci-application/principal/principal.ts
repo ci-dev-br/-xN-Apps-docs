@@ -2,7 +2,8 @@ import { Component } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { EditarDetailComponent, WindowModule, WindowService } from "@ci/components";
 import { CoreModule } from "@ci/core";
-import { Organizacao } from "@ci/portal-api";
+import { Organizacao, OrganizacaoService } from "@ci/portal-api";
+import { lastValueFrom } from "rxjs";
 
 @Component({
     selector: 'ci-org-principal',
@@ -18,6 +19,7 @@ import { Organizacao } from "@ci/portal-api";
 export class Principal {
     constructor(
         private readonly window: WindowService,
+        private readonly organizacao: OrganizacaoService,
     ) {
 
     }
@@ -33,8 +35,13 @@ export class Principal {
         return result;
     }
     async createNew() {
-        let instance: Organizacao = {} as Organizacao;
-        const finalData: number | any = await this.editar(instance);
-        return finalData;
+        try {
+            let instance: Organizacao = {} as Organizacao;
+            instance = await lastValueFrom(this.organizacao.organizacaoSync({ body: { data: instance } }));
+            const finalData: number | any = await this.editar(instance);
+            return finalData;
+        } catch (error) {
+            console.trace(error);
+        }
     }
 }

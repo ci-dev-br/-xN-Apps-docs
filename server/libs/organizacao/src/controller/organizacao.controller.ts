@@ -1,66 +1,60 @@
 import { Body, Controller, Post, Req } from "@nestjs/common";
-import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { OrganizacaoService } from "../service/organizacao.service";
-import { Organizacao } from "../model/organizacao.entity";
-import { Tenant } from "@ci/tenant/models/tenant.entity";
-import { UserService } from "@ci/auth/auth.module";
-export class OrganizacaoSyncPayload {
-    @ApiProperty({ type: Organizacao })
-    data: Organizacao
-}
-export class OrganizacaoSyncOutput {
-    @ApiProperty({ type: Organizacao })
-    out: Organizacao
-}
-export class OrganizacaoFindPayload {
-    @ApiProperty({ nullable: true, required: true })
-    query: string
-}
-export class OrganizacaoFindResult {
-    @ApiProperty({ nullable: true, required: true, type: Organizacao, isArray: true })
-    results: Organizacao[];
-    @ApiProperty({ nullable: true, required: true })
-    totalLength: number;
-}
-@Controller('Organizacao')
+import { OrganizacaoService } from "../service/Organizacao.service";
+import { ControllerDaoBase } from "@ci/core";
+import { Organizacao } from "../model/Organizacao.entity";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { SyncPayloadDaoOrganizacao } from "../dto/sync-payload-dao-organizacao";
+import { ObterListaOrganizacao } from "../dto/obter-list-organizacao";
+import { GetByInternalIdInputDto } from "./GetByInternalIdInputDto";
+/**
+ * Organizacao Controller 
+ */
 @ApiTags('Organizacao')
-export class OrganizacaoController {
+@Controller('Organizacao')
+export class OrganizacaoController extends ControllerDaoBase<OrganizacaoService, Organizacao> {
     constructor(
-        private readonly organizacaoService: OrganizacaoService,
-        private readonly userService: UserService,
-    ) { }
+        service: OrganizacaoService
+    ) {
+        super(service);
+    }
     @Post('Sync')
-    @ApiOperation({ operationId: 'OrganizacaoSync' })
-    async sync(
-        @Req() req: any,
-        @Body() input: OrganizacaoSyncPayload,
-    ) {
-        return await this.organizacaoService.syncronizar(input.data);
-    }
-    @Post('GetCurrent')
     @ApiResponse({
-        type: Tenant, isArray: true
+        type: SyncPayloadDaoOrganizacao
     })
-    @ApiOperation({ operationId: 'OrganizacaoGetCurrent' })
-    async GetCurrent(
-        @Req() req: any,
+    @ApiOperation({
+        operationId: 'SyncOrganizacao'
+    })
+    override async Sync(
+        @Body() body: SyncPayloadDaoOrganizacao,
+        @Req() req?: any,
     ) {
-        let current_user = await this.userService.findById(req.user.id);
-        return current_user?.tenants || undefined;
+        return await super.Sync(body, req)
     }
+    @Post('GetByInternalId')
     @ApiResponse({
-        type: OrganizacaoFindResult,
+        type: Organizacao,
     })
-    @Post('Find')
-    @ApiOperation({ operationId: 'OrganizacaoFind' })
-    async Find(
-        @Req() req: any, @Body() input: OrganizacaoFindPayload
+    @ApiOperation({
+        operationId: 'GetByInternalIdOrganizacao',
+    })
+    override async GetByInternalId(
+        @Body() input: GetByInternalIdInputDto,
+        @Req() req,
     ) {
-        return ((r) => {
-            return {
-                results: r[0],
-                totalLength: r[1],
-            } as OrganizacaoFindResult
-        })(await this.organizacaoService.Find(input.query));
+        return await super.GetByInternalId(input, req);
+    }
+    @Post('GetList')
+    @ApiResponse({
+        type:
+            SyncPayloadDaoOrganizacao
+    })
+    @ApiOperation({
+        operationId: 'GetListOrganizacao'
+    })
+    override async GetList(
+        @Body() input: ObterListaOrganizacao,
+        @Req() req?: any,
+    ) {
+        return super.GetList(input, req);
     }
 }
