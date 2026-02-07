@@ -9,7 +9,7 @@ import { AuthModule } from "@ci/auth/auth.module";
 import { ManagerModule } from "@ci/manager";
 import { Setor } from "./model/setor.entity";
 import { CoreModule } from "@ci/core";
-import { OrganizacaoService } from "./service/Organizacao.service";
+import { OrganizacaoService } from "./service/organizacao.service";
 export const OrganizacaoEntities = [
     Organizacao,
     Setor,

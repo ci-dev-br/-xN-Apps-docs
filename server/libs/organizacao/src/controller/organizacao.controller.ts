@@ -1,11 +1,11 @@
 import { Body, Controller, Post, Req } from "@nestjs/common";
-import { OrganizacaoService } from "../service/Organizacao.service";
 import { ControllerDaoBase } from "@ci/core";
 import { Organizacao } from "../model/organizacao.entity";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { SyncPayloadDaoOrganizacao } from "../dto/sync-payload-dao-organizacao";
 import { ObterListaOrganizacao } from "../dto/obter-list-organizacao";
 import { GetByInternalIdInputDto } from "./GetByInternalIdInputDto";
+import { OrganizacaoService } from "../service/organizacao.service";
 /**
  * Organizacao Controller 
  */
