@@ -36,9 +36,14 @@ export class Principal {
     }
     async createNew() {
         try {
-            let instance: Organizacao = {} as Organizacao;
-            instance = await lastValueFrom(this.organizacao.organizacaoSync({ body: { data: instance } }));
-            const finalData: number | any = await this.editar(instance);
+            let instance: Organizacao = {
+                deleted: true,
+            } as Organizacao;
+            instance = (await lastValueFrom(this.organizacao.sync({ body: { data: instance } }))) as Organizacao;
+            setTimeout(() => {
+                instance.deleted = null;
+            }, 2000);
+            const finalData: number | any = (await this.editar(instance));
             return finalData;
         } catch (error) {
             console.trace(error);

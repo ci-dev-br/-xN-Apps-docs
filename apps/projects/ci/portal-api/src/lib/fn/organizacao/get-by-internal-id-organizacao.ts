@@ -6,15 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { OrganizacaoFindPayload } from '../../models/organizacao-find-payload';
-import { OrganizacaoFindResult } from '../../models/organizacao-find-result';
+import { GetByInternalIdInputDto } from '../../models/get-by-internal-id-input-dto';
+import { Organizacao } from '../../models/organizacao';
 
-export interface OrganizacaoFind$Params {
-      body: OrganizacaoFindPayload
+export interface GetByInternalIdOrganizacao$Params {
+      body: GetByInternalIdInputDto
 }
 
-export function organizacaoFind(http: HttpClient, rootUrl: string, params: OrganizacaoFind$Params, context?: HttpContext): Observable<StrictHttpResponse<OrganizacaoFindResult>> {
-  const rb = new RequestBuilder(rootUrl, organizacaoFind.PATH, 'post');
+export function getByInternalIdOrganizacao(http: HttpClient, rootUrl: string, params: GetByInternalIdOrganizacao$Params, context?: HttpContext): Observable<StrictHttpResponse<Organizacao>> {
+  const rb = new RequestBuilder(rootUrl, getByInternalIdOrganizacao.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -24,9 +24,9 @@ export function organizacaoFind(http: HttpClient, rootUrl: string, params: Organ
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<OrganizacaoFindResult>;
+      return r as StrictHttpResponse<Organizacao>;
     })
   );
 }
 
-organizacaoFind.PATH = '/Organizacao/Find';
+getByInternalIdOrganizacao.PATH = '/Organizacao/GetByInternalId';

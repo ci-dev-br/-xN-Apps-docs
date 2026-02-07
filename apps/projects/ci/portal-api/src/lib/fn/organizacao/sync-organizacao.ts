@@ -6,14 +6,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Tenant } from '../../models/tenant';
+import { SyncPayloadDaoOrganizacao } from '../../models/sync-payload-dao-organizacao';
 
-export interface OrganizacaoGetCurrent$Params {
+export interface SyncOrganizacao$Params {
+      body: SyncPayloadDaoOrganizacao
 }
 
-export function organizacaoGetCurrent(http: HttpClient, rootUrl: string, params?: OrganizacaoGetCurrent$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Tenant>>> {
-  const rb = new RequestBuilder(rootUrl, organizacaoGetCurrent.PATH, 'post');
+export function syncOrganizacao(http: HttpClient, rootUrl: string, params: SyncOrganizacao$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoOrganizacao>> {
+  const rb = new RequestBuilder(rootUrl, syncOrganizacao.PATH, 'post');
   if (params) {
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -21,9 +23,9 @@ export function organizacaoGetCurrent(http: HttpClient, rootUrl: string, params?
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<Tenant>>;
+      return r as StrictHttpResponse<SyncPayloadDaoOrganizacao>;
     })
   );
 }
 
-organizacaoGetCurrent.PATH = '/Organizacao/GetCurrent';
+syncOrganizacao.PATH = '/Organizacao/Sync';
