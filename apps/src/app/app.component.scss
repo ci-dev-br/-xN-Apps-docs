@@ -49,3 +49,43 @@ div.--dev-mode {
 ::ng-deep body:has(.--dev-mode) {
     background-color: black;
 }
+
+.loader-container {
+    // Fixa na tela inteira
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+
+    // Cores Neutras (Dark Mode Clean)
+    background-color: #000000;
+    color: #888888; // Cinza médio para elegância
+
+    // Centralização perfeita
+    display: grid;
+    place-items: center;
+
+    // Fonte
+    font-family: sans-serif; // Usa a fonte do sistema
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+.loading-text {
+    // Animação de "respiração" (Pulso)
+    animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}

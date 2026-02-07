@@ -1,9 +1,10 @@
-import { Component, isDevMode, OnInit, Optional } from '@angular/core';
+import { Component, HostListener, isDevMode, OnDestroy, OnInit, Optional } from '@angular/core';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { WindowModule, WindowService } from '@ci/components';
 import { CoreModule, CoreService, WsService } from '@ci/core';
+import { BehaviorSubject } from 'rxjs';
 @Component({
   selector: 'ci-root',
   standalone: true,
@@ -18,14 +19,15 @@ import { CoreModule, CoreService, WsService } from '@ci/core';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
+  load = new BehaviorSubject<boolean>(true);
   isDevMode = isDevMode();
   title = 'apps';
   constructor(
     private readonly matIconReg: MatIconRegistry,
     private readonly core: CoreService,
     private readonly router: Router,
-    private readonly ws: WsService,
+    private readonly websocket: WsService,
     private readonly window: WindowService,
     private readonly snack?: MatSnackBar,
   ) {
@@ -43,13 +45,16 @@ export class AppComponent implements OnInit {
       // showInAppInstallPromotion();
     }); */
   }
+  ngOnDestroy(): void {
+
+  }
   ngOnInit() {
     this.matIconReg.setDefaultFontSetClass('material-symbols-sharp');
     // this.router.events.subscribe(r => console.log(r))
-
     // This variable will save the event for later use.
     let deferredPrompt;
     if (typeof window !== 'undefined') {
+      this.load.next(false);
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
@@ -64,20 +69,20 @@ export class AppComponent implements OnInit {
     }
     // this.worker();
     this.window?.addEventListener('log', (...args) => {
-      this.snack?.open(String(args),'Ok')
+      this.snack?.open(String(args), 'De acordo')
     })
     this.window?.addEventListener('error', (...args) => {
-      this.snack?.open(String(args),'Ok')
+      this.snack?.open(String(args), 'De acordo')
     })
     this.window?.addEventListener('warn', (...args) => {
-      this.snack?.open(String(args),'Ok')
+      this.snack?.open(String(args), 'De acordo')
     })
     this.window?.addEventListener('info', (...args) => {
-      this.snack?.open(String(args),'Ok')
+      this.snack?.open(String(args), 'De acordo')
     })
   }
   private showInAppInstallPromotion() {
-    alert("Instala ai tio");
+    alert("Gostando da experiência? Tenha tudo na palma da sua mão com o nosso app.");
   }
   private worker() {
     if ('serviceWorker' in navigator) {

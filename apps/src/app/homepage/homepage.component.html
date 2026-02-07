@@ -1,6 +1,3 @@
-@if(stage==='loading'){
-Carregando...
-}@else {
 <ci-navbar></ci-navbar>
 <div class="page--wrapper">
     @if(!!(userService.user | async)){
@@ -58,4 +55,3 @@ Carregando...
     }
 </div>
 <x-footer />
-}
