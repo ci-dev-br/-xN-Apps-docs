@@ -12,6 +12,7 @@ import { Organizacao } from "@ci/portal-api";
         WindowModule,
         MatButtonModule,
     ],
+    styleUrl: 'principal.scss',
     standalone: true,
 })
 export class Principal {
