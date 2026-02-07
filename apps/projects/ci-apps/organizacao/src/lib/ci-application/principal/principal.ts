@@ -1,10 +1,17 @@
 import { Component } from "@angular/core";
-import { EditarDetailComponent, WindowService } from "@ci/components";
+import { MatButtonModule } from "@angular/material/button";
+import { EditarDetailComponent, WindowModule, WindowService } from "@ci/components";
+import { CoreModule } from "@ci/core";
 import { Organizacao } from "@ci/portal-api";
 
 @Component({
     selector: 'ci-org-principal',
     templateUrl: 'principal.html',
+    imports: [
+        CoreModule,
+        WindowModule,
+        MatButtonModule,
+    ],
     standalone: true,
 })
 export class Principal {

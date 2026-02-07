@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'ci-Organizacao',
   imports: [],
   template: `
-    Bem-vindo
+    Bem-vinde
   `,
   styles: ``
 })
