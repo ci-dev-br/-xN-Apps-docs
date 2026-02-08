@@ -1,29 +1,32 @@
-import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild } from '@angular/core';
-import * as THREE from 'three';
+import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, Optional, ViewChild } from '@angular/core';
+import { BoxGeometry, Color, Material, Mesh, MeshNormalMaterial, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { CoreModule } from '@ci/core';
 @Component({
   selector: 'c-threjs',
-  imports: [],
+  imports: [
+    CoreModule,
+  ],
+  standalone: true,
   templateUrl: './threjs.component.html',
   styleUrl: './threjs.component.scss',
 })
 export class ThrejsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('rendererContainer', { static: true }) rendererContainer!: ElementRef<HTMLDivElement>;
-
-  private scene!: THREE.Scene;
-  private camera!: THREE.PerspectiveCamera;
-  private renderer!: THREE.WebGLRenderer;
-  private cube!: THREE.Mesh;
-  private resizeObserver!: ResizeObserver;
-  private frameId: number = 0;
-
-  constructor(private ngZone: NgZone) { }
-
+  protected scene?: Scene;
+  protected camera?: PerspectiveCamera;
+  protected renderer?: WebGLRenderer;
+  protected cube?: Mesh;
+  protected resizeObserver?: ResizeObserver;
+  protected frameId: number = 0;
+  constructor(
+    @Optional() private readonly ngZone?: NgZone,
+  ) { }
   ngAfterViewInit(): void {
     this.initThree();
     this.setupResizeObserver();
 
     // Executa a animação fora do zone do Angular para performance
-    this.ngZone.runOutsideAngular(() => {
+    this.ngZone?.runOutsideAngular(() => {
       this.animate();
     });
   }
@@ -41,7 +44,7 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
       if (Array.isArray(this.cube.material)) {
         this.cube.material.forEach(m => m.dispose());
       } else {
-        (this.cube.material as THREE.Material).dispose();
+        (this.cube.material as Material).dispose();
       }
     }
 
@@ -52,23 +55,23 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
 
   private initThree(): void {
     // 1. Scene
-    this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x222222); // Cinza escuro para contraste
+    this.scene = new Scene();
+    this.scene.background = new Color(0x222222); // Cinza escuro para contraste
 
     // 2. Camera (Dimensões iniciais temporárias, serão corrigidas pelo ResizeObserver)
     const { clientWidth, clientHeight } = this.rendererContainer.nativeElement;
-    this.camera = new THREE.PerspectiveCamera(75, clientWidth / clientHeight, 0.1, 1000);
+    this.camera = new PerspectiveCamera(75, clientWidth / clientHeight, 0.1, 1000);
     this.camera.position.z = 5;
 
     // 3. Renderer
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    this.renderer = new WebGLRenderer({ antialias: true, alpha: true });
     this.renderer.setSize(clientWidth, clientHeight);
     this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
 
     // 4. Objeto de Exemplo (Cubo)
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshNormalMaterial(); // Material colorido básico
-    this.cube = new THREE.Mesh(geometry, material);
+    const geometry = new BoxGeometry();
+    const material = new MeshNormalMaterial(); // Material colorido básico
+    this.cube = new Mesh(geometry, material);
     this.scene.add(this.cube);
   }
 
@@ -81,7 +84,8 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
       this.cube.rotation.y += 0.01;
     }
 
-    this.renderer.render(this.scene, this.camera);
+    if (this.scene && this.camera && this.renderer)
+      this.renderer.render(this.scene, this.camera);
   }
 
   private setupResizeObserver(): void {

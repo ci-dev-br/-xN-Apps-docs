@@ -285,6 +285,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/dym/tsconfig.lib.json"
       }
+    },
+    "vendas": {
+      "type": "library",
+      "root": "libs/vendas",
+      "entryFile": "index",
+      "sourceRoot": "libs/vendas/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/vendas/tsconfig.lib.json"
+      }
     }
   }
 }
