@@ -126,6 +126,9 @@
       "@ci/components/context-menu": [
         "./projects/ci/components/src/lib/context-menu/public-api"
       ],
+      "@ci/espazio": [
+        "./projects/ci/espazio/src/lib/context-menu/public-api"
+      ],
       "@ci/apps/imersao/games/my-house": [
         "./projects/ci-apps/imersao/games/my-house/src/public-api"
       ],
@@ -168,6 +171,12 @@
     },
     {
       "path": "./projects/ci/launcher/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/ci/espazio/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/ci/espazio/tsconfig.spec.json"
     }
   ]
 }

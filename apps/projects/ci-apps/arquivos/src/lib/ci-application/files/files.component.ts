@@ -79,7 +79,7 @@ export class FilesComponent {
     if (this.endereco && (this.endereco?.lastIndexOf('./') === (this.endereco.length - 2))) {
       return this.ir(this.endereco + '../');
     }
-    let r = this.endereco?.replaceAll('\\', '/').split('/');
+    let r = this.endereco?.replace(/\\/g, '/').split('/');
     r?.pop();
     this.ir(r?.join('/') || './')
   }
