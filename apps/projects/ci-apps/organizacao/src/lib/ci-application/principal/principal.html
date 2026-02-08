@@ -1,3 +1,5 @@
+@if(!(load | async)){
+@if(!organizationsCreatedByYou || organizationsCreatedByYou.length === 0){
 <div class="wrapper">
     <h1>Bem-vindo ao módulo de gerenciamento de Organizações da Plataforma Apps.</h1>
     <p>
@@ -25,10 +27,18 @@
 
     <h4>Até o momento presente seu projeto não faz parte de uma Organização.</h4>
 
-    <button mat-raised-button>
-        Procurar por Organização existente
-    </button>
-    <button mat-raised-button (click)="cadastrarOrganizacao()">
-        Cadastrar nova Organização
-    </button>
+    <div class="row">
+        <button mat-raised-button>
+            Procurar por Organização existente
+        </button>
+        <button mat-raised-button (click)="cadastrarOrganizacao()">
+            Cadastrar nova Organização
+        </button>
+    </div>
 </div>
+}@else{
+<ci-master-detail schemaName="Organizacao"></ci-master-detail>
+}
+}@else{
+Carregando...
+}

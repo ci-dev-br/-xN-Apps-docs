@@ -1,3 +1,9 @@
+@if((load | async) ===true){
+<div class="loader-container">
+    <p class="loading-text">Preparando seu ambiente de trabalho...</p>
+</div>
+}@else{
 <div [class.--dev-mode]="isDevMode">
     <router-outlet />
 </div>
+}

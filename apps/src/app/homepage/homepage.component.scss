@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    justify-content: stretch;
     flex: auto;
     overflow: auto;
 }
@@ -9,6 +10,9 @@
 .logo {
     width: 250px;
     object-fit: cover;
+    pointer-events: none;
+    user-select: none;
+    mix-blend-mode: darken;
 }
 
 header {
@@ -61,18 +65,14 @@ header {
 
 .page--wrapper {
 
-    background-position: center center;
-    background-repeat: no-repeat no-repeat;
-    background-size: cover;
+    position: relative;
+
     display: flex;
-    flex-direction: row;
-    align-items: stretch;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
 
     flex: auto;
-    overflow: auto;
-
-    position: relative;
 }
 
 .qra:has(.sidebar) {
@@ -93,7 +93,7 @@ header {
         padding: 24px;
         gap: 12px;
 
-        background-color: white;
+        //  background-color: white;
 
     }
 
@@ -113,19 +113,19 @@ header {
 }
 
 .sidebar {
-    background-color: var(--mat-app-background-color);
+    // background-color: var(--mat-app-background-color);
     display: flex;
     flex-direction: column;
     width: 245px;
     position: absolute;
     left: 0;
     top: 0;
-    // bottom: 0;
     box-shadow: 3px 6px 24px rgba(0, 0, 0, 0.45);
     padding: 24px;
     border-radius: 12px;
     transition: all 1.5s ease;
     overflow: hidden;
+
 
     >* {
         transition: opacity .5s ease-in-out;
@@ -134,7 +134,8 @@ header {
     }
 
     &.--inactive {
-
+        background-color: white;
+        cursor: pointer;
         left: 25px;
         top: 25px;
         width: 40px;
@@ -146,8 +147,6 @@ header {
 
         >* {
             opacity: 0;
-            user-select: none;
-            pointer-events: none;
         }
     }
 }
@@ -192,10 +191,17 @@ video {
 }
 
 .container {
-    background-color: white;
+    flex: auto;
+    // background-color: white;
     border-radius: 24px;
     padding: 0px 24px 24px 24px;
     width: auto;
     max-width: 33cqmax;
-    filter: drop-shadow(0 1px 7px rgb(0, 0, 0));
+    justify-content: center;
+    align-items: center;
+    // filter: drop-shadow(0 1px 7px rgb(0, 0, 0));
+}
+
+mat-form-field {
+    min-width: 60vw;
 }

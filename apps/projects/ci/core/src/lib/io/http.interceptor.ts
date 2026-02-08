@@ -51,7 +51,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             try {
                 this.efail = JSON.parse(efail);
             } catch (error) {
-                console.error(error);
+                console.trace(error);
             }
         }
     }

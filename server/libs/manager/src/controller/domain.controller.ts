@@ -48,7 +48,7 @@ export class DomainController {
                 (user?.roles && user?.roles?.includes('ADMIN') && input.all) ?
                     undefined : (user?.roles || []));
         } catch (error) {
-            console.error(error);
+            console.trace(error);
         }
     }
     @Post('Sync')

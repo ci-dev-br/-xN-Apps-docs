@@ -15,7 +15,6 @@ import { MatTabsModule } from '@angular/material/tabs';
     RouterModule,
     BoardModule,
     AuthModule,
-
     MatTabsModule,
   ],
   standalone: true,

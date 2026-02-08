@@ -27,7 +27,7 @@ export class PranchetaService {
                         prancheta_current[p] = prancheta_untastemented[p];
                 });
             } catch (error) {
-                console.error(error);
+                console.trace(error);
             }
         } else {
             //  if (!!options?.req) console.log(options.req.user);

@@ -1,6 +1,4 @@
-@if(stage==='loading'){
-Carregando...
-}@else {
+<ci-navbar></ci-navbar>
 <div class="page--wrapper">
     @if(!!(userService.user | async)){
     <div #sidebarElement class="sidebar" [class.--inactive]="!sidebar" (click)="sidebar=!sidebar"
@@ -43,13 +41,17 @@ Carregando...
         </div>
     </div>
     }@else {
-    <header class="container" style="background: transparent;">
+    <header class="container">
         <figure>
             <img class="logo" src="logo-colorida.svg"
                 alt-label="Logo 'apps.ci.dev.br' escrita em manuscrito e colida degradê em minúsculo">
         </figure>
+
+        <mat-form-field>
+            <mat-label>Pesqusiar ...</mat-label>
+            <input type="text" matInput placeholder="Pesqusiar...">
+        </mat-form-field>
     </header>
     }
 </div>
 <x-footer />
-}

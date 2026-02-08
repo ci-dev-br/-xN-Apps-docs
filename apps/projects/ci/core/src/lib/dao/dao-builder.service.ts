@@ -104,10 +104,10 @@ export class DaoBuilder /* Service */ {
         ));
     }
     async getForm(name: string) {
-        const schema: ISchema = await this.getSchema(name);
+        const schema: ISchema = (await this.getSchema(name));
         const fields: any = {}
-        if (schema.properties) {
-            Object.keys(schema.properties).map(key => {
+        if (schema?.properties) {
+            Object.keys(schema?.properties).map(key => {
                 fields[key] = [, []];
             });
         }

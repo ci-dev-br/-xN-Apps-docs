@@ -38,8 +38,9 @@
                 <mat-card-content>
                     <div class="row">
                         <div class="content">
-                            <button mat-raised-button [disabled]="!!(form.invalid)" (click)="saveProfile()">
-                                Save Profile
+                            <button mat-raised-button [disabled]="!form.touched || !!(form.invalid)"
+                                (click)="saveProfile()">
+                                {{ form.touched ? 'Confirmar alterações' : 'Nenhuma alteração pendente de confirmação' }}
                             </button>
                         </div>
                     </div>

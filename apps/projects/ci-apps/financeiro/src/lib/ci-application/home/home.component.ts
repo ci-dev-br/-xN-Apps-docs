@@ -8,11 +8,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Route, Router, RouterModule } from '@angular/router';
 import { AuthModule } from '@ci/auth';
 import { DynFormModule, EditarDetailComponent, GridModule, IAction, LNavModule, WindowModule, WindowService } from '@ci/components';
 import { EditarDetailModule } from '@ci/components/editar-detail';
-import { CoreModule } from '@ci/core';
+import { CoreModule, IHaveSync } from '@ci/core';
+import { LancamentoFinanceiro, LancamentoFinanceiroService } from '@ci/portal-api';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
     selector: 'ci-home',
@@ -42,6 +44,9 @@ import { CoreModule } from '@ci/core';
 export class HomeComponent {
     constructor(
         private readonly windows: WindowService,
+        private readonly service: LancamentoFinanceiroService,
+        private readonly router: Router,
+        private readonly route: ActivatedRoute,
     ) { }
     schemaName = 'LancamentoFinanceiro';
     entidades = [
@@ -50,13 +55,23 @@ export class HomeComponent {
     actions?: IAction<unknown>[] = [
         {
             description: 'Novo Lançamento',
-            onClick: () => {
+            onClick: async () => {
+                let new_instance: LancamentoFinanceiro = {} as LancamentoFinanceiro;
+                let new_instance_result: any = await lastValueFrom((this.service).sync({ body: { data: new_instance } }))
                 this.windows
                     .open(EditarDetailComponent, {
                         schemaName: this.schemaName,
-                        data: {}
+                        data: new_instance_result
                     },
                         this.schemaName);
+            }
+        },
+        {
+            description: 'Consultar Lançamentos',
+            onClick: (e) => {
+                this.router.navigate(['LancamentoFinanceiro'], {
+                    relativeTo: this.route
+                })
             }
         }
     ]

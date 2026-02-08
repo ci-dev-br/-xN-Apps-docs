@@ -24,6 +24,8 @@ import { UnidadeMedidaController } from "./controller/unidade-medida.controller"
 import { Pais } from "./model/pais.entity";
 import { PaisService } from "./service/pais.service";
 import { PaisController } from "./controller/pais.controller";
+import { CategoryController } from "./controller/category.controller";
+import { ManagerModule } from "@ci/manager";
 const FORM_PROVIDERS = [
     CadastroPessoaForm,
     CadastroEnderecoForm,
@@ -43,6 +45,7 @@ export const CadastroEntidades = [
     imports: [
         CoreModule,
         TypeOrmModule.forFeature(CadastroEntidades),
+        ManagerModule,
     ],
     providers: [
         CategoryService,
@@ -67,6 +70,7 @@ export const CadastroEntidades = [
         // TODO: realizar carga dos formulários
     ],
     controllers: [
+        CategoryController,
         CadastroController,
         EnderecoController,
         InformacaoContatoController,
@@ -83,6 +87,8 @@ export {
     DocumentoIdentificacao,
     TipoDocumentoIdentificacao,
     Category,
+    CategoryController,
+    CategoryService,
     PessoaService,
     PessoaController,
     EnderecoService,

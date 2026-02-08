@@ -1,5 +1,6 @@
 @if(!!(user | async)){
 <mat-toolbar color="accent">
+    <button mat-icon-button color="primary" routerLink="/meus-apps"><mat-icon>apps</mat-icon></button>
     <ci-logo></ci-logo>
     @if(menuItens){@for (item of menuItens; track $index) {
     <button mat-button [routerLink]="item.routerLink" routerLinkActive="ativo">
@@ -27,8 +28,8 @@
         </button>
     </mat-menu>
 </mat-toolbar>
-}
-@if(!!!((user | async)?.username)){<nav>
+}@else{
+<nav>
     <ul>
         <li>
             <a routerLink="registrar">Registrar</a>
@@ -37,4 +38,5 @@
             <a routerLink="acessar">Entrar</a>
         </li>
     </ul>
-</nav>}
+</nav>
+}

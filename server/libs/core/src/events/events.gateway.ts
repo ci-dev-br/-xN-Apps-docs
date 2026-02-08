@@ -63,7 +63,7 @@ export class EventsGateway implements OnGatewayInit {
         try {
             pm = !!this.pings && this.pings.length > 0 ? this.pings.reduce((a, b) => a + b) / this.pings.length : 0;
         } catch (error) {
-            console.error(error);
+            console.trace(error);
         }
         const waiting = 1000 + Math.random() * 32000;
         const last = {
@@ -184,14 +184,14 @@ export class EventsGateway implements OnGatewayInit {
                 }
             }
         } catch (error) {
-            console.error(error);
+            console.trace(error);
         }
         try {
             if ('mac' in client || 'id' in client) {
                 this.set((client as any).mac || (client as any).id, client, data.momento);
             }
         } catch (error) {
-            console.error(error);
+            console.trace(error);
         }
         if (data.momento && this.momento.indexOf(data.momento) !== -1) return;
         this.momento.push(data.momento)
@@ -232,7 +232,7 @@ export class EventsGateway implements OnGatewayInit {
             try {
                 callBack(data)
             } catch (error) {
-                console.error(error);
+                console.trace(error);
             }
         });
     }

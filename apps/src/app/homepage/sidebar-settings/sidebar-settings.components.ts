@@ -4,9 +4,9 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { MatToolbarModule, throwToolbarMixedModesError } from "@angular/material/toolbar";
+import { MatToolbarModule } from "@angular/material/toolbar";
 import { CoreModule } from "@ci/core";
-import { ApiModule, Application, ApplicationService } from "@ci/portal-api";
+import { Application, ApplicationService } from "@ci/portal-api";
 
 @Component({
     imports: [

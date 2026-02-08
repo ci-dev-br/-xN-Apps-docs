@@ -68,7 +68,7 @@ export class HomeComponent implements OnInit {
                         this.user = _data;
                     }
                 } catch (error) {
-                    console.error(error);
+                    console.trace(error);
                 }
             });
             this.user = user;

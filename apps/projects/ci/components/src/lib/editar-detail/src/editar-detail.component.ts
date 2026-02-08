@@ -1,21 +1,11 @@
-import { CommonModule } from "@angular/common";
-import { Component, Inject, Injector, Input, OnInit, Optional } from "@angular/core";
+import { Component, Inject, Injector, Input, OnDestroy, OnInit, Optional } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { MatButtonModule } from "@angular/material/button";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { MatIconModule } from "@angular/material/icon";
-import { ActivatedRoute, RouterModule } from "@angular/router";
-import { DynFormModule, GridModule, IItemMenu, LNavModule, WindowModule } from "@ci/components";
+import { ActivatedRoute } from "@angular/router";
+import { ActionsService, DynFormModule, IItemMenu } from "@ci/components";
 import { CORE_ENV, CoreModule, DaoBuilder, DaoService, IChangeable, ICoreEnvironment, IHaveSync, ISchemaPreset } from "@ci/core";
 import { FormsService, getServiceAsSchema } from "@ci/portal-api";
-import { BehaviorSubject, lastValueFrom } from "rxjs";
-import { EditarDetailModule } from "./editar-detail.module";
-import { MatToolbarModule } from "@angular/material/toolbar";
-import { MatButtonToggleModule } from "@angular/material/button-toggle";
-import { AuthModule } from "@ci/auth";
-import { MatSidenavModule } from "@angular/material/sidenav";
-import { LayoutModule } from "@angular/cdk/layout";
-import { MatMenuModule } from "@angular/material/menu";
+import { lastValueFrom } from "rxjs";
 /**
  * Interface genérica para construção do editor de dados.
  */
@@ -43,12 +33,20 @@ export interface IDataEditar {
     ],
     standalone: true,
 })
-export class EditarDetailComponent implements OnInit {
+export class EditarDetailComponent implements OnInit, OnDestroy {
     form?: FormGroup<any>;
     @Input()
     schemaName?: string;
     service?: any;
     preset?: ISchemaPreset<any, any>;
+    actions: IItemMenu[] = [{
+        label: 'Remover Aplicação',
+        icon: 'delete',
+        onClick: async () => {
+            if (!!this.service && !!this.data) await lastValueFrom(this.service.delete({ body: this.data.data }));
+            this.ref?.close(-1);
+        }
+    }];
     constructor(
         private readonly dao: DaoService,
         private readonly daoBuilder: DaoBuilder,
@@ -59,20 +57,15 @@ export class EditarDetailComponent implements OnInit {
         private readonly ref: MatDialogRef<EditarDetailComponent>,
         @Optional() @Inject(MAT_DIALOG_DATA) public readonly data?: IDataEditar,
         @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
-        @Optional() @Inject('ACTIONS') actions?: BehaviorSubject<IItemMenu[]>,
+        @Optional() public readonly acts?: ActionsService,
     ) {
-        if (data && data.schemaName) this.schemaName = data.schemaName;
-        if (actions) actions.next([...(actions.value || []), {
-            label: 'Remover Aplicação',
-            icon: 'delete',
-            onClick: async () => {
-                if (!!this.service && !!data) await lastValueFrom(this.service.delete({ body: data.data }));
-                this.ref?.close(-1);
-            }
-        }])
+        if (data && 'schemaName' in data && data.schemaName) this.schemaName = data.schemaName;
+        acts?.setActions(this.actions);
     }
     ngOnInit() {
         this.loadFormFromDaoBuilder();
+    }
+    ngOnDestroy(): void {
     }
     /**
      * Carregar serviços do Objeto em Evidência
@@ -116,7 +109,7 @@ export class EditarDetailComponent implements OnInit {
                         if (form) dao.bindDataForm(_data, form);
                     }
                 } catch (error) {
-                    console.error(error);
+                    console.trace(error);
                 }
             });
         }

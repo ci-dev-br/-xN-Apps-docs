@@ -9,14 +9,14 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { organizacaoFind } from '../fn/organizacao/organizacao-find';
-import { OrganizacaoFind$Params } from '../fn/organizacao/organizacao-find';
-import { OrganizacaoFindResult } from '../models/organizacao-find-result';
-import { organizacaoGetCurrent } from '../fn/organizacao/organizacao-get-current';
-import { OrganizacaoGetCurrent$Params } from '../fn/organizacao/organizacao-get-current';
-import { organizacaoSync } from '../fn/organizacao/organizacao-sync';
-import { OrganizacaoSync$Params } from '../fn/organizacao/organizacao-sync';
-import { Tenant } from '../models/tenant';
+import { getByInternalIdOrganizacao } from '../fn/organizacao/get-by-internal-id-organizacao';
+import { GetByInternalIdOrganizacao$Params } from '../fn/organizacao/get-by-internal-id-organizacao';
+import { getListOrganizacao } from '../fn/organizacao/get-list-organizacao';
+import { GetListOrganizacao$Params } from '../fn/organizacao/get-list-organizacao';
+import { Organizacao } from '../models/organizacao';
+import { syncOrganizacao } from '../fn/organizacao/sync-organizacao';
+import { SyncOrganizacao$Params } from '../fn/organizacao/sync-organizacao';
+import { SyncPayloadDaoOrganizacao } from '../models/sync-payload-dao-organizacao';
 
 @Injectable()
 export class OrganizacaoService extends BaseService {
@@ -24,78 +24,78 @@ export class OrganizacaoService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `organizacaoSync()` */
-  static readonly OrganizacaoSyncPath = '/Organizacao/Sync';
+  /** Path part for operation `syncOrganizacao()` */
+  static readonly SyncOrganizacaoPath = '/Organizacao/Sync';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `organizacaoSync()` instead.
+   * To access only the response body, use `syncOrganizacao()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  organizacaoSync$Response(params: OrganizacaoSync$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return organizacaoSync(this.http, this.rootUrl, params, context);
+  syncOrganizacao$Response(params: SyncOrganizacao$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoOrganizacao>> {
+    return syncOrganizacao(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `organizacaoSync$Response()` instead.
+   * To access the full response (for headers, for example), `syncOrganizacao$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  organizacaoSync(params: OrganizacaoSync$Params, context?: HttpContext): Observable<void> {
-    return this.organizacaoSync$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+  sync(params: SyncOrganizacao$Params, context?: HttpContext): Observable<SyncPayloadDaoOrganizacao> {
+    return this.syncOrganizacao$Response(params, context).pipe(
+      map((r: StrictHttpResponse<SyncPayloadDaoOrganizacao>): SyncPayloadDaoOrganizacao => r.body)
     );
   }
 
-  /** Path part for operation `organizacaoGetCurrent()` */
-  static readonly OrganizacaoGetCurrentPath = '/Organizacao/GetCurrent';
+  /** Path part for operation `getByInternalIdOrganizacao()` */
+  static readonly GetByInternalIdOrganizacaoPath = '/Organizacao/GetByInternalId';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `organizacaoGetCurrent()` instead.
+   * To access only the response body, use `getByInternalIdOrganizacao()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  organizacaoGetCurrent$Response(params?: OrganizacaoGetCurrent$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Tenant>>> {
-    return organizacaoGetCurrent(this.http, this.rootUrl, params, context);
+  getByInternalIdOrganizacao$Response(params: GetByInternalIdOrganizacao$Params, context?: HttpContext): Observable<StrictHttpResponse<Organizacao>> {
+    return getByInternalIdOrganizacao(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `organizacaoGetCurrent$Response()` instead.
+   * To access the full response (for headers, for example), `getByInternalIdOrganizacao$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  organizacaoGetCurrent(params?: OrganizacaoGetCurrent$Params, context?: HttpContext): Observable<Array<Tenant>> {
-    return this.organizacaoGetCurrent$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<Tenant>>): Array<Tenant> => r.body)
+  getByInternalId(params: GetByInternalIdOrganizacao$Params, context?: HttpContext): Observable<Organizacao> {
+    return this.getByInternalIdOrganizacao$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Organizacao>): Organizacao => r.body)
     );
   }
 
-  /** Path part for operation `organizacaoFind()` */
-  static readonly OrganizacaoFindPath = '/Organizacao/Find';
+  /** Path part for operation `getListOrganizacao()` */
+  static readonly GetListOrganizacaoPath = '/Organizacao/GetList';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `organizacaoFind()` instead.
+   * To access only the response body, use `getListOrganizacao()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  organizacaoFind$Response(params: OrganizacaoFind$Params, context?: HttpContext): Observable<StrictHttpResponse<OrganizacaoFindResult>> {
-    return organizacaoFind(this.http, this.rootUrl, params, context);
+  getListOrganizacao$Response(params: GetListOrganizacao$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Organizacao>>> {
+    return getListOrganizacao(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `organizacaoFind$Response()` instead.
+   * To access the full response (for headers, for example), `getListOrganizacao$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  organizacaoFind(params: OrganizacaoFind$Params, context?: HttpContext): Observable<OrganizacaoFindResult> {
-    return this.organizacaoFind$Response(params, context).pipe(
-      map((r: StrictHttpResponse<OrganizacaoFindResult>): OrganizacaoFindResult => r.body)
+  getList(params: GetListOrganizacao$Params, context?: HttpContext): Observable<Array<Organizacao>> {
+    return this.getListOrganizacao$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<Organizacao>>): Array<Organizacao> => r.body)
     );
   }
 

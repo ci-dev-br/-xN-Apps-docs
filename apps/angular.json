@@ -1403,10 +1403,37 @@
           }
         }
       }
+    },
+    "@ci/espazio": {
+      "projectType": "library",
+      "root": "projects/ci/espazio",
+      "sourceRoot": "projects/ci/espazio/src",
+      "prefix": "c",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci/espazio/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci/espazio/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/ci/espazio/tsconfig.spec.json"
+          }
+        }
+      }
     }
   },
   "cli": {
-    "analytics": "b3d51258-3dc6-489b-a9d9-e2566514fdff"
+    "analytics": "b3d51258-3dc6-489b-a9d9-e2566514fdff",
+    "packageManager": "pnpm"
   },
   "schematics": {
     "@schematics/angular:component": {

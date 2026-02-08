@@ -1,16 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ComponentRef, ElementRef, OnInit, Optional } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { CoreModule } from '@ci/core';
+import { ChessService } from '@ci/portal-api';
 import { Chess, Move } from 'chess.js';
+import { lastValueFrom } from 'rxjs';
 const PIECE_VALUES: { [key: string]: number } = {
-    p: 10,  // Peão
-    n: 30,  // Cavalo
-    b: 30,  // Bispo
-    r: 50,  // Torre
-    q: 90,  // Dama
-    k: 900  // Rei
+    p: 10 * 2.1,
+    n: 30 * 2.2,
+    b: 30 * 2.3,
+    r: 50 * 2.4,
+    q: 90 * 3.5,
+    k: 900 * 2
 };
 @Component({
     selector: 'ci-chess-game',
@@ -28,6 +30,7 @@ export class ChessGameComponent implements OnInit {
     stage: 'menu' | 'play' | 'viewer' = 'menu';
     player: 'white' | 'black' = 'white';
     game = new Chess();
+    virtualGame = new Chess();
     board: any[][] = [];
     selectedSquare: string | null = null;
     isVsIA = false; // Flag para o modo IA
@@ -89,80 +92,44 @@ export class ChessGameComponent implements OnInit {
             return moves.sort((a, b) => {
                 const aValue = a.captured ? PIECE_VALUES[a.captured] : 0;
                 const bValue = b.captured ? PIECE_VALUES[b.captured] : 0;
-                return bValue - aValue; // Ordem decrescente de valor capturado
+                return bValue - aValue;
             })[0];
         } catch (error) {
             error;
             debugger;
         }
     }
-    private getBestMoveMinimax(game: Chess, depth: number): any {
-        let moves = game.moves({ verbose: true });
-        let bestMove = null;
-        let bestValue = -9999;
-        for (let move of moves) {
-            game.move(move);
-            let boardValue = -this.minimax(game, depth - 1, false);
-            game.undo();
-            if (boardValue > bestValue) {
-                bestValue = boardValue;
-                bestMove = move;
-            }
-        }
-        return bestMove;
+    constructor(
+        private chess: ChessService,
+        @Optional() private readonly er: ElementRef<any>,
+        @Optional() private readonly cr: ComponentRef<any>
+    ) {
+        er;
+        cr
     }
-    private minimax(game: Chess, depth: number, isMaximizing: boolean): number {
-        if (depth === 0) return this.evaluateBoard(game);
-        let moves = game.moves();
-        if (isMaximizing) {
-            let best = -9999;
-            for (let m of moves) {
-                game.move(m);
-                best = Math.max(best, this.minimax(game, depth - 1, !isMaximizing));
-                game.undo();
-            }
-            return best;
-        } else {
-            let best = 9999;
-            for (let m of moves) {
-                game.move(m);
-                best = Math.min(best, this.minimax(game, depth - 1, !isMaximizing));
-                game.undo();
-            }
-            return best;
-        }
-    }
-    private evaluateBoard(game: Chess): number {
-        let totalEvaluation = 0;
-        const board = game.board();
 
-        for (let i = 0; i < 8; i++) {
-            for (let j = 0; j < 8; j++) {
-                const piece = board[i][j];
-                if (piece) {
-                    const value = PIECE_VALUES[piece.type] || 0;
-                    totalEvaluation += (piece.color === 'w' ? -value : value);
-                }
-            }
-        }
-        return totalEvaluation;
-    }
-    makeAIMove() {
+    async makeAIMove() {
         const possibilidades = this.game.moves({ verbose: true });
-        let move: Move;
+        let move = undefined;
         if (possibilidades.length === 0) return;
-        switch (this.difficulty) {
-            case 'hard':
-                move = this.getBestMoveMinimax(this.game, 3);
-                break;
-            case 'medium':
-                move = this.getHeuristicMove(possibilidades);
-                break;
-            default:
-                const randomIndex = Math.floor(Math.random() * possibilidades.length);
-                move = possibilidades[randomIndex];
+        try {
+            switch (this.difficulty) {
+                case 'hard':
+                    let server_play = await lastValueFrom(this.chess.chessMove({ body: { fen: this.game.fen() } }));
+                    move = server_play.move as any;
+                    break;
+                case 'medium':
+                    move = this.getHeuristicMove(possibilidades);
+                    break;
+                default:
+                    const randomIndex = Math.floor(Math.random() * possibilidades.length);
+                    move = possibilidades[randomIndex];
+            }
+        } catch (error) {
+            console.trace(error);
         }
-        this.game.move(move);
+        if (!!move)
+            this.game.move(move);
         this.updateBoard();
         this.checkGameStatus();
     }
@@ -172,7 +139,16 @@ export class ChessGameComponent implements OnInit {
     }
     checkGameStatus() {
         if (this.game.isGameOver()) {
-            alert('Fim de jogo!');
+            // Informar se ganhou e perdeu
+            if (this.game.isCheckmate()) {
+                const winner = this.game.turn() === 'w' ? 'Black' : 'White';
+                alert(`Checkmate! ${winner} wins!`);
+            } else if (this.game.isDraw()) {
+                alert('Game over! It\'s a draw.');
+            } else {
+                alert('Game over!');
+            }
+            // Reiniciar o jogo
             this.stage = 'menu';
         }
     }
@@ -183,5 +159,17 @@ export class ChessGameComponent implements OnInit {
             'P': '♟', 'N': '♞', 'B': '♝', 'R': '♜', 'Q': '♛', 'K': '♚'
         };
         return symbols[piece.color === 'w' ? piece.type.toUpperCase() : piece.type];
+    }
+    async ajudaMe() {
+        let jogada = await lastValueFrom(this.chess.chessMove({ body: { fen: this.game.fen() } }));
+        if (!!jogada?.move) {
+            this.game.move(jogada.move as any);
+            this.updateBoard();
+            this.checkGameStatus();
+        }
+    }
+    async desistir() {
+        alert('Você desistiu da partida!');
+        this.stage = 'menu';
     }
 }

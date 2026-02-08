@@ -22,7 +22,7 @@ import { ProfileMenu } from '../../../projects/ci/auth/src/lib/components/profil
           // label: 'Username'
         },
         {
-          label: 'Profile',
+          label: 'Minha Conta',
           onClick: (painel?: PainelComponent) => {
             painel?.profile();
           }

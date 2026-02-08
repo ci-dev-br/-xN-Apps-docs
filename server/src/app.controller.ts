@@ -36,7 +36,7 @@ export class AppController {
           // ;3 não sei..., será que é isso mesmo?
         }
       } catch (error) {
-        console.error(error);
+        console.trace(error);
       }
     }
     if (!!request.path && request.path.indexOf('.') > -1) {
@@ -46,7 +46,7 @@ export class AppController {
         }
         return response.sendFile(resolve('public/index.csr.html'));
       } catch (error) {
-        console.error(error);
+        console.trace(error);
       }
     }
     return response.sendFile(resolve('public/index.csr.html'));
@@ -69,7 +69,7 @@ export class AppController {
           return;
         }
       } catch (error) {
-        console.error(error);
+        console.trace(error);
       }
     }
     if (!!request.path && request.path.indexOf('.') > -1) {
@@ -79,7 +79,7 @@ export class AppController {
         }
         return response.sendFile(resolve('public/index.csr.html'));
       } catch (error) {
-        console.error(error);
+        console.trace(error);
       }
     }
     return response.sendFile(resolve('public/index.csr.html'));

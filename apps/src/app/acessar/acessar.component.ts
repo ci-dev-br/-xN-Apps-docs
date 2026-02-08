@@ -79,7 +79,7 @@ export class AcessarComponent implements OnInit {
               }))
           } catch (error) {
             this.snack.open('Acesso indisponível.', 'Ok');
-            console.error(error);
+            console.trace(error);
           }
           if (result) this.acesso_payload = result;
           if (result) {
@@ -100,7 +100,7 @@ export class AcessarComponent implements OnInit {
                   this.snack.open('Não identificamos seu cadastro.', 'Criar conta').onAction().subscribe(() => {
                     this.router.navigate(['/registrar'])
                   });
-                  console.error(error);
+                  console.trace(error);
                   this.acesso_payload = undefined;
                   return;
                 }
@@ -109,7 +109,7 @@ export class AcessarComponent implements OnInit {
               }
             } catch (error) {
               this.snack.open('Falha 2.', 'Ok');
-              console.error(error);
+              console.trace(error);
             }
           } else {
             this.snack.open('Não foi possível solicitar acesso.', 'Ok');
@@ -144,7 +144,7 @@ export class AcessarComponent implements OnInit {
         }
       }
     } catch (error) {
-      console.error(error)
+      console.trace(error)
     }
   }
 }

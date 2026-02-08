@@ -15,7 +15,7 @@ export class DeviceService {
         try {
             return await this.createAndSave(device)
         } catch (error) {
-            console.error(new Error('Não foi possível conectar o dispositivo.'), error);
+            console.trace(new Error('Não foi possível conectar o dispositivo.'), error);
         }
     }
     async createAndSave(device?: Device) {
@@ -48,7 +48,7 @@ export class DeviceService {
                     }
                     await this.phoneNumberRepo.save(phone_number);
                 } catch (error) {
-                    console.error(error)
+                    console.trace(error)
                 }
             })
         }

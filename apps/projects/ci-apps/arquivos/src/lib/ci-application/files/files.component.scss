@@ -3,6 +3,8 @@
     flex-direction: column;
     overflow: hidden;
     flex: auto;
+
+    color: var(--mat-app-text-color);
 }
 
 .folders {
@@ -78,6 +80,9 @@
         align-items: center;
         justify-content: center;
         flex: 0;
+
+        background: var(--mat-app-background-color);
+        color: var(--mat-app-text-color);
 
         height: fit-content;
 

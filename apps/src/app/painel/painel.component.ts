@@ -78,6 +78,8 @@ export class PainelComponent implements OnInit {
       crm: { url: 'icons/v2/crm.svg' },
       cms: { url: 'icons/v3/cms.svg' },
       ADMIN: { url: 'icons/extras/admin mode.svg' },
+      SYSADMIN: { url: 'sysadmin.svg' },
+      GOODNESS: { url: 'goodness.svg' },
       USER: { url: 'icons/extras/user mode.svg' },
       MASTER: { url: 'icons/extras/master mode.svg' },
       GOD: { url: 'icons/extras/god mode.svg' },

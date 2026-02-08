@@ -1,0 +1,18 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%; /* O pai define a altura */
+  overflow: hidden; /* Evita barras de rolagem indesejadas */
+}
+
+.three-container {
+  width: 100%;
+  height: 100%;
+  display: block;
+  
+  canvas {
+    display: block; /* Remove o espaço extra inline de 4px */
+    width: 100% !important;
+    height: 100% !important;
+  }
+}

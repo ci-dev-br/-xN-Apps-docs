@@ -1,18 +1,20 @@
 .board {
     display: flex;
     flex-direction: column;
-    width: 50vw;
-    height: 50vw;
+    width: min(80vw, 80vh);
+    height: min(80vw, 80vh);
+    min-width: min(80vw, 80vh);
+    min-height: min(80vw, 80vh);
     border: 2px solid #333;
-    // scale: .5;
 }
 
 :host {
-    overflow: hidden;
+    overflow: visible;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-self: center;
+    flex: 1;
+    min-width: min(80vw, 80vh);
+    min-height: min(80vw, 80vh);
 }
 
 .row {
@@ -21,11 +23,11 @@
 }
 
 .square {
-    flex: 1;
+    flex: 1 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: min(6vw, 6vh);
     cursor: pointer;
 }
 
@@ -50,10 +52,23 @@
     color: #000;
 }
 
+.legeng {
+    background: var(--mat-app-background-color);
+    color: var(--mat-app-text-color);
+}
+
 .menu {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: centers;
     min-height: 180px;
+
+}
+
+.status {
+    display: flex;
+    flex-direction: roe;
+    align-items: center;
+    justify-content: center;
 }

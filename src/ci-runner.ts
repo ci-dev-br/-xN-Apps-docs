@@ -1,6 +1,7 @@
 require('dotenv').config();
 import { join } from "node:path";
 import { RunnerX } from "./comum/runner-x";
+import { spawn, spawnSync } from "node:child_process";
 export class CiRunner extends RunnerX {
     constructor() {
         super();
@@ -14,6 +15,22 @@ export class CiRunner extends RunnerX {
             if (message.indexOf('[Domain Service iniciado]') > -1) {
                 if (process.env.PUBLIC_GATEWAY_API)
                     this.adicionarVerificacaoRota(process.env.PUBLIC_GATEWAY_API);
+                setTimeout(() => {
+                    try {
+                        const s = spawn('npm run apil', { cwd: __dirname + '/../apps', env: process.env,/*  detached: true, */ });
+
+                        s.on('error', (error) => {
+                            console.trace(error);
+                        })
+
+                        s.on('message', (message) => {
+                            console.log(message);
+                        })
+
+                    } catch (error) {
+                        console.trace(error);
+                    }
+                })
             }
         });
     }

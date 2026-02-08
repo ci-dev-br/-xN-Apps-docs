@@ -12,9 +12,9 @@ import { StrictHttpResponse } from '../strict-http-response';
 import { FileDto } from '../models/file-dto';
 import { fileExplorerControllerReadDirectory } from '../fn/file-explorer/file-explorer-controller-read-directory';
 import { FileExplorerControllerReadDirectory$Params } from '../fn/file-explorer/file-explorer-controller-read-directory';
-import { fileExplorerControllerReadFile } from '../fn/file-explorer/file-explorer-controller-read-file';
-import { FileExplorerControllerReadFile$Params } from '../fn/file-explorer/file-explorer-controller-read-file';
 import { ReadDirectoryOutput } from '../models/read-directory-output';
+import { readFile } from '../fn/file-explorer/read-file';
+import { ReadFile$Params } from '../fn/file-explorer/read-file';
 
 @Injectable()
 export class FileExplorerService extends BaseService {
@@ -47,28 +47,28 @@ export class FileExplorerService extends BaseService {
     );
   }
 
-  /** Path part for operation `fileExplorerControllerReadFile()` */
-  static readonly FileExplorerControllerReadFilePath = '/FileExplorer/File';
+  /** Path part for operation `readFile()` */
+  static readonly ReadFilePath = '/FileExplorer/File';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `fileExplorerControllerReadFile()` instead.
+   * To access only the response body, use `readFile()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  fileExplorerControllerReadFile$Response(params: FileExplorerControllerReadFile$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<FileDto>>> {
-    return fileExplorerControllerReadFile(this.http, this.rootUrl, params, context);
+  readFile$Response(params: ReadFile$Params, context?: HttpContext): Observable<StrictHttpResponse<FileDto>> {
+    return readFile(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `fileExplorerControllerReadFile$Response()` instead.
+   * To access the full response (for headers, for example), `readFile$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  fileExplorerControllerReadFile(params: FileExplorerControllerReadFile$Params, context?: HttpContext): Observable<Array<FileDto>> {
-    return this.fileExplorerControllerReadFile$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<FileDto>>): Array<FileDto> => r.body)
+  readFile(params: ReadFile$Params, context?: HttpContext): Observable<FileDto> {
+    return this.readFile$Response(params, context).pipe(
+      map((r: StrictHttpResponse<FileDto>): FileDto => r.body)
     );
   }
 

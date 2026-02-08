@@ -7,4 +7,5 @@ export * from './statistics.component';
 export * from './totalizador.component';
 export * from './damas.component';
 export * from './chess.component';
+export * from './i-frame.component';
 

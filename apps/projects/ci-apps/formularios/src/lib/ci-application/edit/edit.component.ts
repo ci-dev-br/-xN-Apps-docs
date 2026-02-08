@@ -52,7 +52,7 @@ export class EditComponent implements OnInit {
         this.daos.bindDataForm(_data, this.formGroup);
       }
     } catch (error) {
-      console.error(error);
+      console.trace(error);
     }
   }
   get changes() {

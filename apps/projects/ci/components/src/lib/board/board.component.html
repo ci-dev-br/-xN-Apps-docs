@@ -1,35 +1,14 @@
 @if(form){<div class="board-wrap" [formGroup]="form">
     <ci-input mode="content-editable" fieldName="title" label="Título" el="h1" placeholder=""></ci-input>
     @if(prancheta){
-    <div class="cards-container"><!--  cdkDropList (cdkDropListDropped)="drop($event)" -->
-        @for (card of prancheta.cards; track $index) {
-        <div class="card-wrapper" [class.editing]="edittingCard === card">
-            <!-- cdkDrag -->
-            <div class="inner">
-                <ng-container *ngComponentOutlet="component(card).componentRef"></ng-container>
-            </div>
-            <div class="card-verso">
-                <button mat-icon-button (click)="removeCard(card)">
-                    <mat-icon>delete</mat-icon>
-                </button>
-            </div>
-            <div class="actions">
-                <button mat-icon-button (click)="editCard(card, $event)">
-                    <mat-icon>settings</mat-icon>
-                </button>
-            </div>
-        </div>
-        }
-    </div>
-    }
+    <div class="cards-container"> @for (card of prancheta.cards; track $index) {
+        <ci-card-container [card]="card" [edittingCard]="edittingCard"></ci-card-container>}
+    </div>}
 </div>}
-<div class="c">
+<div class="after-setting">
     <button mat-icon-button (click)="findCardToAdd()">
         <mat-icon>widgets</mat-icon>
     </button>
-    <!-- <button mat-icon-button (click)="editCards()">
-        <mat-icon>pinch</mat-icon>
-    </button> -->
     <button mat-icon-button (click)="openSettings()">
         <mat-icon>settings</mat-icon>
     </button>

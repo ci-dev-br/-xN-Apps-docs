@@ -1,5 +1,6 @@
 import { Entity } from "typeorm";
-@Entity({ schema: 'storage' })
+import { schema } from "./schema";
+@Entity({ schema })
 export class File {
-    
+
 }

@@ -15,7 +15,7 @@ export class UserService {
             try {
                 if (!!stored) return JSON.parse(atob(stored))
             } catch (error) {
-                console.error(error);
+                console.trace(error);
             }
         }
         return null
@@ -40,7 +40,7 @@ export class UserService {
                     if (typeof localStorage !== 'undefined') localStorage.removeItem('CIUSR');
                 }
             } catch (error) {
-                console.error(error);
+                console.trace(error);
             }
         });
         if (typeof localStorage !== 'undefined')
@@ -73,7 +73,7 @@ export class UserService {
         try {
             profile = await lastValueFrom(this.authService.profile());
         } catch (error) {
-            console.error(error);
+            console.trace(error);
             // this.router.navigate(['/']);
         }
         if (!!profile) {

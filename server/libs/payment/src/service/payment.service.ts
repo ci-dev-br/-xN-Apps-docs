@@ -3,9 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Payment } from "../model/payment.entity";
 import { Repository } from "typeorm";
 /**
- * 
- *  Payment Service
- * 
+ * # Payment Service
  */
 @Injectable()
 export class PaymentService {
@@ -14,6 +12,5 @@ export class PaymentService {
         private readonly userRepo: Repository<Payment>,
     ) { }
     async autorization() { }
-    async create() {
-    }
+    async create() { }
 }

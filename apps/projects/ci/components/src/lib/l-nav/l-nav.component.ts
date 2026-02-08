@@ -118,7 +118,7 @@ export class LNavComponent {
       });
       this.cpuStatus = [...Object.values(x)];
     } catch (error) {
-      console.error(error);
+      console.trace(error);
     }
     setTimeout(() => this.updateCpuInfo(), 1000);
   }

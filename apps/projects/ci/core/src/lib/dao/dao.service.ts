@@ -109,10 +109,9 @@ export class DaoService {
                     }
                 }, options?.debounceTime || 500);
             });
-            if (!!data_schema && data_schema.properties) {
-                Object.keys(data_schema.properties).forEach(property => {
-                    if (data_schema?.properties && !!data_schema.properties[property]) {
-                        //  data_schema.properties[property];
+            if (!!data_schema && data_schema?.properties) {
+                Object.keys(data_schema?.properties).forEach(property => {
+                    if (data_schema?.properties && !!data_schema?.properties[property]) {
                         try {
                             let propery_descriptor = Object.getOwnPropertyDescriptor(data, property);
                             if (!propery_descriptor?.get && !propery_descriptor?.set) {
@@ -154,12 +153,12 @@ export class DaoService {
                                         [p]: new SimpleChange(old_vale, value, false),
                                     });
                                 } catch (error) {
-                                    console.error(error);
+                                    console.trace(error);
                                 }
                             },
                         });
                     } catch (error) {
-                        console.error(error);
+                        console.trace(error);
                     }
                 });
             }
@@ -176,7 +175,7 @@ export class DaoService {
                         })
                         return out;
                     } catch (error) {
-                        console.error(error);
+                        console.trace(error);
                     }
                 }
             });
@@ -208,7 +207,7 @@ export class DaoService {
                 }
             })
         } catch (error) {
-            console.error(error);
+            console.trace(error);
         }
         return r;
     }
@@ -232,7 +231,7 @@ export class DaoService {
                                         const { __confirmation_subject, ...out } = data;
                                         return out
                                     } catch (error) {
-                                        console.error(error)
+                                        console.trace(error)
                                     }
                                 }
                             } else {
@@ -247,7 +246,7 @@ export class DaoService {
                                 return out;
                             }
                         } catch (error) {
-                            console.error(error);
+                            console.trace(error);
                         }
                     }
                 });
@@ -257,11 +256,11 @@ export class DaoService {
                     try {
                         this.read(data[p]);
                     } catch (error) {
-                        console.error(error);
+                        console.trace(error);
                     }
                 })
             } catch (error) {
-                console.error(error);
+                console.trace(error);
             }
             // if (!data.toString)
             try {
@@ -271,7 +270,7 @@ export class DaoService {
                     }
                 });
             } catch (error) {
-                console.error(error);
+                console.trace(error);
             }
         }
         return data;
@@ -288,7 +287,7 @@ export class DaoService {
                         try {
                             (data as any)[v] = changedValue;
                         } catch (error) {
-                            console.error(error)
+                            console.trace(error)
                         }
                     });
                 })
@@ -305,7 +304,7 @@ export class DaoService {
                     })
             }
         } catch (error) {
-            console.error(error);
+            console.trace(error);
         }
     }
     async confirmChanges(data: any,) {

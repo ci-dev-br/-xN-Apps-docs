@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Optional } from '@angular/core';
 import { CoreModule, IconLoaderSerices, LoadIconsModule } from '@ci/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -8,6 +8,8 @@ import { IArquivo } from './i-file';
 import { FileExplorerService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { DialogRef } from '@angular/cdk/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'ci-files',
@@ -30,6 +32,7 @@ export class FilesComponent {
   constructor(
     private readonly fileExplorer: FileExplorerService,
     iconLoader: IconLoaderSerices,
+    @Optional() private readonly dialogRef: MatDialogRef<FilesComponent, IArquivo>,
   ) {
     iconLoader.load({
       'i8-folder': { url: '/icons8/icons8-folder.svg' },
@@ -54,21 +57,29 @@ export class FilesComponent {
     })
   }
   async ir(endereco: string) {
-    this.endereco = endereco;
-    this.filteredFiles = undefined;
-    let files = (await lastValueFrom(this.fileExplorer.fileExplorerControllerReadDirectory({ body: { path: endereco } })));
-    if (!!files)
-      this.files = files.map(f => {
-        return {
-          iconType: 'svg',
-          icon: f.isDirectory ? 'i8-folder' : f.isFile ? 'i8-file' : 'unknown_document',
-          name: f.name || 'UNKNOWN',
-          info: f
-        }
-      })
+    try {
+      let endereco_novo = endereco;
+      this.endereco = endereco;
+      this.filteredFiles = undefined;
+      let files = (await lastValueFrom(this.fileExplorer.fileExplorerControllerReadDirectory({ body: { path: endereco } })));
+      if (!!files)
+        this.files = files.map(f => {
+          return {
+            iconType: 'svg',
+            icon: f.isDirectory ? 'i8-folder' : f.isFile ? 'i8-file' : 'unknown_document',
+            name: f.name || 'UNKNOWN',
+            info: f
+          }
+        })
+    } catch (error) {
+      console.trace(error);
+    }
   }
   async voltar() {
-    let r = this.endereco?.replaceAll('\\', '/').split('/');
+    if (this.endereco && (this.endereco?.lastIndexOf('./') === (this.endereco.length - 2))) {
+      return this.ir(this.endereco + '../');
+    }
+    let r = this.endereco?.replace(/\\/g, '/').split('/');
     r?.pop();
     this.ir(r?.join('/') || './')
   }
@@ -78,7 +89,9 @@ export class FilesComponent {
       if (file.name?.indexOf('.') === -1) {
         this.ir(file.info.path + '/' + file.name);
       } else {
-
+        if (!!this.dialogRef && !!file) {
+          this.dialogRef.close(file);
+        }
       }
     }
   }
