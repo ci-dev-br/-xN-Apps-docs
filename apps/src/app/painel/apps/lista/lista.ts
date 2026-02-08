@@ -8,6 +8,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { MatTooltipModule } from "@angular/material/tooltip";
 @Component({
     selector: 'ci-apps-lista',
     templateUrl: 'lista.html',
@@ -19,6 +20,7 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
         MatInputModule,
         MatFormFieldModule,
         ReactiveFormsModule,
+        MatTooltipModule,
     ],
     styleUrl: 'lista.scss'
 })

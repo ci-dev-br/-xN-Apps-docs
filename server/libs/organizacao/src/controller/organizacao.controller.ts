@@ -1,11 +1,22 @@
 import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ControllerDaoBase } from "@ci/core";
 import { Organizacao } from "../model/organizacao.entity";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { SyncPayloadDaoOrganizacao } from "../dto/sync-payload-dao-organizacao";
 import { ObterListaOrganizacao } from "../dto/obter-list-organizacao";
 import { GetByInternalIdInputDto } from "./GetByInternalIdInputDto";
 import { OrganizacaoService } from "../service/organizacao.service";
+
+export class OrganizacaoCotrollerGetInputDto {
+    @ApiProperty({ nullable: true, required: false })
+    where?: any;
+    @ApiProperty({ nullable: true, required: false })
+    take?: number;
+    @ApiProperty({ nullable: true, required: false })
+    skip?: number;
+    @ApiProperty({ nullable: true, required: false })
+    orderBy?: any;
+}
 /**
  * Organizacao Controller 
  */
