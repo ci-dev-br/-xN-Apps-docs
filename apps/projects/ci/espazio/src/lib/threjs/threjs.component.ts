@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, Optional, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, NgZone, OnDestroy, Optional, ViewChild } from '@angular/core';
 import { BoxGeometry, Color, Material, Mesh, MeshNormalMaterial, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { CoreModule } from '@ci/core';
 @Component({
@@ -12,12 +12,18 @@ import { CoreModule } from '@ci/core';
 })
 export class ThrejsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('rendererContainer', { static: true }) rendererContainer!: ElementRef<HTMLDivElement>;
-  protected scene?: Scene;
-  protected camera?: PerspectiveCamera;
-  protected renderer?: WebGLRenderer;
-  protected cube?: Mesh;
-  protected resizeObserver?: ResizeObserver;
-  protected frameId: number = 0;
+  @Input()
+  scene?: Scene;
+  @Input()
+  camera?: PerspectiveCamera;
+  @Input()
+  renderer?: WebGLRenderer;
+  @Input()
+  cube?: Mesh;
+  @Input()
+  resizeObserver?: ResizeObserver;
+  @Input()
+  frameId: number = 0;
   constructor(
     @Optional() private readonly ngZone?: NgZone,
   ) { }
