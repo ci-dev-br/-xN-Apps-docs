@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ThrejsComponent } from '@ci/espazio';
+import { Objeto, ThrejsComponent } from '@ci/espazio';
 @Component({
   selector: 'ci-home',
   imports: [
@@ -9,5 +9,7 @@ import { ThrejsComponent } from '@ci/espazio';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
-
+  objetos = [
+    new Objeto({ glb_file: 'celula-000.glb' }),
+  ]
 }

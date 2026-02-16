@@ -25,6 +25,9 @@ import { RegisterController } from "./controller/register.controller";
 import { Invite } from "./models/invite.entity";
 import { InviteService } from "./service/invite.service";
 import { InviteController } from "./controller/invite.controller";
+export interface IAuthOption {
+    secret?: string;
+}
 export const AuthEntities = [
     Policy,
     User,
@@ -38,12 +41,14 @@ export const AuthEntities = [
         TypeOrmModule.forFeature([
             ...AuthEntities
         ]),
-        JwtModule.register({
-            global: true,
-            secret: jwtConstants.secret,
-            signOptions: {
-                expiresIn: '60s'
-            },
+        JwtModule.registerAsync({
+            useFactory: async () => ({
+                secret: process.env.MASTER_PASSWORD_AUTHORYTHY || jwtConstants.secret,
+                global: true, // <~ será que isso é necessário?
+                signOptions: {
+                    expiresIn: '60s'
+                }
+            }),
         }),
         // forwardRef(() => StorageModule),
         TenantModule,
