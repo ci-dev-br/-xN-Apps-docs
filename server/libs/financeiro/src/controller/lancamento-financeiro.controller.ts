@@ -1,20 +1,12 @@
 import { Body, Controller, Post, Req } from "@nestjs/common";
-import { LancamentoFinanceiroService } from "../service/lancamento-financeiro.service";
-import { ControllerDaoBase, SyncPayloadDao } from "@ci/core";
-import {
-    LancamentoFinanceiro
-
-} from "../model/lancamento-financeiro.entity";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
 import { FindOptionsWhere } from "typeorm";
-export class SyncPayloadDaoLancamentoFinanceiro extends SyncPayloadDao<LancamentoFinanceiro
-> {
-    @ApiProperty({
-        type: LancamentoFinanceiro
-
-    })
-    override data?: LancamentoFinanceiro
-        ;
+import { LancamentoFinanceiroService } from "../service/lancamento-financeiro.service";
+import { LancamentoFinanceiro } from "../model/lancamento-financeiro.entity";
+export class SyncPayloadDaoLancamentoFinanceiro extends SyncPayloadDao<LancamentoFinanceiro> {
+    @ApiProperty({ type: LancamentoFinanceiro })
+    override data?: LancamentoFinanceiro;
 }
 export class ObterListaLancamentoFinanceiro {
     // override data?: LancamentoFinanceiro;
@@ -23,50 +15,54 @@ export class ObterListaLancamentoFinanceiro {
     @ApiProperty({})
     take?: number;
     @ApiProperty({})
-    where?: FindOptionsWhere<LancamentoFinanceiro
-    >[] | FindOptionsWhere<LancamentoFinanceiro
-    >;
+    where?: FindOptionsWhere<LancamentoFinanceiro>[] | FindOptionsWhere<LancamentoFinanceiro>;
 }
-export class LancamentoFinanceiroCotrollerGetInputDto {
+export class PessoaCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
     query?: string;
     @ApiProperty({ nullable: true, required: false })
     limit?: number;
 }
-/**
- * LancamentoFinanceiro Controller
- */
 @ApiTags('LancamentoFinanceiro')
 @Controller('LancamentoFinanceiro')
-export class LancamentoFinanceiroController extends ControllerDaoBase<LancamentoFinanceiroService, LancamentoFinanceiro
-> {
-    constructor(service: LancamentoFinanceiroService) {
+export class LancamentoFinanceiroController extends ControllerDaoBase<LancamentoFinanceiroService, LancamentoFinanceiro> {
+    constructor(
+        service: LancamentoFinanceiroService
+    ) {
         super(service);
     }
     @Post('Sync')
     @ApiResponse({
-        type: SyncPayloadDaoLancamentoFinanceiro
+        type: LancamentoFinanceiro,
     })
     @ApiOperation({
         operationId: 'SyncLancamentoFinanceiro'
     })
     override async Sync(
         @Body() body: SyncPayloadDaoLancamentoFinanceiro,
-        @Req() req?: any,
+        @Req() req,
     ) {
-        return await super.Sync(body, req);
+        try {
+            return await super.Sync(body, req)
+        } catch (error) {
+            return {
+                status: 500,
+                message: 'Falha',
+                detahes: error.message,
+                stack: error.stack
+            } as any
+        }
     }
     @Post('GetList')
     @ApiResponse({
-        type:
-            SyncPayloadDaoLancamentoFinanceiro
+        type: LancamentoFinanceiro, isArray: true
     })
     @ApiOperation({
         operationId: 'GetListLancamentoFinanceiro'
     })
     override async GetList(
         @Body() input: ObterListaLancamentoFinanceiro,
-        @Req() req?: any,
+        @Req() req,
     ) {
         return super.GetList(input, req);
     }

@@ -134,9 +134,11 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
         }
     }
     async createNew() {
-        let instance: T = {} as T;
-        const data: number | any = await this.editar(instance);
-        if (!(typeof data === 'number') && (!!data?.internalId || !!data?.id))
-            this.source = [data, ...this.source || []];
+        if (this.service) {
+            let instance: T = await this.service.sync({});
+            const data: number | any = await this.editar(instance);
+            if (!(typeof data === 'number') && (!!data?.internalId || !!data?.id))
+                this.source = [data, ...this.source || []];
+        }
     }
 }

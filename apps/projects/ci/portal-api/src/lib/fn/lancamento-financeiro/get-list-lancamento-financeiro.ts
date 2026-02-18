@@ -6,14 +6,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { LancamentoFinanceiro } from '../../models/lancamento-financeiro';
 import { ObterListaLancamentoFinanceiro } from '../../models/obter-lista-lancamento-financeiro';
-import { SyncPayloadDaoLancamentoFinanceiro } from '../../models/sync-payload-dao-lancamento-financeiro';
 
 export interface GetListLancamentoFinanceiro$Params {
       body: ObterListaLancamentoFinanceiro
 }
 
-export function getListLancamentoFinanceiro(http: HttpClient, rootUrl: string, params: GetListLancamentoFinanceiro$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoLancamentoFinanceiro>> {
+export function getListLancamentoFinanceiro(http: HttpClient, rootUrl: string, params: GetListLancamentoFinanceiro$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<LancamentoFinanceiro>>> {
   const rb = new RequestBuilder(rootUrl, getListLancamentoFinanceiro.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -24,7 +24,7 @@ export function getListLancamentoFinanceiro(http: HttpClient, rootUrl: string, p
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SyncPayloadDaoLancamentoFinanceiro>;
+      return r as StrictHttpResponse<Array<LancamentoFinanceiro>>;
     })
   );
 }
