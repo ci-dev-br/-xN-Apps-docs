@@ -7,7 +7,7 @@ export class TwoFactorAuthenticationService {
         private readonly messageService: MessageService,
     ) { }
     async requestTwoFactorAuthentication(user: User) {
-        const authorization_code = (Math.random() * 0xFFFFFFFFFFFFFF).toString(36).toUpperCase().substring(0, 6);
+        const authorization_code = (Math.random() * 0xFFFFFFFFFFFFFF).toString(36).toUpperCase().substring(0, 7);
         await this.messageService.sendSMS({
             message: `Olá ${user.fullName || ''}, seu código de autorização é ${authorization_code}`,
         });

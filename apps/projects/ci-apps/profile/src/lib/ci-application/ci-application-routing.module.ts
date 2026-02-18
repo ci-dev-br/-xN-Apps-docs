@@ -4,9 +4,26 @@ import { HomeComponent } from './home/home.component'
 const routes: Routes = [
   {
     path: '',
-    component: HomeComponent, data: {
+    component: HomeComponent,
+    data: {
       group: 'user-menu',
-    }
+    },
+    children: [
+      /* {
+        path: 'seguranca',
+        title: 'Segurança',
+        data: {
+        },
+        children: [
+          {
+            title: 'Configurações',
+            path: 'settings', data: {
+
+            }
+          }
+        ]
+      } */
+    ]
   }
 ];
 @NgModule({

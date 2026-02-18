@@ -30,7 +30,7 @@ export class CiRunner extends RunnerX {
                     } catch (error) {
                         console.trace(error);
                     }
-                })
+                }, 10/*ms*/ * 1000)
             }
         });
     }

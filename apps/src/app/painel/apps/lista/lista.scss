@@ -1,3 +1,5 @@
+@use "sass:math";
+
 :host {
     flex: auto;
     display: flex;
@@ -11,6 +13,32 @@
     overflow: auto;
 }
 
+/**
+ * Define a largura máxima baseada em uma estimativa de palavras por linha.
+ * * @param {Number} $words - Quantidade de palavras desejada por linha.
+ * @param {Boolean} $center - (Opcional) Se deve centralizar o container (margin: 0 auto).
+ * @param {Number} $avg-chars - (Opcional) Média de caracteres por palavra (padrão 6: 5 letras + 1 espaço).
+ */
+@mixin word-wrap-limit($words, $center: true, $avg-chars: 6) {
+    // 2. Cálculo: Palavras * Média de Caracteres = Largura em 'ch'
+    // Interpolamos #{} para garantir que o CSS entenda a unidade
+    max-width: #{$words * $avg-chars}ch;
+
+    // 3. Centralização opcional (padrão true)
+    @if $center {
+        margin-inline: auto;
+    }
+
+    // 4. Ajuste fino de tipografia para linhas longas (>12 palavras)
+    @if $words >12 {
+        line-height: 1.6; // Mais respiro para leitura longa
+    }
+
+    @else {
+        line-height: 1.4; // Padrão para linhas curtas
+    }
+}
+
 .container {
     padding: 0 24px;
 }
@@ -19,8 +47,8 @@
     display: flex;
     flex-direction: column;
     flex: auto;
-    justify-content: stretch;
-    align-items: stretch;
+    justify-content: center;
+    align-items: center;
     align-content: flex-start;
     gap: 12px 12px;
     overflow: auto;
@@ -28,13 +56,15 @@
 
 @mixin app($size: 100px) {
     .app {
+        @include word-wrap-limit(7);
+        flex: 33.3333%;
         $width: $size;
         min-width: #{$width};
-        max-width: calc(33% - 32px);
-        min-height: #{$width*2};
+        // max-width: calc(33% - 32px);
+        // min-height: #{$width*2};
         border-radius: 14px;
         box-shadow: 0 2px 10px 3px rgba(0, 0, 0, .2);
-        flex: auto;
+        // flex: auto;
         display: flex;
         flex-direction: column;
         align-items: stretch;
@@ -97,6 +127,7 @@
         flex-direction: row;
         flex-wrap: wrap;
         flex: auto;
+
         @include app();
 
     }

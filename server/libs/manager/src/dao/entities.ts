@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiHideProperty, ApiProperty } from "@nestjs/swagger";
 import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Tenant } from "@ci/tenant";
 import { Credential } from "@ci/core";
@@ -95,10 +95,18 @@ export class Snapshot extends AuditedEntity {
     hash: string;
 }
 /***
- * Entidade Auditável vinculada entre usuário 1:n Tenant . 
- * 
+ * Entidade Auditável vinculada entre Usuário 1:n Tenant . 
+ * // TODO: revisar documentação e FullAuditedEntity
  */
 export abstract class FullAuditedEntity extends AuditedEntity {
+    /**
+    * Histórico de versões (snapshots) associados a esta entidade.
+    * * @description Esta propriedade mantém uma coleção de estados passados da entidade,
+    * permitindo rastrear a evolução dos dados ao longo do tempo (Audit Log).
+    * * @note Ocultado da documentação pública (Swagger) via @ApiHideProperty
+    * para evitar vazamento de histórico completo em endpoints de leitura padrão.
+    */
+    @ApiHideProperty()
     @ManyToMany(() => Snapshot)
     @JoinTable({ schema: 'snapshot' })
     snapshots?: Snapshot[];

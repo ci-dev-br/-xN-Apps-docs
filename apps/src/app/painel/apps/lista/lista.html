@@ -1,7 +1,7 @@
 <mat-form-field>
     <mat-label>Pesquisar Apps, configurações e cadastros.</mat-label>
-    <input #searchInputElement (keydown.escape)="searchControl.reset()" matInput [formControl]="searchControl" type="text"
-        placeholder="Pesquisar Apps, configurações e cadastros.">
+    <input #searchInputElement (keydown.escape)="searchControl.reset()" matInput [formControl]="searchControl"
+        type="text" placeholder="Pesquisar Apps, configurações e cadastros.">
 </mat-form-field>
 <div class="container">
     <h5>Todos os Apps</h5>
@@ -10,7 +10,7 @@
     @for (app of (appsFiltered || apps); track $index) {
     <div class="app" [tabindex]="$index" (contextmenu)="contextMenuHanlder($event)"
         (keydown.enter)="appClickHandler($event, app)" (click)="appClickHandler($event, app)"
-        [attr.aria-labelledby]="app.description">
+        [attr.aria-labelledby]="app.description" [matTooltip]="app.description">
         <div class="bg" [style.border-color]="app.color"></div>
         <span class="header">
             @if(app.icon){
@@ -24,9 +24,9 @@
                 {{app.name}}
             </span>
         </span>
-        @if(!!app?.description){
+        @if(!!app?.shortDescription){
         <span class="description">
-            {{app.description}}
+            {{app.shortDescription}}
         </span>
         }
     </div>

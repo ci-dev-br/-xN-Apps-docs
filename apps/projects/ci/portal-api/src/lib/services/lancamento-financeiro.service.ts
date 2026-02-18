@@ -11,9 +11,9 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { getListLancamentoFinanceiro } from '../fn/lancamento-financeiro/get-list-lancamento-financeiro';
 import { GetListLancamentoFinanceiro$Params } from '../fn/lancamento-financeiro/get-list-lancamento-financeiro';
+import { LancamentoFinanceiro } from '../models/lancamento-financeiro';
 import { syncLancamentoFinanceiro } from '../fn/lancamento-financeiro/sync-lancamento-financeiro';
 import { SyncLancamentoFinanceiro$Params } from '../fn/lancamento-financeiro/sync-lancamento-financeiro';
-import { SyncPayloadDaoLancamentoFinanceiro } from '../models/sync-payload-dao-lancamento-financeiro';
 
 @Injectable()
 export class LancamentoFinanceiroService extends BaseService {
@@ -30,7 +30,7 @@ export class LancamentoFinanceiroService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  syncLancamentoFinanceiro$Response(params: SyncLancamentoFinanceiro$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoLancamentoFinanceiro>> {
+  syncLancamentoFinanceiro$Response(params: SyncLancamentoFinanceiro$Params, context?: HttpContext): Observable<StrictHttpResponse<LancamentoFinanceiro>> {
     return syncLancamentoFinanceiro(this.http, this.rootUrl, params, context);
   }
 
@@ -40,9 +40,9 @@ export class LancamentoFinanceiroService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  sync(params: SyncLancamentoFinanceiro$Params, context?: HttpContext): Observable<SyncPayloadDaoLancamentoFinanceiro> {
+  sync(params: SyncLancamentoFinanceiro$Params, context?: HttpContext): Observable<LancamentoFinanceiro> {
     return this.syncLancamentoFinanceiro$Response(params, context).pipe(
-      map((r: StrictHttpResponse<SyncPayloadDaoLancamentoFinanceiro>): SyncPayloadDaoLancamentoFinanceiro => r.body)
+      map((r: StrictHttpResponse<LancamentoFinanceiro>): LancamentoFinanceiro => r.body)
     );
   }
 
@@ -55,7 +55,7 @@ export class LancamentoFinanceiroService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  getListLancamentoFinanceiro$Response(params: GetListLancamentoFinanceiro$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoLancamentoFinanceiro>> {
+  getListLancamentoFinanceiro$Response(params: GetListLancamentoFinanceiro$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<LancamentoFinanceiro>>> {
     return getListLancamentoFinanceiro(this.http, this.rootUrl, params, context);
   }
 
@@ -65,9 +65,9 @@ export class LancamentoFinanceiroService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  getList(params: GetListLancamentoFinanceiro$Params, context?: HttpContext): Observable<SyncPayloadDaoLancamentoFinanceiro> {
+  getList(params: GetListLancamentoFinanceiro$Params, context?: HttpContext): Observable<Array<LancamentoFinanceiro>> {
     return this.getListLancamentoFinanceiro$Response(params, context).pipe(
-      map((r: StrictHttpResponse<SyncPayloadDaoLancamentoFinanceiro>): SyncPayloadDaoLancamentoFinanceiro => r.body)
+      map((r: StrictHttpResponse<Array<LancamentoFinanceiro>>): Array<LancamentoFinanceiro> => r.body)
     );
   }
 

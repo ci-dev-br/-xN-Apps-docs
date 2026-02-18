@@ -9,7 +9,11 @@ import { lastValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-
+import { RouterModule } from '@angular/router';
+export interface IResume {
+    title?: string;
+    description?: string;
+}
 @Component({
     selector: 'ci-home',
     standalone: true,
@@ -22,6 +26,7 @@ import { MatMenuModule } from '@angular/material/menu';
         MatButtonModule,
         MatIconModule,
         MatMenuModule,
+        RouterModule,
     ],
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss'
@@ -42,6 +47,7 @@ export class HomeComponent implements OnInit {
         username: [],
         surname: [],
     })
+    protected resumes?: IResume[];
     constructor(
         private readonly formBuilder: FormBuilder,
         private readonly daos: DaoService,

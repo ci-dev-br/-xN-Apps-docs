@@ -40,7 +40,8 @@
                         <div class="content">
                             <button mat-raised-button [disabled]="!form.touched || !!(form.invalid)"
                                 (click)="saveProfile()">
-                                {{ form.touched ? 'Confirmar alterações' : 'Nenhuma alteração pendente de confirmação' }}
+                                {{ form.touched ? 'Confirmar alterações' : 'Nenhuma alteração pendente de confirmação'
+                                }}
                             </button>
                         </div>
                     </div>
@@ -59,45 +60,12 @@
                 </div>
             </mat-card-content>
         </mat-card>
+        @if(!!resumes){@for(resume of resumes; track $index){
         <mat-card>
+            @if(resume.title){<mat-card-title>{{resume.title}}</mat-card-title>}
             <mat-card-content>
-                Seu armazenamento
             </mat-card-content>
         </mat-card>
-        <mat-card>
-            <mat-card-content>
-                Assistente Pessoal
-            </mat-card-content>
-        </mat-card>
-        <mat-card>
-            <mat-card-content>
-                Dispositivos
-            </mat-card-content>
-        </mat-card>
-        <mat-card>
-            <mat-card-content>
-                Privacidade
-            </mat-card-content>
-        </mat-card>
-        <mat-card>
-            <mat-card-content>
-                Segurança
-            </mat-card-content>
-        </mat-card>
-        <mat-card>
-            <mat-card-content>
-                Opções de pagamento
-            </mat-card-content>
-        </mat-card>
-        <mat-card>
-            <mat-card-content>
-                Histórico de pedidos
-            </mat-card-content>
-        </mat-card>
-        <mat-card>
-            <mat-card-content>
-                Discover | Família | Recompensas | Outlook
-            </mat-card-content>
-        </mat-card>
+        }}
     </div>
 </div>

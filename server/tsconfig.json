@@ -204,6 +204,12 @@
       ],
       "@ci/mlms/*": [
         "libs/mlms/src/*"
+      ],
+      "@ci/vendas": [
+        "libs/vendas/src"
+      ],
+      "@ci/vendas/*": [
+        "libs/vendas/src/*"
       ]
     }
   }

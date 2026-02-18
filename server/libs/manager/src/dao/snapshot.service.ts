@@ -27,7 +27,10 @@ export class SnapshotService {
             console.trace(error);
         }
     }
-    async snapshot<T extends FullAuditedEntity>(entidade: T | any, request: Request, repo?: Repository<T>) {
+    async snapshot<T extends FullAuditedEntity>(
+        entidade: T | any,
+        request: Request, repo?: Repository<T>,
+    ) {
         try {
             const json_snapshot = JSON.parse(JSON.stringify(entidade, null, 2));
             const momento = new Date().toISOString();
