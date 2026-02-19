@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Optional, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Optional, Output, Type } from "@angular/core";
 import { Card, Prancheta } from "@ci/portal-api";
 import { BoardComponent } from "../board.component";
 
@@ -13,10 +13,25 @@ export class CardContainerComponent {
         @Optional() protected readonly board: BoardComponent,
     ) { }
     @Input() edittingCard?: Card;
-    @Input() card?: Card;
+    private _card?: Card | undefined;
+    public get card(): Card | undefined {
+        return this._card;
+    }
+    @Input()
+    public set card(value: Card | undefined) {
+        if (this._card === value) return;
+        this._card = value;
+        if (value && value.componentName)
+            this.componentRef = this.board.cards.get(value.componentName)?.componentRef;
+    }
     @Input() prancheta?: Prancheta;
+    @Input() componentRef?: Type<Component>;
     async editCard(card: Card, event: Event) {
-        this.board.edittingCard = card;
+        if (this.board.edittingCard === card) {
+            this.board.edittingCard = undefined;
+        } else {
+            this.board.edittingCard = card;
+        }
         event.preventDefault();
         event.stopPropagation();
     }
