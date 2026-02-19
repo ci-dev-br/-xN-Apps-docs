@@ -9,7 +9,7 @@ import {
     JoinTable,
     ManyToOne,
 } from "typeorm";
-import { schema } from "../termos";
+import { schema } from "./schema";
 /**
  * Entidade que representa uma Organização Informacional
  */
