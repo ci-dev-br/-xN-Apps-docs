@@ -1,6 +1,9 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
-
+/**
+ * Controle de Logger interdo da aplicação para integração
+ * 
+ */
 export class Logger {
     private readonly error = this.console.error;
     private readonly info = this.console.info;
