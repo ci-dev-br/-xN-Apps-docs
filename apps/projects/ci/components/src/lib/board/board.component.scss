@@ -1,6 +1,12 @@
 :host {
     display: flex;
     flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    overflow: hide;
+
+    flex: auto;
+
 }
 
 .after-setting {
@@ -19,4 +25,14 @@
     gap: 0;
     margin: 0 0px;
     border: solid 1px red;
+}
+
+.board-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    overflow: auto;
+
+    flex: auto;
 }

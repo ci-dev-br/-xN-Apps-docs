@@ -14,13 +14,26 @@
         <button mat-icon-button (click)="removeCard(card!,$event)" [matTooltip]="'Remover cartão'">
             <mat-icon>delete</mat-icon>
         </button>
-        <button mat-icon-button (click)="editCard(card!,$event)">
+        <button mat-icon-button (click)="editCard(card!,$event)" [matTooltip]="'Confirmar ajustes'">
             <mat-icon>done_all</mat-icon>
         </button>
         }@else{
-        <button mat-icon-button (click)="editCard(card!,$event)">
+        <button mat-icon-button (click)="editCard(card!,$event)" [matTooltip]="'Ajustar preferências'">
             <mat-icon>settings</mat-icon>
         </button>
         }
     </div>
+    @if(board.edittingCard === card){
+    <div class="actions-lb">
+        <button mat-icon-button>
+            1:1
+        </button>
+        <button mat-icon-button>
+            0
+        </button>
+        <button mat-icon-button>
+            <mat-icon>arrows_outward</mat-icon>
+        </button>
+    </div>
+    }
 </div>

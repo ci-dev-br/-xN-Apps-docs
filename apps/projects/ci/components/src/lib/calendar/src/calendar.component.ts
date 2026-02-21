@@ -2,11 +2,17 @@ import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from "@
 import { CoreModule } from "@ci/core";
 import { CalendarDay } from "./calendar-day";
 import { Day } from "./day/day";
+import { Header } from "./header/header";
+import { Year } from "./year/year";
+import { Month } from "./month/month";
 @Component({
     selector: 'ci-calendar',
     imports: [
         CoreModule,
         Day,
+        Header,
+        Year,
+        Month
     ],
     standalone: true,
     templateUrl: `calendar.component.html`,

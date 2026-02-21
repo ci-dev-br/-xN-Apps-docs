@@ -1,21 +1,8 @@
 <div class="calendar-container">
-    <header class="calendar-header">
-        <div class="month-title">
-            <h2>{{currentViewDate | date: 'MMMM' }} <span>{{ currentViewDate | date: 'yyyy' }}</span></h2>
-        </div>
-        <div class="nav-buttons">
-            <button class="btn-today" (click)="viewMode='day'">Dia</button>
-            <button class="btn-today" (click)="viewMode='month'">Mês</button>
-            <button class="btn-today" (click)="viewMode='year'">Ano</button>
-            <button (click)="prevMonth()" aria-label="Mês anterior">
-                <i class="icon-chevron-left">&lt;</i>
-            </button>
-            <button class="btn-today" (click)="goToToday()">Hoje</button>
-            <button (click)="nextMonth()" aria-label="Próximo mês">
-                <i class="icon-chevron-right">&gt;</i>
-            </button>
-        </div>
-    </header>
+    <ci-calendar-header (prevMonth)="prevMonth()" (goToToday)="goToToday()" (prevMonth)="prevMonth()"
+        (nextMonth)="nextMonth()" [currentViewDate]="currentViewDate" (viewModeOutput)="viewMode=$event"
+        [viewMode]="viewMode" [weekDays]="weekDays" [days]="days" [current]="current"
+        [selectedDate]="selectedDate"></ci-calendar-header>
     @if(viewMode==='day'){
     <ci-day></ci-day>
     }

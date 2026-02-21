@@ -112,10 +112,9 @@ export class BoardComponent implements OnInit {
         })
     }
     edittingCard?: Card;
-    
     @HostListener('window:click')
     clickHandler() {
-        this.edittingCard = undefined;
+        //  this.edittingCard = undefined;
     }
     drop(event: any) {
         if (!!this.prancheta?.cards) moveItemInArray(this.prancheta.cards, event.previousIndex, event.currentIndex);
