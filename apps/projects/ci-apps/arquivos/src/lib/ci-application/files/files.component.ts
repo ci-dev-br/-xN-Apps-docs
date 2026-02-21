@@ -10,6 +10,8 @@ import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { DialogRef } from '@angular/cdk/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Router } from 'express';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'ci-files',
@@ -33,6 +35,7 @@ export class FilesComponent {
     private readonly fileExplorer: FileExplorerService,
     iconLoader: IconLoaderSerices,
     @Optional() private readonly dialogRef: MatDialogRef<FilesComponent, IArquivo>,
+    private readonly route?: ActivatedRoute
   ) {
     iconLoader.load({
       'i8-folder': { url: '/icons8/icons8-folder.svg' },
@@ -91,6 +94,8 @@ export class FilesComponent {
       } else {
         if (!!this.dialogRef && !!file) {
           this.dialogRef.close(file);
+        } else if (!!this.route) {
+          this.route;
         }
       }
     }
