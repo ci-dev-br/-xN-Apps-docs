@@ -31,10 +31,10 @@ div {
 }
 
 .--dev-mode {
-    border: 1px dashed red;
+    border: 3px dashed rgba(red,.5);
     position: fixed;
     inset: 1px;
-    z-index: 100;
+    z-index: 10000000;
     display: block;
     border-radius: 12px;
     user-select: none;
