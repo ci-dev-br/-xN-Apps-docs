@@ -15,3 +15,4 @@ export const Cards: ImplCard[] = [
                 .map(k => (cards as any)[k]))]
         )
 ].reduce((a, b) => [...a || [a], ...b || [b]]);
+console.log(Cards);

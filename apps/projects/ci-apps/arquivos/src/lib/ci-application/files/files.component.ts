@@ -8,10 +8,8 @@ import { IArquivo } from './i-file';
 import { FileExplorerService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { DialogRef } from '@angular/cdk/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Router } from 'express';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'ci-files',
@@ -23,6 +21,7 @@ import { ActivatedRoute } from '@angular/router';
     MatIconModule,
     FormsModule,
     LoadIconsModule,
+    RouterModule,
   ],
   standalone: true,
   templateUrl: './files.component.html',
@@ -35,12 +34,25 @@ export class FilesComponent {
     private readonly fileExplorer: FileExplorerService,
     iconLoader: IconLoaderSerices,
     @Optional() private readonly dialogRef: MatDialogRef<FilesComponent, IArquivo>,
-    private readonly route?: ActivatedRoute
+    @Optional() private readonly activatedRoute?: ActivatedRoute,
+    @Optional() private readonly router?: Router,
   ) {
     iconLoader.load({
       'i8-folder': { url: '/icons8/icons8-folder.svg' },
       'i8-file': { url: '/icons8/icons8-file.svg' },
     });
+    activatedRoute?.queryParams.subscribe(async (query: any) => {
+      if (query) { }
+      /// if (query.file) {
+      ///   const file_loaded = await lastValueFrom(this.fileExplorer.readFile({
+      ///     body: {
+      ///       path: query.file
+      ///     }
+      ///   }));
+      ///   // this.oppenedFile = file_loaded;
+      ///   // this.value = file_loaded.data as string;
+      /// }
+    })
   }
   endereco?: string;
   private _filtrar?: string | undefined;
@@ -94,8 +106,11 @@ export class FilesComponent {
       } else {
         if (!!this.dialogRef && !!file) {
           this.dialogRef.close(file);
-        } else if (!!this.route) {
-          this.route;
+        } else if (!!this.activatedRoute) {
+          let painel = await this.router?.config[4]?.loadChildren!();
+          if (painel) {
+            painel;
+          }
         }
       }
     }

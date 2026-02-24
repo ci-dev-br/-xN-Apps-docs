@@ -45,7 +45,7 @@ export class PainelComponent implements OnInit {
     iconLoader: IconLoaderSerices,
   ) {
     iconLoader.load({
-      imersao: { url: 'icons/imersao.svg' },
+      // imersao: { url: 'icons/imersao.svg' },
       agenda: { url: 'icons/agenda.svg' },
       anotacoes: { url: 'icons/anotacoes.svg' },
       cadastros: { url: 'icons/v2/cadastros.svg' },
