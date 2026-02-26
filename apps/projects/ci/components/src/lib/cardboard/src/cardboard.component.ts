@@ -15,13 +15,26 @@ export class CardboardComponent {
     public set cardInfo(value: any | undefined) {
         if (this._cardInfo === value) return;
         this._cardInfo = value;
-        if (value && value.componentName)
-            this.componentRef = this.board?.cards.get(value.componentName)?.componentRef;
+        this.mount();
     }
     @Input() componentRef?: Type<Component>;
-    @Input() board?: any;
+    private _board?: any;
+    public get board(): any {
+        return this._board;
+    }
+    @Input()
+    public set board(value: any) {
+        if (this._board === value) return;
+        this._board = value;
+        this.mount();
+    }
     constructor(
     ) { }
+    private mount() {
+        if (this.cardInfo && this.cardInfo.componentName && this.board)
+            this.componentRef = this.board?.cards.get(this.cardInfo.componentName)?.componentRef;
+        if (!this.componentRef) console.error('Falha ao montar card.')
+    }
     async editCard(card: any, event: Event) {
         if (!this.board) return;
         if (this.board.edittingCard === card) {
