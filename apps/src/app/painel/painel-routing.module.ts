@@ -16,7 +16,14 @@ export const routes: Routes = [
       { path: 'Formularios', loadChildren: () => import('@ci-apps/Formularios').then(m => m.CiApplicationModule) },
       { path: 'Gerencial', loadChildren: () => import('@ci-apps/Gerencial').then(m => m.CiApplicationModule) },
       { path: 'Icons', loadChildren: () => import('@ci-apps/Icons').then(m => m.CiApplicationModule) },
-      { path: 'Imersao', loadChildren: () => import('@ci-apps/Imersao').then(m => m.CiApplicationModule) },
+      {
+        path: 'Imersao', data: {
+          LoadIcons: {
+            imersao: { url: 'icons/imersao.svg' },
+          }
+        },
+        loadChildren: () => import('@ci-apps/Imersao').then(m => m.CiApplicationModule)
+      },
       { path: 'Infra', loadChildren: () => import('@ci-apps/Infra').then(m => m.CiApplicationModule) },
       { path: 'Installation', loadChildren: () => import('@ci-apps/Instalacao').then(m => m.CiApplicationModule) },
       { path: 'LowCode', loadChildren: () => import('@ci-apps/LowCode').then(m => m.CiApplicationModule) },
@@ -30,8 +37,7 @@ export const routes: Routes = [
       { path: 'Treinamento', loadChildren: () => import('@ci-apps/Treinamento').then(m => m.CiApplicationModule) },
       { path: 'Vendas', loadChildren: () => import('@ci-apps/Vendas').then(m => m.CiApplicationModule) },
       { path: 'CRM', loadChildren: () => import('@ci-apps/crm').then(m => m.CiApplicationModule) },
-      { path: 'CMS', loadChildren: () => import('@ci-apps/cms').then(m => m.CiApplicationModule) },
-      // TODO: Realizar carga dinâmica dos aplicativos
+      { path: 'CMS', loadChildren: () => import('@ci-apps/cms').then(m => m.CiApplicationModule) }
     ]
   }
 ];

@@ -1,0 +1,38 @@
+@if(!!board && !!cardInfo){<div class="card-wrapper" [class.editing]="board.edittingCard === cardInfo">
+    <!-- TODO: cdkDrag -->
+    @if(!!componentRef){<div class="inner">
+        <ng-container *ngComponentOutlet="componentRef"></ng-container>
+    </div>}
+    <div class="card-verso">
+        <div class="wrapper">
+            <!-- <ci-settings></ci-settings> -->
+        </div>
+    </div>
+    <div class="actions">
+        @if(board.edittingCard === cardInfo){
+        <button mat-icon-button (click)="removeCard(cardInfo!,$event)" [matTooltip]="'Remover cartão'">
+            <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-icon-button (click)="editCard(cardInfo!,$event)" [matTooltip]="'Confirmar ajustes'">
+            <mat-icon>done_all</mat-icon>
+        </button>
+        }@else{
+        <button mat-icon-button (click)="editCard(cardInfo!,$event)" [matTooltip]="'Ajustar preferências'">
+            <mat-icon>settings</mat-icon>
+        </button>
+        }
+    </div>
+    @if(board.edittingCard === cardInfo){
+    <div class="actions-lb">
+        <!-- <button mat-icon-button>
+            1:1
+        </button>
+        <button mat-icon-button>
+            0
+        </button>
+        <button mat-icon-button>
+            <mat-icon>arrows_outward</mat-icon>
+        </button> -->
+    </div>
+    }
+</div>}

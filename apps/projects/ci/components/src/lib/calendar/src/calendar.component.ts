@@ -74,11 +74,15 @@ export class CalendarComponent implements OnInit, OnChanges, OnDestroy {
         return date.getDate() % 5 === 0;
     }
     ngOnInit() {
-        this.generateCalendar();
-        this.updateTimeMarker();
-        this.timerId = setInterval(() => {
+        try {
+            this.generateCalendar();
             this.updateTimeMarker();
-        }, 1000);
+            this.timerId = setInterval(() => {
+                this.updateTimeMarker();
+            }, 1000);
+        } catch (error) {
+            console.trace(error);
+        }
     }
     // --- Getters para o Cabeçalho ---
     get isToday(): boolean {

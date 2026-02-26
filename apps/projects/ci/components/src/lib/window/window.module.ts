@@ -20,7 +20,7 @@ import { ActionModule } from '../action/action.module';
     MatIconModule,
     MatDialogModule,
     MatButtonModule,
-    MatProgressBarModule,
+    MatProgressBarModule
   ],
   providers: [
     WindowService,
