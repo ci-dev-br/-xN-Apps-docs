@@ -5,11 +5,9 @@ import { UserService } from "@ci/auth";
 import { DaoBuilder, DaoService } from "@ci/core";
 import { Card, Prancheta, PranchetaService } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
-import { CardFinderComponent } from "./card-finder/card-finder.component";
 import { CardSetting, ImplCard } from "./card";
 import { moveItemInArray } from "@angular/cdk/drag-drop";
 import { WindowService } from "../window/window.service";
-import { SettingsComponent } from "../settings/settings.component";
 /**
  * 
  */
@@ -24,6 +22,7 @@ import { SettingsComponent } from "../settings/settings.component";
 export class BoardComponent implements OnInit {
     form?: FormGroup;
     @Input() default?: string;
+    cards = new Map<string, ImplCard>();
     constructor(
         private readonly window: WindowService,
         private readonly daoForms: DaoBuilder,
@@ -41,34 +40,37 @@ export class BoardComponent implements OnInit {
             }
         })
     }
-    cards = new Map<string, ImplCard>();
     async ngOnInit() {
-        await this.loadBoard();
-        this.form = await this.daoForms.getForm('Prancheta');
-        this.daos.prepareToEdit(this.prancheta);
-        this.daos.bindDataForm(this.prancheta, this.form);
+        try {
+            await this.loadBoard();
+            this.form = await this.daoForms.getForm('Prancheta');
+            this.daos.prepareToEdit(this.prancheta);
+            this.daos.bindDataForm(this.prancheta, this.form);
 
-        this.daos.confirmation(this.prancheta)?.subscribe(async data => {
-            this.syncing = true;
-            try {
-                if (this.prancheta && data && this.form) {
-                    const prancheta_syncronized = await lastValueFrom(this.pranchetas.pranchetaControllerSync({ body: { prancheta: this.prancheta } }));
+            this.daos.confirmation(this.prancheta)?.subscribe(async data => {
+                this.syncing = true;
+                try {
+                    if (this.prancheta && data && this.form) {
+                        const prancheta_syncronized = await lastValueFrom(this.pranchetas.pranchetaControllerSync({ body: { prancheta: this.prancheta } }));
 
-                    let _data: any = Object.assign(this.prancheta, prancheta_syncronized);
-                    // delete (_data as IChangeable).__pre;
-                    // this.daos.prepareToEdit(_data);
-                    // this.daos.bindDataForm(_data, this.form);
-                    // this.prancheta = _data;
-                    _data;
+                        let _data: any = Object.assign(this.prancheta, prancheta_syncronized);
+                        // delete (_data as IChangeable).__pre;
+                        // this.daos.prepareToEdit(_data);
+                        // this.daos.bindDataForm(_data, this.form);
+                        // this.prancheta = _data;
+                        _data;
+                    }
+                } catch (error) {
+                    console.trace(error);
                 }
-            } catch (error) {
-                console.trace(error);
-            }
-            this.syncing = false;
-        });
-        this.form.valueChanges.subscribe(v => {
-            if (!this.syncing) this.syncPrancheta();
-        })
+                this.syncing = false;
+            });
+            this.form.valueChanges.subscribe(v => {
+                if (!this.syncing) this.syncPrancheta();
+            })
+        } catch (error) {
+            console.trace(error);
+        }
     }
     syncing?: boolean;
     prancheta?: Prancheta;
@@ -76,7 +78,6 @@ export class BoardComponent implements OnInit {
         this.prancheta = await lastValueFrom(
             this.pranchetas.pranchetaControllerGet({ body: { defaultGlobalCode: this.default } })
         );
-
         if (!this.prancheta && !!this.default && ((this.user?.user?.value?.roles || []).indexOf('MASTER') > -1)) {
             this.prancheta = {
                 codigoGlobal: ((this.user?.user?.value?.roles || []).indexOf('MASTER') > -1) ? this.default : undefined,
@@ -98,18 +99,23 @@ export class BoardComponent implements OnInit {
             this.form?.markAllAsTouched();
         }
     }
-    component(card: Card): ImplCard {
-        return this.cards.get(card.componentName || '') as ImplCard;
+    component(card: Card): ImplCard | undefined {
+        try {
+            return this.cards.get(card.componentName || '') as ImplCard;
+        } catch (error) {
+
+        }
+        return undefined;
     }
     async findCardToAdd() {
-        const cardFinderDialog = this.dialog.open(CardFinderComponent);
-        cardFinderDialog.afterClosed().subscribe(value => {
-            if (!!this.prancheta && !!value) {
-                if (!this.prancheta.cards) this.prancheta.cards = [];
-                this.prancheta.cards.push(value);
-                this.syncPrancheta();
-            }
-        })
+        /*  const cardFinderDialog = this.dialog.open(CardFinderComponent);
+         cardFinderDialog.afterClosed().subscribe(value => {
+             if (!!this.prancheta && !!value) {
+                 if (!this.prancheta.cards) this.prancheta.cards = [];
+                 this.prancheta.cards.push(value);
+                 this.syncPrancheta();
+             }
+         }) */
     }
     edittingCard?: Card;
     @HostListener('window:click')
@@ -121,11 +127,11 @@ export class BoardComponent implements OnInit {
         this.syncPrancheta();
     }
     get layout() {
-        return this.prancheta?.layout?.split(',').map(d => Number(d))
+        return this.prancheta?.layout?.split(',')?.map(d => Number(d))
     }
     async openSettings() {
-        this.window.open(SettingsComponent, {
+        /* this.window.open(SettingsComponent, {
 
-        })
+        }) */
     }
 }
