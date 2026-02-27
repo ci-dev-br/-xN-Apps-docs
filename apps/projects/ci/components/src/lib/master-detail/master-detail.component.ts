@@ -76,6 +76,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
                             headerName,
                             fieldName,
                             hide: fieldName && [
+                                /* Commons to ignore */
                                 'internalId',
                                 'id',
                                 'createdAt',
@@ -127,7 +128,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
     }
     async editar(data: T, event?: Event) {
         const result: number | any = await this.window?.open(EditarDetailComponent,
-            { schgemaName: this.schemaName, data }, this.schemaName, event)
+            { schemaName: this.schemaName, data }, this.schemaName, event)
         if (result === -1 && this.source) {
             let pos = this.source.indexOf(data);
             this.source?.splice(pos, 1);
