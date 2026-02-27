@@ -8,6 +8,7 @@ import { lastValueFrom } from "rxjs";
 import { CardSetting, ImplCard } from "./card";
 import { moveItemInArray } from "@angular/cdk/drag-drop";
 import { WindowService } from "../window/window.service";
+import { CardFinderComponent } from "../card-finder/card-finder.component";
 /**
  * 
  */
@@ -108,14 +109,14 @@ export class BoardComponent implements OnInit {
         return undefined;
     }
     async findCardToAdd() {
-        /*  const cardFinderDialog = this.dialog.open(CardFinderComponent);
-         cardFinderDialog.afterClosed().subscribe(value => {
-             if (!!this.prancheta && !!value) {
-                 if (!this.prancheta.cards) this.prancheta.cards = [];
-                 this.prancheta.cards.push(value);
-                 this.syncPrancheta();
-             }
-         }) */
+        const cardFinderDialog = this.dialog.open(CardFinderComponent);
+        cardFinderDialog.afterClosed().subscribe(value => {
+            if (!!this.prancheta && !!value) {
+                if (!this.prancheta.cards) this.prancheta.cards = [];
+                this.prancheta.cards.push(value);
+                this.syncPrancheta();
+            }
+        })
     }
     edittingCard?: Card;
     @HostListener('window:click')

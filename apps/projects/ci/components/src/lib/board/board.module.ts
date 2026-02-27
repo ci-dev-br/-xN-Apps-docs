@@ -15,6 +15,7 @@ import { RouterModule } from "@angular/router";
 import { WindowModule } from "../window/window.module";
 import { SettingsComponent } from "../settings/settings.component";
 import { CardboardModule } from "@ci/components/cardboard";
+import { CardFinderModule } from "../card-finder/card-finder.module";
 
 @NgModule({
     imports: [
@@ -33,7 +34,7 @@ import { CardboardModule } from "@ci/components/cardboard";
         MatTooltipModule,
         SettingsComponent,
         CardboardModule,
-        // CardFinderModule,
+        CardFinderModule,
     ],
     declarations: [
         BoardComponent,
