@@ -12,6 +12,7 @@ const routes: Routes = [
         path: ':EntityName',
         component: MasterDetailComponent,
         data: {
+          schema: 'LancamentoFinanceiro'
           /// dataType: 'EntityMasterDetail', title: 'Unidade de Medida', icon: 'svg:unidade_medida',
         }
       },
