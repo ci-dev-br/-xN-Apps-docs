@@ -13,7 +13,7 @@ export interface LancamentoFinanceiro {
   tenants?: Array<string> | null;
 
   /**
-   * Valor incial de do Lançameto
+   * Valor incial do Lançameto
    */
   valor?: number | null;
 }

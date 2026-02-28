@@ -1,8 +1,8 @@
 import { Column, Entity, ManyToMany } from "typeorm";
-import { schema } from "../termos";
 import { FullAuditedEntity } from "@ci/manager";
 import { ApiProperty } from "@nestjs/swagger";
 import { Organizacao } from "./organizacao.entity";
+import { schema } from "./schema";
 /**
  * # Setor da Organização
  */

@@ -3,7 +3,6 @@ import { TerminalComponent } from "./terminal";
 @Component({
     selector: 'ci-terminal-card',
     template: '<ci-terminal></ci-terminal>',
-    styles: ``,
     imports: [
         TerminalComponent,
     ],

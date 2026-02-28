@@ -1,6 +1,6 @@
 import { Component, Inject, Optional } from "@angular/core";
-import { CardSetting, ImplCard } from "../card";
 import { MatDialogRef } from "@angular/material/dialog";
+import { CardSetting, ImplCard } from "../board/card";
 @Component({
     selector: 'ci-card-finder',
     templateUrl: 'card-finder.component.html',

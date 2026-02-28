@@ -9,7 +9,7 @@ const routes: Routes = [
         path: '', component: Principal, pathMatch: 'full',
         title: 'Principal',
         data: {
-          roles: ['USER','ADMIN']
+          roles: ['USER', 'ADMIN'],
         }
       },
     ]

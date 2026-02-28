@@ -87,7 +87,7 @@ export class ChessGameComponent implements OnInit {
             console.log("Movimento inválido");
         }
     }
-    private getHeuristicMove(moves: any[]): any {
+    /* private getHeuristicMove(moves: any[]): any {
         try {
             return moves.sort((a, b) => {
                 const aValue = a.captured ? PIECE_VALUES[a.captured] : 0;
@@ -98,7 +98,7 @@ export class ChessGameComponent implements OnInit {
             error;
             debugger;
         }
-    }
+    } */
     constructor(
         private chess: ChessService,
         @Optional() private readonly er: ElementRef<any>,
@@ -110,26 +110,16 @@ export class ChessGameComponent implements OnInit {
 
     async makeAIMove() {
         const possibilidades = this.game.moves({ verbose: true });
-        let move = undefined;
+        let moviment = undefined;
         if (possibilidades.length === 0) return;
         try {
-            switch (this.difficulty) {
-                case 'hard':
-                    let server_play = await lastValueFrom(this.chess.chessMove({ body: { fen: this.game.fen() } }));
-                    move = server_play.move as any;
-                    break;
-                case 'medium':
-                    move = this.getHeuristicMove(possibilidades);
-                    break;
-                default:
-                    const randomIndex = Math.floor(Math.random() * possibilidades.length);
-                    move = possibilidades[randomIndex];
-            }
+            let reaction = await lastValueFrom(this.chess.chessMove({ body: { fen: this.game.fen() } }));
+            if ('move' in reaction) moviment = reaction.move as any;
         } catch (error) {
             console.trace(error);
         }
-        if (!!move)
-            this.game.move(move);
+        if (!!moviment)
+            this.game.move(moviment);
         this.updateBoard();
         this.checkGameStatus();
     }

@@ -12,13 +12,25 @@ import { schema } from "../norms";
 export class LancamentoFinanceiro extends FullAuditedEntity {
     @ApiProperty({
         title: 'Valor',
-        description: 'Valor incial de do Lançameto',
+        description: 'Valor incial do Lançameto',
         nullable: true,
         required: false,
+        format: 'numeric:20:2'
     })
-    @Column({ nullable: true, type: 'numeric', precision: 20, scale: 2 })
+    @Column({
+        nullable: true,
+        type: 'numeric',
+        precision: 20,
+        scale: 2
+    })
     valor?: number;
-    @ApiProperty({ title: 'Descrição', nullable: true, required: false })
-    @Column({ nullable: true })
+    @ApiProperty({
+        title: 'Descrição',
+        nullable: true,
+        required: false
+    })
+    @Column({
+        nullable: true
+    })
     description?: string;
 }

@@ -13,6 +13,8 @@
     display: flex;
     flex-direction: column;
     flex: 1;
+    align-items: center;
+    justify-content: center;
     min-width: min(80vw, 80vh);
     min-height: min(80vw, 80vh);
 }
@@ -63,7 +65,8 @@
     align-items: center;
     justify-content: centers;
     min-height: 180px;
-
+    align-self: center;
+    justify-self: center;
 }
 
 .status {

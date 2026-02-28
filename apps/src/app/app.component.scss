@@ -30,20 +30,15 @@ div {
     display: contents;
 }
 
-div.--dev-mode {
-    border-radius: 8px;
-    border: 1px solid red;
-    // margin: 15px;
-    box-shadow: inset 1px 1px 6px rgba(150, 0, 0, .85);
-
-    position: absolute;
+.--dev-mode {
+    border: 3px dashed rgba(red,.5);
+    position: fixed;
     inset: 1px;
-    //  background-color: rgb(235, 244, 245);
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: stretch;
-    overflow: hidden;
+    z-index: 10000000;
+    display: block;
+    border-radius: 12px;
+    user-select: none;
+    pointer-events: none;
 }
 
 ::ng-deep body:has(.--dev-mode) {

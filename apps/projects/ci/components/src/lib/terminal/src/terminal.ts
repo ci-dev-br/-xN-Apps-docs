@@ -52,26 +52,30 @@ export class TerminalComponent {
         }
     }
     private async initTerminal() {
-        const xtermModule = await import('xterm');
-        const fitAddonModule = await import('xterm-addon-fit');
-        const TerminalClass = xtermModule.Terminal;
-        const FitAddonClass = fitAddonModule.FitAddon;
-        this.terminal = new TerminalClass(this.options);
-        this.fitAddon = new FitAddonClass();
-        this.terminal.loadAddon(this.fitAddon);
-        this.terminal.open(this.terminalContainer.nativeElement);
-        setTimeout(() => {
-            this.fitAddon.fit();
-            this.emitResize();
-        }, 100);
-        this.terminal.onData((data) => {
-            this.userInput.emit(data);
-        });
-        this.resizeObserver = new ResizeObserver(() => {
-            this.fitAddon.fit();
-            this.emitResize();
-        });
-        this.resizeObserver.observe(this.terminalContainer.nativeElement);
+        try {
+            const xtermModule = await import('xterm');
+            const fitAddonModule = await import('xterm-addon-fit');
+            const TerminalClass = xtermModule.Terminal;
+            const FitAddonClass = fitAddonModule.FitAddon;
+            this.terminal = new TerminalClass(this.options);
+            this.fitAddon = new FitAddonClass();
+            this.terminal.loadAddon(this.fitAddon);
+            this.terminal.open(this.terminalContainer.nativeElement);
+            setTimeout(() => {
+                this.fitAddon.fit();
+                this.emitResize();
+            }, 100);
+            this.terminal.onData((data) => {
+                this.userInput.emit(data);
+            });
+            this.resizeObserver = new ResizeObserver(() => {
+                this.fitAddon.fit();
+                this.emitResize();
+            });
+            this.resizeObserver.observe(this.terminalContainer.nativeElement);
+        } catch (error) {
+
+        }
     }
     public write(data: string) {
         if (this.terminal) {

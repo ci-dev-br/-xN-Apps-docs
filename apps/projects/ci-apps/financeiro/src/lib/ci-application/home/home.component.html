@@ -1,9 +1,11 @@
-@for (act of actions; track $index) {
-<button mat-raised-button (click)="act.onClick ? act.onClick($event) : null">
-    <ng-container *ngTemplateOutlet="inner;"></ng-container>
-</button>
-<ng-template #inner>
-    {{act.description}}
-</ng-template>
-}
+<mat-toolbar>
+    @for (act of actions; track $index) {
+    <button mat-raised-button (click)="act.onClick ? act.onClick($event) : null">
+        <ng-container *ngTemplateOutlet="inner;"></ng-container>
+    </button>
+    <ng-template #inner>
+        {{act.description}}
+    </ng-template>
+    }
+</mat-toolbar>
 <router-outlet></router-outlet>

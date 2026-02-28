@@ -5,11 +5,10 @@
 			"path": "server"
 		},
 		{
-			"name": "Apps",
-			"path": "client/src"
+			"path": "."
 		},
 		{
-			"path": "."
+			"path": "apps"
 		}
 	],
 	"settings": {
