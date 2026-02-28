@@ -103,6 +103,7 @@ export class DynInputComponent {
         if (!!value && !!types[value])
             this.inputComponent = types[value];
     }
+    @Input() format?: string;
     auto?: boolean;
     list?: any[];
     service?: any;
