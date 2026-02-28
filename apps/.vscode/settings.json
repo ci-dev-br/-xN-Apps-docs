@@ -36,7 +36,8 @@
         "**/.gradle": false,
         "**/*.pro": false,
         "**/build": false,
-        "**/*.unotation": true
+        "**/*.unotation": true,
+        "**/portal-api/src": true
     },
     "bigUML.hideUnotation": true
 }

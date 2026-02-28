@@ -144,6 +144,9 @@
       "@ci/apps/imersao/chess": [
         "./projects/ci-apps/imersao/games/chess/public-api"
       ],
+      "@ci/components/feed": [
+        "./projects/ci/components/src/lib/feed/public-api"
+      ],
     },
     "outDir": "./dist/out-tsc",
     "strict": true,
