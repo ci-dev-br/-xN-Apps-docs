@@ -285,6 +285,7 @@ export class DaoService {
                 Object.keys(form.controls).forEach((v) => {
                     form.get(v)?.valueChanges.subscribe(changedValue => {
                         try {
+                            // Atualiza propriedade do objeto conectado ao formulário
                             (data as any)[v] = changedValue;
                         } catch (error) {
                             console.trace(error)
@@ -293,7 +294,7 @@ export class DaoService {
                 })
                 //  data.__binding_form = form; ? para que serve esta linha? Faz efeito remove-la?
                 // Ela vem de uma estrutura legada que não foi adaptada. Aparentemente pode sim ser removida sem provocar reflexo
-                if (data && data[EMITTER]) (data[EMITTER] as EventEmitter<SimpleChanges>)
+                if (!!data && !!data[EMITTER]) (data[EMITTER] as EventEmitter<SimpleChanges>)
                     .subscribe(changes => {
                         Object.keys(changes).forEach(Property => {
                             if (changes[Property].currentValue !== form.controls[Property].value &&
