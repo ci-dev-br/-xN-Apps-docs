@@ -10,7 +10,7 @@ import { Objeto, ThrejsComponent } from '@ci/espazio';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
-  private isBrowser: boolean;
+  protected isBrowser: boolean;
   objetos?: Objeto[];
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.isBrowser = isPlatformBrowser(this.platformId);
