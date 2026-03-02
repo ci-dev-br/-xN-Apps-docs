@@ -30,7 +30,7 @@ export interface ChatMessage {
     </div>
     `,
     styles: [
-        `.chat-container { max-width: 400px; margin: 20px auto; font-family: sans-serif; border: 1px solid #ccc; border-radius: 8px; padding: 15px; }
+        `.chat-container { font-family: sans-serif; border-radius: 8px; padding: 15px; }
     .controls { margin-bottom: 15px; text-align: center; }
     button { padding: 8px 16px; cursor: pointer; border: none; border-radius: 4px; background: #007bff; color: white; }
     button.listening { background: #dc3545; }
