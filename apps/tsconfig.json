@@ -147,6 +147,9 @@
       "@ci/components/feed": [
         "./projects/ci/components/src/lib/feed/public-api"
       ],
+      "@ci/components/aio": [
+        "./projects/ci/components/src/lib/aio/public-api"
+      ],
     },
     "outDir": "./dist/out-tsc",
     "strict": true,
