@@ -7,6 +7,11 @@ $bg-selected: rgba($primary-color, 0.1);
 $border-color: #e0e0e0;
 $cell-height: 60px; // Altura fixa para visual consistente
 
+:host {
+    display: flex;
+    flex-direction: column;
+    color: $text-color;
+}
 
 // --- Grade dos Dias (O Calendário em si) ---
 .days-grid {
@@ -39,7 +44,7 @@ $cell-height: 60px; // Altura fixa para visual consistente
             background-color: #fafafa;
 
             .day-number {
-                color: $text-muted;
+                color: $text-color;
             }
         }
 
@@ -51,7 +56,6 @@ $cell-height: 60px; // Altura fixa para visual consistente
         &.is-today {
             .day-number {
                 background-color: $primary-color;
-                color: white;
                 width: 14px;
                 height: 14px;
                 display: flex;
@@ -72,7 +76,7 @@ $cell-height: 60px; // Altura fixa para visual consistente
 
     .day-number {
         font-size: 0.9rem;
-        color: $text-color;
+        // color: $text-color;
         padding: 2px;
     }
 }
@@ -128,7 +132,7 @@ $cell-height: 60px; // Altura fixa para visual consistente
 
     .time-grid {
         position: relative; // Contexto para o posicionamento absoluto da linha vermelha
-        min-height: $hour-height * 24; // Garante espaço total
+        //  min-height: $hour-height * 12; // Garante espaço total
     }
 
     // --- Linhas da Grade ---
@@ -141,7 +145,7 @@ $cell-height: 60px; // Altura fixa para visual consistente
             width: $time-col-width;
             text-align: right;
             padding-right: 10px;
-            color: #70757a;
+            color: $text-color;
             font-size: 12px;
             transform: translateY(-8px); // Ajuste fino para alinhar texto com a linha
             border-right: 1px solid $grid-color;
@@ -205,4 +209,9 @@ $cell-height: 60px; // Altura fixa para visual consistente
             }
         }
     }
+}
+
+h2 {
+    text-transform: capitalize;
+    color: $text-color;
 }

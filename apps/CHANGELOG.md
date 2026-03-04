@@ -2,6 +2,8 @@
 As mudanças devem estar descritas neste documento para melhor analisar a implementação com seu Objetivo a ser atingido. Descreva o que o recurso implementado resolve e o estágio em que ele se encontra para se comparado com os relatórios gerados após enviar se PR.
 
 # Sprint 2026
+- [dev]: Calendário:
+  - [ ]: Registrar evento, integração com entidade de eventos; 
 - [ ]: Janela
   - [ ]: Abrir objeto em janela externa a partir do (internalId) [SPEC](../docs/specs/123678.md);
 - [ ]: Master Detail Component: 
