@@ -28,6 +28,12 @@ import { ProfileMenu } from '../../../projects/ci/auth/src/lib/components/profil
           }
         },
         {
+          label: 'Ajustar Visibilidade',
+          icon: 'visibility',
+          onClick: (painel?: PainelComponent) => {
+          }
+        },
+        {
           label: 'Sair',
           onClick: (painel?: PainelComponent) => {
             painel?.sair();

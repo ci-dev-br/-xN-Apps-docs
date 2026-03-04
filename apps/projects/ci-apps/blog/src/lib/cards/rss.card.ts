@@ -1,36 +1,41 @@
 import { HttpClient, HttpHeaderResponse, HttpHeaders } from "@angular/common/http";
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
 import { FormBuilder, FormsModule } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { CoreModule } from "@ci/core";
-import { XMLParser, XMLBuilder, XMLValidator } from 'fast-xml-parser';
+import { XMLParser } from 'fast-xml-parser';
 import { lastValueFrom } from "rxjs";
 
 @Component({
     selector: 'ci-card--rss-card',
-    template: `
+    template: `<mat-card>
+        <h4 mat-card-title>Configure o serviço de RSS</h4>
+        <p mat-card-subtitle>  Configure o cartão de RSS inserindo o endereço do RSS abaixo:</p>
+        <mat-card-content>
         @if(stage==='config'){
-            <h4>Configure o serviço de RSS</h4>
-            <p>Configure o cartão de RSS inserindo o endereço do RSS abaixo:</p>
             <mat-form-field>
                 <input matInput placeholder="URL" [(ngModel)]="url" (blur)="update()" />
-        </mat-form-field>}
-        @else{
-            @if(!!data?.title){
-                <h1>{{data?.title}}</h1>
+            </mat-form-field>
+            <button mat-raised-button (click)="configurar()" >Configurar</button>
+        }@else{
+                 A
             }
-        }
-    `,
+        </mat-card-content>
+    </mat-card> `,
     standalone: true,
     imports: [
         CoreModule,
         MatFormFieldModule,
         MatInputModule,
         FormsModule,
+        MatCardModule,
+        MatButtonModule,
     ]
 })
-export class RSSCard implements OnChanges {
+export class RSSCard implements OnChanges, OnInit {
     stage: 'config' | 'run' = 'config';
     data?: any;
     @Input() url?: string;
@@ -45,7 +50,9 @@ export class RSSCard implements OnChanges {
         private readonly http: HttpClient,
     ) { }
     ngOnChanges(changes: SimpleChanges): void {
-
+    }
+    ngOnInit(): void {
+        this.loadRSS();
     }
     async loadRSS() {
         try {
@@ -57,11 +64,12 @@ export class RSSCard implements OnChanges {
                 })));
 
             this.data = json_rss_loaded;
-            // const builder = new XMLBuilder();
-            // const xmlContent = builder.build(json_rss_loaded);
         } catch (error) {
             console.trace(error);
         }
+    }
+    async configurar() {
+        this.update();
     }
 }
 export const RSSCardInfo = {

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, HostListener, Input, OnInit } from "@angular/core";
 import { CoreModule } from "@ci/core";
 
 @Component({
@@ -44,5 +44,15 @@ export class Day implements OnInit {
         // Formata string para mostrar na bolinha (ex: "14:35")
         this.currentTime = now;
         this.currentTimeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    // novoRegistro: E
+    @HostListener('mousedown', ['$event'])
+    mousedownHanlder(event: MouseEvent) {
+
+    }
+
+    @HostListener('mouseup', ['$event'])
+    mouseupHanlder(event: MouseEvent) {
+
     }
 }

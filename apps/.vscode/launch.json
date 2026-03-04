@@ -6,11 +6,12 @@
       "name": "ng serve",
       "type": "msedge",
       "request": "launch",
-      // "preLaunchTask": "npm: start",
+      "preLaunchTask": "npm: start",
       "url": "https://development.ci.dev.br/"
     },
     /* {
       "name": "ng test",
+      
       "type": "chrome",
       "request": "launch",
       "preLaunchTask": "npm: test",

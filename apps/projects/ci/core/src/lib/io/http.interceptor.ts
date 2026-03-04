@@ -106,9 +106,11 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
     }
     private addBearerToken(request: HttpRequest<any>) {
         let bearer = undefined;
-        let user_storage: any = null;
-        if (user_storage = this.storage.restore('apps.ci.dev.br.store.User')) {
-            if (user_storage?.authentication?.bearer) bearer = user_storage.authentication.bearer;
+        if (request.url.indexOf('https://apps.ci.dev.br') === 0) {
+            let user_storage: any = null;
+            if (user_storage = this.storage.restore('apps.ci.dev.br.store.User')) {
+                if (user_storage?.authentication?.bearer) bearer = user_storage.authentication.bearer;
+            }
         }
         return bearer ? request.clone({
             headers: new HttpHeaders({

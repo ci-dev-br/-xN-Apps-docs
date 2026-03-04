@@ -3,10 +3,10 @@
     flex-direction: column;
     align-items: stretch;
     justify-content: stretch;
-    overflow: hide;
+    overflow: hidden;
 
     flex: auto;
-
+    height: 100%;
 }
 
 .after-setting {
@@ -14,6 +14,7 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    flex: 0;
 }
 
 .cards-container {
@@ -37,5 +38,5 @@
     justify-content: stretch;
     overflow: auto;
 
-    flex: auto;
+    flex: 1;
 }
