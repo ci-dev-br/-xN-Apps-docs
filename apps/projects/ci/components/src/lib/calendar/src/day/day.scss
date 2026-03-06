@@ -179,7 +179,7 @@ $cell-height: 60px; // Altura fixa para visual consistente
         align-items: center;
 
         .time-bubble {
-            background-color: $primary-red;
+            background-color: $pri0-*mary-red;
             color: white;
             font-size: 10px;
             font-weight: bold;
@@ -195,7 +195,7 @@ $cell-height: 60px; // Altura fixa para visual consistente
             height: 2px;
             background-color: $primary-red;
 
-            // Opcional: Efeito de bolinha na ponta da linha
+            // Opcional: Efeito de bolinha na ponta da linha+
             &::before {
                 content: '';
                 display: block;
@@ -214,4 +214,5 @@ $cell-height: 60px; // Altura fixa para visual consistente
 h2 {
     text-transform: capitalize;
     color: $text-color;
+    text-align: center;
 }
