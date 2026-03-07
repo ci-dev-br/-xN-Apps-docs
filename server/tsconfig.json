@@ -210,6 +210,12 @@
       ],
       "@ci/vendas/*": [
         "libs/vendas/src/*"
+      ],
+      "@ci/tasking": [
+        "libs/tasking/src"
+      ],
+      "@ci/tasking/*": [
+        "libs/tasking/src/*"
       ]
     }
   }

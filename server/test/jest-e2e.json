@@ -74,6 +74,8 @@
     "@ci/mlms/(.*)": "<rootDir>/../libs/mlms/src/$1",
     "@ci/mlms": "<rootDir>/../libs/mlms/src",
     "@ci/vendas/(.*)": "<rootDir>/../libs/vendas/src/$1",
-    "@ci/vendas": "<rootDir>/../libs/vendas/src"
+    "@ci/vendas": "<rootDir>/../libs/vendas/src",
+    "@ci/tasking/(.*)": "<rootDir>/../libs/tasking/src/$1",
+    "@ci/tasking": "<rootDir>/../libs/tasking/src"
   }
 }

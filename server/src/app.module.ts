@@ -36,6 +36,7 @@ import { CrmEntities } from '@ci/crm/models';
 import { CrmModule } from '@ci/crm';
 import { DyMEntities, DyMModule } from '@ci/mlms';
 import { EspazioModule, Entities as EspazioEntities } from '@ci/espazio/espazio.module';
+import { TaskingModule, Entities as TaskingEntities } from '@ci/tasking/tasking.module';
 /**
  * Adicione os módulos que podem ser carregados pela configfuração do environment;
  * Nesta versão a compilação possui todos os módulos mesmo não estando indicados no .env
@@ -83,6 +84,7 @@ const _entities_name = {
   CRM: CrmEntities,
   DyM: DyMEntities,
   Espazio: EspazioEntities,
+  Tasking: TaskingEntities,
 }
 const _modules_name = {
   System: SystemModule,
@@ -114,6 +116,7 @@ const _modules_name = {
   CRM: CrmModule,
   DyM: DyMModule,
   Espazio: EspazioModule,
+  Tasking: TaskingModule,
 }
 /**
  * « end

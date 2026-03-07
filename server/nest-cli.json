@@ -294,6 +294,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/vendas/tsconfig.lib.json"
       }
+    },
+    "tasking": {
+      "type": "library",
+      "root": "libs/tasking",
+      "entryFile": "index",
+      "sourceRoot": "libs/tasking/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/tasking/tsconfig.lib.json"
+      }
     }
   }
 }

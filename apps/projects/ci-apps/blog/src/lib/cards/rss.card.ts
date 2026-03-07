@@ -16,11 +16,13 @@ import { lastValueFrom } from "rxjs";
         <p mat-card-subtitle>  Configure o cartão de RSS inserindo o endereço do RSS abaixo:</p>
         <mat-card-content>
         @if(stage==='config'){
-            <mat-form-field>
-                <input matInput placeholder="URL" [(ngModel)]="url" (blur)="update()" />
-            </mat-form-field>
-            <button mat-raised-button (click)="configurar()" >Configurar</button>
-        }@else{
+            <div class="a row s">
+                <mat-form-field>
+                    <input matInput placeholder="URL" [(ngModel)]="url" (blur)="update()" />
+                </mat-form-field>
+                <button mat-raised-button (click)="configurar()" >Configurar</button>
+            </div>
+            }@else{
                  A
             }
         </mat-card-content>
