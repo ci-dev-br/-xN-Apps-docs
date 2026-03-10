@@ -3,6 +3,7 @@ import { CalendarDay } from "../calendar-day";
 import { CoreModule } from "@ci/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
+import { MatToolbarModule } from "@angular/material/toolbar";
 
 @Component({
     selector: 'ci-calendar-header',
@@ -11,6 +12,7 @@ import { MatIconModule } from "@angular/material/icon";
         CoreModule,
         MatIconModule,
         MatButtonModule,
+        MatToolbarModule,
     ],
     templateUrl: 'header.html'
 })

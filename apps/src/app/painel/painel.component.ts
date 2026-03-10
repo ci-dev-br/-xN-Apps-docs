@@ -11,7 +11,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CI_STATIC_APPS, IApp } from './apps/apps';
 import { AuthModule, USER_MENU, UserService } from '@ci/auth';
-import { LogoComponent, IconModule, IItemMenu } from '@ci/components';
+import { LogoComponent, IconModule, IItemMenu, NavbarModule } from '@ci/components';
 @Component({
   selector: 'ci-painel',
   imports: [
@@ -29,6 +29,7 @@ import { LogoComponent, IconModule, IItemMenu } from '@ci/components';
     LogoComponent,
     LoadIconsModule,
     IconModule,
+    NavbarModule,
   ],
   standalone: true,
   templateUrl: './painel.component.html',
@@ -45,7 +46,7 @@ export class PainelComponent implements OnInit {
     iconLoader: IconLoaderSerices,
   ) {
     iconLoader.load({
-      // imersao: { url: 'icons/imersao.svg' },
+      imersao: { url: 'icons/imersao.svg' },
       agenda: { url: 'icons/agenda.svg' },
       anotacoes: { url: 'icons/anotacoes.svg' },
       cadastros: { url: 'icons/v2/cadastros.svg' },
