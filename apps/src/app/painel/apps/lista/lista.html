@@ -10,7 +10,8 @@
     @for (app of (appsFiltered || apps); track $index) {
     <div class="app" [tabindex]="$index" (contextmenu)="contextMenuHanlder($event)"
         (keydown.enter)="appClickHandler($event, app)" (click)="appClickHandler($event, app)"
-        [attr.aria-labelledby]="app.description" [matTooltip]="app.description">
+        [attr.aria-labelledby]="app!.description">
+        <!-- [matTooltip]="app.description" -->
         <div class="bg" [style.border-color]="app.color"></div>
         <span class="header">
             @if(app.icon){

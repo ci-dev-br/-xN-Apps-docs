@@ -1,0 +1,301 @@
+// Variáveis para fácil customização
+$primary-color: #3f51b5;
+$text-color: #333;
+$text-muted: #ccc;
+$bg-hover: #f5f5f5;
+$bg-selected: rgba($primary-color, 0.1);
+$border-color: #e0e0e0;
+
+.calendar-container {
+    font-family: 'Roboto', 'Helvetica', sans-serif; // Fonte padrão Angular
+    // background: white;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+// --- Cabeçalho ---
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid $border-color;
+
+    .month-title {
+        h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: $text-color;
+
+            span {
+                font-weight: 300; // Ano mais fino
+                color: lighten($text-color, 20%);
+            }
+        }
+    }
+
+    .nav-buttons {
+        display: flex;
+        gap: 8px;
+
+        button {
+            background: transparent;
+            border: 1px solid $border-color;
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+
+            &:hover {
+                background: $bg-hover;
+            }
+
+            &.btn-today {
+                font-weight: bold;
+                color: $primary-color;
+            }
+        }
+    }
+}
+
+// --- Grade dos Dias da Semana ---
+.weekdays-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid $border-color;
+    // background-color: #fafafa;
+
+    .weekday {
+        padding: 2px;
+        text-align: center;
+        font-weight: 600;
+        color: lighten($text-color, 30%);
+        //  font-size: 0.85rem;
+        text-transform: uppercase;
+    }
+}
+
+// --- Grade dos Dias (O Calendário em si) ---
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    // Opcional: grid-auto-rows garante altura mínima se houver muitas semanas
+    grid-auto-rows: auto;
+
+    .day-cell {
+        border-right: 1px solid $border-color; // Linhas verticais
+        border-bottom: 1px solid $border-color; // Linhas horizontais
+        padding: 4px;
+        cursor: pointer;
+        position: relative;
+        transition: background 0.2s ease;
+        display: flex;
+        flex-direction: column;
+
+        // Remove a borda direita da última coluna para não duplicar com container
+        &:nth-child(7n) {
+            border-right: none;
+        }
+
+        &:hover {
+            // background-color: $bg-hover;
+        }
+
+        // Estados Especiais
+        &.is-other-month {
+            // background-color: #fafafa;
+
+            .day-number {
+                color: $text-muted;
+            }
+        }
+
+        &.is-selected {
+            background-color: $bg-selected;
+            box-shadow: inset 0 0 0 2px $primary-color;
+        }
+
+        &.is-today {
+            .day-number {
+                // background-color: $primary-color;
+                // color: white;
+                width: 14px;
+                height: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                font-weight: bold;
+            }
+        }
+    }
+}
+
+// --- Conteúdo da Célula ---
+.day-header {
+    display: flex;
+    justify-content: flex-end; // Número no canto direito? Ou center?
+    margin-bottom: 4px;
+
+    .day-number {
+        // font-size: 0.9rem;
+        color: $text-color;
+        padding: 2px;
+    }
+}
+
+.day-content {
+    flex: 1; // Ocupa o resto do espaço da célula
+
+    .event-dot {
+        display: block;
+        width: 6px;
+        height: 6px;
+        background-color: $primary-color;
+        border-radius: 50%;
+        margin: 2px auto; // Centralizado
+    }
+}
+
+.day-view-wrapper {
+
+    $hour-height: 48px; // DEVE ser igual à constante HOUR_HEIGHT do TS
+    $grid-color: #e0e0e0;
+    $primary-red: #ea4335;
+    $time-col-width: 60px;
+
+    /* .day-view-wrapper { */
+    display: flex;
+    flex-direction: column;
+    // height: 100%;
+    /* Ocupa altura disponível do pai */
+    //  background: white;
+    border: 1px solid $grid-color;
+    border-radius: 8px;
+    /*  } */
+
+    .day-header {
+        padding: 16px;
+        border-bottom: 1px solid $grid-color;
+        text-align: center;
+        // background-color: #f8f9fa;
+
+        h3 {
+            margin: 0;
+            // font-size: 1.1rem;
+            text-transform: capitalize;
+        }
+    }
+
+    .scroll-container {
+        flex: 1;
+        overflow-y: auto; // Permite rolar se o dia for longo
+        position: relative;
+    }
+
+    .time-grid {
+        position: relative; // Contexto para o posicionamento absoluto da linha vermelha
+        min-height: $hour-height * 24; // Garante espaço total
+    }
+
+    // --- Linhas da Grade ---
+    .hour-row {
+        display: flex;
+        border-bottom: 1px solid #f0f0f0; // Linha sutil separando horas
+        box-sizing: border-box;
+
+        .time-label {
+            width: $time-col-width;
+            text-align: right;
+            padding-right: 10px;
+            //  color: #70757a;
+            // font-size: 12px;
+            transform: translateY(-8px); // Ajuste fino para alinhar texto com a linha
+            border-right: 1px solid $grid-color;
+        }
+
+        .time-slot {
+            flex: 1;
+            position: relative; // Para eventos futuros
+
+            // Opcional: Linha tracejada na meia hora (30min)
+            &::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 0;
+                right: 0;
+                border-top: 1px dashed lighten($grid-color, 10%);
+                pointer-events: none;
+            }
+        }
+    }
+
+    // --- Marcador de Hora Atual ---
+    .current-time-marker {
+        position: absolute;
+        left: 0; // Começa desde a label da hora
+        right: 0;
+        z-index: 10; // Fica acima das linhas da grade
+        pointer-events: none; // Permite clicar em eventos que estejam "embaixo" da linha
+        display: flex;
+        align-items: center;
+
+        .time-bubble {
+            background-color: $primary-red;
+            // color: white;
+            //  font-size: 10px;
+            font-weight: bold;
+            padding: 2px 2px;
+            border-radius: 10px;
+            width: $time-col-width - 10px; // Encaixa na coluna da esquerda
+            text-align: center;
+            margin-left: 5px;
+        }
+
+        .line {
+            flex: 1;
+            height: 2px;
+            background-color: $primary-red;
+
+            // Opcional: Efeito de bolinha na ponta da linha
+            &::before {
+                content: '';
+                display: block;
+                width: 8px;
+                height: 8px;
+                background-color: $primary-red;
+                border-radius: 50%;
+                position: absolute;
+                left: $time-col-width; // Exatamente na borda da grade
+                transform: translate(-50%, -3px); // Centraliza na linha
+            }
+        }
+    }
+}
+
+.small {
+    * {
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 9px;
+    }
+}
+
+:host {
+
+    >h1,
+    >h2,
+    >h3,
+    >h4,
+    >h5,
+    >h6 {
+        padding: 0;
+        margin: 0;
+        color: black;
+        text-align: center;
+        font-size: 8px;
+    }
+}

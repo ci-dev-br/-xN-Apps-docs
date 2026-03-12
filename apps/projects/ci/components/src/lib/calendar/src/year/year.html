@@ -1,0 +1,9 @@
+@if(!!monthsOfYear && !!selectedDate){
+@for(month of monthsOfYear;track $index){
+<div class="card">
+    <!-- <h5>{{month | date:'MMMM'}}</h5> -->
+    <ci-calendar-month [currentViewDate]="month" [selectedDate]="selectedDate" [size]="'small'"
+        (changed)="selectedDate = $event"></ci-calendar-month>
+</div>
+}
+}

@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Input, NgZone, OnDestroy, Optional, ViewChild } from '@angular/core';
 import { BoxGeometry, Color, DirectionalLight, Material, Mesh, MeshNormalMaterial, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from 'three';
 import { CoreModule } from '@ci/core';
+// Importamos o OrbitControls junto com o GLTFLoader
 import { GLTFLoader, OrbitControls } from 'three/addons';
 
 /**
@@ -39,7 +40,7 @@ export class Objeto {
 })
 export class ThrejsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('rendererContainer', { static: true }) rendererContainer!: ElementRef<HTMLDivElement>;
-
+  
   @Input() scene?: Scene;
   @Input() camera?: PerspectiveCamera;
   @Input() renderer?: WebGLRenderer;
@@ -50,11 +51,11 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
   controls?: OrbitControls;
 
   private _objetos?: Objeto[] | undefined;
-
+  
   public get objetos(): Objeto[] | undefined {
     return this._objetos;
   }
-
+  
   @Input()
   public set objetos(value: Objeto[] | undefined) {
     if (this._objetos === value) return;
@@ -90,7 +91,7 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
       this.resizeObserver.disconnect();
     }
     cancelAnimationFrame(this.frameId);
-
+    
     // Limpa os controles da câmera
     if (this.controls) {
       this.controls.dispose();
@@ -104,12 +105,12 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
   private initThree(): void {
     this.scene = new Scene();
     this.scene.background = new Color(0x222222);
-
+    
     const { clientWidth, clientHeight } = this.rendererContainer.nativeElement;
-
+    
     this.camera = new PerspectiveCamera(75, clientWidth / clientHeight, 0.1, 1000);
     this.camera.position.z = 5;
-
+    
     this.renderer = new WebGLRenderer({
       antialias: true,
       alpha: true,
@@ -121,7 +122,7 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
       powerPreference: 'high-performance',
       precision: 'highp'
     });
-
+    
     this.renderer.setSize(clientWidth, clientHeight);
     this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
 
@@ -146,7 +147,7 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
 
   private animate(): void {
     this.frameId = requestAnimationFrame(() => this.animate());
-
+    
     // Atualiza os controles em cada frame (necessário quando enableDamping = true)
     if (this.controls) {
       this.controls.update();
