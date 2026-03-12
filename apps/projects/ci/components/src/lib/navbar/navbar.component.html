@@ -1,5 +1,5 @@
 @if(!!(user | async)){
-<mat-toolbar color="accent">
+<!-- <mat-toolbar color="accent">
     <button mat-icon-button color="primary" routerLink="/meus-apps"><mat-icon>apps</mat-icon></button>
     <ci-logo></ci-logo>
     @if(menuItens){@for (item of menuItens; track $index) {
@@ -21,11 +21,45 @@
     <button mat-button [matMenuTriggerFor]="userMenu">
         {{(user | async)?.username}}
     </button>
-    <mat-menu #userMenu>
-        <button mat-menu-item (click)="sair()">
+    <mat-menu #userMenu> -->
+<!--    <button mat-menu-item (click)="sair()">
             <mat-icon>exit_to_app</mat-icon>
             Sair
+        </button> -->
+<!-- </mat-menu>
+</mat-toolbar> -->
+<mat-toolbar color="accent">
+    <ci-logo></ci-logo>
+    <span style="flex: auto;"></span>
+    <span style="flex: auto;"></span>
+    <!--  <button mat-icon-button (click)="repo()">
+        <ci-icon icon="code"></ci-icon>
+    </button> -->
+    <button mat-icon-button [matMenuTriggerFor]="userMenu">
+        <mat-icon>people</mat-icon>
+    </button>
+    <mat-menu #userMenu>
+        @if(!!userMenu){@for(menu_item of userMenuList; track menu_item){
+        @if(menu_item.component !== undefined){
+        <ng-container *ngComponentOutlet="menu_item.component"></ng-container>
+        }@else{
+        @if(!!menu_item.onClick){
+        <button mat-menu-item (click)="itemMenuActionHandler(menu_item, $event)">
+            <ng-container *ngTemplateOutlet="innerItemMenu"></ng-container>
         </button>
+        }@else{
+        <ng-container *ngTemplateOutlet="innerItemMenu"></ng-container>
+        }
+        }
+        <ng-template #innerItemMenu>
+            <div class="row --vc">
+                @if(menu_item.label){
+                @if(menu_item.icon){<mat-icon>{{menu_item.icon}}</mat-icon>}
+                {{menu_item.label}}
+                }
+            </div>
+        </ng-template>
+        }}
     </mat-menu>
 </mat-toolbar>
 }@else{

@@ -1,7 +1,8 @@
-import { Component } from "@angular/core";
-import { UserService } from "@ci/auth";
+import { Component, inject } from "@angular/core";
+import { USER_MENU, UserService } from "@ci/auth";
 import { IMenuItem } from "./i-menu-item";
 import { MatCardModule } from "@angular/material/card";
+import { IItemMenu } from "@ci/components";
 
 @Component({
     selector: 'ci-navbar',
@@ -14,10 +15,14 @@ import { MatCardModule } from "@angular/material/card";
 export class NavbarComponent {
     user = this.userService.user;
     menuItens?: IMenuItem[];
+    userMenuList?: IItemMenu[] = inject(USER_MENU, { optional: true }) || undefined;
     constructor(
         private readonly userService: UserService,
     ) { }
     async sair() {
         this.userService?.sair();
+    }
+    protected async itemMenuActionHandler(itemMenu: IItemMenu, event: Event) {
+        if (itemMenu.onClick) itemMenu.onClick(this, event);
     }
 }
