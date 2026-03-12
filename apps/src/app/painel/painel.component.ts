@@ -11,7 +11,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CI_STATIC_APPS, IApp } from './apps/apps';
 import { AuthModule, USER_MENU, UserService } from '@ci/auth';
-import { LogoComponent, IconModule, IItemMenu, NavbarModule } from '@ci/components';
+import { IconModule, IItemMenu, NavbarModule } from '@ci/components';
 @Component({
   selector: 'ci-painel',
   imports: [
