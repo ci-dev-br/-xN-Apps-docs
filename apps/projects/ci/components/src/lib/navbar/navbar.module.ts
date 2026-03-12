@@ -34,5 +34,7 @@ import { NavbarComponent } from "./navbar.component";
 })
 export class NavbarModule { }
 export {
-    NavbarComponent
+    NavbarComponent,
+    IconModule,
+    LogoComponent,
 }
