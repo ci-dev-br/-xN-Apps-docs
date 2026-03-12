@@ -1,0 +1,17 @@
+<h5>{{selectedDate | date:'MMMM'}}</h5>
+<div class="weekdays-grid" [class.small]="size==='small'">
+    <span *ngFor="let dayName of weekDays" class="weekday">
+        {{ dayName }}
+    </span>
+</div>
+<div class="days-grid" [class.small]="size==='small'">
+    <div class="day-cell" *ngFor="let day of days" [class.is-other-month]="!day.isCurrentMonth"
+        [class.is-today]="day.isToday" [class.is-selected]="day.isSelected" (click)="selectDate(day)">
+        <div class="day-header">
+            <span class="day-number">{{ day.dayNumber }}</span>
+        </div>
+        <div class="day-content">
+            <span *ngIf="day.hasEvents" class="event-dot"></span>
+        </div>
+    </div>
+</div>
