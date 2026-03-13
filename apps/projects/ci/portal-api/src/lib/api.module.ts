@@ -20,6 +20,9 @@ import { MessageService } from './services/message.service';
 import { AuthService } from './services/auth.service';
 import { RegisterService } from './services/register.service';
 import { InviteService } from './services/invite.service';
+import { PhotoService } from './services/photo.service';
+import { FileExplorerService } from './services/file-explorer.service';
+import { VideoService } from './services/video.service';
 import { ApplicationService } from './services/application.service';
 import { DomainService } from './services/domain.service';
 import { ContactsService } from './services/contacts.service';
@@ -28,9 +31,6 @@ import { ConversationService } from './services/conversation.service';
 import { ProductService } from './services/product.service';
 import { PranchetaService } from './services/prancheta.service';
 import { UserService } from './services/user.service';
-import { PhotoService } from './services/photo.service';
-import { FileExplorerService } from './services/file-explorer.service';
-import { VideoService } from './services/video.service';
 import { CategoryService } from './services/category.service';
 import { CadastroService } from './services/cadastro.service';
 import { EnderecoService } from './services/endereco.service';
@@ -55,9 +55,10 @@ import { ClienteCrmService } from './services/cliente-crm.service';
 import { AtendimentoService } from './services/atendimento.service';
 import { AgendamentoService } from './services/agendamento.service';
 import { ChessService } from './services/chess.service';
+import { ChangelogService } from './services/changelog.service';
 
 export function getServiceAsSchema(schema: string): Type<any>{
-  return ({ 'ApiService': ApiService,'WebsiteService': WebsiteService,'SitePageService': SitePageService,'CommentMetaService': CommentMetaService,'CommentService': CommentService,'LinksService': LinksService,'SiteOptionService': SiteOptionService,'SitePostService': SitePostService,'TermService': TermService,'TermMetaService': TermMetaService,'SystemService': SystemService,'DeviceService': DeviceService,'MessageService': MessageService,'AuthService': AuthService,'RegisterService': RegisterService,'InviteService': InviteService,'ApplicationService': ApplicationService,'DomainService': DomainService,'ContactsService': ContactsService,'ChamadaService': ChamadaService,'ConversationService': ConversationService,'ProductService': ProductService,'PranchetaService': PranchetaService,'UserService': UserService,'PhotoService': PhotoService,'FileExplorerService': FileExplorerService,'VideoService': VideoService,'CategoryService': CategoryService,'CadastroService': CadastroService,'EnderecoService': EnderecoService,'InformacaoContatoService': InformacaoContatoService,'PessoaService': PessoaService,'UnidadeMedidaService': UnidadeMedidaService,'PaisService': PaisService,'LancamentoFinanceiroService': LancamentoFinanceiroService,'OrganizacaoService': OrganizacaoService,'FormsService': FormsService,'ProjetoService': ProjetoService,'ClienteProjetoService': ClienteProjetoService,'WorkItemService': WorkItemService,'VendaProdutoService': VendaProdutoService,'ServicoService': ServicoService,'PromocaoService': PromocaoService,'ProfissionalService': ProfissionalService,'ProdutoService': ProdutoService,'PagamentoService': PagamentoService,'HistoricoContatoService': HistoricoContatoService,'ClienteCrmService': ClienteCrmService,'AtendimentoService': AtendimentoService,'AgendamentoService': AgendamentoService,'ChessService': ChessService, }[ schema + 'Service'] as any) || undefined;
+  return ({ 'ApiService': ApiService,'WebsiteService': WebsiteService,'SitePageService': SitePageService,'CommentMetaService': CommentMetaService,'CommentService': CommentService,'LinksService': LinksService,'SiteOptionService': SiteOptionService,'SitePostService': SitePostService,'TermService': TermService,'TermMetaService': TermMetaService,'SystemService': SystemService,'DeviceService': DeviceService,'MessageService': MessageService,'AuthService': AuthService,'RegisterService': RegisterService,'InviteService': InviteService,'PhotoService': PhotoService,'FileExplorerService': FileExplorerService,'VideoService': VideoService,'ApplicationService': ApplicationService,'DomainService': DomainService,'ContactsService': ContactsService,'ChamadaService': ChamadaService,'ConversationService': ConversationService,'ProductService': ProductService,'PranchetaService': PranchetaService,'UserService': UserService,'CategoryService': CategoryService,'CadastroService': CadastroService,'EnderecoService': EnderecoService,'InformacaoContatoService': InformacaoContatoService,'PessoaService': PessoaService,'UnidadeMedidaService': UnidadeMedidaService,'PaisService': PaisService,'LancamentoFinanceiroService': LancamentoFinanceiroService,'OrganizacaoService': OrganizacaoService,'FormsService': FormsService,'ProjetoService': ProjetoService,'ClienteProjetoService': ClienteProjetoService,'WorkItemService': WorkItemService,'VendaProdutoService': VendaProdutoService,'ServicoService': ServicoService,'PromocaoService': PromocaoService,'ProfissionalService': ProfissionalService,'ProdutoService': ProdutoService,'PagamentoService': PagamentoService,'HistoricoContatoService': HistoricoContatoService,'ClienteCrmService': ClienteCrmService,'AtendimentoService': AtendimentoService,'AgendamentoService': AgendamentoService,'ChessService': ChessService,'ChangelogService': ChangelogService, }[ schema + 'Service'] as any) || undefined;
 } 
 
 /**
@@ -92,6 +93,9 @@ export class ApiModule {
         AuthService,
         RegisterService,
         InviteService,
+        PhotoService,
+        FileExplorerService,
+        VideoService,
         ApplicationService,
         DomainService,
         ContactsService,
@@ -100,9 +104,6 @@ export class ApiModule {
         ProductService,
         PranchetaService,
         UserService,
-        PhotoService,
-        FileExplorerService,
-        VideoService,
         CategoryService,
         CadastroService,
         EnderecoService,
@@ -127,6 +128,7 @@ export class ApiModule {
         AtendimentoService,
         AgendamentoService,
         ChessService,
+        ChangelogService,
         {
           provide: ApiConfiguration,
           useValue: params

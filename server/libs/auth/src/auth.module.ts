@@ -25,6 +25,7 @@ import { RegisterController } from "./controller/register.controller";
 import { Invite } from "./models/invite.entity";
 import { InviteService } from "./service/invite.service";
 import { InviteController } from "./controller/invite.controller";
+import { StorageModule } from "@ci/storage";
 export interface IAuthOption {
     secret?: string;
 }
@@ -54,7 +55,7 @@ export const AuthEntities = [
         TenantModule,
         CoreModule,
         NotificacaoModule,
-        // StorageModule,
+        StorageModule,
     ],
     controllers: [
         AuthController,

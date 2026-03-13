@@ -135,6 +135,7 @@ export * from './models/term';
 export * from './models/term-meta';
 export * from './models/tipo-documento-identificacao';
 export * from './models/unidade-medida';
+export * from './models/update-task-status-dto';
 export * from './models/user';
 export * from './models/venda-produto';
 export * from './models/video-get-input';

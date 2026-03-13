@@ -10,18 +10,20 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { MailService } from '@ci/notification/services/mail.service';
 import { conviteToMessagePayload } from '../functions/convite-to-message-payload';
+import { PhotoService } from '@ci/storage/service/photo.service';
 @Injectable()
 export class UserService {
     constructor(
         private readonly dataSource: DataSource,
         @InjectRepository(User)
         private readonly userRepo: Repository<User>,
+        private readonly photos: PhotoService,
         // private readonly mailer: MailService,
     ) { }
     async registrar(registro: User) {
         return await this.dataSource.transaction(async (manager) => {
             const new_user = this.userRepo.create(registro);
-            const user_created = await manager.save(new_user);
+            const user_created = await manager.save(new_user, { transaction: true, reload: true });
             await this.sendEmailConfirmation(user_created);
             return user_created;
         })
@@ -117,7 +119,7 @@ export class UserService {
             }
         } else {
             return await this.userRepo.createQueryBuilder('user')
-                //  .leftJoinAndSelect('user.photo', 'photo')
+                .leftJoinAndSelect('user.photo', 'photo')
                 .leftJoinAndSelect('user.tenants', 'tenant')
                 .where(`"user".id::varchar = :user_id::varchar and encode(sha512(concat(encode(sha512("user".password::bytea),'hex'), :chave_acesso::varchar )::bytea),'hex') = :ass_pass::varchar`)
                 .setParameter('user_id', userId)
@@ -144,8 +146,12 @@ export class UserService {
             where: { id: userId },
             relations: [/* 'photo',  */
                 'tenants',
+                'photo'
             ]
         })
+        if (user.photo) {
+            user.photo.originalFile = user.photo.originalFile.toString('base64') as any
+        }
         return user;
     }
     /**
@@ -162,9 +168,15 @@ export class UserService {
             delete data.permission;
         }
         let { id, ...changes } = data;
-        let data_ref = !!data.id ? await this.userRepo.findOneBy({ id: data.id }) : await this.userRepo.create(data);
+        let data_ref = !!data.id ? await this.userRepo.findOne({
+            where: { id: data.id },
+            relations: { photo: true }
+        }) : await this.userRepo.create(data);
+        if ('photo' in changes) {
+            changes.photo = await this.photos.Sync(changes.photo)
+        }
         Object.assign(data_ref, changes);
-        return await this.userRepo.save(data_ref);
+        return await this.userRepo.save(data_ref, { transaction: true, reload: true });
     }
     async find(
         tenants?: string[],
@@ -181,8 +193,12 @@ export class UserService {
             }
         }
         return (await this.userRepo.find({
-            where: where
+            where: where,
+            relations: { photo: true, }
         })).map(u => {
+            if (u.photo) {
+                u.photo = u.photo.originalFile.toString('base64') as any
+            }
             Object.keys(u).forEach(k => {
                 if (request.user?.roles?.indexOf('GOODNESS') > -1) {
                     if (['password', 'refreshToken', 'tenants', 'roles', 'permission'].indexOf(k) > -1) {

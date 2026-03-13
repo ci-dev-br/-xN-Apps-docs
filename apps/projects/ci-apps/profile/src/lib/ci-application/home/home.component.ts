@@ -78,6 +78,9 @@ export class HomeComponent implements OnInit {
                     console.trace(error);
                 }
             });
+            if (this.user?.photo && this.user?.photo.format) {
+                this.profileImage = this.user.photo.format! + 'base64,' + this.user.photo.originalFile;
+            }
             this.user = user;
         } else {
             this.user = undefined;
@@ -141,7 +144,10 @@ export class HomeComponent implements OnInit {
             // Converte o canvas para uma imagem Base64 (formato JPEG)
             this.capturedImage = canvas.toDataURL('image/jpeg');
             this.profileImage = this.capturedImage;
-            this.form.get('photo')?.setValue(this.capturedImage);
+            this.form.get('photo')?.setValue({
+                format: this.capturedImage.split('base64,')[0],
+                originalFile: this.capturedImage.split('base64,')[1],
+            });
             // Opcional: Desliga a câmera após tirar a foto
             this.stopCamera();
         }

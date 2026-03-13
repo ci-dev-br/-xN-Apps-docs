@@ -1,8 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude } from "class-transformer";
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Policy } from "./policy.entity";
 import { Tenant } from "@ci/tenant/models/tenant.entity";
+import { Photo } from "@ci/storage/models/photo.entity";
 // import { Photo } from "@ci/storage/models/photo.entity";
 /**
  *	Usuário Auto-identificado do Sistema
@@ -89,17 +90,22 @@ export class User {
     @ManyToMany(() => Tenant)
     @JoinTable()
     tenants?: Tenant[];
-    /**
-     * Campo de teste
-     */
-    @Column({ nullable: true }) teste?: string;
-    // @ApiProperty({ nullable: true, required: false, type: Photo })
-    // @ManyToOne(() => Photo)
-    // @JoinColumn()
-    // photo?: Photo;
-    @ApiProperty({ required: false, nullable: true }) @CreateDateColumn() createdAt?: Date;
+
+
+    @ApiProperty({ required: false, nullable: true })
+    @CreateDateColumn()
+    createdAt?: Date;
     /**
      * Data de atualização do usuário
      */
-    @ApiProperty({ required: false, nullable: true }) @UpdateDateColumn() updatedAt?: Date;
+    @ApiProperty({ required: false, nullable: true })
+    @UpdateDateColumn()
+    updatedAt?: Date;
+    /**
+     * Foto de perfil do usuário
+     */
+    @ApiProperty({ nullable: true, required: false, type: Photo })
+    @ManyToOne(() => Photo, { nullable: true })
+    @JoinColumn()
+    photo?: Photo;
 }

@@ -17,14 +17,16 @@ export class PhotoService {
             const photo_exists = await this.userRepo.findOne({ where: { internalId: photo.internalId } });
             if (photo_exists) {
                 photo_exists.originalFile = photo.originalFile instanceof Buffer ? photo.originalFile : Buffer.from(photo.originalFile as any, 'base64');
-                photo_exists.lastModifiedBy = photo.lastModifiedBy;
-                return await this.userRepo.save(photo_exists);
+                photo_exists.format = photo.format;
+                // photo_exists.lastModifiedBy = photo.lastModifiedBy;
+                return await this.userRepo.save(photo_exists, { reload: true });
             }
         } else {
             const nova_photo = await this.userRepo.create();
             nova_photo.originalFile = photo.originalFile instanceof Buffer ? photo.originalFile : Buffer.from(photo.originalFile as any, 'base64');
-            nova_photo.createdBy = photo.createdBy;
-            return await this.userRepo.save(nova_photo);
+            nova_photo.format = photo.format;
+            // nova_photo.createdBy = photo.createdBy;
+            return await this.userRepo.save(nova_photo, { reload: true, listeners: true, transaction: true });
         }
     }
     async Get(query: string,) {
