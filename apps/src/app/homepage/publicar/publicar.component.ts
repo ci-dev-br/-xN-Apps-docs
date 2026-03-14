@@ -1,11 +1,11 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject, Optional } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
-import { AuthModule, UserPhoto } from "@ci/auth";
+import { AuthModule, UserPhoto, UserService } from "@ci/auth";
 import { CoreModule } from "@ci/core";
 
 @Component({
@@ -25,11 +25,21 @@ import { CoreModule } from "@ci/core";
     ]
 })
 export class Publicar {
+    authorName?: string;
     constructor(
-        @Inject(MAT_DIALOG_DATA)
-        private readonly data: Object
+        @Optional() private readonly dialogReference?: MatDialogRef<Publicar>,
+        @Optional() @Inject(MAT_DIALOG_DATA) private readonly data?: Object,
+        @Optional() private readonly authUserService?: UserService,
     ) {
-
+        this.authUserService?.user.subscribe(user => {
+            if (user?.photo && user?.photo.format) {
+                this.authorName = user.surname || user.fullName || user.username || undefined;
+            } else {
+                this.authorName = undefined;
+            }
+        })
     }
-
+    async publicar() {
+        this.dialogReference?.close();
+    }
 }

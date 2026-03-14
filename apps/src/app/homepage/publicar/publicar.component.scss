@@ -1,0 +1,15 @@
+.col {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    width: 100%;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: stretch;
+    flex: auto;
+    gap: 12px;
+}

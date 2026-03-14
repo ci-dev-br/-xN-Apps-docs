@@ -9,13 +9,13 @@ import { ApiProperty } from "@nestjs/swagger";
     @PrimaryGeneratedColumn('uuid') internalId: string;
     @ApiProperty({ title: 'Chave de Acesso', required: false })
     @Column({ nullable: true, })
-    chaveAcesso?: string;
+    chaveAcessoReference?: string;
     @ApiProperty({ title: 'Registro de Log', required: false })
     @Column({ type: 'jsonb' })
-    log: any;
+    log?: any;
     @ApiProperty({ required: false })
     @Column({ nullable: true })
-    level: string;
+    level?: string;
     @CreateDateColumn()
     cratedAt?: Date;
     @ApiProperty({ required: false })

@@ -1,8 +1,17 @@
 <mat-card-title>
-    <ci-user-photo></ci-user-photo>
+    <div class="row">
+        <ci-user-photo></ci-user-photo>
+        @if(authorName){<h3>{{authorName}}</h3>}
+    </div>
 </mat-card-title>
 <mat-card-content>
-    <mat-form-field>
-        <input type="text" matInput placeholder="Título">
-    </mat-form-field>
+    <div class="col">
+        <mat-form-field>
+            <input type="text" matInput placeholder="Título">
+        </mat-form-field>
+        <mat-form-field>
+            <textarea matInput placeholder="Conteúdo" row="10"></textarea>
+            <button (click)="publicar()" matSuffix mat-icon-button><mat-icon>publish</mat-icon></button>
+        </mat-form-field>
+    </div>
 </mat-card-content>
