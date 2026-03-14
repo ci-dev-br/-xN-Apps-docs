@@ -1,8 +1,9 @@
 <ci-navbar></ci-navbar>
 <div class="page--wrapper">
     @if(!!(userService.user | async)){
-    <div #sidebarElement class="sidebar" [class.--inactive]="!sidebar" (click)="sidebar=!sidebar"
-        [style.top]="sidebarTop + 'px' " [style.left]="sidebarLeft + 'px'">
+    <div #sidebarElement class="sidebar" [class.--inactive]="!sidebar"
+        (click)="sidebar=!sidebar;$event.preventDefault()" [style.top]="sidebarTop + 'px' "
+        [style.left]="sidebarLeft + 'px'">
         <div class="row">
             <button mat-raised-button (click)="newPost()">
                 Texto
