@@ -10,7 +10,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CI_STATIC_APPS, IApp } from './apps/apps';
-import { AuthModule, USER_MENU, UserService } from '@ci/auth';
+import { AuthModule, USER_MENU, AuthUserService } from '@ci/auth';
 import { IconModule, IItemMenu, NavbarModule } from '@ci/components';
 @Component({
   selector: 'ci-painel',
@@ -40,7 +40,7 @@ export class PainelComponent implements OnInit {
   userMenuList?: IItemMenu[] = inject(USER_MENU, { optional: true }) || undefined;
   constructor(
     private readonly router: Router,
-    private readonly userService: UserService,
+    private readonly userService: AuthUserService,
     private readonly route: ActivatedRoute,
     iconLoader: IconLoaderSerices,
   ) {

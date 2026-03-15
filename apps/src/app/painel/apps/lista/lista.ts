@@ -2,7 +2,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { CI_STATIC_APPS, IApp } from "../apps";
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService } from '@ci/auth';
+import { AuthUserService } from '@ci/auth';
 import { CoreModule } from "@ci/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
@@ -31,7 +31,7 @@ export class Lista {
         validators: [],
     });
     constructor(
-        private readonly userService: UserService,
+        private readonly userService: AuthUserService,
         private readonly router: Router,
         private readonly route: ActivatedRoute,
     ) { }

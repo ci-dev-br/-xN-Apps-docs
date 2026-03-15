@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { CoreModule } from "@ci/core";
-import { AuthModule, UserService } from '@ci/auth';
+import { AuthUserService } from "../../services/auth-user.service";
 
 @Component({
     selector: 'ci-user-photo',
@@ -14,7 +14,7 @@ import { AuthModule, UserService } from '@ci/auth';
 export class UserPhoto {
     protected profileImage?: string;
     constructor(
-        private readonly authUserService: UserService,
+        private readonly authUserService: AuthUserService,
     ) {
         this.authUserService.user.subscribe(user => {
             if (user?.photo && user?.photo.format) {

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { UserService } from './services/user.service';
+import { AuthUserService } from './services/auth-user.service';
 import { CoreModule } from '@ci/core';
 import { RouterModule } from '@angular/router';
 @NgModule({
@@ -8,9 +8,7 @@ import { RouterModule } from '@angular/router';
     RouterModule,
   ],
   providers: [
+    AuthUserService,
   ]
 })
 export class AuthModule { }
-export {
-  UserService,
-}

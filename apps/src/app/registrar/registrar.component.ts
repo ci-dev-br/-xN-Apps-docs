@@ -7,7 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Router, RouterModule } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { AuthService, Register, RegisterService } from '@ci/portal-api';
-import { AuthModule, UserService } from '@ci/auth';
+import { AuthModule, AuthUserService } from '@ci/auth';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { FooterModule } from '@ci/components';
 import { CoreModule, IsEmail, IsPhoneNumber, StageModule, StageService } from '@ci/core';
@@ -67,7 +67,7 @@ export class RegistrarComponent implements OnInit {
   constructor(
     private readonly fb: FormBuilder,
     // private readonly authService: AuthService,
-    private readonly userService: UserService,
+    private readonly userService: AuthUserService,
     // private readonly router: Router,
     /* // private readonly */ stages: StageService,
     private readonly regitrar: RegisterService,

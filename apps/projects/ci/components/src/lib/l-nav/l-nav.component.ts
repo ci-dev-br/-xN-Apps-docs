@@ -1,6 +1,6 @@
 import { Component, HostListener, Optional } from '@angular/core';
 import { ActivatedRouteSnapshot, ActivationEnd, ChildActivationEnd, Router } from '@angular/router';
-import { UserService } from '@ci/auth';
+import { AuthUserService } from '@ci/auth';
 import { lastValueFrom } from 'rxjs';
 import { Application, CpuInfo, SystemService, Tenant } from '@ci/portal-api';
 import { ApplicationService } from '@ci/portal-api';
@@ -35,7 +35,7 @@ export class LNavComponent {
   userPhoto?: SafeResourceUrl;
   constructor(
     private readonly router: Router,
-    private readonly userService: UserService,
+    private readonly userService: AuthUserService,
     private readonly applicationService: ApplicationService,
     /// private readonly http: HttpClient,
     public readonly services: ServicesService,
