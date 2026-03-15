@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
-import { AuthModule, UserService } from '@ci/auth';
 import { User } from "@ci/portal-api";
+import { UserService } from "../../services/user.service";
+import { UserPhoto } from "../user-photo/user-photo";
 /**
  * Menu de perfil do usuário.
  * 
@@ -12,6 +13,9 @@ import { User } from "@ci/portal-api";
     templateUrl: './profile-menu.html',
     styleUrls: ['./profile-menu.scss'],
     standalone: true,
+    imports: [
+        UserPhoto,
+    ]
 })
 export class ProfileMenu {
     protected user?: User;
