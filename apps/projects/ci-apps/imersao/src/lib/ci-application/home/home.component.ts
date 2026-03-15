@@ -18,7 +18,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     if (this.isBrowser) {
       this.objetos = [
-        new Objeto({ glb_file: 'cadeira.glb' }),
+        new Objeto({ glb_file: 'mapa_casa.glb' }),
       ];
     }
   }

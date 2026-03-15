@@ -72,6 +72,7 @@ export class FilesComponent {
     })
   }
   async ir(endereco: string) {
+    const old_value = this.endereco;
     try {
       let endereco_novo = endereco;
       this.endereco = endereco;
@@ -88,6 +89,7 @@ export class FilesComponent {
         })
     } catch (error) {
       console.trace(error);
+      this.endereco = old_value;
     }
   }
   async voltar() {

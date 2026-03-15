@@ -14,7 +14,7 @@
 
 .folders,
 .files {
-    $size: 100px;
+    $size: 60px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -55,8 +55,8 @@
         // border: solid 1px #cecece;
         padding: 4px;
         border-radius: 8px;
-        min-height: 120px;
-        min-width: 120px;
+        min-height: 60px;
+        min-width: 60px;
         border: solid 1px transparent;
 
         &:hover {
@@ -128,4 +128,18 @@ mat-tab-group ::ng-deep {
     .mat-mdc-tab-body-content {
         display: contents;
     }
+}
+
+mat-toolbar {
+    display: flex;
+    flex-direction: row;
+
+    >* {
+        flex: auto;
+    }
+}
+
+input{
+    flex: auto;
+    width: 100%;
 }
