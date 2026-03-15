@@ -3,9 +3,11 @@
         <ng-container [formGroup]="form">
             <mat-card>
                 <mat-card-content>
+
                     <div class="row">
                         <div class="user-profile">
-                            <img [src]="profileImage" alt="" class="user-profile-image" (click)="takeAPhoto() ">
+                            @if(profileImage){<img [src]="profileImage" alt="" class="user-profile-image"
+                                (click)="takeAPhoto() ">}
                             <div class="wrap">
                                 <button mat-icon-button
                                     [matMenuTriggerFor]="userPhotoOptions"><mat-icon>photo_camera</mat-icon></button>

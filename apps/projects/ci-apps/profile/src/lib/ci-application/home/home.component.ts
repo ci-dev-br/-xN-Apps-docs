@@ -60,6 +60,9 @@ export class HomeComponent implements OnInit {
     }
     hasUser(user?: User) {
         if (!!user) {
+            if (this.user?.photo && this.user?.photo.format) {
+                this.profileImage = this.user.photo.format! + 'base64,' + this.user.photo.originalFile;
+            }
             // TODO: separar bloco
             this.daos.prepareToEdit(user);
             this.daos.bindDataForm(user, this.form);
@@ -78,9 +81,7 @@ export class HomeComponent implements OnInit {
                     console.trace(error);
                 }
             });
-            if (this.user?.photo && this.user?.photo.format) {
-                this.profileImage = this.user.photo.format! + 'base64,' + this.user.photo.originalFile;
-            }
+
             this.user = user;
         } else {
             this.user = undefined;
