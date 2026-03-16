@@ -13,6 +13,7 @@ import { SidebarSettings } from './sidebar-settings/sidebar-settings.components'
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl } from '@angular/forms';
+import { Publicar } from './publicar/publicar.component';
 const XD = <T>(a: T) => {
     (a as any).___styles_xd__internals = {
         m: { l: 0, r: 0, t: 0, b: 0 },
@@ -136,15 +137,22 @@ export class HomepageComponent implements OnInit {
         }
     }
     async newPost() {
-
+        this.createNewPost('post');
     }
     async newCitation() {
-
+        this.createNewPost('citation');
     }
     async newPhoto() {
-
+        this.createNewPost('photo');
     }
     async newVideo() {
-
+        this.createNewPost('video');
+    }
+    async createNewPost(tipo_postagem: 'post' | 'citation' | 'photo' | 'video') {
+        this.dialog.open(Publicar, {
+            data: {
+                tipo_postagem,
+            }
+        });
     }
 }

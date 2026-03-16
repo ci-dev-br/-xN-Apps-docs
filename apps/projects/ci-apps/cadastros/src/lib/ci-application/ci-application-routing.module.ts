@@ -2,10 +2,15 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component'
 import { CadastrosComponent } from '../cadastros/cadastros.component';
-import { MasterDetailComponent } from '../cadastros/master-detail/master-detail.component';
+import { MasterDetailComponent } from '@ci/components';
+// import { MasterDetailComponent } from '../cadastros/master-detail/master-detail.component';
 const home_children: Routes = [
   {
     path: '', component: CadastrosComponent, data: { title: 'Cadastros', icon: 'dashboard' }, children: [
+      /*  {
+         path: '',
+         component: undefined
+       }, */
       {
         path: ':EntityName',
         component: MasterDetailComponent,
