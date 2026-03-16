@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ComponentRef, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { Router, RouterModule } from '@angular/router';
-import { AuthModule, UserService } from '@ci/auth';
+import { AuthModule, AuthUserService } from '@ci/auth';
 import { FooterModule, NavbarModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { Application, User } from '@ci/portal-api';
@@ -43,7 +43,7 @@ const XD = <T>(a: T) => {
 export class HomepageComponent implements OnInit {
     stage?: 'loading' | 'loaded' = 'loading';
     constructor(
-        protected readonly userService: UserService,
+        protected readonly userService: AuthUserService,
         private render: Renderer2,
         private el: ElementRef<Element>,
         private readonly router: Router,
@@ -101,7 +101,7 @@ export class HomepageComponent implements OnInit {
         this.bg = this.bgs[Math.round((this.bgs.length - 1) * Math.random())];
     }
     @ViewChild('sidebarElement') protected sidebarEl?: ElementRef<HTMLElement>;
-    private updateUser(user: User | null) {
+    private updateUser(user: User | undefined) {
         this.apps = [
             // TODO: revisar isto
             // XD({ name: 'Meus Apps', url: '/meus-apps' }),

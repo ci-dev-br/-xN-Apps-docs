@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dial
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
-import { AuthModule, UserPhoto, UserService } from "@ci/auth";
+import { AuthModule, UserPhoto, AuthUserService } from "@ci/auth";
 import { CoreModule } from "@ci/core";
 
 @Component({
@@ -29,7 +29,7 @@ export class Publicar {
     constructor(
         @Optional() private readonly dialogReference?: MatDialogRef<Publicar>,
         @Optional() @Inject(MAT_DIALOG_DATA) private readonly data?: Object,
-        @Optional() private readonly authUserService?: UserService,
+        @Optional() private readonly authUserService?: AuthUserService,
     ) {
         this.authUserService?.user.subscribe(user => {
             if (user?.photo && user?.photo.format) {

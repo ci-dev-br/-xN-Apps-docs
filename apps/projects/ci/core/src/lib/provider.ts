@@ -1,7 +1,7 @@
 import { EnvironmentProviders, InjectionToken, isDevMode, LOCALE_ID, makeEnvironmentProviders, Provider, Type } from "@angular/core";
 import { WsService } from "./io/ws.service";
 import { NotificationService } from "./notification/notification.service";
-import { UserService } from "@ci/auth";
+import { AuthUserService } from "@ci/auth";
 import { ShortcutService } from "./services/shortcut.service";
 import localePt from '@angular/common/locales/pt';
 import { registerLocaleData } from "@angular/common";
@@ -30,7 +30,7 @@ export function coreProvider(
     }
     const providers: Provider[] = [
         WsService,
-        UserService,
+        AuthUserService,
         NotificationService,
         ShortcutService,
         { provide: CORE_ENV, useValue: options },

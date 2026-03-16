@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { User } from "@ci/portal-api";
-import { UserService } from "../../services/user.service";
+import { AuthUserService } from "../../services/auth-user.service";
 import { UserPhoto } from "../user-photo/user-photo";
 /**
  * Menu de perfil do usuário.
@@ -20,7 +20,7 @@ import { UserPhoto } from "../user-photo/user-photo";
 export class ProfileMenu {
     protected user?: User;
     constructor(
-        private readonly users: UserService,
+        private readonly users: AuthUserService,
     ) {
         this.users.user.subscribe((user) => {
             if (user)

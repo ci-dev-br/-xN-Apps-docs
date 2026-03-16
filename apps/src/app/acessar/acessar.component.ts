@@ -9,7 +9,7 @@ import { AcessoPayload, AuthService } from '@ci/portal-api';
 import { SHA512 } from 'crypto-js';
 import { Router, RouterModule } from '@angular/router';
 import { CoreModule, StorageService } from '@ci/core';
-import { AuthModule, UserService } from '@ci/auth';
+import { AuthModule, AuthUserService } from '@ci/auth';
 @Component({
   selector: 'ci-acessar',
   imports: [
@@ -39,7 +39,7 @@ export class AcessarComponent implements OnInit {
   }
   constructor(
     private readonly storageService: StorageService,
-    private readonly userService: UserService,
+    private readonly userService: AuthUserService,
     private readonly authService: AuthService,
     private readonly snack: MatSnackBar,
     private readonly fb: FormBuilder,

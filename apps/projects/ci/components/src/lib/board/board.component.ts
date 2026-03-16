@@ -1,7 +1,7 @@
 import { Component, HostListener, Inject, Injector, Input, OnInit } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
-import { UserService } from "@ci/auth";
+import { AuthUserService } from "@ci/auth";
 import { DaoBuilder, DaoService } from "@ci/core";
 import { Card, Prancheta, PranchetaService } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
@@ -27,7 +27,7 @@ export class BoardComponent implements OnInit {
     constructor(
         private readonly window: WindowService,
         private readonly daoForms: DaoBuilder,
-        private readonly user: UserService,
+        private readonly user: AuthUserService,
         private readonly pranchetas: PranchetaService,
         private readonly daos: DaoService,
         private readonly dialog: MatDialog,

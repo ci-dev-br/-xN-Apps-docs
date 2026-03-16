@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { InputModule } from '@ci/components';
 import { CoreModule, DaoService, IChangeable } from '@ci/core';
 import { User, UserService } from '@ci/portal-api';
-import { AuthModule, UserService as AuthUserService } from '@ci/auth';
+import { AuthModule, AuthUserService as AuthUserService } from '@ci/auth';
 import { lastValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';

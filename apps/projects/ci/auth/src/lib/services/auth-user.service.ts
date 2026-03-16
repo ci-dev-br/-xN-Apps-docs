@@ -1,15 +1,15 @@
-import { Injectable, OnInit, Optional } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { AuthService, User } from "@ci/portal-api";
 import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
 import { StorageService } from "@ci/core";
 
 @Injectable()
-export class UserService {
+export class AuthUserService {
     /**
      * Serviço para gerenciamento do usuário autenticado.
      */
-    private $user = new BehaviorSubject<User | null>((() => {
+    private $user = new BehaviorSubject<User | undefined>((() => {
         if (typeof localStorage !== 'undefined') {
             let stored = localStorage.getItem('CIUSR');
             try {
@@ -18,7 +18,7 @@ export class UserService {
                 console.trace(error);
             }
         }
-        return null
+        return undefined
     })());
     constructor(
         private readonly authService: AuthService,
@@ -62,7 +62,7 @@ export class UserService {
      */
     async sair() {
         this.storage?.clean();
-        this.$user.next(null);
+        this.$user.next(undefined);
         setTimeout(() => this.router?.navigate(['/']));
     }
     /**
@@ -80,7 +80,7 @@ export class UserService {
             this.$user.next(profile);
             return profile;
         } else {
-            this.$user.next(null);
+            this.$user.next(undefined);
             // setTimeout(() => {
             //     this.router.navigate(['/']);
             // })

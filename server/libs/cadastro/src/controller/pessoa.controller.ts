@@ -57,4 +57,17 @@ export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
     ) {
         return super.GetList(input, req);
     }
+    @Post('Delete')
+    @ApiResponse({
+        type: Pessoa
+    })
+    @ApiOperation({
+        operationId: 'DeletePessoa'
+    })
+    override async Delete(
+        @Body() body: Pessoa,
+        @Req() req?: any,
+    ) {
+        return await super.Delete(body, req);
+    }
 }
