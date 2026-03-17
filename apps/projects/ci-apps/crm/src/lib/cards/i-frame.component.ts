@@ -7,13 +7,13 @@ import { HttpClient } from "@angular/common/http";
     selector: 'ci-card--iframe',
     template: `
         <div class="iframe-container">
-            @if(!!safeUrl){<iframe #frameElement
+            <!-- @if(!!safeUrl){<iframe #frameElement
                 width="100%" 
                 [src]="safeUrl"
                 height="100%"
                 frameborder="0" >
-            </iframe>}
-            
+            </iframe>} -->
+            <!-- <img  width="100%" height="100%" style="object-fit:content" src="http://142.0.109.159/axis-cgi/mjpg/video.cgi" /> -->
             <ng-template #emptyState>
                 <div style="padding: 20px; text-align: center; color: #888;">
                     ⚠️ Nenhuma URL configurada.
@@ -27,11 +27,16 @@ import { HttpClient } from "@angular/common/http";
             height: 100%;
             min-height: 400px; /* Altura mínima padrão */
             display: flex;
+           //  object-fit: c;
             flex-direction: column;
         }
         iframe {
             flex: 1;
             border: none;
+        }
+        iframe ::ng-deep img{
+            width: 100%;
+            height: 100%;
         }
     `],
     standalone: true,
@@ -42,10 +47,9 @@ import { HttpClient } from "@angular/common/http";
 export class IframeCard implements OnInit {
     private mode = 'incorporate'
     private sanitizer = inject(DomSanitizer);
-    @Input() settings: { url: string } = { url: 'https://paulorettamozo.com' };
-
+    @Input() settings: { url: string } = { url: 'https://iihrwc03.iowa.uiowa.edu/axis-cgi/mjpg/video.cgi' };
     @ViewChild('frameElement')
-    frameElement?: ElementRef<HTMLIFrameElement>;
+    frameElement?: ElementRef<HTMLIFrameElement> | undefined;
     safeUrl: SafeResourceUrl | null = null;
     constructor(
         private readonly http: HttpClient,
@@ -54,6 +58,9 @@ export class IframeCard implements OnInit {
         if (this.settings && this.settings.url) {
             this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.settings.url);
         }
+    }
+    async loaded(x: Object) {
+        x;
     }
 }
 
