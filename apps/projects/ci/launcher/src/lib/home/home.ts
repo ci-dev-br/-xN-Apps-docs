@@ -1,9 +1,10 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
+import { AuthUserService } from '@ci/auth';
 import { BoardModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
 
@@ -39,9 +40,22 @@ export class Home implements OnInit {
     this.agora = new Date();
     this.updateTime();
   }
+  isBrowser: boolean;
+  isDeveloper?: boolean;
   constructor(
     private readonly http: HttpClient,
-  ) { }
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private readonly authUser: AuthUserService,
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+    if (this.isBrowser) {
+      authUser.user.subscribe(user => {
+        if (user!.roles!.indexOf('DEVELOPER') !== -1) {
+          this.isDeveloper = true;
+        }
+      })
+    }
+  }
   async updateTime() {
     let o = this.n || 0;
     this.n = (Date.now()).toString().substr(-3);
@@ -80,5 +94,10 @@ export class Home implements OnInit {
         this.load();
       }
     }) */
+  }
+  async alternateDeveloperProduction() {
+    if (this.authUser.user.value!.roles!.indexOf('DEVELOPER') > -1) {
+      location.href = location.href.indexOf('apps.') > -1 ? location.href.replace('apps.', 'development.') : location.href.replace('development.', 'apps.');
+    }
   }
 }

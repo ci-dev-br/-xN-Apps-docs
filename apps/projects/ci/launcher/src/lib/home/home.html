@@ -1,3 +1,10 @@
+<nav> @if(isDeveloper){
+    <button mat-icon-button (click)="alternateDeveloperProduction()">
+        <mat-icon>logo_dev</mat-icon>
+    </button>
+    <span style="flex:auto"></span>
+    }
+</nav>
 <h1>{{agora | date: 'dd MMMM y'}}</h1>
 <div class="horario">
     <h1>{{agora | date: 'HH'}}</h1>
