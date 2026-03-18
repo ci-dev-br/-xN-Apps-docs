@@ -124,12 +124,11 @@ export class PainelComponent implements OnInit {
     window.open('https://github.com/ci-dev-br/-xN-Apps-docs', '_blank')
   }
   async profile() {
-    this.router.navigate(['/Profile'])
+    this.router.navigate(['/profile'])
   }
   protected async itemMenuActionHandler(itemMenu: IItemMenu, event: Event) {
     if (itemMenu.onClick) itemMenu.onClick(this, event);
   }
-
   ngOnInit(): void {
     let c: string | number[] | null = localStorage.getItem('x-menu-cached-favs');
     if (typeof c === 'string') c = JSON.parse(c) as number[];
