@@ -9,6 +9,7 @@ import { CardSetting, ImplCard } from "./card";
 import { moveItemInArray } from "@angular/cdk/drag-drop";
 import { WindowService } from "../window/window.service";
 import { CardFinderComponent } from "../card-finder/card-finder.component";
+import { SettingsComponent } from "@ci/components";
 /**
  * 
  */
@@ -128,11 +129,13 @@ export class BoardComponent implements OnInit {
         this.syncPrancheta();
     }
     get layout() {
-        return this.prancheta?.layout?.split(',')?.map(d => Number(d))
+        return this.prancheta?.layout
+        // return this.prancheta?.layout?.split(',')?.map(d => Number(d))
     }
     async openSettings() {
-        /* this.window.open(SettingsComponent, {
-
-        }) */
+        this.window.open(SettingsComponent,
+            { pranchetas: [this.prancheta] },
+            'Editar Pranchetas'
+        )
     }
 }

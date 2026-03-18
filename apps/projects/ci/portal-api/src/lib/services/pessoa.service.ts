@@ -9,6 +9,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deletePessoa } from '../fn/pessoa/delete-pessoa';
+import { DeletePessoa$Params } from '../fn/pessoa/delete-pessoa';
 import { getByInternalIdPessoa } from '../fn/pessoa/get-by-internal-id-pessoa';
 import { GetByInternalIdPessoa$Params } from '../fn/pessoa/get-by-internal-id-pessoa';
 import { getListPessoa } from '../fn/pessoa/get-list-pessoa';
@@ -96,6 +98,31 @@ export class PessoaService extends BaseService {
   getList(params: GetListPessoa$Params, context?: HttpContext): Observable<SyncPayloadDaoPessoa> {
     return this.getListPessoa$Response(params, context).pipe(
       map((r: StrictHttpResponse<SyncPayloadDaoPessoa>): SyncPayloadDaoPessoa => r.body)
+    );
+  }
+
+  /** Path part for operation `deletePessoa()` */
+  static readonly DeletePessoaPath = '/Pessoa/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deletePessoa()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deletePessoa$Response(params: DeletePessoa$Params, context?: HttpContext): Observable<StrictHttpResponse<Pessoa>> {
+    return deletePessoa(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deletePessoa$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeletePessoa$Params, context?: HttpContext): Observable<Pessoa> {
+    return this.deletePessoa$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Pessoa>): Pessoa => r.body)
     );
   }
 

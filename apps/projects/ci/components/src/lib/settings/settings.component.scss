@@ -1,0 +1,19 @@
+:host {
+    display: flex;
+    flex-direction: column;
+}
+
+.item {
+    display: flex;
+    flex: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: stretch;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+}

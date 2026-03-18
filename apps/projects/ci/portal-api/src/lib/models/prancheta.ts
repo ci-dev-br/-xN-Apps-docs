@@ -16,7 +16,7 @@ export interface Prancheta {
   lastModifiedAt?: Date | null;
   lastModifiedBy?: {
 } | null;
-  layout?: string | null;
+  layout?: any | null;
   order?: number | null;
   tenants?: Array<string> | null;
   title?: string | null;

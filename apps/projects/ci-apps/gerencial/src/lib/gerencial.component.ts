@@ -17,13 +17,13 @@ export interface IItemAction<T> {
   standalone: false
 })
 export class GerencialComponent {
-  abas?: { label: string, path: string, icon: string }[];
+  tabs?: { label: string, path: string, icon: string }[];
   constructor(
     private readonly route: ActivatedRoute,
     private readonly dialog: MatDialog,
     private readonly janela: WindowService,
   ) {
-    this.abas = route.routeConfig?.children?.map(r => {
+    this.tabs = route.routeConfig?.children?.map(r => {
       return {
         label: (r?.data as any)?.title || r.path,
         path: r.path,

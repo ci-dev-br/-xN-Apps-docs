@@ -59,7 +59,7 @@ public class ManagerClient {
      * @param ws
      * @return
      */
-    public AsyncTask<Device, Void, String> setupNewGateway(String url, String ws) {
+    public AsyncTask<Device, Void, String> setupGateway(String url, String ws) {
         GatewayConnection gateway_connection = prepare(url,ws);
         this.task = this.connect(gateway_connection);
         return this.task;
@@ -117,6 +117,6 @@ public class ManagerClient {
         } catch (Exception ex) {
             //handle exception
         }
-        return "";
+        return "ANONYMOUS::ADDR";
     }
 }
