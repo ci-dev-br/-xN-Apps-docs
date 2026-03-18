@@ -8,7 +8,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatSelectModule } from "@angular/material/select";
 import { WindowService } from "@ci/components";
-import { CoreModule } from "@ci/core";
+import { CoreModule, DaoService } from "@ci/core";
 import { Prancheta } from "@ci/portal-api";
 export interface ISettingOption {
     code?: string;
@@ -39,6 +39,7 @@ export class SettingsComponent {
         private readonly windowService: WindowService,
         @Inject(MAT_DIALOG_DATA) private readonly dataSettings: Object,
         formBuilder: FormBuilder,
+        private readonly daos: DaoService,
     ) {
         this.editLayoutForm = formBuilder.group({
             layoutOrientation: [,],
@@ -62,6 +63,7 @@ export class SettingsComponent {
                 console.trace(error);
             }
         }
+        this.daos.confirmChanges(this.pranchetaEditing)
         this.pranchetaEditing = undefined;
     }
 }
