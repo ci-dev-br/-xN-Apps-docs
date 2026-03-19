@@ -5,6 +5,8 @@ import { ApiProperty } from "@nestjs/swagger";
 /**
  * Informação de Contato
  */
+/* @ApiEntity({
+}) */
 @Entity({ schema })
 export class InformacaoContato extends FullAuditedEntity {
     @ApiProperty({ title: 'Descrição', nullable: true, required: false })
