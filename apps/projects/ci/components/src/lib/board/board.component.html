@@ -1,11 +1,16 @@
 @if(!!form){<div class="board-wrap" [formGroup]="form">
     <ci-input mode="content-editable" fieldName="title" label="Título" el="h1" placeholder=""></ci-input>
-    @if(!!prancheta && !!prancheta.cards){
-    <div class="cards-container"> @for(item of prancheta.cards; track $index) {
-        <ci-cardboard [cardInfo]="item" [board]="this"></ci-cardboard>
-        }
-    </div>}
-</div> }
+    <div class="inner-content">
+        @if(!!prancheta && !!prancheta.cards){
+        <!--  <div class="cards-container"> --> @for(item of prancheta.cards; track $index) {
+        <div class="card">
+            CARD-HERE
+        </div>
+        <!--  <ci-cardboard [cardInfo]="item" [board]="this">
+                </ci-cardboard> -->}
+        <!-- </div> -->}
+    </div>
+</div>}
 <div class="after-setting">
     <button mat-icon-button (click)="findCardToAdd()">
         <mat-icon>widgets</mat-icon>

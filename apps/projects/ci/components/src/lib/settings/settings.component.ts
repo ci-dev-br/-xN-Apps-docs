@@ -7,6 +7,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatSelectModule } from "@angular/material/select";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { WindowService } from "@ci/components";
 import { CoreModule, DaoService } from "@ci/core";
 import { Prancheta } from "@ci/portal-api";
@@ -28,6 +29,7 @@ export interface ISettings {
         MatMenuModule,
         MatSelectModule,
         ReactiveFormsModule,
+        MatTooltipModule,
     ],
     templateUrl: 'settings.component.html',
     styleUrl: 'settings.component.scss'

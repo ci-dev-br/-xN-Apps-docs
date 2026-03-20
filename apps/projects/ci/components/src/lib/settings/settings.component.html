@@ -2,7 +2,7 @@
     <input matInput type="text" placeholder="Painéis" />
 </mat-form-field> -->
 @if(!!pranchetaEditing){
-<form [formGroup]="editLayoutForm" >
+<form [formGroup]="editLayoutForm">
     <p>Edite de forma simplificada o layout que a prancheta deve obedecer para
         compor os Cartões Interativos para "{{pranchetaEditing.title}}" escolha o tipo de comportamento do layout, e
         depois
@@ -23,7 +23,7 @@
 }@else{@if(!!pranchetas){@for(prancheta of pranchetas; track prancheta){
 <div class="item">{{prancheta.title}}
     <span style="flex:auto"></span>
-    <button mat-icon-button (click)="editarLayout(prancheta)">
+    <button mat-icon-button (click)="editarLayout(prancheta)" [matTooltip]="'Preferências da Prancheta'">
         <mat-icon>clarify</mat-icon>
     </button>
     @if(!prancheta.codigoGlobal){<button mat-icon-button

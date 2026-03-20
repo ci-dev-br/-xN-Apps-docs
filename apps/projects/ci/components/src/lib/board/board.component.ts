@@ -16,9 +16,7 @@ import { SettingsComponent } from "@ci/components";
 @Component({
     selector: 'ci-board',
     templateUrl: 'board.component.html',
-    styleUrls: [
-        'board.component.scss',
-    ],
+    styleUrl: 'board.component.scss',
     standalone: false,
 })
 export class BoardComponent implements OnInit {
