@@ -1,7 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { USER_MENU, AuthUserService } from "@ci/auth";
-import { IMenuItem } from "./i-menu-item";
-import { MatCardModule } from "@angular/material/card";
+import { INavbarItemMenu } from "./i-menu-item";
 import { IItemMenu } from "@ci/components";
 
 @Component({
@@ -14,7 +13,7 @@ import { IItemMenu } from "@ci/components";
 })
 export class NavbarComponent {
     user = this.userService.user;
-    menuItens?: IMenuItem[];
+    menuItens?: INavbarItemMenu[];
     userMenuList?: IItemMenu[] = inject(USER_MENU, { optional: true }) || undefined;
     constructor(
         private readonly userService: AuthUserService,
