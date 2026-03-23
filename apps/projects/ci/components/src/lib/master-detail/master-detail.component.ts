@@ -75,6 +75,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
                         return {
                             headerName,
                             fieldName,
+                            format: ((properties as any)[property]?.format || undefined) as any,
                             hide: fieldName && [
                                 /* Commons to ignore */
                                 'internalId',

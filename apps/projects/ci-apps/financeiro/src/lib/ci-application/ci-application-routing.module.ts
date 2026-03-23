@@ -13,7 +13,9 @@ const routes: Routes = [
         component: MasterDetailComponent,
         data: {
           schema: 'LancamentoFinanceiro'
-          /// dataType: 'EntityMasterDetail', title: 'Unidade de Medida', icon: 'svg:unidade_medida',
+          // dataType: 'EntityMasterDetail',
+          // title: 'Unidade de Medida',
+          // icon: 'svg:unidade_medida',
         }
       },
     ]

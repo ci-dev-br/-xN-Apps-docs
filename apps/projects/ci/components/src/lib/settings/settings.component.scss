@@ -1,11 +1,13 @@
 :host {
     display: flex;
     flex-direction: column;
+    color: var(--mat-app-text-color);
+    padding: 12px 18px;
 }
 
 .item {
     display: flex;
-    flex: auto;
+    flex: autxo;
     flex-direction: row;
     align-items: center;
     justify-content: stretch;
@@ -16,5 +18,4 @@ form {
     flex-direction: column;
     align-items: stretch;
     justify-content: stretch;
-    padding: 12px;
 }
