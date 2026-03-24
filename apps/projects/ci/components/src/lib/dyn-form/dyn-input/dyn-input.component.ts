@@ -68,11 +68,11 @@ export class DynInputComponent implements IAmSchematization {
     @Input() inputComponent?: Type<any>;
     @Input() isArray?: boolean;
     private _schemaName?: string | undefined;
-    public get schemaName(): string | undefined {
-        return this._schemaName;
+    public get schemaName(): string {
+        return this._schemaName!;
     }
     @Input()
-    public set schemaName(value: string | undefined) {
+    public set schemaName(value: string) {
         if (this._schemaName === value) return;
         this._schemaName = value;
 
