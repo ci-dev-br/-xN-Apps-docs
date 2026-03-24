@@ -31,6 +31,6 @@ export class LancamentoFinanceiro extends FullAuditedEntity {
     })
     @Column({
         nullable: true
-    })
+    })-+
     description?: string;
 }

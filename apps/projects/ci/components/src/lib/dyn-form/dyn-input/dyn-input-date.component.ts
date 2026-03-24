@@ -24,6 +24,7 @@ export class DynInputDateComponent {
     @Input() formGroup?: FormGroup;
     @Input() inputComponent?: Type<any>;
     @Input() type?: string;
+    @Input() format?: string;
     @Input() isArray?: boolean;
     constructor() { }
 }
