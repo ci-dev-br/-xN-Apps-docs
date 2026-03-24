@@ -5,7 +5,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { GridModule, IColumnOption, IDataGridOptions, WindowModule, WindowService, } from "@ci/components";
-import { CoreModule, DaoBuilder, DaoService, } from "@ci/core";
+import { CoreModule, DaoBuilder, DaoService, IAmSchematization, } from "@ci/core";
 import { FormsModule } from "@angular/forms";
 import { getServiceAsSchema } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
@@ -48,11 +48,11 @@ import { EditarDetailComponent, EditarDetailModule } from "@ci/components/editar
     styleUrl: 'master-detail.component.scss',
     templateUrl: 'master-detail.component.html'
 })
-export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestroy {
+export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestroy, IAmSchematization {
     @Input()
     visualizacao?: 'table' | 'list' = 'table';
     @Input()
-    schemaName?: string;
+    schemaName: string = undefined!;
     @Input()
     gridOptions?: IDataGridOptions<T>;
     service?: any;
@@ -94,7 +94,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
         }
     }
     async ngAfterViewInit() {
-        if (!!this.schemaName) this.load();
+        if (!!this.schemaName) this.prepareSchema();
     }
     private oTitle?: string;
     ngOnDestroy(): void {
@@ -104,11 +104,11 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
         this.route?.data.subscribe(async (data: any) => {
             if (!!data.schema) {
                 this.schemaName = data.schema;
-                await this.load();
+                await this.prepareSchema();
             }
         })
     }
-    async load() {
+    async prepareSchema() {
         if (this.schemaName && !!document?.title && !this.oTitle && this.schemaName) {
             this.oTitle = document.title;
             document.title = `${this.oTitle} - ${this.schemaName}`

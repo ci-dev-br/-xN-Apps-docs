@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
 import { ActionsService, DynFormModule, IItemMenu } from "@ci/components";
-import { CORE_ENV, CoreModule, DaoBuilder, DaoService, IChangeable, ICoreEnvironment, IHaveSync, ISchemaPreset } from "@ci/core";
+import { CORE_ENV, CoreModule, DaoBuilder, DaoService, IAmSchematization, IChangeable, ICoreEnvironment, IHaveSync, ISchemaPreset } from "@ci/core";
 import { FormsService, getServiceAsSchema } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 /**
@@ -17,7 +17,6 @@ export interface IDataEditar {
  * Componente de Edição de Dados 
  * Os dados podem ser fornecidos via schema ou injetados em 
  * tempo de compilação ou execução.
- * 
  */
 @Component({
     selector: 'ci-master-detail--editar',
@@ -33,10 +32,10 @@ export interface IDataEditar {
     ],
     standalone: true,
 })
-export class EditarDetailComponent implements OnInit, OnDestroy {
+export class EditarDetailComponent implements OnInit, OnDestroy, IAmSchematization {
     form?: FormGroup<any>;
     @Input()
-    schemaName?: string;
+    schemaName: string = undefined!;
     service?: any;
     preset?: ISchemaPreset<any, any>;
     actions: IItemMenu[] = [{
@@ -48,13 +47,13 @@ export class EditarDetailComponent implements OnInit, OnDestroy {
         }
     }];
     constructor(
-        private readonly dao: DaoService,
-        private readonly daoBuilder: DaoBuilder,
-        private readonly fb: FormBuilder,
-        private readonly formsService: FormsService,
-        private readonly route: ActivatedRoute,
-        private readonly injector: Injector,
-        private readonly ref: MatDialogRef<EditarDetailComponent>,
+        @Optional() private readonly dao?: DaoService,
+        @Optional() private readonly daoBuilder?: DaoBuilder,
+        @Optional() private readonly fb?: FormBuilder,
+        @Optional() private readonly formsService?: FormsService,
+        @Optional() private readonly route?: ActivatedRoute,
+        @Optional() private readonly injector?: Injector,
+        @Optional() private readonly ref?: MatDialogRef<EditarDetailComponent>,
         @Optional() @Inject(MAT_DIALOG_DATA) public readonly data?: IDataEditar,
         @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
         @Optional() public readonly acts?: ActionsService,
@@ -62,9 +61,15 @@ export class EditarDetailComponent implements OnInit, OnDestroy {
         if (data && 'schemaName' in data && data.schemaName) this.schemaName = data.schemaName;
         acts?.setActions(this.actions);
     }
+    /**
+     * Inicie a carga de memória em cache do seu componente neste ponto
+     */
     ngOnInit() {
         this.loadFormFromDaoBuilder();
     }
+    /**
+     * Quando o componente for desmontado, livre a memória
+     */
     ngOnDestroy(): void {
     }
     /**
@@ -74,10 +79,10 @@ export class EditarDetailComponent implements OnInit, OnDestroy {
         if (this.schemaName) {
             this.preset = this.config?.servicesCommons?.find(s => s.schemaName === this.schemaName);
             if (!!this.preset?.service)
-                this.service = this.injector.get(this.preset.service);
+                this.service = this.injector?.get(this.preset.service);
             if (!this.preset) {
                 const service_by_schema = getServiceAsSchema(this.schemaName);
-                if (service_by_schema) this.service = this.injector.get(service_by_schema);
+                if (service_by_schema) this.service = this.injector?.get(service_by_schema);
             }
         }
     }
@@ -89,11 +94,11 @@ export class EditarDetailComponent implements OnInit, OnDestroy {
             await this.loadService();
             const dao = this.dao;
             const _data = this.data?.data;
-            this.form = await this.daoBuilder.getForm(this.schemaName);
+            this.form = await this.daoBuilder?.getForm(this.schemaName);
             const form = this.form;
-            await this.dao.prepareToEdit(this.data?.data, { schemaName: this.schemaName });
-            if (this.form) this.dao.bindDataForm(this.data?.data, this.form);
-            this.dao.confirmation(this.data?.data)?.subscribe(async data => {
+            await this.dao?.prepareToEdit(this.data?.data, { schemaName: this.schemaName });
+            if (this.form) this.dao?.bindDataForm(this.data?.data, this.form);
+            this.dao?.confirmation(this.data?.data)?.subscribe(async data => {
                 try {
                     if (this.data?.data && data) {
                         if (!!(this.preset)?.sync) {
@@ -105,8 +110,8 @@ export class EditarDetailComponent implements OnInit, OnDestroy {
                             r = r;
                         }
                         delete (_data as IChangeable).__pre;
-                        await dao.prepareToEdit(_data);
-                        if (form) dao.bindDataForm(_data, form);
+                        await dao?.prepareToEdit(_data);
+                        if (form) dao?.bindDataForm(_data, form);
                     }
                 } catch (error) {
                     console.trace(error);

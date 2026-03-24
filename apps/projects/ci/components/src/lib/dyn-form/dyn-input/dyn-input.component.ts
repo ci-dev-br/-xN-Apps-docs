@@ -1,7 +1,7 @@
 import { Component, Injector, Input, Optional, Type } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { DynInputDateComponent } from "./dyn-input-date.component";
-import { DaoBuilder, DaoService } from "@ci/core";
+import { DaoBuilder, DaoService, IAmSchematization } from "@ci/core";
 import { getServiceAsSchema } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 
@@ -58,7 +58,7 @@ const types: any = {
     `,
     styleUrl: 'dyn-input.component.scss'
 })
-export class DynInputComponent {
+export class DynInputComponent implements IAmSchematization {
     @Input() fieldName?: string;
     @Input() label?: string;
     @Input() placeholder?: string;
