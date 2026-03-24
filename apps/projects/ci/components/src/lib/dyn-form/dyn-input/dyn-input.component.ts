@@ -86,7 +86,7 @@ export class DynInputComponent implements IAmSchematization {
                             this.list = await this.daos?.read(await lastValueFrom(this.service.getList()), this.schemaName);
                         this.list;
                     } else {
-                        v;
+                        /* TODO: revisar desvio */v;
                     }
                 });
             }

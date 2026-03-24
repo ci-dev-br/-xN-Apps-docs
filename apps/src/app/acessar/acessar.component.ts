@@ -45,6 +45,11 @@ export class AcessarComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly router: Router,
   ) {
+    if (!!userService?.user?.value) this.router.navigate(['/'], {
+      queryParams: {
+        from: this.router.url
+      }
+    })
     // if (!!this.storageService.restore('apps.ci.dev.br.store.User')) router.navigate(['/']); // TODO: acho que esta correto mas deve ser revisado a necessidade de roteamento neste ponto...
     if (this.stage) this.criarFormulario(this.stage)
   }
