@@ -106,7 +106,13 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
                 this.schemaName = data.schema;
                 await this.prepareSchema();
             }
-        })
+        });
+        this.route?.params.subscribe(async (params: any) => {
+            if (!!params.EntityName && typeof params.EntityName === 'string') {
+                this.schemaName = params.EntityName;
+                await this.prepareSchema();
+            }
+        });
     }
     async prepareSchema() {
         if (this.schemaName && !!document?.title && !this.oTitle && this.schemaName) {

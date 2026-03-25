@@ -15,6 +15,7 @@ const home_children: Routes = [
         path: ':EntityName',
         component: MasterDetailComponent,
         data: {
+
           /// dataType: 'EntityMasterDetail', title: 'Unidade de Medida', icon: 'svg:unidade_medida',
         }
       },
