@@ -9,7 +9,11 @@ import * as express from 'express';
 import { spawnSync } from 'child_process';
 import { WsAdapter } from '@nestjs/platform-ws';
 import { corsOptionsDelegate } from './cors-option-delegate';
-// Inicializa variáveis de ambiente
+/***  
+ * 
+ * Inicializa variáveis de ambiente
+ * 
+***/
 config();
 // Inicialização do Logger customizado (assumindo que seja um setup global/side-effect)
 new Logger(console);

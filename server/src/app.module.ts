@@ -140,9 +140,10 @@ process.env.MODULES.split(',').forEach(e => {
       synchronize: Boolean(process.env.DB_SYNCHRONIZE || false),
       autoSave: true,
       cache: true,
+      logger: 'file',
       maxQueryExecutionTime: 100,
       namingStrategy: new SnakeNamingStrategy(),
-      verboseRetryLog: false,
+      // verboseRetryLog: false,
       dropSchema: false,
       entities: [
         ...LoadedEntities

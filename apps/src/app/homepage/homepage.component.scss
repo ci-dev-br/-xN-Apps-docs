@@ -35,7 +35,6 @@ header {
     align-self: center;
 }
 
-
 .apps {
     display: flex;
     flex-direction: row;
@@ -44,20 +43,17 @@ header {
     align-items: center;
     justify-content: center;
     width: 100%;
-
     justify-content: space-evenly;
     align-items: stretch;
 
     >mat-card {
         width: 3cm;
         height: 3cm;
-
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         text-align: center;
-
         color: white;
         font-weight: bold;
         cursor: pointer;
@@ -65,14 +61,11 @@ header {
 }
 
 .page--wrapper {
-
     position: relative;
-
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
     flex: auto;
 }
 
@@ -93,9 +86,7 @@ header {
         // background: rgba(0, 0, 0, .5);
         padding: 24px;
         gap: 12px;
-
         //  background-color: white;
-
     }
 
     .apps {
@@ -127,11 +118,16 @@ header {
     transition: all 1.5s ease;
     overflow: hidden;
 
-
     >* {
         transition: opacity .5s ease-in-out;
         opacity: 1;
+    }
 
+    mat-icon.icon {
+        opacity: 0;
+        transition: all ease 333ms;
+        position: absolute;
+        padding: 8px;
     }
 
     &.--inactive {
@@ -150,6 +146,14 @@ header {
             opacity: 0;
             pointer-events: none;
             user-select: none;
+        }
+
+        >mat-icon.icon {
+            opacity: 1;
+            position: absolute;
+            z-index: 500;
+            color: black;
+            padding: 8px;
         }
     }
 }
@@ -181,7 +185,6 @@ video {
     &::-ms-media-controls {
         display: none !important;
     }
-
 }
 
 .wrapper {
