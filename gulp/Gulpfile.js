@@ -11,7 +11,10 @@ const {
     client_dist_static_public: R734,
     server_local_static_public: R348,
 } = process.env;
-const { NgBuildClientProd: C101 } = require('./ressources').CommonsCommands;
+const { 
+    NgBuildClientProd: C101,
+    NgBuildClientDev: C100,
+} = require('./ressources').CommonsCommands;
 // Clean old files
 function CleanOldFiles(cb) {
     cb();

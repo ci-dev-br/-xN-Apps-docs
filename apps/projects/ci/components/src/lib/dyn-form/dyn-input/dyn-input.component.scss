@@ -12,7 +12,7 @@ mat-form-field {
 
     &,
     & ::ng-deep * {
-        min-width: unset;
+        min-width: unset !important;
         // width: unset;
     }
 }

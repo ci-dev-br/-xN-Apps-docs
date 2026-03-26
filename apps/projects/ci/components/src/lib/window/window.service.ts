@@ -56,9 +56,9 @@ export class WindowService {
     constructor(
         @Optional() private readonly dialog?: MatDialog,
     ) {
-        setTimeout(() => {
+        /* setTimeout(() => {
             WindowService.setup();
-        });
+        }); */
     }
     async open(component: Type<any>, data: any, title?: string, event?: Event) {
         if (event instanceof MouseEvent && event?.ctrlKey) {
