@@ -41,12 +41,6 @@ export class WindowComponent implements OnInit, OnDestroy {
   acts = new BehaviorSubject<IItemMenu[] | undefined>(undefined);
   menu: IItemMenu[] = [
     {
-      icon: 'done_all',
-      label: 'Confirmar alterações',
-      visible: () => !!this.changed,
-      onClick: () => this.confirm()
-    },
-    {
       visible: () => {
         return (!!(this.data as any)?.data?.data && 'internalId' in (this.data as any).data.data);
       },
