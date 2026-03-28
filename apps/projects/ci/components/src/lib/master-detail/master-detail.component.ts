@@ -4,7 +4,7 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatIconModule } from "@angular/material/icon";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { ActivatedRoute, RouterModule } from "@angular/router";
-import { GridModule, IColumnOption, IDataGridOptions, WindowModule, WindowService, } from "@ci/components";
+import { ActionsService, DataListModule, GridModule, IColumnOption, IDataGridOptions, WindowModule, WindowService, } from "@ci/components";
 import { CoreModule, DaoBuilder, DaoService, IAmSchematization, } from "@ci/core";
 import { FormsModule } from "@angular/forms";
 import { getServiceAsSchema } from "@ci/portal-api";
@@ -40,7 +40,7 @@ import { EditarDetailComponent, EditarDetailModule } from "@ci/components/editar
         MatButtonModule,
         WindowModule,
         GridModule,
-        // DataListModule,
+        DataListModule,
         FormsModule,
         EditarDetailModule,
     ],
@@ -62,6 +62,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
         @Optional() private readonly route?: ActivatedRoute,
         @Optional() private readonly window?: WindowService,
         @Optional() private readonly injector?: Injector,
+        // @Optional() private readonly actions?: ActionsService,
     ) { }
     source?: T[] = [{} as any];
     async loadGrid() {
@@ -101,6 +102,13 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
         if (!!document && this.oTitle) document.title = this.oTitle;
     }
     async ngOnInit() {
+        /* this.actions?.setAction('confirmation', {
+            label: 'Cornfimar alterações',
+            icon: 'done-all',
+            onClick: (element) => {
+                element;
+            }
+        }) */
         this.route?.data.subscribe(async (data: any) => {
             if (!!data.schema) {
                 this.schemaName = data.schema;

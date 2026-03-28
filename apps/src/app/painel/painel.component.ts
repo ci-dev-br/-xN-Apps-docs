@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, Optional } from '@angular/core';
 import { CoreModule, LoadIconsModule, IconLoaderSerices, StorageService } from '@ci/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -35,16 +35,16 @@ import { IconModule, IItemMenu, NavbarModule } from '@ci/components';
   styleUrl: './painel.component.scss'
 })
 export class PainelComponent implements OnInit {
-  user = this.userService.user
+  user = this.userService?.user
   apps?: any[];
   userMenuList?: IItemMenu[] = inject(USER_MENU, { optional: true }) || undefined;
   constructor(
-    private readonly router: Router,
-    private readonly userService: AuthUserService,
-    private readonly route: ActivatedRoute,
-    iconLoader: IconLoaderSerices,
+    @Optional() private readonly router?: Router,
+    @Optional() private readonly userService?: AuthUserService,
+    // @Optional() private readonly route: ActivatedRoute,
+    @Optional() iconLoader?: IconLoaderSerices,
   ) {
-    iconLoader.load({
+    iconLoader?.load({
       'devtools': { url: 'icons/dev-tools-icon.svg' },
       imersao: { url: 'icons/imersao.svg' },
       agenda: { url: 'icons/agenda.svg' },
@@ -85,7 +85,7 @@ export class PainelComponent implements OnInit {
       MASTER: { url: 'icons/extras/master mode.svg' },
       GOD: { url: 'icons/extras/god mode.svg' },
     });
-    this.userService.user.subscribe(user => {
+    this.userService?.user.subscribe(user => {
       if (!!user) {
         this.apps = CI_STATIC_APPS.filter(app => !!app.roles?.find(role => !!user.roles?.find(r => r === role)))
       }
@@ -118,13 +118,13 @@ export class PainelComponent implements OnInit {
     this.appsFavoritos = this.apps;
   }
   async sair() {
-    this.userService.sair();
+    this.userService?.sair();
   }
   async repo() {
     window.open('https://github.com/ci-dev-br/-xN-Apps-docs', '_blank')
   }
   async profile() {
-    this.router.navigate(['/profile'])
+    this.router?.navigate(['/profile'])
   }
   protected async itemMenuActionHandler(itemMenu: IItemMenu, event: Event) {
     if (itemMenu.onClick) itemMenu.onClick(this, event);

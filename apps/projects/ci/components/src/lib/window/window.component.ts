@@ -1,8 +1,9 @@
-import { Component, HostListener, Inject, Injector, Input, OnDestroy, OnInit, Optional, TemplateRef, Type, ViewChild } from '@angular/core';
+import { Component, EventEmitter, HostListener, inject, Inject, Injector, Input, OnDestroy, OnInit, Optional, Output, PLATFORM_ID, TemplateRef, Type, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DaoService } from '@ci/core';
 import { ActionsService } from '../action/actions.service';
 import { BehaviorSubject } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 
 export interface IData {
   data?: any;
@@ -28,6 +29,12 @@ export interface IItemMenu {
   standalone: false
 })
 export class WindowComponent implements OnInit, OnDestroy {
+  @Output('events')
+  eventsOutput = new EventEmitter<Object>();
+  /* @Output('changed')
+  changedOutput = new EventEmitter<any>(); */
+  /* @Output('confirm')
+  confirmOutput = new EventEmitter<any>(); */
   @Input()
   title?: string;
   showing = false;
@@ -41,10 +48,10 @@ export class WindowComponent implements OnInit, OnDestroy {
     },
     {
       visible: () => {
-        return (!!this.data?.data?.data && 'internalId' in this.data.data.data);
+        return (!!(this.data as any)?.data?.data && 'internalId' in (this.data as any).data.data);
       },
       icon: 'open_in_new', label: 'Abrir em Janela', onClick: () => {
-        const object_identification = this.data?.data?.data?.internalId || this.data?.data?.data?.id;
+        const object_identification = (this.data as any)?.data?.data?.internalId || (this.data as any)?.data?.data?.id;
         window.open(location.href + '/Editar/' + object_identification, 'PopupWindow' + (object_identification), "width=600,height=700,resizable=yes,top=100,left=200,");
         this.close();
       }
@@ -55,15 +62,14 @@ export class WindowComponent implements OnInit, OnDestroy {
   component?: Type<any>;
   injector = Injector.create([
     { provide: MatDialogRef<WindowComponent>, useValue: this.ref },
-    { provide: MAT_DIALOG_DATA, useValue: this.data?.data || null },
-    { provide: 'ACTIONS', useValue: this.acts },
+    { provide: MAT_DIALOG_DATA, useValue: (this.data as any)?.data || null },
+    { provide: 'ACTIONS', useValue: this.acts }
   ]);
+  daos?: DaoService;
   constructor(
-    @Optional() private readonly daos?: DaoService,
     @Optional() private readonly ref?: MatDialogRef<WindowComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA)
-    protected data?: IData,
-    @Optional() public readonly actions?: ActionsService,
+    @Optional() @Inject(MAT_DIALOG_DATA) protected data?: IData,
+    // @Optional() public readonly actions?: ActionsService,
   ) { }
   ngOnInit(): void {
     this.showing = true;
@@ -72,15 +78,17 @@ export class WindowComponent implements OnInit, OnDestroy {
     this.showing = false;
   }
   get changed() {
-    if (!this.data?.data) return false;
-    return this.daos?.haveChanges(!!this.data?.data?.schemaName ? this.data.data.data : this.data.data)
+    return false;
+    /* if (!(this.data as any)?.data) return false;
+    return this.daos?.haveChanges(!!(this.data as any)?.data?.schemaName ? (this.data as any)?.data.data : (this.data as any)?.data) */
   }
   confirm() {
-    this.daos?.confirmChanges(!!this.data?.data?.schemaName ? this.data.data.data : this.data?.data)
+    /*   this.confirmOutput.emit(!!(this.data as any)?.data?.schemaName ? (this.data as any).data.data : (this.data as any)?.data);
+      this.daos?.confirmChanges(!!(this.data as any)?.data?.schemaName ? (this.data as any).data.data : (this.data as any)?.data) */
   }
   close() {
     this.showing = false;
-    this.ref?.close(this.data?.data);
+    /* this.ref?.close((this.data as any)?.data); */
   }
   @HostListener('keydown', ['$event'])
   protected async keydownHandler(event: KeyboardEvent) {

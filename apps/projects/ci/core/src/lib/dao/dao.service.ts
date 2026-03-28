@@ -1,47 +1,9 @@
-import { EventEmitter, Injectable, SimpleChange, SimpleChanges } from "@angular/core";
+import { EventEmitter, Injectable, SimpleChanges } from "@angular/core";
 import { FormGroup } from "@angular/forms";
-import { Subject } from "rxjs";
-import { DaoBuilder, WsService } from "../core.module";
+import { of, Subject } from "rxjs";
+import { IChangeable, OfString } from "./models";
 import { EMITTER } from "../emitter/token";
 
-export function OfString(data: any): string {
-    return (
-        data.name || data.nome ||
-        data.title || data.titulo ||
-        data.descricao || data.description ||
-        (() => {
-            const a = Object.keys(data)
-                .find(p => p.indexOf('name') > -1 || p.indexOf('nome') > -1);
-            if (a) return data[a]
-            return Object.keys(data)
-                .filter(x =>
-                    x !== 'internalId' &&
-                    x.indexOf('At') === -1 &&
-                    typeof data[x] === 'string')
-                .map(x => {
-                    return data[x]
-                }).join(' ');
-        })() || '(registro vazio)')
-}
-
-/**
- * Objeto alterável pela interface do usuário
- */
-export interface IChangeable {
-    /***
-     * Snapshot do objeto antes de iniciar as mudanças no objeto.
-     */
-    __pre?: any;
-    /**
-     * Metadados do formulário conectado ao Objeto
-     */
-    __binding_form?: FormGroup;
-}
-export class SerializedObjectData implements IChangeable {
-    __pre: any;
-    __binding_form?: FormGroup;
-    complete() { }
-}
 /** 
  *   Mapeamento de entidade
  *   Objeto com meta informação para realizar o mapeamento do objeto
@@ -49,10 +11,7 @@ export class SerializedObjectData implements IChangeable {
 @Injectable()
 export class DaoService {
     private states = new Map<any, any>();
-    constructor(
-        private readonly ws: WsService,
-        private readonly daoBuilder: DaoBuilder,
-    ) { }
+
     /**
      * Prepara o objeto para ser editado por ReactiveFormsModule ou FormsModule Strategies.
      * 
@@ -66,130 +25,7 @@ export class DaoService {
          */
         schemaName?: string,
     }): /* SerializedObjectData */  Promise<IChangeable[] | IChangeable | Date | undefined> {
-        //let emitter;
-        const data_schema = options?.schemaName ? await this.daoBuilder.getSchema(options.schemaName) : undefined;
-
-        if (Object.getOwnPropertyDescriptor(data, 'toJSON') !== undefined) return data;
-
-        if (!data) return undefined;
-        if (Array.isArray(data)) {
-            return data.map(data_child => {
-                this.prepareToEdit(data_child, options);
-                return data_child;
-            });
-        }
-        this.ws.Attention(data);
-        if (data instanceof Date) return data;
-        if (data instanceof SerializedObjectData) return data;
-        if (data && typeof data === 'object' && !('__pre' in data)) {
-            let { __pre, __binding_form, __confirmation_subject, ...o_data } = data;
-            let pre = { ...JSON.parse(JSON.stringify(o_data)) };
-            const emitter = /* !!options?.onChange ? */ new EventEmitter<SimpleChanges>() /* : undefined */;
-            const ws = this.ws;
-            emitter.subscribe(changes => {
-                ws.EmitChanges(data.internalId, changes, data);
-            })
-            let ___changes_on_changing: SimpleChanges[] | undefined;
-            if (!!emitter) emitter.subscribe(r => {
-                if (!___changes_on_changing) ___changes_on_changing = [];
-                ___changes_on_changing.push(r);
-                const _current_length = ___changes_on_changing?.length || 0;
-                setTimeout(() => {
-                    if (_current_length === ___changes_on_changing?.length) {
-                        const changes = ___changes_on_changing;
-                        ___changes_on_changing = undefined;
-                        if (options?.onChange) options.onChange(
-                            changes.reduce((change_a, change_b) => {
-                                return {
-                                    ...change_a,
-                                    ...change_b,
-                                } as SimpleChanges;
-                            })
-                        )
-                    }
-                }, options?.debounceTime || 500);
-            });
-            if (!!data_schema && data_schema?.properties) {
-                Object.keys(data_schema?.properties).forEach(property => {
-                    if (data_schema?.properties && !!data_schema?.properties[property]) {
-                        try {
-                            let propery_descriptor = Object.getOwnPropertyDescriptor(data, property);
-                            if (!propery_descriptor?.get && !propery_descriptor?.set) {
-                                delete data[property];
-                                Object.defineProperty(data, property, {
-                                    get: () => { return o_data[property]; },
-                                    set: (value: any) => {
-                                        try {
-                                            if (o_data[property] === value) return;
-                                            const old_vale = o_data[property];
-                                            o_data[property] = value;
-                                            if (!!emitter) emitter.emit({
-                                                [property]: new SimpleChange(old_vale, value, false),
-                                            });
-                                        } catch (error) {
-                                            console.trace(error);
-                                        }
-                                    },
-                                });
-                                this.read(o_data[property]);
-                            }
-                        } catch (error) {
-                            console.trace(error);
-                        }
-                    }
-                })
-            } else {
-                Object.keys(o_data).forEach(p => {  // {a:1 , b: 2, c: function(){}} ['a', 'b', 'c']
-                    try {
-                        delete data[p];
-                        Object.defineProperty(data, p, {
-                            get: () => { return o_data[p]; },
-                            set: (value: any) => {
-                                try {
-                                    if (o_data[p] === value) return;
-                                    const old_vale = o_data[p];
-                                    o_data[p] = value;
-                                    if (!!emitter) emitter.emit({
-                                        [p]: new SimpleChange(old_vale, value, false),
-                                    });
-                                } catch (error) {
-                                    console.trace(error);
-                                }
-                            },
-                        });
-                    } catch (error) {
-                        console.trace(error);
-                    }
-                });
-            }
-            Object.defineProperty(data, 'toJSON', {
-                value: () => {
-                    try {
-                        const out: any = {
-                            ...this.getChanges(data, { pre })
-                        };
-                        (options?.fieldsId || ['id', 'internalId']).forEach(p => {
-                            if (data[p]) {
-                                out[p] = data[p] || undefined;
-                            }
-                        })
-                        return out;
-                    } catch (error) {
-                        console.trace(error);
-                    }
-                }
-            });
-            if (!data.toString)
-                Object.defineProperty(data, 'toString', {
-                    value: () => {
-                        return OfString(data);
-                    }
-                });
-            data.complete = () => pre = { ...JSON.parse(JSON.stringify(o_data)) };
-            (data as any)[EMITTER] = emitter;
-            Object.setPrototypeOf(data, new SerializedObjectData());
-        }
-        return data;
+        return of().toPromise();
     }
     getChanges(data?: IChangeable, options?: {
         pre: any

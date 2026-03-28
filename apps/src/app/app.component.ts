@@ -24,12 +24,12 @@ export class AppComponent implements OnInit, OnDestroy {
   isDevMode = isDevMode();
   title = 'apps';
   constructor(
-    private readonly matIconReg: MatIconRegistry,
-    private readonly core: CoreService,
-    private readonly router: Router,
-    private readonly websocket: WsService,
-    private readonly window: WindowService,
-    private readonly snack?: MatSnackBar,
+    @Optional() private readonly matIconReg: MatIconRegistry,
+    @Optional() private readonly core: CoreService,
+    // @Optional() private readonly router: Router, // TODO: mover controle ativo de rota para camapra Core Init;
+    // @Optional() private readonly websocket: WsService, // TODO: mover Web Seocket para Core Init;
+    @Optional() private readonly window: WindowService,
+    @Optional() private readonly snack?: MatSnackBar,
   ) {
     // This variable will save the event for later use.
     // let deferredPrompt;
@@ -46,9 +46,9 @@ export class AppComponent implements OnInit, OnDestroy {
     }); */
   }
   ngOnDestroy(): void {
-
   }
   ngOnInit() {
+    this.core.init();
     this.matIconReg.setDefaultFontSetClass('material-symbols-sharp');
     // this.router.events.subscribe(r => console.log(r))
     // This variable will save the event for later use.

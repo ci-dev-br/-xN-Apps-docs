@@ -1,21 +1,15 @@
-import { Component, HostListener, Optional } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { ActivatedRouteSnapshot, ActivationEnd, ChildActivationEnd, Router } from '@angular/router';
 import { AuthUserService } from '@ci/auth';
 import { lastValueFrom } from 'rxjs';
-import { Application, CpuInfo, SystemService, Tenant } from '@ci/portal-api';
+import { Application, SystemService, Tenant } from '@ci/portal-api';
 import { ApplicationService } from '@ci/portal-api';
 import { ServicesService } from '@ci/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { OrganizacaoService } from '@ci/organizacao';
 import { WindowService } from '../window/window.service';
-import { SettingsComponent } from '@ci/components';
-// import { WindowService } from '../window/window.service';
-// import { SettingsComponent } from 'src/app/views/settings/settings.component';
-
 interface IBreadcrumb {
   name?: string;
 }
-
 @Component({
   selector: 'ci-l-nav',
   templateUrl: './l-nav.component.html',
@@ -37,13 +31,9 @@ export class LNavComponent {
     private readonly router: Router,
     private readonly userService: AuthUserService,
     private readonly applicationService: ApplicationService,
-    /// private readonly http: HttpClient,
     public readonly services: ServicesService,
     private readonly sanitizer: DomSanitizer,
     private readonly system: SystemService,
-    @Optional()
-    private readonly organizacaoService?: OrganizacaoService,
-
     private readonly window?: WindowService,
   ) {
     this.load();
@@ -184,6 +174,6 @@ export class LNavComponent {
     console.log(crumb);
   }
   async settings() {
-    this.window?.open(SettingsComponent, null);
+    //  this.window?.open(SettingsComponent, null);
   }
 }

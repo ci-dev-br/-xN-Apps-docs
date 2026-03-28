@@ -11,7 +11,9 @@ import { IContextMenu } from "./i-contex-menu";
 export class ContextMenuDirective {
     private overlayRef: OverlayRef | null = null;
     constructor(
+        @Optional()
         private readonly overlay: Overlay,
+        @Optional()
         private readonly viewContainerRef: ViewContainerRef,
         @Optional()
         private readonly element?: ElementRef<HTMLElement>,

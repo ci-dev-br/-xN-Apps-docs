@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { AIOModule } from "./aio.module";
 @Component({
-    selector: 'ci-terminal-card',
+    selector: 'ci-aio-chat-card',
     template: '<aio-chat></aio-chat>',
     imports: [
         AIOModule,
