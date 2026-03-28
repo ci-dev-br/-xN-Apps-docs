@@ -15,13 +15,7 @@ export class CoreService {
     // @Optional() private readonly contextMenu?: ContextMenuServices,
     // @Optional() private readonly ws?: WsService,
   ) {
-    if (!!router) this.initRouterFixings()
-    try {
-      //  setTimeout(() => inject.get(Damn));
-    } catch (error) {
-      console.info('[0xf1]');
-    }
-    notification?.requestPermission();
+
   }
   /**
    * 
@@ -44,5 +38,17 @@ export class CoreService {
       }, 0)
     })
   }
-  init() { }
+  init() {
+    try {
+      if (!!this.router) this.initRouterFixings()
+      //  setTimeout(() => inject.get(Damn));
+    } catch (error) {
+      console.info('[0xf1]');
+    }
+    try {
+      this.notification?.requestPermission();
+    } catch (error) {
+      console.info('[0xf2]');
+    }
+  }
 }
