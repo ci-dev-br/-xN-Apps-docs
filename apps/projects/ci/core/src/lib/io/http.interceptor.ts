@@ -41,9 +41,9 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         }
     }
     constructor(
-        private readonly router: Router,
-        private readonly storage: StorageService,
-        private readonly auth: AuthService,
+        @Optional() private readonly router: Router,
+        @Optional() private readonly storage: StorageService,
+        @Optional() private readonly auth: AuthService,
         @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
     ) {
         let efail = localStorage.getItem('e-fail');

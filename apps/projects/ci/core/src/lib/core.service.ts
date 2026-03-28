@@ -7,19 +7,22 @@ import { ContextMenuServices } from './contextmenu/contextmenu.service';
 @Injectable()
 export class CoreService {
   constructor(
-    inject: Injector,
+    //  @Optional() inject: Injector,
     @Optional() private readonly router?: Router,
-    @Optional() private readonly ar?: ActivatedRoute,
-    @Optional() private readonly themeService?: ThemeService,
+    // @Optional() private readonly ar?: ActivatedRoute,
+    // @Optional() private readonly themeService?: ThemeService,
     @Optional() private readonly notification?: NotificationService,
-    @Optional() private readonly contextMenu?: ContextMenuServices,
-    @Optional() private readonly ws?: WsService,
+    // @Optional() private readonly contextMenu?: ContextMenuServices,
+    // @Optional() private readonly ws?: WsService,
   ) {
     if (!!router) this.initRouterFixings()
-    setTimeout(() => inject.get(Damn));
+    try {
+      //  setTimeout(() => inject.get(Damn));
+    } catch (error) {
+      console.info('[0xf1]');
+    }
     notification?.requestPermission();
   }
-
   /**
    * 
    * para que serve este trecho? qual era a intenção inicial?
@@ -41,5 +44,5 @@ export class CoreService {
       }, 0)
     })
   }
-
+  init() { }
 }
