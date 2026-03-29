@@ -17,7 +17,7 @@ export class ObterListaWebsite {
     @ApiProperty({})
     where?: FindOptionsWhere<Website>[] | FindOptionsWhere<Website>;
 }
-export class PessoaCotrollerGetInputDto {
+export class WebsiteCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
     query?: string;
     @ApiProperty({ nullable: true, required: false })

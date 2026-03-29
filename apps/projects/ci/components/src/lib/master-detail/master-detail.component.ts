@@ -56,6 +56,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
     @Input()
     gridOptions?: IDataGridOptions<T>;
     service?: any;
+    private order?: any;
     constructor(
         @Optional() private readonly daoBuilder?: DaoBuilder,
         @Optional() private readonly daos?: DaoService,
@@ -156,5 +157,8 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
             if (!(typeof data === 'number') && (!!data?.internalId || !!data?.id))
                 this.source = [data, ...this.source || []];
         }
+    }
+    async sortHandle(event: any) {
+        this.order = event;
     }
 }

@@ -12,21 +12,7 @@ import { IColumnOption } from "../../models/i-column-options";
 }*/
 @Component({
     selector: 'px-header-cell',
-    template: `<ng-container *ngIf="column">
-<div class="row">
-@if(!!column.headerName || !!column.fieldName){  <span class="text-content">{{column.headerName || column.fieldName}} </span> }
-@if(sort === 'ASC'){
-    <button mat-icon-button >
-        <mat-icon>arrow_upward</mat-icon>
-    </button>
-}
-@else if(sort === 'DESC'){
-    <button mat-icon-button >
-        <mat-icon>arrow_downward</mat-icon>
-    </button>
-}
-</div> 
-</ng-container>`,
+    templateUrl: 'header-cell.component.html',
     styleUrls: [
         'header-cell.component.scss'
     ],
@@ -40,7 +26,6 @@ export class HeaderCellRenderer<T> {
     ) { }
     @Input()
     column?: IColumnOption<T>;
-
     @HostListener('click')
     clickHandler() {
         if (!this.sort) this.sort = 'ASC';
