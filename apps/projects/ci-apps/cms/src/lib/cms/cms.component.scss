@@ -53,3 +53,14 @@ mat-drawer-content {
         width: 100%;
     }
 }
+
+.container {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    justify-content: stretch;
+    flex: auto;
+    height: 100%;
+}

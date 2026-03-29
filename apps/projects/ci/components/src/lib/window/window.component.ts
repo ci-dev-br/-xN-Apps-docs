@@ -63,7 +63,7 @@ export class WindowComponent implements OnInit, OnDestroy {
   constructor(
     @Optional() private readonly ref?: MatDialogRef<WindowComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) protected data?: IData,
-    // @Optional() public readonly actions?: ActionsService,
+    @Optional() public readonly actions?: ActionsService,
   ) { }
   ngOnInit(): void {
     this.showing = true;

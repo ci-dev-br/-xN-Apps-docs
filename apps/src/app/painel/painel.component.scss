@@ -250,3 +250,13 @@ button.app {
         align-items: center;
     }
 }
+
+.container {
+    display: flex;
+    flex-direction: column;
+
+    flex: auto;
+    align-items: stretch;
+    justify-content: stretch;
+    overflow: auto;
+}
