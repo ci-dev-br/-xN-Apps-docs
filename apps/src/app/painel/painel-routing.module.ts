@@ -8,6 +8,12 @@ export const routes: Routes = [{
     { path: 'Codex', loadChildren: () => import('@ci-apps/Codex').then(m => m.CiApplicationModule) },
     { path: 'CMS', loadChildren: () => import('@ci-apps/cms').then(m => m.CiApplicationModule) },
     { path: 'Financeiro', loadChildren: () => import('@ci-apps/Financeiro').then(m => m.CiApplicationModule) },
+    { path: 'CRM', loadChildren: () => import('@ci-apps/crm').then(m => m.CiApplicationModule) },
+    { path: 'Cadastros', loadChildren: () => import('@ci-apps/Cadastros').then(m => m.CiApplicationModule) },
+    { path: 'DevTools', loadChildren: () => import('@ci-apps/DevTools').then(m => m.CiApplicationModule) },
+    { path: 'Dynamic', loadChildren: () => import('@ci-apps/Dynamic').then(m => m.CiApplicationModule) },
+    { path: 'LowCode', loadChildren: () => import('@ci-apps/LowCode').then(m => m.CiApplicationModule) },
+
   ]
 }];
 @NgModule({
