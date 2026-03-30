@@ -10,6 +10,7 @@ import { FormsModule } from "@angular/forms";
 import { getServiceAsSchema } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 import { EditarDetailComponent, EditarDetailModule } from "@ci/components/editar-detail";
+import { thickness } from "three/examples/jsm/nodes/core/PropertyNode.js";
 
 /**
  *  # Componente de Master-Detail para exibição e edição de dados.
@@ -160,5 +161,6 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
     }
     async sortHandle(event: any) {
         this.order = event;
+        this.search();
     }
 }

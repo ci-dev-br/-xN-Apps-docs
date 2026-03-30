@@ -1,8 +1,10 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface ObterListaWebsite {
-  skip: number;
-  take: number;
-  where: {
-};
+  order?: {
+} | null;
+  skip?: number | null;
+  take?: number | null;
+  where?: {
+} | null;
 }
