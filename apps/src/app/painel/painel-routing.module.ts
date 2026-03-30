@@ -17,7 +17,16 @@ export const routes: Routes = [
       { path: 'LowCode', loadChildren: () => import('@ci-apps/LowCode').then(m => m.CiApplicationModule) },
       { path: 'Organizacao', loadChildren: () => import('@ci-apps/Organizacao').then(m => m.CiApplicationModule) },
       { path: 'Gerencial', loadChildren: () => import('@ci-apps/Gerencial').then(m => m.CiApplicationModule) },
-    ]
+      { path: 'Infra', loadChildren: () => import('@ci-apps/Infra').then(m => m.CiApplicationModule) },
+      { path: 'Installation', loadChildren: () => import('@ci-apps/Instalacao').then(m => m.CiApplicationModule) },
+      { path: 'Mensagens', loadChildren: () => import('@ci-apps/Mensagens').then(m => m.CiApplicationModule) },
+      { path: 'Produtos', loadChildren: () => import('@ci-apps/Produtos').then(m => m.CiApplicationModule) },
+      { path: 'Profile', loadChildren: () => import('@ci-apps/Profile').then(m => m.CiApplicationModule) },
+      { path: 'Projetos', loadChildren: () => import('@ci-apps/Projetos').then(m => m.CiApplicationModule) },
+      { path: 'SEO', loadChildren: () => import('@ci-apps/SEO').then(m => m.CiApplicationModule) },
+      { path: 'Threejs', loadChildren: () => import('@ci-apps/Threejs').then(m => m.CiApplicationModule) },
+      { path: 'Treinamento', loadChildren: () => import('@ci-apps/Treinamento').then(m => m.CiApplicationModule) },
+      { path: 'Vendas', loadChildren: () => import('@ci-apps/Vendas').then(m => m.CiApplicationModule) },]
   }];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
