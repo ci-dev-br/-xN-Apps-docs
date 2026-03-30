@@ -13,6 +13,7 @@ export const routes: Routes = [{
     { path: 'DevTools', loadChildren: () => import('@ci-apps/DevTools').then(m => m.CiApplicationModule) },
     { path: 'Dynamic', loadChildren: () => import('@ci-apps/Dynamic').then(m => m.CiApplicationModule) },
     { path: 'LowCode', loadChildren: () => import('@ci-apps/LowCode').then(m => m.CiApplicationModule) },
+    { path: 'Organizacao', loadChildren: () => import('@ci-apps/Organizacao').then(m => m.CiApplicationModule) },
 
   ]
 }];
