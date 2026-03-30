@@ -28,6 +28,7 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './acessar.component.scss'
 })
 export class AcessarComponent implements OnInit {
+  autenticado = false;
   // private argon2?: Argon2;
   passwordVisibility = false;
   year = (new Date()).getFullYear();
@@ -52,12 +53,10 @@ export class AcessarComponent implements OnInit {
     if (this.stage) this.criarFormulario(this.stage)
   }
   async ngOnInit() {
-    // if (!!this.storageService.restore('apps.ci.dev.br.store.User')) this.router.navigate(['/']); // TODO: acho que esta correto mas deve ser revisado a necessidade de roteamento neste ponto...
 
-    /* if (!!this.userService?.user?.value) this.router.navigate(['/'], {
-      from: this.router.url
-    }
-    }) */
+    if (!!this.userService?.user?.value) this.router.navigate(['/'], {
+      //  from: this.router.url
+    })
   }
   private criarFormulario(stage: 'identification' | 'loading' | 'captcha' | 'authentication') {
     if (this.stage !== stage) this.stage = stage;
