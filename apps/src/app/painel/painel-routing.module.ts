@@ -26,7 +26,18 @@ export const routes: Routes = [
       { path: 'SEO', loadChildren: () => import('@ci-apps/SEO').then(m => m.CiApplicationModule) },
       { path: 'Threejs', loadChildren: () => import('@ci-apps/Threejs').then(m => m.CiApplicationModule) },
       { path: 'Treinamento', loadChildren: () => import('@ci-apps/Treinamento').then(m => m.CiApplicationModule) },
-      { path: 'Vendas', loadChildren: () => import('@ci-apps/Vendas').then(m => m.CiApplicationModule) },]
+      { path: 'Vendas', loadChildren: () => import('@ci-apps/Vendas').then(m => m.CiApplicationModule) },
+      { path: 'Icons', loadChildren: () => import('@ci-apps/Icons').then(m => m.CiApplicationModule) },
+      {
+        path: 'Imersao', data: {
+          LoadIcons: {
+            imersao: { url: 'icons/imersao.svg' },
+          }
+        },
+        loadChildren: () => import('@ci-apps/Imersao').then(m => m.CiApplicationModule)
+      },
+      // { path: 'Formularios', loadChildren: () => import('@ci-apps/Formularios').then(m => m.CiApplicationModule) },
+    ]
   }];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
