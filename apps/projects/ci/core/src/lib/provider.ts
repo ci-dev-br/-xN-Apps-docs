@@ -6,7 +6,6 @@ import { ShortcutService } from "./services/shortcut.service";
 import localePt from '@angular/common/locales/pt';
 import { registerLocaleData } from "@angular/common";
 registerLocaleData(localePt, 'pt-BR');
-
 export interface ISchemaPreset<T, D> {
     primary?: string | string[];
     schemaName?: string;
@@ -34,7 +33,7 @@ export function coreProvider(
         NotificationService,
         ShortcutService,
         { provide: CORE_ENV, useValue: options },
-        { provide: LOCALE_ID, useValue: 'pt-BR' }
+        { provide: LOCALE_ID, useValue: 'pt-BR' } // Default ?
     ];
     return makeEnvironmentProviders(providers);
 }

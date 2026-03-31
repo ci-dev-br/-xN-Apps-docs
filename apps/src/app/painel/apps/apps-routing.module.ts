@@ -5,7 +5,7 @@ import { Lista } from './lista/lista';
 const routes: Routes = [
   {
     path: '', component: AppsComponent, children: [
-      { path: '', component: Lista, title: 'Aplicativos' },
+      { path: 'apps', component: Lista, title: 'Aplicativos' },
     ]
   }
 ];

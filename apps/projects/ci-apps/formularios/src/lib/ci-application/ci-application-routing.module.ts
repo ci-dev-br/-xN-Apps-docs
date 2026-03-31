@@ -1,9 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component'
+import { FormularioHomeComponent } from './fomulario-home/fomulario-home.component'
+import { FormularioEditComponent } from './fomulario-edit/fomulario-edit.component';
 const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'edit', loadChildren: () => import('./edit/edit.module').then(m => m.EditModule) },
+  {
+    path: '',
+    component: FormularioHomeComponent,
+    children: [
+    ]
+  }
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

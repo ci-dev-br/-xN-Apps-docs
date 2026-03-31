@@ -1,17 +1,17 @@
 <div class="row">
     @if(formulario){
     <div class="col small-container auto">
-        <mat-card>
+        @if(!!formGroup){<mat-card>
             <mat-card-content [formGroup]="formGroup">
                 <ci-input mode="content-editable" label="Título" fieldName="title" el="h1" />
                 <ci-input mode="content-editable" label="Descrição" fieldName="description" />
             </mat-card-content>
-        </mat-card>
-        @if(!!formulario.perguntas){
-        @for (pergunta of formulario.perguntas.perguntas; track $index) {
+        </mat-card>}
+        @if(!!((formulario)?.perguntas?.perguntas)){
+        @for (pergunta of formulario.perguntas!.perguntas; track pergunta) {
         <mat-card>
             <mat-card-content>
-                <ci-pergunta [source]="pergunta"></ci-pergunta>
+                <!-- <ci-pergunta-item [source]="pergunta"></ci-pergunta-item> -->
             </mat-card-content>
             <mat-card-footer align="end">
                 <button mat-icon-button (click)="removerPergunta(pergunta)">

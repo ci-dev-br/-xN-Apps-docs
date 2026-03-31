@@ -17,7 +17,6 @@ export const routes: Routes = [
       { path: 'LowCode', loadChildren: () => import('@ci-apps/LowCode').then(m => m.CiApplicationModule) },
       { path: 'Organizacao', loadChildren: () => import('@ci-apps/Organizacao').then(m => m.CiApplicationModule) },
       { path: 'Gerencial', loadChildren: () => import('@ci-apps/Gerencial').then(m => m.CiApplicationModule) },
-      { path: 'Infra', loadChildren: () => import('@ci-apps/Infra').then(m => m.CiApplicationModule) },
       { path: 'Installation', loadChildren: () => import('@ci-apps/Instalacao').then(m => m.CiApplicationModule) },
       { path: 'Mensagens', loadChildren: () => import('@ci-apps/Mensagens').then(m => m.CiApplicationModule) },
       { path: 'Produtos', loadChildren: () => import('@ci-apps/Produtos').then(m => m.CiApplicationModule) },
@@ -36,7 +35,7 @@ export const routes: Routes = [
         },
         loadChildren: () => import('@ci-apps/Imersao').then(m => m.CiApplicationModule)
       },
-      // { path: 'Formularios', loadChildren: () => import('@ci-apps/Formularios').then(m => m.CiApplicationModule) },
+      { path: 'Formularios', loadChildren: () => import('@ci-apps/Formularios').then(m => m.CiApplicationModule) },
     ]
   }];
 @NgModule({

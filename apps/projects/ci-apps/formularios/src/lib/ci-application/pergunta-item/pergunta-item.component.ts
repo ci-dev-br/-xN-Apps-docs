@@ -7,8 +7,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { CoreModule, DaoService } from "@ci/core";
 import { Pergunta } from "@ci/portal-api";
-import { Type, TYPES } from "../../../type";
-
+import { CI_INPUT_TYPES, CyInputType } from "../../type";
 @Component({
     standalone: true,
     imports: [
@@ -20,7 +19,7 @@ import { Type, TYPES } from "../../../type";
         ReactiveFormsModule,
         MatSelectModule,
     ],
-    selector: 'ci-pergunta',
+    selector: 'ci-pergunta-item',
     styles: `
         :host{display: contents;}
         mat-form-field{
@@ -31,7 +30,7 @@ import { Type, TYPES } from "../../../type";
     styleUrl: `pergunta-item.component.scss`,
 })
 export class PerguntaItemComponent {
-    types: Type[] = TYPES;
+    types: CyInputType[] = CI_INPUT_TYPES;
     form = this.formBuilder.group({
         questao: [, []],
         type: [, []],

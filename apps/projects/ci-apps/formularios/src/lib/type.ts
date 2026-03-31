@@ -1,19 +1,15 @@
-export interface Option {
+export interface CiInputOption {
     label?: string;
     fieldName?: string;
 }
-
-
-
-export interface Type {
+export interface CyInputType {
     name?: string;
     description?: string;
     hint?: string;
-    options?: Option[];
+    options?: CiInputOption[];
     icon?: string;
 }
-
-export const TYPES: Type[] = [
+export const CI_INPUT_TYPES: CyInputType[] = [
     { name: 'text', description: 'Texto', icon: 'text' },
     { name: 'number', description: 'Número', icon: 'numeric' },
     { name: 'number', description: 'Valor', icon: 'numeric' },

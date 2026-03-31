@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Inject, Injectable, PLATFORM_ID, SimpleChange, SimpleChanges } from "@angular/core";
+import { Inject, Injectable, Optional, PLATFORM_ID, SimpleChange, SimpleChanges } from "@angular/core";
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 
 /**
@@ -23,7 +23,7 @@ export class WsService {
         return this._subject;
     }
     constructor(
-        @Inject(PLATFORM_ID) private platformId: Object
+        @Optional() @Inject(PLATFORM_ID) private platformId: Object
     ) {
         setTimeout(() => this.init());
     }
