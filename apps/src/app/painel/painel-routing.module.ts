@@ -35,7 +35,6 @@ export const routes: Routes = [
         },
         loadChildren: () => import('@ci-apps/Imersao').then(m => m.CiApplicationModule)
       },
-      { path: 'Formularios', loadChildren: () => import('@ci-apps/Formularios').then(m => m.CiApplicationModule) },
     ]
   }];
 @NgModule({
