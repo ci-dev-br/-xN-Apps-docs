@@ -57,7 +57,6 @@ export class AppController {
     @Req() request: Request,
     @Res() response: Response
   ) {
-    console.trace('Acesso');
     if (this.sitePage) {
       try {
         let host: string = this.appService.getHost(request);
