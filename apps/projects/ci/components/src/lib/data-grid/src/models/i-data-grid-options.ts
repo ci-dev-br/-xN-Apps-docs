@@ -1,7 +1,7 @@
 import { IContextMenuOf } from "@ci/components/context-menu";
-import { IColumnOption } from "../data-grid/src/models/i-column-options";
 import { ILoadListOptions } from "./i-load-list-options";
 import { IPivot } from "./i-pivot";
+import { IColumnOption } from "./i-column-options";
 
 export interface IDataGridOptions<T> {
     columns: IColumnOption<T>[];

@@ -7,8 +7,8 @@
       "type": "msedge",
       "request": "launch",
       // "preLaunchTask": "npm: start",
-      // "url": "https://development.ci.dev.br/"
-      "url": "https://apps.ci.dev.br/"
+      "url": "https://development.ci.dev.br/"
+      // "url": "https://apps.ci.dev.br/"
     },
     /* {
       "name": "ng test",

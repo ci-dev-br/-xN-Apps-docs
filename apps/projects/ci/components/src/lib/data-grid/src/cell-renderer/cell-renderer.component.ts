@@ -1,15 +1,6 @@
-import { Component, Input, TemplateRef, ViewChild, ViewContainerRef } from "@angular/core";
+import { Component, Input, ViewContainerRef } from "@angular/core";
 import { DataGridService } from "../data-grid.service";
-import { IColumnOption } from "../../models/i-column-options";
-
-/*export interface IColumns {
-    headerName: string;
-    propertyName: string;
-    rendererType?: string;
-    component?: any;
-    componentType?: Type<any>
-    hide?: boolean;
-}*/
+import { IColumnOption } from "../models/i-column-options";
 @Component({
     selector: 'px-cell-renderer',
     template: `

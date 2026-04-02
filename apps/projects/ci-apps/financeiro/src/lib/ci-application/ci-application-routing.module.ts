@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component'
-import { MasterDetailComponent } from '@ci/components';
+import { MasterDetailComponent } from '@ci/components/master-detail';
 const routes: Routes = [
   {
     path: '', component: HomeComponent, data: {
@@ -12,7 +12,8 @@ const routes: Routes = [
         path: ':EntityName',
         component: MasterDetailComponent,
         data: {
-          schema: 'LancamentoFinanceiro' /* TODO: replace at to dictionary */
+          schema: 'LancamentoFinanceiro'
+          /* TODO: replace at to dictionary */
           // dataType: 'EntityMasterDetail',
           // title: 'Unidade de Medida',
           // icon: 'svg:unidade_medida',

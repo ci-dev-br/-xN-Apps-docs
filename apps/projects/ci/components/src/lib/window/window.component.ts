@@ -1,23 +1,9 @@
 import { Component, EventEmitter, HostListener, inject, Inject, Injector, Input, OnDestroy, OnInit, Optional, Output, PLATFORM_ID, TemplateRef, Type, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DaoService } from '@ci/core';
-import { ActionsService } from '../action/actions.service';
 import { BehaviorSubject } from 'rxjs';
-import { isPlatformBrowser } from '@angular/common';
+import { IWindowData, IMenuItem } from './models';
 
-export interface IData {
-  data?: any;
-  [key: string]: any;
-}
-export interface IItemMenu {
-  component?: Type<any>;
-  icon?: string;
-  label?: string;
-  path?: string;
-  children?: IItemMenu[];
-  onClick?: (...args: any) => void;
-  visible?: () => boolean;
-}
 /**
  * Window Component
  * 
@@ -38,8 +24,8 @@ export class WindowComponent implements OnInit, OnDestroy {
   @Input()
   title?: string;
   showing = false;
-  acts = new BehaviorSubject<IItemMenu[] | undefined>(undefined);
-  menu: IItemMenu[] = [
+  acts = new BehaviorSubject<IMenuItem[] | undefined>(undefined);
+  menu: IMenuItem[] = [
     {
       visible: () => {
         return (!!(this.data as any)?.data?.data && 'internalId' in (this.data as any).data.data);
@@ -62,8 +48,8 @@ export class WindowComponent implements OnInit, OnDestroy {
   daos?: DaoService;
   constructor(
     @Optional() private readonly ref?: MatDialogRef<WindowComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) protected data?: IData,
-    @Optional() public readonly actions?: ActionsService,
+    @Optional() @Inject(MAT_DIALOG_DATA) protected data?: IWindowData,
+    // @Optional() public readonly actions?: ActionsService,
   ) { }
   ngOnInit(): void {
     this.showing = true;

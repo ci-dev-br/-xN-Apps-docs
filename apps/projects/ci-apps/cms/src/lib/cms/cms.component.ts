@@ -6,15 +6,16 @@ import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { RouterModule } from "@angular/router";
 import { CoreModule } from "@ci/core";
-import { BoardModule, GridModule, WindowModule } from "@ci/components";
+import { BoardModule, WindowModule } from "@ci/components";
 import { models } from "../models";
+import { DataGridModule } from "@ci/components/data-grid";
 
 @Component({
     selector: 'ci-cms',
     imports: [
         CoreModule,
         RouterModule,
-        GridModule,
+        DataGridModule,
         BoardModule,
         MatToolbarModule,
         MatSidenavModule,

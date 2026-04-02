@@ -1,14 +1,12 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from "@angular/core";
 import { DataGridService } from "./data-grid.service";
-import { IDataGridOptions } from "../models/i-data-grid-options";
-import { IColumnOption } from "../models/i-column-options";
-import { ShortCut } from "@ci/core";
 import { IContextMenu } from "@ci/components/context-menu";
+import { IDataGridOptions } from "./models/i-data-grid-options";
+import { IColumnOption } from "./models/i-column-options";
 export interface SelectEvent<I> {
     value?: I;
     event: MouseEvent | KeyboardEvent | Event;
 }
-
 @Component({
     selector: 'ci-data-grid',
     templateUrl: 'data-grid.component.html',

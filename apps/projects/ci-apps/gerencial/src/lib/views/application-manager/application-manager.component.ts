@@ -1,11 +1,12 @@
 import { Component } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
-import { MatIcon, MatIconModule } from "@angular/material/icon";
+import { MatIconModule } from "@angular/material/icon";
 import { MatTableModule } from "@angular/material/table";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { Application, ApplicationService } from "@ci/portal-api";
 import { CoreModule, DaoBuilder } from "@ci/core";
-import { DataListModule, WindowService, GridModule, IDataGridOptions, IColumnOption } from "@ci/components";
+import { DataListModule, WindowService } from "@ci/components";
+import { DataGridModule, IDataGridOptions, IColumnOption } from "@ci/components/data-grid";
 import { lastValueFrom } from "rxjs";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
@@ -31,7 +32,7 @@ import { Router } from "@angular/router";
         MatSelectModule,
         MatIconModule,
         FormsModule,
-        GridModule,
+        DataGridModule,
         DataListModule,
     ]
 }) export class ApplicationManagerComponent {

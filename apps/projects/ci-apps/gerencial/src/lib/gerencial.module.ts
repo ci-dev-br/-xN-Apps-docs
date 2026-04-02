@@ -17,7 +17,7 @@ import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo
 import { GerencialComponent } from "./gerencial.component";
 import { WindowModule } from "@ci/components";
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { GridModule } from "@ci/components";
+import { DataGridModule } from "@ci/components/data-grid";
 import { MatSelectModule } from "@angular/material/select";
 import { MatChipsModule } from "@angular/material/chips";
 import { MobFakeComponent } from "./mob-fake/mob-fake.component";
@@ -72,7 +72,7 @@ const routes: Routes = [
         MatTooltipModule,
         MatInputModule,
         WindowModule,
-        GridModule,
+        DataGridModule,
         MatButtonToggleModule,
         FormsModule,
         MatSelectModule,

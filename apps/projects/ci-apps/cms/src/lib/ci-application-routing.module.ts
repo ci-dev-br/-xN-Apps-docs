@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Route, RouterModule, Routes } from '@angular/router';
 import { CMSComponent } from './cms/cms.component';
-import { MasterDetailComponent } from '@ci/components';
+import { MasterDetailComponent } from '@ci/components/master-detail';
 import { models } from './models';
 const routes: Routes = [
   {

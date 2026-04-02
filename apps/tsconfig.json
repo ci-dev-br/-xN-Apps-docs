@@ -150,6 +150,12 @@
       "@ci/components/aio": [
         "./projects/ci/components/src/lib/aio/public-api"
       ],
+      "@ci/components/master-detail": [
+        "./projects/ci/components/src/lib/master-detail/public-api"
+      ],
+      "@ci/components/data-grid": [
+        "./projects/ci/components/src/lib/data-grid/public-api"
+      ],
     },
     "outDir": "./dist/out-tsc",
     "strict": true,

@@ -3,7 +3,8 @@ import { Route, RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component'
 // import { BrandingComponent } from './branding/branding.component';
 import { models } from '../models';
-import { MasterDetailComponent } from '@ci/components';
+import { MasterDetailComponent } from '@ci/components/master-detail';
+import { RouteFromSchema } from '@ci/core';
 const routes: Routes = [
   /* {
     path: '', component: HomeComponent, children: [
@@ -14,11 +15,7 @@ const routes: Routes = [
   {
     path: '', component: HomeComponent, children: [
       ...models.map(c => {
-        return {
-          path: `${c}`, component: MasterDetailComponent, data: {
-            schema: `${c}`, title: `${c}`, icon: `svg:${c}`,
-          }
-        } as Route
+        return RouteFromSchema(c, MasterDetailComponent)
       })
     ],
     title: 'Apps :: Projetos'

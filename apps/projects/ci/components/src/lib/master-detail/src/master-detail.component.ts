@@ -1,16 +1,8 @@
 import { AfterViewInit, Component, Injector, Input, OnDestroy, OnInit, Optional } from "@angular/core";
-import { MatButtonModule } from "@angular/material/button";
-import { MatButtonToggleModule } from "@angular/material/button-toggle";
-import { MatIconModule } from "@angular/material/icon";
-import { MatToolbarModule } from "@angular/material/toolbar";
-import { ActivatedRoute, RouterModule } from "@angular/router";
-import { ActionsService, DataListModule, GridModule, IColumnOption, IDataGridOptions, WindowModule, WindowService, } from "@ci/components";
-import { CoreModule, DaoBuilder, DaoService, IAmSchematization, } from "@ci/core";
-import { FormsModule } from "@angular/forms";
+import { ActivatedRoute } from "@angular/router";
+import { DaoBuilder, DaoService, IAmSchematization, } from "@ci/core";
 import { getServiceAsSchema } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
-import { EditarDetailComponent, EditarDetailModule } from "@ci/components/editar-detail";
-import { thickness } from "three/examples/jsm/nodes/core/PropertyNode.js";
 
 /**
  *  # Componente de Master-Detail para exibição e edição de dados.
@@ -31,21 +23,7 @@ import { thickness } from "three/examples/jsm/nodes/core/PropertyNode.js";
  */
 @Component({
     selector: 'ci-master-detail',
-    standalone: true,
-    imports: [
-        CoreModule,
-        RouterModule,
-        MatToolbarModule,
-        MatButtonToggleModule,
-        MatIconModule,
-        MatButtonModule,
-        WindowModule,
-        GridModule,
-        DataListModule,
-        FormsModule,
-        EditarDetailModule,
-    ],
-
+    standalone: false,
     styleUrl: 'master-detail.component.scss',
     templateUrl: 'master-detail.component.html'
 })
@@ -55,16 +33,16 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
     @Input()
     schemaName: string = undefined!;
     @Input()
-    gridOptions?: IDataGridOptions<T>;
+    gridOptions?: any/* IDataGridOptions<T> */;
     service?: any;
     private order?: any;
     constructor(
-        @Optional() private readonly daoBuilder?: DaoBuilder,
-        @Optional() private readonly daos?: DaoService,
-        @Optional() private readonly route?: ActivatedRoute,
-        @Optional() private readonly window?: WindowService,
-        @Optional() private readonly injector?: Injector,
-        // @Optional() private readonly actions?: ActionsService,
+        @Optional() private daoBuilder?: DaoBuilder,
+        @Optional() private daos?: DaoService,
+        @Optional() private route?: ActivatedRoute,
+        // @Optional() private window?: WindowService,
+        @Optional() private injector?: Injector,
+        //  @Optional() private actions?: ActionsService,
     ) { }
     source?: T[] = [{} as any];
     async loadGrid() {
@@ -90,7 +68,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
                                 'tenants',
                                 'deleted'].indexOf(fieldName) > -1
 
-                        } as IColumnOption<any>
+                        } as /* IColumnOption<any> */ any
                     })
                 ]
             }
@@ -104,13 +82,13 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
         if (!!document && this.oTitle) document.title = this.oTitle;
     }
     async ngOnInit() {
-        /* this.actions?.setAction('confirmation', {
-            label: 'Cornfimar alterações',
-            icon: 'done-all',
-            onClick: (element) => {
-                element;
-            }
-        }) */
+        /*  this.actions?.setAction('confirmation', {
+             label: 'Cornfimar alterações',
+             icon: 'done-all',
+             onClick: (element) => {
+                 element;
+             }
+         }) */
         this.route?.data.subscribe(async (data: any) => {
             if (!!data.schema) {
                 this.schemaName = data.schema;
@@ -144,12 +122,13 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
             this.source = await this.daos?.read(await lastValueFrom(this.service.getList()), this.schemaName);
     }
     async editar(data: T, event?: Event) {
-        const result: number | any = await this.window?.open(EditarDetailComponent,
-            { schemaName: this.schemaName, data }, this.schemaName, event)
-        if (result === -1 && this.source) {
-            let pos = this.source.indexOf(data);
-            this.source?.splice(pos, 1);
-        }
+        // TODO: refatorar para chamada da janela de edição, passando o componente de edição como parâmetro, para evitar dependência direta do componente de edição 
+        /*   const result: number | any = await this.window?.open(EditarDetailComponent,
+              { schemaName: this.schemaName, data }, this.schemaName, event)
+          if (result === -1 && this.source) {
+              let pos = this.source.indexOf(data);
+              this.source?.splice(pos, 1);
+          } */
     }
     async createNew() {
         if (this.service) {

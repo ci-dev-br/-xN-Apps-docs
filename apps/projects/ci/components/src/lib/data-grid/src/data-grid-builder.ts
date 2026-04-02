@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { DaoBuilder } from "@ci/core";
-import { IColumnOption } from "./grid.module";
+import { IColumnOption } from "./models/i-column-options";
 /**
  * Service to build grid options
  * 

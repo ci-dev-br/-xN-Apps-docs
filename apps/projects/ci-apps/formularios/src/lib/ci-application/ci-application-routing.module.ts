@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { FormularioHomeComponent } from './fomulario-home/fomulario-home.component'
-import { FormularioEditComponent } from './fomulario-edit/fomulario-edit.component';
 const routes: Routes = [
   {
     path: '',
     component: FormularioHomeComponent,
-    children: [
-    ]
+    children: []
   }
 ];
 @NgModule({

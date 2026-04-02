@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
-import { EditarDetailComponent, MasterDetailComponent, WindowModule, WindowService } from "@ci/components";
+import { EditarDetailComponent, WindowModule, WindowService } from "@ci/components";
+import { MasterDetailModule } from "@ci/components/master-detail";
 import { CoreModule } from "@ci/core";
 import { Organizacao, OrganizacaoService } from "@ci/portal-api";
 import { BehaviorSubject, lastValueFrom } from "rxjs";
@@ -12,7 +13,7 @@ import { BehaviorSubject, lastValueFrom } from "rxjs";
         CoreModule,
         WindowModule,
         MatButtonModule,
-        MasterDetailComponent,
+        MasterDetailModule,
     ],
     styleUrl: 'principal.scss',
     standalone: true,

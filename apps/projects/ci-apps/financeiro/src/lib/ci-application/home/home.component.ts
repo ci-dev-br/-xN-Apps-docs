@@ -10,7 +10,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthModule } from '@ci/auth';
-import { DynFormModule, EditarDetailComponent, GridModule, IAction, LNavModule, WindowModule, WindowService } from '@ci/components';
+import { DynFormModule, EditarDetailComponent, IAction, LNavModule, WindowModule, WindowService } from '@ci/components';
+import { DataGridModule } from '@ci/components/data-grid';
 import { EditarDetailModule } from '@ci/components/editar-detail';
 import { CoreModule, IAmSchematization } from '@ci/core';
 import { LancamentoFinanceiro, LancamentoFinanceiroService } from '@ci/portal-api';
@@ -26,7 +27,7 @@ import { lastValueFrom } from 'rxjs';
         WindowModule,
         EditarDetailModule,
         CoreModule,
-        GridModule,
+        DataGridModule,
         RouterModule,
         MatToolbarModule,
         MatButtonToggleModule,

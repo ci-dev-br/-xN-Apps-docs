@@ -7,7 +7,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CoreModule } from '@ci/core';
-import { ActionModule } from '../action/action.module';
+import { IWindowData, IMenuItem } from './models';
 
 @NgModule({
   declarations: [
@@ -15,7 +15,6 @@ import { ActionModule } from '../action/action.module';
   ],
   imports: [
     CoreModule,
-    // ActionModule,
     MatToolbarModule,
     MatIconModule,
     MatDialogModule,
@@ -33,4 +32,6 @@ export class WindowModule { }
 export {
   WindowComponent,
   WindowService,
+  IWindowData as IData,
+  IMenuItem as IItemMenu,
 }
