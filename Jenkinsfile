@@ -19,7 +19,8 @@ pipeline {
             steps {
                 dir("${env.APP_PATH}") {
                     echo 'Instalando dependências...'
-                    sh 'npm ci'
+                    sh 'npm install -g pnpm'
+                    sh 'pnpm install'
                 }
             }
         }
