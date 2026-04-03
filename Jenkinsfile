@@ -1,14 +1,9 @@
 pipeline {
     agent any
 
-    tools {
-        // O nome 'node20' deve coincidir com o configurado em "Global Tool Configuration" no Jenkins
-        nodejs 'node20'
-    }
-
     environment {
         // Define o caminho da aplicação para facilitar a manutenção
-        APP_PATH = 'apps/minha-app'
+        APP_PATH = 'apps'
     }
 
     stages {
