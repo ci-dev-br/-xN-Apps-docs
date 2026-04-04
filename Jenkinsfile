@@ -1,11 +1,8 @@
 pipeline {
     agent any
-
     environment {
-        // Define o caminho da aplicação para facilitar a manutenção
         APP_PATH = 'apps'
     }
-
     stages {
         stage('Limpeza Inicial') {
             steps {
@@ -14,17 +11,15 @@ pipeline {
                 checkout scm
             }
         }
-
         stage('Instalação de Dependências') {
             steps {
                 dir("${env.APP_PATH}") {
                     echo 'Instalando dependências...'
-                    sh 'npm install -g pnpm'
-                    sh 'pnpm install'
+                    bat 'npm install -g pnpm'
+                    bat 'pnpm install'
                 }
             }
         }
-
         stage('Lint & Testes') {
             steps {
                 dir("${env.APP_PATH}") {
@@ -35,7 +30,6 @@ pipeline {
                 }
             }
         }
-
         stage('Build da Aplicação') {
             steps {
                 dir("${env.APP_PATH}") {
@@ -44,7 +38,6 @@ pipeline {
                 }
             }
         }
-
         stage('Arquivamento') {
             steps {
                 echo 'Arquivando artefatos de build...'
@@ -53,7 +46,6 @@ pipeline {
             }
         }
     }
-
     post {
         always {
             echo 'Finalizando pipeline...'
