@@ -25,7 +25,7 @@ pipeline {
             steps {
                 dir("${env.APP_PATH}") {
                     echo 'Iniciando compilação Angular (Produção)...'
-                    bat 'npm run build -- --configuration=production'
+                    bat 'npm run build -- --configuration=production --verbose'
                 }
             }
         }
