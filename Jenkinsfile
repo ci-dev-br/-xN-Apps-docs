@@ -30,7 +30,7 @@ pipeline {
             }
         }
     }
-    post {a
+    post {
         always {
             echo 'Finalizando pipeline...'
         }
