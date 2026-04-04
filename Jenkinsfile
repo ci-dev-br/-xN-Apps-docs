@@ -17,7 +17,7 @@ pipeline {
                     echo 'Instalando dependências...'
                     bat 'npm install -g @angular/cli'
                     bat 'npm install -g pnpm'
-                    bat 'pnpm install'
+                    bat 'pnpm install --force' // Força a reinstalação de todas as dependências, ignorando o cache local.
                 }
             }
         }
