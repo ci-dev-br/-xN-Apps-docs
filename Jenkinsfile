@@ -21,6 +21,16 @@ pipeline {
                 }
             }
         }
+        stage('Testes Unitários') {
+            steps {
+                dir("${env.APP_PATH}") {
+                    echo 'Executando testes...'
+                    // O comando abaixo executa o teste uma única vez (--watch=false)
+                    // e usa o ChromeHeadless (sem janela)
+                    bat 'npm test -- --watch=false --browsers=ChromeHeadless --reporters=progress,junit'
+                }
+            }
+        }
         stage('Build da Aplicação') {
             steps {
                 dir("${env.APP_PATH}") {
@@ -29,16 +39,22 @@ pipeline {
                 }
             }
         }
+        // TODO: implementar estágio de publicação do build para o ambiente indicado
     }
     post {
         always {
+            echo 'Processando relatórios de teste...'
+            // Coleta os arquivos XML gerados pelo karma-junit-reporter
+            // O caminho depende de onde o seu karma.conf.js salva o XML
+            junit testResults: "${env.APP_PATH}/test-results/**/*.xml", allowEmptyResults: true
+            
             echo 'Finalizando pipeline...'
         }
         success {
-            echo 'Build concluído com sucesso!'
+            echo 'Build e Testes concluídos com sucesso!'
         }
         failure {
-            echo 'Ocorreu um erro no pipeline. Verifique os logs.'
+            echo 'Ocorreu um erro. Verifique os relatórios de teste ou o log de build.'
         }
     }
 }

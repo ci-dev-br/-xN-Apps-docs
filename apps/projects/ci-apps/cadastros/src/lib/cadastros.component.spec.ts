@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CadastrosComponent } from './cadastros.component';
+import { CadastrosComponent } from './cadastros/cadastros.component';
 
 describe('CadastrosComponent', () => {
   let component: CadastrosComponent;
@@ -10,8 +10,8 @@ describe('CadastrosComponent', () => {
     await TestBed.configureTestingModule({
       imports: [CadastrosComponent]
     })
-    .compileComponents();
-    
+      .compileComponents();
+
     fixture = TestBed.createComponent(CadastrosComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

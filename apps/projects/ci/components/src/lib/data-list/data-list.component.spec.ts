@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DataListComponent } from './data-list.component';
 
 describe('DataListComponent', () => {
-  let component: DataListComponent;
-  let fixture: ComponentFixture<DataListComponent>;
+  let component: DataListComponent<unknown>;
+  let fixture: ComponentFixture<DataListComponent<unknown>>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
