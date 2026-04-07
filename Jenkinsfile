@@ -45,7 +45,7 @@ pipeline {
                     script {
                         try {
                             echo 'Executando testes...'
-                            bat 'npm test -- --no-watch--browsers=ChromeHeadless --reporters=progress,junit'
+                            bat 'npm test -- --no-watch --browsers=ChromeHeadless --reporters=progress,junit'
                         } finally {
                             echo 'Limpando processos do Chrome para destravar o pipeline...'
                             bat 'taskkill /F /IM chrome.exe /T >nul 2>&1 || exit 0'
