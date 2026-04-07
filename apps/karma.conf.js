@@ -4,6 +4,11 @@
 module.exports = function (config) {
   config.set({
     basePath: '',
+    singleRun: true,
+    autoWatch: false,             // Garante que não vai ficar olhando arquivos
+    browserDisconnectTimeout: 10000, // Se o Chrome demorar pra fechar, chuta ele
+    browserDisconnectTolerance: 3,
+    browserNoActivityTimeout: 60000,
     frameworks: ['jasmine', 'junit'],
     plugins: [
       require('karma-jasmine'),
@@ -38,8 +43,19 @@ module.exports = function (config) {
       ]
     },
     reporters: ['progress', 'kjhtml', 'junit'],
-    browsers: ['ChromeHeadless'],
-    singleRun: true,
+    // browsers: ['ChromeHeadless'],
+    customLaunchers: {
+      ChromeHeadlessCI: {
+        base: 'ChromeHeadless',
+        flags: [
+          '--no-sandbox',
+          '--disable-gpu',
+          '--disable-dev-shm-usage', // Evita travamento por falta de memória em CIs
+          '--remote-debugging-port=9222'
+        ]
+      }
+    },
+    browsers: ['ChromeHeadlessCI'], // Use o launcher customizado aqui
     restartOnFileChange: false
   });
 };
