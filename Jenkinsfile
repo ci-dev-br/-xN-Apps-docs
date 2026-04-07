@@ -11,13 +11,31 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Instalação de Dependências') {
+       stage('Instalação de Dependências') {
             steps {
                 dir("${env.APP_PATH}") {
-                    echo 'Instalando dependências...'
-                    bat 'npm install -g @angular/cli'
-                    bat 'npm install -g pnpm'
-                    bat 'pnpm install --no-frozen-lockfile' // Evita erros de lockfile desatualizado
+                    echo 'Verificando e instalando ferramentas globais...'
+                    bat """
+                        @echo off
+                        where ng >nul 2>nul
+                        if %errorlevel% neq 0 (
+                            echo Angular CLI nao encontrado. Instalando...
+                            npm install -g @angular/cli
+                        ) else (
+                            echo Angular CLI ja esta instalado.
+                        )
+
+                        where pnpm >nul 2>nul
+                        if %errorlevel% neq 0 (
+                            echo pnpm nao encontrado. Instalando...
+                            npm install -g pnpm
+                        ) else (
+                            echo pnpm ja esta instalado.
+                        )
+                    """
+                    
+                    echo 'Instalando dependências do projeto...'
+                    bat 'pnpm install --no-frozen-lockfile'
                 }
             }
         }
