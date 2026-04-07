@@ -45,15 +45,9 @@ pipeline {
                     script {
                         try {
                             echo 'Executando testes...'
-                            // Usando --watch=false que costuma ser mais bem interpretado pelo Angular mais recente
-                            bat 'npm test -- --watch=false --browsers=ChromeHeadless --reporters=progress,junit'
+                            bat 'npm test -- --no-watch--browsers=ChromeHeadless --reporters=progress,junit'
                         } finally {
-                            // O bloco finally roda INDEPENDENTE se o teste passou ou falhou.
-                            // Ele limpa os processos zumbis do Chrome que seguram o pipeline.
                             echo 'Limpando processos do Chrome para destravar o pipeline...'
-                            
-                            // O '>nul 2>&1' esconde a saída de erro caso não tenha nenhum chrome aberto
-                            // O '|| exit 0' garante que esse comando de limpeza nunca quebre o pipeline
                             bat 'taskkill /F /IM chrome.exe /T >nul 2>&1 || exit 0'
                         }
                     }
@@ -73,8 +67,6 @@ pipeline {
     post {
         always {
             echo 'Processando relatórios de teste...'
-            // Coleta os arquivos XML gerados pelo karma-junit-reporter
-            // O caminho depende de onde o seu karma.conf.js salva o XML
             junit testResults: "${env.APP_PATH}/test-results/**/*.xml", allowEmptyResults: true
             
             echo 'Finalizando pipeline...'
