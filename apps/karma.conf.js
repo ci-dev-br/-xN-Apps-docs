@@ -1,36 +1,33 @@
-// Karma configuration file, see link for more information
-// https://karma-runner.github.io/1.0/config/configuration-file.html
-
+// Karma configuration file
 module.exports = function (config) {
   config.set({
     basePath: '',
     singleRun: true,
-    autoWatch: false,             // Garante que não vai ficar olhando arquivos
-    browserDisconnectTimeout: 10000, // Se o Chrome demorar pra fechar, chuta ele
+    autoWatch: false,
+    browserDisconnectTimeout: 10000,
     browserDisconnectTolerance: 3,
     browserNoActivityTimeout: 60000,
-    frameworks: ['jasmine', 'junit'],
+    // CORREÇÃO 1: JUnit removido daqui. Adicionado o framework do Angular.
+    frameworks: ['jasmine', '@angular-devkit/build-angular'],
+    // CORREÇÃO 2: Garantir que o plugin do Angular está carregado junto com o JUnit
     plugins: [
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
       require('karma-coverage'),
-      require('karma-junit-reporter') // <--- Linha crucial
+      require('@angular-devkit/build-angular/plugins/karma'), // <-- Importante para o Angular entender os testes
+      require('karma-junit-reporter')
     ],
     client: {
       clearContext: false,
-      jasmine: {
-        // you can add configuration options for Jasmine here
-        // the possible options are listed at https://jasmine.github.io/api/edge/Configuration.html
-        // for example, you can disable the random execution with `random: false`
-        // or set a specific seed with `seed: 4321`
-      },
+      jasmine: {}
     },
     jasmineHtmlReporter: {
-      suppressAll: true // removes the duplicated traces
+      suppressAll: true
     },
+    // Esta é a configuração do reporter que o Jenkins vai usar
     junitReporter: {
-      outputDir: 'test-results', // pasta que o Jenkins vai ler
+      outputDir: 'test-results',
       outputFile: 'test-results.xml',
       useBrowserName: false
     },
@@ -42,20 +39,20 @@ module.exports = function (config) {
         { type: 'text-summary' }
       ]
     },
+    // O junit vive aqui, nos reporters!
     reporters: ['progress', 'kjhtml', 'junit'],
-    // browsers: ['ChromeHeadless'],
     customLaunchers: {
       ChromeHeadlessCI: {
         base: 'ChromeHeadless',
         flags: [
           '--no-sandbox',
           '--disable-gpu',
-          '--disable-dev-shm-usage', // Evita travamento por falta de memória em CIs
+          '--disable-dev-shm-usage',
           '--remote-debugging-port=9222'
         ]
       }
     },
-    browsers: ['ChromeHeadlessCI'], // Use o launcher customizado aqui
+    browsers: ['ChromeHeadlessCI'],
     restartOnFileChange: false
   });
 };
