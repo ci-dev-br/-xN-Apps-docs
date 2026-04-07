@@ -27,7 +27,7 @@ pipeline {
                     echo 'Executando testes...'
                     // O comando abaixo executa o teste uma única vez (--watch=false)
                     // e usa o ChromeHeadless (sem janela)
-                    bat 'npm test -- --watch=false --browsers=ChromeHeadless --reporters=progress,junit'
+                    bat 'npm test -- --single-run --watch=false --browsers=ChromeHeadless --reporters=progress,junit'
                 }
             }
         }
