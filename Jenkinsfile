@@ -42,10 +42,21 @@ pipeline {
         stage('Testes Unitários') {
             steps {
                 dir("${env.APP_PATH}") {
-                    echo 'Executando testes...'
-                    // O comando abaixo executa o teste uma única vez (--watch=false)
-                    // e usa o ChromeHeadless (sem janela)
-                    bat 'npm test -- --no-watch --browsers=ChromeHeadless --reporters=progress,junit'
+                    script {
+                        try {
+                            echo 'Executando testes...'
+                            // Usando --watch=false que costuma ser mais bem interpretado pelo Angular mais recente
+                            bat 'npm test -- --watch=false --browsers=ChromeHeadless --reporters=progress,junit'
+                        } finally {
+                            // O bloco finally roda INDEPENDENTE se o teste passou ou falhou.
+                            // Ele limpa os processos zumbis do Chrome que seguram o pipeline.
+                            echo 'Limpando processos do Chrome para destravar o pipeline...'
+                            
+                            // O '>nul 2>&1' esconde a saída de erro caso não tenha nenhum chrome aberto
+                            // O '|| exit 0' garante que esse comando de limpeza nunca quebre o pipeline
+                            bat 'taskkill /F /IM chrome.exe /T >nul 2>&1 || exit 0'
+                        }
+                    }
                 }
             }
         }
