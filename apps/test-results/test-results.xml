@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 146.0.0.0 (Windows 10)" package="" timestamp="2026-04-08T01:10:28" id="0" hostname="srv33" tests="10" errors="0" failures="7" time="1.464">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/146.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="TermosComponent should create" time="0.236" classname="TermosComponent"/>
+  <testcase name="RegistrarComponent should create" time="1.056" classname="RegistrarComponent">
+    <failure type="">ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[RegistrarComponent2]. Path: AuthUserService2 -&gt; AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `AuthService2`.', ngTokenPath: [ 'AuthUserService2', 'AuthService2' ] })
+ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[RegistrarComponent2]. Path: AuthUserService2 -&gt; AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+    at createRuntimeError (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors_di.ts:130:17)
+    at NullInjector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/null_injector.ts:20:21)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.retrieve (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:250:52)
+    at injectInjectorOnly (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:110:35)
+    at ɵɵinject (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:144:40)
+    at Object.factory (ng:///AuthUserService2/ɵfac.js:4:60)
+    at node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:535:35
+</failure>
+  </testcase>
+  <testcase name="PainelComponent should create" time="0.039" classname="PainelComponent">
+    <failure type="">ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[PainelComponent2]. Path: AuthUserService2 -&gt; AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `AuthService2`.', ngTokenPath: [ 'AuthUserService2', 'AuthService2' ] })
+ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[PainelComponent2]. Path: AuthUserService2 -&gt; AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+    at createRuntimeError (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors_di.ts:130:17)
+    at NullInjector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/null_injector.ts:20:21)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.retrieve (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:250:52)
+    at injectInjectorOnly (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:110:35)
+    at ɵɵinject (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:144:40)
+    at Object.factory (ng:///AuthUserService2/ɵfac.js:4:60)
+    at node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:535:35
+</failure>
+  </testcase>
+  <testcase name="BoardComponent should create" time="0.014" classname="BoardComponent">
+    <failure type="">Error: NG0304: 'mat-toolbar' is not a known element (used in the 'BoardComponent2' component template):
+1. If 'mat-toolbar' is an Angular component, then verify that it is a part of an @NgModule where this component is declared.
+2. If 'mat-toolbar' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@NgModule.schemas' of this component to suppress this message.
+error properties: Object({ code: 304 })
+    at validateElementIsKnown (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/element_validation.ts:116:15)
+    at initializeElement (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/element.ts:151:5)
+    at ɵɵelementStart (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/element.ts:127:3)
+    at templateFn (ng:///BoardComponent2.js:7:9)
+    at executeTemplate (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/shared.ts:109:5)
+    at renderView (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/render.ts:107:7)
+    at renderComponent (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/render.ts:47:5)
+    at renderChildComponents (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/render.ts:160:5)
+    at renderView (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/render.ts:140:7)
+    at ComponentFactory2.createComponentRef (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/component_ref.ts:379:7)
+</failure>
+  </testcase>
+  <testcase name="AppsComponent should create" time="0.042" classname="AppsComponent">
+    <failure type="">ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[AppsComponent2]. Path: AuthUserService2 -&gt; AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `AuthService2`.', ngTokenPath: [ 'AuthUserService2', 'AuthService2' ] })
+ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[AppsComponent2]. Path: AuthUserService2 -&gt; AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+    at createRuntimeError (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors_di.ts:130:17)
+    at NullInjector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/null_injector.ts:20:21)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.retrieve (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:250:52)
+    at injectInjectorOnly (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:110:35)
+    at ɵɵinject (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:144:40)
+    at Object.factory (ng:///AuthUserService2/ɵfac.js:4:60)
+    at node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:535:35
+</failure>
+  </testcase>
+  <testcase name="HomepageComponent should create" time="0.022" classname="HomepageComponent">
+    <failure type="">ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[HomepageComponent2]. Path: AuthUserService2 -&gt; AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `AuthService2`.', ngTokenPath: [ 'AuthUserService2', 'AuthService2' ] })
+ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[HomepageComponent2]. Path: AuthUserService2 -&gt; AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+    at createRuntimeError (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors_di.ts:130:17)
+    at NullInjector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/null_injector.ts:20:21)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.retrieve (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:250:52)
+    at injectInjectorOnly (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:110:35)
+    at ɵɵinject (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:144:40)
+    at Object.factory (ng:///AuthUserService2/ɵfac.js:4:60)
+    at node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:535:35
+</failure>
+  </testcase>
+  <testcase name="AppComponent should render title" time="0.023" classname="AppComponent">
+    <failure type="">Expected undefined to contain 'Hello, apps'.
+    at &lt;Jasmine&gt;
+    at UserContext.&lt;anonymous&gt; (src/app/app.component.spec.ts:28:55)
+    at _ZoneDelegate.invoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone.js:398:28)
+    at _ProxyZoneSpec.onInvoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone-testing.js:2132:39)
+    at _ZoneDelegate.invoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone.js:397:34)
+</failure>
+  </testcase>
+  <testcase name="AppComponent should create the app" time="0.008" classname="AppComponent"/>
+  <testcase name="AppComponent should have the 'apps' title" time="0.009" classname="AppComponent"/>
+  <testcase name="AcessarComponent should create" time="0.015" classname="AcessarComponent">
+    <failure type="">ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[AcessarComponent2]. Path: AuthUserService2 -&gt; AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `AuthService2`.', ngTokenPath: [ 'AuthUserService2', 'AuthService2' ] })
+ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[AcessarComponent2]. Path: AuthUserService2 -&gt; AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+    at createRuntimeError (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors_di.ts:130:17)
+    at NullInjector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/null_injector.ts:20:21)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.retrieve (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:250:52)
+    at injectInjectorOnly (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:110:35)
+    at ɵɵinject (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:144:40)
+    at Object.factory (ng:///AuthUserService2/ɵfac.js:4:60)
+    at node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:535:35
+</failure>
+  </testcase>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>
