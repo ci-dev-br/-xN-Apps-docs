@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ComponentRef, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { Router, RouterModule } from '@angular/router';
-import { AuthModule, AuthUserService } from '@ci/auth';
+import { AuthModule, UserAuthenticationService } from '@ci/auth';
 import { FooterModule, NavbarModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { Application, User } from '@ci/portal-api';
@@ -43,7 +43,7 @@ const XD = <T>(a: T) => {
 export class HomepageComponent implements OnInit {
     stage?: 'loading' | 'loaded' = 'loading';
     constructor(
-        protected readonly userService: AuthUserService,
+        protected readonly userService: UserAuthenticationService,
         private render: Renderer2,
         private el: ElementRef<Element>,
         private readonly router: Router,

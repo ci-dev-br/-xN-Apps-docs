@@ -1,0 +1,14 @@
+.loading {
+    padding: 3px;
+    background: black;
+    color: white;
+    margin: 24px;
+    box-shadow: 3px 6px 8px rgba(0, 0, 0, 0.3);
+    display: block;
+}
+
+:host {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}

@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { InputModule } from '@ci/components';
 import { CoreModule, DaoService, IChangeable } from '@ci/core';
 import { User, UserService } from '@ci/portal-api';
-import { AuthModule, AuthUserService as AuthUserService } from '@ci/auth';
+import { AuthModule, UserAuthenticationService as UserAuthenticationService } from '@ci/auth';
 import { lastValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit {
         private readonly formBuilder: FormBuilder,
         private readonly daos: DaoService,
         private readonly userService: UserService,
-        private readonly authUserService: AuthUserService,
+        private readonly authUserService: UserAuthenticationService,
     ) { }
     ngOnInit(): void {
         this.authUserService.user.subscribe(user => { this.hasUser(user || undefined) })

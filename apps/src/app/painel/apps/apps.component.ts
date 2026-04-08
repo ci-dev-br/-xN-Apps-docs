@@ -3,7 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { /* ActivatedRoute */ ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CoreModule } from '@ci/core';
 // import { APPS, IApp } from './apps';
-import { AuthModule, roles, AuthUserService } from '@ci/auth';
+import { AuthModule, roles, UserAuthenticationService } from '@ci/auth';
 import { BoardModule } from '@ci/components';
 import { MatTabsModule } from '@angular/material/tabs';
 
@@ -32,7 +32,7 @@ export class AppsComponent implements OnInit {
   // apps?: IApp[];
   abas?: { label: string, path: string, icon: string }[];
   constructor(
-    private readonly userService: AuthUserService,
+    private readonly userService: UserAuthenticationService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
   ) { }

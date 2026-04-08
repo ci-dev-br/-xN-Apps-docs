@@ -4,7 +4,7 @@ import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
-import { AuthUserService } from '@ci/auth';
+import { UserAuthenticationService } from '@ci/auth';
 import { BoardModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
 
@@ -45,7 +45,7 @@ export class Home implements OnInit {
   constructor(
     private readonly http: HttpClient,
     @Inject(PLATFORM_ID) private platformId: Object,
-    private readonly authUser: AuthUserService,
+    private readonly authUser: UserAuthenticationService,
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
     if (this.isBrowser) {

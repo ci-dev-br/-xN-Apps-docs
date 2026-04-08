@@ -1,11 +1,11 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Optional } from "@angular/core";
 import { AuthService, User } from "@ci/portal-api";
 import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
 import { StorageService } from "@ci/core";
 
 @Injectable()
-export class AuthUserService {
+export class UserAuthenticationService {
     /**
      * Serviço para gerenciamento do usuário autenticado.
      */
@@ -21,9 +21,9 @@ export class AuthUserService {
         return undefined
     })());
     constructor(
-        private readonly authService: AuthService,
-        private readonly router?: Router,
-        private readonly storage?: StorageService,
+        @Optional() private readonly authService?: AuthService,
+        @Optional() private readonly router?: Router,
+        @Optional() private readonly storage?: StorageService,
     ) {
         this.init();
     }
@@ -55,7 +55,7 @@ export class AuthUserService {
      * @param user 
      */
     async identificarUsuario(user: User) {
-        this.$user.next(await lastValueFrom(this.authService.profile()));
+        if (this.authService) this.$user.next(await lastValueFrom(this.authService.profile()));
     }
     /**
      * Encerra a sessão do usuário atual.
@@ -71,7 +71,8 @@ export class AuthUserService {
     private async getFromMemory() {
         let profile: User | null = null;
         try {
-            profile = await lastValueFrom(this.authService.profile());
+            if (this.authService)
+                profile = await lastValueFrom(this.authService.profile());
         } catch (error) {
             console.trace(error);
             // this.router.navigate(['/']);

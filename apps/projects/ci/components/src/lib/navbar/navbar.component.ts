@@ -1,5 +1,5 @@
 import { Component, inject } from "@angular/core";
-import { USER_MENU, AuthUserService } from "@ci/auth";
+import { USER_MENU, UserAuthenticationService } from "@ci/auth";
 import { INavbarItemMenu } from "./i-menu-item";
 import { IItemMenu } from "@ci/components";
 
@@ -16,7 +16,7 @@ export class NavbarComponent {
     menuItens?: INavbarItemMenu[];
     userMenuList?: IItemMenu[] = inject(USER_MENU, { optional: true }) || undefined;
     constructor(
-        private readonly userService: AuthUserService,
+        private readonly userService: UserAuthenticationService,
     ) { }
     async sair() {
         this.userService?.sair();

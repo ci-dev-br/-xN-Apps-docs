@@ -1,0 +1,1704 @@
+
+C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps>npm test -- --no-watch --browsers=ChromeHeadless --reporters=progress,junit 
+
+> apps@0.0.0 test
+> ng test --no-watch --browsers=ChromeHeadless --reporters=progress,junit
+
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                           [2m | [22m[1mNames[22m                                      [2m | [22m [1mRaw size[22m
+[32mchunk-YKXHHR5N.js[39m                             [2m | [22m[2m-[22m                                          [2m | [22m  [36m2.41 MB[39m[2m | [22m
+[32mchunk-ESYD77KQ.js[39m                             [2m | [22m[2m-[22m                                          [2m | [22m  [36m2.21 MB[39m[2m | [22m
+[32mchunk-UATU7U5H.js[39m                             [2m | [22m[2m-[22m                                          [2m | [22m  [36m1.71 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                  [2m | [22m[2mpolyfills[22m                                  [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mspec-app-registrar-registrar.component.spec.js[39m[2m | [22m[2mspec-app-registrar-registrar.component.spec[22m[2m | [22m[36m206.14 kB[39m[2m | [22m
+[32mspec-app-painel-painel.component.spec.js[39m      [2m | [22m[2mspec-app-painel-painel.component.spec[22m      [2m | [22m[36m184.53 kB[39m[2m | [22m
+[32mspec-app-painel-apps-apps.component.spec.js[39m   [2m | [22m[2mspec-app-painel-apps-apps.component.spec[22m   [2m | [22m[36m169.79 kB[39m[2m | [22m
+[32mstyles.css[39m                                    [2m | [22m[2mstyles[22m                                     [2m | [22m[36m125.54 kB[39m[2m | [22m
+[32mspec-app-homepage-homepage.component.spec.js[39m  [2m | [22m[2mspec-app-homepage-homepage.component.spec[22m  [2m | [22m [36m86.78 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                          [2m | [22m[2mjasmine-cleanup-1[22m                          [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mspec-app-acessar-acessar.component.spec.js[39m    [2m | [22m[2mspec-app-acessar-acessar.component.spec[22m    [2m | [22m [36m56.26 kB[39m[2m | [22m
+[32mchunk-LHQSYLY6.js[39m                             [2m | [22m[2m-[22m                                          [2m | [22m [36m40.77 kB[39m[2m | [22m
+[32mchunk-VMBELSNE.js[39m                             [2m | [22m[2m-[22m                                          [2m | [22m [36m37.48 kB[39m[2m | [22m
+[32mspec-app-app.component.spec.js[39m                [2m | [22m[2mspec-app-app.component.spec[22m                [2m | [22m [36m26.68 kB[39m[2m | [22m
+[32mtest_main.js[39m                                  [2m | [22m[2mtest_main[22m                                  [2m | [22m [36m22.32 kB[39m[2m | [22m
+[32mchunk-SPVVSZYI.js[39m                             [2m | [22m[2m-[22m                                          [2m | [22m [36m17.07 kB[39m[2m | [22m
+[32mspec-app-termos-termos.component.spec.js[39m      [2m | [22m[2mspec-app-termos-termos.component.spec[22m      [2m | [22m [36m16.09 kB[39m[2m | [22m
+[32mchunk-BQJ5F2ZZ.js[39m                             [2m | [22m[2m-[22m                                          [2m | [22m [36m10.99 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                             [2m | [22m[2m-[22m                                          [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                          [2m | [22m[2mjasmine-cleanup-0[22m                          [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                             [2m | [22m[1mInitial total[22m                              [2m | [22m  [1m8.41 MB[22m
+
+Application bundle generation complete. [13.078 seconds] - 2026-04-08T22:58:58.100Z
+
+[1m[33mIgnoring framework "@angular-devkit/build-angular" from karma config file because it's not compatible with the application builder.[39m[22m
+[32m08 04 2026 19:59:00.931:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 19:59:00.932:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[32m08 04 2026 19:59:00.945:INFO [launcher]: [39mStarting browser ChromeHeadless
+[32m08 04 2026 19:59:03.523:INFO [Chrome Headless 146.0.0.0 (Windows 10)]: [39mConnected on socket UuerCvf_rd9_IGn3AAAB with id 3438049
+Chrome Headless 146.0.0.0 (Windows 10): Executed 0 of 9[32m SUCCESS[39m (0 secs / 0 secs)
+[1A[2K[31mChrome Headless 146.0.0.0 (Windows 10) PainelComponent should create FAILED[39m
+	ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[PainelComponent2]. Path: AuthUserService2 -> AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+	error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `AuthService2`.', ngTokenPath: [ 'AuthUserService2', 'AuthService2' ] })
+	ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[PainelComponent2]. Path: AuthUserService2 -> AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+	    at createRuntimeError (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors_di.ts:130:17)
+	    at NullInjector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/null_injector.ts:20:21)
+	    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+	    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+	    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+	    at R3Injector.retrieve (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:250:52)
+	    at injectInjectorOnly (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:110:35)
+	    at ɵɵinject (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:144:40)
+	    at Object.factory (ng:///AuthUserService2/ɵfac.js:4:60)
+	    at node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:535:35
+Chrome Headless 146.0.0.0 (Windows 10): Executed 1 of 9[31m (1 FAILED)[39m (0 secs / 0.608 secs)
+[1A[2K[31mChrome Headless 146.0.0.0 (Windows 10) AppsComponent should create FAILED[39m
+	ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[AppsComponent2]. Path: AuthUserService2 -> AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+	error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `AuthService2`.', ngTokenPath: [ 'AuthUserService2', 'AuthService2' ] })
+	ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[AppsComponent2]. Path: AuthUserService2 -> AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+	    at createRuntimeError (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors_di.ts:130:17)
+	    at NullInjector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/null_injector.ts:20:21)
+	    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+	    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+	    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+	    at R3Injector.retrieve (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:250:52)
+	    at injectInjectorOnly (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:110:35)
+	    at ɵɵinject (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:144:40)
+	    at Object.factory (ng:///AuthUserService2/ɵfac.js:4:60)
+	    at node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:535:35
+Chrome Headless 146.0.0.0 (Windows 10): Executed 2 of 9[31m (2 FAILED)[39m (0 secs / 0.624 secs)
+[1A[2KChrome Headless 146.0.0.0 (Windows 10): Executed 3 of 9[31m (2 FAILED)[39m (0 secs / 0.646 secs)
+[1A[2K[31mChrome Headless 146.0.0.0 (Windows 10) RegistrarComponent should create FAILED[39m
+	ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[RegistrarComponent2]. Path: AuthUserService2 -> AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+	error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `AuthService2`.', ngTokenPath: [ 'AuthUserService2', 'AuthService2' ] })
+	ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[RegistrarComponent2]. Path: AuthUserService2 -> AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+	    at createRuntimeError (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors_di.ts:130:17)
+	    at NullInjector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/null_injector.ts:20:21)
+	    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+	    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+	    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+	    at R3Injector.retrieve (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:250:52)
+	    at injectInjectorOnly (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:110:35)
+	    at ɵɵinject (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:144:40)
+	    at Object.factory (ng:///AuthUserService2/ɵfac.js:4:60)
+	    at node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:535:35
+Chrome Headless 146.0.0.0 (Windows 10): Executed 4 of 9[31m (3 FAILED)[39m (0 secs / 0.656 secs)
+[1A[2K[31mChrome Headless 146.0.0.0 (Windows 10) AcessarComponent should create FAILED[39m
+	ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[AcessarComponent2]. Path: AuthUserService2 -> AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+	error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `AuthService2`.', ngTokenPath: [ 'AuthUserService2', 'AuthService2' ] })
+	ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[AcessarComponent2]. Path: AuthUserService2 -> AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+	    at createRuntimeError (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors_di.ts:130:17)
+	    at NullInjector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/null_injector.ts:20:21)
+	    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+	    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+	    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+	    at R3Injector.retrieve (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:250:52)
+	    at injectInjectorOnly (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:110:35)
+	    at ɵɵinject (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:144:40)
+	    at Object.factory (ng:///AuthUserService2/ɵfac.js:4:60)
+	    at node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:535:35
+Chrome Headless 146.0.0.0 (Windows 10): Executed 5 of 9[31m (4 FAILED)[39m (0 secs / 0.664 secs)
+[1A[2K[31mChrome Headless 146.0.0.0 (Windows 10) AppComponent should render title FAILED[39m
+	Expected undefined to contain 'Hello, apps'.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/app.component.spec.ts:28:55)
+	    at _ZoneDelegate.invoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone.js:398:28)
+	    at _ProxyZoneSpec.onInvoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone-testing.js:2132:39)
+	    at _ZoneDelegate.invoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone.js:397:34)
+Chrome Headless 146.0.0.0 (Windows 10): Executed 6 of 9[31m (5 FAILED)[39m (0 secs / 0.677 secs)
+[1A[2KChrome Headless 146.0.0.0 (Windows 10): Executed 7 of 9[31m (5 FAILED)[39m (0 secs / 0.682 secs)
+[1A[2KChrome Headless 146.0.0.0 (Windows 10): Executed 8 of 9[31m (5 FAILED)[39m (0 secs / 0.686 secs)
+[1A[2K[31mChrome Headless 146.0.0.0 (Windows 10) HomepageComponent should create FAILED[39m
+	ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[HomepageComponent2]. Path: AuthUserService2 -> AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+	error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `AuthService2`.', ngTokenPath: [ 'AuthUserService2', 'AuthService2' ] })
+	ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[HomepageComponent2]. Path: AuthUserService2 -> AuthService2. Find more at https://v21.angular.dev/errors/NG0201
+	    at createRuntimeError (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors_di.ts:130:17)
+	    at NullInjector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/null_injector.ts:20:21)
+	    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+	    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+	    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+	    at R3Injector.retrieve (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:250:52)
+	    at injectInjectorOnly (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:110:35)
+	    at ɵɵinject (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/injector_compatibility.ts:144:40)
+	    at Object.factory (ng:///AuthUserService2/ɵfac.js:4:60)
+	    at node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:535:35
+Chrome Headless 146.0.0.0 (Windows 10): Executed 9 of 9[31m (6 FAILED)[39m (0 secs / 0.696 secs)
+[1A[2KChrome Headless 146.0.0.0 (Windows 10): Executed 9 of 9[31m (6 FAILED)[39m (0.727 secs / 0.696 secs)
+[31mTOTAL: 6 FAILED, 3 SUCCESS[39m
+
+=============================== Coverage summary ===============================
+Statements   : 11.31% ( 31/274 )
+Branches     : 0.82% ( 1/121 )
+Functions    : 6.25% ( 5/80 )
+Lines        : 11.83% ( 29/245 )
+================================================================================
+[33m❯[39m Building...
+[32m✔[39m Building...
+Application bundle generation failed. [1.391 seconds] - 2026-04-08T22:59:07.691Z
+
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18003: No inputs were found in config file 'C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/portal-api/tsconfig.spec.json'. Specified 'include' paths were '["**/*.spec.ts","**/*.d.ts"]' and 'exclude' paths were '[]'.[0m [1m[35m[plugin angular-compiler][0m
+
+[39m[22m
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                             [2m | [22m[1mNames[22m                                                        [2m | [22m [1mRaw size[22m
+[32mchunk-GWIFK677.js[39m                                               [2m | [22m[2m-[22m                                                            [2m | [22m  [36m2.21 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                                    [2m | [22m[2mpolyfills[22m                                                    [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mchunk-VEJDBHLE.js[39m                                               [2m | [22m[2m-[22m                                                            [2m | [22m[36m757.43 kB[39m[2m | [22m
+[32mspec-lib-window-window.component.spec.js[39m                        [2m | [22m[2mspec-lib-window-window.component.spec[22m                        [2m | [22m[36m302.75 kB[39m[2m | [22m
+[32mchunk-IXI7D5DD.js[39m                                               [2m | [22m[2m-[22m                                                            [2m | [22m[36m189.38 kB[39m[2m | [22m
+[32mchunk-KBPULPQJ.js[39m                                               [2m | [22m[2m-[22m                                                            [2m | [22m[36m171.11 kB[39m[2m | [22m
+[32mchunk-GLDVIAN3.js[39m                                               [2m | [22m[2m-[22m                                                            [2m | [22m[36m120.97 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                                            [2m | [22m[2mjasmine-cleanup-1[22m                                            [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mchunk-KK5LS3DX.js[39m                                               [2m | [22m[2m-[22m                                                            [2m | [22m [36m40.81 kB[39m[2m | [22m
+[32mtest_main.js[39m                                                    [2m | [22m[2mtest_main[22m                                                    [2m | [22m [36m22.35 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                                               [2m | [22m[2m-[22m                                                            [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mspec-lib-dyn-form-dyn-form.component.spec.js[39m                    [2m | [22m[2mspec-lib-dyn-form-dyn-form.component.spec[22m                    [2m | [22m  [36m6.17 kB[39m[2m | [22m
+[32mspec-lib-input-input.component.spec.js[39m                          [2m | [22m[2mspec-lib-input-input.component.spec[22m                          [2m | [22m  [36m5.85 kB[39m[2m | [22m
+[32mspec-lib-data-list-data-list.component.spec.js[39m                  [2m | [22m[2mspec-lib-data-list-data-list.component.spec[22m                  [2m | [22m  [36m3.68 kB[39m[2m | [22m
+[32mspec-lib-l-nav-l-nav.component.spec.js[39m                          [2m | [22m[2mspec-lib-l-nav-l-nav.component.spec[22m                          [2m | [22m  [36m3.14 kB[39m[2m | [22m
+[32mspec-lib-data-list-item-renderer-item-renderer.component.spec.js[39m[2m | [22m[2mspec-lib-data-list-item-renderer-item-renderer.component.spec[22m[2m | [22m  [36m2.78 kB[39m[2m | [22m
+[32mspec-lib-action-action.component.spec.js[39m                        [2m | [22m[2mspec-lib-action-action.component.spec[22m                        [2m | [22m  [36m2.77 kB[39m[2m | [22m
+[32mspec-lib-container-container.component.spec.js[39m                  [2m | [22m[2mspec-lib-container-container.component.spec[22m                  [2m | [22m  [36m2.76 kB[39m[2m | [22m
+[32mspec-lib-logo-logo.component.spec.js[39m                            [2m | [22m[2mspec-lib-logo-logo.component.spec[22m                            [2m | [22m  [36m2.71 kB[39m[2m | [22m
+[32mspec-lib-icon-icon.component.spec.js[39m                            [2m | [22m[2mspec-lib-icon-icon.component.spec[22m                            [2m | [22m  [36m1.78 kB[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                                            [2m | [22m[2mjasmine-cleanup-0[22m                                            [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                               [2m | [22m[1mInitial total[22m                                                [2m | [22m  [1m4.93 MB[22m
+
+Application bundle generation complete. [5.652 seconds] - 2026-04-08T22:59:13.418Z
+
+[91m08 04 2026 19:59:13.489:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 19:59:14.130:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 19:59:14.131:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 19:59:14.131:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m             [2m | [22m[1mNames[22m                        [2m | [22m [1mRaw size[22m
+[32mchunk-N5YX4SVY.js[39m               [2m | [22m[2m-[22m                            [2m | [22m  [36m2.03 MB[39m[2m | [22m
+[32mpolyfills.js[39m                    [2m | [22m[2mpolyfills[22m                    [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mspec-lib-auth-auth.guard.spec.js[39m[2m | [22m[2mspec-lib-auth-auth.guard.spec[22m[2m | [22m[36m220.85 kB[39m[2m | [22m
+[32mchunk-JG7H6BA4.js[39m               [2m | [22m[2m-[22m                            [2m | [22m[36m205.73 kB[39m[2m | [22m
+[32mspec-lib-core.service.spec.js[39m   [2m | [22m[2mspec-lib-core.service.spec[22m   [2m | [22m[36m179.08 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m            [2m | [22m[2mjasmine-cleanup-1[22m            [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                    [2m | [22m[2mtest_main[22m                    [2m | [22m [36m21.88 kB[39m[2m | [22m
+[32mchunk-RW6TATDC.js[39m               [2m | [22m[2m-[22m                            [2m | [22m  [36m7.00 kB[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m            [2m | [22m[2mjasmine-cleanup-0[22m            [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                               [2m | [22m[1mInitial total[22m                [2m | [22m  [1m3.75 MB[22m
+
+Application bundle generation complete. [5.492 seconds] - 2026-04-08T22:59:19.654Z
+
+[91m08 04 2026 19:59:19.725:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 19:59:20.132:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 19:59:20.132:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 19:59:20.132:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                 [2m | [22m[1mNames[22m                            [2m | [22m [1mRaw size[22m
+[32mchunk-UDN5I2TO.js[39m                   [2m | [22m[2m-[22m                                [2m | [22m  [36m2.13 MB[39m[2m | [22m
+[32mpolyfills.js[39m                        [2m | [22m[2mpolyfills[22m                        [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mtest_main.js[39m                        [2m | [22m[2mtest_main[22m                        [2m | [22m[36m227.84 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                [2m | [22m[2mjasmine-cleanup-1[22m                [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mchunk-O76QEXRV.js[39m                   [2m | [22m[2m-[22m                                [2m | [22m  [36m5.80 kB[39m[2m | [22m
+[32mspec-lib-data-grid.component.spec.js[39m[2m | [22m[2mspec-lib-data-grid.component.spec[22m[2m | [22m  [36m1.74 kB[39m[2m | [22m
+[32mspec-lib-data-grid.service.spec.js[39m  [2m | [22m[2mspec-lib-data-grid.service.spec[22m  [2m | [22m[36m935 bytes[39m[2m | [22m
+[32mchunk-G4WZGFAO.js[39m                   [2m | [22m[2m-[22m                                [2m | [22m[36m856 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                [2m | [22m[2mjasmine-cleanup-0[22m                [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                   [2m | [22m[1mInitial total[22m                    [2m | [22m  [1m3.45 MB[22m
+
+Application bundle generation complete. [2.668 seconds] - 2026-04-08T22:59:22.839Z
+
+[91m08 04 2026 19:59:22.960:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 19:59:23.353:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 19:59:23.354:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 19:59:23.354:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                  [2m | [22m[1mNames[22m                                             [2m | [22m [1mRaw size[22m
+[32mchunk-DNDCVHA7.js[39m                                    [2m | [22m[2m-[22m                                                 [2m | [22m  [36m2.44 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                         [2m | [22m[2mpolyfills[22m                                         [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mspec-lib-ci-application-files-files.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-files-files.component.spec[22m[2m | [22m[36m942.95 kB[39m[2m | [22m
+[32mchunk-ZQ6DFYBR.js[39m                                    [2m | [22m[2m-[22m                                                 [2m | [22m[36m827.05 kB[39m[2m | [22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m  [2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m  [2m | [22m[36m163.16 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                                 [2m | [22m[2mjasmine-cleanup-1[22m                                 [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                         [2m | [22m[2mtest_main[22m                                         [2m | [22m [36m22.28 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                                    [2m | [22m[2m-[22m                                                 [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                                 [2m | [22m[2mjasmine-cleanup-0[22m                                 [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                    [2m | [22m[1mInitial total[22m                                     [2m | [22m  [1m5.48 MB[22m
+
+Application bundle generation complete. [6.067 seconds] - 2026-04-08T22:59:29.493Z
+
+[91m08 04 2026 19:59:29.549:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 19:59:30.044:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 19:59:30.044:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 19:59:30.044:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                [2m | [22m[1mNames[22m                                           [2m | [22m [1mRaw size[22m
+[32mchunk-V7TRXVAX.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.55 MB[39m[2m | [22m
+[32mchunk-YHXGD2TY.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.45 MB[39m[2m | [22m
+[32mchunk-IVF7FZ4X.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m1.46 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                       [2m | [22m[2mpolyfills[22m                                       [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m[2m | [22m[36m143.74 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                               [2m | [22m[2mjasmine-cleanup-1[22m                               [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                       [2m | [22m[2mtest_main[22m                                       [2m | [22m [36m22.28 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mspec-lib-cadastros.component.spec.js[39m               [2m | [22m[2mspec-lib-cadastros.component.spec[22m               [2m | [22m  [36m1.12 kB[39m[2m | [22m
+[32mspec-lib-cadastros-cadastros.component.spec.js[39m     [2m | [22m[2mspec-lib-cadastros-cadastros.component.spec[22m     [2m | [22m[36m797 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                               [2m | [22m[2mjasmine-cleanup-0[22m                               [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                  [2m | [22m[1mInitial total[22m                                   [2m | [22m  [1m7.71 MB[22m
+
+Application bundle generation complete. [6.132 seconds] - 2026-04-08T22:59:36.212Z
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:10:12:
+[37m      10 │             [32m//[37m overflow: hidden;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:31:12:
+[37m      31 │             [32m//[37m position: absolute;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:32:12:
+[37m      32 │             [32m//[37m right: 0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:33:12:
+[37m      33 │             [32m//[37m top:0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[91m08 04 2026 19:59:36.318:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 19:59:36.873:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 19:59:36.873:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 19:59:36.873:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                              [2m | [22m[1mNames[22m                                                         [2m | [22m [1mRaw size[22m
+[32mchunk-LKWRE33Z.js[39m                                                [2m | [22m[2m-[22m                                                             [2m | [22m  [36m2.44 MB[39m[2m | [22m
+[32mchunk-YE3TQDM6.js[39m                                                [2m | [22m[2m-[22m                                                             [2m | [22m  [36m1.10 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                                     [2m | [22m[2mpolyfills[22m                                                     [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mspec-lib-ci-application-navigation-navigation.component.spec.js[39m  [2m | [22m[2mspec-lib-ci-application-navigation-navigation.component.spec[22m  [2m | [22m[36m833.53 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                                             [2m | [22m[2mjasmine-cleanup-1[22m                                             [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                                     [2m | [22m[2mtest_main[22m                                                     [2m | [22m [36m22.28 kB[39m[2m | [22m
+[32mspec-lib-ci-application-code-editor-code-editor.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-code-editor-code-editor.component.spec[22m[2m | [22m [36m21.49 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                                                [2m | [22m[2m-[22m                                                             [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                                             [2m | [22m[2mjasmine-cleanup-0[22m                                             [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                                [2m | [22m[1mInitial total[22m                                                 [2m | [22m  [1m5.51 MB[22m
+
+Application bundle generation complete. [5.629 seconds] - 2026-04-08T22:59:42.542Z
+
+[91m08 04 2026 19:59:42.632:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 19:59:43.091:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 19:59:43.092:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 19:59:43.092:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                [2m | [22m[1mNames[22m                                           [2m | [22m [1mRaw size[22m
+[32mchunk-UDN5I2TO.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.13 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                       [2m | [22m[2mpolyfills[22m                                       [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mtest_main.js[39m                                       [2m | [22m[2mtest_main[22m                                       [2m | [22m[36m227.84 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                               [2m | [22m[2mjasmine-cleanup-1[22m                               [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mchunk-O76QEXRV.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m5.80 kB[39m[2m | [22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m[2m | [22m  [36m2.48 kB[39m[2m | [22m
+[32mspec-lib-dev-tools.component.spec.js[39m               [2m | [22m[2mspec-lib-dev-tools.component.spec[22m               [2m | [22m  [36m2.29 kB[39m[2m | [22m
+[32mspec-lib-dev-tools.service.spec.js[39m                 [2m | [22m[2mspec-lib-dev-tools.service.spec[22m                 [2m | [22m[36m950 bytes[39m[2m | [22m
+[32mchunk-G4WZGFAO.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m[36m856 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                               [2m | [22m[2mjasmine-cleanup-0[22m                               [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                  [2m | [22m[1mInitial total[22m                                   [2m | [22m  [1m3.45 MB[22m
+
+Application bundle generation complete. [2.422 seconds] - 2026-04-08T22:59:45.574Z
+
+[91m08 04 2026 19:59:45.666:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 19:59:46.040:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 19:59:46.040:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 19:59:46.040:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                [2m | [22m[1mNames[22m                                           [2m | [22m [1mRaw size[22m
+[32mchunk-UDN5I2TO.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.13 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                       [2m | [22m[2mpolyfills[22m                                       [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mtest_main.js[39m                                       [2m | [22m[2mtest_main[22m                                       [2m | [22m[36m227.84 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                               [2m | [22m[2mjasmine-cleanup-1[22m                               [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mchunk-O76QEXRV.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m5.80 kB[39m[2m | [22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m[2m | [22m  [36m4.36 kB[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                               [2m | [22m[2mjasmine-cleanup-0[22m                               [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                  [2m | [22m[1mInitial total[22m                                   [2m | [22m  [1m3.45 MB[22m
+
+Application bundle generation complete. [2.347 seconds] - 2026-04-08T22:59:48.453Z
+
+[91m08 04 2026 19:59:48.507:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 19:59:48.885:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 19:59:48.885:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 19:59:48.885:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                [2m | [22m[1mNames[22m                                           [2m | [22m [1mRaw size[22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m[2m | [22m  [36m4.00 MB[39m[2m | [22m
+[32mchunk-KEXJSFNG.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.45 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                       [2m | [22m[2mpolyfills[22m                                       [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                               [2m | [22m[2mjasmine-cleanup-1[22m                               [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                       [2m | [22m[2mtest_main[22m                                       [2m | [22m [36m22.28 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                               [2m | [22m[2mjasmine-cleanup-0[22m                               [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                  [2m | [22m[1mInitial total[22m                                   [2m | [22m  [1m7.56 MB[22m
+
+Application bundle generation complete. [6.138 seconds] - 2026-04-08T22:59:55.086Z
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:10:12:
+[37m      10 │             [32m//[37m overflow: hidden;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:31:12:
+[37m      31 │             [32m//[37m position: absolute;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:32:12:
+[37m      32 │             [32m//[37m right: 0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:33:12:
+[37m      33 │             [32m//[37m top:0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[91m08 04 2026 19:59:55.180:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 19:59:55.762:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 19:59:55.762:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 19:59:55.762:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                                    [2m | [22m[1mNames[22m                                                               [2m | [22m [1mRaw size[22m
+[32mchunk-Q5HYSNOX.js[39m                                                      [2m | [22m[2m-[22m                                                                   [2m | [22m  [36m3.94 MB[39m[2m | [22m
+[32mchunk-HWUTYBX7.js[39m                                                      [2m | [22m[2m-[22m                                                                   [2m | [22m  [36m2.45 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                                           [2m | [22m[2mpolyfills[22m                                                           [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mspec-lib-ci-application-fomulario-edit-fomulario-edit.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-fomulario-edit-fomulario-edit.component.spec[22m[2m | [22m[36m186.43 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                                                   [2m | [22m[2mjasmine-cleanup-1[22m                                                   [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                                           [2m | [22m[2mtest_main[22m                                                           [2m | [22m [36m22.28 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                                                      [2m | [22m[2m-[22m                                                                   [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mspec-lib-ci-application-fomulario-home-fomulario-home.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-fomulario-home-fomulario-home.component.spec[22m[2m | [22m  [36m6.58 kB[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                                                   [2m | [22m[2mjasmine-cleanup-0[22m                                                   [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                                      [2m | [22m[1mInitial total[22m                                                       [2m | [22m  [1m7.69 MB[22m
+
+Application bundle generation complete. [6.172 seconds] - 2026-04-08T23:00:02.009Z
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:10:12:
+[37m      10 │             [32m//[37m overflow: hidden;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:31:12:
+[37m      31 │             [32m//[37m position: absolute;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:32:12:
+[37m      32 │             [32m//[37m right: 0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:33:12:
+[37m      33 │             [32m//[37m top:0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[91m08 04 2026 20:00:02.112:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:00:02.968:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:00:02.968:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:00:02.969:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                [2m | [22m[1mNames[22m                                           [2m | [22m [1mRaw size[22m
+[32mchunk-3AIASZRH.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.18 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                       [2m | [22m[2mpolyfills[22m                                       [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m[2m | [22m[36m501.92 kB[39m[2m | [22m
+[32mchunk-CZYVVMFT.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m[36m232.39 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                               [2m | [22m[2mjasmine-cleanup-1[22m                               [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                       [2m | [22m[2mtest_main[22m                                       [2m | [22m [36m22.32 kB[39m[2m | [22m
+[32mchunk-O76QEXRV.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m5.80 kB[39m[2m | [22m
+[32mspec-lib-icons.component.spec.js[39m                   [2m | [22m[2mspec-lib-icons.component.spec[22m                   [2m | [22m  [36m2.14 kB[39m[2m | [22m
+[32mspec-lib-icons.service.spec.js[39m                     [2m | [22m[2mspec-lib-icons.service.spec[22m                     [2m | [22m[36m838 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                               [2m | [22m[2mjasmine-cleanup-0[22m                               [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                  [2m | [22m[1mInitial total[22m                                   [2m | [22m  [1m4.02 MB[22m
+
+Application bundle generation complete. [2.621 seconds] - 2026-04-08T23:00:05.622Z
+
+[91m08 04 2026 20:00:05.688:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:00:06.125:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:00:06.125:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:00:06.125:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                [2m | [22m[1mNames[22m                                           [2m | [22m [1mRaw size[22m
+[32mchunk-6MRP5QZJ.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.19 MB[39m[2m | [22m
+[32mchunk-H4DDGDGY.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.04 MB[39m[2m | [22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m[2m | [22m  [36m1.05 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                       [2m | [22m[2mpolyfills[22m                                       [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mchunk-3ZAI76OU.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m[36m229.36 kB[39m[2m | [22m
+[32mspec-lib-infiltrado-infiltrado.component.spec.js[39m   [2m | [22m[2mspec-lib-infiltrado-infiltrado.component.spec[22m   [2m | [22m [36m73.57 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                               [2m | [22m[2mjasmine-cleanup-1[22m                               [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                       [2m | [22m[2mtest_main[22m                                       [2m | [22m [36m22.32 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mspec-lib-game-engine-game-engine.component.spec.js[39m [2m | [22m[2mspec-lib-game-engine-game-engine.component.spec[22m [2m | [22m  [36m2.61 kB[39m[2m | [22m
+[32mspec-lib-imersao.component.spec.js[39m                 [2m | [22m[2mspec-lib-imersao.component.spec[22m                 [2m | [22m  [36m2.21 kB[39m[2m | [22m
+[32mspec-lib-imersao.service.spec.js[39m                   [2m | [22m[2mspec-lib-imersao.service.spec[22m                   [2m | [22m[36m892 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                               [2m | [22m[2mjasmine-cleanup-0[22m                               [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                  [2m | [22m[1mInitial total[22m                                   [2m | [22m  [1m6.70 MB[22m
+
+Application bundle generation complete. [6.838 seconds] - 2026-04-08T23:00:12.995Z
+
+[91m08 04 2026 20:00:13.082:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:00:13.639:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:00:13.639:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:00:13.639:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                [2m | [22m[1mNames[22m                                           [2m | [22m [1mRaw size[22m
+[32mchunk-UDN5I2TO.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.13 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                       [2m | [22m[2mpolyfills[22m                                       [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mtest_main.js[39m                                       [2m | [22m[2mtest_main[22m                                       [2m | [22m[36m227.84 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                               [2m | [22m[2mjasmine-cleanup-1[22m                               [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mchunk-O76QEXRV.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m5.80 kB[39m[2m | [22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m[2m | [22m  [36m2.53 kB[39m[2m | [22m
+[32mspec-lib-infra.component.spec.js[39m                   [2m | [22m[2mspec-lib-infra.component.spec[22m                   [2m | [22m  [36m2.18 kB[39m[2m | [22m
+[32mspec-lib-infra.service.spec.js[39m                     [2m | [22m[2mspec-lib-infra.service.spec[22m                     [2m | [22m[36m904 bytes[39m[2m | [22m
+[32mchunk-G4WZGFAO.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m[36m856 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                               [2m | [22m[2mjasmine-cleanup-0[22m                               [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                  [2m | [22m[1mInitial total[22m                                   [2m | [22m  [1m3.45 MB[22m
+
+Application bundle generation complete. [2.581 seconds] - 2026-04-08T23:00:16.246Z
+
+[91m08 04 2026 20:00:16.335:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:00:16.791:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:00:16.791:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:00:16.791:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                [2m | [22m[1mNames[22m                                           [2m | [22m [1mRaw size[22m
+[32mchunk-OUEVQOSW.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.17 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                       [2m | [22m[2mpolyfills[22m                                       [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m[2m | [22m[36m299.51 kB[39m[2m | [22m
+[32mchunk-75R3GPED.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m[36m229.09 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                               [2m | [22m[2mjasmine-cleanup-1[22m                               [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                       [2m | [22m[2mtest_main[22m                                       [2m | [22m [36m22.32 kB[39m[2m | [22m
+[32mchunk-O76QEXRV.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m5.80 kB[39m[2m | [22m
+[32mspec-lib-instalacao.component.spec.js[39m              [2m | [22m[2mspec-lib-instalacao.component.spec[22m              [2m | [22m  [36m2.31 kB[39m[2m | [22m
+[32mspec-lib-instalacao.service.spec.js[39m                [2m | [22m[2mspec-lib-instalacao.service.spec[22m                [2m | [22m[36m931 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                               [2m | [22m[2mjasmine-cleanup-0[22m                               [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                  [2m | [22m[1mInitial total[22m                                   [2m | [22m  [1m3.81 MB[22m
+
+Application bundle generation complete. [2.843 seconds] - 2026-04-08T23:00:19.703Z
+
+[91m08 04 2026 20:00:19.773:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:00:20.237:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:00:20.237:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:00:20.237:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                                     [2m | [22m[1mNames[22m                                                                [2m | [22m [1mRaw size[22m
+[32mchunk-M44M5AS4.js[39m                                                       [2m | [22m[2m-[22m                                                                    [2m | [22m  [36m2.21 MB[39m[2m | [22m
+[32mchunk-7RZ637CW.js[39m                                                       [2m | [22m[2m-[22m                                                                    [2m | [22m  [36m1.04 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                                            [2m | [22m[2mpolyfills[22m                                                            [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mchunk-YJGGLSP3.js[39m                                                       [2m | [22m[2m-[22m                                                                    [2m | [22m[36m511.65 kB[39m[2m | [22m
+[32mchunk-U3JIFKSK.js[39m                                                       [2m | [22m[2m-[22m                                                                    [2m | [22m[36m229.36 kB[39m[2m | [22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m                     [2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m                     [2m | [22m[36m146.67 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                                                    [2m | [22m[2mjasmine-cleanup-1[22m                                                    [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                                            [2m | [22m[2mtest_main[22m                                                            [2m | [22m [36m22.32 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                                                       [2m | [22m[2m-[22m                                                                    [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mspec-lib-low-code.component.spec.js[39m                                     [2m | [22m[2mspec-lib-low-code.component.spec[22m                                     [2m | [22m  [36m2.23 kB[39m[2m | [22m
+[32mchunk-QHE5USJO.js[39m                                                       [2m | [22m[2m-[22m                                                                    [2m | [22m  [36m1.93 kB[39m[2m | [22m
+[32mchunk-ZDYBTGIR.js[39m                                                       [2m | [22m[2m-[22m                                                                    [2m | [22m  [36m1.78 kB[39m[2m | [22m
+[32mspec-lib-ci-application-home-blocks-maker-blocks-maker.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-home-blocks-maker-blocks-maker.component.spec[22m[2m | [22m  [36m1.28 kB[39m[2m | [22m
+[32mspec-lib-ci-application-home-code-code.component.spec.js[39m                [2m | [22m[2mspec-lib-ci-application-home-code-code.component.spec[22m                [2m | [22m  [36m1.17 kB[39m[2m | [22m
+[32mspec-lib-ci-application-home-node-red-node-red.component.spec.js[39m        [2m | [22m[2mspec-lib-ci-application-home-node-red-node-red.component.spec[22m        [2m | [22m  [36m1.16 kB[39m[2m | [22m
+[32mspec-lib-low-code.service.spec.js[39m                                       [2m | [22m[2mspec-lib-low-code.service.spec[22m                                       [2m | [22m[36m899 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                                                    [2m | [22m[2mjasmine-cleanup-0[22m                                                    [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                                       [2m | [22m[1mInitial total[22m                                                        [2m | [22m  [1m5.26 MB[22m
+
+Application bundle generation complete. [6.262 seconds] - 2026-04-08T23:00:26.558Z
+
+[91m08 04 2026 20:00:26.663:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:00:27.252:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:00:27.252:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:00:27.252:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                           [2m | [22m[1mNames[22m                                                      [2m | [22m [1mRaw size[22m
+[32mchunk-ETZF4IL5.js[39m                                             [2m | [22m[2m-[22m                                                          [2m | [22m  [36m2.21 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                                  [2m | [22m[2mpolyfills[22m                                                  [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mchunk-MUDQJBKR.js[39m                                             [2m | [22m[2m-[22m                                                          [2m | [22m[36m742.01 kB[39m[2m | [22m
+[32mchunk-DJVHIJJ5.js[39m                                             [2m | [22m[2m-[22m                                                          [2m | [22m[36m574.09 kB[39m[2m | [22m
+[32mchunk-UVMYB3DJ.js[39m                                             [2m | [22m[2m-[22m                                                          [2m | [22m[36m238.05 kB[39m[2m | [22m
+[32mchunk-V24HSD5Q.js[39m                                             [2m | [22m[2m-[22m                                                          [2m | [22m[36m232.46 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                                          [2m | [22m[2mjasmine-cleanup-1[22m                                          [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                                  [2m | [22m[2mtest_main[22m                                                  [2m | [22m [36m22.32 kB[39m[2m | [22m
+[32mchunk-YFCGYO6H.js[39m                                             [2m | [22m[2m-[22m                                                          [2m | [22m  [36m6.24 kB[39m[2m | [22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m           [2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m           [2m | [22m  [36m3.14 kB[39m[2m | [22m
+[32mspec-lib-mensagens.component.spec.js[39m                          [2m | [22m[2mspec-lib-mensagens.component.spec[22m                          [2m | [22m  [36m3.01 kB[39m[2m | [22m
+[32mspec-lib-pesquisar-contato-pesquisar-contato.component.spec.js[39m[2m | [22m[2mspec-lib-pesquisar-contato-pesquisar-contato.component.spec[22m[2m | [22m  [36m1.29 kB[39m[2m | [22m
+[32mspec-lib-conversas-conversas.component.spec.js[39m                [2m | [22m[2mspec-lib-conversas-conversas.component.spec[22m                [2m | [22m  [36m1.21 kB[39m[2m | [22m
+[32mspec-lib-mensagens.service.spec.js[39m                            [2m | [22m[2mspec-lib-mensagens.service.spec[22m                            [2m | [22m[36m619 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                                          [2m | [22m[2mjasmine-cleanup-0[22m                                          [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                             [2m | [22m[1mInitial total[22m                                              [2m | [22m  [1m5.11 MB[22m
+
+Application bundle generation complete. [4.854 seconds] - 2026-04-08T23:00:32.143Z
+
+[91m08 04 2026 20:00:32.267:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:00:32.785:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:00:32.786:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:00:32.786:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                [2m | [22m[1mNames[22m                                           [2m | [22m [1mRaw size[22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m[2m | [22m  [36m4.08 MB[39m[2m | [22m
+[32mchunk-JXI6ZAHA.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.21 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                       [2m | [22m[2mpolyfills[22m                                       [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mchunk-FODNBV2C.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m[36m232.84 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                               [2m | [22m[2mjasmine-cleanup-1[22m                               [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                       [2m | [22m[2mtest_main[22m                                       [2m | [22m [36m22.32 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mspec-lib-organizacao.component.spec.js[39m             [2m | [22m[2mspec-lib-organizacao.component.spec[22m             [2m | [22m  [36m2.32 kB[39m[2m | [22m
+[32mspec-lib-organizacao.service.spec.js[39m               [2m | [22m[2mspec-lib-organizacao.service.spec[22m               [2m | [22m[36m944 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                               [2m | [22m[2mjasmine-cleanup-0[22m                               [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                  [2m | [22m[1mInitial total[22m                                   [2m | [22m  [1m7.64 MB[22m
+
+Application bundle generation complete. [6.047 seconds] - 2026-04-08T23:00:39.023Z
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:10:12:
+[37m      10 │             [32m//[37m overflow: hidden;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:31:12:
+[37m      31 │             [32m//[37m position: absolute;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:32:12:
+[37m      32 │             [32m//[37m right: 0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:33:12:
+[37m      33 │             [32m//[37m top:0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[91m08 04 2026 20:00:39.079:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:00:39.687:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:00:39.687:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:00:39.687:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                [2m | [22m[1mNames[22m                                           [2m | [22m [1mRaw size[22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m[2m | [22m  [36m3.94 MB[39m[2m | [22m
+[32mchunk-HUY2NCSV.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.21 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                       [2m | [22m[2mpolyfills[22m                                       [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mchunk-4ZOMBLPU.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m[36m232.84 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                               [2m | [22m[2mjasmine-cleanup-1[22m                               [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                       [2m | [22m[2mtest_main[22m                                       [2m | [22m [36m22.32 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mspec-lib-produtos.component.spec.js[39m                [2m | [22m[2mspec-lib-produtos.component.spec[22m                [2m | [22m  [36m2.24 kB[39m[2m | [22m
+[32mspec-lib-produtos.service.spec.js[39m                  [2m | [22m[2mspec-lib-produtos.service.spec[22m                  [2m | [22m[36m905 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                               [2m | [22m[2mjasmine-cleanup-0[22m                               [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                  [2m | [22m[1mInitial total[22m                                   [2m | [22m  [1m7.50 MB[22m
+
+Application bundle generation complete. [5.961 seconds] - 2026-04-08T23:00:45.683Z
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:10:12:
+[37m      10 │             [32m//[37m overflow: hidden;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:31:12:
+[37m      31 │             [32m//[37m position: absolute;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:32:12:
+[37m      32 │             [32m//[37m right: 0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:33:12:
+[37m      33 │             [32m//[37m top:0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[91m08 04 2026 20:00:45.780:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:00:46.381:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:00:46.381:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:00:46.381:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                [2m | [22m[1mNames[22m                                           [2m | [22m [1mRaw size[22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m[2m | [22m  [36m3.95 MB[39m[2m | [22m
+[32mchunk-HUY2NCSV.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.21 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                       [2m | [22m[2mpolyfills[22m                                       [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mchunk-4ZOMBLPU.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m[36m232.84 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                               [2m | [22m[2mjasmine-cleanup-1[22m                               [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                       [2m | [22m[2mtest_main[22m                                       [2m | [22m [36m22.32 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mspec-lib-profile.component.spec.js[39m                 [2m | [22m[2mspec-lib-profile.component.spec[22m                 [2m | [22m  [36m2.17 kB[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                               [2m | [22m[2mjasmine-cleanup-0[22m                               [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                  [2m | [22m[1mInitial total[22m                                   [2m | [22m  [1m7.51 MB[22m
+
+Application bundle generation complete. [6.028 seconds] - 2026-04-08T23:00:52.448Z
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:10:12:
+[37m      10 │             [32m//[37m overflow: hidden;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:31:12:
+[37m      31 │             [32m//[37m position: absolute;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:32:12:
+[37m      32 │             [32m//[37m right: 0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:33:12:
+[37m      33 │             [32m//[37m top:0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[91m08 04 2026 20:00:52.545:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:00:53.126:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:00:53.126:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:00:53.126:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                        [2m | [22m[1mNames[22m                                                   [2m | [22m [1mRaw size[22m
+[32mchunk-UDRWBDKQ.js[39m                                          [2m | [22m[2m-[22m                                                       [2m | [22m  [36m3.57 MB[39m[2m | [22m
+[32mchunk-HUY2NCSV.js[39m                                          [2m | [22m[2m-[22m                                                       [2m | [22m  [36m2.21 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                               [2m | [22m[2mpolyfills[22m                                               [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mchunk-73C52S4S.js[39m                                          [2m | [22m[2m-[22m                                                       [2m | [22m[36m381.42 kB[39m[2m | [22m
+[32mchunk-4ZOMBLPU.js[39m                                          [2m | [22m[2m-[22m                                                       [2m | [22m[36m232.84 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                                       [2m | [22m[2mjasmine-cleanup-1[22m                                       [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                               [2m | [22m[2mtest_main[22m                                               [2m | [22m [36m22.32 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                                          [2m | [22m[2m-[22m                                                       [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m        [2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m        [2m | [22m  [36m4.27 kB[39m[2m | [22m
+[32mspec-lib-ci-application-branding-branding.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-branding-branding.component.spec[22m[2m | [22m  [36m2.83 kB[39m[2m | [22m
+[32mspec-lib-projetos.component.spec.js[39m                        [2m | [22m[2mspec-lib-projetos.component.spec[22m                        [2m | [22m  [36m2.24 kB[39m[2m | [22m
+[32mspec-lib-projetos.service.spec.js[39m                          [2m | [22m[2mspec-lib-projetos.service.spec[22m                          [2m | [22m[36m643 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                                       [2m | [22m[2mjasmine-cleanup-0[22m                                       [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                          [2m | [22m[1mInitial total[22m                                           [2m | [22m  [1m7.51 MB[22m
+
+Application bundle generation complete. [6.107 seconds] - 2026-04-08T23:00:59.275Z
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:10:12:
+[37m      10 │             [32m//[37m overflow: hidden;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:31:12:
+[37m      31 │             [32m//[37m position: absolute;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:32:12:
+[37m      32 │             [32m//[37m right: 0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:33:12:
+[37m      33 │             [32m//[37m top:0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[91m08 04 2026 20:00:59.379:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:00:59.960:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:00:59.960:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:00:59.960:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                [2m | [22m[1mNames[22m                                           [2m | [22m [1mRaw size[22m
+[32mchunk-UDN5I2TO.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.13 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                       [2m | [22m[2mpolyfills[22m                                       [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mtest_main.js[39m                                       [2m | [22m[2mtest_main[22m                                       [2m | [22m[36m227.84 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                               [2m | [22m[2mjasmine-cleanup-1[22m                               [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mchunk-O76QEXRV.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m5.80 kB[39m[2m | [22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m[2m | [22m  [36m2.45 kB[39m[2m | [22m
+[32mspec-lib-seo.component.spec.js[39m                     [2m | [22m[2mspec-lib-seo.component.spec[22m                     [2m | [22m  [36m2.11 kB[39m[2m | [22m
+[32mspec-lib-seo.service.spec.js[39m                       [2m | [22m[2mspec-lib-seo.service.spec[22m                       [2m | [22m[36m878 bytes[39m[2m | [22m
+[32mchunk-G4WZGFAO.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m[36m856 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                               [2m | [22m[2mjasmine-cleanup-0[22m                               [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                  [2m | [22m[1mInitial total[22m                                   [2m | [22m  [1m3.45 MB[22m
+
+Application bundle generation complete. [2.472 seconds] - 2026-04-08T23:01:02.471Z
+
+[91m08 04 2026 20:01:02.536:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:01:02.940:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:01:02.940:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:01:02.941:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                [2m | [22m[1mNames[22m                                           [2m | [22m [1mRaw size[22m
+[32mchunk-UDN5I2TO.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.13 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                       [2m | [22m[2mpolyfills[22m                                       [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mtest_main.js[39m                                       [2m | [22m[2mtest_main[22m                                       [2m | [22m[36m227.84 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                               [2m | [22m[2mjasmine-cleanup-1[22m                               [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mchunk-O76QEXRV.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m5.80 kB[39m[2m | [22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m[2m | [22m  [36m2.48 kB[39m[2m | [22m
+[32mspec-lib-threejs.component.spec.js[39m                 [2m | [22m[2mspec-lib-threejs.component.spec[22m                 [2m | [22m  [36m2.25 kB[39m[2m | [22m
+[32mspec-lib-threejs.service.spec.js[39m                   [2m | [22m[2mspec-lib-threejs.service.spec[22m                   [2m | [22m[36m930 bytes[39m[2m | [22m
+[32mchunk-G4WZGFAO.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m[36m856 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                               [2m | [22m[2mjasmine-cleanup-0[22m                               [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                  [2m | [22m[1mInitial total[22m                                   [2m | [22m  [1m3.45 MB[22m
+
+Application bundle generation complete. [2.353 seconds] - 2026-04-08T23:01:05.351Z
+
+[91m08 04 2026 20:01:05.443:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:01:05.834:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:01:05.834:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:01:05.834:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                [2m | [22m[1mNames[22m                                           [2m | [22m [1mRaw size[22m
+[32mchunk-C6MQ6WIA.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.19 MB[39m[2m | [22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m[2m | [22m  [36m1.05 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                       [2m | [22m[2mpolyfills[22m                                       [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mchunk-DD45V6FO.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m[36m229.36 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                               [2m | [22m[2mjasmine-cleanup-1[22m                               [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                       [2m | [22m[2mtest_main[22m                                       [2m | [22m [36m22.32 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mspec-lib-treinamento.component.spec.js[39m             [2m | [22m[2mspec-lib-treinamento.component.spec[22m             [2m | [22m  [36m2.52 kB[39m[2m | [22m
+[32mspec-lib-treinamento.service.spec.js[39m               [2m | [22m[2mspec-lib-treinamento.service.spec[22m               [2m | [22m[36m944 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                               [2m | [22m[2mjasmine-cleanup-0[22m                               [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                  [2m | [22m[1mInitial total[22m                                   [2m | [22m  [1m4.57 MB[22m
+
+Application bundle generation complete. [5.407 seconds] - 2026-04-08T23:01:11.297Z
+
+[91m08 04 2026 20:01:11.386:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:01:11.855:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:01:11.855:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:01:11.855:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                [2m | [22m[1mNames[22m                                           [2m | [22m [1mRaw size[22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m[2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m[2m | [22m  [36m3.94 MB[39m[2m | [22m
+[32mchunk-HUY2NCSV.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m2.21 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                       [2m | [22m[2mpolyfills[22m                                       [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mchunk-4ZOMBLPU.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m[36m232.84 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                               [2m | [22m[2mjasmine-cleanup-1[22m                               [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                       [2m | [22m[2mtest_main[22m                                       [2m | [22m [36m22.32 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                                  [2m | [22m[2m-[22m                                               [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mspec-lib-vendas.component.spec.js[39m                  [2m | [22m[2mspec-lib-vendas.component.spec[22m                  [2m | [22m  [36m2.17 kB[39m[2m | [22m
+[32mspec-lib-vendas.service.spec.js[39m                    [2m | [22m[2mspec-lib-vendas.service.spec[22m                    [2m | [22m[36m879 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                               [2m | [22m[2mjasmine-cleanup-0[22m                               [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                  [2m | [22m[1mInitial total[22m                                   [2m | [22m  [1m7.50 MB[22m
+
+Application bundle generation complete. [6.314 seconds] - 2026-04-08T23:01:18.202Z
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:10:12:
+[37m      10 │             [32m//[37m overflow: hidden;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:31:12:
+[37m      31 │             [32m//[37m position: absolute;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:32:12:
+[37m      32 │             [32m//[37m right: 0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:33:12:
+[37m      33 │             [32m//[37m top:0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[91m08 04 2026 20:01:18.328:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:01:19.038:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:01:19.038:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:01:19.038:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                           [2m | [22m[1mNames[22m                                                      [2m | [22m [1mRaw size[22m
+[32mchunk-HWUTYBX7.js[39m                                             [2m | [22m[2m-[22m                                                          [2m | [22m  [36m2.45 MB[39m[2m | [22m
+[32mchunk-QIWLUUCR.js[39m                                             [2m | [22m[2m-[22m                                                          [2m | [22m  [36m2.14 MB[39m[2m | [22m
+[32mchunk-LS23IXL5.js[39m                                             [2m | [22m[2m-[22m                                                          [2m | [22m  [36m1.04 MB[39m[2m | [22m
+[32mpolyfills.js[39m                                                  [2m | [22m[2mpolyfills[22m                                                  [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mchunk-SQTISTCW.js[39m                                             [2m | [22m[2m-[22m                                                          [2m | [22m[36m429.37 kB[39m[2m | [22m
+[32mchunk-UZQC5BP2.js[39m                                             [2m | [22m[2m-[22m                                                          [2m | [22m[36m333.84 kB[39m[2m | [22m
+[32mspec-lib-ci-application-home-home.component.spec.js[39m           [2m | [22m[2mspec-lib-ci-application-home-home.component.spec[22m           [2m | [22m[36m143.21 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                                          [2m | [22m[2mjasmine-cleanup-1[22m                                          [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                                                  [2m | [22m[2mtest_main[22m                                                  [2m | [22m [36m22.28 kB[39m[2m | [22m
+[32mspec-lib-mob-fake-mob-fake.component.spec.js[39m                  [2m | [22m[2mspec-lib-mob-fake-mob-fake.component.spec[22m                  [2m | [22m  [36m7.98 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                                             [2m | [22m[2m-[22m                                                          [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mspec-lib-editar-aplicativo-editar-aplicativo.component.spec.js[39m[2m | [22m[2mspec-lib-editar-aplicativo-editar-aplicativo.component.spec[22m[2m | [22m  [36m5.93 kB[39m[2m | [22m
+[32mspec-lib-gerencial.component.spec.js[39m                          [2m | [22m[2mspec-lib-gerencial.component.spec[22m                          [2m | [22m  [36m3.26 kB[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                                          [2m | [22m[2mjasmine-cleanup-0[22m                                          [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                                             [2m | [22m[1mInitial total[22m                                              [2m | [22m  [1m7.66 MB[22m
+
+Application bundle generation complete. [6.901 seconds] - 2026-04-08T23:01:25.981Z
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:10:12:
+[37m      10 │             [32m//[37m overflow: hidden;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:31:12:
+[37m      31 │             [32m//[37m position: absolute;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:32:12:
+[37m      32 │             [32m//[37m right: 0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:33:12:
+[37m      33 │             [32m//[37m top:0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[91m08 04 2026 20:01:26.082:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:01:26.750:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:01:26.751:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:01:26.751:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+Application bundle generation failed. [1.401 seconds] - 2026-04-08T23:01:28.177Z
+
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18003: No inputs were found in config file 'C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/auth/tsconfig.spec.json'. Specified 'include' paths were '["**/*.spec.ts","**/*.d.ts"]' and 'exclude' paths were '[]'.[0m [1m[35m[plugin angular-compiler][0m
+
+[39m[22m
+[33m❯[39m Building...
+[32m✔[39m Building...
+Application bundle generation failed. [1.456 seconds] - 2026-04-08T23:01:29.709Z
+
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18003: No inputs were found in config file 'C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/organizacao/tsconfig.spec.json'. Specified 'include' paths were '["**/*.spec.ts","**/*.d.ts"]' and 'exclude' paths were '[]'.[0m [1m[35m[plugin angular-compiler][0m
+
+[39m[22m
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m            [2m | [22m[1mNames[22m                       [2m | [22m [1mRaw size[22m
+[32mchunk-UDN5I2TO.js[39m              [2m | [22m[2m-[22m                           [2m | [22m  [36m2.13 MB[39m[2m | [22m
+[32mpolyfills.js[39m                   [2m | [22m[2mpolyfills[22m                   [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mtest_main.js[39m                   [2m | [22m[2mtest_main[22m                   [2m | [22m[36m227.84 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m           [2m | [22m[2mjasmine-cleanup-1[22m           [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mchunk-O76QEXRV.js[39m              [2m | [22m[2m-[22m                           [2m | [22m  [36m5.80 kB[39m[2m | [22m
+[32mspec-lib-blog.component.spec.js[39m[2m | [22m[2mspec-lib-blog.component.spec[22m[2m | [22m  [36m3.68 kB[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m           [2m | [22m[2mjasmine-cleanup-0[22m           [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                              [2m | [22m[1mInitial total[22m               [2m | [22m  [1m3.45 MB[22m
+
+Application bundle generation complete. [2.424 seconds] - 2026-04-08T23:01:32.205Z
+
+[91m08 04 2026 20:01:32.276:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:01:32.644:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:01:32.644:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:01:32.645:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m           [2m | [22m[1mNames[22m                      [2m | [22m [1mRaw size[22m
+[32mchunk-KXHYRUJQ.js[39m             [2m | [22m[2m-[22m                          [2m | [22m  [36m2.40 MB[39m[2m | [22m
+[32mpolyfills.js[39m                  [2m | [22m[2mpolyfills[22m                  [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mspec-app-app.component.spec.js[39m[2m | [22m[2mspec-app-app.component.spec[22m[2m | [22m[36m195.48 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m          [2m | [22m[2mjasmine-cleanup-1[22m          [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                  [2m | [22m[2mtest_main[22m                  [2m | [22m [36m22.28 kB[39m[2m | [22m
+[32mchunk-O76QEXRV.js[39m             [2m | [22m[2m-[22m                          [2m | [22m  [36m5.80 kB[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m          [2m | [22m[2mjasmine-cleanup-0[22m          [2m | [22m[36m593 bytes[39m[2m | [22m
+[32mstyles.css[39m                    [2m | [22m[2mstyles[22m                     [2m | [22m[36m114 bytes[39m[2m | [22m
+
+[1m [22m                             [2m | [22m[1mInitial total[22m              [2m | [22m  [1m3.70 MB[22m
+
+Application bundle generation complete. [2.506 seconds] - 2026-04-08T23:01:35.209Z
+
+[91m08 04 2026 20:01:35.282:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:01:35.651:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:01:35.652:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:01:35.652:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                  [2m | [22m[1mNames[22m                             [2m | [22m [1mRaw size[22m
+[32mchunk-UDN5I2TO.js[39m                    [2m | [22m[2m-[22m                                 [2m | [22m  [36m2.13 MB[39m[2m | [22m
+[32mpolyfills.js[39m                         [2m | [22m[2mpolyfills[22m                         [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mtest_main.js[39m                         [2m | [22m[2mtest_main[22m                         [2m | [22m[36m227.84 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                 [2m | [22m[2mjasmine-cleanup-1[22m                 [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mchunk-O76QEXRV.js[39m                    [2m | [22m[2m-[22m                                 [2m | [22m  [36m5.80 kB[39m[2m | [22m
+[32mspec-lib-ilustrador.component.spec.js[39m[2m | [22m[2mspec-lib-ilustrador.component.spec[22m[2m | [22m  [36m2.28 kB[39m[2m | [22m
+[32mspec-lib-ilustrador.service.spec.js[39m  [2m | [22m[2mspec-lib-ilustrador.service.spec[22m  [2m | [22m[36m954 bytes[39m[2m | [22m
+[32mchunk-G4WZGFAO.js[39m                    [2m | [22m[2m-[22m                                 [2m | [22m[36m856 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                 [2m | [22m[2mjasmine-cleanup-0[22m                 [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                    [2m | [22m[1mInitial total[22m                     [2m | [22m  [1m3.45 MB[22m
+
+Application bundle generation complete. [2.314 seconds] - 2026-04-08T23:01:38.028Z
+
+[91m08 04 2026 20:01:38.081:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:01:38.485:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:01:38.485:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:01:38.485:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m            [2m | [22m[1mNames[22m                       [2m | [22m [1mRaw size[22m
+[32mchunk-WWQAYCXV.js[39m              [2m | [22m[2m-[22m                           [2m | [22m  [36m2.20 MB[39m[2m | [22m
+[32mpolyfills.js[39m                   [2m | [22m[2mpolyfills[22m                   [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mspec-lib-nota.service.spec.js[39m  [2m | [22m[2mspec-lib-nota.service.spec[22m  [2m | [22m[36m322.08 kB[39m[2m | [22m
+[32mchunk-RCUUGN37.js[39m              [2m | [22m[2m-[22m                           [2m | [22m[36m206.21 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m           [2m | [22m[2mjasmine-cleanup-1[22m           [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                   [2m | [22m[2mtest_main[22m                   [2m | [22m [36m22.09 kB[39m[2m | [22m
+[32mchunk-O76QEXRV.js[39m              [2m | [22m[2m-[22m                           [2m | [22m  [36m5.80 kB[39m[2m | [22m
+[32mchunk-XPUAZZJU.js[39m              [2m | [22m[2m-[22m                           [2m | [22m  [36m1.34 kB[39m[2m | [22m
+[32mspec-lib-nota.component.spec.js[39m[2m | [22m[2mspec-lib-nota.component.spec[22m[2m | [22m  [36m1.02 kB[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m           [2m | [22m[2mjasmine-cleanup-0[22m           [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                              [2m | [22m[1mInitial total[22m               [2m | [22m  [1m3.83 MB[22m
+
+Application bundle generation complete. [2.510 seconds] - 2026-04-08T23:01:41.051Z
+
+[91m08 04 2026 20:01:41.113:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:01:41.520:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:01:41.520:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:01:41.520:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m             [2m | [22m[1mNames[22m                        [2m | [22m [1mRaw size[22m
+[32mchunk-UDN5I2TO.js[39m               [2m | [22m[2m-[22m                            [2m | [22m  [36m2.13 MB[39m[2m | [22m
+[32mpolyfills.js[39m                    [2m | [22m[2mpolyfills[22m                    [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mtest_main.js[39m                    [2m | [22m[2mtest_main[22m                    [2m | [22m[36m227.84 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m            [2m | [22m[2mjasmine-cleanup-1[22m            [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mchunk-O76QEXRV.js[39m               [2m | [22m[2m-[22m                            [2m | [22m  [36m5.80 kB[39m[2m | [22m
+[32mspec-lib-sites.component.spec.js[39m[2m | [22m[2mspec-lib-sites.component.spec[22m[2m | [22m  [36m2.55 kB[39m[2m | [22m
+[32mspec-lib-sites.service.spec.js[39m  [2m | [22m[2mspec-lib-sites.service.spec[22m  [2m | [22m[36m904 bytes[39m[2m | [22m
+[32mchunk-G4WZGFAO.js[39m               [2m | [22m[2m-[22m                            [2m | [22m[36m856 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m            [2m | [22m[2mjasmine-cleanup-0[22m            [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                               [2m | [22m[1mInitial total[22m                [2m | [22m  [1m3.45 MB[22m
+
+Application bundle generation complete. [2.343 seconds] - 2026-04-08T23:01:43.921Z
+
+[91m08 04 2026 20:01:44.034:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:01:44.415:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:01:44.416:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:01:44.416:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                  [2m | [22m[1mNames[22m                             [2m | [22m [1mRaw size[22m
+[32mchunk-UDN5I2TO.js[39m                    [2m | [22m[2m-[22m                                 [2m | [22m  [36m2.13 MB[39m[2m | [22m
+[32mpolyfills.js[39m                         [2m | [22m[2mpolyfills[22m                         [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mtest_main.js[39m                         [2m | [22m[2mtest_main[22m                         [2m | [22m[36m227.84 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m                 [2m | [22m[2mjasmine-cleanup-1[22m                 [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mchunk-O76QEXRV.js[39m                    [2m | [22m[2m-[22m                                 [2m | [22m  [36m5.80 kB[39m[2m | [22m
+[32mspec-lib-documentos.component.spec.js[39m[2m | [22m[2mspec-lib-documentos.component.spec[22m[2m | [22m  [36m2.50 kB[39m[2m | [22m
+[32mspec-lib-documentos.service.spec.js[39m  [2m | [22m[2mspec-lib-documentos.service.spec[22m  [2m | [22m[36m969 bytes[39m[2m | [22m
+[32mchunk-G4WZGFAO.js[39m                    [2m | [22m[2m-[22m                                 [2m | [22m[36m856 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m                 [2m | [22m[2mjasmine-cleanup-0[22m                 [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                    [2m | [22m[1mInitial total[22m                     [2m | [22m  [1m3.45 MB[22m
+
+Application bundle generation complete. [2.341 seconds] - 2026-04-08T23:01:46.817Z
+
+[91m08 04 2026 20:01:46.905:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:01:47.296:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:01:47.296:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:01:47.296:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m               [2m | [22m[1mNames[22m                          [2m | [22m [1mRaw size[22m
+[32mspec-lib-crm-crm.component.spec.js[39m[2m | [22m[2mspec-lib-crm-crm.component.spec[22m[2m | [22m  [36m4.00 MB[39m[2m | [22m
+[32mchunk-XGU4HZNY.js[39m                 [2m | [22m[2m-[22m                              [2m | [22m  [36m2.21 MB[39m[2m | [22m
+[32mpolyfills.js[39m                      [2m | [22m[2mpolyfills[22m                      [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mchunk-HFV7USCU.js[39m                 [2m | [22m[2m-[22m                              [2m | [22m[36m232.84 kB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m              [2m | [22m[2mjasmine-cleanup-1[22m              [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m                      [2m | [22m[2mtest_main[22m                      [2m | [22m [36m22.32 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m                 [2m | [22m[2m-[22m                              [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mspec-lib-crm-crm.service.spec.js[39m  [2m | [22m[2mspec-lib-crm-crm.service.spec[22m  [2m | [22m[36m828 bytes[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m              [2m | [22m[2mjasmine-cleanup-0[22m              [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                                 [2m | [22m[1mInitial total[22m                  [2m | [22m  [1m7.56 MB[22m
+
+Application bundle generation complete. [6.017 seconds] - 2026-04-08T23:01:53.372Z
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:10:12:
+[37m      10 │             [32m//[37m overflow: hidden;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:31:12:
+[37m      31 │             [32m//[37m position: absolute;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:32:12:
+[37m      32 │             [32m//[37m right: 0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:33:12:
+[37m      33 │             [32m//[37m top:0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[91m08 04 2026 20:01:53.474:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:01:54.042:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:01:54.042:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:01:54.042:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[33m❯[39m Building...
+[32m✔[39m Building...
+Application bundle generation failed. [1.295 seconds] - 2026-04-08T23:01:55.367Z
+
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18003: No inputs were found in config file 'C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci-apps/cms/tsconfig.spec.json'. Specified 'include' paths were '["**/*.spec.ts","**/*.d.ts"]' and 'exclude' paths were '[]'.[0m [1m[35m[plugin angular-compiler][0m
+
+[39m[22m
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m      [2m | [22m[1mNames[22m                 [2m | [22m [1mRaw size[22m
+[32mspec-lib-launcher.spec.js[39m[2m | [22m[2mspec-lib-launcher.spec[22m[2m | [22m  [36m3.94 MB[39m[2m | [22m
+[32mchunk-TEJ22ZRN.js[39m        [2m | [22m[2m-[22m                     [2m | [22m  [36m2.45 MB[39m[2m | [22m
+[32mpolyfills.js[39m             [2m | [22m[2mpolyfills[22m             [2m | [22m  [36m1.01 MB[39m[2m | [22m
+[32mjasmine-cleanup-1.js[39m     [2m | [22m[2mjasmine-cleanup-1[22m     [2m | [22m [36m67.24 kB[39m[2m | [22m
+[32mtest_main.js[39m             [2m | [22m[2mtest_main[22m             [2m | [22m [36m22.28 kB[39m[2m | [22m
+[32mchunk-AWUC5A65.js[39m        [2m | [22m[2m-[22m                     [2m | [22m  [36m7.56 kB[39m[2m | [22m
+[32mjasmine-cleanup-0.js[39m     [2m | [22m[2mjasmine-cleanup-0[22m     [2m | [22m[36m593 bytes[39m[2m | [22m
+
+[1m [22m                        [2m | [22m[1mInitial total[22m         [2m | [22m  [1m7.50 MB[22m
+
+Application bundle generation complete. [6.038 seconds] - 2026-04-08T23:02:01.475Z
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:10:12:
+[37m      10 │             [32m//[37m overflow: hidden;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:31:12:
+[37m      31 │             [32m//[37m position: absolute;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:32:12:
+[37m      32 │             [32m//[37m right: 0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mComments in CSS use "/* ... */" instead of "//"[0m [1m[35m[plugin angular-compiler][0m [js-comment-in-css]
+
+    angular:styles/component:css;cc3c0ad965845e17f4dd10bacb62cd7c8673218e063a9d63351e8408016a79c2;C:/ProgramData/Jenkins/.jenkins/workspace/_pps_Produ_o_2026.april/apps/projects/ci/components/src/lib/file/file.component.ts:33:12:
+[37m      33 │             [32m//[37m top:0;
+         ╵             [32m~~[0m
+
+  The plugin "angular-compiler" was triggered by this import
+
+    projects/ci/components/src/lib/file/file.component.ts:2:33:
+[37m      2 │ ...CE__0 from [32m"angular:jit:style:inline;Omhvc3R7CiAgICAgICAgICAgIGR[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[91m08 04 2026 20:02:01.560:ERROR [reporter]: [39mCan not load reporter "junit", it is not registered!
+  Perhaps you are missing some plugin?
+[32m08 04 2026 20:02:02.121:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m08 04 2026 20:02:02.121:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m08 04 2026 20:02:02.122:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (C:\ProgramData\Jenkins\.jenkins\workspace\_pps_Produ_o_2026.april\apps\node_modules\.pnpm\karma@6.4.4_bufferutil@4.1.0_utf-8-validate@6.0.6\node_modules\karma\lib\server.js:243:26)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:520:35)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1983:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[1m[31mError: Schema validation failed with the following errors:
+  Data path "/browsers" must be array.[39m[22m

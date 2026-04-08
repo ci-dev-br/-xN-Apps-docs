@@ -10,7 +10,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CI_STATIC_APPS, IApp } from './apps/apps';
-import { AuthModule, USER_MENU, AuthUserService } from '@ci/auth';
+import { AuthModule, USER_MENU, UserAuthenticationService } from '@ci/auth';
 import { IconModule, IItemMenu, NavbarModule } from '@ci/components';
 @Component({
   selector: 'ci-painel',
@@ -35,16 +35,16 @@ import { IconModule, IItemMenu, NavbarModule } from '@ci/components';
   styleUrl: './painel.component.scss'
 })
 export class PainelComponent implements OnInit {
-  user = this.userService?.user
+  user = this.userAuthenticationInstanceService?.user
   apps?: any[];
   userMenuList?: IItemMenu[] = inject(USER_MENU, { optional: true }) || undefined;
   constructor(
     @Optional() private readonly router?: Router,
-    @Optional() private readonly userService?: AuthUserService,
+    @Optional() private readonly userAuthenticationInstanceService?: UserAuthenticationService,
     // @Optional() private readonly route: ActivatedRoute,
     @Optional() iconLoader?: IconLoaderSerices,
   ) {
-    iconLoader?.load({
+    iconLoader?.load({ /// TODO: mover para fora
       'devtools': { url: 'icons/dev-tools-icon.svg' },
       imersao: { url: 'icons/imersao.svg' },
       agenda: { url: 'icons/agenda.svg' },
@@ -85,7 +85,7 @@ export class PainelComponent implements OnInit {
       MASTER: { url: 'icons/extras/master mode.svg' },
       GOD: { url: 'icons/extras/god mode.svg' },
     });
-    this.userService?.user.subscribe(user => {
+    this.userAuthenticationInstanceService?.user.subscribe(user => {
       if (!!user) {
         this.apps = CI_STATIC_APPS.filter(app => !!app.roles?.find(role => !!user.roles?.find(r => r === role)))
       }
@@ -118,7 +118,7 @@ export class PainelComponent implements OnInit {
     this.appsFavoritos = this.apps;
   }
   async sair() {
-    this.userService?.sair();
+    this.userAuthenticationInstanceService?.sair();
   }
   async repo() {
     window.open('https://github.com/ci-dev-br/-xN-Apps-docs', '_blank')

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { AuthUserService } from './services/auth-user.service';
+import { UserAuthenticationService } from './services/user-authentication-user.service';
 import { CoreModule } from '@ci/core';
 import { RouterModule } from '@angular/router';
 @NgModule({
@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
     RouterModule,
   ],
   providers: [
-    AuthUserService,
+    UserAuthenticationService,
   ]
 })
 export class AuthModule { }
