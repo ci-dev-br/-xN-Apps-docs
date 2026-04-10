@@ -26,8 +26,10 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     @Optional() private readonly matIconReg?: MatIconRegistry,
     @Optional() private readonly core?: CoreService,
-    // @Optional() private readonly router: Router, // TODO: mover controle ativo de rota para camapra Core Init;
-    // @Optional() private readonly websocket: WsService, // TODO: mover Web Seocket para Core Init;
+    // @Optional() private readonly router: Router, 
+    // // TODO: mover controle ativo de rota para camapra Core Init;
+    // @Optional() private readonly websocket: WsService,
+    //  // TODO: mover Web Seocket para Core Init;
     @Optional() private readonly window?: WindowService,
     @Optional() private readonly snack?: MatSnackBar,
   ) {

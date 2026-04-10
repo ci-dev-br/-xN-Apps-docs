@@ -1,6 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { beforeEach } from 'node:test';
 import { AppComponent } from './app.component';
 
 describe('Aplicativo Arquivos, Início', () => {

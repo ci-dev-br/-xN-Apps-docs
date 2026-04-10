@@ -12,7 +12,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconModule,
   ],
   exports: [
-    IconComponent
+    IconComponent,
+    MatIconModule,
   ]
 })
 export class IconModule {
