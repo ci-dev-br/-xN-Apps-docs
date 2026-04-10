@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach } from 'node:test';
 import { HomeComponent } from './home/home.component';
 
-describe('AppsArquivosHomeComponent', () => {
+describe('Aplicativo Arquivos, Início', () => {
     let component: HomeComponent;
     let fixture: ComponentFixture<HomeComponent>;
 
@@ -18,7 +18,7 @@ describe('AppsArquivosHomeComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it('Componente criado com sucesso', () => {
         expect(component).toBeTruthy();
     });
 });
