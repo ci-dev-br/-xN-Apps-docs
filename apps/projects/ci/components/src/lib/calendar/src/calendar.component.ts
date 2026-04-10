@@ -1,18 +1,18 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from "@angular/core";
 import { CoreModule } from "@ci/core";
 import { CalendarDay } from "./calendar-day";
-import { Day } from "./day/day";
-import { Header } from "./header/header";
-import { Year } from "./year/year";
-import { Month } from "./month/month";
+import { DayCalendar } from "./day/day";
+import { HeaderCalendar } from "./header/header";
+import { YearCalendar } from "./year/year";
+import { MonthCalendar } from "./month/month";
 @Component({
     selector: 'ci-calendar',
     imports: [
         CoreModule,
-        Day,
-        Header,
-        Year,
-        Month
+        DayCalendar,
+        HeaderCalendar,
+        YearCalendar,
+        MonthCalendar
     ],
     standalone: true,
     templateUrl: `calendar.component.html`,

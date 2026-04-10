@@ -16,7 +16,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
     ],
     templateUrl: 'header.html'
 })
-export class Header {
+export class HeaderCalendar {
     @Input() currentViewDate: Date = new Date(); // Data de referência para o mês visível
     private _viewMode?: 'day' | 'month' | 'year' | undefined;
     public get viewMode(): 'day' | 'month' | 'year' | undefined {

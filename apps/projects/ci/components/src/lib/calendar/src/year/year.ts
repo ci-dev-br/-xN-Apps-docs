@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, SimpleChange, SimpleChanges } from "@angular/core";
-import { Month } from "../month/month";
+import { MonthCalendar } from "../month/month";
 import { CoreModule } from "@ci/core";
 
 @Component({
@@ -8,11 +8,11 @@ import { CoreModule } from "@ci/core";
     standalone: true,
     styleUrl: 'year.scss',
     imports: [
-        Month,
+        MonthCalendar,
         CoreModule,
     ]
 })
-export class Year implements OnChanges {
+export class YearCalendar implements OnChanges {
     @Input()
     currentYear?: Date;
     private _selectedDate?: Date | undefined;

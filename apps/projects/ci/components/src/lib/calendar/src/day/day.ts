@@ -10,7 +10,7 @@ import { CoreModule } from "@ci/core";
         CoreModule,
     ]
 })
-export class Day implements OnInit {
+export class DayCalendar implements OnInit {
     markerTopPosition = 0;
     @Input() selectedDate: Date = new Date();    // Data atualmente selecionada (inicia hoje)
     currentTime?: Date;

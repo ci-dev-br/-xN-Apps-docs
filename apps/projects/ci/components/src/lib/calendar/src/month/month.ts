@@ -12,7 +12,7 @@ import { CoreModule } from "@ci/core";
     ]
 
 })
-export class Month implements OnChanges {
+export class MonthCalendar implements OnChanges {
     @Input() size: 'small' | 'normal' | 'full-page' = 'normal';
     @Input() currentViewDate: Date = new Date(); // Data de referência para o mês visível
     @Input() viewMode?: 'day' | 'month' | 'year';
