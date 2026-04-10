@@ -6,7 +6,6 @@ import { AutoFocusDirective } from './directives/auto-focus.directive';
 import { DaoService } from './dao/dao.service';
 import { ServicesService } from './services/services.service';
 import { Localizacao } from './models/localozacao';
-import { Damn } from './services/damn.service';
 import { AutoScollDirective } from './directives/auto-scroll.directive';
 import { ConsoleService } from './services/console.service';
 import { ThemeService } from './theme/theme.service';
