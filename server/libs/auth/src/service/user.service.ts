@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { User } from '../models/user.entity';
 import { DataSource, Equal, FindOptionsWhere, Repository, IsNull, } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,16 +8,14 @@ import { createHash } from 'crypto';
 import { request } from 'https';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { MailService } from '@ci/notification/services/mail.service';
-import { conviteToMessagePayload } from '../functions/convite-to-message-payload';
 import { PhotoService } from '@ci/storage/service/photo.service';
 @Injectable()
 export class UserService {
     constructor(
-        private readonly dataSource: DataSource,
+        @Optional() private readonly dataSource: DataSource,
         @InjectRepository(User)
-        private readonly userRepo: Repository<User>,
-        private readonly photos: PhotoService,
+        @Optional() private readonly userRepo: Repository<User>,
+        @Optional() private readonly photos: PhotoService,
         // private readonly mailer: MailService,
     ) { }
     async registrar(registro: User) {
@@ -78,7 +76,7 @@ export class UserService {
                             } else {
                                 res();
                             }
-                        } catch (e) {
+                        } catch (e: any) {
 
                             rej(new Error('Falha no envio do e-mail de confirmação.\n' + (e?.message || '')))
                         }
@@ -215,9 +213,9 @@ export class UserService {
     }
     ocultaInformacaoSensivel(informacao: string): string {
         if (typeof informacao === 'string' && informacao.length > 4) {
-            return informacao.substring(0, 2) + '****' + informacao.substring(informacao.length - 2, informacao.length);
+            return informacao.substring(0, 2) + '↔' + informacao.substring(informacao.length - 2, informacao.length);
         } else if (typeof informacao === 'string' && informacao.length <= 4) {
-            return informacao.substring(0, 1) + '***';
+            return informacao.substring(0, 1) + '↔';
         }
         return informacao;
     }

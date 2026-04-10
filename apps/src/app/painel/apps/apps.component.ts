@@ -29,7 +29,6 @@ import { MatTabsModule } from '@angular/material/tabs';
   styleUrl: './apps.component.scss'
 })
 export class AppsComponent implements OnInit {
-  // apps?: IApp[];
   abas?: { label: string, path: string, icon: string }[];
   constructor(
     private readonly userService: UserAuthenticationService,
@@ -68,7 +67,6 @@ export class AppsComponent implements OnInit {
   contextMenuHanlder(event: MouseEvent | PointerEvent | Event) {
     event.preventDefault;
   }
-
   @HostListener('keyup', ['$event'])
   keyUpHandler(e: KeyboardEvent) {
     if (e.key == 'PrintScreen') {
@@ -76,7 +74,6 @@ export class AppsComponent implements OnInit {
       alert('Screenshots disabled!');
     }
   };
-
   @HostListener('keydown', ['$event'])
   keyDownHandler(e: KeyboardEvent) {
     if (e.ctrlKey && e.key == 'p') {

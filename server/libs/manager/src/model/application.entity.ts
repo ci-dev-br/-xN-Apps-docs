@@ -114,7 +114,8 @@ export class Application {
     @ApiProperty({
         nullable: true,
         required: false,
-        title: 'Domínio'
+        title: 'Domínio',
+        type: Domain,
     })
     @ManyToOne(() => Domain)
     @JoinTable()
