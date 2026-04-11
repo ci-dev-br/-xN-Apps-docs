@@ -25,7 +25,10 @@ export class User {
     /**
      * Nome Completo do Usuário
      */
-    @ApiProperty({ required: false, nullable: true })
+    @ApiProperty({
+        title: 'Nome Completo',
+        required: false, nullable: true
+    })
     @Column({ nullable: true })
     fullName?: string;
     /**
@@ -50,61 +53,92 @@ export class User {
      * Endereço de e-mail do Usuário
      */
     @Column({ nullable: true, unique: true })
-    @ApiProperty({ required: false, nullable: true })
+    @ApiProperty({
+        title: 'e-mail',
+        required: false,
+        nullable: true
+    })
     email?: string;
     /**
      * Define se o e-mail do usuário foi verificado
      */
     @Column({ nullable: true, default: false })
-    @ApiProperty({ required: false, nullable: true })
+    @ApiProperty({
+        title: 'E-mail Verificado',
+        required: false, nullable: true
+    })
     emailVerificado?: boolean;
     /**
      * Número de telefone do Usuário
      */
     @Column({ nullable: true })
-    @ApiProperty({ required: false, nullable: true })
+    @ApiProperty({ title: 'Telefone', required: false, nullable: true })
     phone?: string;
     /**
      * Define se o telefone do usuário foi verificado
      */
     // @ApiProperty({ required: false, nullable: true })
-    @ApiProperty({ required: false, nullable: true })
+    @ApiProperty({ title: 'Papéis atribuídos', required: false, nullable: true })
     @Column({ nullable: true, type: 'varchar', array: true, default: ['USER'] })
     roles?: string[];
     /**
      * Permissões atribuídas ao usuário
      */
-    @ApiProperty({ required: false, nullable: true, isArray: true, type: Policy })
+    @ApiProperty({
+        title: 'Permissões atribuídas',
+        required: false, nullable: true, isArray: true, type: Policy
+    })
     @ManyToMany(() => Policy) @JoinTable()
     permission?: Policy[];
     /**
      * Token de atualização do usuário
      */
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({
+        title: 'Token de atualização',
+        nullable: true,
+        required: false
+    })
     @Column({ nullable: true })
     refreshToken?: string;
     /**
      * Tenants associados ao usuário
      */
-    @ApiProperty({ nullable: true, required: false, type: Tenant, isArray: true })
+    @ApiProperty({
+        title: 'Tenants associados',
+        nullable: true,
+        required: false,
+        type: Tenant,
+        isArray: true
+    })
     @ManyToMany(() => Tenant)
     @JoinTable()
     tenants?: Tenant[];
-
-
-    @ApiProperty({ required: false, nullable: true })
+    @ApiProperty({
+        title: 'Data de criação do usuário',
+        required: false,
+        nullable: true
+    })
     @CreateDateColumn()
     createdAt?: Date;
     /**
      * Data de atualização do usuário
      */
-    @ApiProperty({ required: false, nullable: true })
+    @ApiProperty({
+        title: 'Data de atualização do usuário',
+        required: false,
+        nullable: true
+    })
     @UpdateDateColumn()
     updatedAt?: Date;
     /**
      * Foto de perfil do usuário
      */
-    @ApiProperty({ nullable: true, required: false, type: Photo })
+    @ApiProperty({
+        title: 'Foto de perfil',
+        nullable: true,
+        required: false,
+        type: Photo
+    })
     @ManyToOne(() => Photo, { nullable: true })
     @JoinColumn()
     photo?: Photo;

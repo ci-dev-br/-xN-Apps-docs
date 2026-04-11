@@ -6,7 +6,6 @@ import { User } from "../models/user.entity";
 import { conviteToMessagePayload } from "../functions/convite-to-message-payload";
 import { MailService } from "@ci/notification/services/mail.service";
 import { createHash } from "crypto";
-
 /**
  * Service para gerenciamento de convites.
  * Responsável por criar, validar e gerenciar convites no sistema.

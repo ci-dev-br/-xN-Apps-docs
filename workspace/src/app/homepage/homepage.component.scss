@@ -1,9 +1,10 @@
 :host {
-    background: linear-gradient(to top, #00000051 0%, #000000cd 100%);
+    background: linear-gradient(to top, #000000e3 0%, #000000e8 100%);
     min-height: 100vh;
     overflow: auto;
     overflow-x: hidden;
     display: flex;
+    backdrop-filter: blur(52px);
 
     align-items: center;
 
