@@ -16,7 +16,6 @@ import { EditarDetailModule } from '@ci/components/editar-detail';
 import { CoreModule, IAmSchematization } from '@ci/core';
 import { LancamentoFinanceiro, LancamentoFinanceiroService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
-
 @Component({
     selector: 'ci-home',
     standalone: true,
@@ -55,17 +54,22 @@ export class HomeComponent implements IAmSchematization {
     @Input()
     actions?: IAction<unknown>[] = [
         {
-            description: 'Novo Lançamento',
-            onClick: async () => {
-                let new_instance: LancamentoFinanceiro = {} as LancamentoFinanceiro;
-                let new_instance_result: any = await lastValueFrom((this.service).sync({ body: { data: new_instance } }))
-                this.windows
-                    .open(EditarDetailComponent, {
-                        schemaName: this.schemaName,
-                        data: new_instance_result
-                    },
-                        this.schemaName);
-            }
+            description: 'Adicionar',
+            children: [
+                {
+                    description: 'Novo Lançamento',
+                    onClick: async () => {
+                        let new_instance: LancamentoFinanceiro = {} as LancamentoFinanceiro;
+                        let new_instance_result: any = await lastValueFrom((this.service).sync({ body: { data: new_instance } }))
+                        this.windows
+                            .open(EditarDetailComponent, {
+                                schemaName: this.schemaName,
+                                data: new_instance_result
+                            },
+                                this.schemaName);
+                    }
+                },
+            ]
         },
         {
             description: 'Consultar Lançamentos',

@@ -72,6 +72,7 @@ mat-toolbar {
 
 mat-drawer {
     z-index: 1001;
+    border-radius: 0;
 }
 
 .wrapper {
@@ -112,8 +113,8 @@ mat-drawer {
         top: 10px;
         bottom: 10px;
         width: 4px;
-        border-radius: 4px;
-        background-color: var(--mdc-protected-button-label-text-color);
+        border-radius: 0px;
+        // background-color: var(--mdc-protected-button-label-text-color);
     }
 }
 
@@ -146,9 +147,9 @@ mat-drawer-container {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    justify-content: flex-start;
-    gap: 2px;
-    padding: 4px 0;
+    justify-content: center;
+    gap: 0px;
+    padding: 0;
     height: 80vh;
     flex: auto;
     position: relative;
@@ -159,6 +160,10 @@ mat-drawer-container {
         left: 0;
         top: 0;
         right: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         transition: all ease-in-out 2s !important;
     }
 }
@@ -173,7 +178,7 @@ button.app {
     height: unset;
     min-height: unset;
     max-height: unset;
-    gap: 4px;
+    gap: 0px;
     border-radius: 0;
     overflow: hidden;
     text-overflow: ellipsis;

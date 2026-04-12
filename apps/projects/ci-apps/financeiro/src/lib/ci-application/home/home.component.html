@@ -1,11 +1,46 @@
 <mat-toolbar>
     @for (act of actions; track $index) {
-    <button mat-raised-button (click)="act.onClick ? act.onClick($event) : null">
-        <ng-container *ngTemplateOutlet="inner;"></ng-container>
-    </button>
-    <ng-template #inner>
-        {{act.description}}
-    </ng-template>
+    <ng-container *ngTemplateOutlet="default;context:{act:act}">
+    </ng-container>
     }
 </mat-toolbar>
 <router-outlet></router-outlet>
+<ng-template #default let-act="act">
+    @if('onClick' in act && act.onClick){
+    <button mat-raised-button (click)="act.onClick ? act.onClick($event) : null">
+        <ng-container *ngTemplateOutlet="inner;context:{act:act}"></ng-container>
+    </button>
+    }
+    @if('children' in act && act.children){
+    <button mat-raised-button [matMenuTriggerFor]="actMenu">
+        <ng-container *ngTemplateOutlet="inner;context:{act:act}"></ng-container>
+    </button>
+    <mat-menu #actMenu="matMenu">
+        @for (child of act.children; track $index) {
+        <ng-container *ngTemplateOutlet="itemDefault;context:{act:child}">
+        </ng-container>
+        }
+    </mat-menu>
+    }
+</ng-template>
+<ng-template #itemDefault let-act="act">
+    @if('onClick' in act && act.onClick){
+    <button mat-menu-item (click)="act.onClick ? act.onClick($event) : null">
+        <ng-container *ngTemplateOutlet="inner;context:{act:act}"></ng-container>
+    </button>
+    }
+    @if('children' in act && act.children){
+    <button mat-menu-item [matMenuTriggerFor]="actMenu">
+        <ng-container *ngTemplateOutlet="inner;context:{act:act}"></ng-container>
+    </button>
+    <mat-menu #actMenu="matMenu">
+        @for (child of act.children; track $index) {
+        <ng-container *ngTemplateOutlet="itemDefault;context:{act:child}">
+        </ng-container>
+        }
+    </mat-menu>
+    }
+</ng-template>
+<ng-template #inner let-act="act">
+    @if(act){{{act.description}}}
+</ng-template>

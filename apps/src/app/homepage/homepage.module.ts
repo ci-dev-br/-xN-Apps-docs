@@ -6,7 +6,6 @@ import { USER_MENU } from '@ci/auth';
 import { ProfileMenu } from '@ci/auth';
 import { PainelComponent } from '../painel/painel.component';
 import { IItemMenu } from '@ci/components';
-import { HomeComponent } from '../../../dist/ci-apps/cadastros/lib/ci-application/home/home.component';
 import { HomepageComponent } from './homepage.component';
 
 @NgModule({
