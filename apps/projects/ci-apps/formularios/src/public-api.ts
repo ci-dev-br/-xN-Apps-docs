@@ -3,4 +3,4 @@
  */
 export * from './lib/ci-application/ci-application.module';
 export * from './lib/type';
-export * from './lib/ci-application/formulario-home/fomulario-home.component';
+export * from './lib/ci-application/formulario-home/formulario-home.component';

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { FormularioHomeComponent } from './formulario-home/fomulario-home.component'
+import { FormularioHomeComponent } from './formulario-home/formulario-home.component'
 const routes: Routes = [
   {
     path: '',
