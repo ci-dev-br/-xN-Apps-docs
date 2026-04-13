@@ -37,7 +37,7 @@
         "**/*.pro": false,
         "**/build": false,
         "**/*.unotation": true,
-        "**/portal-api/src": true
+        "**/portal-api/src": false
     },
     "bigUML.hideUnotation": true
 }
