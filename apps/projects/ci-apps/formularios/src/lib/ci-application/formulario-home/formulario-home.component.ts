@@ -25,8 +25,8 @@ import { lastValueFrom } from 'rxjs';
     RouterModule,
   ],
   standalone: true,
-  templateUrl: './fomulario-home.component.html',
-  styleUrl: './fomulario-home.component.scss'
+  templateUrl: './formulario-home.component.html',
+  styleUrl: './formulario-home.component.scss'
 })
 export class FormularioHomeComponent implements OnInit {
   forms?: Forms[];
