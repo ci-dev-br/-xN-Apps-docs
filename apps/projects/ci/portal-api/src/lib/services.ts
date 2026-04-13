@@ -11,7 +11,7 @@ export { TermMetaService } from './services/term-meta.service';
 export { SystemService } from './services/system.service';
 export { DeviceService } from './services/device.service';
 export { MessageService } from './services/message.service';
-export { AuthService as AuthService } from './services/auth.service';
+export { AuthService } from './services/auth.service';
 export { RegisterService } from './services/register.service';
 export { InviteService } from './services/invite.service';
 export { PhotoService } from './services/photo.service';

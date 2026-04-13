@@ -77,6 +77,7 @@
     "@angular/build": "^21.2.2",
     "@angular/cli": "^21.2.2",
     "@angular/compiler-cli": "^21.2.3",
+    "@ci/api-gen": "^3.5.3",
     "@types/chess.js": "^0.13.7",
     "@types/crypto-js": "^4.2.2",
     "@types/d3-scale": "^4.0.8",
