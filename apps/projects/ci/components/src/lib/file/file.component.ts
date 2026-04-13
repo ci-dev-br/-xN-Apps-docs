@@ -35,47 +35,7 @@ import { MatButtonModule } from "@angular/material/button";
         </mat-card>
         
     `,
-    styles: [
-        `:host{
-            display: flex;
-            flex-direction: column;
-        }
-        mat-card{
-            flex:auto;
-            overflow: hidden;
-        }
-        iframe{
-            // overflow: hidden;
-            border: none;
-            transform: scale(.25);
-            width: 400%;
-            height: 400%;
-            margin: -150%;
-            pointer-events: none;
-            user-select: none;
-        }
-        mat-icon{
-            flex:none;
-        }
-        mat-card-footer{
-            position:relative;
-            display: flex;
-            flex-direction: row;
-            align-items:center;
-            gap: 6px;
-        }
-        .actions{
-
-            // position: absolute;
-            // right: 0;
-            // top:0;
-        }
-        .col{
-            display: flex;
-            flex-direction: column;
-        }
-        `
-    ]
+    styleUrl: 'file.component.scss'
 })
 export class FileComponent {
     @Input() icon?: string;
