@@ -33,8 +33,7 @@ export class BoardComponent implements OnInit {
         @Optional() private readonly daos?: DaoService,
         @Optional() private readonly dialog?: MatDialog,
         @Optional() private readonly injector?: Injector,
-        @Optional() @Inject(CardSetting)
-        public cardsFound?: ImplCard[],
+        @Optional() @Inject(CardSetting) public cardsFound?: ImplCard[],
     ) {
         this.cardsFound?.forEach(c => {
             if (!!c && !!c?.componentName) {

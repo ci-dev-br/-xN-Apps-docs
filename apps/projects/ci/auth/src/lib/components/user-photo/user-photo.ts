@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Optional } from "@angular/core";
 import { CoreModule } from "@ci/core";
 import { UserAuthenticationService } from "../../services/user-authentication-user.service";
 
@@ -14,9 +14,9 @@ import { UserAuthenticationService } from "../../services/user-authentication-us
 export class UserPhoto {
     protected profileImage?: string;
     constructor(
-        private readonly authUserService: UserAuthenticationService,
+        @Optional() private readonly authUserService?: UserAuthenticationService,
     ) {
-        this.authUserService.user.subscribe(user => {
+        this.authUserService?.user.subscribe(user => {
             if (user?.photo && user?.photo.format) {
                 this.profileImage = user.photo.format! + 'base64,' + user.photo.originalFile;
             }
