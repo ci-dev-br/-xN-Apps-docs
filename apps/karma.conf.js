@@ -19,7 +19,7 @@ module.exports = function (config) {
       require('karma-junit-reporter')
     ],
     client: {
-      clearContext: false,
+      clearContext: true,
       jasmine: {}
     },
     jasmineHtmlReporter: {
