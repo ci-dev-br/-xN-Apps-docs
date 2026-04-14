@@ -1,9 +1,8 @@
 <div class="row">
     <div class="col">
-        <ng-container [formGroup]="form">
+        @if(form){<ng-container [formGroup]="form">
             <mat-card>
                 <mat-card-content>
-
                     <div class="row">
                         <div class="user-profile">
                             @if(profileImage){<img [src]="profileImage" alt="" class="user-profile-image"
@@ -16,7 +15,6 @@
                                 <button mat-menu-item (click)="uploadPhoto()">Arquivo local</button>
                                 <button mat-menu-item (click)="takeAPhoto()">Tirar foto</button>
                             </mat-menu>
-
                         </div>
                         <div class="content">
                             <ci-input mode="content-editable" fieldName="fullName" label="Nome Completo"
@@ -43,14 +41,14 @@
                         <div class="content">
                             <button mat-raised-button [disabled]="!form.touched || !!(form.invalid)"
                                 (click)="saveProfile()">
-                                {{ form.touched ? 'Confirmar alterações' : 'Nenhuma alteração pendente de confirmação'
+                                {{ form?.touched ? 'Confirmar alterações' : 'Nenhuma alteração pendente de confirmação'
                                 }}
                             </button>
                         </div>
                     </div>
                 </mat-card-content>
             </mat-card>
-        </ng-container>
+        </ng-container>}
     </div>
     <div class="col">
         <mat-card>
@@ -82,24 +80,20 @@
     </div>
     <canvas #canvasElement style="display: none;"></canvas>
     <div class="controls">
-        <button mat-raised-button *ngIf="!isCameraActive && !capturedImage" (click)="startCamera()">
+        @if(!isCameraActive && !capturedImage){<button mat-raised-button (click)="startCamera()">
             Ligar Câmera
-        </button>
-
-        <button mat-raised-button *ngIf="isCameraActive" (click)="capturePhoto()">
+        </button>}
+        @if(isCameraActive){<button mat-raised-button (click)="capturePhoto()">
             Tirar Foto
-        </button>
-
-        <button mat-raised-button *ngIf="isCameraActive" (click)="stopCamera()">
+        </button>}
+        @if(isCameraActive){<button mat-raised-button (click)="stopCamera()">
             Cancelar
-        </button>
-
-        <button mat-raised-button *ngIf="capturedImage" (click)="retakePhoto()">
+        </button>}
+        @if(capturedImage){<button mat-raised-button (click)="retakePhoto()">
             Tirar Outra Foto
-        </button>
-
-        <button mat-raised-button *ngIf="capturedImage" class="save-btn" (click)="saveProfile()">
+        </button>}
+        @if(capturedImage){<button mat-raised-button class="save-btn" (click)="saveProfile()">
             Salvar Perfil
-        </button>
+        </button>}
     </div>
 </div>}
