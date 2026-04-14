@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Optional } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,16 +28,17 @@ import { MenuService } from '../menu-servive';
 export class HomeComponent {
     abas?: { label: string, path: string, icon: string }[];
     constructor(
-        private readonly route: ActivatedRoute,
-        private readonly window: WindowService,
-        protected readonly menus: MenuService,
+        @Optional() private readonly route?: ActivatedRoute,
+        @Optional() private readonly window?: WindowService,
+        @Optional() protected readonly menus?: MenuService,
     ) {
-        this.abas = route.routeConfig?.children?.map(r => {
-            return {
-                label: (r?.data as any)?.title || r.path,
-                path: '/' + r.path,
-                icon: (r?.data as any)?.icon || undefined,
-            } as { label: string, path: string, icon: string }
-        }) || undefined;
+        if (!!route?.routeConfig?.children)
+            this.abas = route.routeConfig?.children?.map(r => {
+                return {
+                    label: (r?.data as any)?.title || r.path,
+                    path: '/' + r.path,
+                    icon: (r?.data as any)?.icon || undefined,
+                } as { label: string, path: string, icon: string }
+            }) || undefined;
     }
 }

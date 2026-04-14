@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Optional, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { InputModule } from '@ci/components';
@@ -34,7 +34,7 @@ export interface IResume {
 export class HomeComponent implements OnInit {
     protected user?: User;
     protected profileImage?: string;
-    form: FormGroup = this.formBuilder.group({
+    form?: FormGroup = this.formBuilder?.group({
         fullName: [],
         email: [],
         emailVerificado: [],
@@ -50,13 +50,13 @@ export class HomeComponent implements OnInit {
     })
     protected resumes?: IResume[];
     constructor(
-        private readonly formBuilder: FormBuilder,
-        private readonly daos: DaoService,
-        private readonly userService: UserService,
-        private readonly authUserService: UserAuthenticationService,
+        @Optional() private readonly formBuilder?: FormBuilder,
+        @Optional() private readonly daos?: DaoService,
+        @Optional() private readonly userService?: UserService,
+        @Optional() private readonly authUserService?: UserAuthenticationService,
     ) { }
     ngOnInit(): void {
-        this.authUserService.user.subscribe(user => { this.hasUser(user || undefined) })
+        this.authUserService?.user.subscribe(user => { this.hasUser(user || undefined) })
     }
     hasUser(user?: User) {
         if (!!user) {
@@ -64,17 +64,17 @@ export class HomeComponent implements OnInit {
                 this.profileImage = this.user.photo.format! + 'base64,' + this.user.photo.originalFile;
             }
             // TODO: separar bloco
-            this.daos.prepareToEdit(user);
-            this.daos.bindDataForm(user, this.form);
-            this.daos.confirmation(user)?.subscribe(async data => {
+            this.daos?.prepareToEdit(user);
+            if (this.form) this.daos?.bindDataForm(user, this.form);
+            this.daos?.confirmation(user)?.subscribe(async data => {
                 try {
-                    if (user && data) {
+                    if (user && data && this.userService) {
                         let _data: any = Object.assign(user,
                             await lastValueFrom(this.userService.sync({ body: user }))
                         );
                         delete (_data as IChangeable).__pre;
-                        this.daos.prepareToEdit(_data);
-                        this.daos.bindDataForm(_data, this.form);
+                        this.daos?.prepareToEdit(_data);
+                        if (this.form) this.daos?.bindDataForm(_data, this.form);
                         this.user = _data;
                     }
                 } catch (error) {
@@ -88,10 +88,10 @@ export class HomeComponent implements OnInit {
         }
     }
     async saveProfile() {
-        if (this.user && this.form.valid) {
-            await this.daos.confirmChanges(this.user);
+        if (this.user && this.form?.valid) {
+            await this.daos?.confirmChanges(this.user);
         } else {
-            this.form.markAllAsTouched();
+            this.form?.markAllAsTouched();
         }
     }
     /**
@@ -145,7 +145,7 @@ export class HomeComponent implements OnInit {
             // Converte o canvas para uma imagem Base64 (formato JPEG)
             this.capturedImage = canvas.toDataURL('image/jpeg');
             this.profileImage = this.capturedImage;
-            this.form.get('photo')?.setValue({
+            this.form?.get('photo')?.setValue({
                 format: this.capturedImage.split('base64,')[0],
                 originalFile: this.capturedImage.split('base64,')[1],
             });
