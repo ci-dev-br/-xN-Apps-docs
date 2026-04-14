@@ -16,7 +16,7 @@ module.exports = function (config) {
       require('karma-jasmine-html-reporter'),
       require('karma-coverage'),
       require('@angular-devkit/build-angular/plugins/karma'), // <-- Importante para o Angular entender os testes
-      // require('karma-junit-reporter')
+      require('karma-junit-reporter')
     ],
     client: {
       clearContext: false,
