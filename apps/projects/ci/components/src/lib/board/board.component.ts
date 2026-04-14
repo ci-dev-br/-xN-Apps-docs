@@ -1,4 +1,4 @@
-import { Component, HostListener, Inject, Injector, Input, OnInit } from "@angular/core";
+import { Component, HostListener, Inject, Injector, Input, OnInit, Optional } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { UserAuthenticationService } from "@ci/auth";
@@ -11,7 +11,9 @@ import { WindowService } from "../window/window.service";
 import { CardFinderComponent } from "../card-finder/card-finder.component";
 import { SettingsComponent } from "@ci/components";
 /**
- * 
+ * Componente de Visualização de Prancheta para construção de Dashboards
+ * dinâmico com Cartões Extensíveis e Configuráveis por Multi-Inquilinos
+ * da Aplicação;
  */
 @Component({
     selector: 'ci-board',
@@ -24,14 +26,14 @@ export class BoardComponent implements OnInit {
     @Input() default?: string;
     cards = new Map<string, ImplCard>();
     constructor(
-        private readonly window: WindowService,
-        private readonly daoForms: DaoBuilder,
-        private readonly user: UserAuthenticationService,
-        private readonly pranchetas: PranchetaService,
-        private readonly daos: DaoService,
-        private readonly dialog: MatDialog,
-        private readonly injector: Injector,
-        @Inject(CardSetting)
+        @Optional() private readonly window?: WindowService,
+        @Optional() private readonly daoForms?: DaoBuilder,
+        @Optional() private readonly user?: UserAuthenticationService,
+        @Optional() private readonly pranchetas?: PranchetaService,
+        @Optional() private readonly daos?: DaoService,
+        @Optional() private readonly dialog?: MatDialog,
+        @Optional() private readonly injector?: Injector,
+        @Optional() @Inject(CardSetting)
         public cardsFound?: ImplCard[],
     ) {
         this.cardsFound?.forEach(c => {
@@ -43,14 +45,14 @@ export class BoardComponent implements OnInit {
     async ngOnInit() {
         try {
             await this.loadBoard();
-            this.form = await this.daoForms.getForm('Prancheta');
-            this.daos.prepareToEdit(this.prancheta);
-            this.daos.bindDataForm(this.prancheta, this.form);
+            this.form = await this.daoForms?.getForm('Prancheta');
+            this.daos?.prepareToEdit(this.prancheta);
+            if (this.form) this.daos?.bindDataForm(this.prancheta, this.form);
 
-            this.daos.confirmation(this.prancheta)?.subscribe(async data => {
+            this.daos?.confirmation(this.prancheta)?.subscribe(async data => {
                 this.syncing = true;
                 try {
-                    if (this.prancheta && data && this.form) {
+                    if (this.prancheta && data && this.form && this.pranchetas) {
                         const prancheta_syncronized = await lastValueFrom(this.pranchetas.pranchetaControllerSync({ body: { prancheta: this.prancheta } }));
 
                         let _data: any = Object.assign(this.prancheta, prancheta_syncronized);
@@ -65,7 +67,7 @@ export class BoardComponent implements OnInit {
                 }
                 this.syncing = false;
             });
-            this.form.valueChanges.subscribe(v => {
+            this.form?.valueChanges.subscribe(v => {
                 if (!this.syncing) this.syncPrancheta();
             })
         } catch (error) {
@@ -75,6 +77,7 @@ export class BoardComponent implements OnInit {
     syncing?: boolean;
     prancheta?: Prancheta;
     async loadBoard() {
+        if (!this.pranchetas) return;
         this.prancheta = await lastValueFrom(
             this.pranchetas.pranchetaControllerGet({ body: { defaultGlobalCode: this.default } })
         );
@@ -94,7 +97,7 @@ export class BoardComponent implements OnInit {
 
     async syncPrancheta() {
         if (this.prancheta && this.form?.valid) {
-            if (!this.syncing) await this.daos.confirmChanges(this.prancheta);
+            if (!this.syncing) await this.daos?.confirmChanges(this.prancheta);
         } else {
             this.form?.markAllAsTouched();
         }
@@ -108,8 +111,8 @@ export class BoardComponent implements OnInit {
         return undefined;
     }
     async findCardToAdd() {
-        const cardFinderDialog = this.dialog.open(CardFinderComponent);
-        cardFinderDialog.afterClosed().subscribe(value => {
+        const cardFinderDialog = this.dialog?.open(CardFinderComponent);
+        cardFinderDialog?.afterClosed().subscribe(value => {
             if (!!this.prancheta && !!value) {
                 if (!this.prancheta.cards) this.prancheta.cards = [];
                 this.prancheta.cards.push(value);
@@ -131,7 +134,7 @@ export class BoardComponent implements OnInit {
         // return this.prancheta?.layout?.split(',')?.map(d => Number(d))
     }
     async openSettings() {
-        this.window.open(SettingsComponent,
+        this.window?.open(SettingsComponent,
             { pranchetas: [this.prancheta] },
             'Editar Pranchetas'
         )
