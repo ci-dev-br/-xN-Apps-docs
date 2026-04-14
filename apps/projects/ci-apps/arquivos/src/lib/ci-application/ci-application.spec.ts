@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HomeComponent } from './home/home.component';
 
-describe('Aplicativo Arquivos, Início', () => {
+describe('Àpps, Arquivos', () => {
     let component: HomeComponent;
     let fixture: ComponentFixture<HomeComponent>;
 

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 
-describe('Aplicativo Arquivos, Início', () => {
+describe('Componente Incial', () => {
     let component: AppComponent;
     let fixture: ComponentFixture<AppComponent>;
 
