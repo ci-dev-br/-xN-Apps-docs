@@ -3,8 +3,6 @@ import { Injectable } from "@angular/core";
 @Injectable()
 export class NotificationService {
     permission?: 'granted' | 'none' | 'block' | 'denied' | 'default';
-    constructor(
-    ) { }
     async requestPermission() {
         // TODO: implementar camada de notificação.sds
         this.permission = await Notification.requestPermission();
