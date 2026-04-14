@@ -11,6 +11,9 @@ import { BlogComponent } from './blog.component';
   imports: [
     CommonModule,
     BlogRoutingModule
+  ],
+  exports: [
+    BlogComponent,
   ]
 })
 export class BlogModule { }
