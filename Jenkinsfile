@@ -45,7 +45,7 @@ pipeline {
                     script {
                         try {
                             echo 'Executando testes...'
-                            bat 'npm test -- --no-watch'
+                            bat returnStatus: true, 'npm test -- --no-watch'
                         } finally {
                             echo 'Limpando processos do Chrome para destravar o pipeline...'
                             bat returnStatus: true, 'taskkill /F /IM chrome.exe /T >nul 2>&1'
