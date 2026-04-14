@@ -35,7 +35,7 @@ pipeline {
                     """
                     
                     echo 'Instalando dependências do projeto...'
-                    bat 'pnpm install --no-frozen-lockfile'
+                    bat 'pnpm install'
                 }
             }
         }
