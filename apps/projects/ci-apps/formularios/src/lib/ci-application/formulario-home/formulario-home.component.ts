@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Optional } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -32,8 +32,8 @@ export class FormularioHomeComponent implements OnInit {
   forms?: Forms[];
   origin = location.origin;
   constructor(
-    private readonly formsService: FormsService,
-    private readonly router: Router,
+    @Optional() private readonly formsService?: FormsService,
+    @Optional() private readonly router?: Router,
   ) { }
   async ngOnInit() {
     this.find();
@@ -52,13 +52,14 @@ export class FormularioHomeComponent implements OnInit {
   }
   openFormById(internalId: string) {
     setTimeout(() => {
-      this.router.navigate(['Formularios', 'edit', internalId]);
+      this.router?.navigate(['Formularios', 'edit', internalId]);
     })
   }
   async remove(internalId: string) {
-    await lastValueFrom(
-      this.formsService.delete({ body: { internalId } })
-    );
+    if (this.formsService)
+      await lastValueFrom(
+        this.formsService.delete({ body: { internalId } })
+      );
     this.find();
   }
 }
