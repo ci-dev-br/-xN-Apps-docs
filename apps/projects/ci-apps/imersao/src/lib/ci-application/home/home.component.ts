@@ -16,11 +16,12 @@ export class HomeComponent implements OnInit {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
   ngOnInit() {
-    if (this.isBrowser) {
-      this.objetos = [
-        new Objeto({ glb_file: 'mapa_casa.glb' }),
-      ];
-    }
+    // TODO: removido exemplo, carga deve ser realizada mediante requisição.
+    /*  if (this.isBrowser) {
+       this.objetos = [
+         new Objeto({ glb_file: 'mapa_casa.glb' }),
+       ];
+     } */
   }
 }
 
