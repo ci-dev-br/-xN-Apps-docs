@@ -1,6 +1,6 @@
 import { LayoutModule } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, Optional } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -43,10 +43,10 @@ import { lastValueFrom } from 'rxjs';
 })
 export class HomeComponent implements IAmSchematization {
     constructor(
-        private readonly windows: WindowService,
-        private readonly service: LancamentoFinanceiroService,
-        private readonly router: Router,
-        private readonly route: ActivatedRoute,
+        @Optional() private readonly windows?: WindowService,
+        @Optional() private readonly service?: LancamentoFinanceiroService,
+        @Optional() private readonly router?: Router,
+        @Optional() private readonly route?: ActivatedRoute,
     ) { }
     schemaName = 'LancamentoFinanceiro';
     entidades = [
@@ -59,14 +59,14 @@ export class HomeComponent implements IAmSchematization {
                 {
                     description: 'Novo Lançamento',
                     onClick: async () => {
+                        if (!this.service) return;
                         let new_instance: LancamentoFinanceiro = {} as LancamentoFinanceiro;
                         let new_instance_result: any = await lastValueFrom((this.service).sync({ body: { data: new_instance } }))
-                        this.windows
-                            .open(EditarDetailComponent, {
-                                schemaName: this.schemaName,
-                                data: new_instance_result
-                            },
-                                this.schemaName);
+                        this.windows?.open(EditarDetailComponent, {
+                            schemaName: this.schemaName,
+                            data: new_instance_result
+                        },
+                            this.schemaName);
                     }
                 },
             ]
@@ -74,7 +74,7 @@ export class HomeComponent implements IAmSchematization {
         {
             description: 'Consultar Lançamentos',
             onClick: (e) => {
-                this.router.navigate(['LancamentoFinanceiro'], {
+                this.router?.navigate(['LancamentoFinanceiro'], {
                     relativeTo: this.route
                 })
             }
