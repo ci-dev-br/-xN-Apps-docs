@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 
 import { HomeComponent } from './home/home.component';
+import { RouterModule } from '@angular/router';
 
 describe('Àpps Gerencial', () => {
     let component: HomeComponent;
@@ -9,7 +10,9 @@ describe('Àpps Gerencial', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [HomeComponent]
+            imports: [
+                RouterModule.forRoot([]),
+                HomeComponent]
         })
             .compileComponents();
 
