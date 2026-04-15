@@ -41,15 +41,15 @@ pipeline {
         }
         stage('Testes Unitários') {
             steps {
-                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                catchError {
                     dir("${env.APP_PATH}") {
                         script {
                             try {
                                 echo 'Executando testes...'
-                                bat returnStatus: true, 'npm test -- --no-watch'
+                                bat 'npm test -- --no-watch'
                             } finally {
                                 echo 'Limpando processos do Chrome para destravar o pipeline...'
-                                bat returnStatus: true, 'taskkill /F /IM chrome.exe /T >nul 2>&1'
+                                bat 'taskkill /F /IM chrome.exe /T >nul 2>&1'
                             }
                         }
                     }
