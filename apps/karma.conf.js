@@ -40,7 +40,7 @@ module.exports = function (config) {
       ]
     },
     // O junit vive aqui, nos reporters!
-    reporters: ['progress', 'kjhtml'],
+    reporters: ['progress', 'kjhtml', 'junit'],
     customLaunchers: {
       ChromeHeadlessCI: {
         base: 'ChromeHeadless',
