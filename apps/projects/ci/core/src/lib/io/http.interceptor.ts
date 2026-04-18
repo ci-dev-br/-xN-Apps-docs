@@ -76,17 +76,17 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                 if (error) {
                     if (error?.error?.message?.indexOf('Acesso negado. Não corresponde ao nível de acesso necessário.') > -1) {
                         setTimeout(() => {
-                            this.router.navigate(['/meus-apps']);
+                            this.router.navigate(['/']);
                         });
                         return throwError(undefined);
                     }
                     if (error instanceof HttpErrorResponse && (error.status === 0 || error.status === 404)) {
                         if (this.config && Array.isArray(this.config.alternativeApiGateways)) {
 
-                            let lista = (this.config.alternativeApiGateways
+                            let gateways_list = (this.config.alternativeApiGateways
                                 .filter(url => url.indexOf('http') === 0)
                             );
-                            this.efail = lista['string' === typeof this.efail ? lista.indexOf(this.efail) + 1 : 0];
+                            this.efail = gateways_list['string' === typeof this.efail ? gateways_list.indexOf(this.efail) + 1 : 0];
                             if (this._pipocate++ < 100) {
                                 return this.intercept(request, next);
                             } else {
@@ -142,9 +142,9 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                     }
                 }).pipe(
                     switchMap((token: { authorization: string }) => {
-                        this.refreshing = false;
                         user.authentication.bearer = token.authorization;
                         this.storage.store('apps.ci.dev.br.store.User', user);
+                        setTimeout(() => { this.refreshing = false; });
                         return next.handle(this.addBearerToken(request));
                     }), catchError(error => {
                         return throwError(error);
