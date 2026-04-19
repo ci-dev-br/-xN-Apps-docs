@@ -56,7 +56,7 @@ pipeline {
                                         @echo off
                                         taskkill /F /IM chrome.exe /T >nul 2>&1 || exit 0
                                         """
-                                } finally {
+                                } catch {
                                     echo 'End'
                                 }
                             }
