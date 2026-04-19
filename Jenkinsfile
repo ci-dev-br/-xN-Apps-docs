@@ -51,10 +51,14 @@ pipeline {
                                     npm test -- --no-watch
                                     """
                             } finally {
-                                bat """
-                                    @echo off
-                                    taskkill /F /IM chrome.exe /T >nul 2>&1 || exit 0
-                                    """
+                                try {
+                                    bat """
+                                        @echo off
+                                        taskkill /F /IM chrome.exe /T >nul 2>&1 || exit 0
+                                        """
+                                } finally {
+                                    echo 'End'
+                                }
                             }
                         }
                     }
