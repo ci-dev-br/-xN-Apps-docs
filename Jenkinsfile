@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
         APP_PATH = 'apps'
+        API_PATH = 'serve'
     }
     stages {
         stage('Limpeza Inicial') {
@@ -36,7 +37,7 @@ pipeline {
                     
                     echo 'Instalando dependências do projeto...'
                     bat 'pnpm install'
-                }
+                }   
             }
         }
         stage('Testes Unitários') {
@@ -45,11 +46,15 @@ pipeline {
                     dir("${env.APP_PATH}") {
                         script {
                             try {
-                                echo 'Executando testes...'
-                                bat 'npm test -- --no-watch'
+                                bat """
+                                    @echo off
+                                    npm test -- --no-watch
+                                    """
                             } finally {
-                                echo 'Limpando processos do Chrome para destravar o pipeline...'
-                                bat 'taskkill /F /IM chrome.exe /T >nul 2>&1 || exit 0'
+                                bat """
+                                    @echo off
+                                    taskkill /F /IM chrome.exe /T >nul 2>&1 || exit 0
+                                    """
                             }
                         }
                     }

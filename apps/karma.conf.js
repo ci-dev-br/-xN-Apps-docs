@@ -29,7 +29,7 @@ module.exports = function (config) {
     junitReporter: {
       outputDir: 'test-results',
       outputFile: 'test-results.xml',
-      useBrowserName: false
+      useBrowserName: true
     },
     coverageReporter: {
       dir: require('path').join(__dirname, './coverage/apps'),
