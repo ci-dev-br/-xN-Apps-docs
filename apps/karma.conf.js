@@ -1,7 +1,7 @@
 // Karma configuration file
 module.exports = function (config) {
   // Lê a variável de ambiente injetada pelo script ou pipeline
-  const projectName = process.env.PROJECT_NAME || (new Date().toISOString()).replace(/\D/g, '');
+  const projectName = (process.env.PROJECT_NAME || (new Date().toISOString()).replace(/\D/g, '')) + '_' + (Math.random() * Math.random()).toString(36).replace('.', '').toUpperCase();
   config.set({
     basePath: '',
     singleRun: true,
