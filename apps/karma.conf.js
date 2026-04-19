@@ -28,8 +28,9 @@ module.exports = function (config) {
     // Esta é a configuração do reporter que o Jenkins vai usar
     junitReporter: {
       outputDir: 'test-results',
-      outputFile: 'test-results.xml',
-      useBrowserName: true
+      // outputFile: 'test-results.xml',
+      useBrowserName: true,
+
     },
     coverageReporter: {
       dir: require('path').join(__dirname, './coverage/apps'),
