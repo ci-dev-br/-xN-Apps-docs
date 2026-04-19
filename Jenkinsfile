@@ -50,13 +50,16 @@ pipeline {
                                     @echo off
                                     npm test -- --no-watch
                                     """
-                            } finally {
+                            } catch (err) { 
+                                echo 'Waiting'
+                            }
+                            finally {
                                 try {
                                     bat """
                                         @echo off
                                         taskkill /F /IM chrome.exe /T >nul 2>&1 || exit 0
                                         """
-                                } catch {
+                                } catch (err) {
                                     echo 'End'
                                 }
                             }
