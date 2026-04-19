@@ -1,5 +1,7 @@
 // Karma configuration file
 module.exports = function (config) {
+  // Lê a variável de ambiente injetada pelo script ou pipeline
+  const projectName = process.env.PROJECT_NAME || 'root';
   config.set({
     basePath: '',
     singleRun: true,
@@ -27,10 +29,9 @@ module.exports = function (config) {
     },
     // Esta é a configuração do reporter que o Jenkins vai usar
     junitReporter: {
-      outputDir: 'test-results',
-      // outputFile: 'test-results.xml',
+      outputDir: `test-results/${projectName}`,
+      outputFile: 'test-results.xml',
       useBrowserName: true,
-
     },
     coverageReporter: {
       dir: require('path').join(__dirname, './coverage/apps'),
