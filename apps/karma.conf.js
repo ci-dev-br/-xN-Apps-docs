@@ -47,10 +47,14 @@ module.exports = function (config) {
       ChromeHeadlessCI: {
         base: 'ChromeHeadless',
         flags: [
-          '--no-sandbox',
-          '--disable-gpu',
-          '--disable-dev-shm-usage',
-          '--remote-debugging-port=9222'
+          '--no-sandbox',               // Desativa o sandbox, crucial para CI no Windows
+          '--disable-gpu',              // Evita travamentos de renderização em background
+          '--disable-translate',
+          '--disable-extensions',
+          '--disable-dev-shm-usage',    // Usa /tmp em vez de memória compartilhada (evita crash)
+          // '--remote-debugging-port=0',  // Porta dinâmica para debugging interno do Chrome
+          // '--remote-debugging-port=9222',
+          '--window-size=1920,1080'
         ]
       }
     },
