@@ -69,7 +69,7 @@ pipeline {
     post {
         always {
             echo 'Processando relatórios de teste...'
-            junit testResults: "${env.APP_PATH}/apps/test-results/**/*.xml", allowEmptyResults: true
+            junit testResults: "${env.APP_PATH}/test-results/**/*.xml", allowEmptyResults: true
             
             echo 'Finalizando pipeline...'
         }
