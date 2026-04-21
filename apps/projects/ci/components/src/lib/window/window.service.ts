@@ -99,4 +99,9 @@ export class WindowService {
             event.type === eventName ? callback(...event.args) : undefined
         }) */
     }
+    async at(of: Type<any>) {
+        this.open(of, {
+
+        })
+    }
 }

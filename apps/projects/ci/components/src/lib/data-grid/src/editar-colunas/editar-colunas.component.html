@@ -1,0 +1,7 @@
+@for(column of columns; track column){
+<div>
+    {{column.headerName || column.fieldName}}
+    <span style="flex: auto;"></span>
+    <mat-checkbox [checked]="!column.hide" (change)="column.hide = !column.hide"></mat-checkbox>
+</div>
+}

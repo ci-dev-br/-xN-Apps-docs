@@ -3,6 +3,9 @@ import { DataGridService } from "./data-grid.service";
 import { IContextMenu } from "@ci/components/context-menu";
 import { IDataGridOptions } from "./models/i-data-grid-options";
 import { IColumnOption } from "./models/i-column-options";
+import { Handlers } from "@ci/core";
+import { MatDialog } from "@angular/material/dialog";
+import { EditarColunasComponent } from "./editar-colunas/editar-colunas.component";
 export interface SelectEvent<I> {
     value?: I;
     event: MouseEvent | KeyboardEvent | Event;
@@ -26,7 +29,17 @@ export class DataGridComponent<I> {
     @ViewChild('gridContainer', { static: true })
     gridContainer?: ElementRef<HTMLElement>;
     headerContextMenu?: IContextMenu[] = [
-        { label: 'Editar colunas' }
+        {
+            label: 'Editar colunas',
+            handler: () => {
+                this.dialog.open(EditarColunasComponent, {
+                    data: {
+                        columns: this.columns
+                    }
+                });
+            }
+            // this.handlers.getHandler(`RequestEditPivoting`, this),
+        }
     ];
     private _selectedItem?: I | undefined;
     /**
@@ -70,12 +83,16 @@ export class DataGridComponent<I> {
         if (this._options === value) return;
         this._options = value;
         this.columns = this._options?.columns;
-        this.displayedColumns = this.columns?.filter(c => !c.hide && c.defaultVisible !== false)?.map((c, i) => c.fieldName || '')
+        // this.displayedColumns = this.columns?.filter(c => !c.hide && c.defaultVisible !== false)?.map((c, i) => c.fieldName || '')
     }
     columns?: IColumnOption<I>[];
-    displayedColumns?: string[];
+    get displayedColumns() {
+        return this.columns?.filter(c => !c.hide && c.defaultVisible !== false)?.map((c, i) => c.fieldName || '')
+    }
     constructor(
         private readonly services: DataGridService,
+        private readonly handlers: Handlers,
+        private readonly dialog: MatDialog,
     ) {
         services.grid = this;
     }

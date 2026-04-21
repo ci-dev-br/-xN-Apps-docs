@@ -77,3 +77,18 @@ mat-toolbar {
 .a {
   flex: auto;
 }
+
+/* * { // Marcador para visualização de caixas em destaque para auxilio na construção de layouts...
+  position: relative;
+
+  &::after {
+    pointer-events: none;
+    user-select: none;
+    position: absolute;1
+    inset: 0;
+    content: " ";
+    border-radius: 10px;
+    z-index: 1000;
+    border: dashed 0.00001px rgba(255, 0, 0, .10) !important;
+  }
+} */

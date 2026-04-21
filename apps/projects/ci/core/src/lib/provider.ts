@@ -5,6 +5,7 @@ import { UserAuthenticationService } from "@ci/auth";
 import { ShortcutService } from "./services/shortcut.service";
 import localePt from '@angular/common/locales/pt';
 import { registerLocaleData } from "@angular/common";
+import { Handlers } from "./services/handlers.service";
 registerLocaleData(localePt, 'pt-BR');
 export interface ISchemaPreset<T, D> {
     primary?: string | string[];
@@ -28,6 +29,7 @@ export function coreProvider(
     if (isDevMode()) {
     }
     const providers: Provider[] = [
+        Handlers,
         WsService,
         UserAuthenticationService,
         NotificationService,

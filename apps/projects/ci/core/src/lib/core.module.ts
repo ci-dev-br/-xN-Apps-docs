@@ -16,6 +16,7 @@ import { DaoBuilder, ISchema, ISchemaProperty } from './dao/dao-builder.service'
 import { DaoPipe } from './pipes/dao.pipe';
 import { StageDirective } from './directives/stage.directive';
 import { IChangeable, OfString, SerializedObjectData } from './dao/models';
+import { AtOf, Handlers } from './services/handlers.service';
 
 @NgModule({
   declarations: [
@@ -65,4 +66,6 @@ export {
   SafePipe,
   ThemeService,
   WsService,
+  Handlers,
+  AtOf,
 }
