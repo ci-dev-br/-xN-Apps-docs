@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
-import { IListOptions } from '../models/i-list-options';
+import { IListOptions } from '../models/src/i-list-options';
 
 @Component({
   selector: 'ci-data-list',

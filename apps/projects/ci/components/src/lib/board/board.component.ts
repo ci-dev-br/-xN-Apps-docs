@@ -7,7 +7,7 @@ import { Card, Prancheta, PranchetaService } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 import { CardSetting, ImplCard } from "./card";
 import { moveItemInArray } from "@angular/cdk/drag-drop";
-import { WindowService } from "../window/window.service";
+import { WindowService } from "../window/src/window.service";
 import { CardFinderComponent } from "../card-finder/card-finder.component";
 import { SettingsComponent } from "@ci/components";
 /**

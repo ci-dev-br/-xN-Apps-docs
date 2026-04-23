@@ -156,6 +156,12 @@
       "@ci/components/data-grid": [
         "./projects/ci/components/src/lib/data-grid/public-api"
       ],
+      "@ci/components/models": [
+        "./projects/ci/components/src/lib/models/public-api"
+      ],
+      "@ci/components/window": [
+        "./projects/ci/components/src/lib/window/public-api"
+      ],
     },
     "outDir": "./dist/out-tsc",
     "strict": true,

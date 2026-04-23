@@ -8,7 +8,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { DragDropModule } from "@angular/cdk/drag-drop";
-import { WindowModule } from "../window/window.module";
+import { WindowModule } from "../window/src/window.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouterModule } from "@angular/router";
 import { CardFinderComponent } from "./card-finder.component";
