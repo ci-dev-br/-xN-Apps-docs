@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
-import { EditarDetailComponent } from "@ci/components";
+import { EditarDetailComponent } from "@ci/components/editar-detail";
 import { MasterDetailModule } from "@ci/components/master-detail";
 import { WindowModule, WindowService } from "@ci/components/window";
 import { CoreModule } from "@ci/core";

@@ -12,7 +12,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { CoreModule } from "@ci/core";
-import { DynFormModule, LNavModule, StatusBarModule } from "@ci/components";
+import { LNavModule, StatusBarModule } from "@ci/components";
 import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo.component';
 import { GerencialComponent } from "./gerencial.component";
 import { WindowModule } from "@ci/components/window";
@@ -27,6 +27,7 @@ import { GerecialSettingsComponent } from "./views/settings/gerecial-settigns.co
 
 import { DevicesComponent } from "./views/devices/devices.component";
 import { UsersComponent } from "./views/users/users.component";
+import { DynFormModule } from "@ci/components/dyn-form";
 
 const routes: Routes = [
     {

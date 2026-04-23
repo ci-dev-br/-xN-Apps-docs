@@ -162,6 +162,9 @@
       "@ci/components/window": [
         "./projects/ci/components/src/lib/window/public-api"
       ],
+      "@ci/components/dyn-form": [
+        "./projects/ci/components/src/lib/dyn-form/public-api"
+      ],
     },
     "outDir": "./dist/out-tsc",
     "strict": true,

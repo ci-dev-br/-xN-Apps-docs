@@ -8,6 +8,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { FormsModule } from "@angular/forms";
 import { DataGridModule } from "@ci/components/data-grid";
+import { EditarDetailModule } from "@ci/components/editar-detail";
 
 @NgModule({
     declarations: [
@@ -22,6 +23,7 @@ import { DataGridModule } from "@ci/components/data-grid";
         MatButtonModule,
         FormsModule,
         DataGridModule,
+        EditarDetailModule,
     ],
     exports: [
         MasterDetailComponent

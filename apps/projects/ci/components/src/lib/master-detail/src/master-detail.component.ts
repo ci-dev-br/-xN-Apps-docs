@@ -1,5 +1,7 @@
 import { AfterViewInit, Component, Injector, Input, OnDestroy, OnInit, Optional } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { EditarDetailComponent } from "@ci/components/editar-detail";
+import { WindowService } from "@ci/components/window";
 import { DaoBuilder, DaoService, IAmSchematization, } from "@ci/core";
 import { getServiceAsSchema } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
@@ -40,7 +42,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
         @Optional() private daoBuilder?: DaoBuilder,
         @Optional() private daos?: DaoService,
         @Optional() private route?: ActivatedRoute,
-        // @Optional() private window?: WindowService,
+        @Optional() private window?: WindowService,
         @Optional() private injector?: Injector,
         //  @Optional() private actions?: ActionsService,
     ) { }
@@ -123,12 +125,12 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
     }
     async editar(data: T, event?: Event) {
         // TODO: refatorar para chamada da janela de edição, passando o componente de edição como parâmetro, para evitar dependência direta do componente de edição 
-        /*   const result: number | any = await this.window?.open(EditarDetailComponent,
-              { schemaName: this.schemaName, data }, this.schemaName, event)
-          if (result === -1 && this.source) {
-              let pos = this.source.indexOf(data);
-              this.source?.splice(pos, 1);
-          } */
+        const result: number | any = await this.window?.open(EditarDetailComponent,
+            { schemaName: this.schemaName, data }, this.schemaName, event)
+        if (result === -1 && this.source) {
+            let pos = this.source.indexOf(data);
+            this.source?.splice(pos, 1);
+        }
     }
     async createNew() {
         if (this.service) {
