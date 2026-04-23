@@ -7,6 +7,7 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { FormsModule } from "@angular/forms";
+import { DataGridModule } from "@ci/components/data-grid";
 
 @NgModule({
     declarations: [
@@ -20,6 +21,7 @@ import { FormsModule } from "@angular/forms";
         MatIconModule,
         MatButtonModule,
         FormsModule,
+        DataGridModule,
     ],
     exports: [
         MasterDetailComponent

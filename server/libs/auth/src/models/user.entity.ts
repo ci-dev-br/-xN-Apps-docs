@@ -4,6 +4,7 @@ import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, Ma
 import { Policy } from "./policy.entity";
 import { Tenant } from "@ci/tenant/models/tenant.entity";
 import { Photo } from "@ci/storage/models/photo.entity";
+import { UserPreference } from "./user-preference.entity";
 // import { Photo } from "@ci/storage/models/photo.entity";
 /**
  *	Usuário Auto-identificado do Sistema
@@ -142,4 +143,12 @@ export class User {
     @ManyToOne(() => Photo, { nullable: true })
     @JoinColumn()
     photo?: Photo;
+    @ApiProperty({
+        title: 'Preferências do Usuário',
+        nullable: true,
+        required: false,
+        isArray: true,
+        type: UserPreference,
+    })
+    preferences?: UserPreference[];
 }

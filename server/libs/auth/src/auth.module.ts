@@ -26,6 +26,7 @@ import { Invite } from "./models/invite.entity";
 import { InviteService } from "./service/invite.service";
 import { InviteController } from "./controller/invite.controller";
 import { StorageModule } from "@ci/storage";
+import { UserPreference } from "./models/user-preference.entity";
 export interface IAuthOption {
     secret?: string;
 }
@@ -36,6 +37,7 @@ export const AuthEntities = [
     AccessCredential,
     Register,
     Invite,
+    UserPreference,
 ];
 @Module({
     imports: [

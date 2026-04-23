@@ -12,10 +12,10 @@
     </mat-button-toggle-group>
 </mat-toolbar>
 @if(visualizacao === 'table' && !!gridOptions){
-<!-- <ci-data-grid (select)="editar($event.value, $event.event)" (sorted)="sortHandle($event)" [options]="gridOptions"
+<ci-data-grid (select)="editar($event.value, $event.event)" (sorted)="sortHandle($event)" [options]="gridOptions"
     [source]="source">
     <div vazio style="flex: auto; text-align: center;">Nenhum item cadastrado</div>
-</ci-data-grid> -->
+</ci-data-grid>
 }
 @if(visualizacao === 'list'){
 <!-- <ci-data-list (select)="editar($event[0],$event[1])" > </ci-data-list> -->
