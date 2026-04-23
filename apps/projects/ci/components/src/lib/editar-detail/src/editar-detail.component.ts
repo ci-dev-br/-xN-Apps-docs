@@ -2,7 +2,8 @@ import { Component, Inject, Injector, Input, OnDestroy, OnInit, Optional } from 
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
-import { ActionsService, DynFormModule, IItemMenu } from "@ci/components";
+import { ActionsService, DynFormModule } from "@ci/components";
+import { IItemMenu } from "@ci/components/window";
 import { CORE_ENV, CoreModule, DaoBuilder, DaoService, IAmSchematization, IChangeable, ICoreEnvironment, IHaveSync, ISchemaPreset } from "@ci/core";
 import { FormsService, getServiceAsSchema } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";

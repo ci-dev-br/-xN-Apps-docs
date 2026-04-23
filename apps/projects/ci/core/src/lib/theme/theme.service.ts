@@ -1,7 +1,7 @@
 import { Injectable, OnInit, Optional } from "@angular/core";
 import { IThemeOptions } from "./i-theme-options";
 import { of } from "rxjs";
-import { WindowService } from "@ci/components";
+import { WindowService } from "@ci/components/window";
 
 @Injectable()
 export class ThemeService implements OnInit {

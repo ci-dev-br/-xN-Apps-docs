@@ -5,7 +5,7 @@ import { MatTableModule } from "@angular/material/table";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { Application, ApplicationService } from "@ci/portal-api";
 import { CoreModule, DaoBuilder } from "@ci/core";
-import { DataListModule, WindowService } from "@ci/components";
+import { DataListModule } from "@ci/components";
 import { DataGridModule, IDataGridOptions, IColumnOption } from "@ci/components/data-grid";
 import { lastValueFrom } from "rxjs";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -15,6 +15,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { FormsModule } from "@angular/forms";
 import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplicativo.component";
 import { Router } from "@angular/router";
+import { WindowService } from "@ci/components/window";
 @Component({
     selector: 'ci-application-manager',
     templateUrl: 'application-manager.component.html',

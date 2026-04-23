@@ -2,7 +2,7 @@ import { Component, HostListener, isDevMode, OnDestroy, OnInit, Optional } from 
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
-import { WindowModule, WindowService } from '@ci/components';
+import { WindowModule, WindowService } from '@ci/components/window';
 import { CoreModule, CoreService, WsService } from '@ci/core';
 import { BehaviorSubject } from 'rxjs';
 @Component({

@@ -8,7 +8,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { WindowService } from "@ci/components";
+import { WindowService } from "@ci/components/window";
 import { CoreModule, DaoService } from "@ci/core";
 import { Prancheta } from "@ci/portal-api";
 export interface ISettingOption {

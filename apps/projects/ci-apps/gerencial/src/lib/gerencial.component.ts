@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 // import { TokenService } from '@ci/core';
-import { WindowService } from '@ci/components';
+import { WindowService } from '@ci/components/window';
 // import { MatIcon } from '@angular/material/icon';
 // import { IColumns } from '@ci/components';
 export interface IItemAction<T> {

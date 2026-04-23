@@ -1,7 +1,7 @@
 import { Component, inject } from "@angular/core";
 import { USER_MENU, UserAuthenticationService } from "@ci/auth";
 import { INavbarItemMenu } from "./i-menu-item";
-import { IItemMenu } from "@ci/components";
+import { IItemMenu } from "@ci/components/window";
 
 @Component({
     selector: 'ci-navbar',

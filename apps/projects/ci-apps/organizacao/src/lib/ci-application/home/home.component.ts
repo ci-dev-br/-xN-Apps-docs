@@ -4,7 +4,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { WindowModule, WindowService } from '@ci/components';
+import { WindowModule, WindowService } from '@ci/components/window';
 import { CoreModule } from '@ci/core';
 import { MenuService } from '../menu-servive';
 /**

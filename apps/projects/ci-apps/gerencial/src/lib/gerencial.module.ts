@@ -15,7 +15,7 @@ import { CoreModule } from "@ci/core";
 import { DynFormModule, LNavModule, StatusBarModule } from "@ci/components";
 import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo.component';
 import { GerencialComponent } from "./gerencial.component";
-import { WindowModule } from "@ci/components";
+import { WindowModule } from "@ci/components/window";
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DataGridModule } from "@ci/components/data-grid";
 import { MatSelectModule } from "@angular/material/select";

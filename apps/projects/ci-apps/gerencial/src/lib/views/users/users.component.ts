@@ -4,7 +4,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatTableModule } from "@angular/material/table";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { CoreModule } from "@ci/core";
-import { WindowModule, WindowService } from "@ci/components";
+import { WindowModule, WindowService } from "@ci/components/window";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatFormFieldModule } from "@angular/material/form-field";
