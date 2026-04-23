@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { EditarDetailComponent } from './editar-detail.component';
 import { CoreModule } from '@ci/core';
 import { ReactiveFormsModule } from '@angular/forms';

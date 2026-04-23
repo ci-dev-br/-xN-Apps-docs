@@ -1,16 +1,16 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { DynFormComponent } from './dyn-form.component';
-import { FORM_OPTIONS, FormOptionsBuilder, IFormOptions } from './i-form-options';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CoreModule } from '@ci/core';
 import { MatChipsModule } from '@angular/material/chips';
-import { DynInputComponent } from './dyn-input/dyn-input.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { DynFormComponent } from './dyn-form.component';
+import { FORM_OPTIONS, FormOptionsBuilder, IFormOptions } from './i-form-options';
 import { DynInputDateComponent } from './dyn-input/dyn-input-date.component';
+import { DynInputComponent } from './dyn-input/dyn-input.component';
 @NgModule({
   declarations: [
     DynFormComponent,
@@ -35,6 +35,8 @@ import { DynInputDateComponent } from './dyn-input/dyn-input-date.component';
   ],
   exports: [
     DynFormComponent,
+    DynInputComponent,
+    DynInputDateComponent,
   ]
 })
 export class DynFormModule {
@@ -48,7 +50,7 @@ export class DynFormModule {
   }
 }
 export {
-  DynInputDateComponent,
   DynFormComponent,
   DynInputComponent,
+  DynInputDateComponent,
 }
