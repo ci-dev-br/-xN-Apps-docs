@@ -12,7 +12,7 @@ import { MonthCalendar } from "./month/month";
         DayCalendar,
         HeaderCalendar,
         YearCalendar,
-        MonthCalendar
+        // MonthCalendar
     ],
     standalone: true,
     templateUrl: `calendar.component.html`,

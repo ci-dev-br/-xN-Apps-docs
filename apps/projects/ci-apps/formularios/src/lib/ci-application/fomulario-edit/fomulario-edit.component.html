@@ -11,7 +11,7 @@
         @for (pergunta of formulario.perguntas!.perguntas; track pergunta) {
         <mat-card>
             <mat-card-content>
-                <!-- <ci-pergunta-item [source]="pergunta"></ci-pergunta-item> -->
+                <ci-pergunta-item [source]="pergunta"></ci-pergunta-item>
             </mat-card-content>
             <mat-card-footer align="end">
                 <button mat-icon-button (click)="removerPergunta(pergunta)">
