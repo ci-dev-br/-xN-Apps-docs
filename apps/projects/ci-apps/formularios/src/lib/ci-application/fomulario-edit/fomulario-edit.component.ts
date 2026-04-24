@@ -102,7 +102,7 @@ export class FormularioEditComponent implements OnInit {
       return;
     } */
     await this.daos?.confirmChanges(this.formulario);
-    this.snap?.open('Alterações confirmadas', 'Ver Histórico')
+    this.snap?.open('Alterações aplicadas com sucesso!', 'Visualizar histórico')
   }
   async adicionarPergunta() {
     if (this.formulario) {
