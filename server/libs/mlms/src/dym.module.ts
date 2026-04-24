@@ -7,6 +7,7 @@ import { DyMSourceDefinition } from './models/dym-source-definition';
 import { ManagerModule } from '@ci/manager';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DyMJobStatus } from './models/dym-job-status';
+import { DeployerController } from './controllers/deployer.controller';
 export const DyMEntities = [
   DyMArtifact,
   DyMBuildEnvironment,
@@ -22,6 +23,7 @@ export const DyMEntities = [
     DyMService,
   ],
   controllers: [
+    DeployerController,
   ],
   exports: [
     DyMService
