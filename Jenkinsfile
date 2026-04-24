@@ -74,7 +74,7 @@ pipeline {
                         }
                     }
                 }
-                junit testResults: "${env.APP_PATH}/test-results/**/*.xml", 
+                junit testResults: "${env.APP_PATH}/test-results/**/*.xml"
             }
         }
         stage('Build da Aplicação') {
