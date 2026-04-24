@@ -33,6 +33,14 @@ pipeline {
                         ) else (
                             echo pnpm ja esta instalado.
                         )
+
+                        where gulp >nul 2>nul
+                        if %errorlevel% neq 0 (
+                            echo gulp-cli nao encontrado. Instalando...
+                            npm install -g gulp-cli
+                        ) else (
+                            echo gulp-cli ja esta instalado.
+                        )
                     """
                     
                     echo 'Instalando dependências do projeto...'
@@ -66,6 +74,7 @@ pipeline {
                         }
                     }
                 }
+                junit testResults: "${env.APP_PATH}/test-results/**/*.xml", 
             }
         }
         stage('Build da Aplicação') {
@@ -76,7 +85,13 @@ pipeline {
                 }
             }
         }
-        // TODO: implementar estágio de publicação do build para o ambiente indicado
+         stage('Deploy Application') {
+            steps {
+                dir("gulp") {
+                    bat 'gulp DeployPipeline'
+                }
+            }
+        }
     }
     post {
         always {
