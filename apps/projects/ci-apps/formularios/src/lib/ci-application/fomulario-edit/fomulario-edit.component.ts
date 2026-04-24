@@ -53,20 +53,20 @@ export class FormularioEditComponent implements OnInit {
   });
   constructor(
     @Optional() private readonly formsService?: FormsService,
-   //  @Optional() private readonly route?: ActivatedRoute,
+    @Optional() private readonly route?: ActivatedRoute,
     @Optional() private readonly formBuilder?: FormBuilder,
     @Optional() private readonly daos?: DaoService,
     @Optional() private readonly snap?: MatSnackBar,
   ) { }
   async ngOnInit() {
-    /* if (!!this.route && !!this.formsService) {
+    if (!!this.route && !!this.formsService) {
       this.formsService.getByInternalId({ body: { internalId: this.route.snapshot.paramMap.get('FormId') } }).subscribe(form_data => {
         this.formulario = form_data;
         this.daos?.prepareToEdit(this.formulario);
         if (this.formGroup) this.daos?.bindDataForm(this.formulario, this.formGroup);
         this.daos?.confirmation(this.formulario)?.subscribe(data => this.confirmationHandler(data))
       });
-    } */
+    }
   }
   private async confirmationHandler(data: any) {
     try {
