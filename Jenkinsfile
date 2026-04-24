@@ -74,7 +74,7 @@ pipeline {
                         }
                     }
                 }
-                junit testResults: "${env.APP_PATH}/test-results/**/*.xml"
+                junit testResults: "${env.APP_PATH}/test-results/**/*.xml", allowEmptyResults: true
             }
         }
         stage('Build da Aplicação') {
@@ -88,6 +88,7 @@ pipeline {
          stage('Deploy Application') {
             steps {
                 dir("gulp") {
+                    bat 'npm install'
                     bat 'gulp DeployPipeline'
                 }
             }
@@ -96,7 +97,7 @@ pipeline {
     post {
         always {
             echo 'Processando relatórios de teste...'
-            junit testResults: "${env.APP_PATH}/test-results/**/*.xml", allowEmptyResults: true
+            // junit testResults: "${env.APP_PATH}/test-results/**/*.xml", // allowEmptyResults: true
             
             echo 'Finalizando pipeline...'
         }

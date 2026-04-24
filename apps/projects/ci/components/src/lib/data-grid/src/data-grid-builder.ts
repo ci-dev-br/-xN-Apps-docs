@@ -35,7 +35,17 @@ export class GridBuilder {
                     return {
                         headerName,
                         fieldName,
-                        hide: fieldName && ['internalId', 'id'].indexOf(fieldName) > -1
+                        
+                        hide: fieldName && [
+                            'internalId',
+                            'id',
+                            'createdAt',
+                            'createdBy',
+                            'lastModifiedAt',
+                            'lastModifiedBy',
+                            'tenants',
+                            'deleted'
+                        ].indexOf(fieldName) > -1
                     } as IColumnOption<any>
                 })
             ]

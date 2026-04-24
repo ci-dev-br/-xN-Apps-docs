@@ -8,9 +8,9 @@ import { IColumnOption } from "../models/i-column-options";
        {{value}}
     </ng-container>
     <ng-container *ngIf="column && !!column.component">
-        <ng-template #teste>
+        <!-- <ng-template #teste>
             {{value}}
-        </ng-template>
+        </ng-template> -->
         <ng-container *ngComponentOutlet="column.component; content: componentContent">
         </ng-container>
     </ng-container>
