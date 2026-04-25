@@ -7,9 +7,9 @@ import { Repository } from "typeorm";
 @ApiTags('Deployer')
 @Controller('Deployer')
 export class DeployerController {
-    constructor(
+    /* constructor(
         private readonly repo: Repository<any>
-    ) { }
+    ) { } */
     @Public()
     @Post('report')
     async Report(

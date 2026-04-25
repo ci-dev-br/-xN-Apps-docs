@@ -23,6 +23,9 @@
         }
         <mat-card>
             <mat-card-footer align="end">
+                <button mat-stroked-button style="float: left;">
+                    Vincular Projeto
+                </button>
                 <button mat-raised-button color="primary" (click)="confirm()">Aplicar ajustes</button>
             </mat-card-footer>
         </mat-card>
@@ -37,6 +40,12 @@
             </button>
             <button mat-icon-button [matMenuTriggerFor]="shareMenu">
                 <mat-icon>share</mat-icon>
+            </button>
+            <button mat-icon-button>
+                <mat-icon>styler</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Abrir Ambiente de Validação">
+                <mat-icon>playground</mat-icon>
             </button>
             <mat-menu #shareMenu>
                 <button mat-menu-item (click)="compartilhar()">
