@@ -1,9 +1,9 @@
 const https = require('https');
 const postData = JSON.stringify({
     local_exec: __dirname,
-    url_report: process.env.BUILD_URL
+    BUILD_URL: process.env.BUILD_URL,
+    BUILD_TAG: process.env.BUILD_TAG,
 });
-console.log(process)
 const options = {
     hostname: 'apps.ci.dev.br',
     port: 443,
