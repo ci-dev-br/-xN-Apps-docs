@@ -16,7 +16,7 @@ export class DeployerController {
         @Body() payload: DeployPayload,
         @Request() req,
     ) {
-        console.log(req.header, payload);
+        console.log(JSON.stringify(payload));
         return { status: 200 }
     }
 }
