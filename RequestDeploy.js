@@ -17,10 +17,8 @@ const options = {
 const req = https.request({
     ...options,
 }, (res) => {
-    console.log('statusCode:', res.statusCode);
-    console.log('headers:', res.headers);
     res.on('data', (d) => {
-        process.stdout.write(d);
+        process.exit(0);
     });
 });
 req.on('error', (e) => {
