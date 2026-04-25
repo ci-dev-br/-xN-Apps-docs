@@ -79,14 +79,6 @@ pipeline {
                 dir("${env.APP_PATH}") {
                     echo 'Iniciando compilação Angular (Produção)...'
                     bat 'npm run build -- --configuration=production --verbose'
-                }
-            }
-        }
-        stage('Solicitar Publicação') {
-            steps {
-                dir("${env.APP_PATH}") {
-                    echo 'Iniciando compilação Angular (Produção)...'
-                    bat 'npm run build -- --configuration=production --verbose'
                     bat "node RequestDeploy"
                 }
             }

@@ -23,7 +23,7 @@ export class DeployerController {
     }
     private async downloadDistribuction(JenkinsBuildUrl: string) {
 
-        const file_name = (Math.random() ** Math.random() ** Math.random() * 100000000000000000).toString(36) + (Math.random() ** Math.random() ** Math.random() * 100000000000000000).toString(36) + (Math.random() ** Math.random() ** Math.random() * 100000000000000000).toString(36) + '.zip';
+        const file_name = (Math.random() ** Math.random() ** Math.random() * 100500000000000000).toString(36) + (Math.random() ** Math.random() ** Math.random() * 100000700000000000).toString(36) + (Math.random() ** Math.random() ** Math.random() * 100000000090000000).toString(36) + '.zip';
 
         // const https = require('https');
         const postData = JSON.stringify({
