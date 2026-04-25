@@ -1,14 +1,19 @@
-import { Body, Controller, Get, Post, Request } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Optional, Post, Request } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { DeployPayload } from "../dto/DeployPayload";
 import { Public } from "@ci/auth/decorators/public.decorator";
-import { Repository } from "typeorm";
 import { request } from "node:https";
 import { appendFileSync, existsSync, writeFileSync } from "node:fs";
 
 @ApiTags('Deployer')
 @Controller('Deployer')
 export class DeployerController {
+    constructor(
+        @Inject('JENKINS_USERNAME') @Optional()
+        private username: string,
+        @Inject('JENKINS_PASSWORD') @Optional()
+        private passwordOrToken: string,
+    ) { }
     @Public()
     @Post('report')
     async Report(
@@ -24,7 +29,7 @@ export class DeployerController {
     private async downloadDistribuction(JenkinsBuildUrl: string) {
 
         const file_name = (Math.random() ** Math.random() ** Math.random() * 100500000000000000).toString(36) + (Math.random() ** Math.random() ** Math.random() * 100000700000000000).toString(36) + (Math.random() ** Math.random() ** Math.random() * 100000000090000000).toString(36) + '.zip';
-
+        const auth = 'Basic ' + Buffer.from(`${this.username}:${this.passwordOrToken}`).toString('base64');
         // const https = require('https');
         const postData = JSON.stringify({
             local_exec: __dirname,
@@ -36,7 +41,10 @@ export class DeployerController {
             hostname: urlJenkinsBuildUrl.hostname,
             port: 443,
             path: urlJenkinsBuildUrl.pathname + 'execution/node/3/ws/apps/dist/apps/browser/*zip*/browser.zip',
-            method: 'GET'
+            method: 'GET',
+            headers: {
+                'Authorization': auth,
+            }
         };
         const req = request({
             ...options,

@@ -1,0 +1,43 @@
+# Internet Services
+# pfx="c:/.cert/apps.ci.dev.br/apps.ci.dev.br.pfx"
+# passphrase="485916273565123@duarte"
+
+# Intranet SRV33 
+# internal_pfx="C:/.cert/srv33.internals.ci.dev.br/srv33.internals.ci.dev.br.pfx"
+# internal_passphrase="485916273565123@duarte"
+
+# Internal Services
+# internal_pfx="c:/.cert/srv33.internals.ci.dev.br/certificado.p7b"
+
+# internal_passphrase="485916273565123@duarte"
+# internal_key="c:/.cert/srv33.internals.ci.dev.br/chaveprivada.key"
+# internal_cert="c:/.cert/srv33.internals.ci.dev.br/certificado.cer"
+mailer_key="627d5e2c-6a7b-47a0-bccd-cbc782e35091@34fcttv35$%¨FGY456"
+
+# cert="c:/.cert/apps.ci.dev.br/apps.ci.dev.br-crt.pem"
+# key="c:/.cert/apps.ci.dev.br/apps.ci.dev.br-key.pem"
+
+PORT=86
+INTERNAL_PORT=86
+
+DB_TYPE=postgres
+DB_HOST=::1
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD="485916273565123"
+DB_DATABASE=br.dev.ci.services
+DB_SYNCHRONIZE=true
+MASTER_PASSWORD_AUTHORYTHY="1v$%ty12$%y!@%4yBN@56U256ubn3%¨&i467IJNU47*ik%&*KN%7¨*ik%&*lm¨790LM68lk$67UBI@wBuw$%bU@675IKN478Lm5*(çl%7Uw456vby2$%ty@456u3567iB34)"
+MODULES=System,Notificacao,Auth,Manager,Messager,Produto,Codex,Globalization,Prancheta,Icons,Tenant,Users,Storage,Casdastro,Payment,Fiscal,Infra,Financeiro,Organizacao,INPI,SeoMarketing,Forms,Cms,I11n,Projetos,CodeX,L10n,CRM,DyM,Espazio,Tasking
+CI_APPS_MAILER="250c67d7-8d46-4dd9-94c2-4bc8b5b78c17"
+CI_APPS_MAILER_HOSTNAME="xx.app.br"
+# Informações de Pagamento
+ASSAS_WALLET_ID="8215e77e-eafd-43a4-b69b-f55a6186e154"
+
+# Integration envs
+INTGR_AWS_TOKEN_ACCESS=
+INTGR_GCLOUD_TOKEN_ACCESS=
+INTGR_AZURE_TOKEN_ACCESS=
+INTGR_CI_GOOD_TOKEN_ACCESS=
+INTGR_CI_JENKINS_USER=oybuqcgerofhifmxewerh
+INTGR_CI_JENKINS_PASS=k2tgn67x80c95428957h4t1sifvb34
