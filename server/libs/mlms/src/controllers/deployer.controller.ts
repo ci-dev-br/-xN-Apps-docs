@@ -13,7 +13,7 @@ export class DeployerController {
     async Report(
         @Body() payload: DeployPayload
     ) {
-        console.log('[payload]', payload);
+        console.log('[payload]', JSON.stringify(payload));
         return { status: 200 }
     }
 }
