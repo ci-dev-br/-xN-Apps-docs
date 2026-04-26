@@ -8,7 +8,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CoreModule } from '@ci/core';
 import { OpenProjectComponent } from '../open-project/open-project.component';
 import { Files } from '../services/files.service';
-import { FilesComponent } from '@ci-apps/Arquivos';
+import { FilesComponent, IArquivo } from '@ci-apps/Arquivos';
 
 export interface IMenu {
   items: IMenuItem[];
@@ -38,6 +38,25 @@ export interface IMenuItem {
 export class NavigationComponent {
   menuBar?: IMenu;
   abas?: { label: string, path: string, icon: string }[];
+  private _arquivos?: IArquivo[] | undefined;
+  public get arquivos(): IArquivo[] | undefined {
+    if (this._arquivos === undefined && !!localStorage.getItem('::__arquivos_codex')) {
+      try {
+        const v = localStorage.getItem('::__arquivos_codex');
+        if (v) this._arquivos = JSON.parse(v);
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    return this._arquivos;
+  }
+  public set arquivos(value: IArquivo[] | undefined) {
+    if (this._arquivos === value) return;
+    this._arquivos = value;
+    if (value)
+      localStorage.setItem('::__arquivos_codex', JSON.stringify(value));
+  }
+  current?: IArquivo;
   constructor(
     private readonly route: ActivatedRoute,
     private readonly dialog: MatDialog,
@@ -72,7 +91,19 @@ export class NavigationComponent {
       }
     })
     dialog_files.afterClosed().subscribe(value => {
-      this.files.openFile(value);
+      try {
+        if (value) this.arquivos = [value, ...(this.arquivos || [])];
+        this.open(value);
+      } catch (error) {
+        console.error(error)
+      }
     });
+  }
+  open(arquivo: IArquivo) {
+    this.current = arquivo;
+    this.files.openFile(arquivo);
+  }
+  saveChanges() {
+
   }
 }

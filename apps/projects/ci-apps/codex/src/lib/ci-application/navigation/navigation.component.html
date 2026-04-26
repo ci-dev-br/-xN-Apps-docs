@@ -6,20 +6,33 @@
     <button mat-button>
         Edit
     </button>
-    <button mat-button>
-        Selection
-    </button>
     <mat-menu #fileMenu>
-        <button mat-menu-item (click)="files.openCreateNew()">
+        <!-- <button mat-menu-item (click)="files.openCreateNew()">
             New
-        </button>
-        <button mat-menu-item (click)="openProject()">
+        </button> -->
+        <!-- <button mat-menu-item (click)="openProject()">
             Open Project...
-        </button>
+        </button> -->
         <button mat-menu-item (click)="openFile()">
             Open File...
         </button>
     </mat-menu>
+    @if(!!arquivos){
+    <button mat-button [matMenuTriggerFor]="arquivosMenu">
+        Arquivos
+    </button>
+    <mat-menu #arquivosMenu>
+        @for(arq of arquivos; track arq){
+        @if(!!arq){<button mat-menu-item (click)="open(arq)">
+            {{arq.name}}
+        </button>}
+        }
+    </mat-menu>
+    }
+    <span style="flex: auto"></span>
+    <button mat-button (click)="saveChanges()">
+        Confirmar
+    </button>
 </div>
 <nav mat-tab-nav-bar [tabPanel]="tabPanel">
     @if(abas){
