@@ -11,9 +11,13 @@ import { FilePermissionService } from "./service/file-permission.service";
 import { TenantModule } from "@ci/tenant";
 import { AuthModule } from "@ci/auth/auth.module";
 import { ManagerModule } from "@ci/manager";
+import { File } from "./models/file.entity";
+import { FileService } from "./service/file.service";
+import { FileController } from "./controller/file.controller";
 export const StorageEntities = [
     Photo,
     FilePermission,
+    File,
 ];
 @Module({
     imports: [
@@ -25,11 +29,13 @@ export const StorageEntities = [
     ],
     controllers: [
         PhotoController,
+        FileController,
         FileExplorerController,
         VideoController,
     ],
     providers: [
         PhotoService,
+        FileService,
         FilePermissionService,
     ],
     exports: [

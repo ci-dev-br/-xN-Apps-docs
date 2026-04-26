@@ -14,9 +14,8 @@
     flex-direction: row;
     flex-wrap: wrap;
     gap: 12px;
-    padding: 24px;
-    // align-items: center;
-    justify-content: center;
+    padding: 0px;
+    justify-content: space-evenly;
 
     flex: auto;
     overflow: auto;
@@ -29,7 +28,7 @@ mat-toolbar {
 
 ci-file {
     flex: auto;
-    $size: 180px;
+    $size: 110px;
 
     width: #{$size};
     height: #{$size};

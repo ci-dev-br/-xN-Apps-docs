@@ -157,13 +157,7 @@ process.env.MODULES.split(',').forEach(e => {
   ],
   providers: [
     CiApplicationService,
-    {
-      provide: 'JENKINS_USERNAME',
-      useValue: process.env.INTGR_CI_JENKINS_USER,
-    }, {
-      provide: 'JENKINS_PASSWORD',
-      useValue: process.env.INTGR_CI_JENKINS_PASS,
-    }
+    
   ],
 })
 export class AppModule { }

@@ -1,7 +1,7 @@
 const https = require('https');
 const postData = JSON.stringify({
     local_exec: __dirname,
-    BUILD_URL: process.env.BUILD_URL,
+    BUILD_URL: process.env.BUILD_URL || 'https://jenkins.ci.dev.br/job/%C3%80pps%20Produ%C3%A7%C3%A3o/job/2026.april/139/',
     BUILD_TAG: process.env.BUILD_TAG,
 });
 const options = {

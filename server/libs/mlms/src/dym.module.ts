@@ -20,6 +20,14 @@ export const DyMEntities = [
     TypeOrmModule.forFeature(DyMEntities),
   ],
   providers: [
+    {
+      provide: 'JENKINS_USERNAME',
+      useFactory: () => process.env.INTGR_CI_JENKINS_USER,
+    },
+    {
+      provide: 'JENKINS_PASSWORD',
+      useFactory: () => process.env.INTGR_CI_JENKINS_PASS,
+    },
     DyMService,
   ],
   controllers: [
