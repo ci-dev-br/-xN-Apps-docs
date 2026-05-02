@@ -21,6 +21,7 @@ import { AuthService } from './services/auth.service';
 import { RegisterService } from './services/register.service';
 import { InviteService } from './services/invite.service';
 import { PhotoService } from './services/photo.service';
+import { FileService } from './services/file.service';
 import { FileExplorerService } from './services/file-explorer.service';
 import { VideoService } from './services/video.service';
 import { ApplicationService } from './services/application.service';
@@ -39,6 +40,7 @@ import { PessoaService } from './services/pessoa.service';
 import { UnidadeMedidaService } from './services/unidade-medida.service';
 import { PaisService } from './services/pais.service';
 import { LancamentoFinanceiroService } from './services/lancamento-financeiro.service';
+import { I11NService } from './services/i-11-n.service';
 import { OrganizacaoService } from './services/organizacao.service';
 import { FormsService } from './services/forms.service';
 import { ProjetoService } from './services/projeto.service';
@@ -54,11 +56,12 @@ import { HistoricoContatoService } from './services/historico-contato.service';
 import { ClienteCrmService } from './services/cliente-crm.service';
 import { AtendimentoService } from './services/atendimento.service';
 import { AgendamentoService } from './services/agendamento.service';
+import { DeployerService } from './services/deployer.service';
 import { ChessService } from './services/chess.service';
 import { ChangelogService } from './services/changelog.service';
 
 export function getServiceAsSchema(schema: string): Type<any>{
-  return ({ 'ApiService': ApiService,'WebsiteService': WebsiteService,'SitePageService': SitePageService,'CommentMetaService': CommentMetaService,'CommentService': CommentService,'LinksService': LinksService,'SiteOptionService': SiteOptionService,'SitePostService': SitePostService,'TermService': TermService,'TermMetaService': TermMetaService,'SystemService': SystemService,'DeviceService': DeviceService,'MessageService': MessageService,'AuthService': AuthService,'RegisterService': RegisterService,'InviteService': InviteService,'PhotoService': PhotoService,'FileExplorerService': FileExplorerService,'VideoService': VideoService,'ApplicationService': ApplicationService,'DomainService': DomainService,'ContactsService': ContactsService,'ChamadaService': ChamadaService,'ConversationService': ConversationService,'ProductService': ProductService,'PranchetaService': PranchetaService,'UserService': UserService,'CategoryService': CategoryService,'CadastroService': CadastroService,'EnderecoService': EnderecoService,'InformacaoContatoService': InformacaoContatoService,'PessoaService': PessoaService,'UnidadeMedidaService': UnidadeMedidaService,'PaisService': PaisService,'LancamentoFinanceiroService': LancamentoFinanceiroService,'OrganizacaoService': OrganizacaoService,'FormsService': FormsService,'ProjetoService': ProjetoService,'ClienteProjetoService': ClienteProjetoService,'WorkItemService': WorkItemService,'VendaProdutoService': VendaProdutoService,'ServicoService': ServicoService,'PromocaoService': PromocaoService,'ProfissionalService': ProfissionalService,'ProdutoService': ProdutoService,'PagamentoService': PagamentoService,'HistoricoContatoService': HistoricoContatoService,'ClienteCrmService': ClienteCrmService,'AtendimentoService': AtendimentoService,'AgendamentoService': AgendamentoService,'ChessService': ChessService,'ChangelogService': ChangelogService, }[ schema + 'Service'] as any) || undefined;
+  return ({ 'ApiService': ApiService,'WebsiteService': WebsiteService,'SitePageService': SitePageService,'CommentMetaService': CommentMetaService,'CommentService': CommentService,'LinksService': LinksService,'SiteOptionService': SiteOptionService,'SitePostService': SitePostService,'TermService': TermService,'TermMetaService': TermMetaService,'SystemService': SystemService,'DeviceService': DeviceService,'MessageService': MessageService,'AuthService': AuthService,'RegisterService': RegisterService,'InviteService': InviteService,'PhotoService': PhotoService,'FileService': FileService,'FileExplorerService': FileExplorerService,'VideoService': VideoService,'ApplicationService': ApplicationService,'DomainService': DomainService,'ContactsService': ContactsService,'ChamadaService': ChamadaService,'ConversationService': ConversationService,'ProductService': ProductService,'PranchetaService': PranchetaService,'UserService': UserService,'CategoryService': CategoryService,'CadastroService': CadastroService,'EnderecoService': EnderecoService,'InformacaoContatoService': InformacaoContatoService,'PessoaService': PessoaService,'UnidadeMedidaService': UnidadeMedidaService,'PaisService': PaisService,'LancamentoFinanceiroService': LancamentoFinanceiroService,'I11NService': I11NService,'OrganizacaoService': OrganizacaoService,'FormsService': FormsService,'ProjetoService': ProjetoService,'ClienteProjetoService': ClienteProjetoService,'WorkItemService': WorkItemService,'VendaProdutoService': VendaProdutoService,'ServicoService': ServicoService,'PromocaoService': PromocaoService,'ProfissionalService': ProfissionalService,'ProdutoService': ProdutoService,'PagamentoService': PagamentoService,'HistoricoContatoService': HistoricoContatoService,'ClienteCrmService': ClienteCrmService,'AtendimentoService': AtendimentoService,'AgendamentoService': AgendamentoService,'DeployerService': DeployerService,'ChessService': ChessService,'ChangelogService': ChangelogService, }[ schema + 'Service'] as any) || undefined;
 } 
 
 /**
@@ -94,6 +97,7 @@ export class ApiModule {
         RegisterService,
         InviteService,
         PhotoService,
+        FileService,
         FileExplorerService,
         VideoService,
         ApplicationService,
@@ -112,6 +116,7 @@ export class ApiModule {
         UnidadeMedidaService,
         PaisService,
         LancamentoFinanceiroService,
+        I11NService,
         OrganizacaoService,
         FormsService,
         ProjetoService,
@@ -127,6 +132,7 @@ export class ApiModule {
         ClienteCrmService,
         AtendimentoService,
         AgendamentoService,
+        DeployerService,
         ChessService,
         ChangelogService,
         {

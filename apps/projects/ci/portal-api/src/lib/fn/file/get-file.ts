@@ -6,15 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Application } from '../../models/application';
-import { GetInputDtos } from '../../models/get-input-dtos';
+import { File } from '../../models/file';
+import { FileGetPaylodInputDto } from '../../models/file-get-paylod-input-dto';
 
-export interface GetApplication$Params {
-      body: GetInputDtos
+export interface GetFile$Params {
+      body: FileGetPaylodInputDto
 }
 
-export function getApplication(http: HttpClient, rootUrl: string, params: GetApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Application>>> {
-  const rb = new RequestBuilder(rootUrl, getApplication.PATH, 'post');
+export function getFile(http: HttpClient, rootUrl: string, params: GetFile$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<File>>> {
+  const rb = new RequestBuilder(rootUrl, getFile.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -24,9 +24,9 @@ export function getApplication(http: HttpClient, rootUrl: string, params: GetApp
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<Application>>;
+      return r as StrictHttpResponse<Array<File>>;
     })
   );
 }
 
-getApplication.PATH = '/Application/Get';
+getFile.PATH = '/File/Get';

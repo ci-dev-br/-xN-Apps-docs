@@ -20,7 +20,7 @@ export class ApplicationController {
         isArray: true, description: 'Obter Aplicações'
     })
     @ApiOperation({
-        operationId: 'GetApplication',
+        operationId: 'GetListApplication',
     })
     async get(
         @Request() req: Request,

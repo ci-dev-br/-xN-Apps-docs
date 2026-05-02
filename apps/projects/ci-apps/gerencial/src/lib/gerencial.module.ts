@@ -28,6 +28,7 @@ import { GerecialSettingsComponent } from "./views/settings/gerecial-settigns.co
 import { DevicesComponent } from "./views/devices/devices.component";
 import { UsersComponent } from "./views/users/users.component";
 import { DynFormModule } from "@ci/components/dyn-form";
+import { MasterDetailComponent, MasterDetailModule } from "@ci/components/master-detail";
 
 const routes: Routes = [
     {
@@ -39,7 +40,14 @@ const routes: Routes = [
         children: [
             { path: 'devices', component: DevicesComponent, data: { title: '    ', icon: 'smartphone' } },
             // { path: 'settings', component: undefined },
-            { path: 'applications', component: ApplicationManagerComponent, data: { title: 'Apps', icon: 'apps' } },
+            {
+                path: 'applications', component: MasterDetailComponent
+                /* ApplicationManagerComponent */, data: {
+                    title: 'Apps', icon: 'apps', schema: 'Application', search: {
+                        all: true
+                    }
+                }
+            },
             { path: 'user-manager', component: UsersComponent, data: { title: 'Gestão de Usuários', icon: 'badge' } },
         ]
     },
@@ -80,6 +88,7 @@ const routes: Routes = [
         MatChipsModule,
         MobFakeModule,
         StatusBarModule,
+        MasterDetailModule,
         DynFormModule,
         RouterModule.forChild(routes)
     ]

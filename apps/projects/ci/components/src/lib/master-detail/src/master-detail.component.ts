@@ -31,6 +31,7 @@ import { lastValueFrom } from "rxjs";
     templateUrl: 'master-detail.component.html'
 })
 export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestroy, IAmSchematization {
+    searchDefault?: any;
     @Input()
     visualizacao?: 'table' | 'list' = 'table';
     @Input()
@@ -46,7 +47,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
         @Optional() private window?: WindowService,
         @Optional() private injector?: Injector,
         @Optional() private gridb?: GridBuilder,
-        //  @Optional() private actions?: ActionsService,
+        // @Optional() private actions?: ActionsService,
     ) { }
     source?: T[] = [{} as any];
     async loadGrid() {
@@ -97,6 +98,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
         this.route?.data.subscribe(async (data: any) => {
             if (!!data.schema) {
                 this.schemaName = data.schema;
+                this.searchDefault = data.search;
                 await this.prepareSchema();
             }
         });
@@ -124,7 +126,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
     }
     async search() {
         if (this.service && this.service.getList)
-            this.source = await this.daos?.read(await lastValueFrom(this.service.getList()), this.schemaName);
+            this.source = await this.daos?.read(await lastValueFrom(this.service.getList({ body: { ...(this.searchDefault || {}) } })), this.schemaName);
     }
     async editar(data: T, event?: Event) {
         // TODO: refatorar para chamada da janela de edição, passando o componente de edição como parâmetro, para evitar dependência direta do componente de edição 

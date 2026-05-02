@@ -1,3 +1,6 @@
+@if(!schemaName){
+<img src="not_found.svg" />
+}@else{
 <mat-toolbar [auto-scroll]="'horizontal'">
     <button mat-raised-button (click)="search()">
         Pesquisar
@@ -8,7 +11,7 @@
     <span style="flex:auto"></span>
     <mat-button-toggle-group [(ngModel)]="visualizacao">
         <mat-button-toggle value="table"><mat-icon>view_list</mat-icon>Tabela</mat-button-toggle>
-        <mat-button-toggle value="list"><mat-icon>grid_view</mat-icon>Lista</mat-button-toggle>
+        <!--   <mat-button-toggle value="list"><mat-icon>grid_view</mat-icon>Lista</mat-button-toggle> -->
     </mat-button-toggle-group>
 </mat-toolbar>
 @if(visualizacao === 'table' && !!gridOptions){
@@ -19,4 +22,5 @@
 }
 @if(visualizacao === 'list'){
 <!-- <ci-data-list (select)="editar($event[0],$event[1])" > </ci-data-list> -->
+}
 }

@@ -96,7 +96,7 @@ import { WindowService } from "@ci/components/window";
         this.apps = [...app];
     }
     async carregarListaAplicativos() {
-        this.apps = await lastValueFrom(this.applications.get({ body: { all: true } }));
+        this.apps = await lastValueFrom(this.applications.getList({ body: { all: true } }));
     }
     async adicionarAplicacao() {
         // TODO: adicionar aplicação.
