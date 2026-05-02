@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DaoService } from '@ci/core';
 import { BehaviorSubject } from 'rxjs';
 import { IWindowData, IMenuItem } from './models';
+import { ActionsService } from '@ci/components/action';
 
 /**
  * Window Component
@@ -17,10 +18,10 @@ import { IWindowData, IMenuItem } from './models';
 export class WindowComponent implements OnInit, OnDestroy {
   @Output('events')
   eventsOutput = new EventEmitter<Object>();
-  /* @Output('changed')
-  changedOutput = new EventEmitter<any>(); */
-  /* @Output('confirm')
-  confirmOutput = new EventEmitter<any>(); */
+  @Output('changed')
+  changedOutput = new EventEmitter<any>();
+  @Output('confirm')
+  confirmOutput = new EventEmitter<any>();
   @Input()
   title?: string;
   showing = false;
@@ -49,7 +50,7 @@ export class WindowComponent implements OnInit, OnDestroy {
   constructor(
     @Optional() private readonly ref?: MatDialogRef<WindowComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) protected data?: IWindowData,
-    // @Optional() public readonly actions?: ActionsService,
+    @Optional() public readonly actions?: ActionsService,
   ) { }
   ngOnInit(): void {
     this.showing = true;

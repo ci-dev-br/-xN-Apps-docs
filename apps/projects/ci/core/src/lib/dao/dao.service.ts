@@ -72,7 +72,7 @@ export class DaoService {
                                 }
                             } else {
                                 const out: any = {
-                                    ...this.getChanges(data/* , { pre } */) // ERRO: parece não estar funcionando nesse contexto...
+                                    ...this.getChanges(data/* , { pre } */)
                                 };
                                 (['id', 'internalId']).forEach(p => {
                                     if (data[p]) {

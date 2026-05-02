@@ -165,6 +165,9 @@
       "@ci/components/dyn-form": [
         "./projects/ci/components/src/lib/dyn-form/public-api"
       ],
+      "@ci/components/action": [
+        "./projects/ci/components/src/lib/action/public-api"
+      ],
     },
     "outDir": "./dist/out-tsc",
     "strict": true,

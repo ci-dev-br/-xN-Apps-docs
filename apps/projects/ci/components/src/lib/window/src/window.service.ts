@@ -1,6 +1,8 @@
 import { EventEmitter, Injectable, Optional, Type } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { WindowComponent } from "./window.component";
+import { DaoService } from "@ci/core";
+import { lastValueFrom } from "rxjs";
 
 export interface ConsoleEvent {
     type?: 'log' | 'info' | 'warn' | 'error';
@@ -9,17 +11,17 @@ export interface ConsoleEvent {
 
 @Injectable()
 export class WindowService {
-    /*  private static _logger_origin: any;
-     private static emitter = new EventEmitter<ConsoleEvent>();
-     private static setup() {
-         if (!!WindowService._logger_origin) return;
-         WindowService._logger_origin = {
-             log: console.log,
-             info: console.info,
-             warn: console.warn,
-             error: console.error,
-         };
-         console.log = (...args: any[]) => {
+    private static _logger_origin: any;
+    private static emitter = new EventEmitter<ConsoleEvent>();
+    private static setup() {
+        if (!!WindowService._logger_origin) return;
+        WindowService._logger_origin = {
+            log: console.log,
+            info: console.info,
+            warn: console.warn,
+            error: console.error,
+        };
+        /*  console.log = (...args: any[]) => {
              this.emitter.emit({
                  type: 'log', args
              })
@@ -50,24 +52,24 @@ export class WindowService {
              setTimeout(() => {
                  WindowService._logger_origin.error(...args);
              })
-         }
-     } */
+         } */
+    }
     constructor(
         @Optional() private readonly dialog?: MatDialog,
-        // @Optional() private readonly daos?: DaoService,
+        @Optional() private readonly daos?: DaoService,
     ) {
-        /* setTimeout(() => {
+        setTimeout(() => {
             WindowService.setup();
-        }); */
+        });
     }
     async open(component: Type<any>, data: any, title?: string, event?: Event): Promise<any> {
         return await new Promise<any>(async (result, reject) => {
             try {
                 if (event instanceof MouseEvent && event?.ctrlKey) {
-                    /* event.preventDefault();
+                    event.preventDefault();
                     setTimeout(() => {
                         window.open(location.href, 'PopupWindow' + (data?.internalId || data?.id || data?.data?.internalId || data?.data?.id || ''), "width=600,height=700,resizable=yes,top=100,left=200,");
-                    }) */
+                    })
                 } else {
                     const dialog = await this.dialog?.open(WindowComponent, {
                         data: {
@@ -85,7 +87,7 @@ export class WindowService {
                         dialog.afterClosed().subscribe((r: any) => {
                             result(r);
                         })
-                        //  return await lastValueFrom(dialog.afterClosed());
+                        return await lastValueFrom(dialog.afterClosed());
                     }
                 }
             } catch (error) {
@@ -95,9 +97,9 @@ export class WindowService {
         });
     }
     public addEventListener(eventName: string, callback: (...args: any[]) => void) {
-        /* return WindowService.emitter.subscribe(event => {
+        return WindowService.emitter.subscribe(event => {
             event.type === eventName ? callback(...event.args) : undefined
-        }) */
+        })
     }
     async at(of: Type<any>) {
         this.open(of, {

@@ -7,7 +7,7 @@ import { RouterModule } from "@angular/router";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatMenuModule } from "@angular/material/menu";
 import { FormsModule } from "@angular/forms";
-import { ActionModule } from "@ci/components";
+import { ActionModule } from "@ci/components/action";
 
 @NgModule({
     imports: [

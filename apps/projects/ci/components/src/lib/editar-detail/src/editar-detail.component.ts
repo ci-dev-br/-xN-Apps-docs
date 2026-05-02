@@ -1,8 +1,8 @@
 import { Component, Inject, Injector, Input, OnDestroy, OnInit, Optional } from "@angular/core";
-import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormBuilder, FormGroup } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
-import { ActionsService } from "@ci/components";
+import { ActionsService } from "@ci/components/action";
 import { IItemMenu } from "@ci/components/window";
 import { CORE_ENV, CoreModule, DaoBuilder, DaoService, IAmSchematization, IChangeable, ICoreEnvironment, IHaveSync, ISchemaPreset } from "@ci/core";
 import { FormsService, getServiceAsSchema } from "@ci/portal-api";
@@ -38,7 +38,7 @@ export class EditarDetailComponent implements OnInit, OnDestroy, IAmSchematizati
         label: 'Remover Aplicação',
         icon: 'delete',
         onClick: async () => {
-            if (!!this.service && !!this.data) await lastValueFrom(this.service.delete({ body: this.data.data }));
+            if (!!this.service && !!this.editor_data) await lastValueFrom(this.service.delete({ body: this.editor_data.data }));
             this.ref?.close(-1);
         }
     }];
@@ -50,11 +50,11 @@ export class EditarDetailComponent implements OnInit, OnDestroy, IAmSchematizati
         @Optional() private readonly route?: ActivatedRoute,
         @Optional() private readonly injector?: Injector,
         @Optional() private readonly ref?: MatDialogRef<EditarDetailComponent>,
-        @Optional() @Inject(MAT_DIALOG_DATA) public readonly data?: IDataEditar,
+        @Optional() @Inject(MAT_DIALOG_DATA) public readonly editor_data?: IDataEditar,
         @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
         @Optional() public readonly acts?: ActionsService,
     ) {
-        if (data && 'schemaName' in data && data.schemaName) this.schemaName = data.schemaName;
+        if (editor_data && 'schemaName' in editor_data && editor_data.schemaName) this.schemaName = editor_data.schemaName;
         acts?.setActions(this.actions);
     }
     /**
@@ -89,21 +89,21 @@ export class EditarDetailComponent implements OnInit, OnDestroy, IAmSchematizati
         if (this.schemaName) {
             await this.loadService();
             const dao = this.dao;
-            const _data = this.data?.data;
+            const _data = this.editor_data?.data;
             this.form = await this.daoBuilder?.getForm(this.schemaName);
             const form = this.form;
-            await this.dao?.prepareToEdit(this.data?.data, { schemaName: this.schemaName });
-            if (this.form) this.dao?.bindDataForm(this.data?.data, this.form);
-            this.dao?.confirmation(this.data?.data)?.subscribe(async data => {
+            await this.dao?.prepareToEdit(this.editor_data?.data, { schemaName: this.schemaName });
+            if (this.form) this.dao?.bindDataForm(this.editor_data?.data, this.form);
+            this.dao?.confirmation(this.editor_data?.data)?.subscribe(async data => {
                 try {
-                    if (this.data?.data && data) {
+                    if (this.editor_data?.data && data) {
                         if (!!(this.preset)?.sync) {
-                            Object.assign(this.data?.data,
-                                await this.preset.sync(this.service, this.data?.data)
+                            Object.assign(this.editor_data?.data,
+                                await this.preset.sync(this.service, this.editor_data?.data)
                             );
                         } else if (this.service && this.service.sync) {
-                            let r = await lastValueFrom((this.service as IHaveSync<any>).sync({ body: { data: this.data?.data } }))
-                            r = r;
+                            let payload_dao = await lastValueFrom((this.service as IHaveSync<any>).sync({ body: { data: this.editor_data?.data } }))
+                            payload_dao = payload_dao;
                         }
                         delete (_data as IChangeable).__pre;
                         await dao?.prepareToEdit(_data);

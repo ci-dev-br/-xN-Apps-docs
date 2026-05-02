@@ -1,8 +1,6 @@
 /*
  * Public API Surface of components
  */
-export * from './lib/action/action.module';
-export * from './lib/action/actions.service';
 export * from './lib/board/board.module';
 export * from './lib/container/container.module';
 export * from './lib/data-list/data-list.module';
