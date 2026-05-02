@@ -5,7 +5,7 @@ import { BehaviorSubject, lastValueFrom } from 'rxjs';
 import { Application, FormsService } from '@ci/portal-api';
 import { ApplicationService } from '@ci/portal-api';
 import { IChangeable, DaoService, DaoBuilder } from '@ci/core';
-import { ActionsService } from '@ci/components';
+import { ActionsService } from '@ci/components/action';
 import { DialogRef } from '@angular/cdk/dialog';
 import { IItemMenu, WindowComponent } from '@ci/components/window';
 

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IAction } from '@ci/components';
+import { IAction } from '@ci/components/action';
 import { CoreModule } from '@ci/core';
 
 @Component({
