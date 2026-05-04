@@ -41,8 +41,8 @@ pipeline {
                         )
                     """
                     
-                    echo 'Instalando dependências do projeto...'
-                    bat 'pnpm install'
+                    // echo 'Instalando dependências do projeto...'
+                    // bat 'pnpm install'
                 }   
             }
         }
@@ -78,7 +78,7 @@ pipeline {
             steps {
                 dir("${env.APP_PATH}") {
                     echo 'Iniciando compilação Angular (Produção)...'
-                    bat 'npm run build -- --configuration=production --verbose'
+                    bat 'npx ng build --configuration=production --verbose'
                 }
                 bat "node RequestDeploy"
             }
