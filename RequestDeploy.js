@@ -18,6 +18,7 @@ const req = https.request({
     ...options,
 }, (res) => {
     res.on('data', (d) => {
+        console.log('Notificao à apps.ci.dev.br distribuição disponível.')
         process.exit(0);
     });
 });
