@@ -30,7 +30,7 @@ export class DynFormComponent implements OnInit {
   }
   async getFormOptionsBySchema(name: string): Promise<IFormOptions> {
     if (this.daoBuilder) {
-      const hidden_fields = ['internalId', 'createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy', 'deleted', 'tenants'];
+      const hidden_fields = ['internalId', 'id', 'createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy', 'tenants', 'deleted'];
       const properties = await (await this.daoBuilder.getSchema(name))?.properties
       if (properties) {
         const options = {

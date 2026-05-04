@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, Injector, Input, OnDestroy, OnInit, Optional } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+// import { ActionsService } from "@ci/components/action";
 import { GridBuilder } from "@ci/components/data-grid";
 import { EditarDetailComponent } from "@ci/components/editar-detail";
 import { WindowService } from "@ci/components/window";
@@ -47,7 +48,7 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
         @Optional() private window?: WindowService,
         @Optional() private injector?: Injector,
         @Optional() private gridb?: GridBuilder,
-        // @Optional() private actions?: ActionsService,
+        //  @Optional() private actions?: ActionsService,
     ) { }
     source?: T[] = [{} as any];
     async loadGrid() {

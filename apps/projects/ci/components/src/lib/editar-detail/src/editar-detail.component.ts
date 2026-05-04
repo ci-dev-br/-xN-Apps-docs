@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
 import { ActionsService } from "@ci/components/action";
 import { IItemMenu } from "@ci/components/window";
-import { CORE_ENV, CoreModule, DaoBuilder, DaoService, IAmSchematization, IChangeable, ICoreEnvironment, IHaveSync, ISchemaPreset } from "@ci/core";
+import { CORE_ENV, DaoBuilder, DaoService, IAmSchematization, IChangeable, ICoreEnvironment, IHaveSync, ISchemaPreset } from "@ci/core";
 import { FormsService, getServiceAsSchema } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 /**
@@ -22,10 +22,7 @@ export interface IDataEditar {
 @Component({
     selector: 'ci-master-detail--editar',
     styleUrl: 'editar-detail.component.scss',
-    template: `@if(form){<ci-dyn-form 
-        [formGroup]="form" 
-        [schemaName]="schemaName">
-        </ci-dyn-form>}`,
+    templateUrl: 'editar-detail.component.html',
     standalone: false,
 })
 export class EditarDetailComponent implements OnInit, OnDestroy, IAmSchematization {

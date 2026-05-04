@@ -68,8 +68,8 @@ export class WindowComponent implements OnInit, OnDestroy {
       this.daos?.confirmChanges(!!(this.data as any)?.data?.schemaName ? (this.data as any).data.data : (this.data as any)?.data) */
   }
   close() {
-    this.showing = false;
-    /* this.ref?.close((this.data as any)?.data); */
+    // this.showing = false;
+    this.ref?.close((this.data as any)?.data);
   }
   @HostListener('keydown', ['$event'])
   protected async keydownHandler(event: KeyboardEvent) {

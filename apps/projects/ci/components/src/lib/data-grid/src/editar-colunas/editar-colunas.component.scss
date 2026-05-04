@@ -5,10 +5,17 @@
     overflow: auto;
     max-height: 80vh;
 
+
     >div {
+        display: flex;
+        flex-direction: column;
+        flex: auto;
+        overflow: auto;
+    }
+
+    >div>div {
         display: flex;
         flex-direction: row;
         align-items: center;
-        padding-left: 12px;
     }
 }

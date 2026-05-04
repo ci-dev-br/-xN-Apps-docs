@@ -1,7 +1,13 @@
-@for(column of columns; track column){
+<h1>Colunas</h1>
 <div>
-    {{column.headerName || column.fieldName}}
-    <span style="flex: auto;"></span>
-    <mat-checkbox [checked]="!column.hide" (change)="column.hide = !column.hide"></mat-checkbox>
+    @if(columns){@for(column of columns; track column){
+    <div>
+        {{column.headerName || column.fieldName}}
+        <span style="flex: auto;"></span>
+        <button mat-icon-button>
+            <mat-icon>drag_handle</mat-icon>
+        </button>
+        <mat-checkbox [checked]="!column.hide" (change)="column.hide = !column.hide"></mat-checkbox>
+    </div>
+    }}
 </div>
-}

@@ -26,7 +26,7 @@ import { EditarDetailModule } from "@ci/components/editar-detail";
         EditarDetailModule,
     ],
     exports: [
-        MasterDetailComponent
+        MasterDetailComponent,
     ]
 })
 export class MasterDetailModule { }

@@ -13,7 +13,7 @@
         <ng-template #itemMenu let-item="item">
             <ng-container *ngIf="!item.visible || (!!item.visible && item.visible())">
                 <ng-container *ngIf="!!item.onClick">
-                    <button mat-icon-button (click)="item.onClick()">
+                    <button mat-icon-button (click)="item.onClick($event)">
                         <ng-container *ngTemplateOutlet="contentTmpl">
                         </ng-container>
                     </button>
