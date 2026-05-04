@@ -4,7 +4,6 @@ import { DaoService } from '@ci/core';
 import { BehaviorSubject } from 'rxjs';
 import { IWindowData, IMenuItem } from './models';
 import { ActionsService } from '@ci/components/action';
-
 /**
  * Window Component
  * 
@@ -31,7 +30,9 @@ export class WindowComponent implements OnInit, OnDestroy {
       visible: () => {
         return (!!(this.data as any)?.data?.data && 'internalId' in (this.data as any).data.data);
       },
-      icon: 'open_in_new', label: 'Abrir em Janela', onClick: () => {
+      icon: 'open_in_new',
+      label: 'Abrir em Janela',
+      onClick: () => {
         const object_identification = (this.data as any)?.data?.data?.internalId || (this.data as any)?.data?.data?.id;
         window.open(location.href + '/Editar/' + object_identification, 'PopupWindow' + (object_identification), "width=600,height=700,resizable=yes,top=100,left=200,");
         this.close();
@@ -60,12 +61,16 @@ export class WindowComponent implements OnInit, OnDestroy {
   }
   get changed() {
     return false;
-    /* if (!(this.data as any)?.data) return false;
-    return this.daos?.haveChanges(!!(this.data as any)?.data?.schemaName ? (this.data as any)?.data.data : (this.data as any)?.data) */
+    /* 
+      if (!(this.data as any)?.data) return false;
+      return this.daos?.haveChanges(!!(this.data as any)?.data?.schemaName ? (this.data as any)?.data.data : (this.data as any)?.data) 
+    */
   }
   confirm() {
-    /*   this.confirmOutput.emit(!!(this.data as any)?.data?.schemaName ? (this.data as any).data.data : (this.data as any)?.data);
-      this.daos?.confirmChanges(!!(this.data as any)?.data?.schemaName ? (this.data as any).data.data : (this.data as any)?.data) */
+    /* 
+      this.confirmOutput.emit(!!(this.data as any)?.data?.schemaName ? (this.data as any).data.data : (this.data as any)?.data);
+      this.daos?.confirmChanges(!!(this.data as any)?.data?.schemaName ? (this.data as any).data.data : (this.data as any)?.data)
+    */
   }
   close() {
     // this.showing = false;

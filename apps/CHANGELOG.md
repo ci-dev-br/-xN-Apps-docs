@@ -27,6 +27,7 @@
 - [/] **Interface / UX:** Serviço de Tema (LightMode e Dark Mode); Meus Documentos.
 - [/] **Profile:** Upload e configuração de Foto de Perfil.
 - [/] **Ecossistema de Apps (Iniciados):** Codex App, DevTools App, Dynamic App, Financeiro App, Formulários App, Icons App (Novo projeto de Ícone/Fonte), LowCode App (CodeBlocks, NodeRED), Mensagens App, Organização App, Treinamento App.
+ - [ ] **Publicação**: Hook para catálogo e publicação das distribuições realizadas pelo CI/CD;
 
 ---
 

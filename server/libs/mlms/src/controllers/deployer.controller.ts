@@ -45,16 +45,16 @@ export class DeployerController {
         }, (res) => {
             res.on('data', (d) => {
                 if (!its_html_response) {
-                    if (!existsSync(__dirname + '/' + file_name)) {
+                    if (!existsSync(__dirname + '/../.jenkins-dist/' + file_name)) {
                         if (d.toString().indexOf('<html>') !== -1) {
-                            writeFileSync(__dirname + '/' + file_name, d);
-                            its_html_response = true;
+                            writeFileSync(__dirname + '/../.jenkins-dist/' + file_name, d);
+                            // its_html_response = true;
                         } else {
                             console.warn(d)
                         }
                     }
                     else {
-                        appendFileSync(__dirname + '/' + file_name, d)
+                        appendFileSync(__dirname + '/../.jenkins-dist/' + file_name, d)
                     }
                 }
             });
