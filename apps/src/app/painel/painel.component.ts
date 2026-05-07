@@ -47,6 +47,10 @@ export class PainelComponent implements OnInit {
   ) {
     iconLoader?.load({ /// TODO: mover para fora
       'devtools': { url: 'icons/dev-tools-icon.svg' },
+      gusers: { url: 'icons/gerencial/users.svg' },
+      gdevices: { url: 'icons/gerencial/devices.svg' },
+      gapps: { url: 'icons/gerencial/apps.svg' },
+      assis: { url: 'assis.svg' },
       imersao: { url: 'icons/imersao.svg' },
       agenda: { url: 'icons/agenda.svg' },
       anotacoes: { url: 'icons/anotacoes.svg' },

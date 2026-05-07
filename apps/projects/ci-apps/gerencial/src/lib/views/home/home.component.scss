@@ -1,0 +1,16 @@
+:host ci-icon ::ng-deep mat-icon,
+button {
+    width: 80px;
+    height: 80px;
+    --mat-icon-button-icon-size: 80px;
+}
+
+:host {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex: auto;
+}

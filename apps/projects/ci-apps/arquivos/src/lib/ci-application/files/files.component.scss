@@ -114,6 +114,7 @@ input.navegacao {
     display: flex;
     overflow: auto;
     flex-direction: column;
+    padding: 24px;
 }
 
 mat-tab-group,
@@ -139,7 +140,7 @@ mat-toolbar {
     }
 }
 
-input{
+input {
     flex: auto;
     width: 100%;
 }

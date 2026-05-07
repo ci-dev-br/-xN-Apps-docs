@@ -29,6 +29,7 @@ import { DevicesComponent } from "./views/devices/devices.component";
 import { UsersComponent } from "./views/users/users.component";
 import { DynFormModule } from "@ci/components/dyn-form";
 import { MasterDetailComponent, MasterDetailModule } from "@ci/components/master-detail";
+import { HomeComponent } from "./views/home/home.component";
 
 const routes: Routes = [
     {
@@ -38,6 +39,7 @@ const routes: Routes = [
             role: 'MASTER',
         },
         children: [
+            { path: 'home', component: HomeComponent, data: { title: '    ', icon: 'smartphone' } },
             { path: 'devices', component: DevicesComponent, data: { title: '    ', icon: 'smartphone' } },
             // { path: 'settings', component: undefined },
             {

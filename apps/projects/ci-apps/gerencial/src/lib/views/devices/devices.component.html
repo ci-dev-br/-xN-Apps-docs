@@ -11,9 +11,17 @@
         <mat-icon>phone_android</mat-icon>
         Fake Mobile Services
     </button> -->
-    <button [disabled]="statusConnection!=='online'" mat-raised-button (click)="TestSendSMS()">
-        Verificar Envio de SMS
+    <button mat-icon-button [matMenuTriggerFor]="moreOptionsMenu">
+        <mat-icon>more_vert</mat-icon>
     </button>
+    <mat-menu #moreOptionsMenu>
+        <button mat-menu-item (click)="AdicionarNumero()">
+            Adicionar número manualmente
+        </button>
+        <button mat-menu-item [disabled]="statusConnection!=='online'" (click)="TestSendSMS()">
+            Verificar Envio de SMS
+        </button>
+    </mat-menu>
     <button mat-raised-button [matTooltip]="'Necessário para envio de SMS, o dispositivo deve ter rede GSM ativada.'"
         [disabled]="!isAndroid" (click)="InstallLauncher()">
         Instalar Launcher

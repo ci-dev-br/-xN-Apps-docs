@@ -10,6 +10,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { isPlatformBrowser } from "@angular/common";
+import { MatMenuModule } from "@angular/material/menu";
 
 export interface DeviceItem {
     device?: Device;
@@ -30,6 +31,7 @@ export interface DeviceItem {
         MatFormFieldModule,
         MatInputModule,
         MatTooltipModule,
+        MatMenuModule,
     ]
 }) export class DevicesComponent implements OnInit {
     isBrowser: boolean;
@@ -107,5 +109,8 @@ export interface DeviceItem {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    }
+    async AdicionarNumero() {
+
     }
 }

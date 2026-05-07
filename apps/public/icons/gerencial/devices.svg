@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128">
+  <!-- Monitor Base -->
+  <rect x="8" y="16" width="44" height="28" rx="4" fill="#E2E8F0" stroke="#1E3A8A" stroke-width="4" stroke-linejoin="round"/>
+  <!-- Suporte do Monitor -->
+  <path d="M 24 44 L 20 56 L 40 56 L 36 44" fill="#E2E8F0" stroke="#1E3A8A" stroke-width="4" stroke-linejoin="round"/>
+  <line x1="16" y1="56" x2="44" y2="56" stroke="#1E3A8A" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Detalhe da Tela (Nó de Rede) -->
+  <circle cx="30" cy="30" r="4" fill="#3B82F6"/>
+  <line x1="20" y1="30" x2="26" y2="30" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
+  <line x1="34" y1="30" x2="40" y2="30" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Dispositivo Móvel Sobreposto -->
+  <rect x="42" y="32" width="16" height="24" rx="3" fill="#3B82F6" stroke="#1E3A8A" stroke-width="4" stroke-linejoin="round"/>
+  <line x1="47" y1="50" x2="53" y2="50" stroke="#1E3A8A" stroke-width="2" stroke-linecap="round"/>
+</svg>
