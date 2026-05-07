@@ -33,7 +33,7 @@ async function startApplication(app: NestExpressApplication, port: number) {
     await app.listen(port, () => {
       console.log(`Non-Secure HTTP Application is Running on port ${port}`);
     });
-  } catch (error) {
+  } catch (error:any) {
     if (error.code === 'EADDRINUSE') {
       console.trace(error);
       console.warn('Port in use. Attempting to stop colliding services...');
