@@ -34,8 +34,13 @@ export class FileController {
     async Sync(
         @Req() req: Request,
         @Body() payload: File) {
-        const photo = await this.photoService.Sync(this.audt.doSync(payload, req, !!payload.internalId));
-        return photo
+        try {
+
+            const photo = await this.photoService.Sync(this.audt.doSync(payload, req, !!payload.internalId));
+            return photo
+        } catch (err) {
+            console.trace(err)
+        }
     }
     /* @Post('SendPart')
     @ApiOperation({ operationId: 'SendPartFile' })
@@ -68,6 +73,10 @@ export class FileController {
         @Req() req: Request,
         @Body() payload: FileGetPaylodInputDto
     ) {
-        return await this.photoService.Get(payload.query);
+        try {
+            return await this.photoService.Get(payload.query);
+        } catch (err) {
+            console.trace(err)
+        }
     }
 }
