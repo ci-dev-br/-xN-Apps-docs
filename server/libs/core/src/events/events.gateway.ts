@@ -24,19 +24,23 @@ export class EventsGateway implements OnGatewayInit {
     ) {
         bus.events = this;
         let verifyAndPropagateStatusHandlersOfClients = () => {
-            if (!!this.server?.clients) {
-                let clientes = [...this.server.clients].filter((c) =>
-                    c.readyState === 1 && 'mac' in c);
-                if (this._$devices)
-                    this._$devices.next([...clientes.map((c: any) => {
-                        return {
-                            mac: c.mac,
-                        }
-                    })]);
+            try {
+                if (!!this.server?.clients) {
+                    let clientes = [...this.server.clients].filter((c) =>
+                        c.readyState === 1 && 'mac' in c);
+                    if (this._$devices)
+                        this._$devices.next([...clientes.map((c: any) => {
+                            return {
+                                mac: c.mac,
+                            }
+                        })]);
+                }
+                setTimeout(() => {
+                    verifyAndPropagateStatusHandlersOfClients();
+                }, 5000);
+            } catch (error) {
+                console.trace(error);
             }
-            setTimeout(() => {
-                verifyAndPropagateStatusHandlersOfClients();
-            }, 5000);
         }
         verifyAndPropagateStatusHandlersOfClients();
     }
@@ -399,9 +403,13 @@ export class EventsGateway implements OnGatewayInit {
                 const __last_data = this._attentionDatas.get(data.internalId);
                 if (data.changes && __last_data) {
                     Object.keys(data.changes).forEach(property => {
-                        if (data.changes[property].currentValue
-                        ) {
-                            __last_data[property] = data.changes[property].currentValue;
+                        try {
+                            if (data.changes[property].currentValue
+                            ) {
+                                __last_data[property] = data.changes[property].currentValue;
+                            }
+                        } catch (error) {
+                            console.trace(error);
                         }
                     })
                 }
