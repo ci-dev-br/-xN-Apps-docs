@@ -50,7 +50,7 @@ export class Principal implements AfterViewInit, OnInit {
                 }
             }));
         } catch (error) {
-            console.error(error);
+            console.trace(error);
         }
         this.load.next(false);
     }

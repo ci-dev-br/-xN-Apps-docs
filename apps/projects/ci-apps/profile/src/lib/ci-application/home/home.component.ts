@@ -124,7 +124,7 @@ export class HomeComponent implements OnInit {
             video.play();
             this.capturedImage = null; // Limpa a foto anterior, se houver
         } catch (error) {
-            console.error('Erro ao acessar a webcam: ', error);
+            console.trace('Erro ao acessar a webcam: ', error);
             alert('Não foi possível acessar a câmera. Verifique as permissões.');
         }
     }

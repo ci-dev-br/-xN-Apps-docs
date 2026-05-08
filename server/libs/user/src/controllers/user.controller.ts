@@ -51,7 +51,7 @@ export class UserController {
                         delete u.email;
                         delete u.passwordMode;
                     } catch (error) {
-                        console.error('Erro ao ocultar dados do usuário.', error);
+                        console.trace('Erro ao ocultar dados do usuário.', error);
                     }
                     return u;
                 });

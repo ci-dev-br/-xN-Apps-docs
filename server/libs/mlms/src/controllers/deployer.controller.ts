@@ -60,7 +60,7 @@ export class DeployerController {
             });
         });
         req.on('error', (e) => {
-            console.error(e);
+            console.trace(e);
         });
         //  req.write(postData);
         req.end();

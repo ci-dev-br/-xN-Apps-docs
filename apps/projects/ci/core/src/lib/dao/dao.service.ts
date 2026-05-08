@@ -163,7 +163,7 @@ export class DaoService {
         }
         return (data as any).__confirmation_subject as Subject<T>;
         // } catch (error) {
-        //     console.error(error);
+        //     console.trace(error);
         // }
     }
 }

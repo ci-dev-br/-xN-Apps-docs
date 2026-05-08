@@ -54,7 +54,7 @@ export abstract class RunnerX {
         }
     }
     private async errorHandler(error: Error) {
-        console.error('Falha ao conectar', error);
+        console.trace('Falha ao conectar', error);
         console.trace(error);
     }
     // @RequestStatusHandler(530) /// TODO: Implementar decorator para assinar retorno de códido de erro
@@ -72,11 +72,11 @@ export abstract class RunnerX {
             this.runTask(task);
             // this._tasks = [];
         } catch (error) {
-            console.error('[Falha ao Iniciar ao Adicinar tarefa]', error);
+            console.trace('[Falha ao Iniciar ao Adicinar tarefa]', error);
         }
     }
     private taskErrorHandler(error: Error, task: RunnerTask) {
-        console.error('[Falha ao executar tarefa]', error);
+        console.trace('[Falha ao executar tarefa]', error);
     }
     protected defaultHandler(error: any, eventName: string, task: RunnerTask) {
         console.log(`[Retorno ${eventName}]`, error);
@@ -144,7 +144,7 @@ export abstract class RunnerX {
                 callBack
             ];
         } catch (error) {
-            console.error('Error on add event listener', error)
+            console.trace('Error on add event listener', error)
         }
     }
     private _ignoretaskstype: string[] = [];

@@ -68,7 +68,7 @@ export class AudioModemService {
             this.isListening = true;
             this.processAudioData();
         } catch (err) {
-            console.error('Erro ao acessar o microfone:', err);
+            console.trace('Erro ao acessar o microfone:', err);
         }
     }
     public stopListening() {

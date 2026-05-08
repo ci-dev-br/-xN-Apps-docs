@@ -40,7 +40,7 @@ async function startApplication(app: NestExpressApplication, port: number) {
       // NOTA: Este comando é específico para ambientes Windows PowerShell
       const out = spawnSync('powershell', ['Stop-Service', 'apps.ci.dev.br']);
       if (out.error) {
-        console.error('Failed to stop service:', out.error);
+        console.trace('Failed to stop service:', out.error);
       } else {
         console.log('Service stopped successfully. Retrying...');
       }
@@ -94,8 +94,8 @@ async function bootstrap() {
 // Execução segura do bootstrap
 try {
   bootstrap().catch((err) => {
-    console.error('[Bootstrap Error]', err);
+    console.trace('[Bootstrap Error]', err);
   });
 } catch (error) {
-  console.error('[Fatal Error]', error);
+  console.trace('[Fatal Error]', error);
 }

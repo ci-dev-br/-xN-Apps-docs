@@ -45,7 +45,7 @@ export class NavigationComponent {
         const v = localStorage.getItem('::__arquivos_codex');
         if (v) this._arquivos = JSON.parse(v);
       } catch (error) {
-        console.error(error)
+        console.trace(error)
       }
     }
     return this._arquivos;
@@ -95,7 +95,7 @@ export class NavigationComponent {
         if (value) this.arquivos = [value, ...(this.arquivos || [])];
         this.open(value);
       } catch (error) {
-        console.error(error)
+        console.trace(error)
       }
     });
   }

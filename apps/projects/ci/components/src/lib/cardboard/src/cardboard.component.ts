@@ -33,7 +33,7 @@ export class CardboardComponent {
     private mount() {
         if (this.cardInfo && this.cardInfo.componentName && this.board)
             this.componentRef = this.board?.cards.get(this.cardInfo.componentName)?.componentRef;
-        if (!this.componentRef) console.error('Falha ao montar card.')
+        if (!this.componentRef) console.trace('Falha ao montar card.')
     }
     async editCard(card: any, event: Event) {
         if (!this.board) return;

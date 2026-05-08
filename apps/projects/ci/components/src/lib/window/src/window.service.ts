@@ -19,7 +19,7 @@ export class WindowService {
             log: console.log,
             info: console.info,
             warn: console.warn,
-            error: console.error,
+            error: console.trace,
         };
         /*  console.log = (...args: any[]) => {
              this.emitter.emit({
@@ -45,7 +45,7 @@ export class WindowService {
                  WindowService._logger_origin.warn(...args);
              })
          }
-         console.error = (...args: any[]) => {
+         console.trace = (...args: any[]) => {
              this.emitter.emit({
                  type: 'error', args
              })
