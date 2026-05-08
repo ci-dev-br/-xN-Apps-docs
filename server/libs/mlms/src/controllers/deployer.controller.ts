@@ -20,10 +20,14 @@ export class DeployerController {
         @Body() payload: DeployPayload,
         @Request() req,
     ) {
-        if (payload.BUILD_URL) {
-            this.downloadDistribuction(payload.BUILD_URL);
+        try {
+            if (payload.BUILD_URL) {
+                this.downloadDistribuction(payload.BUILD_URL);
+            }
+            return { status: 200 }
+        } catch (err) {
+            console.trace(err);
         }
-        return { status: 200 }
     }
     private async downloadDistribuction(JenkinsBuildUrl: string) {
 

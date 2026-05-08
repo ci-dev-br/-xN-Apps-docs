@@ -31,7 +31,11 @@ export class CadastroController {
         operationId: 'EditablesCadastro',
     })
     async editables() {
-        return this._editables;
+        try {
+            return this._editables;
+        } catch (error) {
+            console.trace(error);
+        }
     }
     @ApiResponse({
         type: IDynamicForm,
@@ -47,23 +51,27 @@ export class CadastroController {
         input?: Payload<void>,
         @Req() req?: any,
     ) {
-        return this.services
-            .filter(s => {
-                if (input.by && input.equals) {
-                    if (s.view[input.by] === input.equals) return true;
-                    return false;
-                }
-                return true;
-            })
-            .map(s => {
-                if (input && !!input.fields) {
-                    const out: any = {};
-                    for (let field of input.fields) {
-                        out[field] = s.view[field];
+        try {
+            return this.services
+                .filter(s => {
+                    if (input.by && input.equals) {
+                        if (s.view[input.by] === input.equals) return true;
+                        return false;
                     }
-                    return out;
-                }
-                return s.view
-            });
+                    return true;
+                })
+                .map(s => {
+                    if (input && !!input.fields) {
+                        const out: any = {};
+                        for (let field of input.fields) {
+                            out[field] = s.view[field];
+                        }
+                        return out;
+                    }
+                    return s.view
+                });
+        } catch (err) {
+            console.trace(err)
+        }
     }
 }

@@ -1,11 +1,10 @@
 import { Body, Controller, Optional, Post, Req } from "@nestjs/common";
-import { ApiOperation, ApiResponse, ApiResponseProperty, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { readdirSync, readFileSync } from "fs";
 import { ReadDirectoryInput } from "./dto/read-directory-input.dto";
 import { ReadDirectoryOutput } from "./dto/read-directory-output.dto";
 import { Role } from "@ci/auth/decorators/role.decorator";
 import { FileDto } from "./dto/file-dto";
-import { ConsoleLogEntry } from "selenium-webdriver/bidi/logEntries";
 import { FilePermissionService } from "../service/file-permission.service";
 @Role('SYSADMIN')
 @ApiTags('FileExplorer')
@@ -20,26 +19,30 @@ export class FileExplorerController {
         @Body() input: ReadDirectoryInput,
         @Req() req: any
     ) {
-        if (!!this.filePermissions) {
-            if (await this.filePermissions.grant(input.path, req)) {
+        try {
+            if (!!this.filePermissions) {
+                if (await this.filePermissions.grant(input.path, req)) {
 
-            } else {
-                return null;
+                } else {
+                    return null;
+                }
             }
+            return readdirSync(input.path, {
+                withFileTypes: true,
+            }).map(v => {
+                return {
+                    ...v,
+                    isCharacterDevice: v.isCharacterDevice(),
+                    isFile: v.isFile(),
+                    isDirectory: v.isDirectory(),
+                    isSocket: v.isSocket(),
+                    isFIFO: v.isFIFO(),
+                    isSymbolicLink: v.isSymbolicLink(),
+                }
+            }).filter(f => f.name.indexOf('.') !== 0 && f.name.indexOf('$') !== 0);
+        } catch (error) {
+            console.trace(error);
         }
-        return readdirSync(input.path, {
-            withFileTypes: true,
-        }).map(v => {
-            return {
-                ...v,
-                isCharacterDevice: v.isCharacterDevice(),
-                isFile: v.isFile(),
-                isDirectory: v.isDirectory(),
-                isSocket: v.isSocket(),
-                isFIFO: v.isFIFO(),
-                isSymbolicLink: v.isSymbolicLink(),
-            }
-        }).filter(f => f.name.indexOf('.') !== 0 && f.name.indexOf('$') !== 0);
     }
 
     @Post('File')
@@ -63,6 +66,7 @@ export class FileExplorerController {
             input.data = readed.toString();
             return input;
         } catch (error) {
+            console.trace(error);
             return {
                 status: 500,
                 cause: error
