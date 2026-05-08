@@ -4,7 +4,7 @@
     </ng-container>
     }
 </mat-toolbar>
-<router-outlet></router-outlet>
+<router-outlet />
 <ng-template #default let-act="act">
     @if('onClick' in act && act.onClick){
     <button mat-raised-button (click)="act.onClick ? act.onClick($event) : null">
