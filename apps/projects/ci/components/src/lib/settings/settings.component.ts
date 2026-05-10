@@ -37,7 +37,7 @@ export interface ISettings {
 export class SettingsComponent {
     editLayoutForm;
     pranchetaEditing?: Prancheta;
-    constructor(
+    constructor( 
         private readonly windowService: WindowService,
         @Inject(MAT_DIALOG_DATA) private readonly dataSettings: Object,
         formBuilder: FormBuilder,

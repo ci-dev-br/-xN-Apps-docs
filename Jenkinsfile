@@ -41,8 +41,8 @@ pipeline {
                         )
                     """
                     
-                    // echo 'Instalando dependências do projeto...'
-                    // bat 'pnpm install'
+                    echo 'Instalando dependências do projeto...'
+                    bat 'pnpm install'
                 }   
             }
         }

@@ -17,16 +17,19 @@
         </mat-select>
     </mat-form-field>
     <mat-form-field>
-        <mat-label>Largura Máxima</mat-label>
-        <input type="number" matInput />
+        <mat-label>Largura Máxima de cada Cartão</mat-label>
+        <input type="text" matInput />
     </mat-form-field>
     <!-- <mat-form-field>
         <mat-label>Largura Máxima</mat-label>
         <input type="number" matInput />
     </mat-form-field> -->
-    <button mat-raised-button (click)="confirmarEdicaoLayout()">
-        Confirmar <mat-icon>check</mat-icon>
-    </button>
+    <div class="row">
+        <button mat-raised-button>Cartões</button>
+        <button mat-raised-button (click)="confirmarEdicaoLayout()">
+            Confirmar <mat-icon>check</mat-icon>
+        </button>
+    </div>
 </form>
 }@else{@if(!!pranchetas){@for(prancheta of pranchetas; track prancheta){
 <div class="item">{{prancheta.title}}

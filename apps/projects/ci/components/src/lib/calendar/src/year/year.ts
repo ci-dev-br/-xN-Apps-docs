@@ -25,12 +25,17 @@ export class YearCalendar implements OnChanges {
         this._selectedDate = value;
     }
     @Input()
-    monthsOfYear: Date[] = [];
+    monthsOfYear?: Date[];
     @Input()
     year?: number;
     ngOnChanges(changes: SimpleChanges<{ currentYear: Date }>): void {
         if (changes?.currentYear?.currentValue) {
-            const year = changes.currentYear.currentValue.getFullYear();
+
+        }
+    }
+    digest() {
+        if (this.currentYear) {
+            const year = this.currentYear.getFullYear();
             this.year = year;
             const months: Date[] = [];
             for (let index = 0; index < 12; index++) {
@@ -38,6 +43,8 @@ export class YearCalendar implements OnChanges {
                 months.push(element);
             }
             this.monthsOfYear = months;
-        }
+
+        } else
+            this.monthsOfYear = undefined;
     }
 }

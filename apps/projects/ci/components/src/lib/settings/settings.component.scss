@@ -19,3 +19,13 @@ form {
     align-items: stretch;
     justify-content: stretch;
 }
+
+.row {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+
+    >button:last-child {
+        flex: auto;
+    }
+}
