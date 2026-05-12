@@ -6,7 +6,7 @@
 <mat-drawer-container>
     <mat-drawer #sideMenu mode="over" opened>
         @for(item of entidades; track item){
-        <button mat-menu-item [routerLink]="'./' + item">{{item}}</button>
+        <button mat-menu-item [routerLink]="'./' + item"><mat-icon></mat-icon>{{item}}</button>
         }
     </mat-drawer>
     <mat-drawer-content>
