@@ -1,43 +1,29 @@
 @if(!!(user | async)){
-<!-- <mat-toolbar color="accent">
-    <button mat-icon-button color="primary" routerLink="/meus-apps"><mat-icon>apps</mat-icon></button>
-    <ci-logo></ci-logo>
-    @if(menuItens){@for (item of menuItens; track $index) {
-    <button mat-button [routerLink]="item.routerLink" routerLinkActive="ativo">
-        {{item.label}}
-    </button>
-    }
-    }
-    <mat-form-field appearance="outline" #pesquisaField>
-        <mat-label>Pesquisar...</mat-label>
-        <input type="text" matInput placeholder="Pesquisar...">
-        <button matSuffix mat-icon-button>
-            <mat-icon>clear</mat-icon>
-        </button>
-        <button matSuffix mat-icon-button>
-            <mat-icon>search</mat-icon>
-        </button>
-    </mat-form-field>
-    <button mat-button [matMenuTriggerFor]="userMenu">
-        {{(user | async)?.username}}
-    </button>
-    <mat-menu #userMenu> -->
-<!--    <button mat-menu-item (click)="sair()">
-            <mat-icon>exit_to_app</mat-icon>
-            Sair
-        </button> -->
-<!-- </mat-menu>
-</mat-toolbar> -->
 <mat-toolbar color="accent">
-    <button mat-icon-button>
+    @if(!!apps){ <button mat-icon-button [matMenuTriggerFor]="menuApps">
         <mat-icon>apps</mat-icon>
     </button>
+    <mat-menu #menuApps>
+        <div class="menu--inner">
+            @for (app of apps; track $index) {
+            <button mat-icon-button class="app" routerLinkActive="side-ativo" [routerLink]="'/' + app.url"
+                (click)="appClickHandler($event, app)">
+                @if(app.icon){
+                @if(app.type === 'svg'){
+                <mat-icon [svgIcon]="app.icon"></mat-icon>
+                }
+                @else{
+                <mat-icon>{{app.icon}}</mat-icon>
+                }
+                }
+                <div class="title">{{app.name}}</div>
+            </button>
+            }
+        </div>
+    </mat-menu>}
     <ci-logo></ci-logo>
     <span style="flex: auto;"></span>
     <span style="flex: auto;"></span>
-    <!--  <button mat-icon-button (click)="repo()">
-        <ci-icon icon="code"></ci-icon>
-    </button> -->
     <button mat-icon-button [matMenuTriggerFor]="userMenu">
         <mat-icon>people</mat-icon>
     </button>

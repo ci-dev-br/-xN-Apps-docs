@@ -1,11 +1,11 @@
-import { Component, inject, OnInit, Optional } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, Optional, ViewChild } from '@angular/core';
 import { CoreModule, LoadIconsModule, IconLoaderSerices, StorageService } from '@ci/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatMenu, MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -38,6 +38,7 @@ import { IItemMenu } from '@ci/components/window';
 export class PainelComponent implements OnInit {
   user = this.userAuthenticationInstanceService?.user
   apps?: any[];
+  /*  @ViewChild('menuApps') menuApps?: MatMenu; */
   userMenuList?: IItemMenu[] = inject(USER_MENU, { optional: true }) || undefined;
   constructor(
     @Optional() private readonly router?: Router,
