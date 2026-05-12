@@ -15,3 +15,4 @@ export * from './lib/routes/route-from-schema';
 export * from './lib/stage/stage.module';
 export * from './lib/function';
 export * from './lib/abstractions/IAmSchmatization';
+export * from './lib/apps/apps.service';

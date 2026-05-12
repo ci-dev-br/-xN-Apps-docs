@@ -1,9 +1,11 @@
 import { Injectable, Optional } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { NotificationService } from './notification/notification.service';
+import { Apps } from './apps/apps.service';
 @Injectable()
 export class CoreService {
   constructor(
+    @Optional() private readonly apps?: Apps,
     @Optional() private readonly router?: Router,
     @Optional() private readonly notification?: NotificationService,
     //  @Optional() inject: Injector,
