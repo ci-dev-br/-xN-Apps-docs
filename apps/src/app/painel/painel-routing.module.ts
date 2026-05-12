@@ -5,6 +5,7 @@ export const routes: Routes = [
   { path: 'launcher', loadChildren: () => import('@ci/Launcher').then(m => m.LauncherRouterModule) },
   {
     path: '', component: PainelComponent, children: [
+      { path: '', loadChildren: () => import('@ci/Launcher').then(m => m.LauncherRouterModule) },
       { path: 'meus-apps', loadChildren: () => import('./apps/apps.module').then(m => m.AppsModule) },
       { path: 'Arquivos', loadChildren: () => import('@ci-apps/Arquivos').then(m => m.CiApplicationModule) },
       { path: 'Codex', loadChildren: () => import('@ci-apps/Codex').then(m => m.CiApplicationModule) },

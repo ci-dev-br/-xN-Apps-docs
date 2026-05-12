@@ -47,6 +47,7 @@ export class Home implements OnInit {
     @Inject(PLATFORM_ID) private platformId: Object,
     private readonly authUser: UserAuthenticationService,
   ) {
+    this.load();
     this.isBrowser = isPlatformBrowser(this.platformId);
     if (this.isBrowser) {
       authUser.user.subscribe(user => {
@@ -84,16 +85,16 @@ export class Home implements OnInit {
   }
   async load() {
     // removidor temporariamente: Esta provocando travamento no contador.
-    // let a = this.g[Math.round(Math.random() * (this.g.length - 1))];
-    // this.http
-    /* fetch('' + a).then((r) => {
+    let a = this.g[Math.round(Math.random() * (this.g.length - 1))];
+    //  this.http
+    fetch('' + a).then((r) => {
       if (r.status === 200) {
         this.x = a;
         a = this.g[Math.round(Math.random() * (this.g.length - 1))];
       } else {
         this.load();
       }
-    }) */
+    })
   }
   async alternateDeveloperProduction() {
     if (this.authUser.user.value!.roles!.indexOf('DEVELOPER') > -1) {
