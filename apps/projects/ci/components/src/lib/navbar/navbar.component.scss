@@ -84,3 +84,30 @@ button.app {
         z-index: 12;
     }
 }
+
+
+
+.menu--inner {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+    gap: 24px;
+
+    ::ng-deep * {
+        font-size: medium !important;
+    }
+
+    ::ng-deep button {
+        width: 85px;
+        min-width: unset;
+        max-width: unset;
+        height: 85px;
+        min-height: unset;
+        max-height: unset;
+        // box-shadow: 1px 3px 4px -1px black;
+        padding: 8px;
+    }
+}
