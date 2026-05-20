@@ -1,6 +1,6 @@
 import { Body, Controller, Optional, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { readdirSync, readFileSync } from "fs";
+import { readdirSync, readFileSync, writeFileSync } from "fs";
 import { ReadDirectoryInput } from "./dto/read-directory-input.dto";
 import { ReadDirectoryOutput } from "./dto/read-directory-output.dto";
 import { Role } from "@ci/auth/decorators/role.decorator";
@@ -57,13 +57,20 @@ export class FileExplorerController {
                 if (await this.filePermissions.grant(input.path, request)) {
 
                 } else {
-                    return null;
+                    throw new Error('Negado por Política de Acesso.')
                 }
             }
-            let readed = readFileSync(input.path, {
-                encoding: input.encoding as any || 'utf-8'
-            });
-            input.data = readed.toString();
+            if (!input.data) {
+                let readed = readFileSync(input.path, {
+                    encoding: input.encoding as any || 'utf-8'
+                });
+                input.data = readed.toString();
+            } else if (typeof input.data === 'string') {
+                // TODO: implementar controle de versão em cima das alterações realizadas via API.
+                writeFileSync(input.path,
+                    input.data, { encoding: 'utf-8' }
+                )
+            }
             return input;
         } catch (error) {
             console.trace(error);

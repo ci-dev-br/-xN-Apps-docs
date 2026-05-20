@@ -1,6 +1,7 @@
 <ng-container *ngIf="showing">
     <mat-toolbar>
         <span class="ci-window--title">
+            <!-- Título -->
             @if(title){ {{title}} }
         </span>
         <span style="flex: auto;"></span>
@@ -14,8 +15,7 @@
             <ng-container *ngIf="!item.visible || (!!item.visible && item.visible())">
                 <ng-container *ngIf="!!item.onClick">
                     <button mat-icon-button (click)="item.onClick($event)">
-                        <ng-container *ngTemplateOutlet="contentTmpl">
-                        </ng-container>
+                        <ng-container *ngTemplateOutlet="contentTmpl"></ng-container>
                     </button>
                 </ng-container>
                 <ng-container *ngIf="!item.onClick">

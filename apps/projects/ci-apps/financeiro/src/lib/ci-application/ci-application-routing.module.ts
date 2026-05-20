@@ -12,10 +12,10 @@ const routes: Routes = [
         path: ':EntityName',
         component: MasterDetailComponent,
         data: {
-          schema: 'LancamentoFinanceiro'
+          schema: 'LancamentoFinanceiro',
           /* TODO: replace at to dictionary */
           // dataType: 'EntityMasterDetail',
-          // title: 'Unidade de Medida',
+          title: 'Lançamento Financeiro',
           // icon: 'svg:unidade_medida',
         }
       },

@@ -1,7 +1,7 @@
 @if(!!apps){
 <ci-navbar [apps]="apps"></ci-navbar>
 <mat-drawer-container class="container">
-    <mat-drawer mode="side" opened auto-scroll="vertical" tabindex="0">
+    <mat-drawer mode="over" [opened]="appsMenuOpened | async" auto-scroll="vertical" tabindex="0">
         <div class="inner">
             <!--  <button mat-icon-button [matMenuTriggerFor]="menuApps">
                 <mat-icon>apps</mat-icon>

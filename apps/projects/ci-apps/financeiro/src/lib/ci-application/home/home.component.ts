@@ -16,7 +16,7 @@ import { DataGridModule } from '@ci/components/data-grid';
 import { DynFormModule } from '@ci/components/dyn-form';
 import { EditarDetailComponent, EditarDetailModule } from '@ci/components/editar-detail';
 import { WindowModule, WindowService } from '@ci/components/window';
-import { CoreModule, IAmSchematization } from '@ci/core';
+import { CoreModule, DaoService, IAmSchematization } from '@ci/core';
 import { LancamentoFinanceiro, LancamentoFinanceiroService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
 @Component({
@@ -50,6 +50,7 @@ export class HomeComponent implements IAmSchematization {
         @Optional() private readonly service?: LancamentoFinanceiroService,
         @Optional() private readonly router?: Router,
         @Optional() private readonly route?: ActivatedRoute,
+        @Optional() private readonly daos?: DaoService,
     ) { }
     schemaName = 'LancamentoFinanceiro';
     entidades = [
@@ -64,7 +65,8 @@ export class HomeComponent implements IAmSchematization {
                     onClick: async () => {
                         if (!this.service) return;
                         let new_instance: LancamentoFinanceiro = {} as LancamentoFinanceiro;
-                        let new_instance_result: any = await lastValueFrom((this.service).sync({ body: { data: new_instance } }))
+                        let new_instance_result: any = await lastValueFrom((this.service).sync({ body: { data: new_instance } }));
+                        // this.daos?.prepareToEdit(new_instance_result); ? deve ou não preparar o dado quando novo ?
                         this.windows?.open(EditarDetailComponent, {
                             schemaName: this.schemaName,
                             data: new_instance_result

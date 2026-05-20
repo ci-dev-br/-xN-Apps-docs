@@ -256,6 +256,16 @@ button.app {
     }
 }
 
+.mat-drawer-content {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+    align-items: stretch;
+    justify-content: stretch;
+
+    background-color: var(--mdc-protected-button-label-text-color);
+}
+
 .container {
     display: flex;
     flex-direction: column;
@@ -263,5 +273,6 @@ button.app {
     flex: auto;
     align-items: stretch;
     justify-content: stretch;
-    overflow: auto;
+    overflow: hidden;
+    background-color: var(--mdc-protected-button-label-text-color);
 }

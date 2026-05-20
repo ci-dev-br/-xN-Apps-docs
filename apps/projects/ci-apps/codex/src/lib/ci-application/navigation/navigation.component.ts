@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -102,8 +102,5 @@ export class NavigationComponent {
   open(arquivo: IArquivo) {
     this.current = arquivo;
     this.files.openFile(arquivo);
-  }
-  saveChanges() {
-
   }
 }

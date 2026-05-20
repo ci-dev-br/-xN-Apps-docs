@@ -55,30 +55,6 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
         if (!!this.schemaName && this.daoBuilder) {
             const properties = await (await this.daoBuilder.getSchema(this.schemaName)).properties;
             this.gridOptions = await this.gridb?.FromSchema(this.schemaName);
-            // this.gridOptions = {
-            //     columns: [
-            //         ...Object.keys(properties || {}).map(property => {
-            //             const headerName = properties ? properties[property].title : property;
-            //             const fieldName = property;
-            //             return {
-            //                 headerName,
-            //                 fieldName,
-            //                 format: ((properties as any)[property]?.format || undefined) as any,
-            //                 hide: fieldName && [
-            //                     /* Commons to ignore */
-            //                     'internalId',
-            //                     'id',
-            //                     'createdAt',
-            //                     'createdBy',
-            //                     'lastModifiedAt',
-            //                     'lastModifiedBy',
-            //                     'tenants',
-            //                     'deleted'].indexOf(fieldName) > -1
-            // 
-            //             } as /* IColumnOption<any> */ any
-            //         })
-            //     ]
-            // }
         }
     }
     async ngAfterViewInit() {

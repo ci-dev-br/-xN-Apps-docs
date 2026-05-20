@@ -109,6 +109,19 @@ export class DataGridComponent<I> {
             this.selectedItem = row;
         }
     }
+    cellSelectionHandler(event: MouseEvent, row: I, col: IColumnOption<any>) {
+        /* if (this.selectionMode === 'row') {
+            if (event.ctrlKey) {
+                if (row === this.selectedItem) {
+                    this.select.emit(undefined);
+                    this.selectedItem = undefined;
+                    return;
+                }
+            }
+            this.select.emit({ value: row, event });
+            this.selectedItem = row;
+        } */
+    }
     @HostListener('keydown', ['$event'])
     async keyDownHandler(event: KeyboardEvent) {
         [

@@ -3,9 +3,9 @@
     <button mat-button [matMenuTriggerFor]="fileMenu">
         File
     </button>
-    <button mat-button>
+    <!-- <button mat-button>
         Edit
-    </button>
+    </button> -->
     <mat-menu #fileMenu>
         <!-- <button mat-menu-item (click)="files.openCreateNew()">
             New
@@ -25,14 +25,11 @@
         @for(arq of arquivos; track arq){
         @if(!!arq){<button mat-menu-item (click)="open(arq)">
             {{arq.name}}
-        </button>}
+        </button>}                      
         }
     </mat-menu>
     }
     <span style="flex: auto"></span>
-    <button mat-button (click)="saveChanges()">
-        Confirmar
-    </button>
 </div>
 <nav mat-tab-nav-bar [tabPanel]="tabPanel">
     @if(abas){

@@ -1,5 +1,5 @@
 import { S } from '@angular/cdk/keycodes';
-import { Component, Input } from '@angular/core';
+import { Component, Input, Optional } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { IArquivo } from '@ci-apps/Arquivos';
@@ -7,6 +7,8 @@ import { CoreModule } from '@ci/core';
 import { FileDto, FileExplorerService } from '@ci/portal-api';
 import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 import { lastValueFrom } from 'rxjs';
+import { NavigationComponent } from '../navigation/navigation.component';
+import { MatButtonModule } from '@angular/material/button';
 @Component({
     selector: 'ci-code-editor',
     standalone: true,
@@ -14,6 +16,7 @@ import { lastValueFrom } from 'rxjs';
         CoreModule,
         NuMonacoEditorModule,
         FormsModule,
+        MatButtonModule,
     ],
     templateUrl: './code-editor.component.html',
     styleUrl: './code-editor.component.scss'
@@ -41,7 +44,7 @@ export class CodeEditorComponent {
                     this.editorOptions = { ...this.editorOptions };
                 }
             }
-        })
+        });
     }
     @Input()
     language?: string;
@@ -53,5 +56,15 @@ export class CodeEditorComponent {
 
     async selectLanguage() {
 
+    }
+
+    async confirmar() {
+        await lastValueFrom(
+            this.fileExplorer.readFile({
+                body: {
+                    ...this.oppenedFile,
+                    data: this.value
+                }
+            }));
     }
 }

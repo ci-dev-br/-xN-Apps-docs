@@ -13,6 +13,7 @@ import { CI_STATIC_APPS, IApp } from './apps/apps';
 import { AuthModule, USER_MENU, UserAuthenticationService } from '@ci/auth';
 import { IconModule, NavbarModule } from '@ci/components';
 import { IItemMenu } from '@ci/components/window';
+import { BehaviorSubject } from 'rxjs';
 @Component({
   selector: 'ci-painel',
   imports: [
@@ -38,6 +39,7 @@ import { IItemMenu } from '@ci/components/window';
 export class PainelComponent implements OnInit {
   user = this.userAuthenticationInstanceService?.user
   apps?: any[];
+  appsMenuOpened = new BehaviorSubject<boolean>(false);
   /*  @ViewChild('menuApps') menuApps?: MatMenu; */
   userMenuList?: IItemMenu[] = inject(USER_MENU, { optional: true }) || undefined;
   constructor(

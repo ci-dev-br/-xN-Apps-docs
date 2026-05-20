@@ -1,8 +1,9 @@
-import { EventEmitter, Injectable, SimpleChanges } from "@angular/core";
+import { EventEmitter, Injectable, Optional, SimpleChanges } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { of, Subject } from "rxjs";
 import { IChangeable, OfString } from "./models";
 import { EMITTER } from "../emitter/token";
+import { WsService } from "../core.module";
 
 /** 
  *   Mapeamento de entidade
@@ -10,6 +11,11 @@ import { EMITTER } from "../emitter/token";
  */
 @Injectable()
 export class DaoService {
+    constructor(
+        @Optional() private readonly ws?: WsService
+    ) {
+
+    }
     private states = new Map<any, any>();
 
     /**
@@ -150,7 +156,7 @@ export class DaoService {
                 (data.__confirmation_subject as Subject<any>).next(this.getChanges(data));
             }
             /// TODO: remover assinatura de evento Attention para Objeto quando for abandonado pelo componente.
-            // this.ws.Attention(data);
+            this.ws?.Attention(data);
         } catch (error) {
             console.log(data)
         }

@@ -60,11 +60,8 @@ export class WindowComponent implements OnInit, OnDestroy {
     this.showing = false;
   }
   get changed() {
-    return false;
-    /* 
-      if (!(this.data as any)?.data) return false;
-      return this.daos?.haveChanges(!!(this.data as any)?.data?.schemaName ? (this.data as any)?.data.data : (this.data as any)?.data) 
-    */
+    if (!(this.data as any)?.data) return false;
+    return this.daos?.haveChanges(!!(this.data as any)?.data?.schemaName ? (this.data as any)?.data.data : (this.data as any)?.data)
   }
   confirm() {
     /* 
@@ -73,7 +70,7 @@ export class WindowComponent implements OnInit, OnDestroy {
     */
   }
   close() {
-    // this.showing = false;
+    this.showing = false;
     this.ref?.close((this.data as any)?.data);
   }
   @HostListener('keydown', ['$event'])

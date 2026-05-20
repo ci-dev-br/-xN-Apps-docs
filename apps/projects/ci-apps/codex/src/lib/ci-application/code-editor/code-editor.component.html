@@ -1,5 +1,11 @@
-@if(!!value){<nu-monaco-editor [(ngModel)]="value" [options]="editorOptions"
-    height="calc(100vh - 154px)"></nu-monaco-editor>}@else{
+
+@if(!!value){   
+    <button mat-button (click)="confirmar()">
+        Confirmar
+    </button>            
+    <nu-monaco-editor [(ngModel)]="value" [options]="editorOptions"
+    height="calc(100vh - 154px)"></nu-monaco-editor>
+}@else{
 <div class="loading">
     Carregando ...
 </div>
