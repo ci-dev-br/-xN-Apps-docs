@@ -31,7 +31,7 @@ div {
 }
 
 .--dev-mode {
-    border: 3px dashed rgba(red,.5);
+    border: 3px dashed rgba(red, .5);
     position: fixed;
     inset: 1px;
     z-index: 10000000;
@@ -41,7 +41,8 @@ div {
     pointer-events: none;
 }
 
-::ng-deep body:has(.--dev-mode) {
+::ng-deep body {
+    /* :has(.--dev-mode) */
     background-color: black;
 }
 

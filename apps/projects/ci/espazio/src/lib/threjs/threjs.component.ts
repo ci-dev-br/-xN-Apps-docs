@@ -40,7 +40,7 @@ export class Objeto {
 })
 export class ThrejsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('rendererContainer', { static: true }) rendererContainer!: ElementRef<HTMLDivElement>;
-  
+
   @Input() scene?: Scene;
   @Input() camera?: PerspectiveCamera;
   @Input() renderer?: WebGLRenderer;
@@ -51,11 +51,11 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
   controls?: OrbitControls;
 
   private _objetos?: Objeto[] | undefined;
-  
+
   public get objetos(): Objeto[] | undefined {
     return this._objetos;
   }
-  
+
   @Input()
   public set objetos(value: Objeto[] | undefined) {
     if (this._objetos === value) return;
@@ -91,7 +91,7 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
       this.resizeObserver.disconnect();
     }
     cancelAnimationFrame(this.frameId);
-    
+
     // Limpa os controles da câmera
     if (this.controls) {
       this.controls.dispose();
@@ -105,12 +105,12 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
   private initThree(): void {
     this.scene = new Scene();
     this.scene.background = new Color(0x222222);
-    
+
     const { clientWidth, clientHeight } = this.rendererContainer.nativeElement;
-    
+
     this.camera = new PerspectiveCamera(75, clientWidth / clientHeight, 0.1, 1000);
     this.camera.position.z = 5;
-    
+
     this.renderer = new WebGLRenderer({
       antialias: true,
       alpha: true,
@@ -122,7 +122,7 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
       powerPreference: 'high-performance',
       precision: 'highp'
     });
-    
+
     this.renderer.setSize(clientWidth, clientHeight);
     this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
 
@@ -147,7 +147,7 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
 
   private animate(): void {
     this.frameId = requestAnimationFrame(() => this.animate());
-    
+
     // Atualiza os controles em cada frame (necessário quando enableDamping = true)
     if (this.controls) {
       this.controls.update();
@@ -179,6 +179,15 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
 
   @HostListener('window:keydown', ['$event'])
   async keydownHandler(event: KeyboardEvent) {
-    // Implementação de teclas se necessário
+    if (event.key === 'w') {
+      this.camera!.position!.z -= 1;
+    }else if (event.key === 's') {
+      this.camera!.position!.z += 1;
+    }
+    if (event.key === 'a') {
+      this.camera!.position!.x -= 1;
+    }else if (event.key === 'd') {
+      this.camera!.position!.x += 1;
+    }
   }
 }

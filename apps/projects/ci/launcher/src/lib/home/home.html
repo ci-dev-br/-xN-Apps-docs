@@ -1,3 +1,5 @@
+ <c-threjs [objetos]="objetos"></c-threjs>
+
 <nav> @if(isDeveloper){
     <button mat-icon-button (click)="alternateDeveloperProduction()">
         <mat-icon>logo_dev</mat-icon>
@@ -13,7 +15,8 @@
     <div class="ms"> {{n}} </div>
 </div>
 <div class="scroll">
-    <ci-board default="Launcher.Board"></ci-board>
+   
+    <!--   <ci-board default="Launcher.Board"></ci-board> -->
 </div>
 @if(x){<img class="bg" [src]="x" />}
 <div class="footer">

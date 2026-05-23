@@ -6,10 +6,10 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
 import { config } from 'dotenv';
 import * as express from 'express';
-import { spawnSync } from 'child_process';
+import { spawn, spawnSync } from 'child_process';
 import { WsAdapter } from '@nestjs/platform-ws';
 import { corsOptionsDelegate } from './cors-option-delegate';
-/***  
+/***
  * 
  * Inicializa variáveis de ambiente
  * 
@@ -33,7 +33,7 @@ async function startApplication(app: NestExpressApplication, port: number) {
     await app.listen(port, () => {
       console.log(`Non-Secure HTTP Application is Running on port ${port}`);
     });
-  } catch (error:any) {
+  } catch (error: any) {
     if (error.code === 'EADDRINUSE') {
       console.trace(error);
       console.warn('Port in use. Attempting to stop colliding services...');
@@ -90,6 +90,50 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggingInterceptor());
   // Inicia o ciclo de start da aplicação
   await startApplication(app, httpPort);
+
+  /**
+   * Inicia a aplicação em modo desenvolvimento para manutenção 
+   * (experimental):
+   *  - A implementação oficial deve ativar/desativar mediante
+   * chamada via API por Usuário autorizado via Politica de Acesso
+   */
+  async function RunDevClient() {
+    try {
+      // Define o caminho absoluto para a pasta ./client
+      const clientPath = join(__dirname, '..', '..', 'apps');
+
+      console.log(`\x1b[36m[Runner]\x1b[0m Iniciando o Angular CLI em: ${clientPath}...`);
+
+      // No Windows, o comando 'ng' precisa ser executado como 'ng.cmd'
+      const isWindows = process.platform === 'win32';
+      const command = isWindows ? 'cmd' : 'ng';
+
+      // Dispara o processo child_process.spawn
+      const ngServe = spawn(command, ['npm', 'run', 'watch'], {
+        cwd: clientPath, // Define o diretório de trabalho corrente
+        shell: true,     // Garante compatibilidade com o ambiente de execução
+        stdio: 'inherit' // Redireciona stdin, stdout e stderr diretamente para o terminal pai
+      });
+
+      // Trata o encerramento do processo do Angular
+      ngServe.on('close', (code) => {
+        if (code === 0) {
+          console.log('\x1b[32m[Runner]\x1b[0m Processo do Angular finalizado com sucesso.');
+        } else {
+          console.error(`\x1b[31m[Runner]\x1b[0m O processo do Angular falhou e fechou com o código ${code}`);
+        }
+      });
+
+      // Trata erros ao tentar disparar o processo (ex: se o 'ng' não estiver instalado)
+      ngServe.on('error', (err) => {
+        console.error('\x1b[31m[Runner]\x1b[0m Erro ao tentar rodar o comando ng:', err.message);
+      });
+    } catch (err) {
+      console.trace('Falha ao executar ambiente de desenvolvimento');
+      console.trace(err);
+    }
+  }
+  RunDevClient()
 }
 // Execução segura do bootstrap
 try {

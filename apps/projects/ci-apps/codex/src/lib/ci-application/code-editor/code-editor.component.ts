@@ -1,13 +1,10 @@
-import { S } from '@angular/cdk/keycodes';
-import { Component, Input, Optional } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { IArquivo } from '@ci-apps/Arquivos';
 import { CoreModule } from '@ci/core';
 import { FileDto, FileExplorerService } from '@ci/portal-api';
 import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 import { lastValueFrom } from 'rxjs';
-import { NavigationComponent } from '../navigation/navigation.component';
 import { MatButtonModule } from '@angular/material/button';
 @Component({
     selector: 'ci-code-editor',
@@ -22,6 +19,7 @@ import { MatButtonModule } from '@angular/material/button';
     styleUrl: './code-editor.component.scss'
 })
 export class CodeEditorComponent {
+    carregando = true;
     private oppenedFile?: FileDto;
     constructor(
         private readonly fileExplorer: FileExplorerService,
@@ -29,13 +27,27 @@ export class CodeEditorComponent {
     ) {
         this.activatedRoute.queryParams.subscribe(async (query: any) => {
             if (query.file) {
-                const file_loaded = await lastValueFrom(this.fileExplorer.readFile({
-                    body: {
-                        path: query.file
+                this.carregando = true;
+                try {
+                    const file_loaded = await lastValueFrom(this.fileExplorer.readFile({
+                        body: {
+                            path: query.file
+                        }
+                    }));
+                    this.oppenedFile = file_loaded;
+                    this.value = file_loaded.data as string;
+                } catch (e) {
+
+                }
+
+                if (!this.oppenedFile?.data) {
+                    alert("Arquivo inexistente, criado novo arquivo");
+                    this.oppenedFile = {
+                        path: query.file,
+                        data: '// novo arquivo criado ...'
                     }
-                }));
-                this.oppenedFile = file_loaded;
-                this.value = file_loaded.data as string;
+                    this.value = '// novo arquivo criado ...';
+                }
 
                 if (query?.file?.indexOf('.ts') > -1) {
                     this.editorOptions.language = 'typescript';
@@ -43,6 +55,8 @@ export class CodeEditorComponent {
                     this.editorOptions.language = undefined;
                     this.editorOptions = { ...this.editorOptions };
                 }
+
+                this.carregando = false;
             }
         });
     }

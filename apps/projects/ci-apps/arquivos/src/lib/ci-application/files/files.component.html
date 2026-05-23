@@ -10,6 +10,9 @@
             <button mat-icon-button (click)="voltar()">
                 <mat-icon>arrow_upward</mat-icon>
             </button>
+            <button mat-icon-button >
+                <mat-icon>edit</mat-icon>
+            </button>
             <input type="text" class="navegacao" #urlInput [(ngModel)]="endereco"
                 (keydown.enter)="ir(urlInput.value)" />
             <input type="text" class="navegacao" [(ngModel)]="filtrar" />

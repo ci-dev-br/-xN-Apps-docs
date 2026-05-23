@@ -16,6 +16,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { FormsModule } from "@angular/forms";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { ValueOfPipe } from "./cell-renderer/value-of.pipe";
 @NgModule({
     declarations: [
         DataGridComponent,
@@ -36,6 +37,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
         MatDialogModule,
         MatCheckboxModule,
         MatFormFieldModule,
+        ValueOfPipe,
     ],
     exports: [
         TextCellRenderer,

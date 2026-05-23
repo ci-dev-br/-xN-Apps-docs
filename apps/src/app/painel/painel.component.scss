@@ -106,16 +106,16 @@ mat-drawer {
 .side-ativo {
     position: relative;
 
-    &::before {
-        content: " ";
-        position: absolute;
-        left: 0;
-        top: 10px;
-        bottom: 10px;
-        width: 4px;
-        border-radius: 0px;
-        // background-color: var(--mdc-protected-button-label-text-color);
-    }
+   //  &::before {
+   //      content: " ";
+   //      position: absolute;
+   //      left: 0;
+   //      top: 10px;
+   //      bottom: 10px;
+   //      width: 4px;
+   //      border-radius: 0px;
+   //      // background-color: var(--mdc-protected-button-label-text-color);
+   //  }
 }
 
 mat-drawer {
@@ -132,15 +132,15 @@ mat-drawer {
 mat-drawer-container {
 
     // margin-left: 60px;
-    &::before {
-        position: absolute;
-        content: " ";
-        top: 0;
-        bottom: 0;
-        width: 50px;
-        background-color: #ffffff;
-        z-index: -1;
-    }
+    // &::before {
+    //     position: absolute;
+    //     content: " ";
+    //     top: 0;
+    //     bottom: 0;
+    //     width: 50px;
+    //     background-color: #ffffff;
+    //     z-index: -1;
+    // }
 }
 
 .apps {

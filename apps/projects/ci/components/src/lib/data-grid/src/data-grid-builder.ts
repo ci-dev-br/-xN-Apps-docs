@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Injector, PipeTransform, Type } from "@angular/core";
 import { DaoBuilder } from "@ci/core";
 import { IColumnOption } from "./models/i-column-options";
 /**
@@ -19,7 +19,7 @@ import { IColumnOption } from "./models/i-column-options";
 export class GridBuilder {
     constructor(
         private readonly daoBuilder: DaoBuilder,
-
+        private readonly injector: Injector,
     ) { }
     /**
      *  Build grid options from schema
@@ -30,12 +30,20 @@ export class GridBuilder {
         let gridOptions = {
             columns: [
                 ...Object.keys(properties || {}).map(property => {
-                    const headerName = properties ? properties[property].title : property;
+                    const prop = properties![property];
+                    const headerName = prop?.title || property;
                     const fieldName = property;
+                    const type = prop.type || 'text';
+                    const format = prop.format || undefined;
+                    const pipe = prop.format ? this.getPipeOfFormat(prop.format) : undefined;
+                    const component = undefined;
                     return {
                         headerName,
                         fieldName,
-                        
+                        type,
+                        format,
+                        pipe,
+                        component,
                         hide: fieldName && [
                             'internalId',
                             'id',
@@ -51,5 +59,17 @@ export class GridBuilder {
             ]
         }
         return gridOptions;
+    }
+    /**
+     * Retorna o pipe para o formato indicado
+     * @param format 
+     * @returns 
+     */
+    private getPipeOfFormat(format: string) {
+        const pipes = this.injector.get<any>('XNE.PIPES');
+        const pipe = Object.keys(pipes).find(pipe_code => (
+            format.split(':')[0] === pipe_code
+        ))
+        return pipe ? pipes[pipe] : undefined;
     }
 }

@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { UserAuthenticationService } from '@ci/auth';
 import { BoardModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
+import { Objeto, ThrejsComponent } from '@ci/espazio';
 
 @Component({
   selector: 'ci-Home  ',
@@ -16,6 +17,7 @@ import { CoreModule } from '@ci/core';
     MatIconModule,
     RouterModule,
     BoardModule,
+    ThrejsComponent,
   ],
   templateUrl: `home.html`,
   styleUrl: `home.scss`,
@@ -28,6 +30,10 @@ export class Home implements OnInit {
     'https://images.pexels.com/photos/6009490/pexels-photo-6009490.jpeg',
     'https://images.pexels.com/photos/11394988/pexels-photo-11394988.jpeg',
     'https://images.pexels.com/photos/34442367/pexels-photo-34442367.jpeg',
+  ];
+  objetos: Objeto[] = [
+    // new Objeto({ glb_file: 'nana.glb' }),
+    new Objeto({ glb_file: 'celula-000.glb' }),
   ];
   x?: string;
   agora = new Date();
