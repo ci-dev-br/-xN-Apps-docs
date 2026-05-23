@@ -121,7 +121,7 @@ app.get('/commits', (req, res) => {
     });
 });
 /**
- * 3. Homepage (Acesso via Navegador) - Tema Dark Premium Glass
+ * 3. Homepage (Acesso via Navegador) - Tema Dark Premium Glass + Visualizador de Grafo
  */
 app.get('/', (req, res) => {
     const html = `
@@ -172,53 +172,38 @@ app.get('/', (req, res) => {
                     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); 
                     padding: 40px; 
                     width: 100%;
-                    max-width: 850px; 
+                    max-width: 1000px; 
                 }
 
-                h1 { 
-                    font-weight: 300; 
-                    letter-spacing: 1px; 
-                    margin-top: 0; 
-                    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+                h1 { font-weight: 300; margin-top: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+
+                .controls-grid {
+                    display: grid;
+                    grid-template-columns: 1fr auto;
+                    gap: 20px;
+                    margin-bottom: 25px;
+                    background: rgba(0,0,0,0.2);
+                    padding: 20px;
+                    border-radius: 12px;
+                    border: 1px solid var(--glass-border);
                 }
 
-                h3 { 
-                    border-bottom: 1px solid var(--glass-border); 
-                    padding-bottom: 10px; 
-                    color: var(--text-muted); 
-                    margin-top: 35px; 
-                    font-weight: 400; 
-                    font-size: 1.1rem;
-                }
-
-                .input-group { 
-                    display: flex; 
-                    gap: 15px; 
-                    margin-bottom: 20px; 
-                    align-items: center; 
-                    flex-wrap: wrap;
-                }
-
+                .input-group { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
                 label { color: var(--text-muted); font-size: 0.9rem; }
-
-                input { 
+                
+                input[type="number"], input[type="text"] { 
                     background: rgba(0, 0, 0, 0.3); 
                     border: 1px solid var(--glass-border); 
                     border-radius: 8px; 
                     color: var(--text-main);
-                    padding: 10px 14px; 
+                    padding: 8px 12px; 
                     font-size: 0.9rem;
                     outline: none;
-                    transition: all 0.3s ease;
                 }
+                
+                input:focus { border-color: rgba(255, 255, 255, 0.2); }
 
-                input:focus {
-                    border-color: rgba(255, 255, 255, 0.2);
-                    background: rgba(0, 0, 0, 0.5);
-                    box-shadow: 0 0 0 2px rgba(255,255,255,0.05);
-                }
-
-                input::placeholder { color: #475569; }
+                .checkbox-wrapper { display: flex; align-items: center; gap: 5px; cursor: pointer; }
 
                 .btn { 
                     background: rgba(255, 255, 255, 0.05); 
@@ -230,115 +215,251 @@ app.get('/', (req, res) => {
                     font-weight: 500; 
                     color: var(--text-main); 
                     transition: all 0.3s ease;
-                    letter-spacing: 0.5px;
-                    backdrop-filter: blur(5px);
                 }
 
-                .btn:hover { 
-                    transform: translateY(-2px); 
-                    box-shadow: 0 8px 20px rgba(0,0,0,0.4); 
-                }
+                .btn:hover { transform: translateY(-2px); }
+                .btn-blue { background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.4); }
+                .btn-blue:hover { border-color: var(--accent-blue); text-shadow: 0 0 8px rgba(59, 130, 246, 0.6); }
+                .btn-green { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.4); }
+                .btn-green:hover { border-color: var(--accent-green); text-shadow: 0 0 8px rgba(16, 185, 129, 0.6); }
 
-                .btn:active { transform: translateY(0); }
+                #status-msg { margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); }
 
-                .btn-blue:hover { 
-                    border-color: var(--accent-blue); 
-                    text-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
-                    background: rgba(59, 130, 246, 0.1);
-                }
-
-                .btn-green:hover { 
-                    border-color: var(--accent-green); 
-                    text-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
-                    background: rgba(16, 185, 129, 0.1);
-                }
-
-                pre { 
-                    background: rgba(0, 0, 0, 0.6); 
-                    border: 1px solid var(--glass-border); 
-                    color: var(--accent-green); 
-                    padding: 20px; 
-                    border-radius: 12px; 
-                    overflow-x: auto; 
-                    white-space: pre-wrap; 
-                    margin-top: 25px; 
-                    max-height: 400px; 
-                    overflow-y: auto;
-                    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-                    font-size: 0.9rem;
+                /* Painel do Grafo */
+                .graph-panel {
+                    display: flex;
+                    background: rgba(0, 0, 0, 0.5);
+                    border: 1px solid var(--glass-border);
+                    border-radius: 12px;
+                    padding: 20px 0;
+                    margin-top: 20px;
+                    overflow-x: auto;
                     box-shadow: inset 0 2px 15px rgba(0,0,0,0.5);
-                    line-height: 1.5;
+                    min-height: 300px;
                 }
 
-                /* Scrollbar Customizada */
+                .canvas-container { flex-shrink: 0; padding-left: 10px; }
+                .commit-list { flex-grow: 1; display: flex; flex-direction: column; min-width: 600px; padding-right: 20px; }
+                
+                .commit-row { 
+                    display: flex; 
+                    align-items: center; 
+                    border-bottom: 1px solid rgba(255,255,255,0.03); 
+                    box-sizing: border-box;
+                }
+                .commit-row:hover { background: rgba(255,255,255,0.02); }
+
+                .commit-hash { font-family: monospace; font-size: 0.85rem; width: 80px; flex-shrink: 0; }
+                .commit-msg { flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 15px; font-size: 0.9rem; }
+                .commit-author { width: 120px; flex-shrink: 0; font-size: 0.8rem; color: var(--text-muted); text-align: right; }
+                
+                .branch-tag { 
+                    background: rgba(255,255,255,0.1); 
+                    border: 1px solid var(--glass-border); 
+                    padding: 2px 6px; 
+                    border-radius: 4px; 
+                    font-size: 0.7rem; 
+                    margin-right: 8px; 
+                    color: var(--accent-green);
+                    font-weight: bold;
+                }
+
                 ::-webkit-scrollbar { width: 8px; height: 8px; }
                 ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
                 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-                ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
             </style>
         </head>
         <body>
             <div class="container">
-                <h1>🚀 Git Dashboard</h1>
+                <h1>🚀 Git Tree Dashboard</h1>
                 
-                <h3>Buscar Commits (GET)</h3>
-                <div class="input-group">
-                    <label for="param-limit">Limite:</label>
-                    <input type="number" id="param-limit" value="5" style="width: 70px;">
-                    
-                    <label for="param-skip">Skip:</label>
-                    <input type="number" id="param-skip" value="0" style="width: 70px;">
-                    
-                    <label for="param-author">Autor:</label>
-                    <input type="text" id="param-author" placeholder="Ex: plhx">
-                    
-                    <button class="btn btn-blue" onclick="buscarCommits()">📋 Buscar</button>
+                <div class="controls-grid">
+                    <div class="input-group">
+                        <label>Limite:</label>
+                        <input type="number" id="param-limit" value="20" style="width: 70px;">
+                        
+                        <label>Skip:</label>
+                        <input type="number" id="param-skip" value="0" style="width: 70px;">
+                        
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" id="param-all" checked> Todas as Branches (--all)
+                        </label>
+
+                        <button class="btn btn-blue" onclick="buscarEDesenharGrafo()">🌳 Renderizar Grafo</button>
+                    </div>
+                    <div>
+                        <button class="btn btn-green" onclick="fazerCommit()">🚀 git add . && commit</button>
+                    </div>
                 </div>
 
-                <h3>Ações (POST)</h3>
-                <button class="btn btn-green" onclick="fazerCommit()">🚀 Executar Script de Commit</button>
+                <div id="status-msg">Pronto.</div>
 
-                <pre id="resultado">// O output do terminal aparecerá aqui...</pre>
+                <div class="graph-panel" id="graph-panel" style="display: none;">
+                    <div class="canvas-container">
+                        <canvas id="git-canvas"></canvas>
+                    </div>
+                    <div class="commit-list" id="commit-list"></div>
+                </div>
             </div>
 
             <script>
-                const resultadoEl = document.getElementById('resultado');
+                const statusEl = document.getElementById('status-msg');
+                const panelEl = document.getElementById('graph-panel');
 
-                async function buscarCommits() {
-                    resultadoEl.style.color = '#94a3b8';
-                    resultadoEl.textContent = 'Processando...';
+                // Configurações visuais do grafo
+                const ROW_HEIGHT = 40;
+                const DOT_RADIUS = 5;
+                const TRACK_WIDTH = 20;
+                const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#0ea5e9'];
+
+                async function buscarEDesenharGrafo() {
+                    statusEl.textContent = 'Buscando árvore de commits...';
                     
                     const limit = document.getElementById('param-limit').value;
                     const skip = document.getElementById('param-skip').value;
-                    const author = document.getElementById('param-author').value;
+                    const all = document.getElementById('param-all').checked;
                     
-                    const params = new URLSearchParams({ limit, skip });
-                    if (author) params.append('author', author);
+                    const params = new URLSearchParams({ limit, skip, all });
 
                     try {
                         const response = await fetch('/commits?' + params.toString());
                         const data = await response.json();
-                        resultadoEl.style.color = '#10b981';
-                        resultadoEl.textContent = JSON.stringify(data, null, 2);
+                        
+                        if (data.commits && data.commits.length > 0) {
+                            panelEl.style.display = 'flex';
+                            desenharGrafo(data.commits);
+                            statusEl.textContent = \`Grafo renderizado com \${data.commits.length} commits.\`;
+                        } else {
+                            statusEl.textContent = 'Nenhum commit encontrado no repositório.';
+                        }
                     } catch (error) {
-                        resultadoEl.style.color = '#ef4444';
-                        resultadoEl.textContent = 'Erro: ' + error.message;
+                        statusEl.textContent = 'Erro ao buscar commits: ' + error.message;
                     }
                 }
 
+                function desenharGrafo(commits) {
+                    const canvas = document.getElementById('git-canvas');
+                    const ctx = canvas.getContext('2d');
+                    const listEl = document.getElementById('commit-list');
+                    listEl.innerHTML = '';
+
+                    // Lógica para definir a trilha (track X) de cada commit
+                    let tracks = []; 
+                    let nodes = [];
+                    let maxTrackIndex = 0;
+
+                    commits.forEach((commit, i) => {
+                        let trackIndex = tracks.indexOf(commit.hash);
+                        
+                        // Se não encontrou uma trilha aguardando esse commit, cria uma nova
+                        if (trackIndex === -1) {
+                            trackIndex = tracks.findIndex(t => t === null); // reaproveita trilha morta
+                            if (trackIndex === -1) {
+                                trackIndex = tracks.length;
+                            }
+                        }
+
+                        if (trackIndex > maxTrackIndex) maxTrackIndex = trackIndex;
+
+                        nodes.push({
+                            commit,
+                            x: 20 + trackIndex * TRACK_WIDTH,
+                            y: i * ROW_HEIGHT + ROW_HEIGHT / 2,
+                            color: COLORS[trackIndex % COLORS.length],
+                            trackIndex
+                        });
+
+                        // Atualiza as trilhas aguardando os próximos nós (pais)
+                        if (commit.parents.length > 0) {
+                            tracks[trackIndex] = commit.parents[0];
+                            // Se for merge, cria trilhas pros outros pais
+                            for (let p = 1; p < commit.parents.length; p++) {
+                                tracks.push(commit.parents[p]);
+                            }
+                        } else {
+                            tracks[trackIndex] = null; // Fim da trilha (initial commit)
+                        }
+                    });
+
+                    // Ajusta o tamanho do canvas com base nas trilhas e nós
+                    canvas.width = 40 + maxTrackIndex * TRACK_WIDTH;
+                    canvas.height = commits.length * ROW_HEIGHT;
+                    
+                    // Limpeza
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.lineWidth = 2;
+
+                    // 1. Desenhar as Linhas (Edges)
+                    nodes.forEach(node => {
+                        node.commit.parents.forEach((parentHash, pIndex) => {
+                            const parentNode = nodes.find(n => n.commit.hash === parentHash);
+                            
+                            ctx.beginPath();
+                            ctx.moveTo(node.x, node.y);
+
+                            if (parentNode) {
+                                // Curva Bezier para transição suave entre trilhas
+                                ctx.bezierCurveTo(
+                                    node.x, node.y + ROW_HEIGHT / 2,
+                                    parentNode.x, parentNode.y - ROW_HEIGHT / 2,
+                                    parentNode.x, parentNode.y
+                                );
+                                ctx.strokeStyle = (pIndex === 0) ? node.color : parentNode.color;
+                            } else {
+                                // Pai não está na página atual (paginação), linha reta para baixo e some
+                                ctx.lineTo(node.x, node.y + ROW_HEIGHT);
+                                ctx.strokeStyle = node.color;
+                                ctx.globalAlpha = 0.3;
+                            }
+                            
+                            ctx.stroke();
+                            ctx.globalAlpha = 1.0;
+                        });
+                    });
+
+                    // 2. Desenhar os Pontos (Nodes) e injetar HTML
+                    nodes.forEach(node => {
+                        // Círculo
+                        ctx.beginPath();
+                        ctx.arc(node.x, node.y, DOT_RADIUS, 0, 2 * Math.PI);
+                        ctx.fillStyle = '#0f172a'; // Cor de fundo para furar a linha
+                        ctx.fill();
+                        ctx.lineWidth = 3;
+                        ctx.strokeStyle = node.color;
+                        ctx.stroke();
+
+                        // Lista HTML
+                        const row = document.createElement('div');
+                        row.className = 'commit-row';
+                        row.style.height = \`\${ROW_HEIGHT}px\`;
+
+                        const tagsHtml = node.commit.branches
+                            .map(b => \`<span class="branch-tag">\${b}</span>\`)
+                            .join('');
+
+                        row.innerHTML = \`
+                            <div class="commit-hash" style="color: \${node.color}">\${node.commit.short_hash}</div>
+                            <div class="commit-msg">\${tagsHtml} \${node.commit.message}</div>
+                            <div class="commit-author">\${node.commit.author.name}</div>
+                        \`;
+                        listEl.appendChild(row);
+                    });
+                }
+
                 async function fazerCommit() {
-                    resultadoEl.style.color = '#94a3b8';
-                    resultadoEl.textContent = 'Executando pipeline de commit...';
+                    statusEl.textContent = 'Executando pipeline de commit...';
                     try {
                         const response = await fetch('/commit', { method: 'POST' });
                         const data = await response.json();
-                        resultadoEl.style.color = '#3b82f6';
-                        resultadoEl.textContent = JSON.stringify(data, null, 2);
+                        statusEl.textContent = 'Commit finalizado. Saída: ' + (data.saida || 'Sucesso.');
+                        buscarEDesenharGrafo(); // Recarrega o grafo
                     } catch (error) {
-                        resultadoEl.style.color = '#ef4444';
-                        resultadoEl.textContent = 'Erro: ' + error.message;
+                        statusEl.textContent = 'Erro ao fazer commit: ' + error.message;
                     }
                 }
+
+                // Carrega o grafo automaticamente ao abrir
+                window.onload = buscarEDesenharGrafo;
             </script>
         </body>
         </html>
@@ -346,7 +467,6 @@ app.get('/', (req, res) => {
 
     res.send(html);
 });
-
 // Inicializa o servidor
 app.listen(PORT, () => {
     console.log(`🚀 Servidor rodando na porta ${PORT}`);
