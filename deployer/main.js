@@ -256,7 +256,7 @@ app.get('/', (req, res) => {
         </head>
         <body>
             <div class="container">
-                <h1>⚙️ Dashboard Hub</h1>
+                <h1>⚙️ Dashboard Hub | Backdoor</h1>
                 
                 <!-- PAINEL NG SERVE -->
                 <div class="panel">
