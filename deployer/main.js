@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const { exec } = require('child_process');
-
+const { exec, spawn } = require('child_process'); // Importe o spawn aqui
 const app = express();
 const PORT = process.env.PORT || 4666;
 
@@ -121,7 +120,7 @@ app.get('/commits', (req, res) => {
     });
 });
 /**
- * 3. Homepage (Acesso via Navegador) - Tema Dark Premium Glass + Visualizador de Grafo
+ * 3. Homepage (Acesso via Navegador) - Tema Dark Premium Glass + App Control
  */
 app.get('/', (req, res) => {
     const html = `
@@ -130,7 +129,7 @@ app.get('/', (req, res) => {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Painel do Git</title>
+            <title>Dashboard Hub</title>
             <style>
                 :root {
                     --glass-bg: rgba(255, 255, 255, 0.03);
@@ -139,6 +138,8 @@ app.get('/', (req, res) => {
                     --text-muted: #94a3b8;
                     --accent-blue: #3b82f6;
                     --accent-green: #10b981;
+                    --accent-red: #ef4444;
+                    --accent-orange: #f59e0b;
                 }
 
                 * { box-sizing: border-box; }
@@ -154,7 +155,7 @@ app.get('/', (req, res) => {
                     min-height: 100vh;
                     display: flex;
                     justify-content: center;
-                    align-items: center;
+                    align-items: flex-start;
                 }
 
                 @keyframes gradientBG {
@@ -166,28 +167,28 @@ app.get('/', (req, res) => {
                 .container { 
                     background: var(--glass-bg); 
                     backdrop-filter: blur(16px); 
-                    -webkit-backdrop-filter: blur(16px);
                     border: 1px solid var(--glass-border); 
                     border-radius: 16px; 
                     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); 
                     padding: 40px; 
                     width: 100%;
                     max-width: 1000px; 
+                    display: flex;
+                    flex-direction: column;
+                    gap: 30px;
                 }
 
-                h1 { font-weight: 300; margin-top: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+                h1 { font-weight: 300; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+                h2 { font-size: 1.2rem; font-weight: 400; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin: 0 0 15px 0; color: #e2e8f0; }
 
-                .controls-grid {
-                    display: grid;
-                    grid-template-columns: 1fr auto;
-                    gap: 20px;
-                    margin-bottom: 25px;
+                .panel {
                     background: rgba(0,0,0,0.2);
-                    padding: 20px;
+                    padding: 25px;
                     border-radius: 12px;
                     border: 1px solid var(--glass-border);
                 }
 
+                .controls-grid { display: grid; grid-template-columns: 1fr auto; gap: 20px; }
                 .input-group { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
                 label { color: var(--text-muted); font-size: 0.9rem; }
                 
@@ -201,20 +202,12 @@ app.get('/', (req, res) => {
                     outline: none;
                 }
                 
-                input:focus { border-color: rgba(255, 255, 255, 0.2); }
-
                 .checkbox-wrapper { display: flex; align-items: center; gap: 5px; cursor: pointer; }
 
                 .btn { 
-                    background: rgba(255, 255, 255, 0.05); 
-                    border: 1px solid var(--glass-border); 
-                    border-radius: 8px; 
-                    padding: 10px 24px; 
-                    cursor: pointer; 
-                    font-size: 0.9rem; 
-                    font-weight: 500; 
-                    color: var(--text-main); 
-                    transition: all 0.3s ease;
+                    background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); 
+                    border-radius: 8px; padding: 10px 24px; cursor: pointer; 
+                    font-size: 0.9rem; font-weight: 500; color: var(--text-main); transition: all 0.2s ease;
                 }
 
                 .btn:hover { transform: translateY(-2px); }
@@ -222,47 +215,39 @@ app.get('/', (req, res) => {
                 .btn-blue:hover { border-color: var(--accent-blue); text-shadow: 0 0 8px rgba(59, 130, 246, 0.6); }
                 .btn-green { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.4); }
                 .btn-green:hover { border-color: var(--accent-green); text-shadow: 0 0 8px rgba(16, 185, 129, 0.6); }
+                .btn-red { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); }
+                .btn-red:hover { border-color: var(--accent-red); text-shadow: 0 0 8px rgba(239, 68, 68, 0.6); }
 
-                #status-msg { margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); }
+                /* Status Indicator */
+                .status-badge {
+                    padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 6px;
+                }
+                .status-offline { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); }
+                .status-starting { background: rgba(245, 158, 11, 0.1); color: var(--accent-orange); border: 1px solid var(--accent-orange); }
+                .status-online { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid var(--accent-green); }
+                
+                .dot { width: 8px; height: 8px; border-radius: 50%; }
+                .status-offline .dot { background: var(--text-muted); }
+                .status-starting .dot { background: var(--accent-orange); animation: pulse 1s infinite; }
+                .status-online .dot { background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
 
-                /* Painel do Grafo */
-                .graph-panel {
-                    display: flex;
-                    background: rgba(0, 0, 0, 0.5);
-                    border: 1px solid var(--glass-border);
-                    border-radius: 12px;
-                    padding: 20px 0;
-                    margin-top: 20px;
-                    overflow-x: auto;
-                    box-shadow: inset 0 2px 15px rgba(0,0,0,0.5);
-                    min-height: 300px;
+                @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+                .terminal-box {
+                    background: rgba(0, 0, 0, 0.6); border: 1px solid var(--glass-border);
+                    padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.85rem;
+                    height: 150px; overflow-y: auto; color: #a3be8c; margin-top: 15px;
                 }
 
+                /* Grafo CSS omitido por brevidade mas igual ao anterior */
+                .graph-panel { display: flex; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--glass-border); border-radius: 12px; padding: 20px 0; margin-top: 15px; overflow-x: auto; min-height: 250px; }
                 .canvas-container { flex-shrink: 0; padding-left: 10px; }
                 .commit-list { flex-grow: 1; display: flex; flex-direction: column; min-width: 600px; padding-right: 20px; }
-                
-                .commit-row { 
-                    display: flex; 
-                    align-items: center; 
-                    border-bottom: 1px solid rgba(255,255,255,0.03); 
-                    box-sizing: border-box;
-                }
-                .commit-row:hover { background: rgba(255,255,255,0.02); }
-
+                .commit-row { display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.03); box-sizing: border-box; }
                 .commit-hash { font-family: monospace; font-size: 0.85rem; width: 80px; flex-shrink: 0; }
                 .commit-msg { flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 15px; font-size: 0.9rem; }
                 .commit-author { width: 120px; flex-shrink: 0; font-size: 0.8rem; color: var(--text-muted); text-align: right; }
-                
-                .branch-tag { 
-                    background: rgba(255,255,255,0.1); 
-                    border: 1px solid var(--glass-border); 
-                    padding: 2px 6px; 
-                    border-radius: 4px; 
-                    font-size: 0.7rem; 
-                    margin-right: 8px; 
-                    color: var(--accent-green);
-                    font-weight: bold;
-                }
+                .branch-tag { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-right: 8px; color: var(--accent-green); font-weight: bold; }
 
                 ::-webkit-scrollbar { width: 8px; height: 8px; }
                 ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
@@ -271,69 +256,105 @@ app.get('/', (req, res) => {
         </head>
         <body>
             <div class="container">
-                <h1>🚀 Git Tree Dashboard</h1>
+                <h1>⚙️ Dashboard Hub</h1>
                 
-                <div class="controls-grid">
-                    <div class="input-group">
-                        <label>Limite:</label>
-                        <input type="number" id="param-limit" value="20" style="width: 70px;">
-                        
-                        <label>Skip:</label>
-                        <input type="number" id="param-skip" value="0" style="width: 70px;">
-                        
-                        <label class="checkbox-wrapper">
-                            <input type="checkbox" id="param-all" checked> Todas as Branches (--all)
-                        </label>
-
-                        <button class="btn btn-blue" onclick="buscarEDesenharGrafo()">🌳 Renderizar Grafo</button>
+                <!-- PAINEL NG SERVE -->
+                <div class="panel">
+                    <h2>🚀 App Server (ng serve)</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <div class="input-group">
+                            <label>Porta:</label>
+                            <input type="number" id="app-port" value="4200" style="width: 80px;">
+                            <button class="btn btn-green" onclick="startApp()">▶ Iniciar</button>
+                            <button class="btn btn-red" onclick="stopApp()">⏹ Parar</button>
+                        </div>
+                        <div id="app-badge" class="status-badge status-offline">
+                            <div class="dot"></div> <span id="app-status-text">OFFLINE</span>
+                        </div>
                     </div>
-                    <div>
-                        <button class="btn btn-green" onclick="fazerCommit()">🚀 git add . && commit</button>
-                    </div>
+                    <div class="terminal-box" id="app-terminal">Aguardando comandos...</div>
                 </div>
 
-                <div id="status-msg">Pronto.</div>
-
-                <div class="graph-panel" id="graph-panel" style="display: none;">
-                    <div class="canvas-container">
-                        <canvas id="git-canvas"></canvas>
+                <!-- PAINEL GIT -->
+                <div class="panel">
+                    <h2>🌳 Git Tree</h2>
+                    <div class="controls-grid">
+                        <div class="input-group">
+                            <input type="number" id="param-limit" value="10" style="width: 60px;" title="Limite">
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" id="param-all" checked> --all
+                            </label>
+                            <button class="btn btn-blue" onclick="buscarEDesenharGrafo()">Renderizar Grafo</button>
+                        </div>
+                        <button class="btn btn-green" onclick="fazerCommit()">git add . && commit</button>
                     </div>
-                    <div class="commit-list" id="commit-list"></div>
+                    <div class="graph-panel" id="graph-panel" style="display: none;">
+                        <div class="canvas-container"><canvas id="git-canvas"></canvas></div>
+                        <div class="commit-list" id="commit-list"></div>
+                    </div>
                 </div>
             </div>
 
             <script>
-                const statusEl = document.getElementById('status-msg');
-                const panelEl = document.getElementById('graph-panel');
+                // --- LÓGICA DO NG SERVE ---
+                const termEl = document.getElementById('app-terminal');
+                const badgeEl = document.getElementById('app-badge');
+                const statusTextEl = document.getElementById('app-status-text');
 
-                // Configurações visuais do grafo
-                const ROW_HEIGHT = 40;
-                const DOT_RADIUS = 5;
-                const TRACK_WIDTH = 20;
-                const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#0ea5e9'];
+                async function startApp() {
+                    const port = document.getElementById('app-port').value;
+                    await fetch('/app/start', { 
+                        method: 'POST', 
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ port })
+                    });
+                    checkStatus();
+                }
+
+                async function stopApp() {
+                    await fetch('/app/stop', { method: 'POST' });
+                    checkStatus();
+                }
+
+                async function checkStatus() {
+                    try {
+                        const res = await fetch('/app/status');
+                        const data = await res.json();
+                        
+                        // Atualiza a UI do badge
+                        badgeEl.className = 'status-badge status-' + data.status;
+                        statusTextEl.textContent = data.status === 'offline' ? 'OFFLINE' : data.status + (data.porta ? ' :' + data.porta : '');
+
+                        // Atualiza logs se houver
+                        if (data.logs && data.logs.length > 0) {
+                            termEl.innerHTML = data.logs.join('<br>');
+                            termEl.scrollTop = termEl.scrollHeight; // Auto-scroll pro final
+                        }
+                    } catch (e) {
+                        console.error('Erro ao buscar status', e);
+                    }
+                }
+
+                // Faz polling do status a cada 2 segundos
+                setInterval(checkStatus, 2000);
+                checkStatus();
+
+
+                // --- LÓGICA DO GRAFO GIT (Mantida igual a anterior) ---
+                const ROW_HEIGHT = 40, DOT_RADIUS = 5, TRACK_WIDTH = 20;
+                const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
                 async function buscarEDesenharGrafo() {
-                    statusEl.textContent = 'Buscando árvore de commits...';
-                    
                     const limit = document.getElementById('param-limit').value;
-                    const skip = document.getElementById('param-skip').value;
                     const all = document.getElementById('param-all').checked;
-                    
-                    const params = new URLSearchParams({ limit, skip, all });
+                    const params = new URLSearchParams({ limit, skip: 0, all });
 
-                    try {
-                        const response = await fetch('/commits?' + params.toString());
-                        const data = await response.json();
-                        
-                        if (data.commits && data.commits.length > 0) {
-                            panelEl.style.display = 'flex';
-                            desenharGrafo(data.commits);
-                            statusEl.textContent = \`Grafo renderizado com \${data.commits.length} commits.\`;
-                        } else {
-                            statusEl.textContent = 'Nenhum commit encontrado no repositório.';
-                        }
-                    } catch (error) {
-                        statusEl.textContent = 'Erro ao buscar commits: ' + error.message;
+                    const response = await fetch('/commits?' + params.toString());
+                    const data = await response.json();
+                    
+                    if (data.commits && data.commits.length > 0) {
+                        document.getElementById('graph-panel').style.display = 'flex';
+                        desenharGrafo(data.commits);
                     }
                 }
 
@@ -343,122 +364,60 @@ app.get('/', (req, res) => {
                     const listEl = document.getElementById('commit-list');
                     listEl.innerHTML = '';
 
-                    // Lógica para definir a trilha (track X) de cada commit
-                    let tracks = []; 
-                    let nodes = [];
-                    let maxTrackIndex = 0;
+                    let tracks = [], nodes = [], maxTrackIndex = 0;
 
                     commits.forEach((commit, i) => {
                         let trackIndex = tracks.indexOf(commit.hash);
-                        
-                        // Se não encontrou uma trilha aguardando esse commit, cria uma nova
                         if (trackIndex === -1) {
-                            trackIndex = tracks.findIndex(t => t === null); // reaproveita trilha morta
-                            if (trackIndex === -1) {
-                                trackIndex = tracks.length;
-                            }
+                            trackIndex = tracks.findIndex(t => t === null);
+                            if (trackIndex === -1) trackIndex = tracks.length;
                         }
-
                         if (trackIndex > maxTrackIndex) maxTrackIndex = trackIndex;
 
-                        nodes.push({
-                            commit,
-                            x: 20 + trackIndex * TRACK_WIDTH,
-                            y: i * ROW_HEIGHT + ROW_HEIGHT / 2,
-                            color: COLORS[trackIndex % COLORS.length],
-                            trackIndex
-                        });
+                        nodes.push({ commit, x: 20 + trackIndex * TRACK_WIDTH, y: i * ROW_HEIGHT + ROW_HEIGHT / 2, color: COLORS[trackIndex % COLORS.length], trackIndex });
 
-                        // Atualiza as trilhas aguardando os próximos nós (pais)
                         if (commit.parents.length > 0) {
                             tracks[trackIndex] = commit.parents[0];
-                            // Se for merge, cria trilhas pros outros pais
-                            for (let p = 1; p < commit.parents.length; p++) {
-                                tracks.push(commit.parents[p]);
-                            }
-                        } else {
-                            tracks[trackIndex] = null; // Fim da trilha (initial commit)
-                        }
+                            for (let p = 1; p < commit.parents.length; p++) tracks.push(commit.parents[p]);
+                        } else tracks[trackIndex] = null;
                     });
 
-                    // Ajusta o tamanho do canvas com base nas trilhas e nós
                     canvas.width = 40 + maxTrackIndex * TRACK_WIDTH;
                     canvas.height = commits.length * ROW_HEIGHT;
-                    
-                    // Limpeza
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.lineWidth = 2;
 
-                    // 1. Desenhar as Linhas (Edges)
                     nodes.forEach(node => {
                         node.commit.parents.forEach((parentHash, pIndex) => {
                             const parentNode = nodes.find(n => n.commit.hash === parentHash);
-                            
-                            ctx.beginPath();
-                            ctx.moveTo(node.x, node.y);
-
+                            ctx.beginPath(); ctx.moveTo(node.x, node.y);
                             if (parentNode) {
-                                // Curva Bezier para transição suave entre trilhas
-                                ctx.bezierCurveTo(
-                                    node.x, node.y + ROW_HEIGHT / 2,
-                                    parentNode.x, parentNode.y - ROW_HEIGHT / 2,
-                                    parentNode.x, parentNode.y
-                                );
+                                ctx.bezierCurveTo(node.x, node.y + ROW_HEIGHT / 2, parentNode.x, parentNode.y - ROW_HEIGHT / 2, parentNode.x, parentNode.y);
                                 ctx.strokeStyle = (pIndex === 0) ? node.color : parentNode.color;
                             } else {
-                                // Pai não está na página atual (paginação), linha reta para baixo e some
-                                ctx.lineTo(node.x, node.y + ROW_HEIGHT);
-                                ctx.strokeStyle = node.color;
-                                ctx.globalAlpha = 0.3;
+                                ctx.lineTo(node.x, node.y + ROW_HEIGHT); ctx.strokeStyle = node.color; ctx.globalAlpha = 0.3;
                             }
-                            
-                            ctx.stroke();
-                            ctx.globalAlpha = 1.0;
+                            ctx.stroke(); ctx.globalAlpha = 1.0;
                         });
                     });
 
-                    // 2. Desenhar os Pontos (Nodes) e injetar HTML
                     nodes.forEach(node => {
-                        // Círculo
-                        ctx.beginPath();
-                        ctx.arc(node.x, node.y, DOT_RADIUS, 0, 2 * Math.PI);
-                        ctx.fillStyle = '#0f172a'; // Cor de fundo para furar a linha
-                        ctx.fill();
-                        ctx.lineWidth = 3;
-                        ctx.strokeStyle = node.color;
-                        ctx.stroke();
+                        ctx.beginPath(); ctx.arc(node.x, node.y, DOT_RADIUS, 0, 2 * Math.PI);
+                        ctx.fillStyle = '#0f172a'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = node.color; ctx.stroke();
 
-                        // Lista HTML
                         const row = document.createElement('div');
-                        row.className = 'commit-row';
-                        row.style.height = \`\${ROW_HEIGHT}px\`;
-
-                        const tagsHtml = node.commit.branches
-                            .map(b => \`<span class="branch-tag">\${b}</span>\`)
-                            .join('');
-
-                        row.innerHTML = \`
-                            <div class="commit-hash" style="color: \${node.color}">\${node.commit.short_hash}</div>
-                            <div class="commit-msg">\${tagsHtml} \${node.commit.message}</div>
-                            <div class="commit-author">\${node.commit.author.name}</div>
-                        \`;
+                        row.className = 'commit-row'; row.style.height = \`\${ROW_HEIGHT}px\`;
+                        const tagsHtml = node.commit.branches.map(b => \`<span class="branch-tag">\${b}</span>\`).join('');
+                        row.innerHTML = \`<div class="commit-hash" style="color: \${node.color}">\${node.commit.short_hash}</div><div class="commit-msg">\${tagsHtml} \${node.commit.message}</div><div class="commit-author">\${node.commit.author.name}</div>\`;
                         listEl.appendChild(row);
                     });
                 }
 
                 async function fazerCommit() {
-                    statusEl.textContent = 'Executando pipeline de commit...';
-                    try {
-                        const response = await fetch('/commit', { method: 'POST' });
-                        const data = await response.json();
-                        statusEl.textContent = 'Commit finalizado. Saída: ' + (data.saida || 'Sucesso.');
-                        buscarEDesenharGrafo(); // Recarrega o grafo
-                    } catch (error) {
-                        statusEl.textContent = 'Erro ao fazer commit: ' + error.message;
-                    }
+                    await fetch('/commit', { method: 'POST' });
+                    buscarEDesenharGrafo();
                 }
 
-                // Carrega o grafo automaticamente ao abrir
                 window.onload = buscarEDesenharGrafo;
             </script>
         </body>
@@ -467,6 +426,106 @@ app.get('/', (req, res) => {
 
     res.send(html);
 });
+
+// --- ESTADO DO NG SERVE ---
+let ngProcess = null;        // Guarda a instância do processo
+let ngStatus = 'offline';    // 'offline', 'starting', 'online', 'error'
+let ngPort = null;           // Porta atual
+let ngLogs = [];             // Guarda as últimas 50 linhas de log
+
+/**
+ * 4. Iniciar ng serve
+ * POST /app/start
+ * Aceita body ou query: { port: 4200 }
+ */
+app.post('/app/start', (req, res) => {
+    try {
+        const port = req.body.port || req.query.port;
+
+        if (ngProcess) {
+            return res.status(400).json({ erro: 'O ng serve já está rodando!', porta: ngPort });
+        }
+
+        ngStatus = 'starting';
+        ngPort = port;
+        ngLogs = ['Iniciando ng serve...'];
+
+        // Tratamento multiplataforma para o comando do Angular
+        const isWin = process.platform === "win32";
+        const cmd = isWin ? 'powershell' : 'powershell';
+
+        // Inicia o processo na pasta ./apps
+        ngProcess = spawn(cmd, ['ng', 'serve', ...(!!ngPort ? ['--port', ngPort]:[])], { cwd: './apps' });
+
+        // Captura os logs normais (stdout)
+        ngProcess.stdout.on('data', (data) => {
+            const log = data.toString().trim();
+            if (log) {
+                ngLogs.push(log);
+                if (ngLogs.length > 50) ngLogs.shift(); // Mantém apenas as últimas 50 linhas
+
+                // Verifica se terminou de compilar
+                if (log.includes('Compiled successfully') || log.includes('Application bundle generation complete')) {
+                    ngStatus = 'online';
+                }
+            }
+        });
+
+        // Captura logs de erro (stderr)
+        ngProcess.stderr.on('data', (data) => {
+            const log = data.toString().trim();
+            if (log) {
+                ngLogs.push(`[ERRO]: ${log}`);
+                if (ngLogs.length > 50) ngLogs.shift();
+            }
+        });
+
+        // Evento disparado quando o processo é fechado/morto
+        ngProcess.on('close', (code) => {
+            ngProcess = null;
+            ngStatus = 'offline';
+            ngPort = null;
+            ngLogs.push(`Processo finalizado com código ${code}`);
+        });
+
+        res.json({ mensagem: `Comando disparado na porta ${port}`, status: ngStatus });
+    } catch (error) {
+        res.json({ mensagem: error });
+    }
+});
+
+/**
+ * 5. Parar ng serve
+ * POST /app/stop
+ */
+app.post('/app/stop', (req, res) => {
+    if (!ngProcess) {
+        return res.status(400).json({ erro: 'Nenhum servidor rodando no momento.' });
+    }
+
+    // Envia o sinal para derrubar o processo
+    ngProcess.kill('SIGINT');
+
+    // Força a limpeza das variáveis imediatamente
+    ngProcess = null;
+    ngStatus = 'offline';
+    ngPort = null;
+
+    res.json({ mensagem: 'Servidor de desenvolvimento interrompido com sucesso.' });
+});
+
+/**
+ * 6. Status do ng serve
+ * GET /app/status
+ */
+app.get('/app/status', (req, res) => {
+    res.json({
+        status: ngStatus,
+        porta: ngPort,
+        logs: ngLogs
+    });
+});
+
 // Inicializa o servidor
 app.listen(PORT, () => {
     console.log(`🚀 Servidor rodando na porta ${PORT}`);
