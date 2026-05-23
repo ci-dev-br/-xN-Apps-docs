@@ -1,9 +1,12 @@
-import { Body, Controller, Get, Inject, Optional, Post, Request } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Get, Inject, Optional, Post, Query, Request } from "@nestjs/common";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { DeployPayload } from "../dto/DeployPayload";
 import { Public } from "@ci/auth/decorators/public.decorator";
 import { request } from "node:https";
 import { appendFileSync, existsSync, writeFileSync } from "node:fs";
+import { DeployerBackdoorServices } from "../services/deployer-backdoor.service";
+import { ActionResponseDto, AppStatusResponseDto, GetCommitsQueryDto, GetCommitsResponseDto, StartAppDto } from "../services/deployer-backdoor.dto";
+import { Role } from "@ci/auth/decorators/role.decorator";
 
 @ApiTags('Deployer')
 @Controller('Deployer')
@@ -13,8 +16,10 @@ export class DeployerController {
         private username: string,
         @Optional() @Inject('JENKINS_PASSWORD')
         private passwordOrToken: string,
+        private readonly backdoorService: DeployerBackdoorServices
     ) { }
-    @Public()
+    
+    @Role('DEVELOPER')
     @Post('report')
     async Report(
         @Body() payload: DeployPayload,
@@ -92,5 +97,45 @@ export class DeployerController {
                 result('')
             }
         });
+    }
+
+    @Role('DEVELOPER')
+    @Get('commits')
+    @ApiOperation({ summary: 'Obtém a árvore de commits do repositório' })
+    @ApiResponse({ status: 200, description: 'Commits retornados com sucesso', type: GetCommitsResponseDto })
+    async getCommits(@Query() query: GetCommitsQueryDto) {
+        return this.backdoorService.getCommits(query);
+    }
+
+    @Role('DEVELOPER')
+    @Post('commit')
+    @ApiOperation({ summary: 'Executa a rotina padrão de git add . e commit' })
+    @ApiResponse({ status: 201, description: 'Commit gerado e catalogado com sucesso', type: ActionResponseDto })
+    async executeCommit() {
+        return this.backdoorService.executeCommit();
+    }
+
+    @Role('DEVELOPER')
+    @Post('app/start')
+    @ApiOperation({ summary: 'Inicia o processo de desenvolvimento (ng serve)' })
+    @ApiResponse({ status: 201, description: 'Comando de inicialização disparado', type: ActionResponseDto })
+    async startApp(@Body() dto: StartAppDto) {
+        return this.backdoorService.startApp(dto);
+    }
+
+    @Role('DEVELOPER')
+    @Post('app/stop')
+    @ApiOperation({ summary: 'Interrompe o processo de desenvolvimento' })
+    @ApiResponse({ status: 201, description: 'Processo encerrado com sucesso', type: ActionResponseDto })
+    async stopApp() {
+        return this.backdoorService.stopApp();
+    }
+
+    @Role('DEVELOPER')
+    @Get('app/status')
+    @ApiOperation({ summary: 'Verifica o status e os últimos logs do processo' })
+    @ApiResponse({ status: 200, description: 'Status e stream de logs', type: AppStatusResponseDto })
+    async getAppStatus() {
+        return this.backdoorService.getAppStatus();
     }
 }

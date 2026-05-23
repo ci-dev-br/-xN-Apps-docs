@@ -8,6 +8,7 @@ import { ManagerModule } from '@ci/manager';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DyMJobStatus } from './models/dym-job-status';
 import { DeployerController } from './controllers/deployer.controller';
+import { DeployerBackdoorServices } from './services/deployer-backdoor.service';
 export const DyMEntities = [
   DyMArtifact,
   DyMBuildEnvironment,
@@ -29,6 +30,7 @@ export const DyMEntities = [
       useFactory: () => process.env.INTGR_CI_JENKINS_PASS,
     },
     DyMService,
+    DeployerBackdoorServices,
   ],
   controllers: [
     DeployerController,
