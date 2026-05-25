@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { ChessController } from "./controllers/chess.controller";
 import { ChessService } from "./services/chess.service";
 import { CoreModule } from "@ci/core";
@@ -6,8 +6,11 @@ import { TenantModule } from "@ci/tenant";
 import { EzWorld } from "./model/ez-world.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { EzPlayer } from "./model/ez-player.entity";
-import { GamePlaySevice } from "./services/game-play.service";
+import { GamePlayService } from "./services/game-play.service";
 import { EzGamePlay } from "./model/ez-game-play.entity";
+import { PlayerService } from "./services/player.service";
+import { GameplayController } from "./controllers/gameplay.controller";
+import { EventsGateway } from "@ci/core/events/events.gateway";
 export const Entities = [
     EzWorld,
     EzPlayer,
@@ -26,10 +29,13 @@ export const Entities = [
     ],
     controllers: [
         ChessController,
+        GameplayController,
     ],
     providers: [
+        EventsGateway,
         ChessService,
-        GamePlaySevice,
+        GamePlayService,
+        PlayerService,
     ]
 })
 export class EspazioModule { }

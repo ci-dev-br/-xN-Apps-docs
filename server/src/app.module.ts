@@ -149,7 +149,7 @@ process.env.MODULES.split(',').forEach(e => {
         ...LoadedEntities
       ]
     }),
-    forwardRef(() => CmsModule),
+    // forwardRef(() => CmsModule),
     ...LoadedModules,
   ],
   controllers: [
@@ -157,7 +157,7 @@ process.env.MODULES.split(',').forEach(e => {
   ],
   providers: [
     CiApplicationService,
-    
+
   ],
 })
 export class AppModule { }

@@ -457,4 +457,17 @@ export class EventsGateway implements OnGatewayInit {
             console.trace(error);
         }
     }
+
+    async createUserChat(options?: any) {
+        const user_chat_context: {
+            options?: any,
+            connections?: any[],
+            __user_identification?: string,
+        } = {
+            options
+        }
+        user_chat_context.__user_identification =
+            (Math.random() ** Math.random()).toString(36)
+        return user_chat_context;
+    }
 }

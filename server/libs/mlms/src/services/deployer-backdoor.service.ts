@@ -21,7 +21,7 @@ export class DeployerBackdoorServices {
       const url = new URL(`${this.backdoorUrl}${path}`);
       
       const options: http.RequestOptions = {
-        method,
+      method,
         hostname: url.hostname,
         port: url.port,
         path: url.pathname + url.search,

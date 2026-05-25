@@ -1,1 +1,11 @@
 
+export * from './services/chess.service'
+export * from './services/game-play.service'
+export * from './services/player.service'
+export * from './espazio.module'
+export * from './model/ez-game-play.entity'
+export * from './model/ez-player.entity'
+export * from './model/ez-world.entity'
+export * from './model/schema'
+export * from './controllers/chess.controller'
+export * from './controllers/gameplay.controller'
