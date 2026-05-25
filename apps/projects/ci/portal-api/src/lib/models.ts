@@ -1,9 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
 export * from './models/acesso-payload';
+export * from './models/action-response-dto';
 export * from './models/agendamento';
 export * from './models/application';
+export * from './models/app-status-response-dto';
 export * from './models/atendimento';
+export * from './models/author-dto';
 export * from './models/authorization-output';
 export * from './models/buffer';
 export * from './models/card';
@@ -13,6 +16,7 @@ export * from './models/cliente-crm';
 export * from './models/cliente-projeto';
 export * from './models/comment';
 export * from './models/comment-meta';
+export * from './models/commit-dto';
 export * from './models/conversation';
 export * from './models/cpu-info';
 export * from './models/deploy-payload';
@@ -30,6 +34,7 @@ export * from './models/form-cotroller-get-input-dto';
 export * from './models/forms';
 export * from './models/game-payload';
 export * from './models/get-by-internal-id-input-dto';
+export * from './models/get-commits-response-dto';
 export * from './models/get-device-input';
 export * from './models/get-input-dtos';
 export * from './models/historico-contato';
@@ -104,6 +109,7 @@ export * from './models/servico';
 export * from './models/site-option';
 export * from './models/site-page';
 export * from './models/site-post';
+export * from './models/start-app-dto';
 export * from './models/sync-payload-dao-agendamento';
 export * from './models/sync-payload-dao-atendimento';
 export * from './models/sync-payload-dao-category';

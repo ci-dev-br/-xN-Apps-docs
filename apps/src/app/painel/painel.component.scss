@@ -276,3 +276,6 @@ button.app {
     overflow: hidden;
     background-color: var(--mdc-protected-button-label-text-color);
 }
+ci-navbar{
+    z-index: 500;
+}

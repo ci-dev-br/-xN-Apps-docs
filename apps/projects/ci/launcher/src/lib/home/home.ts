@@ -32,9 +32,11 @@ export class Home implements OnInit {
     'https://images.pexels.com/photos/34442367/pexels-photo-34442367.jpeg',
   ];
   objetos: Objeto[] = [
-    // new Objeto({ glb_file: 'nana.glb' }),
-    new Objeto({ glb_file: 'celula-000.glb' }),
+    new Objeto({
+      glb_file: 'tiger.glb'
+    })
   ];
+
   x?: string;
   agora = new Date();
   n?: string;

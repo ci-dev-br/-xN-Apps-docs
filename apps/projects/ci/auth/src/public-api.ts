@@ -9,3 +9,4 @@ export * from './lib/components/user-photo/user-photo';
 export * from './lib/services/user-authentication-user.service';
 export * from './lib/components/profile-menu/profile-menu';
 export * from './lib/components/user-photo/user-photo';
+export * from './lib/roles/role.directive';

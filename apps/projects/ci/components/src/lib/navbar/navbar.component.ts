@@ -1,8 +1,7 @@
-import { Component, ElementRef, EventEmitter, inject, Input, OnInit, Output, ViewChild } from "@angular/core";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import { USER_MENU, UserAuthenticationService } from "@ci/auth";
 import { INavbarItemMenu } from "./i-menu-item";
 import { IItemMenu } from "@ci/components/window";
-import { MatMenu } from "@angular/material/menu";
 
 @Component({
     selector: 'ci-navbar',

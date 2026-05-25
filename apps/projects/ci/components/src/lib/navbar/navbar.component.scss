@@ -95,6 +95,7 @@ button.app {
     justify-content: space-between;
     overflow: hidden;
     gap: 24px;
+    z-index: 500;
 
     ::ng-deep * {
         font-size: medium !important;

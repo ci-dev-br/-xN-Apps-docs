@@ -262,4 +262,14 @@ export const CI_STATIC_APPS: IApp[] = [
         icon: 'cms',
         type: 'svg'
     },
+    {
+        shortDescription: 'Loja de Aplicativos',
+        description: 'Loja de Aplicativos',
+        color: getColor(),
+        url: '/Loja',
+        name: 'Loja',
+        roles: ['USER'],
+        icon: 'apps',
+        type: 'mat'
+    },
 ];

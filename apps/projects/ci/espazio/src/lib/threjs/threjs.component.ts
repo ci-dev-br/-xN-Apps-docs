@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Input, NgZone, OnDestroy, Optional, ViewChild } from '@angular/core';
-import { BoxGeometry, Color, DirectionalLight, Material, Mesh, MeshNormalMaterial, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from 'three';
+import { AnimationMixer, BoxGeometry, Color, DirectionalLight, Material, Mesh, MeshNormalMaterial, PerspectiveCamera, PointLight, Scene, WebGLRenderer, Clock } from 'three';
 import { CoreModule } from '@ci/core';
 // Importamos o OrbitControls junto com o GLTFLoader
-import { GLTFLoader, OrbitControls } from 'three/addons';
+import { GLTFLoader, OrbitControls, TechnicolorShader, } from 'three/addons';
 
 /**
  * Objeto Espacial
@@ -17,20 +17,30 @@ export class Objeto {
   largura?: number;
   massa?: number;
   glb_file?: string;
-
+  gltf?: any;
+  controls?: any;
   constructor(data?: { mesh?: Mesh, glb_file?: string }) {
     this.mesh = data?.mesh;
     this.glb_file = data?.glb_file;
   }
-
-  loadGBL(glb_file: string = this.glb_file || '') {
-    const loader = new GLTFLoader().setPath('./3d/');
-    loader.load(glb_file, (gltf) => {
-      this.scene?.add(gltf.scene);
-    });
+  async loadGBLFile(glb_file: string = this.glb_file || '') {
+    return await new Promise<void>((res, rej) => {
+      try {
+        const loader = new GLTFLoader().setPath('./3d/');
+        loader.load(glb_file, (gltf) => {
+          this.loadGltf(gltf)
+          res();
+        });
+      } catch (error) {
+        rej(error);
+      }
+    })
+  }
+  private loadGltf(gltf: any) {
+    this.gltf = gltf;
+    this.scene?.add(gltf.scene);
   }
 }
-
 @Component({
   selector: 'c-threjs',
   imports: [CoreModule],
@@ -41,11 +51,14 @@ export class Objeto {
 export class ThrejsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('rendererContainer', { static: true }) rendererContainer!: ElementRef<HTMLDivElement>;
 
+  @Input() mixer?: AnimationMixer;
   @Input() scene?: Scene;
   @Input() camera?: PerspectiveCamera;
   @Input() renderer?: WebGLRenderer;
   @Input() resizeObserver?: ResizeObserver;
   @Input() frameId: number = 0;
+  lights: PointLight[] = [];
+  clock = new Clock();
 
   // Nova propriedade para armazenar os controles da câmera
   controls?: OrbitControls;
@@ -104,12 +117,13 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
 
   private initThree(): void {
     this.scene = new Scene();
-    this.scene.background = new Color(0x222222);
+    // this.scene.background = new Color(0x22222200);
 
     const { clientWidth, clientHeight } = this.rendererContainer.nativeElement;
 
     this.camera = new PerspectiveCamera(75, clientWidth / clientHeight, 0.1, 1000);
     this.camera.position.z = 5;
+    this.camera.position.y = 1;
 
     this.renderer = new WebGLRenderer({
       antialias: true,
@@ -133,29 +147,45 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     // this.controls.enablePan = false; // Descomente se não quiser que o usuário arraste a câmera para fora do centro
     // this.controls.enableZoom = true; // O zoom usando o scroll do mouse já vem ativado por padrão
 
-    const light = new PointLight(0xffffff, 10000, 100);
+    const light = new PointLight(0xffffff, 10, 100);
+    this.lights.push(light);
     light.position.set(0, 40, -10);
     this.scene.add(light);
 
     if (this.objetos) {
-      this.objetos.forEach(obj => {
+      this.objetos.forEach(async obj => {
         obj.scene = this.scene;
-        if (!!obj.glb_file) obj.loadGBL();
+        if (!!obj.glb_file) {
+          await obj.loadGBLFile();
+          if (!this.mixer && obj.scene) this.mixer = new AnimationMixer(obj.scene)
+          this.mixer?.clipAction(obj.gltf.animations[5]).play();
+        }
       });
     }
   }
 
   private animate(): void {
-    this.frameId = requestAnimationFrame(() => this.animate());
+    try {
+      const delta = this.clock.getDelta();
+      this.frameId = requestAnimationFrame(() => this.animate());
 
-    // Atualiza os controles em cada frame (necessário quando enableDamping = true)
-    if (this.controls) {
-      this.controls.update();
-    }
+      // Atualiza os controles em cada frame (necessário quando enableDamping = true)
+      this.lights[0].position.z = this.camera!.position.z!;
+      this.lights[0].position.y = this.camera!.position.y!;
+      this.lights[0].position.x = this.camera!.position.x!;
 
-    if (this.scene && this.camera && this.renderer) {
-      this.renderer.render(this.scene, this.camera);
-    }
+      this.mixer?.update(delta);
+
+      if (this.controls) {
+        this.controls.update();
+      }
+
+      if (this.scene && this.camera && this.renderer) {
+        this.renderer.render(this.scene, this.camera);
+      }
+    } catch (err) {
+      console.trace(err);
+    } 
   }
 
   private setupResizeObserver(): void {
@@ -179,15 +209,15 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
 
   @HostListener('window:keydown', ['$event'])
   async keydownHandler(event: KeyboardEvent) {
-    if (event.key === 'w') {
-      this.camera!.position!.z -= 1;
-    }else if (event.key === 's') {
-      this.camera!.position!.z += 1;
-    }
-    if (event.key === 'a') {
-      this.camera!.position!.x -= 1;
-    }else if (event.key === 'd') {
-      this.camera!.position!.x += 1;
-    }
+    /*  if (event.key === 'w') {
+       this.camera!.position!.z -= 1;
+     }else if (event.key === 's') {
+       this.camera!.position!.z += 1;
+     }
+     if (event.key === 'a') {
+       this.camera!.position!.x -= 1;
+     }else if (event.key === 'd') {
+       this.camera!.position!.x += 1;
+     } */
   }
 }

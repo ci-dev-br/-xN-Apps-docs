@@ -139,11 +139,14 @@ export class PainelComponent implements OnInit {
   }
   ngOnInit(): void {
     let c: string | number[] | null = localStorage.getItem('x-menu-cached-favs');
-    if (typeof c === 'string') c = JSON.parse(c) as number[];
-    this.apps?.forEach((e, i, a) => {
-      e.__cta_hndlred = (c as any)[i];
-    });
-
+    try {
+      if (typeof c === 'string') c = JSON.parse(c) as number[];
+      this.apps?.forEach((e, i, a) => {
+        e.__cta_hndlred = (c as any)[i];
+      });
+    } catch (error) {
+      console.trace(error);
+    }
     setTimeout(() => {
       this.appsFavoritos = [...this.apps || []];
     })

@@ -168,6 +168,9 @@
       "@ci/components/action": [
         "./projects/ci/components/src/lib/action/public-api"
       ],
+      "@ci/components/devtools": [
+        "./projects/ci/components/src/lib/devtools/public-api"
+      ],
     },
     "outDir": "./dist/out-tsc",
     "strict": true,

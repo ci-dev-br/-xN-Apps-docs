@@ -5,15 +5,6 @@ import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
 import { ApiService } from './services/api.service';
-import { WebsiteService } from './services/website.service';
-import { SitePageService } from './services/site-page.service';
-import { CommentMetaService } from './services/comment-meta.service';
-import { CommentService } from './services/comment.service';
-import { LinksService } from './services/links.service';
-import { SiteOptionService } from './services/site-option.service';
-import { SitePostService } from './services/site-post.service';
-import { TermService } from './services/term.service';
-import { TermMetaService } from './services/term-meta.service';
 import { SystemService } from './services/system.service';
 import { DeviceService } from './services/device.service';
 import { MessageService } from './services/message.service';
@@ -43,6 +34,15 @@ import { LancamentoFinanceiroService } from './services/lancamento-financeiro.se
 import { I11NService } from './services/i-11-n.service';
 import { OrganizacaoService } from './services/organizacao.service';
 import { FormsService } from './services/forms.service';
+import { WebsiteService } from './services/website.service';
+import { SitePageService } from './services/site-page.service';
+import { CommentMetaService } from './services/comment-meta.service';
+import { CommentService } from './services/comment.service';
+import { LinksService } from './services/links.service';
+import { SiteOptionService } from './services/site-option.service';
+import { SitePostService } from './services/site-post.service';
+import { TermService } from './services/term.service';
+import { TermMetaService } from './services/term-meta.service';
 import { ProjetoService } from './services/projeto.service';
 import { ClienteProjetoService } from './services/cliente-projeto.service';
 import { WorkItemService } from './services/work-item.service';
@@ -61,7 +61,7 @@ import { ChessService } from './services/chess.service';
 import { ChangelogService } from './services/changelog.service';
 
 export function getServiceAsSchema(schema: string): Type<any>{
-  return ({ 'ApiService': ApiService,'WebsiteService': WebsiteService,'SitePageService': SitePageService,'CommentMetaService': CommentMetaService,'CommentService': CommentService,'LinksService': LinksService,'SiteOptionService': SiteOptionService,'SitePostService': SitePostService,'TermService': TermService,'TermMetaService': TermMetaService,'SystemService': SystemService,'DeviceService': DeviceService,'MessageService': MessageService,'AuthService': AuthService,'RegisterService': RegisterService,'InviteService': InviteService,'PhotoService': PhotoService,'FileService': FileService,'FileExplorerService': FileExplorerService,'VideoService': VideoService,'ApplicationService': ApplicationService,'DomainService': DomainService,'ContactsService': ContactsService,'ChamadaService': ChamadaService,'ConversationService': ConversationService,'ProductService': ProductService,'PranchetaService': PranchetaService,'UserService': UserService,'CategoryService': CategoryService,'CadastroService': CadastroService,'EnderecoService': EnderecoService,'InformacaoContatoService': InformacaoContatoService,'PessoaService': PessoaService,'UnidadeMedidaService': UnidadeMedidaService,'PaisService': PaisService,'LancamentoFinanceiroService': LancamentoFinanceiroService,'I11NService': I11NService,'OrganizacaoService': OrganizacaoService,'FormsService': FormsService,'ProjetoService': ProjetoService,'ClienteProjetoService': ClienteProjetoService,'WorkItemService': WorkItemService,'VendaProdutoService': VendaProdutoService,'ServicoService': ServicoService,'PromocaoService': PromocaoService,'ProfissionalService': ProfissionalService,'ProdutoService': ProdutoService,'PagamentoService': PagamentoService,'HistoricoContatoService': HistoricoContatoService,'ClienteCrmService': ClienteCrmService,'AtendimentoService': AtendimentoService,'AgendamentoService': AgendamentoService,'DeployerService': DeployerService,'ChessService': ChessService,'ChangelogService': ChangelogService, }[ schema + 'Service'] as any) || undefined;
+  return ({ 'ApiService': ApiService,'SystemService': SystemService,'DeviceService': DeviceService,'MessageService': MessageService,'AuthService': AuthService,'RegisterService': RegisterService,'InviteService': InviteService,'PhotoService': PhotoService,'FileService': FileService,'FileExplorerService': FileExplorerService,'VideoService': VideoService,'ApplicationService': ApplicationService,'DomainService': DomainService,'ContactsService': ContactsService,'ChamadaService': ChamadaService,'ConversationService': ConversationService,'ProductService': ProductService,'PranchetaService': PranchetaService,'UserService': UserService,'CategoryService': CategoryService,'CadastroService': CadastroService,'EnderecoService': EnderecoService,'InformacaoContatoService': InformacaoContatoService,'PessoaService': PessoaService,'UnidadeMedidaService': UnidadeMedidaService,'PaisService': PaisService,'LancamentoFinanceiroService': LancamentoFinanceiroService,'I11NService': I11NService,'OrganizacaoService': OrganizacaoService,'FormsService': FormsService,'WebsiteService': WebsiteService,'SitePageService': SitePageService,'CommentMetaService': CommentMetaService,'CommentService': CommentService,'LinksService': LinksService,'SiteOptionService': SiteOptionService,'SitePostService': SitePostService,'TermService': TermService,'TermMetaService': TermMetaService,'ProjetoService': ProjetoService,'ClienteProjetoService': ClienteProjetoService,'WorkItemService': WorkItemService,'VendaProdutoService': VendaProdutoService,'ServicoService': ServicoService,'PromocaoService': PromocaoService,'ProfissionalService': ProfissionalService,'ProdutoService': ProdutoService,'PagamentoService': PagamentoService,'HistoricoContatoService': HistoricoContatoService,'ClienteCrmService': ClienteCrmService,'AtendimentoService': AtendimentoService,'AgendamentoService': AgendamentoService,'DeployerService': DeployerService,'ChessService': ChessService,'ChangelogService': ChangelogService, }[ schema + 'Service'] as any) || undefined;
 } 
 
 /**
@@ -81,15 +81,6 @@ export class ApiModule {
       ngModule: ApiModule,
       providers: [
         ApiService,
-        WebsiteService,
-        SitePageService,
-        CommentMetaService,
-        CommentService,
-        LinksService,
-        SiteOptionService,
-        SitePostService,
-        TermService,
-        TermMetaService,
         SystemService,
         DeviceService,
         MessageService,
@@ -119,6 +110,15 @@ export class ApiModule {
         I11NService,
         OrganizacaoService,
         FormsService,
+        WebsiteService,
+        SitePageService,
+        CommentMetaService,
+        CommentService,
+        LinksService,
+        SiteOptionService,
+        SitePostService,
+        TermService,
+        TermMetaService,
         ProjetoService,
         ClienteProjetoService,
         WorkItemService,
