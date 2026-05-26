@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Input, NgZone, OnDestroy, Optional, ViewChild } from '@angular/core';
-import { AnimationMixer, BoxGeometry, Color, DirectionalLight, Material, Mesh, MeshNormalMaterial, PerspectiveCamera, PointLight, Scene, WebGLRenderer, Clock } from 'three';
+import { AnimationMixer, BoxGeometry, Color, DirectionalLight, Material, Mesh, MeshNormalMaterial, PerspectiveCamera, PointLight, Scene, WebGLRenderer, Clock, PCFSoftShadowMap } from 'three';
 import { CoreModule } from '@ci/core';
 // Importamos o OrbitControls junto com o GLTFLoader
 import { GLTFLoader, OrbitControls, TechnicolorShader, } from 'three/addons';
@@ -137,6 +137,9 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
       precision: 'highp'
     });
 
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = PCFSoftShadowMap;
+
     this.renderer.setSize(clientWidth, clientHeight);
     this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
 
@@ -148,6 +151,7 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     // this.controls.enableZoom = true; // O zoom usando o scroll do mouse já vem ativado por padrão
 
     const light = new PointLight(0xffffff, 10, 100);
+    
     this.lights.push(light);
     light.position.set(0, 40, -10);
     this.scene.add(light);
@@ -185,7 +189,7 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
       }
     } catch (err) {
       console.trace(err);
-    } 
+    }
   }
 
   private setupResizeObserver(): void {

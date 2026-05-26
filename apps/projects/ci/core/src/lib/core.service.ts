@@ -7,7 +7,7 @@ export class CoreService {
   constructor(
     @Optional() private readonly apps?: Apps,
     @Optional() private readonly router?: Router,
-    @Optional() private readonly notification?: NotificationService,
+  @Optional() private readonly notification?: NotificationService,
     //  @Optional() inject: Injector,
     // @Optional() private readonly ar?: ActivatedRoute,
     // @Optional() private readonly themeService?: ThemeService,
@@ -42,10 +42,10 @@ export class CoreService {
     } catch (error) {
       console.info('[0xf1]');
     }
-    try {
-      this.notification?.requestPermission();
-    } catch (error) {
-      console.info('[0xf2]');
-    }
+    /*  try {
+       this.notification?.requestPermission();
+     } catch (error) {
+       console.info('[0xf2]');
+     } */
   }
 }

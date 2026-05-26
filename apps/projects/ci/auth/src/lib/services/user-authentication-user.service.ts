@@ -2,7 +2,7 @@ import { Injectable, Optional } from "@angular/core";
 import { AuthService, User } from "@ci/portal-api";
 import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
-import { StorageService } from "@ci/core";
+import { StorageService, NotificationService } from "@ci/core";
 
 @Injectable()
 export class UserAuthenticationService {
@@ -24,6 +24,8 @@ export class UserAuthenticationService {
         @Optional() private readonly authService?: AuthService,
         @Optional() private readonly router?: Router,
         @Optional() private readonly storage?: StorageService,
+        @Optional() private readonly notification?: NotificationService,
+
     ) {
         this.init();
     }
@@ -36,6 +38,7 @@ export class UserAuthenticationService {
                 if (!!user) {
                     const { /* photo,    */...user_info } = user;
                     if (localStorage) localStorage.setItem('CIUSR', btoa(JSON.stringify(user_info, null, 2)));
+                    this.notification?.requestPermission();
                 } else {
                     if (typeof localStorage !== 'undefined') localStorage.removeItem('CIUSR');
                 }

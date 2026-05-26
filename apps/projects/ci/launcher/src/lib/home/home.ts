@@ -34,7 +34,10 @@ export class Home implements OnInit {
   objetos: Objeto[] = [
     new Objeto({
       glb_file: 'tiger.glb'
-    })
+    }),
+    new Objeto({
+      glb_file: 'map_01.glb'
+    }),
   ];
 
   x?: string;
