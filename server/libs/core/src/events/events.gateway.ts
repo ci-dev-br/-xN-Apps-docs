@@ -24,23 +24,20 @@ export class EventsGateway implements OnGatewayInit {
     ) {
         bus.events = this;
         let verifyAndPropagateStatusHandlersOfClients = () => {
-            try {
-                if (!!this.server?.clients) {
-                    let clientes = [...this.server.clients].filter((c) =>
-                        c.readyState === 1 && 'mac' in c);
-                    if (this._$devices)
-                        this._$devices.next([...clientes.map((c: any) => {
-                            return {
-                                mac: c.mac,
-                            }
-                        })]);
-                }
-                setTimeout(() => {
-                    verifyAndPropagateStatusHandlersOfClients();
-                }, 5000);
-            } catch (error) {
-                console.trace(error);
+
+            if (!!this.server?.clients) {
+                let clientes = [...this.server.clients].filter((c) =>
+                    c.readyState === 1 && 'mac' in c);
+                if (this._$devices)
+                    this._$devices.next([...clientes.map((c: any) => {
+                        return {
+                            mac: c.mac,
+                        }
+                    })]);
             }
+            setTimeout(() => {
+                verifyAndPropagateStatusHandlersOfClients();
+            }, 5000);
         }
         verifyAndPropagateStatusHandlersOfClients();
     }
@@ -56,40 +53,37 @@ export class EventsGateway implements OnGatewayInit {
     private pingHandler(
         client: WebSocket,
         data: IDataMessage) {
-        try {
-            if (data.lastPing) {
-                this.globalPing = ((this.globalPing + (data.lastPing || 0)) / 2)
-                this.pings.push(data.lastPing)
-                if (this.pings.length > 500) {
-                    this.pings = this.pings.splice(this.pings.length - 500, this.pings.length);
-                }
+        if (data.lastPing) {
+            this.globalPing = ((this.globalPing + (data.lastPing || 0)) / 2)
+            this.pings.push(data.lastPing)
+            if (this.pings.length > 500) {
+                this.pings = this.pings.splice(this.pings.length - 500, this.pings.length);
             }
-            let pm = 0;
-            try {
-                pm = !!this.pings && this.pings.length > 0 ? this.pings.reduce((a, b) => a + b) / this.pings.length : 0;
-            } catch (error) {
-                console.trace(error);
-            }
-            const waiting = 1000 + Math.random() * 32000;
-            const last = {
-                event: 'events',
-                type: 'pong',
-                wait: this.lastWaitingTime = waiting,
-                momento: data.momento,
-                globalPing: this.globalPing,
-                pingMedium: pm,
-            };
-            setTimeout(() => {
-                const c = this.clients.get(data.client);
-                if (c && data.momento === c.momento) {
-                    c.returned = false;
-                    this.clients.delete(data.client);
-                }
-            }, waiting + 1000);
-            return last;
-        } catch (error) {
-            console.trace(error)
         }
+        let pm = 0;
+        try {
+            pm = !!this.pings && this.pings.length > 0 ? this.pings.reduce((a, b) => a + b) / this.pings.length : 0;
+        } catch (error) {
+            console.trace(error);
+        }
+        const waiting = 1000 + Math.random() * 32000;
+        const last = {
+            event: 'events',
+            type: 'pong',
+            wait: this.lastWaitingTime = waiting,
+            momento: data.momento,
+            globalPing: this.globalPing,
+            pingMedium: pm,
+        };
+        setTimeout(() => {
+            const c = this.clients.get(data.client);
+            if (c && data.momento === c.momento) {
+                c.returned = false;
+                this.clients.delete(data.client);
+            }
+        }, waiting + 1000);
+        return last;
+
     }
 
     /**
@@ -98,27 +92,23 @@ export class EventsGateway implements OnGatewayInit {
      * @param data 
      */
     private sendSMSHandler(client: WebSocket, data: IDataMessage) {
-        try {
-            this.clients.forEach(c => {
-                try {
-                    if ('mac' in c.ws && c.ws.OPEN) {
-                        c.ws.send(JSON.stringify({
-                            event: 'events',
-                            data: {
-                                type: "requestSendSMSMessage",
-                                momento: Date.now(),
-                                to: data.to,
-                                contentText: data.content
-                            }
-                        }));
+
+        this.clients.forEach(c => {
+
+            if ('mac' in c.ws && c.ws.OPEN) {
+                c.ws.send(JSON.stringify({
+                    event: 'events',
+                    data: {
+                        type: "requestSendSMSMessage",
+                        momento: Date.now(),
+                        to: data.to,
+                        contentText: data.content
                     }
-                } catch (error) {
-                    console.trace(error);
-                }
-            })
-        } catch (error) {
-            console.trace(error)
-        }
+                }));
+            }
+
+        })
+
     }
     private lastWaitingTime?: number;
     /**
@@ -224,13 +214,9 @@ export class EventsGateway implements OnGatewayInit {
      */
     @SubscribeMessage('identity')
     async identity(@ConnectedSocket() client: any, @MessageBody() data: IDataMessage) {
-        try {
-            if (!this.sing(data)) return;
-            client.id = data.client;
-            return data;
-        } catch (error) {
-            console.trace(error);
-        }
+        if (!this.sing(data)) return;
+        client.id = data.client;
+        return data;
     }
     /**
      * Catálogo de listeners de eventos
@@ -240,15 +226,13 @@ export class EventsGateway implements OnGatewayInit {
      * Adiciona listener para evento
      */
     private addEventListener(eventName: string, callBack: (r?: any) => void) {
-        try {
-            let listeners = this.listeners.has(eventName) ? this.listeners.get(eventName) : [];
-            if (!this.listeners.has(eventName)) {
-                this.listeners.set(eventName, listeners);
-            }
-            listeners.push(callBack);
-        } catch (error) {
-            console.trace(error);
+
+        let listeners = this.listeners.has(eventName) ? this.listeners.get(eventName) : [];
+        if (!this.listeners.has(eventName)) {
+            this.listeners.set(eventName, listeners);
         }
+        listeners.push(callBack);
+
     }
     /**
      *  Emite evento para os listeners cadastrados
@@ -256,17 +240,14 @@ export class EventsGateway implements OnGatewayInit {
      * @param data 
      */
     public async emitEvent<E>(nameEvent: string, data?: E) {
-        try {
-            this.listeners.get(nameEvent)?.forEach(callBack => {
-                try {
-                    callBack(data)
-                } catch (error) {
-                    console.trace(error);
-                }
-            });
-        } catch (error) {
-            console.trace(error);
-        }
+        this.listeners.get(nameEvent)?.forEach(callBack => {
+            try {
+                callBack(data)
+            } catch (error) {
+                console.trace(error);
+            }
+        });
+
     }
     private _notices?: ReplaySubject<{ event: string, data: any }> = new ReplaySubject();
 
@@ -280,21 +261,17 @@ export class EventsGateway implements OnGatewayInit {
     public async listening(
         @ConnectedSocket() client: Socket,
         @MessageBody() data: IDataMessage) {
-        try {
-            if (!this.sing(data)) return;
-            this.addEventListener(data.name, (result) => {
-                // (client as any).mac = result.device_mac_assign;
-                const event = {
-                    event: 'notice',
-                    // type: 'replay' | 'sign' | 'loop-back', 
-                    data: result,
-                };
-                // this._notices.next(event);
-                client.send(JSON.stringify(event));
-            })
-        } catch (error) {
-            console.trace(error);
-        }
+        if (!this.sing(data)) return;
+        this.addEventListener(data.name, (result) => {
+            // (client as any).mac = result.device_mac_assign;
+            const event = {
+                event: 'notice',
+                // type: 'replay' | 'sign' | 'loop-back', 
+                data: result,
+            };
+            // this._notices.next(event);
+            client.send(JSON.stringify(event));
+        })
     }
     private _attentionDatas: Map<string, any> = new Map();
     /**
@@ -305,24 +282,20 @@ export class EventsGateway implements OnGatewayInit {
      */
     @SubscribeMessage('Attention')
     async Attention(@ConnectedSocket() client: any, @MessageBody() data: IDataMessage) {
-        try {
-            if (!this.sing(data)) return;
-            client.id = data.client;
-            this.set(data.client, client, data.momento);
-            if (!!data?.objectRef?.internalId) {
-                if (this._attentionDatas.has(data.objectRef.internalId)) {
-                } else {
-                    this._attentionDatas.set(data.objectRef.internalId, {
-                        // TODO: 
-                    });
-                }
-                const __last_data = this._attentionDatas.get(data.objectRef.internalId);
-                if (!__last_data["::CI_INTERNAL.CLIENTS"])
-                    __last_data["::CI_INTERNAL.CLIENTS"] = [];
-                __last_data["::CI_INTERNAL.CLIENTS"].push(client);
+        if (!this.sing(data)) return;
+        client.id = data.client;
+        this.set(data.client, client, data.momento);
+        if (!!data?.objectRef?.internalId) {
+            if (this._attentionDatas.has(data.objectRef.internalId)) {
+            } else {
+                this._attentionDatas.set(data.objectRef.internalId, {
+                    // TODO: 
+                });
             }
-        } catch (error) {
-            console.trace(error);
+            const __last_data = this._attentionDatas.get(data.objectRef.internalId);
+            if (!__last_data["::CI_INTERNAL.CLIENTS"])
+                __last_data["::CI_INTERNAL.CLIENTS"] = [];
+            __last_data["::CI_INTERNAL.CLIENTS"].push(client);
         }
     }
     /**
@@ -332,66 +305,62 @@ export class EventsGateway implements OnGatewayInit {
      * @param momento 
      */
     set(id: string, ws: WebSocket, momento?: number) {
-        try {
-            (ws as any).id = id;
-            if (!this.clients.has(id)) {
-                this.clients.set(id, {
-                    ws, returned: true, momento: momento
-                });
-                if ('mac' in ws && typeof ws.mac === 'string') {
-                    if (this._$devices.value.findIndex(d => d.mac === ws.mac) === -1) {
-                        this._$devices.next([...(this._$devices.value || []), {
-                            mac: ws.mac,
-                        }]);
-                    }
+        (ws as any).id = id;
+        if (!this.clients.has(id)) {
+            this.clients.set(id, {
+                ws, returned: true, momento: momento
+            });
+            if ('mac' in ws && typeof ws.mac === 'string') {
+                if (this._$devices.value.findIndex(d => d.mac === ws.mac) === -1) {
+                    this._$devices.next([...(this._$devices.value || []), {
+                        mac: ws.mac,
+                    }]);
                 }
-                ws.addEventListener('close', (ev) => {
-                    if ('mac' in ws && typeof ws.mac === 'string') {
-                        this._$devices.next([...(this._$devices.value || []).filter(d => d.mac !== ws.mac)]);
-                    }
-                    this.clients.delete((ws as any).id)
-                    setTimeout(() => {
+            }
+            ws.addEventListener('close', (ev) => {
+                if ('mac' in ws && typeof ws.mac === 'string') {
+                    this._$devices.next([...(this._$devices.value || []).filter(d => d.mac !== ws.mac)]);
+                }
+                this.clients.delete((ws as any).id)
+                setTimeout(() => {
 
-                        try {
-                            this.clients.forEach(client => {
-                                try {
-                                    if (client.ws.OPEN) {
-                                        client.ws.send(JSON.stringify({
-                                            clients: this.clients.size
-                                        }))
-                                    }
-                                } catch (error) {
-                                    console.trace(error);
+                    try {
+                        this.clients.forEach(client => {
+                            try {
+                                if (client.ws.OPEN) {
+                                    client.ws.send(JSON.stringify({
+                                        clients: this.clients.size
+                                    }))
                                 }
-                            });
-                        } catch (error) {
-                            console.trace(error);
-                        }
-                    })
-                });
-            }
-            else {
-                const c = this.clients.get(id);
-                c.returned = true;
-                if (momento !== undefined) c.momento = momento;
-            }
-            // setTimeout(() => {
-            //     this.clients.forEach(client => {
-            //         if (client.ws.OPEN) {
-            //             client.ws.send(JSON.stringify({
-            //                 clients: this.clients.size,
-            //                 dispositivos: [...this.clients.values()].map(v => {
-            //                     let m = (v.ws as any).mac;
-            //                     if (typeof m === 'string') m = createHash// ('md5').update(m).digest('hex');
-            //                     return m
-            //                 }).filter(x => !!x)
-            //             }))
-            //         }
-            //     })
-            // })
-        } catch (error) {
-            console.trace(error);
+                            } catch (error) {
+                                console.trace(error);
+                            }
+                        });
+                    } catch (error) {
+                        console.trace(error);
+                    }
+                })
+            });
         }
+        else {
+            const c = this.clients.get(id);
+            c.returned = true;
+            if (momento !== undefined) c.momento = momento;
+        }
+        // setTimeout(() => {
+        //     this.clients.forEach(client => {
+        //         if (client.ws.OPEN) {
+        //             client.ws.send(JSON.stringify({
+        //                 clients: this.clients.size,
+        //                 dispositivos: [...this.clients.values()].map(v => {
+        //                     let m = (v.ws as any).mac;
+        //                     if (typeof m === 'string') m = createHash// ('md5').update(m).digest('hex');
+        //                     return m
+        //                 }).filter(x => !!x)
+        //             }))
+        //         }
+        //     })
+        // })
     }
     /**
      *  Processa mudanças enviadas por clientes conectados
@@ -404,40 +373,37 @@ export class EventsGateway implements OnGatewayInit {
         @ConnectedSocket() client: any,
         @MessageBody() data: IDataMessage,
     ) {
-        try {
-            if (!this.sing(data)) return;
-            this.set(data.client, client, data.momento);
-            if (!!data?.internalId) {
-                const __last_data = this._attentionDatas.get(data.internalId);
-                if (data.changes && __last_data) {
-                    Object.keys(data.changes).forEach(property => {
-                        try {
-                            if (data.changes[property].currentValue
-                            ) {
-                                __last_data[property] = data.changes[property].currentValue;
-                            }
-                        } catch (error) {
-                            console.trace(error);
-                        }
-                    })
-                }
-                this.clients.forEach((v, k) => {
+        if (!this.sing(data)) return;
+        this.set(data.client, client, data.momento);
+        if (!!data?.internalId) {
+            const __last_data = this._attentionDatas.get(data.internalId);
+            if (data.changes && __last_data) {
+                Object.keys(data.changes).forEach(property => {
                     try {
-                        if (
-                            (v as any).id !== data.client &&
-                            (v as any).id !== data.setOrigem
-                        ) v.ws.send(JSON.stringify({
-                            event: 'Changes',
-                            data
-                        }))
+                        if (data.changes[property].currentValue
+                        ) {
+                            __last_data[property] = data.changes[property].currentValue;
+                        }
                     } catch (error) {
                         console.trace(error);
                     }
                 })
             }
-        } catch (error) {
-            console.trace(error);
+            this.clients.forEach((v, k) => {
+                try {
+                    if (
+                        (v as any).id !== data.client &&
+                        (v as any).id !== data.setOrigem
+                    ) v.ws.send(JSON.stringify({
+                        event: 'Changes',
+                        data
+                    }))
+                } catch (error) {
+                    console.trace(error);
+                }
+            })
         }
+
     }
     /**
      * Executa após o início
@@ -454,16 +420,12 @@ export class EventsGateway implements OnGatewayInit {
      * @returns 
      */
     sing(data?: IDataMessage): boolean {
-        try {
-            let s = createHash('md5').update(JSON.stringify(data)).digest('hex');
-            if (this.lasts.indexOf(s) === -1) {
-                this.lasts.push(s);
-                return true;
-            }
-            else false;
-        } catch (error) {
-            console.trace(error);
+        let s = createHash('md5').update(JSON.stringify(data)).digest('hex');
+        if (this.lasts.indexOf(s) === -1) {
+            this.lasts.push(s);
+            return true;
         }
+        else false;
     }
 
     async createUserChat(options?: any) {

@@ -12,7 +12,7 @@ import { Public } from '../libs/auth/src/decorators/public.decorator';
 @Controller()
 export class AppController {
   // Configurações do nosso Cache em Memória
-  private readonly MAX_CACHE_FILES = 100;
+  private readonly MAX_CACHE_FILES = 40;
   private readonly MAX_FILE_SIZE = 300 * 1024; // 200KB
 
   // O Map preserva a ordem de inserção, funcionando como um FIFO perfeito.
@@ -78,7 +78,7 @@ export class AppController {
       // --- Configuração Cloudflare ---
       if (isIndex) {
         // Força a Cloudflare e o navegador a sempre revalidar o Index
-        response.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+        response.setHeader('Cache-Control', 'public, max-age=1000');
       } else {
         // Cache na Cloudflare de 10 dias (864000 segundos) para os outros arquivos
         response.setHeader('Cache-Control', 'public, max-age=864000');

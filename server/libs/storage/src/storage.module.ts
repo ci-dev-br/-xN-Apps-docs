@@ -14,6 +14,7 @@ import { ManagerModule } from "@ci/manager";
 import { File } from "./models/file.entity";
 import { FileService } from "./service/file.service";
 import { FileController } from "./controller/file.controller";
+import { FileExplorerService } from "./models/file-explorer.service";
 export const StorageEntities = [
     Photo,
     FilePermission,
@@ -37,6 +38,7 @@ export const StorageEntities = [
         PhotoService,
         FileService,
         FilePermissionService,
+        FileExplorerService,
     ],
     exports: [
         PhotoService,
