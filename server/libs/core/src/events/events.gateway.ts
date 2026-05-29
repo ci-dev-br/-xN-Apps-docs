@@ -56,36 +56,40 @@ export class EventsGateway implements OnGatewayInit {
     private pingHandler(
         client: WebSocket,
         data: IDataMessage) {
-        if (data.lastPing) {
-            this.globalPing = ((this.globalPing + (data.lastPing || 0)) / 2)
-            this.pings.push(data.lastPing)
-            if (this.pings.length > 500) {
-                this.pings = this.pings.splice(this.pings.length - 500, this.pings.length);
-            }
-        }
-        let pm = 0;
         try {
-            pm = !!this.pings && this.pings.length > 0 ? this.pings.reduce((a, b) => a + b) / this.pings.length : 0;
-        } catch (error) {
-            console.trace(error);
-        }
-        const waiting = 1000 + Math.random() * 32000;
-        const last = {
-            event: 'events',
-            type: 'pong',
-            wait: this.lastWaitingTime = waiting,
-            momento: data.momento,
-            globalPing: this.globalPing,
-            pingMedium: pm,
-        };
-        setTimeout(() => {
-            const c = this.clients.get(data.client);
-            if (c && data.momento === c.momento) {
-                c.returned = false;
-                this.clients.delete(data.client);
+            if (data.lastPing) {
+                this.globalPing = ((this.globalPing + (data.lastPing || 0)) / 2)
+                this.pings.push(data.lastPing)
+                if (this.pings.length > 500) {
+                    this.pings = this.pings.splice(this.pings.length - 500, this.pings.length);
+                }
             }
-        }, waiting + 1000);
-        return last;
+            let pm = 0;
+            try {
+                pm = !!this.pings && this.pings.length > 0 ? this.pings.reduce((a, b) => a + b) / this.pings.length : 0;
+            } catch (error) {
+                console.trace(error);
+            }
+            const waiting = 1000 + Math.random() * 32000;
+            const last = {
+                event: 'events',
+                type: 'pong',
+                wait: this.lastWaitingTime = waiting,
+                momento: data.momento,
+                globalPing: this.globalPing,
+                pingMedium: pm,
+            };
+            setTimeout(() => {
+                const c = this.clients.get(data.client);
+                if (c && data.momento === c.momento) {
+                    c.returned = false;
+                    this.clients.delete(data.client);
+                }
+            }, waiting + 1000);
+            return last;
+        } catch (error) {
+            console.trace(error)
+        }
     }
 
     /**
@@ -94,23 +98,27 @@ export class EventsGateway implements OnGatewayInit {
      * @param data 
      */
     private sendSMSHandler(client: WebSocket, data: IDataMessage) {
-        this.clients.forEach(c => {
-            try {
-                if ('mac' in c.ws && c.ws.OPEN) {
-                    c.ws.send(JSON.stringify({
-                        event: 'events',
-                        data: {
-                            type: "requestSendSMSMessage",
-                            momento: Date.now(),
-                            to: data.to,
-                            contentText: data.content
-                        }
-                    }));
+        try {
+            this.clients.forEach(c => {
+                try {
+                    if ('mac' in c.ws && c.ws.OPEN) {
+                        c.ws.send(JSON.stringify({
+                            event: 'events',
+                            data: {
+                                type: "requestSendSMSMessage",
+                                momento: Date.now(),
+                                to: data.to,
+                                contentText: data.content
+                            }
+                        }));
+                    }
+                } catch (error) {
+                    console.trace(error);
                 }
-            } catch (error) {
-                console.trace(error);
-            }
-        })
+            })
+        } catch (error) {
+            console.trace(error)
+        }
     }
     private lastWaitingTime?: number;
     /**
@@ -206,7 +214,7 @@ export class EventsGateway implements OnGatewayInit {
             console.trace(error);
         }
         if (data.momento && this.momento.indexOf(data.momento) !== -1) return;
-        this.momento.push(data.momento)
+        this.momento?.push(data.momento)
     }
     /**
      *  Identifica o cliente conectado

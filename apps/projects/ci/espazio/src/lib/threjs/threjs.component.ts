@@ -1,46 +1,10 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Input, NgZone, OnDestroy, Optional, ViewChild } from '@angular/core';
-import { AnimationMixer, BoxGeometry, Color, DirectionalLight, Material, Mesh, MeshNormalMaterial, PerspectiveCamera, PointLight, Scene, WebGLRenderer, Clock, PCFSoftShadowMap } from 'three';
+import { AnimationMixer, Mesh, PerspectiveCamera, PointLight, Scene, WebGLRenderer, Clock, PCFSoftShadowMap } from 'three';
 import { CoreModule } from '@ci/core';
 // Importamos o OrbitControls junto com o GLTFLoader
-import { GLTFLoader, OrbitControls, TechnicolorShader, } from 'three/addons';
+import { OrbitControls } from 'three/addons';
+import { Objeto } from '../engine/objeto';
 
-/**
- * Objeto Espacial
- */
-export class Objeto {
-  scene?: Scene;
-  mesh?: Mesh;
-  visible?: boolean;
-  peso?: number;
-  densidade?: number;
-  altura?: number;
-  largura?: number;
-  massa?: number;
-  glb_file?: string;
-  gltf?: any;
-  controls?: any;
-  constructor(data?: { mesh?: Mesh, glb_file?: string }) {
-    this.mesh = data?.mesh;
-    this.glb_file = data?.glb_file;
-  }
-  async loadGBLFile(glb_file: string = this.glb_file || '') {
-    return await new Promise<void>((res, rej) => {
-      try {
-        const loader = new GLTFLoader().setPath('./3d/');
-        loader.load(glb_file, (gltf) => {
-          this.loadGltf(gltf)
-          res();
-        });
-      } catch (error) {
-        rej(error);
-      }
-    })
-  }
-  private loadGltf(gltf: any) {
-    this.gltf = gltf;
-    this.scene?.add(gltf.scene);
-  }
-}
 @Component({
   selector: 'c-threjs',
   imports: [CoreModule],
@@ -50,7 +14,6 @@ export class Objeto {
 })
 export class ThrejsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('rendererContainer', { static: true }) rendererContainer!: ElementRef<HTMLDivElement>;
-
   @Input() mixer?: AnimationMixer;
   @Input() scene?: Scene;
   @Input() camera?: PerspectiveCamera;
@@ -59,22 +22,16 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
   @Input() frameId: number = 0;
   lights: PointLight[] = [];
   clock = new Clock();
-
-  // Nova propriedade para armazenar os controles da câmera
   controls?: OrbitControls;
-
   private _objetos?: Objeto[] | undefined;
-
   public get objetos(): Objeto[] | undefined {
     return this._objetos;
   }
-
   @Input()
   public set objetos(value: Objeto[] | undefined) {
     if (this._objetos === value) return;
     this._objetos = value;
   }
-
   adicionarObjeto(objeto: Objeto) {
     if (!this.objetos) {
       this.objetos = [];
@@ -82,13 +39,10 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     objeto.scene = this.scene;
     return objeto;
   }
-
   adicionarMesh(mesh: Mesh): Objeto {
     return this.adicionarObjeto(new Objeto({ mesh }));
   }
-
   constructor(@Optional() private readonly ngZone?: NgZone) { }
-
   ngAfterViewInit(): void {
     this.initThree();
     this.setupResizeObserver();
@@ -97,7 +51,6 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
       this.animate();
     });
   }
-
   ngOnDestroy(): void {
     // Limpeza crucial para evitar vazamento de memória (memory leaks)
     if (this.resizeObserver) {
@@ -147,11 +100,11 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true; // Adiciona uma inércia suave ao movimento
     this.controls.dampingFactor = 0.05;
-    // this.controls.enablePan = false; // Descomente se não quiser que o usuário arraste a câmera para fora do centro
-    // this.controls.enableZoom = true; // O zoom usando o scroll do mouse já vem ativado por padrão
+    this.controls.enablePan = false; // Descomente se não quiser que o usuário arraste a câmera para fora do centro
+    this.controls.enableZoom = true; // O zoom usando o scroll do mouse já vem ativado por padrão
 
     const light = new PointLight(0xffffff, 10, 100);
-    
+
     this.lights.push(light);
     light.position.set(0, 40, -10);
     this.scene.add(light);
@@ -162,7 +115,7 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
         if (!!obj.glb_file) {
           await obj.loadGBLFile();
           if (!this.mixer && obj.scene) this.mixer = new AnimationMixer(obj.scene)
-          this.mixer?.clipAction(obj.gltf.animations[5]).play();
+          if (!!obj?.gltf?.animations) this.mixer?.clipAction(obj.gltf.animations[5]).play();
         }
       });
     }
@@ -180,9 +133,9 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
 
       this.mixer?.update(delta);
 
-      if (this.controls) {
-        this.controls.update();
-      }
+      /*  if (!!this.controls) {
+         this.controls?.update();
+       } */
 
       if (this.scene && this.camera && this.renderer) {
         this.renderer.render(this.scene, this.camera);

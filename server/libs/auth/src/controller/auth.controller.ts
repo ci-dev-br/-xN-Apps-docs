@@ -9,7 +9,6 @@ import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import { AuthService } from '../service/auth.service';
 import { TwoFactorAuthenticationService } from '../service/two-factors.service';
-import * as argon2 from 'argon2';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -59,11 +58,7 @@ export class AuthController {
       console.trace(error);
       return {
         status: 500,
-        message: String(error),
-        error: {
-          severity: error.severity,
-          detail: error.detail,
-        }
+        message: error,
       }
     }
   }
@@ -76,14 +71,13 @@ export class AuthController {
     @Request() req: Request,
   ) {
     try {
-      let { refreshToken, password, ...user } = await this.userService.findById((req as any).user.id);
+      let { refreshToken, password, ...user } = await this.userService.findById((req as any)?.user?.id);
       return user;
     } catch (error) {
+      console.trace(error);
       return {
         status: 500,
         message: 'Falha',
-        detahes: error.message,
-        stack: error.stack
       } as any
     }
   }
@@ -172,12 +166,10 @@ export class AuthController {
       }
 
     } catch (error) {
+      console.trace(error);
       return {
         status: 500,
-        message: 'Falha',
-        detahes: error.message,
-        stack: error.stack,
-        datail: error
+        message: 'Falha'
       } as any
     }
   }
@@ -187,11 +179,10 @@ export class AuthController {
     try {
       return await this.userService.logout(null)
     } catch (error) {
+      console.trace(error);
       return {
         status: 500,
-        message: 'Falha',
-        detahes: error.message,
-        stack: error.stack
+        message: 'Falha'
       } as any
     }
   }
@@ -209,11 +200,10 @@ export class AuthController {
         null, payload?.refreshToken, req, ip
       );
     } catch (error) {
+      console.trace(error);
       return {
         status: 500,
-        message: 'Falha',
-        detahes: error.message,
-        stack: error.stack
+        message: 'Falha'
       } as any
     }
   }

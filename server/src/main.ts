@@ -34,23 +34,28 @@ async function startApplication(app: NestExpressApplication, port: number) {
       console.log(`Non-Secure HTTP Application is Running on port ${port}`);
     });
   } catch (error: any) {
-    if (error.code === 'EADDRINUSE') {
-      console.trace(error);
-      console.warn('Port in use. Attempting to stop colliding services...');
-      // NOTA: Este comando é específico para ambientes Windows PowerShell
-      const out = spawnSync('powershell', ['Stop-Service', 'apps.ci.dev.br']);
-      if (out.error) {
-        console.trace('Failed to stop service:', out.error);
+    try {
+      if (error.code === 'EADDRINUSE') {
+        console.trace(error);
+        console.warn('Port in use. Attempting to stop colliding services...');
+        // NOTA: Este comando é específico para ambientes Windows PowerShell
+        const out = spawnSync('powershell', ['Stop-Service', 'apps.ci.dev.br']);
+        if (out.error) {
+          console.trace('Failed to stop service:', out.error);
+        } else {
+          console.log('Service stopped successfully. Retrying...');
+        }
+        // Tentativa recursiva de iniciar a aplicação
+        await startApplication(app, port);
       } else {
-        console.log('Service stopped successfully. Retrying...');
+        console.trace('[Falha ao iniciar serviços]');
+        console.trace(error);
+        process.exit(1);
       }
-      // Tentativa recursiva de iniciar a aplicação
-      await startApplication(app, port);
-    } else {
-      console.trace('[Falha ao iniciar serviços]');
+    } catch (error) {
       console.trace(error);
-      process.exit(1);
     }
+
   }
 }
 /**

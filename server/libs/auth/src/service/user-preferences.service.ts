@@ -13,9 +13,11 @@ export class UserPreferencesService {
     ) { }
 
     async setNewPreference(userId: string, code: string, valueOfString: string) {
-        this.userPreferenceRepo.save({
-            
-        })
+        try {
+            this.userPreferenceRepo.save({
 
+            })
+
+        } catch (error) { console.trace(error); }
     }
 }

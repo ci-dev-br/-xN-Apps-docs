@@ -20,68 +20,73 @@ export class AuthService {
         req?: Request,
         ip?: string,
     ) {
-        let confiance: string = 'r';
-        const r: { try?: string } = await this.jwtService.verifyAsync(refreshToken);
-        let old_authorization: {
-            id: string,
-            roles: string[],
-            exp: number,
-            iat: number,
-            chaveAcesso?: string;
-            confiance: string,
-        };
-        let permission = null;
-        let chave_acesso: Credential = null;
-        if ('try' in r && r.try && typeof r.try === 'string') {
-            permission = JSON.parse(atob(r.try)).permission;
-            old_authorization = (await this.jwtService.decode(req.headers['authorization']?.replace('Bearer', '').trim())) as any;
-            userId = old_authorization?.id;
-            // TODO: verificar validade da chave de acesso 
-            try {
-                const chave_acesso_token = old_authorization?.chaveAcesso;
-                chave_acesso = await this.credencial.obterChaveAcessoPorId(chave_acesso_token);
-                chave_acesso;
-                if (chave_acesso) {
-                    if (userId !== chave_acesso?.identifiedUser) {
-                        userId = chave_acesso?.identifiedUser;
-                        confiance += 'v';
-                    } else {
-                        confiance += 'o';
-                    }
-                    if (!chave_acesso?.refreshToken) {
-                        confiance += 'e';
-                        if (confiance.indexOf('o') === -1) {
-                            throw new UnauthorizedException('Por favor, identifique-se novamente.');
+        try {
+            let confiance: string = 'r';
+            const r: { try?: string } = await this.jwtService.verifyAsync(refreshToken);
+            let old_authorization: {
+                id: string,
+                roles: string[],
+                exp: number,
+                iat: number,
+                chaveAcesso?: string;
+                confiance: string,
+            };
+            let permission = null;
+            let chave_acesso: Credential = null;
+            if ('try' in r && r.try && typeof r.try === 'string') {
+                permission = JSON.parse(atob(r.try)).permission;
+                old_authorization = (await this.jwtService.decode(req.headers['authorization']?.replace('Bearer', '').trim())) as any;
+                userId = old_authorization?.id;
+                // TODO: verificar validade da chave de acesso 
+                try {
+                    const chave_acesso_token = old_authorization?.chaveAcesso;
+                    chave_acesso = await this.credencial.obterChaveAcessoPorId(chave_acesso_token);
+                    chave_acesso;
+                    if (chave_acesso) {
+                        if (userId !== chave_acesso?.identifiedUser) {
+                            userId = chave_acesso?.identifiedUser;
+                            confiance += 'v';
+                        } else {
+                            confiance += 'o';
+                        }
+                        if (!chave_acesso?.refreshToken) {
+                            confiance += 'e';
+                            if (confiance.indexOf('o') === -1) {
+                                throw new UnauthorizedException('Por favor, identifique-se novamente.');
+                            }
                         }
                     }
+                } catch (error) {
+                    console.trace(error);
+                    confiance += 'e';
+                    throw new UnauthorizedException('Sem autenticidade.', error);
                 }
-            } catch (error) {
-                console.trace(error);
-                confiance += 'e';
-                throw new UnauthorizedException('Sem autenticidade.', error);
             }
-        }
-        const user = await this.userService.findById(userId);
-        this.userCredentialService.credenciar(user.id);
-        if (user) {
-            const chaveAcesso = (await this.credencial.solicitarCredencial({
-                ip: ip,
-                identificacao_inicial: chave_acesso?.identifiedUser,  //  old_authorization.id
-                headers: req.headers
-            }));
-            chaveAcesso.alive = true;
-            chaveAcesso.valid = false;
-            await this.credencial.atualizar(chaveAcesso);
-            return {
-                authorization: await this.jwtService.signAsync({
-                    id: user?.id,
-                    roles: user?.roles,
-                    permission: permission,
-                    chaveAcesso: chaveAcesso.id,
-                    confiance
-                })
+            const user = await this.userService.findById(userId);
+            this.userCredentialService.credenciar(user.id);
+            if (user) {
+                const chaveAcesso = (await this.credencial.solicitarCredencial({
+                    ip: ip,
+                    identificacao_inicial: chave_acesso?.identifiedUser,  //  old_authorization.id
+                    headers: req.headers
+                }));
+                chaveAcesso.alive = true;
+                chaveAcesso.valid = false;
+                await this.credencial.atualizar(chaveAcesso);
+                return {
+                    authorization: await this.jwtService.signAsync({
+                        id: user?.id,
+                        roles: user?.roles,
+                        permission: permission,
+                        chaveAcesso: chaveAcesso.id,
+                        confiance
+                    })
+                }
+            } else {
+                throw new UnauthorizedException('Acesso Nagado.');
             }
-        } else {
+        } catch (error) {
+            console.trace(error);
             throw new UnauthorizedException('Acesso Nagado.');
         }
     }

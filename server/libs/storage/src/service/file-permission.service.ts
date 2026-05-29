@@ -12,29 +12,33 @@ export class FilePermissionService {
 
     ) { }
     async grant(file: string, request: any) {
-        if (!!this.filePermissionRepo && request) {
-            let permissions = await this.filePermissionRepo.find({
-                where: [{
-                    createdBy: {
-                        identifiedUser: Equal(request.user.id)
+        try {
+            if (!!this.filePermissionRepo && request) {
+                let permissions = await this.filePermissionRepo.find({
+                    where: [{
+                        createdBy: {
+                            identifiedUser: Equal(request.user.id)
+                        },
                     },
-                },
-                {
-                    createdBy: IsNull()
-                }
-                ]
-            });
-            if (!!permissions) {
-                let file_path = file.indexOf('.') === 0 ? join(__dirname, '..', file) : file;
-                for (const permission of permissions) {
-                    let permission_path = permission.path.indexOf('.') === 0 ? join(__dirname, '..', permission.path) : permission.path;
-                    if (permission.type === 'GRANT' && file_path.indexOf(permission_path) === 0) {
-                        return true;
+                    {
+                        createdBy: IsNull()
                     }
-                }
+                    ]
+                });
+                if (!!permissions) {
+                    let file_path = file.indexOf('.') === 0 ? join(__dirname, '..', file) : file;
+                    for (const permission of permissions) {
+                        let permission_path = permission.path.indexOf('.') === 0 ? join(__dirname, '..', permission.path) : permission.path;
+                        if (permission.type === 'GRANT' && file_path.indexOf(permission_path) === 0) {
+                            return true;
+                        }
+                    }
 
+                }
             }
+            return false;
+        } catch (error) {
+            console.trace(error)
         }
-        return false;
     }
 } 

@@ -10,6 +10,10 @@ export class CiApplicationService {
     constructor() { }
 
     getHost(req: Request) {
-        return (req.header('x-From') || req.query.from || req.hostname) as string;
+        try {
+            return (req.header('x-From') || req.query.from || req.hostname) as string;
+        } catch (error) {
+            console.trace(error)
+        }
     }
 }

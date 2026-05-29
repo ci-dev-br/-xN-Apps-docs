@@ -107,50 +107,60 @@ export class UserService {
         assinaturaPassword: string,
         chaveAcesso: string,
     ) {
-        const user = await this.userRepo.findOne({
-            where: { id: Equal(userId), passwordMode: Equal('argon2') }
-        });
-        if (!!user) {
-            if (await argon2.verify(user.password, assinaturaPassword)) {
-                delete user.password;
-                return user;
+        try {
+            const user = await this.userRepo.findOne({
+                where: { id: Equal(userId), passwordMode: Equal('argon2') }
+            });
+            if (!!user) {
+                if (await argon2.verify(user.password, assinaturaPassword)) {
+                    delete user.password;
+                    return user;
+                }
+            } else {
+                return await this.userRepo.createQueryBuilder('user')
+                    .leftJoinAndSelect('user.photo', 'photo')
+                    .leftJoinAndSelect('user.tenants', 'tenant')
+                    .where(`"user".id::varchar = :user_id::varchar and encode(sha512(concat(encode(sha512("user".password::bytea),'hex'), :chave_acesso::varchar )::bytea),'hex') = :ass_pass::varchar`)
+                    .setParameter('user_id', userId)
+                    .setParameter('ass_pass', assinaturaPassword)
+                    .setParameter('chave_acesso', chaveAcesso)
+                    .getOne()
             }
-        } else {
-            return await this.userRepo.createQueryBuilder('user')
-                .leftJoinAndSelect('user.photo', 'photo')
-                .leftJoinAndSelect('user.tenants', 'tenant')
-                .where(`"user".id::varchar = :user_id::varchar and encode(sha512(concat(encode(sha512("user".password::bytea),'hex'), :chave_acesso::varchar )::bytea),'hex') = :ass_pass::varchar`)
-                .setParameter('user_id', userId)
-                .setParameter('ass_pass', assinaturaPassword)
-                .setParameter('chave_acesso', chaveAcesso)
-                .getOne()
-        }
+        } catch (error) { console.trace(error); }
     }
     hashData(data: string) {
-        return argon2.hash(data);
+        try {
+            return argon2.hash(data);
+        } catch (error) { console.trace(error); }
     }
     async logout(user: User) {
-        return await this.userRepo.update(user.id, {
-            refreshToken: null
-        })
+        try {
+            return await this.userRepo.update(user.id, {
+                refreshToken: null
+            })
+        } catch (error) { console.trace(error); }
     }
     async updateRefreshToken(userId: string, refreshToken: string, chave?: Credential) {
-        const hashedRefreshToken = await this.hashData(refreshToken);
-        return hashedRefreshToken;
-        // TODO:  implementar verificação do hash do RefrashToken ...
+        try {
+            const hashedRefreshToken = await this.hashData(refreshToken);
+            return hashedRefreshToken;
+            // TODO:  implementar verificação do hash do RefrashToken ...
+        } catch (error) { console.trace(error); }
     }
     async findById(userId: string) {
-        const user = await this.userRepo.findOne({
-            where: { id: userId },
-            relations: [/* 'photo',  */
-                'tenants',
-                'photo'
-            ]
-        })
-        if (user.photo) {
-            user.photo.originalFile = user.photo.originalFile.toString('base64') as any
-        }
-        return user;
+        try {
+            const user = await this.userRepo.findOne({
+                where: { id: userId },
+                relations: [/* 'photo',  */
+                    'tenants',
+                    'photo'
+                ]
+            })
+            if (user.photo) {
+                user.photo.originalFile = user.photo.originalFile.toString('base64') as any
+            }
+            return user;
+        } catch (error) { console.trace(error); }
     }
     /**
      * Sincronizar objeto
@@ -158,65 +168,73 @@ export class UserService {
      * @returns 
      */
     async sync(data: User) {
-        if (data) {
-            delete data.password;
-            delete data.refreshToken;
-            delete data.tenants;
-            delete data.roles;
-            delete data.permission;
-        }
-        let { id, ...changes } = data;
-        let data_ref = !!data.id ? await this.userRepo.findOne({
-            where: { id: data.id },
-            relations: { photo: true }
-        }) : await this.userRepo.create(data);
-        if ('photo' in changes) {
-            changes.photo = await this.photos.Sync(changes.photo)
-        }
-        Object.assign(data_ref, changes);
-        return await this.userRepo.save(data_ref, { transaction: true, reload: true });
+        try {
+            if (data) {
+                delete data.password;
+                delete data.refreshToken;
+                delete data.tenants;
+                delete data.roles;
+                delete data.permission;
+            }
+            let { id, ...changes } = data;
+            let data_ref = !!data.id ? await this.userRepo.findOne({
+                where: { id: data.id },
+                relations: { photo: true }
+            }) : await this.userRepo.create(data);
+            if ('photo' in changes) {
+                changes.photo = await this.photos.Sync(changes.photo)
+            }
+            Object.assign(data_ref, changes);
+            return await this.userRepo.save(data_ref, { transaction: true, reload: true });
+        } catch (error) { console.trace(error); }
     }
     async find(
         tenants?: string[],
         request?: { user: User }
     ): Promise<User[] | undefined> {
-        let where: FindOptionsWhere<User> | FindOptionsWhere<User>[] = {};
-        if (!request.user) {
-            throw new Error('Acesso negado.');
-        }
-        if (!!request?.user) {
-            if (request.user?.roles?.indexOf('GOODNESS') > -1) {
-            } else {
+        try {
+            let where: FindOptionsWhere<User> | FindOptionsWhere<User>[] = {};
+            if (!request.user) {
                 throw new Error('Acesso negado.');
             }
-        }
-        return (await this.userRepo.find({
-            where: where,
-            relations: { photo: true, }
-        })).map(u => {
-            if (u.photo) {
-                u.photo = u.photo.originalFile.toString('base64') as any
-            }
-            Object.keys(u).forEach(k => {
+            if (!!request?.user) {
                 if (request.user?.roles?.indexOf('GOODNESS') > -1) {
-                    if (['password', 'refreshToken', 'tenants', 'roles', 'permission'].indexOf(k) > -1) {
-                        delete u[k]
-                    } else if (['internalId', 'id'].indexOf(k) === -1) {
-                        if (typeof u[k] === 'string') {
-                            u[k] = typeof u[k] === 'string' ? this.ocultaInformacaoSensivel(u[k]) : undefined;
-                        }
-                    }
+                } else {
+                    throw new Error('Acesso negado.');
                 }
-            });
-            return u;
-        }) || undefined;
+            }
+            return (await this.userRepo.find({
+                where: where,
+                relations: { photo: true, }
+            })).map(u => {
+                if (u.photo) {
+                    u.photo = u.photo.originalFile.toString('base64') as any
+                }
+                Object.keys(u).forEach(k => {
+                    try {
+                        if (request.user?.roles?.indexOf('GOODNESS') > -1) {
+                            if (['password', 'refreshToken', 'tenants', 'roles', 'permission'].indexOf(k) > -1) {
+                                delete u[k]
+                            } else if (['internalId', 'id'].indexOf(k) === -1) {
+                                if (typeof u[k] === 'string') {
+                                    u[k] = typeof u[k] === 'string' ? this.ocultaInformacaoSensivel(u[k]) : undefined;
+                                }
+                            }
+                        }
+                    } catch (error) { console.trace(error); }
+                });
+                return u;
+            }) || undefined;
+        } catch (error) { console.trace(error); }
     }
     ocultaInformacaoSensivel(informacao: string): string {
-        if (typeof informacao === 'string' && informacao.length > 4) {
-            return informacao.substring(0, 2) + '↔' + informacao.substring(informacao.length - 2, informacao.length);
-        } else if (typeof informacao === 'string' && informacao.length <= 4) {
-            return informacao.substring(0, 1) + '↔';
-        }
-        return informacao;
+        try {
+            if (typeof informacao === 'string' && informacao.length > 4) {
+                return informacao.substring(0, 2) + '↔' + informacao.substring(informacao.length - 2, informacao.length);
+            } else if (typeof informacao === 'string' && informacao.length <= 4) {
+                return informacao.substring(0, 1) + '↔';
+            }
+            return informacao;
+        } catch (error) { console.trace(error); }
     }
 }

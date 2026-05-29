@@ -12,11 +12,22 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
             passReqToCallback: true,
         });
     }
+    /**
+     * Validação da autorização
+     * @param request 
+     * @param payload 
+     * @returns 
+     */
     validate(request: Request, payload: any) {
-        const refreshToken = request.get('Authorization').replace('Bearer', '').trim();
-        return {
-            ...payload,
-            refreshToken
-        };
+        try {
+            const refreshToken = request.get('Authorization')
+                .replace('Bearer', '').trim();
+            return {
+                ...payload,
+                refreshToken
+            };
+        } catch (error) {
+            console.trace(error);
+        }
     }
 }

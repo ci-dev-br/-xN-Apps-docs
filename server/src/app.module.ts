@@ -143,7 +143,7 @@ process.env.MODULES.split(',').forEach(e => {
       logger: 'file',
       maxQueryExecutionTime: 100,
       namingStrategy: new SnakeNamingStrategy(),
-      // verboseRetryLog: false,
+      verboseRetryLog: true,
       dropSchema: false,
       entities: [
         ...LoadedEntities

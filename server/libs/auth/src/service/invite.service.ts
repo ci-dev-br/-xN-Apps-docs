@@ -27,12 +27,14 @@ export class InviteService {
      * @returns 
      */
     async createInvite(email: string, invitedByUserId: string) {
-        const invite = this.repository.create();
-        invite.email = email;
-        invite.invited = false;
-        invite.accepted = false;
-        invite.createdBy = { user: { id: invitedByUserId } };
-        return await this.repository.save(invite);
+        try {
+            const invite = this.repository.create();
+            invite.email = email;
+            invite.invited = false;
+            invite.accepted = false;
+            invite.createdBy = { user: { id: invitedByUserId } };
+            return await this.repository.save(invite);
+        } catch (error) { console.trace(error); }
     }
     /**
      *  # Envia um convite para um usuário.
@@ -50,18 +52,20 @@ export class InviteService {
     },
         invitedByUser?: User,
     ) {
-        let invite = await this.createInvite(registro.email, invitedByUser.id);
-        return await new Promise<void>((res, rej) => {
-            if (!!registro.email) {
-                this.mailer.requestSendMessageToMail(
-                    conviteToMessagePayload({
-                        ...registro,
-                        invite: 'INVITE-' + createHash('sha256').update(`${invite.createdAt}${invite.email}`).digest('hex').toString(),
-                    })
-                );
-                res();
-            }
-        });
+        try {
+            let invite = await this.createInvite(registro.email, invitedByUser.id);
+            return await new Promise<void>((res, rej) => {
+                if (!!registro.email) {
+                    this.mailer.requestSendMessageToMail(
+                        conviteToMessagePayload({
+                            ...registro,
+                            invite: 'INVITE-' + createHash('sha256').update(`${invite.createdAt}${invite.email}`).digest('hex').toString(),
+                        })
+                    );
+                    res();
+                }
+            });
+        } catch (error) { console.trace(error); }
     }
     /**
      * # Valida o convite e retorna os dados do convite.
@@ -73,13 +77,15 @@ export class InviteService {
      * @returns 
      */
     async getInvite(invite: string) {
-        return await new Promise<Invite>(async (result, reject) => {
-            try {
-                result(await this.repository.createQueryBuilder('invite')
-                    .where('sha2(concat(invite.created_at,invite.email)),256)=sha2(:invite_code,256)', { invite_code: invite }).getOneOrFail());
-            } catch (error) {
-                reject(error);
-            }
-        });
+        try {
+            return await new Promise<Invite>(async (result, reject) => {
+                try {
+                    result(await this.repository.createQueryBuilder('invite')
+                        .where('sha2(concat(invite.created_at,invite.email)),256)=sha2(:invite_code,256)', { invite_code: invite }).getOneOrFail());
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        } catch (error) { console.trace(error); }
     }
 }
