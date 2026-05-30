@@ -57,7 +57,9 @@ export class EventsGateway implements OnGatewayInit {
             this.globalPing = ((this.globalPing + (data.lastPing || 0)) / 2)
             this.pings.push(data.lastPing)
             if (this.pings.length > 500) {
-                this.pings = this.pings.splice(this.pings.length - 500, this.pings.length);
+                this.pings.reverse()
+                this.pings.length = 250; // = this.pings.splice(this.pings.length - 500, this.pings.length);
+                this.pings.reverse()
             }
         }
         let pm = 0;
@@ -66,7 +68,7 @@ export class EventsGateway implements OnGatewayInit {
         } catch (error) {
             console.trace(error);
         }
-        const waiting = 1000 + Math.random() * 32000;
+        const waiting = 15000;// 1000 + Math.random() * 32000;
         const last = {
             event: 'events',
             type: 'pong',
