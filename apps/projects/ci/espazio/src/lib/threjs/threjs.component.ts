@@ -115,7 +115,10 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
         if (!!obj.glb_file) {
           await obj.loadGBLFile();
           if (!this.mixer && obj.scene) this.mixer = new AnimationMixer(obj.scene)
-          if (!!obj?.gltf?.animations) this.mixer?.clipAction(obj.gltf.animations[5]).play();
+          /*  if (!!obj?.gltf?.animations) this.mixer?.clipAction(obj.gltf.animations[5]).play(); */
+          if (!!obj?.gltf?.animations && Array.isArray(obj.gltf.animations)) {
+            obj.animations = obj.gltf.animations.map(x => this.mixer!.clipAction(x))
+          }
         }
       });
     }
@@ -166,6 +169,19 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
 
   @HostListener('window:keydown', ['$event'])
   async keydownHandler(event: KeyboardEvent) {
+    /*  if (event.key === 'w') {
+       this.camera!.position!.z -= 1;
+     }else if (event.key === 's') {
+       this.camera!.position!.z += 1;
+     }
+     if (event.key === 'a') {
+       this.camera!.position!.x -= 1;
+     }else if (event.key === 'd') {
+       this.camera!.position!.x += 1;
+     } */
+  }
+  @HostListener('window:keyup', ['$event'])
+  async keyupHandler(event: KeyboardEvent) {
     /*  if (event.key === 'w') {
        this.camera!.position!.z -= 1;
      }else if (event.key === 's') {

@@ -15,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { PerguntaItemComponent } from '../pergunta-item/pergunta-item.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
 @Component({
   selector: 'ci-fomulario-edit',
   templateUrl: './fomulario-edit.component.html',
@@ -36,6 +37,7 @@ import { PerguntaItemComponent } from '../pergunta-item/pergunta-item.component'
     MatTooltipModule,
     MatMenuModule,
     PerguntaItemComponent,
+    MatToolbarModule,
   ]
 })
 export class FormularioEditComponent implements OnInit {

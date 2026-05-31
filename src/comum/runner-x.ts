@@ -24,7 +24,7 @@ export abstract class RunnerX {
     constructor() {
         console.log('[ci.dev.br] Iniciando serviços...');
     }
-    protected async adicionarVerificacaoRota(url: string, replayTimeout = (60000)) {
+    protected async adicionarVerificacaoRota(url: string, replayTimeout = (1000 * 60 * 10)) {
         console.log(`[ verificando rota ]`);
         try {
             if (url.indexOf('https://') === 0)

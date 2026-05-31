@@ -21,7 +21,7 @@ export class FileExplorerController {
         @Body() input: ReadDirectoryInput,
         @Req() request: Request
     ) {
-       // this.fileExplorer.readDirectory(input, request)
+        return await this.fileExplorer.readDirectory(input, request)
     }
 
     @Post('File')
@@ -31,6 +31,6 @@ export class FileExplorerController {
         @Body() input: FileDto,
         @Req() request: Request,
     ) {
-       // this.fileExplorer.readFile(input, request)
+        return await this.fileExplorer.readFile(input, request)
     }
 }

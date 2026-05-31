@@ -52,6 +52,7 @@ export class FileExplorerService {
                 input.data = readed.toString();
             } else if (typeof input.data === 'string') {
                 // TODO: implementar controle de versão em cima das alterações realizadas via API.
+                console.log('writing file... ')
                 writeFileSync(input.path,
                     input.data, { encoding: 'utf-8' }
                 )

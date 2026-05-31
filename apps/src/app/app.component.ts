@@ -91,4 +91,12 @@ export class AppComponent implements OnInit, OnDestroy {
       navigator.serviceWorker.register("https://apps.ci.dev.br/sw.js");
     }
   }
+  @HostListener('window:keydown', ['$event'])
+  keyDownHandler(event: KeyboardEvent) {
+    // disabled user force reload page ... 
+    if (event.code === 'F5' || (event.code === 'KeyR' && event.ctrlKey)) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }
 }

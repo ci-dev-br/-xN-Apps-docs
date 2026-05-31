@@ -1,4 +1,4 @@
-import { Vector3, Scene, Mesh } from 'three';
+import { Vector3, Scene, Mesh, AnimationAction } from 'three';
 import { Octree, Capsule, GLTFLoader } from 'three/examples/jsm/Addons.js';
 
 /**
@@ -28,6 +28,7 @@ export class Objeto {
   private vector1 = new Vector3();
   private vector2 = new Vector3();
   private vector3 = new Vector3();
+  animations?: AnimationAction[];
 
   GRAVITY: number = 10;
   scene?: Scene;
@@ -74,4 +75,6 @@ export class Objeto {
     // playerCollisions();
     // camera.position.copy(this.playerCollider.end);
   }
+
+  
 }

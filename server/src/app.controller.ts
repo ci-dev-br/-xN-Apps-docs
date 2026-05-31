@@ -29,6 +29,11 @@ export class AppController {
   async handleAllRequests(@Req() request: Request, @Res() response: Response) {
     // Nota: Removi o setTimeout para evitar crash de headers enviados em requisições lentas.
     console.log(request.url)
+    console.log(request.originalUrl)
+    console.log(request.baseUrl)
+    console.log(...Object.keys(request.headers).map((p) => {
+      return `${p} > ${request.headers[p]};`;
+    }))
     try {
       // 1. Tenta servir dinamicamente via CMS (SitePageService)
       if (this.sitePage) {

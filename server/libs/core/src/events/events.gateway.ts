@@ -94,7 +94,7 @@ export class EventsGateway implements OnGatewayInit {
      * @param data 
      */
     private sendSMSHandler(client: WebSocket, data: IDataMessage) {
-
+        console.log('sendSMSHandler')
         this.clients.forEach(c => {
 
             if ('mac' in c.ws && c.ws.OPEN) {
@@ -117,7 +117,7 @@ export class EventsGateway implements OnGatewayInit {
      * Mapeamento de listeners de eventos
      */
     private eventsListeners: { [eventType: string]: (client: WebSocket, data: any) => void } = {
-        ping: (client, data) => this.pingHandler(client, data),
+       // ping: (client, data) => this.pingHandler(client, data),
         'SMS.Send': (client, data) => this.sendSMSHandler(client, data),
         'Devices': (client, data) => this.devicesHandler(client, data),
     };
@@ -178,6 +178,7 @@ export class EventsGateway implements OnGatewayInit {
         (client as { lastTime?: number }).lastTime = Date.now();
         try {
             if (data.type in this.eventsListeners) {
+                console.log(data.type)
                 return this.eventsListeners[data.type](client, data);
             }
         } catch (error) {

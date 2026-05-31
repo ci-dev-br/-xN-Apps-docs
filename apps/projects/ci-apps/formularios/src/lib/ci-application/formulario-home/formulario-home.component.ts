@@ -42,9 +42,12 @@ export class FormularioHomeComponent implements OnInit {
   find() {
     this.formsService?.getList({
       body: {
-        take: 50, skip: 0,
+        //  take: 50, skip: 0,
       }
     }).subscribe(v => this.forms = v);
+  }
+  async loadMore() {
+
   }
   async criarFormulario() {
     if (!this.formsService) return;

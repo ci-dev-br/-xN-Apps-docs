@@ -1,13 +1,14 @@
 :host {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: auto;
+    align-items: stretch;
+    justify-content: stretch;
     flex: auto;
     user-select: none;
-    background: linear-gradient(to top, rgb(156, 156, 156) 0%, rgba(0, 0, 0) 100%);
-    padding: 24px;
+    overflow: hidden;
+    // 
+    //  background: linear-gradient(to top, rgb(156, 156, 156) 0%, rgba(0, 0, 0) 100%);
+    ///  padding: 24px;
     z-index: 3;
 }
 
@@ -36,13 +37,12 @@
     flex: auto;
     border-radius: 48px;
     overflow-y: auto;
-    max-height: 65vh;
 }
 
 h1 {
     margin: 0;
     padding: 0;
-    color: rgb(182, 15, 98);
+    // color: rgb(182, 15, 98);
     text-shadow: 0 3px 3px rgba(0, 0, 0, 0.151);
     // mix-blend-mode: exclusion;
 }
@@ -57,7 +57,7 @@ h1 {
         padding: 0;
         font-size: 3em;
         font-weight: bold;
-        color: rgb(182, 15, 98);
+        // color: rgb(182, 15, 98);
         margin-top: #{+25 * 0}px;
         text-shadow: 0 3px 3px rgba(0, 0, 0, 0.151);
         z-index: 3;
@@ -65,12 +65,12 @@ h1 {
         margin-left: -20px;
 
         +* {
-            color: rgb(117, 22, 70);
+            // color: rgb(117, 22, 70);
             margin-top: #{+15 * 1}px;
             z-index: 2;
 
             +* {
-                color: rgb(90, 54, 72);
+                // color: rgb(90, 54, 72);
                 margin-top: #{+15 * 2}px;
                 z-index: 1;
             }
@@ -142,4 +142,408 @@ c-threjs {
     // user-select: none;
     // pointer-events: none;
     // mix-blend-mode: screen;
+}
+
+/* // Variáveis de Tema (Design Clean)
+$bg-color: #f8f9fa;
+$text-main: #c2c2c2;
+$text-muted: #fadcf3;
+$shadow-soft: 0 8px 24px rgba(149, 157, 165, 0.12);
+$shadow-hover: 0 12px 32px rgba(149, 157, 165, 0.2);
+
+.launcher-container {
+
+    flex: auto;
+    // min-height: 100vh;
+    // background-color: $bg-color;
+    padding: 3rem 1.5rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    box-sizing: border-box;
+
+}
+
+.launcher-header {
+    margin-bottom: 3rem;
+    text-align: center;
+    flex: auto;
+
+    h2 {
+        font-size: 1.75rem;
+        color: $text-main;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+        letter-spacing: -0.5px;
+    }
+
+    p {
+        color: $text-muted;
+        font-size: 1rem;
+        margin: 0;
+        font-weight: 400;
+    }
+}
+
+.launcher-grid {
+    display: grid;
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0;
+    overflow: auto;
+
+    // Responsividade Inteligente com CSS Grid
+    // Mobile (Pequeno): 3 colunas
+    grid-template-columns: repeat(3, 1fr);
+
+    // Mobile (Maior / Phablet): 4 colunas
+    @media (min-width: 480px) {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2rem 1.5rem;
+    }
+
+    // Tablet (Retrato): 5 colunas
+    @media (min-width: 768px) {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2.5rem 2rem;
+    }
+
+    // Tablet (Paisagem) / Desktop: 6 colunas
+    @media (min-width: 1024px) {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
+.app-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+    -webkit-tap-highlight-color: transparent; // Remove overlay azul no mobile
+
+    // Efeito elástico no clique
+    transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    &:active {
+        transform: scale(0.92);
+    }
+
+    // Efeito sutil no hover para tablets/desktops
+    @media (hover: hover) {
+        &:hover .icon-container {
+            box-shadow: $shadow-hover;
+            transform: translateY(-3px);
+        }
+    }
+}
+
+.icon-container {
+    width: 64px;
+    height: 64px;
+    // Canto arredondado no estilo iOS/Premium
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: $shadow-soft;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+
+    // Aumenta o tamanho no tablet
+    @media (min-width: 768px) {
+        width: 76px;
+        height: 76px;
+        border-radius: 24px;
+    }
+
+    .material-icons {
+        font-size: 28px;
+
+        @media (min-width: 768px) {
+            font-size: 34px;
+        }
+    }
+}
+
+.app-name {
+    font-size: 0.8rem;
+    color: $text-main;
+    font-weight: 500;
+    text-align: center;
+
+    // Trunca o texto se for muito longo
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+
+    @media (min-width: 768px) {
+        font-size: 0.9rem;
+    }
+} */
+
+// Variáveis do Tema Premium/Cyberpunk
+$bg-absolute: #000000;
+$fg-main: #ffffff;
+$fg-muted: #888888;
+$accent-red: #ff2d2d; // Vermelho vibrante
+$tile-bg: #111111; // Preto ligeiramente mais claro para contraste
+$shadow-deep: 0 10px 40px rgba(0, 0, 0, 0.5);
+
+$font-primary: 'Inter', sans-serif;
+$font-mono: 'Space Mono', monospace;
+
+.launcher-container.dark-theme {
+    flex: auto;
+    ///  min-height: 100vh;
+    /// 
+    overflow: auto;
+    background-color: $bg-absolute;
+    color: $fg-main;
+    font-family: $font-primary;
+    padding: 2rem 1.5rem;
+    box-sizing: border-box;
+}
+
+// Layout Principal Responsivo
+.launcher-layout {
+    // max-width: 400px; // Largura típica de mobile/phablet
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+
+    /* @media (min-width: 768px) {
+        max-width: 700px; // Largura para tablet em modo retrato
+    } */
+}
+
+// GREETING / HEADER
+.launcher-greeting {
+    text-align: center;
+
+    h1 {
+        font-size: 1.5rem;
+        font-weight: 300;
+        letter-spacing: 1px;
+        color: $fg-main;
+        margin: 0 0 0.5rem 0;
+    }
+
+    p {
+        font-size: 0.85rem;
+        color: $fg-muted;
+        font-family: $font-mono;
+        margin: 0;
+    }
+}
+
+// STATUS BAR PILL
+.status-bar-pill {
+    background-color: $accent-red;
+    color: $bg-absolute;
+    border-radius: 50px;
+    padding: 0.75rem 1.5rem;
+    font-family: $font-mono;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+// GRID DE TILES MODULARES CENTRAL
+.modular-tiles-grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex: auto;
+
+    // display: grid;
+    // // A grid interna sempre usa 4 colunas para modularidade
+    // grid-template-columns: repeat(4, 1fr);
+    // gap: 1rem;
+    // // width: 100%;
+
+    // Classes de utilidade para tamanho baseadas na grid de 4 colunas
+    /// .col-2 {
+    ///     grid-column: span 2;
+    /// }
+    /// 
+    /// .col-4 {
+    ///     grid-column: span 4;
+    /// }
+}
+
+// ESTILO BASE DO TILE WIDGET
+.widget-tile {
+    flex: auto;
+    background-color: $tile-bg;
+    border: 1px solid mix($fg-muted, $tile-bg, 15%); // Borda sutil
+    border-radius: 20px;
+    color: $fg-main;
+    cursor: pointer;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    // gap: 0.75rem;
+    outline: none;
+    transition: all 0.2s ease;
+
+    &:active {
+        transform: scale(0.96);
+    }
+
+    // Seção de Ícone
+    .icon-section {
+        flex: auto;
+        display: flex;
+        justify-content: flex-end; // Alinha à direita
+        // width: 100%;
+
+        .icon-wrapper {
+            // Cria o círculo de fundo (ex: para o microfone vermelho)
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent; // Default
+
+            .material-icons-round {
+                font-size: 24px;
+            }
+        }
+    }
+
+    // Seção de Texto
+    .text-section {
+        flex: auto;
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+        gap: 0.25rem;
+
+        .title {
+            font-size: 0.8rem;
+            color: $fg-muted;
+            font-weight: 400;
+        }
+
+        .subtitle {
+            font-size: 0.7rem;
+            color: $fg-muted;
+            font-family: $font-mono;
+        }
+
+        .meta-value {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+    }
+}
+
+// WIDGET SENSOR (Especial - bloco branco da imagem)
+.widget-sensor {
+    background-color: $fg-main;
+    color: $bg-absolute;
+    border-radius: 20px;
+    // padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative; // Para os dots de decoração
+    flex: auto;
+
+
+    .sensor-value {
+        flex: auto;
+        display: flex;
+        align-items: baseline;
+        font-family: $font-mono;
+
+        .value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .unit {
+            font-size: 1rem;
+            font-weight: 400;
+            margin-left: 0.25rem;
+        }
+    }
+
+    .sensor-info {
+        text-align: right;
+
+        .title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: block;
+        }
+
+        .subtitle {
+            font-size: 0.7rem;
+            color: #555555;
+            display: block;
+        }
+    }
+
+    // Decoração de dots (visível na imagem)
+    .sensor-deco-dots {
+        flex: auto;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        width: 30px;
+        height: 10px;
+        background-image: radial-gradient(#ccc 1px, transparent 1px);
+        background-size: 5px 5px;
+    }
+}
+
+// PILL ACTIONS (Inferior)
+.action-pill {
+    background-color: $tile-bg;
+    border: 1px solid mix($fg-muted, $tile-bg, 15%);
+    border-radius: 50px;
+    color: $fg-main;
+    cursor: pointer;
+    // padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    outline: none;
+    transition: all 0.2s ease;
+
+    &:active {
+        transform: scale(0.96);
+    }
+
+    .icon {
+        font-size: 1.25rem;
+        color: $accent-red;
+    }
+
+    .label {
+        font-size: 0.9rem;
+        font-weight: 400;
+        flex: 1;
+        text-align: left;
+        margin-left: 1rem;
+    }
+
+    // Estilo primário (vermelho, ex: EXECUTAR AÇÃO)
+    &.pill-primary {
+        background-color: $accent-red;
+        color: $bg-absolute;
+        border-color: $accent-red;
+        justify-content: center;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
 }

@@ -10,7 +10,6 @@ import { CoreModule } from "@ci/core";
     imports: [
         CoreModule,
     ]
-
 })
 export class MonthCalendar implements OnChanges {
     @Input() size: 'small' | 'normal' | 'full-page' = 'normal';
