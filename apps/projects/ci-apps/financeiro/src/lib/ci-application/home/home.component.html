@@ -7,9 +7,15 @@
 <router-outlet />
 <ng-template #default let-act="act">
     @if('onClick' in act && act.onClick){
+    @if(act.icon && !act.title){
+    <button mat-icon-button (click)="act.onClick ? act.onClick($event) : null">
+        <mat-icon>{{act.icon}}</mat-icon>
+    </button>
+    }@else{
     <button mat-raised-button (click)="act.onClick ? act.onClick($event) : null">
         <ng-container *ngTemplateOutlet="inner;context:{act:act}"></ng-container>
     </button>
+    }
     }
     @if('children' in act && act.children){
     <button mat-raised-button [matMenuTriggerFor]="actMenu">

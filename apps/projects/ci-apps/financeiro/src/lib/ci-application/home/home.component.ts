@@ -58,6 +58,12 @@ export class HomeComponent implements IAmSchematization {
     @Input()
     actions?: IAction<unknown>[] = [
         {
+            icon: 'home',
+            onClick: () => {
+                this.router?.navigate(['/Financeiro/'])
+            }
+        },
+        {
             description: 'Adicionar',
             children: [
                 {
