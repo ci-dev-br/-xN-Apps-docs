@@ -45,12 +45,14 @@ import { CardFinderModule } from "../card-finder/card-finder.module";
 })
 export class BoardModule {
     public static forFeature(options: {
-        cards: ImplCard[]
+        cards?: ImplCard[],
+        services?: any[],
     }): ModuleWithProviders<BoardModule> {
         return {
             ngModule: BoardModule,
             providers: [
-                { provide: CardSetting, useValue: options.cards || [] }
+                { provide: CardSetting, useValue: options.cards || [] },
+                { provide: 'services', useValue: options.services || [] },
             ]
         }
     }

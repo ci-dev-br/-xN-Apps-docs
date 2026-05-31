@@ -2,7 +2,7 @@ import { Component, HostListener, Inject, Injector, Input, OnInit, Optional } fr
 import { FormGroup } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { UserAuthenticationService } from "@ci/auth";
-import { DaoBuilder, DaoService } from "@ci/core";
+import { DaoBuilder, DaoService, IChangeable } from "@ci/core";
 import { Card, Prancheta, PranchetaService } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 import { CardSetting, ImplCard } from "./card";
@@ -30,6 +30,7 @@ export class BoardComponent implements OnInit {
         @Optional() private readonly daoForms?: DaoBuilder,
         @Optional() private readonly user?: UserAuthenticationService,
         @Optional() private readonly pranchetas?: PranchetaService,
+        /** Data Access Object Servuice */
         @Optional() private readonly daos?: DaoService,
         @Optional() private readonly dialog?: MatDialog,
         @Optional() private readonly injector?: Injector,
@@ -49,31 +50,33 @@ export class BoardComponent implements OnInit {
             if (this.form) this.daos?.bindDataForm(this.prancheta, this.form);
 
             this.daos?.confirmation(this.prancheta)?.subscribe(async data => {
-                this.syncing = true;
+                this.synchronizing = true;
                 try {
                     if (this.prancheta && data && this.form && this.pranchetas) {
-                        const prancheta_syncronized = await lastValueFrom(this.pranchetas.pranchetaControllerSync({ body: { prancheta: this.prancheta } }));
+                        const prancheta: any = { ...this.prancheta };
+                        delete prancheta.__confirmation_subject;
+                        const prancheta_syncronized = await lastValueFrom(this.pranchetas.pranchetaControllerSync({ body: { prancheta: prancheta } }));
 
                         let _data: any = Object.assign(this.prancheta, prancheta_syncronized);
                         // delete (_data as IChangeable).__pre;
-                        // this.daos.prepareToEdit(_data);
-                        // this.daos.bindDataForm(_data, this.form);
-                        // this.prancheta = _data;
+                        this.daos?.prepareToEdit(_data);
+                        this.daos?.bindDataForm(_data, this.form);
+                        this.prancheta = _data;
                         _data;
                     }
                 } catch (error) {
                     console.trace(error);
                 }
-                this.syncing = false;
+                this.synchronizing = false;
             });
             this.form?.valueChanges.subscribe(v => {
-                if (!this.syncing) this.syncPrancheta();
+                if (!this.synchronizing) this.syncPrancheta();
             })
         } catch (error) {
             console.trace(error);
         }
     }
-    syncing?: boolean;
+    synchronizing?: boolean;
     prancheta?: Prancheta;
     async loadBoard() {
         if (!this.pranchetas) return;
@@ -88,15 +91,15 @@ export class BoardComponent implements OnInit {
                 this.pranchetas.pranchetaControllerSync({ body: { prancheta: this.prancheta } })
             )
         } else {
-            // if (!!this.default) {
-            //     this.pranchetas.pranchetaControllerGet({ body: { defaultGlobalCode: this.default } });
-            // }
+            if (!!this.default) {
+                this.pranchetas.pranchetaControllerGet({ body: { defaultGlobalCode: this.default } });
+            }
         }
     }
 
     async syncPrancheta() {
         if (this.prancheta && this.form?.valid) {
-            if (!this.syncing) await this.daos?.confirmChanges(this.prancheta);
+            if (!this.synchronizing) await this.daos?.confirmChanges(this.prancheta);
         } else {
             this.form?.markAllAsTouched();
         }
