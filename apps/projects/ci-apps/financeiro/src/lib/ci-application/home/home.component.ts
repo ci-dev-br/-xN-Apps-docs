@@ -72,7 +72,7 @@ export class HomeComponent implements IAmSchematization {
                         if (!this.service) return;
                         let new_instance: LancamentoFinanceiro = {} as LancamentoFinanceiro;
                         let new_instance_result: any = await lastValueFrom((this.service).sync({ body: { data: new_instance } }));
-                        // this.daos?.prepareToEdit(new_instance_result); ? deve ou não preparar o dado quando novo ?
+                        this.daos?.prepareToEdit(new_instance_result); // ? deve ou não preparar o dado quando novo ?
                         this.windows?.open(EditarDetailComponent, {
                             schemaName: this.schemaName,
                             data: new_instance_result
