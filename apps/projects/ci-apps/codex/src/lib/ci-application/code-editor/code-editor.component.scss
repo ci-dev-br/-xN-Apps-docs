@@ -10,5 +10,16 @@
 :host {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: auto;
+    align-items: stretch;
+    justify-content: stretch;
+    flex: auto;
+}
+
+.wrapper {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    height: 100px;
 }

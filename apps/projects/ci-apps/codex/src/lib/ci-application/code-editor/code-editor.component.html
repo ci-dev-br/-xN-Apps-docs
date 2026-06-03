@@ -1,17 +1,20 @@
-
-@if(!carregando){   
-    <div  >
-        <button mat-button (click)="confirmar()">
-            Confirmar
-        </button>
-        <button mat-button >
-            Voltar ultima versão
-        </button>
-    </div>
-    <nu-monaco-editor [(ngModel)]="value" [options]="editorOptions"
-    height="calc(100vh - 154px)"></nu-monaco-editor>
+@if(!carregando){
+<div>
+    <button mat-button (click)="confirmar()">
+        Confirmar
+    </button>
+    <button mat-button>
+        Voltar ultima versão
+    </button>
+</div>
+<div class="wrapper">
+    <nu-monaco-editor [(ngModel)]="value" [options]="editorOptions" height="calc(100vh - 154px)"></nu-monaco-editor>
+</div>
 }@else{
 <div class="loading">
     Carregando ...
 </div>
 }
+<div class="status">
+    x
+</div>
