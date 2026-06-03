@@ -1,0 +1,22 @@
+:host {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    font-size: 11px;
+}
+
+.path {
+    cursor: pointer;
+}
+
+.path+.path {
+    position: relative;
+    margin-left: 20px;
+
+    &::before {
+        content: '>';
+        position: absolute;
+        left: -15px;
+        transform: scaleY(1.8) scaleX(.7);
+    }
+}

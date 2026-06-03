@@ -3,10 +3,11 @@
     <button mat-button (click)="confirmar()">
         Confirmar
     </button>
-    <button mat-button>
+    <!-- <button mat-button>
         Voltar ultima versão
-    </button>
+    </button> -->
 </div>
+<ci-breadcrumb [oppenedFile]="oppenedFile"></ci-breadcrumb>
 <div class="wrapper">
     <nu-monaco-editor [(ngModel)]="value" [options]="editorOptions" height="calc(100vh - 154px)"></nu-monaco-editor>
 </div>

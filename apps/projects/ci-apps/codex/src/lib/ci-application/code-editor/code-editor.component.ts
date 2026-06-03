@@ -6,6 +6,7 @@ import { FileDto, FileExplorerService } from '@ci/portal-api';
 import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 import { lastValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
+import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 @Component({
     selector: 'ci-code-editor',
     standalone: true,
@@ -14,13 +15,14 @@ import { MatButtonModule } from '@angular/material/button';
         NuMonacoEditorModule,
         FormsModule,
         MatButtonModule,
+        BreadcrumbComponent,
     ],
     templateUrl: './code-editor.component.html',
     styleUrl: './code-editor.component.scss'
 })
 export class CodeEditorComponent {
     carregando = true;
-    private oppenedFile?: FileDto;
+    oppenedFile?: FileDto;
     constructor(
         private readonly fileExplorer: FileExplorerService,
         private readonly activatedRoute: ActivatedRoute,
