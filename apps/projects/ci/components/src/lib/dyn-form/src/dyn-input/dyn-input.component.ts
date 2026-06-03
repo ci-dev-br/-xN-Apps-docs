@@ -12,55 +12,13 @@ const types: any = {
 @Component({
     selector: 'ci-dyn-input',
     standalone: false,
-    template: `
-    @if(!!formGroup && !!fieldName){<form style="display:contents" [formGroup]="formGroup">
-        @if(inputComponent !== undefined && !!inputComponent){
-            <ng-container *ngComponentOutlet="inputComponent" ></ng-container>
-        }
-        @else{
-            <!-- 
-                Defafault Input Implementation
-            -->
-                @if(type === 'html'){
-                    HTML CONTENT
-                }@else {
-                    <mat-form-field>
-                        <mat-label>{{label || placeholder || ''}}</mat-label>
-                        @if(!!service){
-                            <input matInput type="text" 
-                                [placeholder]="placeholder || label || ''" 
-                                [formControlName]="fieldName || ''"  
-                                [matAutocomplete]="autoc"  
-                            >
-                            <mat-autocomplete #autoc="matAutocomplete">
-                             @for (option of list; track option) {
-                                 <mat-option [value]="option">{{option | dao}}</mat-option>
-                             }    
-                            </mat-autocomplete>
-                        }@else{
-                            <input matInput type="text" 
-                                autocomplete="off"
-                                [placeholder]="placeholder || label || ''" 
-                                [formControlName]="fieldName || ''"  
-                            >
-                        }
-                        @if(!!schemaName){<button mat-icon-button matSuffix>
-                            <mat-icon>
-                                search
-                            </mat-icon>
-                        </button>}
-                    </mat-form-field>
-                }
-        }
-    </form>
-    @if(false){  <ci-dyn-input-date></ci-dyn-input-date>}
-}
-    `,
+    templateUrl: `dyn-input.component.html`,
     styleUrl: 'dyn-input.component.scss'
 })
 export class DynInputComponent implements IAmSchematization {
     @Input() fieldName?: string;
     @Input() label?: string;
+    @Input() description?: string;
     @Input() placeholder?: string;
     @Input() hint?: string;
     @Input() formControl?: FormControl;
@@ -75,7 +33,6 @@ export class DynInputComponent implements IAmSchematization {
     public set schemaName(value: string) {
         if (this._schemaName === value) return;
         this._schemaName = value;
-
         if (!!this._schemaName) {
             let serviceType = getServiceAsSchema(this._schemaName);
             if (serviceType) {

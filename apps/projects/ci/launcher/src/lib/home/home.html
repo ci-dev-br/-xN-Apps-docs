@@ -1,6 +1,6 @@
 @if(isDeveloper){
-<!-- <c-threjs [objetos]="objetos"></c-threjs> -->
-}
+<c-threjs [objetos]="objetos"></c-threjs>
+}@else{
 <nav> @if(isDeveloper){
     <button mat-icon-button (click)="toggleEnv()">
         <mat-icon>logo_dev</mat-icon>
@@ -107,4 +107,4 @@
     <button mat-icon-button [routerLink]="'/meus-apps'">
         <mat-icon>apps</mat-icon>
     </button>
-</div>
+</div>}

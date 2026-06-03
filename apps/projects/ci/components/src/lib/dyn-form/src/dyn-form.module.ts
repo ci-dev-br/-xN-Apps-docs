@@ -11,6 +11,7 @@ import { DynFormComponent } from './dyn-form.component';
 import { FORM_OPTIONS, FormOptionsBuilder, IFormOptions } from './i-form-options';
 import { DynInputDateComponent } from './dyn-input/dyn-input-date.component';
 import { DynInputComponent } from './dyn-input/dyn-input.component';
+import { NgxCurrencyDirective } from 'ngx-currency';
 @NgModule({
   declarations: [
     DynFormComponent,
@@ -29,6 +30,7 @@ import { DynInputComponent } from './dyn-input/dyn-input.component';
     MatAutocompleteModule,
     MatButtonModule,
     ReactiveFormsModule,
+    NgxCurrencyDirective,
   ],
   providers: [
     FormOptionsBuilder,

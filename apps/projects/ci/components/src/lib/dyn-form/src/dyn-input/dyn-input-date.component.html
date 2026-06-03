@@ -1,0 +1,7 @@
+<mat-form-field>
+    <mat-label>{{label || placeholder || ''}}</mat-label>
+    <input matInput type="text" [placeholder]="placeholder || label || ''">
+    @if(isArray){<button matSuffix mat-icon-button>
+        <mat-icon>edit</mat-icon>
+    </button>}
+</mat-form-field>

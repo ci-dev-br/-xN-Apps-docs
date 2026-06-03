@@ -21,7 +21,7 @@ import { IColumnOption } from "../models/i-column-options";
 export class HeaderCellRenderer<T> {
     sort?: 'ASC' | 'DESC';
     constructor(
-        private readonly vcr: ViewContainerRef,
+        private readonly view: ViewContainerRef,
         private readonly services: DataGridService,
     ) { }
     @Input()

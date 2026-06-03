@@ -1,4 +1,4 @@
-import { Component, Optional } from '@angular/core';
+import { Component, Optional, OnInit, OnDestroy } from '@angular/core';
 import { CoreModule, IconLoaderSerices, LoadIconsModule } from '@ci/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -27,8 +27,9 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
   templateUrl: './files.component.html',
   styleUrl: './files.component.scss'
 })
-export class FilesComponent {
+export class FilesComponent implements OnInit, OnDestroy {
   files?: IArquivo[];
+  navegacao?: string[];
   filteredFiles?: IArquivo[];
   constructor(
     private readonly fileExplorer: FileExplorerService,
@@ -55,6 +56,16 @@ export class FilesComponent {
     })
   }
   endereco?: string;
+  ngOnInit() {
+    const a = localStorage.getItem('Arquivos.Endereco');
+    if (!!a) {
+      this.endereco = JSON.parse(a);
+      this.ir(this.endereco!);
+    }
+  }
+  ngOnDestroy() {
+    localStorage.setItem('Arquivos.Endereco', JSON.stringify(this.endereco))
+  }
   private _filtrar?: string | undefined;
   public get filtrar(): string | undefined {
     return this._filtrar;
@@ -78,6 +89,10 @@ export class FilesComponent {
       this.endereco = endereco;
       this.filteredFiles = undefined;
       let files = (await lastValueFrom(this.fileExplorer.fileExplorerControllerReadDirectory({ body: { path: endereco } })));
+
+      if (!this.navegacao) this.navegacao = [];
+      this.navegacao.push(endereco);
+
       if (!!files)
         this.files = files.map(f => {
           return {
@@ -116,5 +131,14 @@ export class FilesComponent {
         }
       }
     }
+  }
+  back() {
+    if (!!this.navegacao) {
+      this.navegacao.splice(this.navegacao.length - 1, 1);
+      this.ir(this.navegacao[this.navegacao.length - 1]);
+    }
+  }
+  forward() {
+
   }
 }

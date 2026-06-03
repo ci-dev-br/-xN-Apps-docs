@@ -1,0 +1,52 @@
+@if(!!formGroup && !!fieldName){<form style="display:contents" [formGroup]="formGroup">
+    @if(inputComponent !== undefined && !!inputComponent){
+    <ng-container *ngComponentOutlet="inputComponent"></ng-container>
+    }
+    @else{
+    <!-- 
+                Defafault Input Implementation
+            -->
+    @if(type === 'html'){
+    HTML CONTENT
+    }@else {
+    <mat-form-field>
+        <mat-label>{{label || placeholder || ''}}</mat-label>
+        @if(!!service){
+        <input matInput type="text" [placeholder]="placeholder || label || ''" [formControlName]="fieldName || ''"
+            [matAutocomplete]="autoc">
+        <mat-autocomplete #autoc="matAutocomplete">
+            @for (option of list; track option) {
+            <mat-option [value]="option">{{option | dao}}</mat-option>
+            }
+        </mat-autocomplete>
+        }@else{
+        <ng-container *ngTemplateOutlet="inputContent"></ng-container>
+        <!-- <input matInput type="text" autocomplete="off" [placeholder]="placeholder || label || ''"
+            [formControlName]="fieldName || ''"> -->
+        }
+        @if(!!schemaName){<button mat-icon-button matSuffix>
+            <mat-icon>
+                search
+            </mat-icon>
+        </button>}
+        <ng-template #inputContent>
+            @if(type==='text'){
+            <input matInput type="text" autocomplete="off" [placeholder]="placeholder || label || ''"
+                [formControlName]="fieldName || ''">
+            }@else if(type==='number'){
+            <input matInput style="text-align: right;" type="text" autocomplete="off"
+                [placeholder]="placeholder || label || ''" [formControlName]="fieldName || ''">
+            }@else{
+            <input matInput type="text" autocomplete="off" [placeholder]="placeholder || label || ''"
+                [formControlName]="fieldName || ''">
+            }
+        </ng-template>
+        @if(!!description){<mat-hint>
+            {{description}}
+        </mat-hint>}
+    </mat-form-field>
+    }
+    }
+</form>
+@if(false){ <ci-dyn-input-date></ci-dyn-input-date>}
+}

@@ -4,15 +4,7 @@ import { FormControl, FormGroup } from "@angular/forms";
 @Component({
     selector: 'ci-dyn-input-date',
     standalone: false,
-    template: `
-        <mat-form-field>
-            <mat-label>{{label || placeholder || ''}}</mat-label>
-            <input matInput type="text" [placeholder]="placeholder || label || ''"  >
-            @if(isArray){<button matSuffix mat-icon-button>
-                <mat-icon>edit</mat-icon>
-            </button>}
-        </mat-form-field>
-        `,
+    templateUrl: 'dyn-input-date.component.html',
     styles: ':host{display:contents;}'
 })
 export class DynInputDateComponent {
