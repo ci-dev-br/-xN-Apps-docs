@@ -58,13 +58,18 @@ export class CredencialService {
     async obterChaveAcesso(
         assinatura?: string,
     ) {
-        try {//  console.log(assinatura)
+        try {
+            //  console.log(assinatura)
             return await this.credentialRepository.createQueryBuilder('chave_acesso')
                 .where(`encode(sha512(chave_acesso.id::varchar::bytea), 'hex') = :id`)
                 .setParameter('id', assinatura)
                 .getOne();
         } catch (error) { console.trace(error); }
     }
+    /***
+     * Obtém chave de acesso a partir de sua ID
+     * 
+     */
     async obterChaveAcessoPorId(
         chave_acesso_id?: string,
     ) {
@@ -80,6 +85,10 @@ export class CredencialService {
     ) {
         return await this.credentialRepository.save(chave);
     }
+    /**
+     * 
+     * @param user_id 
+     */
     async eliminarChaves(user_id: string) {
         try {
             const chaves_ativas = await this.credentialRepository.find({
@@ -92,6 +101,9 @@ export class CredencialService {
                     chave.valid = false;
                 });
             await this.credentialRepository.save(chaves_ativas);
-        } catch (error) { console.trace(error); }
+        } catch (error) {
+            console.trace(error);
+            throw new Error("Falha ao invalidar chaves de acesso.");
+        }
     }
 }

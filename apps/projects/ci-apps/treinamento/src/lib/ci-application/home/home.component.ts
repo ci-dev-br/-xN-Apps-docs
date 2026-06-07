@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Optional } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { IAction } from '@ci/components/action';
 import { CoreModule } from '@ci/core';
 
@@ -7,13 +8,14 @@ import { CoreModule } from '@ci/core';
     standalone: true,
     imports: [
         CoreModule,
+        RouterModule,
     ],
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss'
 })
 export class HomeComponent {
     actions?: IAction<any>[] = [
-        {
+        /* {
             label: 'Migrar meu produto'
         },
         {
@@ -21,12 +23,16 @@ export class HomeComponent {
         },
         {
             label: 'Explorar'
-        },
+        }, */
         {
-            label: 'Cirar e Vender'
+            label: 'Cirar ',
+            onClick: () => {
+                this.router?.navigate(['Treinamento/Create']);
+            }
         },
-        {
-            label: 'Prestação de Serviços'
-        },
+        /*  {
+             label: 'Prestação de Serviços'
+         }, */
     ];
+    constructor(@Optional() private router?: Router) { }
 }

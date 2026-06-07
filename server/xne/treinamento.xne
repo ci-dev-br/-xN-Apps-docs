@@ -1,0 +1,24 @@
+@Proto: xne.core.FuncionalidadeImpl
+@version: 1.0.0
+@Funcionalidade: Teinamento:
+@Detail: Cadastramento de Pessoa, física e jurídica para gerenciamento de cadastro de pessoas.
+@Models{
+    Instrutor{
+        Endereços as Endereço;
+    }
+    Curso{
+        Endereços as Endereço;
+    }
+    Turma{
+        Endereços as Endereço;
+    }
+    Aluno{
+        Endereços as Endereço;
+    }
+    Matrícula{
+        Endereços as Endereço;
+    }
+    Pagamento{
+        Endereços as Endereço;
+    }
+}
