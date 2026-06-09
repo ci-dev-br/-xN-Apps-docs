@@ -1,11 +1,13 @@
-import { Component, ComponentRef, ElementRef, OnInit, Optional } from '@angular/core';
+import { Component, ComponentRef, ElementRef, OnInit, Optional, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { CoreModule } from '@ci/core';
+import { Objeto, ThrejsComponent } from '@ci/espazio';
 import { ChessService } from '@ci/portal-api';
 import { Chess, Move } from 'chess.js';
 import { lastValueFrom } from 'rxjs';
+import { PerspectiveCamera } from 'three';
 const PIECE_VALUES: { [key: string]: number } = {
     p: 10 * 2.1,
     n: 30 * 2.2,
@@ -22,14 +24,23 @@ const PIECE_VALUES: { [key: string]: number } = {
         MatButtonModule,
         MatIconModule,
         MatMenuModule,
+        ThrejsComponent,
     ],
     templateUrl: './chess.html',
     styleUrls: ['./chess.scss']
 })
 export class ChessGameComponent implements OnInit {
+    @ViewChild('rendererContainer', { static: true }) rendererContainer!: ElementRef<HTMLDivElement>;
+
+
+
+    objetos: Objeto[] = [
+        new Objeto({ glb_file: 'chess.glb' }),
+    ];
     stage: 'menu' | 'play' | 'viewer' = 'menu';
     player: 'white' | 'black' = 'white';
     game = new Chess();
+    camera = new PerspectiveCamera(75, 400 / 300, 0.1, 1000);
     virtualGame = new Chess();
     board: any[][] = [];
     selectedSquare: string | null = null;
@@ -39,11 +50,16 @@ export class ChessGameComponent implements OnInit {
         'hard',]
     difficulty: 'easy' | 'medium' | 'hard' = 'hard';
     ngOnInit() {
+
+        this.camera.position.z = 4;
+        this.camera.position.y = 3;
         this.updateBoard();
     }
     start() {
         this.isVsIA = false;
         this.stage = 'play';
+        const { clientWidth, clientHeight } = this.rendererContainer.nativeElement;
+
         this.resetGame();
     }
     startVsIA() {

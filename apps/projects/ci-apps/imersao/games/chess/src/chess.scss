@@ -19,6 +19,15 @@
     min-height: min(80vw, 80vh);
 }
 
+c-threjs {
+    min-width: 400px;
+    min-height: 300px;
+    width: 400px;
+    height: 300px;
+    // min-width: min(80vw, 80vh);
+    // min-height: min(80vw, 80vh);
+}
+
 .row {
     display: flex;
     flex: 1;

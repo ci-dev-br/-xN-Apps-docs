@@ -37,7 +37,5 @@ export class Player extends Objeto {
     narrador?: any;
     skills?: { [code: string]: number };
 
-    controlHandler(event: MouseEvent | KeyboardEvent) {
 
-    }
 }

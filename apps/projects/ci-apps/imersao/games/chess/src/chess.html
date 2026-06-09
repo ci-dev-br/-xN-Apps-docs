@@ -18,8 +18,9 @@
 </div>
 }
 @else if(stage==='play'){
-<div class="chess-container">
-    <div class="board">
+<div class="chess-container" #rendererContainer>
+    <c-threjs [objetos]="objetos" [camera]="camera"></c-threjs>
+    <!--  <div class="board">
         <div *ngFor="let row of board; let i = index" class="row">
             <div *ngFor="let cell of row; let j = index" class="square" [ngClass]="(i + j) % 2 === 0 ? 'light' : 'dark'"
                 [class.selected]="selectedSquare === getCoords(i, j)" (click)="onSquareClick(i, j)">
@@ -28,7 +29,7 @@
                 </span>
             </div>
         </div>
-    </div>
+    </div> -->
     <span *ngIf="isVsIA && game.turn() === 'b'">(IA pensando...)</span>
     <div class="row legeng">
         <div class="status">

@@ -4,6 +4,7 @@ import { CoreModule } from '@ci/core';
 // Importamos o OrbitControls junto com o GLTFLoader
 import { OrbitControls } from 'three/addons';
 import { Objeto } from '../engine/objeto';
+import { Player } from '@ci/espazio';
 
 @Component({
   selector: 'c-threjs',
@@ -43,6 +44,10 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     return this.adicionarObjeto(new Objeto({ mesh }));
   }
   constructor(@Optional() private readonly ngZone?: NgZone) { }
+  private get localPlayer(): Player | undefined {
+    return this.objetos?.find(obj => obj instanceof Player) as Player;
+  }
+
   ngAfterViewInit(): void {
     this.initThree();
     this.setupResizeObserver();
@@ -74,9 +79,9 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
 
     const { clientWidth, clientHeight } = this.rendererContainer.nativeElement;
 
-    this.camera = new PerspectiveCamera(75, clientWidth / clientHeight, 0.1, 1000);
-    this.camera.position.z = 5;
-    this.camera.position.y = 1;
+    // this.camera = new PerspectiveCamera(75, clientWidth / // clientHeight, 0.1, 1000);
+    // this.camera.position.z = 5;
+    // this.camera.position.y = 1;
 
     this.renderer = new WebGLRenderer({
       antialias: true,
@@ -97,11 +102,14 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
 
     // Configurando o OrbitControls para rotacionar, dar zoom e mover a câmera
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.enableDamping = true; // Adiciona uma inércia suave ao movimento
-    this.controls.dampingFactor = 0.05;
-    this.controls.enablePan = false; // Descomente se não quiser que o usuário arraste a câmera para fora do centro
-    this.controls.enableZoom = true; // O zoom usando o scroll do mouse já vem ativado por padrão
+    if (this.camera) {
+
+      this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+      this.controls.enableDamping = true; // Adiciona uma inércia suave ao movimento
+      this.controls.dampingFactor = 0.05;
+      this.controls.enablePan = false; // Descomente se não quiser que o usuário arraste a câmera para fora do centro
+      this.controls.enableZoom = true; // O zoom usando o scroll do mouse já vem ativado por padrão
+    }
 
     const light = new PointLight(0xffffff, 10, 100);
 

@@ -9,25 +9,27 @@ export class Objeto {
     obj.gltf = gltf;
     obj.scene?.add(gltf.scene);
   }
-  private worldOctree = new Octree();
+  protected worldOctree = new Octree();
 
-  private playerCollider = new Capsule(new Vector3(0, 0.35, 0), new Vector3(0, 1, 0), 0.35);
+  protected playerCollider = new Capsule(new Vector3(0, 0.35, 0), new Vector3(0, 1, 0), 0.35);
 
-  private playerVelocity = new Vector3();
-  private playerDirection = new Vector3();
+  protected playerVelocity = new Vector3();
+  protected playerDirection = new Vector3();
 
-  private playerOnFloor = false;
-  private mouseTime = 0;
+  protected playerOnFloor = false;
+  protected mouseTime = 0;
 
   // Nova propriedade para armazenar os controles da câmera
   //  controls?: OrbitControls;
   controls?: any;
 
-  private keyStates = {};
+  // Dicionário para guardar quais teclas estão pressionadas
+  protected keyStates: { [key: string]: boolean } = {};
+  protected speed: number = 25; // Velocidade de caminhada
 
-  private vector1 = new Vector3();
-  private vector2 = new Vector3();
-  private vector3 = new Vector3();
+  protected vector1 = new Vector3();
+  protected vector2 = new Vector3();
+  protected vector3 = new Vector3();
   animations?: AnimationAction[];
 
   GRAVITY: number = 10;
@@ -61,7 +63,14 @@ export class Objeto {
       }
     });
   }
-
+  // Método que recebe os eventos do Angular
+  controlHandler(event: KeyboardEvent) {
+    if (event.type === 'keydown') {
+      this.keyStates[event.code] = true;
+    } else if (event.type === 'keyup') {
+      this.keyStates[event.code] = false;
+    }
+  }
   updatePlayer(deltaTime: number) {
     let damping = Math.exp(- 4 * deltaTime) - 1;
     if (!this.playerOnFloor) {
@@ -75,6 +84,4 @@ export class Objeto {
     // playerCollisions();
     // camera.position.copy(this.playerCollider.end);
   }
-
-  
 }

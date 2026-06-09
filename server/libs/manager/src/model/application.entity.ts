@@ -231,6 +231,4 @@ export class Application {
     @ManyToMany(type => User)
     @JoinTable()
     users?: User[];
-
-    
 }
