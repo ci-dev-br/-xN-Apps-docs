@@ -34,9 +34,16 @@ export class WindowComponent implements OnInit, OnDestroy {
       label: 'Abrir em Janela',
       onClick: () => {
         const object_identification = (this.data as any)?.data?.data?.internalId || (this.data as any)?.data?.data?.id;
-        window.open(location.href + '/Editar/' + object_identification, 'PopupWindow' + (object_identification), "width=600,height=700,resizable=yes,top=100,left=200,");
+        window.open(location.href + '?Editar=' + object_identification, 'PopupWindow' + (object_identification), "width=600,height=700,resizable=yes,top=100,left=200,");
         this.close();
       }
+    },
+    {
+      icon: 'save', label: 'Confirmar',
+      visible: () => {
+        return !!this.changed;
+      },
+      onClick: () => { this.confirm() }
     },
     { icon: 'close', label: 'Fechar', onClick: () => this.close() },
   ];
@@ -47,8 +54,9 @@ export class WindowComponent implements OnInit, OnDestroy {
     { provide: MAT_DIALOG_DATA, useValue: (this.data as any)?.data || null },
     { provide: 'ACTIONS', useValue: this.acts }
   ]);
-  daos?: DaoService;
+
   constructor(
+    @Optional() private daos?: DaoService,
     @Optional() private readonly ref?: MatDialogRef<WindowComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) protected data?: IWindowData,
     @Optional() public readonly actions?: ActionsService,
@@ -64,10 +72,8 @@ export class WindowComponent implements OnInit, OnDestroy {
     return this.daos?.haveChanges(!!(this.data as any)?.data?.schemaName ? (this.data as any)?.data.data : (this.data as any)?.data)
   }
   confirm() {
-    /* 
-      this.confirmOutput.emit(!!(this.data as any)?.data?.schemaName ? (this.data as any).data.data : (this.data as any)?.data);
-      this.daos?.confirmChanges(!!(this.data as any)?.data?.schemaName ? (this.data as any).data.data : (this.data as any)?.data)
-    */
+    this.confirmOutput.emit((this.data as any)?.data.data);
+    this.daos?.confirmChanges((this.data as any)?.data.data)
   }
   close() {
     this.showing = false;

@@ -59,6 +59,9 @@ export class EditarDetailComponent implements OnInit, OnDestroy, IAmSchematizati
      */
     ngOnInit() {
         this.loadFormFromDaoBuilder();
+        // this.route?.params.subscribe(params => {
+        //     params;
+        // })
     }
     /**
      * Quando o componente for desmontado, livre a memória

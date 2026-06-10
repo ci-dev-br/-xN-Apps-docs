@@ -2,7 +2,7 @@ import { Injector, Optional, Pipe, PipeTransform } from "@angular/core";
 import { TextCellRenderer } from "./cell-renderer.component";
 
 @Pipe({
-    pure: true,
+    pure: false,
     name: 'valueOf',
     standalone: true,
 })

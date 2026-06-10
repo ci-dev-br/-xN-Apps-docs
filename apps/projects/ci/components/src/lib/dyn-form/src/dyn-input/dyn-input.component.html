@@ -34,8 +34,9 @@
             <input matInput type="text" autocomplete="off" [placeholder]="placeholder || label || ''"
                 [formControlName]="fieldName || ''">
             }@else if(type==='number'){
-            <input matInput style="text-align: right;" type="text" autocomplete="off"
-                [placeholder]="placeholder || label || ''" [formControlName]="fieldName || ''">
+            <input matInput [currencyMask]="{ prefix: '', thousands: '.', decimal: ',' }" style="text-align: right;"
+                type="text" autocomplete="off" [placeholder]="placeholder || label || ''"
+                [formControlName]="fieldName || ''">
             }@else{
             <input matInput type="text" autocomplete="off" [placeholder]="placeholder || label || ''"
                 [formControlName]="fieldName || ''">

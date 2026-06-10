@@ -11,6 +11,9 @@ export interface IAction<I> {
 }
 @Injectable()
 export class ActionsService {
+    get actions() {
+        return this._actions?.values()
+    }
     private _actions?: Map<string, IAction<unknown>> = new Map();
     async setAction(code: string, extas: IAction<any>) {
         this._actions?.set(code, extas);

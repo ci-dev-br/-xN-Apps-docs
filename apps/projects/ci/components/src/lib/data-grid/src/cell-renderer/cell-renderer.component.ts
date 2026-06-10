@@ -55,7 +55,7 @@ export class TextCellRenderer<T> {
     componentContent?: any[][];
     private _value: any;
     get value() {
-        if (this._value !== undefined) return this._value;
+        //  if (this._value !== undefined) return this._value;
         // TODO: implementar camada de aplicação de valor
         if (this.column?.fieldName && this.data) {
             let inner = this.data;
