@@ -20,11 +20,11 @@
 }
 
 c-threjs {
-    min-width: 400px;
-    min-height: 300px;
-    width: 400px;
-    height: 300px;
-    // min-width: min(80vw, 80vh);
+    // min-width: 400px;
+    // min-height: 300px;
+    width: auto;
+    height: min(80vw, 80vh);
+    min-width: min(80vw, 80vh);
     // min-height: min(80vw, 80vh);
 }
 

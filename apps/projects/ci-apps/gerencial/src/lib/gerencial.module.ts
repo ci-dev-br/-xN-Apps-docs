@@ -39,18 +39,29 @@ const routes: Routes = [
             role: 'MASTER',
         },
         children: [
-            { path: 'home', component: HomeComponent, data: { title: '    ', icon: 'smartphone' } },
-            { path: 'devices', component: DevicesComponent, data: { title: '    ', icon: 'smartphone' } },
+            {
+                path: 'home', component: HomeComponent,
+                data: { title: '    ', icon: 'smartphone' }
+            },
+            {
+                path: 'devices', component: DevicesComponent,
+                data: { title: '    ', icon: 'smartphone' }
+            },
             // { path: 'settings', component: undefined },
             {
                 path: 'applications', component: MasterDetailComponent
-                /* ApplicationManagerComponent */, data: {
-                    title: 'Apps', icon: 'apps', schema: 'Application', search: {
+                /* ApplicationManagerComponent */,
+                data: {
+                    title: 'Apps', icon: 'apps', schema: 'Application',
+                    search: {
                         all: true
                     }
                 }
             },
-            { path: 'user-manager', component: UsersComponent, data: { title: 'Gestão de Usuários', icon: 'badge' } },
+            {
+                path: 'user-manager', component: UsersComponent,
+                data: { title: 'Gestão de Usuários', icon: 'badge' }
+            },
         ]
     },
     {

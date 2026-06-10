@@ -31,9 +31,7 @@ const PIECE_VALUES: { [key: string]: number } = {
 })
 export class ChessGameComponent implements OnInit {
     @ViewChild('rendererContainer', { static: true }) rendererContainer!: ElementRef<HTMLDivElement>;
-
-
-
+    @ViewChild('th', { static: true }) th?: ThrejsComponent;
     objetos: Objeto[] = [
         new Objeto({ glb_file: 'chess.glb' }),
     ];
@@ -58,9 +56,27 @@ export class ChessGameComponent implements OnInit {
     start() {
         this.isVsIA = false;
         this.stage = 'play';
-        const { clientWidth, clientHeight } = this.rendererContainer.nativeElement;
-
+        // const { clientWidth, clientHeight } = this.rendererContainer?.nativeElement;
         this.resetGame();
+        setTimeout(() => {
+            this.updatePosition();
+        }, 600)
+    }
+    updatePosition() {
+        if (!this.objetos) return;
+        let objetos = this.objetos[0].gltf?.scene?.children;
+
+        objetos?.forEach(mesh => {
+            if (mesh?.name?.indexOf('Dark') > -1) {
+                // mesh.position.x = 0;
+                // mesh.position.z = 0;
+            }
+            if (mesh?.name?.indexOf('Light') > -1) {
+                // mesh.position.x = 0;
+                // mesh.position.z = 0;
+            }
+        });
+        ///this.objetos.
     }
     startVsIA() {
         this.isVsIA = true;

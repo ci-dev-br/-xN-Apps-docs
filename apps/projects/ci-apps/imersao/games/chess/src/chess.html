@@ -19,7 +19,7 @@
 }
 @else if(stage==='play'){
 <div class="chess-container" #rendererContainer>
-    <c-threjs [objetos]="objetos" [camera]="camera"></c-threjs>
+    <c-threjs #th [objetos]="objetos" [camera]="camera"></c-threjs>
     <!--  <div class="board">
         <div *ngFor="let row of board; let i = index" class="row">
             <div *ngFor="let cell of row; let j = index" class="square" [ngClass]="(i + j) % 2 === 0 ? 'light' : 'dark'"
