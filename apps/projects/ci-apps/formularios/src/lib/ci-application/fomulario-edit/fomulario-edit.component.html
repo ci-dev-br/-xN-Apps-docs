@@ -4,7 +4,7 @@
         @if(!!formGroup){<mat-card>
             <mat-card-content [formGroup]="formGroup">
                 <ci-input mode="content-editable" label="Título" fieldName="title" el="h1" />
-                <ci-input mode="content-editable" label="Descrição" fieldName="description" />
+                <ci-input mode="content-editable" label="Descrição" fieldName="description" el="html" />
             </mat-card-content>
         </mat-card>}
         @if(!!((formulario)?.perguntas?.perguntas)){

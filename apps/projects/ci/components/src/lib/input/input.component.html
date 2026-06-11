@@ -1,8 +1,13 @@
 @if(stage==='edit' && form && fieldName){
 <mat-form-field [formGroup]="form">
     <mat-label>{{label || placeholder || ''}}</mat-label>
+    @if(form.controls[fieldName]?.value?.length > 100){
+    <textarea matInput [formControlName]="fieldName" [placeholder]="placeholder || label||''"
+        (keydown.enter)="confirm($event)" (blur)="confirm($event)"></textarea>
+    }@else{
     <input #input type="text" matInput [placeholder]="placeholder || label||''" (keydown.enter)="confirm($event)"
         (blur)="confirm($event)" [formControlName]="fieldName" />
+    }
     <button matSuffix mat-icon-button (click)="confirm($event)">
         <mat-icon>check</mat-icon>
     </button>
@@ -18,6 +23,7 @@
 @case ('h6') {<h6><ng-container *ngTemplateOutlet="inner"></ng-container></h6>}
 @case ('p') {<p><ng-container *ngTemplateOutlet="inner"></ng-container></p>}
 @case ('div') {<div><ng-container *ngTemplateOutlet="inner"></ng-container></div>}
+@case ('html') {<div [innerHTML]="value"></div>}
 @default {<p><ng-container *ngTemplateOutlet="inner"></ng-container></p>}
 }
 <ng-template #inner>{{value || ''}}</ng-template>

@@ -16,7 +16,8 @@
     flex: auto;
 }
 
-.wrapper {
+.wrapper,
+.loading {
     flex: auto;
     display: flex;
     flex-direction: column;
@@ -28,4 +29,16 @@
     border: solid 1px blue;
     background-color: orange;
     color: black;
+}
+
+button {
+    border: transparent;
+    background: transparent;
+
+    cursor: pointer;
+
+    &:hover {
+        background: black;
+        color: white;
+    }
 }

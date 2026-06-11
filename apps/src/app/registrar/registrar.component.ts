@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { AuthService, Register, RegisterService } from '@ci/portal-api';
 import { AuthModule, UserAuthenticationService } from '@ci/auth';
@@ -71,8 +71,14 @@ export class RegistrarComponent implements OnInit {
     // private readonly router: Router,
     /* // private readonly */ stages: StageService,
     private readonly regitrar: RegisterService,
+    private readonly route: ActivatedRoute,
   ) {
     stages.host = this;
+    route.params.subscribe((params: any) => {
+      if (params.invite) {
+
+      }
+    })
   }
   validar() {
     return this.form.valid;

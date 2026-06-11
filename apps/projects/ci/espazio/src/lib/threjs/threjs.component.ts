@@ -137,11 +137,6 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
       const delta = this.clock.getDelta();
       this.frameId = requestAnimationFrame(() => this.animate());
 
-      // Atualiza os controles em cada frame (necessário quando enableDamping = true)
-      this.lights[0].position.z = this.camera!.position.z!;
-      this.lights[0].position.y = this.camera!.position.y!;
-      this.lights[0].position.x = this.camera!.position.x!;
-
       this.mixer?.update(delta);
 
       /*  if (!!this.controls) {

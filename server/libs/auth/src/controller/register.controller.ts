@@ -39,12 +39,12 @@ export class RegisterController {
                 } catch (error) {
                     console.trace(error);
                 }
-                // this.mails.requestSendMessageToMail({
-                //     template_html: 'bem-vindo',
-                //     from: 'apps@ci.dev.br',
-                //     to: input.email,
-                // 
-                // })
+                this.mails.requestSendMessageToMail({
+                    template_html: 'bem-vindo',
+                    from: 'apps@ci.dev.br',
+                    to: input.email,
+
+                })
             }
         } else {
             throw new Error('Erro temporário, tente novamente mais tarde.');
@@ -60,7 +60,7 @@ export class RegisterController {
            passwordMode: 'argon2',
          });
          return created_user; */
-    } catch(error) {
+    } /* catch(error) {
         console.trace(error);
         return {
             status: 500,
@@ -70,5 +70,5 @@ export class RegisterController {
                 detail: error.detail,
             }
         }
-    }
+    } */
 }

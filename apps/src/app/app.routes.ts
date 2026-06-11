@@ -7,6 +7,10 @@ export const routes: Routes = [
         loadChildren: () => import('./acessar/acessar.module').then(m => m.AcessarModule)
     },
     {
+        path: 'registrar',
+        loadChildren: () => import('./registrar/registrar.module').then(m => m.RegistrarModule)
+    },
+    {
         path: '',
         canMatch: [authGuard],
         loadChildren: () => import('./painel/painel.module').then(m => m.PainelModule),

@@ -26,10 +26,17 @@ export class InviteService {
      * @param invitedByUserId 
      * @returns 
      */
-    async createInvite(email: string, invitedByUserId: string) {
+    async createInvite(email: string, invitedByUserId: string,
+        friendlyName?: string,
+        mensagem?: string,
+        phoneSMS?: string,
+    ) {
         try {
             const invite = this.repository.create();
             invite.email = email;
+            invite.friendlyName = friendlyName;
+            invite.mensagem = mensagem;
+            invite.phoneSMS = phoneSMS;
             invite.invited = false;
             invite.accepted = false;
             invite.createdBy = { user: { id: invitedByUserId } };
@@ -53,7 +60,7 @@ export class InviteService {
         invitedByUser?: User,
     ) {
         try {
-            let invite = await this.createInvite(registro.email, invitedByUser.id);
+            let invite = await this.createInvite(registro.email, invitedByUser.id, registro.friendlyName, registro.mensagem);
             return await new Promise<void>((res, rej) => {
                 if (!!registro.email) {
                     this.mailer.requestSendMessageToMail(
