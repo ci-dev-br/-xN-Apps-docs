@@ -19,7 +19,7 @@
     </mat-menu>
     @if(!!arquivos){
     <button mat-button [matMenuTriggerFor]="arquivosMenu">
-        Arquivos
+        Opened files
     </button>
     <mat-menu #arquivosMenu>
         @for(arq of arquivos; track arq){

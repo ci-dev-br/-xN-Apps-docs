@@ -7,6 +7,7 @@ import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 import { lastValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
+import { MatIconModule } from '@angular/material/icon';
 @Component({
     selector: 'ci-code-editor',
     standalone: true,
@@ -15,6 +16,7 @@ import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
         NuMonacoEditorModule,
         FormsModule,
         MatButtonModule,
+        MatIconModule,
         BreadcrumbComponent,
     ],
     templateUrl: './code-editor.component.html',

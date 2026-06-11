@@ -1,5 +1,8 @@
 @if(!carregando){
 <div>
+    <button mat-icon-button>
+        <mat-icon>fullscreen</mat-icon>
+    </button>
     <button mat-button (click)="confirmar()">
         Confirmar
     </button>
@@ -9,7 +12,8 @@
 </div>
 <ci-breadcrumb [oppenedFile]="oppenedFile"></ci-breadcrumb>
 <div class="wrapper">
-    <nu-monaco-editor [(ngModel)]="value" [options]="editorOptions" height="calc(100vh - 154px)"></nu-monaco-editor>
+    <!-- inner here -->
+    <ng-container *ngTemplateOutlet="inner" ></ng-container>
 </div>
 }@else{
 <div class="loading">
@@ -19,3 +23,4 @@
 <div class="status">
     <button>branch</button>
 </div>
+<ng-template #inner ><nu-monaco-editor [(ngModel)]="value" [options]="editorOptions" height="calc(100vh - 154px)"></nu-monaco-editor></ng-template>
