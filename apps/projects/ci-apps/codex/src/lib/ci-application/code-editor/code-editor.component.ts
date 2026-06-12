@@ -23,6 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
     styleUrl: './code-editor.component.scss'
 })
 export class CodeEditorComponent {
+    fullscreen?: boolean = false;
     carregando = true;
     oppenedFile?: FileDto;
     constructor(
@@ -55,6 +56,10 @@ export class CodeEditorComponent {
 
                 if (query?.file?.indexOf('.ts') > -1) {
                     this.editorOptions.language = 'typescript';
+                } else if (query?.file?.indexOf('.html') > -1) {
+                    this.editorOptions.language = 'html';
+                } else if (query?.file?.indexOf('.scss') > -1) {
+                    this.editorOptions.language = 'scss';
                 } else {
                     this.editorOptions.language = undefined;
                     this.editorOptions = { ...this.editorOptions };

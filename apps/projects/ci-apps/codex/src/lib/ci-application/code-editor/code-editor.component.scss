@@ -42,3 +42,19 @@ button {
         color: white;
     }
 }
+
+.container {
+    flex:auto;
+    display: flex;
+    flex-direction: column;
+
+    &.fullscreen{
+        position: absolute;
+        inset: 0;
+        z-index: 500;
+        background: black;
+    }
+}
+nu-monaco-editor{
+    // max-height:50vh;
+}

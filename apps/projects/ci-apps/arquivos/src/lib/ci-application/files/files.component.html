@@ -12,9 +12,12 @@
             </button>
             <button mat-icon-button >
                 <mat-icon>edit</mat-icon>
-            </button>
+            </button> 
             <input type="text" class="navegacao" #urlInput [(ngModel)]="endereco"
-                (keydown.enter)="ir(urlInput.value)" />
+                (keydown.enter)="ir(urlInput.value)" [matAutocomplete]="historicoAuto" />
+            <mat-autocomplete #historicoAuto="matAutocomplete">
+                @if(historico){@for (hist of historico; track hist) {<mat-option [value]="hist">{{hist}}</mat-option>}}
+            </mat-autocomplete>
             <input type="text" class="navegacao" [(ngModel)]="filtrar" />
         </mat-toolbar>
         <div class="scoller">

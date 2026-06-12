@@ -83,9 +83,9 @@ export class NavigationComponent {
 
   async openFile() {
     const dialog_files = this.dialog.open(FilesComponent, {
-      minHeight: '60vh',
-      maxHeight: '70vh',
-      minWidth: '90vw',
+      minHeight: '80vh',
+      maxHeight: '95vh',
+      minWidth: '95vw',
       data: {
         // acceptedFiles: ['.ts']
       }

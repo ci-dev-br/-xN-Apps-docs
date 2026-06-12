@@ -4,12 +4,14 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { IArquivo } from './i-file';
 import { FileExplorerService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { IArquivo } from './i-file';
+import {MatSelectModule} from '@angular/material/select';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 @Component({
   selector: 'ci-files',
@@ -22,12 +24,15 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
     FormsModule,
     LoadIconsModule,
     RouterModule,
+    MatSelectModule,
+    MatAutocompleteModule,
   ],
   standalone: true,
   templateUrl: './files.component.html',
   styleUrl: './files.component.scss'
 })
 export class FilesComponent implements OnInit, OnDestroy {
+  historico?: string[];
   files?: IArquivo[];
   navegacao?: string[];
   filteredFiles?: IArquivo[];
@@ -57,14 +62,19 @@ export class FilesComponent implements OnInit, OnDestroy {
   }
   endereco?: string;
   ngOnInit() {
-    const a = localStorage.getItem('Arquivos.Endereco');
-    if (!!a) {
-      this.endereco = JSON.parse(a);
+    const historico = localStorage.getItem('Arquivos.HistoryFiles')
+    const ultimo_endereco = localStorage.getItem('Arquivos.Endereco');
+    if (historico) {
+      this.historico = JSON.parse(historico);
+    }
+    if (!!ultimo_endereco) {
+      this.endereco = JSON.parse(ultimo_endereco);
       this.ir(this.endereco!);
     }
   }
   ngOnDestroy() {
     localStorage.setItem('Arquivos.Endereco', JSON.stringify(this.endereco))
+    if (!!this.historico) localStorage.setItem('Arquivos.HistoryFiles', JSON.stringify(this.historico))
   }
   private _filtrar?: string | undefined;
   public get filtrar(): string | undefined {
@@ -83,13 +93,14 @@ export class FilesComponent implements OnInit, OnDestroy {
     })
   }
   async ir(endereco: string) {
-    const old_value = this.endereco;
+    const endereco_anterior = this.endereco;
     try {
       let endereco_novo = endereco;
       this.endereco = endereco;
       this.filteredFiles = undefined;
       let files = (await lastValueFrom(this.fileExplorer.fileExplorerControllerReadDirectory({ body: { path: endereco } })));
-
+      if (!this.historico) this.historico = [];
+      this.historico.push(endereco_novo);
       if (!this.navegacao) this.navegacao = [];
       this.navegacao.push(endereco);
 
@@ -104,7 +115,7 @@ export class FilesComponent implements OnInit, OnDestroy {
         })
     } catch (error) {
       console.trace(error);
-      this.endereco = old_value;
+      this.endereco = endereco_anterior;
     }
   }
   async voltar() {

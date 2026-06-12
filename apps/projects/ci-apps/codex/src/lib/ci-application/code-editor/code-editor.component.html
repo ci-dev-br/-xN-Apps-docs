@@ -1,26 +1,31 @@
-@if(!carregando){
-<div>
-    <button mat-icon-button>
+<div class="container" [class.fullscreen]="fullscreen">
+    @if(!carregando){
+    <div style="display:flex; flex-direction: row;">
+        <button mat-icon-button (click)="fullscreen = !fullscreen">
         <mat-icon>fullscreen</mat-icon>
     </button>
-    <button mat-button (click)="confirmar()">
+        <span style="flex:auto" ></span>
+        <button mat-button (click)="confirmar()">
         Confirmar
     </button>
-    <!-- <button mat-button>
+        <!-- <button mat-button>
         Voltar ultima versão
     </button> -->
+    </div>
+    <ci-breadcrumb [oppenedFile]="oppenedFile"></ci-breadcrumb>
+    <div class="wrapper">
+        <!-- inner here -->
+        <ng-container *ngTemplateOutlet="inner"></ng-container>
+    </div>
+    }@else{
+    <div class="loading">
+        Carregando ...
+    </div>
+    }
+    <div class="status">
+        <button>branch</button>
+    </div>
+    <ng-template #inner>
+        <nu-monaco-editor [(ngModel)]="value" [options]="editorOptions" height="calc(100vh - 154px)"></nu-monaco-editor>
+    </ng-template>
 </div>
-<ci-breadcrumb [oppenedFile]="oppenedFile"></ci-breadcrumb>
-<div class="wrapper">
-    <!-- inner here -->
-    <ng-container *ngTemplateOutlet="inner" ></ng-container>
-</div>
-}@else{
-<div class="loading">
-    Carregando ...
-</div>
-}
-<div class="status">
-    <button>branch</button>
-</div>
-<ng-template #inner ><nu-monaco-editor [(ngModel)]="value" [options]="editorOptions" height="calc(100vh - 154px)"></nu-monaco-editor></ng-template>
