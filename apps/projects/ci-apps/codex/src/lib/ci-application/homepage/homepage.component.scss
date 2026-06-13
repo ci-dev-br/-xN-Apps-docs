@@ -4,11 +4,15 @@
     flex: auto;
     justify-self: stretch;
     align-self: stretch;
+    overflow: scroll;
 }
 
 .col {
     display: flex;
     flex-direction: column;
+    justify-content: stretch;
+    min-width: 12%;
+    flex: auto;
 }
 
 .row {
@@ -25,8 +29,7 @@
     justify-self: stretch;
     gap: 6px;
     padding: 24px;
-    overflow: auto;
-    height: auto;
+    overflow: scroll;
 
     background: var(--mat-app-background-color);
     color: var(--mat-app-text-color);
@@ -50,14 +53,24 @@
 }
 
 h1 {
-    width: auto;
+    //  width: auto;
     padding: 0;
     margin: 0;
-    font-size: 12px;
+    font-size: .8rem;
 
-    flex: 100%;
+    //  flex: 100%;
 }
 
 .auto {
     flex: auto;
+}
+
+.s6 {
+    padding: 6px;
+    gap: 6px;
+}
+
+.instance-card {
+    width: 150px;
+    border: solid 1px rgba(0, 0, 0, .33);
 }

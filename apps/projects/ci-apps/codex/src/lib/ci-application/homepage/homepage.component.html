@@ -1,43 +1,53 @@
 <div class="row auto">
-    <div class="col">
-        <!-- <button mat-raised-button>
-            Documentações
+    <div class="col s6">
+        <button mat-stroked-button (click)="createNewInstanceCode()">
+            <mat-icon>add</mat-icon> Nova instância
+        </button>
+        <!-- <h1>Documentações</h1>
+        <button mat-raised-button>
+            Block Feature
         </button>
         <button mat-raised-button>
-            Criar
+            Angular
         </button>
         <button mat-raised-button>
-            Explorar
+            Vue
         </button>
         <button mat-raised-button>
-            Importar
+            React
+        </button>
+        <button mat-raised-button>
+            NestJS
+        </button>
+        <button mat-raised-button>
+            DNS / Cloudflare
+        </button>
+        <button mat-raised-button>
+            PostgreSQL
         </button> -->
     </div>
-    <div class="miniaturas">
-        <!--  <h1>Ultimas recentes</h1>
-        <div class="miniatura">
-            Editor de Texto
-        </div>
-        <div class="miniatura">
-            Bar Chart
-        </div>
-        <div class="miniatura">
-            Pie Chart
-        </div>
-        <div class="miniatura">
-            XD Editor
-        </div>
-        <h1>Arquivos mais visitados</h1>
-        <div class="miniatura">
-            XD Editor
-        </div> -->
-        <h1>Instâncias</h1>
-        <div class="miniatura">
-            Cliente
-        </div>
-        <div class="miniatura">
-            API
+    <div class="col">
+        <h1>Instâncias de Modificação</h1>
+        <p>As Instâncias de modificação permite aplicar alterações de forma vertical. É criado um Patch com todos os
+            ajustes necessários para uma modificação no sistema, garantindo integridade nos lançamentos. <a href="">ler
+                mais</a></p>
+        <p>
+            As instâncias interagem com o repositórios de código fonte, aplicando a alteração seguindo a instrução de
+            empacotamento que pode ser configurada.
+        </p>
+        <div class="miniaturas">
+
+            @for(instance of instances;track $index){
+            <div class="instance-card" [formGroup]="instance.form">
+                <ci-input fieldName="name" el="h5"></ci-input>
+                <!--  <h5>{{instance.name}}</h5> -->
+                <div class="actions">
+                    <button mat-button>Vincular arquivo</button>
+                    <button mat-button (click)="removerInstance(instance)">Deletar</button>
+                </div>
+            </div>
+            }
+
         </div>
     </div>
-
 </div>

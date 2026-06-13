@@ -1,6 +1,9 @@
 import { Component, OnInit, Optional } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -24,6 +27,9 @@ import { lastValueFrom } from 'rxjs';
     MatMenuModule,
     MatButtonModule,
     RouterModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
   ],
   standalone: true,
   templateUrl: './formulario-home.component.html',
@@ -31,13 +37,26 @@ import { lastValueFrom } from 'rxjs';
 })
 export class FormularioHomeComponent implements OnInit {
   forms?: Forms[];
+  formsFiltrered?: Forms[];
+  filtro = this.formBuilder.group({
+    filtro: [, []]
+  });
   origin = location.origin;
   constructor(
+    private readonly formBuilder: FormBuilder,
     @Optional() private readonly formsService?: FormsService,
     @Optional() private readonly router?: Router,
   ) { }
   async ngOnInit() {
     this.find();
+    this.filtro.valueChanges.subscribe((value) => {
+      if (value.filtro) {
+        const filtro: string = (value.filtro as string).toLowerCase();
+        this.formsFiltrered = this.forms?.filter(forms => {
+          return JSON.stringify(forms).toLowerCase().indexOf(filtro) > -1
+        })
+      } else this.formsFiltrered = undefined;
+    })
   }
   find() {
     this.formsService?.getList({
@@ -46,6 +65,7 @@ export class FormularioHomeComponent implements OnInit {
       }
     }).subscribe(v => this.forms = v);
   }
+
   async loadMore() {
 
   }
