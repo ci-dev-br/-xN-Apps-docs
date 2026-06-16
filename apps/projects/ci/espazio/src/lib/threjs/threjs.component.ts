@@ -121,7 +121,7 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
       this.objetos.forEach(async obj => {
         obj.scene = this.scene;
         if (!!obj.glb_file) {
-          await obj.loadGBLFile();
+          // await obj.loadGBLFile();
           if (!this.mixer && obj.scene) this.mixer = new AnimationMixer(obj.scene)
           /*  if (!!obj?.gltf?.animations) this.mixer?.clipAction(obj.gltf.animations[5]).play(); */
           if (!!obj?.gltf?.animations && Array.isArray(obj.gltf.animations)) {

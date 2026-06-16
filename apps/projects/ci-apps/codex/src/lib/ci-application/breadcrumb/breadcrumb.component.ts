@@ -1,8 +1,13 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, HostListener } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { CoreModule } from '@ci/core';
-import { FileDto } from '@ci/portal-api';
-
+import { FileDto, FileExplorerService, ReadDirectoryOutput } from '@ci/portal-api';
+import { lastValueFrom } from 'rxjs';
+export interface IFile extends ReadDirectoryOutput {
+  name?: string;
+  path?: string;
+  list?: (IFile | ReadDirectoryOutput)[];
+}
 @Component({
   selector: 'ci-breadcrumb',
   imports: [
@@ -23,13 +28,40 @@ export class BreadcrumbComponent implements OnChanges {
     this._oppenedFile = value;
     this.load();
   }
-  constructor() { }
+  constructor(
+    private readonly explorer: FileExplorerService,
+  ) { }
   load() {
-    this.paths = this.oppenedFile?.path?.replaceAll('\\', '/').split('/');
+    this.paths = this.oppenedFile?.path?.replaceAll('\\', '/').split('/').map((path, i, arr) => ({
+      name: path,
+      path: (() => {
+        let a = [...arr];
+        a.length = i + 1;
+        return a.join('/');
+      })(),
+      //  list: [],
+    }));
     this.paths;
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.load()
   }
-  paths?: string[];
+  paths?: IFile[];
+  async loadMenu(menu: any) {
+    menu;
+    const dir = await lastValueFrom(this.explorer.readDirectory({
+      body: {
+        path: menu.isDirectory !== undefined /* disctinct ifile >-< ReadDirectoryOutput */ ? menu.path + '/' + menu.name : menu.path?.substring(0, menu.path.lastIndexOf('/'))
+      }
+    })
+    );
+    if (dir) {
+      menu.list = dir
+      // old - menu.list = dir.map(el => el.name || '')
+      /*.map(el => ({
+        name: el.name
+      }))*/
+    }
+  }
+ 
 }

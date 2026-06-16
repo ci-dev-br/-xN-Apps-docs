@@ -9,13 +9,11 @@ import { RequestBuilder } from '../../request-builder';
 import { Application } from '../../models/application';
 
 export interface SyncApplication$Params {
-      body: Application
 }
 
-export function syncApplication(http: HttpClient, rootUrl: string, params: SyncApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
+export function syncApplication(http: HttpClient, rootUrl: string, params?: SyncApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
   const rb = new RequestBuilder(rootUrl, syncApplication.PATH, 'post');
   if (params) {
-    rb.body(params.body, 'application/json');
   }
 
   return http.request(

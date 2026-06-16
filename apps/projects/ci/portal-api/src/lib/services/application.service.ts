@@ -55,9 +55,9 @@ export class ApplicationService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `syncApplication()` instead.
    *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * This method doesn't expect any request body.
    */
-  syncApplication$Response(params: SyncApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
+  syncApplication$Response(params?: SyncApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
     return syncApplication(this.http, this.rootUrl, params, context);
   }
 
@@ -65,9 +65,9 @@ export class ApplicationService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `syncApplication$Response()` instead.
    *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * This method doesn't expect any request body.
    */
-  sync(params: SyncApplication$Params, context?: HttpContext): Observable<Application> {
+  sync(params?: SyncApplication$Params, context?: HttpContext): Observable<Application> {
     return this.syncApplication$Response(params, context).pipe(
       map((r: StrictHttpResponse<Application>): Application => r.body)
     );

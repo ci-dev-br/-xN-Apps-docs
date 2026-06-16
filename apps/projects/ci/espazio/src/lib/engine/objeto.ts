@@ -47,7 +47,10 @@ export class Objeto {
   controller?: (event: Event) => void;
   constructor(data?: { mesh?: Mesh; glb_file?: string; controller?: (event: Event) => void; }) {
     this.mesh = data?.mesh;
-    this.glb_file = data?.glb_file;
+    if (data?.glb_file) {
+      this.glb_file = data?.glb_file;
+      this.loadGBLFile();
+    }
     this.controller = data?.controller;
   }
   async loadGBLFile(glb_file: string = this.glb_file || '') {

@@ -16,14 +16,14 @@ export class FileExplorerController {
         @Optional() private readonly fileExplorer: FileExplorerService,
     ) { }
     @ApiResponse({ type: ReadDirectoryOutput, isArray: true })
+    @ApiOperation({ operationId: 'ReadDirectory' })
     @Post('ReadDirectory')
     async readDirectory(
         @Body() input: ReadDirectoryInput,
         @Req() request: Request
     ) {
-        return await this.fileExplorer.readDirectory(input, request)
+        return await this.fileExplorer.readDirectory(input, request);
     }
-
     @Post('File')
     @ApiOperation({ operationId: 'ReadFile' })
     @ApiResponse({ type: FileDto })

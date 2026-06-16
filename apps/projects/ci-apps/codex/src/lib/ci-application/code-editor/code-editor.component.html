@@ -2,12 +2,12 @@
     @if(!carregando){
     <div style="display:flex; flex-direction: row;">
         <button mat-icon-button (click)="fullscreen = !fullscreen">
-        <mat-icon>fullscreen</mat-icon>
-    </button>
-        <span style="flex:auto" ></span>
+            <mat-icon>fullscreen</mat-icon>
+        </button>
+        <span style="flex:auto"></span>
         <button mat-button (click)="confirmar()">
-        Confirmar
-    </button>
+            Confirmar
+        </button>
         <!-- <button mat-button>
         Voltar ultima versão
     </button> -->
@@ -19,11 +19,11 @@
     </div>
     }@else{
     <div class="loading">
-        Carregando ...
+        Carregando arquivo...
     </div>
     }
     <div class="status">
-        <button>branch</button>
+        <button>develop</button><!-- todo: controle de versão -->
     </div>
     <ng-template #inner>
         <nu-monaco-editor [(ngModel)]="value" [options]="editorOptions" height="calc(100vh - 154px)"></nu-monaco-editor>

@@ -9,12 +9,12 @@ import { RequestBuilder } from '../../request-builder';
 import { ReadDirectoryInput } from '../../models/read-directory-input';
 import { ReadDirectoryOutput } from '../../models/read-directory-output';
 
-export interface FileExplorerControllerReadDirectory$Params {
+export interface ReadDirectory$Params {
       body: ReadDirectoryInput
 }
 
-export function fileExplorerControllerReadDirectory(http: HttpClient, rootUrl: string, params: FileExplorerControllerReadDirectory$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<ReadDirectoryOutput>>> {
-  const rb = new RequestBuilder(rootUrl, fileExplorerControllerReadDirectory.PATH, 'post');
+export function readDirectory(http: HttpClient, rootUrl: string, params: ReadDirectory$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<ReadDirectoryOutput>>> {
+  const rb = new RequestBuilder(rootUrl, readDirectory.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -29,4 +29,4 @@ export function fileExplorerControllerReadDirectory(http: HttpClient, rootUrl: s
   );
 }
 
-fileExplorerControllerReadDirectory.PATH = '/FileExplorer/ReadDirectory';
+readDirectory.PATH = '/FileExplorer/ReadDirectory';

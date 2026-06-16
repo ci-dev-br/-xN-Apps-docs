@@ -42,9 +42,7 @@ export class CodeEditorComponent {
                     this.oppenedFile = file_loaded;
                     this.value = file_loaded.data as string;
                 } catch (e) {
-
                 }
-
                 if (!this.oppenedFile?.data) {
                     alert("Arquivo inexistente, criado novo arquivo");
                     this.oppenedFile = {
@@ -53,18 +51,17 @@ export class CodeEditorComponent {
                     }
                     this.value = '// novo arquivo criado ...';
                 }
-
                 if (query?.file?.indexOf('.ts') > -1) {
-                    this.editorOptions.language = 'typescript';
+                    this.selectLanguage('typescript');
+                    // Exemplo de configuração do compilador
                 } else if (query?.file?.indexOf('.html') > -1) {
-                    this.editorOptions.language = 'html';
+                    this.selectLanguage('html');
                 } else if (query?.file?.indexOf('.scss') > -1) {
-                    this.editorOptions.language = 'scss';
+                    this.selectLanguage('scss');
                 } else {
-                    this.editorOptions.language = undefined;
+                    this.selectLanguage(undefined);
                     this.editorOptions = { ...this.editorOptions };
                 }
-
                 this.carregando = false;
             }
         });
@@ -76,11 +73,9 @@ export class CodeEditorComponent {
         theme: 'vs-dark',
         wordWrap: 'on',
     };
-
-    async selectLanguage() {
-
+    async selectLanguage(language?: string) {
+        this.editorOptions.language = language;
     }
-
     async confirmar() {
         await lastValueFrom(
             this.fileExplorer.readFile({
@@ -90,4 +85,5 @@ export class CodeEditorComponent {
                 }
             }));
     }
+
 }

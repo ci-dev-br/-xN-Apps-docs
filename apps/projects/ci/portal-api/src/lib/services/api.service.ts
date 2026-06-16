@@ -9,10 +9,10 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { appControllerGetResource } from '../fn/operations/app-controller-get-resource';
-import { AppControllerGetResource$Params } from '../fn/operations/app-controller-get-resource';
-import { appControllerRoot } from '../fn/operations/app-controller-root';
-import { AppControllerRoot$Params } from '../fn/operations/app-controller-root';
+import { appControllerHandleAllRequests } from '../fn/operations/app-controller-handle-all-requests';
+import { appControllerHandleAllRequests_1 } from '../fn/operations/app-controller-handle-all-requests-1';
+import { AppControllerHandleAllRequests_1$Params } from '../fn/operations/app-controller-handle-all-requests-1';
+import { AppControllerHandleAllRequests$Params } from '../fn/operations/app-controller-handle-all-requests';
 
 @Injectable()
 export class ApiService extends BaseService {
@@ -20,52 +20,52 @@ export class ApiService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `appControllerRoot()` */
-  static readonly AppControllerRootPath = '/';
+  /** Path part for operation `appControllerHandleAllRequests()` */
+  static readonly AppControllerHandleAllRequestsPath = '/';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `appControllerRoot()` instead.
+   * To access only the response body, use `appControllerHandleAllRequests()` instead.
    *
    * This method doesn't expect any request body.
    */
-  appControllerRoot$Response(params?: AppControllerRoot$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return appControllerRoot(this.http, this.rootUrl, params, context);
+  appControllerHandleAllRequests$Response(params?: AppControllerHandleAllRequests$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return appControllerHandleAllRequests(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `appControllerRoot$Response()` instead.
+   * To access the full response (for headers, for example), `appControllerHandleAllRequests$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  appControllerRoot(params?: AppControllerRoot$Params, context?: HttpContext): Observable<void> {
-    return this.appControllerRoot$Response(params, context).pipe(
+  appControllerHandleAllRequests(params?: AppControllerHandleAllRequests$Params, context?: HttpContext): Observable<void> {
+    return this.appControllerHandleAllRequests$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 
-  /** Path part for operation `appControllerGetResource()` */
-  static readonly AppControllerGetResourcePath = '/*w';
+  /** Path part for operation `appControllerHandleAllRequests_1()` */
+  static readonly AppControllerHandleAllRequests_1Path = '/*w';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `appControllerGetResource()` instead.
+   * To access only the response body, use `appControllerHandleAllRequests_1()` instead.
    *
    * This method doesn't expect any request body.
    */
-  appControllerGetResource$Response(params?: AppControllerGetResource$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return appControllerGetResource(this.http, this.rootUrl, params, context);
+  appControllerHandleAllRequests_1$Response(params?: AppControllerHandleAllRequests_1$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return appControllerHandleAllRequests_1(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `appControllerGetResource$Response()` instead.
+   * To access the full response (for headers, for example), `appControllerHandleAllRequests_1$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  appControllerGetResource(params?: AppControllerGetResource$Params, context?: HttpContext): Observable<void> {
-    return this.appControllerGetResource$Response(params, context).pipe(
+  appControllerHandleAllRequests_1(params?: AppControllerHandleAllRequests_1$Params, context?: HttpContext): Observable<void> {
+    return this.appControllerHandleAllRequests_1$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }

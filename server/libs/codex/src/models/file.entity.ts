@@ -6,10 +6,13 @@ import { schema } from "./schema";
     schema
 })
 export class File extends FullAuditedEntity {
-    @ApiProperty({ nullable: true, required: false }) @Column({ nullable: false, primary: true })
+    @ApiProperty({ nullable: true, required: false })
+    @Column({ nullable: false, primary: true })
     version?: string;
-    @ApiProperty({ nullable: true, required: false }) @Column({ type: 'bytea', nullable: true })
+    @ApiProperty({ nullable: true, required: false })
+    @Column({ type: 'bytea', nullable: true })
     data?: Buffer;
-    @ApiProperty({ nullable: true, required: false }) @Column({ nullable: true })
+    @ApiProperty({ nullable: true, required: false })
+    @Column({ nullable: true })
     relativePath?: string;
 }

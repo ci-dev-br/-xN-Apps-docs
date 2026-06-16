@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface LancamentoFinanceiro {
+  categoria?: string | null;
   createdAt?: Date | null;
   createdBy?: {
 } | null;

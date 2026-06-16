@@ -13,7 +13,7 @@ export class FileExplorerService {
         try {
             if (!!this.filePermissions) {
                 if (await this.filePermissions.grant(input.path, request)) {
-
+                    
                 } else {
                     return null;
                 }

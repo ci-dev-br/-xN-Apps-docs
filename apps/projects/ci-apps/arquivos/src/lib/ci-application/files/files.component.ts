@@ -98,7 +98,7 @@ export class FilesComponent implements OnInit, OnDestroy {
       let endereco_novo = endereco;
       this.endereco = endereco;
       this.filteredFiles = undefined;
-      let files = (await lastValueFrom(this.fileExplorer.fileExplorerControllerReadDirectory({ body: { path: endereco } })));
+      let files = (await lastValueFrom(this.fileExplorer.readDirectory({ body: { path: endereco } })));
       if (!this.historico) this.historico = [];
       this.historico.push(endereco_novo);
       if (!this.navegacao) this.navegacao = [];

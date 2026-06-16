@@ -7,11 +7,11 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 
-export interface AppControllerGetResource$Params {
+export interface AppControllerHandleAllRequests$Params {
 }
 
-export function appControllerGetResource(http: HttpClient, rootUrl: string, params?: AppControllerGetResource$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, appControllerGetResource.PATH, 'get');
+export function appControllerHandleAllRequests(http: HttpClient, rootUrl: string, params?: AppControllerHandleAllRequests$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, appControllerHandleAllRequests.PATH, 'get');
   if (params) {
   }
 
@@ -25,4 +25,4 @@ export function appControllerGetResource(http: HttpClient, rootUrl: string, para
   );
 }
 
-appControllerGetResource.PATH = '/*w';
+appControllerHandleAllRequests.PATH = '/';
