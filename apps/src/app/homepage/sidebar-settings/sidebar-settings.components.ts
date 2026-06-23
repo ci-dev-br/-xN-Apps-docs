@@ -39,11 +39,11 @@ export class SidebarSettings {
         });
     }
     pesquisarAplicativos() {
-        this.aplications.get({
+        /* this.aplications.get({
             body: {
 
             }
-        })
+        }) */
     }
     novaCategoria() {
         this.stage = 'new-category';

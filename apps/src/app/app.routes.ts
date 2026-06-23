@@ -3,6 +3,10 @@ import { authGuard } from '@ci/core';
 
 export const routes: Routes = [
     {
+        path: '',
+        loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule)
+    },
+    {
         path: 'acessar',
         loadChildren: () => import('./acessar/acessar.module').then(m => m.AcessarModule)
     },

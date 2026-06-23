@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ComponentRef, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Optional, Renderer2, ViewChild } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { Router, RouterModule } from '@angular/router';
 import { AuthModule, UserAuthenticationService } from '@ci/auth';
@@ -43,11 +43,11 @@ const XD = <T>(a: T) => {
 export class HomepageComponent implements OnInit {
     stage?: 'loading' | 'loaded' = 'loading';
     constructor(
-        protected readonly userService: UserAuthenticationService,
-        private render: Renderer2,
-        private el: ElementRef<Element>,
-        private readonly router: Router,
-        private readonly dialog: MatDialog,
+        @Optional() protected readonly userService?: UserAuthenticationService,
+        @Optional() private render?: Renderer2,
+        @Optional() private el?: ElementRef<Element>,
+        @Optional() private readonly router?: Router,
+        @Optional() private readonly dialog?: MatDialog,
     ) {
     }
     protected sidebar = false;
@@ -60,7 +60,7 @@ export class HomepageComponent implements OnInit {
     @ViewChild('video') protected video?: ElementRef<HTMLVideoElement>;
     async ngOnInit() {
         this.mountStyle();
-        this.userService.user.subscribe(user => this.updateUser(user));
+        this.userService?.user.subscribe(user => this.updateUser(user));
         // Set the playback speed to 0.5 (half speed)
         if (this.video?.nativeElement) this.video.nativeElement.playbackRate = 0.1;
         if ('document' in this && !!document && !!document.body && !!window) {
@@ -112,11 +112,11 @@ export class HomepageComponent implements OnInit {
         if (event.ctrlKey) {
             window.open(location.href + '/' + app.url, '')
         } else {
-            this.router.navigate([app.url], {/*  relativeTo: this.route */ });
+            this.router?.navigate([app.url], {/*  relativeTo: this.route */ });
         }
     }
     protected openSidebarSettings() {
-        this.dialog.open(SidebarSettings, {
+        this.dialog?.open(SidebarSettings, {
             data: {
                 origin: this
             }
@@ -149,7 +149,7 @@ export class HomepageComponent implements OnInit {
         this.createNewPost('video');
     }
     async createNewPost(tipo_postagem: 'post' | 'citation' | 'photo' | 'video') {
-        this.dialog.open(Publicar, {
+        this.dialog?.open(Publicar, {
             data: {
                 tipo_postagem,
             }

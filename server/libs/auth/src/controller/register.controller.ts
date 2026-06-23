@@ -15,8 +15,8 @@ export class RegisterController {
         private readonly mails: MailService,
     ) { }
     @Public()
-    @Post('requestRegisterByFistContact')
-    @ApiOperation({ operationId: 'requestRegisterByFistContact' })
+    @Post('RequestRegisterByFistContact')
+    @ApiOperation({ operationId: 'RequestRegisterByFistContact' })
     @ApiResponse({ type: Register })
     async requestRegisterByFistContact(
         @Request() req: Request,

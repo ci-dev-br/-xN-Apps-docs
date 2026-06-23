@@ -20,7 +20,7 @@ export class RegisterService extends BaseService {
   }
 
   /** Path part for operation `requestRegisterByFistContact()` */
-  static readonly RequestRegisterByFistContactPath = '/Register/requestRegisterByFistContact';
+  static readonly RequestRegisterByFistContactPath = '/Register/RequestRegisterByFistContact';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

@@ -28,6 +28,8 @@ const SETUP = {
     // 'ws://srv33.internals.ci.dev.br:87',
     // 'wss://apps.ci.dev.br:446',
     // 'ws://apps.ci.dev.br:87',
+
+    'https://paulorettamozo.com.br/dry'
   ],
   UNSATLY_WS_COMMON: 'wss://apps.ci.dev.br',
 }

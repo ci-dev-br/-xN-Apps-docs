@@ -33,6 +33,7 @@ import { CoreModule, IsEmail, IsPhoneNumber, StageModule, StageService } from '@
   styleUrl: './registrar.component.scss'
 })
 export class RegistrarComponent implements OnInit {
+
   termos = {
     "M": 'e-mail',
     "P": 'sms'
@@ -70,7 +71,7 @@ export class RegistrarComponent implements OnInit {
     private readonly userService: UserAuthenticationService,
     // private readonly router: Router,
     /* // private readonly */ stages: StageService,
-    private readonly regitrar: RegisterService,
+    private readonly register: RegisterService,
     private readonly route: ActivatedRoute,
   ) {
     stages.host = this;
@@ -99,7 +100,7 @@ export class RegistrarComponent implements OnInit {
     if (!this.validar()) return this.form.markAllAsTouched();
     const values = this.form.getRawValue() as Register;
     const register = await lastValueFrom(
-      this.regitrar.requestByFistContact({ body: { ...(values as any) } })
+      this.register.requestByFistContact({ body: { ...(values as any) } })
       // this.authService.registrar({ body: { ...(this.form.getRawValue() as any) } })
     );
     if (values.emailAuthorization) {
@@ -108,6 +109,20 @@ export class RegistrarComponent implements OnInit {
       this.stage = 'waiting_register';
     }
     this.userService.identificarUsuario(register);
+  }
+  async continue() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+    }
+    const data = this.form.getRawValue();
+    await lastValueFrom(
+      this.register.requestByFistContact({
+        body: {
+          identificacao: data.emailOrPhone as string,
+        }
+      })
+    )
+
   }
 }
 
