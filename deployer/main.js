@@ -454,8 +454,9 @@ app.post('/app/start', (req, res) => {
         const isWin = process.platform === "win32";
         const cmd = isWin ? 'powershell' : 'powershell';
 
+        // ngProcess = spawn(cmd, ['npm', 'install', '-g', 'pnpm'], { cwd: './apps' });
         // Inicia o processo na pasta ./apps
-        ngProcess = spawn(cmd, ['ng', 'serve', ...(!!ngPort ? ['--port', ngPort]:[])], { cwd: './apps' });
+        ngProcess = spawn(cmd, ['node', './node_modules/@angular/cli/bin/ng.js', 'serve', ...(!!ngPort ? ['--port', ngPort] : [])], { cwd: './apps' });
 
         // Captura os logs normais (stdout)
         ngProcess.stdout.on('data', (data) => {
@@ -528,7 +529,5 @@ app.get('/app/status', (req, res) => {
 
 // Inicializa o servidor
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando na porta ${PORT}`);
-    console.log(`👉 GET /commits - Para ver os últimos commits`);
-    console.log(`👉 POST /commit - Para enviar as alterações`);
+    console.log(`🚀 Backdoor DevTools has online at ${PORT}`);
 });

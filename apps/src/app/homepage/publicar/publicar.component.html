@@ -1,18 +1,46 @@
-<mat-card-title>
+<mat-card-title [formGroup]="postForm">
     <div class="row">
         <ci-user-photo></ci-user-photo>
         @if(authorName){<h3>{{authorName}}</h3>}
+        <mat-form-field style="flex: auto;">
+            <mat-label>Título</mat-label>
+            <input type="text" formControlName="title" matInput placeholder="Sem título">
+        </mat-form-field>
     </div>
 </mat-card-title>
-<mat-card-content>
+<mat-card-content [formGroup]="postForm">
     <div class="col">
+
+
         <mat-form-field>
-            <mat-label>Título</mat-label>
-            <input type="text" matInput placeholder="Sem título">
-        </mat-form-field>
-        <mat-form-field>
-            <textarea matInput placeholder="Conteúdo" row="10"></textarea>
-            <button (click)="publicar()" matSuffix mat-icon-button><mat-icon>publish</mat-icon></button>
+            <textarea matInput placeholder="Conteúdo" formControlName="content" row="10">
+            </textarea>
+            <!--  <button (click)="publicar()" matSuffix mat-icon-button><mat-icon>publish</mat-icon></button> -->
         </mat-form-field>
     </div>
+    <mat-card-footer>
+        <button mat-stroked-button [matMenuTriggerFor]="visibility_menu">
+            Visibilidade
+        </button>
+        <mat-menu #visibility_menu>
+            <button mat-button>Para todo mundo</button>
+        </mat-menu>
+        <button mat-raised-button (click)="publicar()">
+            Tornar público
+        </button>
+        <button class="--comb" mat-raised-button [mat-menu-trigger-for]="publisherSettingsMenu">
+            +
+        </button>
+        <mat-menu #publisherSettingsMenu>
+            <button mat-stroked-button>
+                Agendar Publicação
+            </button>
+            <button mat-stroked-button>
+                Guardar como Rascunhos
+            </button>
+            <button mat-stroked-button>
+                Guardar como Formulário
+            </button>
+        </mat-menu>
+    </mat-card-footer>
 </mat-card-content>

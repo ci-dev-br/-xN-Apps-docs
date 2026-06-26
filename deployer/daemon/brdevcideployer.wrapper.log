@@ -1,0 +1,146 @@
+2026-06-26 13:56:18 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-06-26 13:56:18 - Started 14292
+2026-06-26 19:03:09 - Stopping brdevcideployer.exe
+2026-06-26 19:03:09 - ProcessKill 14292
+2026-06-26 19:03:09 - Found child process: 14260 Name: conhost.exe
+2026-06-26 19:03:09 - Found child process: 13328 Name: node.exe
+2026-06-26 19:03:09 - Stopping process 14260
+2026-06-26 19:03:09 - Send SIGINT 14260
+2026-06-26 19:03:09 - SIGINT to 14260 failed - Killing as fallback
+2026-06-26 19:03:09 - Stopping process 13328
+2026-06-26 19:03:09 - Send SIGINT 13328
+2026-06-26 19:03:09 - SIGINT to 13328 failed - Killing as fallback
+2026-06-26 19:03:09 - Stopping process 14292
+2026-06-26 19:03:09 - Send SIGINT 14292
+2026-06-26 19:03:09 - SIGINT to 14292 failed - Killing as fallback
+2026-06-26 19:03:09 - Finished brdevcideployer.exe
+2026-06-26 19:03:11 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-06-26 19:03:11 - Started 8404
+2026-06-26 19:05:40 - Stopping brdevcideployer.exe
+2026-06-26 19:05:40 - ProcessKill 8404
+2026-06-26 19:05:41 - Found child process: 1768 Name: conhost.exe
+2026-06-26 19:05:41 - Found child process: 13096 Name: node.exe
+2026-06-26 19:05:41 - Stopping process 1768
+2026-06-26 19:05:41 - Send SIGINT 1768
+2026-06-26 19:05:41 - SIGINT to 1768 failed - Killing as fallback
+2026-06-26 19:05:41 - Stopping process 13096
+2026-06-26 19:05:41 - Send SIGINT 13096
+2026-06-26 19:05:41 - SIGINT to 13096 failed - Killing as fallback
+2026-06-26 19:05:41 - Stopping process 8404
+2026-06-26 19:05:41 - Send SIGINT 8404
+2026-06-26 19:05:41 - SIGINT to 8404 failed - Killing as fallback
+2026-06-26 19:05:41 - Finished brdevcideployer.exe
+2026-06-26 19:05:42 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-06-26 19:05:42 - Started 5260
+2026-06-26 19:06:07 - Stopping brdevcideployer.exe
+2026-06-26 19:06:07 - ProcessKill 5260
+2026-06-26 19:06:07 - Found child process: 12240 Name: conhost.exe
+2026-06-26 19:06:07 - Found child process: 7804 Name: node.exe
+2026-06-26 19:06:07 - Stopping process 12240
+2026-06-26 19:06:07 - Send SIGINT 12240
+2026-06-26 19:06:07 - SIGINT to 12240 failed - Killing as fallback
+2026-06-26 19:06:07 - Stopping process 7804
+2026-06-26 19:06:07 - Send SIGINT 7804
+2026-06-26 19:06:07 - SIGINT to 7804 failed - Killing as fallback
+2026-06-26 19:06:07 - Stopping process 5260
+2026-06-26 19:06:07 - Send SIGINT 5260
+2026-06-26 19:06:07 - SIGINT to 5260 failed - Killing as fallback
+2026-06-26 19:06:07 - Finished brdevcideployer.exe
+2026-06-26 19:06:09 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-06-26 19:06:09 - Started 3440
+2026-06-26 19:06:39 - Stopping brdevcideployer.exe
+2026-06-26 19:06:39 - ProcessKill 3440
+2026-06-26 19:06:39 - Found child process: 13964 Name: conhost.exe
+2026-06-26 19:06:39 - Found child process: 1900 Name: node.exe
+2026-06-26 19:06:40 - Stopping process 13964
+2026-06-26 19:06:40 - Send SIGINT 13964
+2026-06-26 19:06:40 - SIGINT to 13964 failed - Killing as fallback
+2026-06-26 19:06:40 - Stopping process 1900
+2026-06-26 19:06:40 - Send SIGINT 1900
+2026-06-26 19:06:40 - SIGINT to 1900 failed - Killing as fallback
+2026-06-26 19:06:40 - Stopping process 3440
+2026-06-26 19:06:40 - Send SIGINT 3440
+2026-06-26 19:06:40 - SIGINT to 3440 failed - Killing as fallback
+2026-06-26 19:06:40 - Finished brdevcideployer.exe
+2026-06-26 19:06:53 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-06-26 19:06:53 - Started 9952
+2026-06-26 19:07:14 - Stopping brdevcideployer.exe
+2026-06-26 19:07:14 - ProcessKill 9952
+2026-06-26 19:07:14 - Found child process: 6300 Name: conhost.exe
+2026-06-26 19:07:14 - Found child process: 1124 Name: node.exe
+2026-06-26 19:07:14 - Stopping process 6300
+2026-06-26 19:07:14 - Send SIGINT 6300
+2026-06-26 19:07:14 - SIGINT to 6300 failed - Killing as fallback
+2026-06-26 19:07:14 - Stopping process 1124
+2026-06-26 19:07:14 - Send SIGINT 1124
+2026-06-26 19:07:14 - SIGINT to 1124 failed - Killing as fallback
+2026-06-26 19:07:14 - Stopping process 9952
+2026-06-26 19:07:14 - Send SIGINT 9952
+2026-06-26 19:07:14 - SIGINT to 9952 failed - Killing as fallback
+2026-06-26 19:07:14 - Finished brdevcideployer.exe
+2026-06-26 19:07:23 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-06-26 19:07:23 - Started 5448
+2026-06-26 19:07:47 - Stopping brdevcideployer.exe
+2026-06-26 19:07:47 - ProcessKill 5448
+2026-06-26 19:07:47 - Found child process: 6536 Name: conhost.exe
+2026-06-26 19:07:47 - Found child process: 6292 Name: node.exe
+2026-06-26 19:07:47 - Stopping process 6536
+2026-06-26 19:07:47 - Send SIGINT 6536
+2026-06-26 19:07:47 - SIGINT to 6536 failed - Killing as fallback
+2026-06-26 19:07:47 - Stopping process 6292
+2026-06-26 19:07:47 - Send SIGINT 6292
+2026-06-26 19:07:47 - SIGINT to 6292 failed - Killing as fallback
+2026-06-26 19:07:47 - Stopping process 5448
+2026-06-26 19:07:47 - Send SIGINT 5448
+2026-06-26 19:07:47 - SIGINT to 5448 failed - Killing as fallback
+2026-06-26 19:07:47 - Finished brdevcideployer.exe
+2026-06-26 19:07:49 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-06-26 19:07:49 - Started 14016
+2026-06-26 19:07:56 - Stopping brdevcideployer.exe
+2026-06-26 19:07:56 - ProcessKill 14016
+2026-06-26 19:07:57 - Found child process: 11924 Name: conhost.exe
+2026-06-26 19:07:57 - Found child process: 3224 Name: node.exe
+2026-06-26 19:07:57 - Stopping process 11924
+2026-06-26 19:07:57 - Send SIGINT 11924
+2026-06-26 19:07:57 - SIGINT to 11924 failed - Killing as fallback
+2026-06-26 19:07:57 - Stopping process 3224
+2026-06-26 19:07:57 - Send SIGINT 3224
+2026-06-26 19:07:57 - SIGINT to 3224 failed - Killing as fallback
+2026-06-26 19:07:57 - Stopping process 14016
+2026-06-26 19:07:57 - Send SIGINT 14016
+2026-06-26 19:07:57 - SIGINT to 14016 failed - Killing as fallback
+2026-06-26 19:07:57 - Finished brdevcideployer.exe
+2026-06-26 19:29:01 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-06-26 19:29:01 - Started 10224
+2026-06-26 19:33:35 - Stopping brdevcideployer.exe
+2026-06-26 19:33:35 - ProcessKill 10224
+2026-06-26 19:33:35 - Found child process: 3668 Name: conhost.exe
+2026-06-26 19:33:35 - Found child process: 11644 Name: node.exe
+2026-06-26 19:33:35 - Stopping process 3668
+2026-06-26 19:33:35 - Send SIGINT 3668
+2026-06-26 19:33:35 - SIGINT to 3668 failed - Killing as fallback
+2026-06-26 19:33:35 - Stopping process 11644
+2026-06-26 19:33:35 - Send SIGINT 11644
+2026-06-26 19:33:35 - SIGINT to 11644 failed - Killing as fallback
+2026-06-26 19:33:35 - Stopping process 10224
+2026-06-26 19:33:35 - Send SIGINT 10224
+2026-06-26 19:33:35 - SIGINT to 10224 failed - Killing as fallback
+2026-06-26 19:33:35 - Finished brdevcideployer.exe
+2026-06-26 19:33:36 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-06-26 19:33:36 - Started 13988
+2026-06-26 19:36:44 - Stopping brdevcideployer.exe
+2026-06-26 19:36:44 - ProcessKill 13988
+2026-06-26 19:36:44 - Found child process: 9420 Name: conhost.exe
+2026-06-26 19:36:44 - Found child process: 1592 Name: node.exe
+2026-06-26 19:36:44 - Stopping process 9420
+2026-06-26 19:36:44 - Send SIGINT 9420
+2026-06-26 19:36:44 - SIGINT to 9420 failed - Killing as fallback
+2026-06-26 19:36:44 - Stopping process 1592
+2026-06-26 19:36:44 - Send SIGINT 1592
+2026-06-26 19:36:44 - SIGINT to 1592 failed - Killing as fallback
+2026-06-26 19:36:44 - Stopping process 13988
+2026-06-26 19:36:44 - Send SIGINT 13988
+2026-06-26 19:36:44 - SIGINT to 13988 failed - Killing as fallback
+2026-06-26 19:36:44 - Finished brdevcideployer.exe
+2026-06-26 19:36:47 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-06-26 19:36:47 - Started 6944
