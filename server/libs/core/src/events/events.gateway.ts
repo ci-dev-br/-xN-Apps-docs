@@ -61,6 +61,7 @@ export class EventsGateway implements OnGatewayInit {
                 this.pings.length = 250; // = this.pings.splice(this.pings.length - 500, this.pings.length);
                 this.pings.reverse()
             }
+            console.log(this.pings);
         }
         let pm = 0;
         try {
@@ -78,6 +79,7 @@ export class EventsGateway implements OnGatewayInit {
             pingMedium: pm,
         };
         setTimeout(() => {
+            console.log(this.clients);
             const c = this.clients.get(data.client);
             if (c && data.momento === c.momento) {
                 c.returned = false;
@@ -117,11 +119,13 @@ export class EventsGateway implements OnGatewayInit {
      * Mapeamento de listeners de eventos
      */
     private eventsListeners: { [eventType: string]: (client: WebSocket, data: any) => void } = {
-       // ping: (client, data) => this.pingHandler(client, data),
+        // TODO: Problema em Ping;
+        // ping: (client, data) => this.pingHandler(client, data),
         'SMS.Send': (client, data) => this.sendSMSHandler(client, data),
         'Devices': (client, data) => this.devicesHandler(client, data),
+        'Ident': (client, data) => this.identification(client, data)
     };
-    devicesHandler(client, data) {
+    private devicesHandler(client, data) {
         this._$devices.subscribe(devices => {
             try {
                 let self = this;
@@ -442,5 +446,8 @@ export class EventsGateway implements OnGatewayInit {
         user_chat_context.__user_identification =
             (Math.random() ** Math.random()).toString(36)
         return user_chat_context;
+    }
+    private identification(client, data) {
+        // TODO: implementar auto-identificação da credencial (vincula o cliente com determinada chave de acesso, auto escalada)
     }
 }

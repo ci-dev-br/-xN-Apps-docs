@@ -4,10 +4,10 @@ const svc = new Service({
     name: 'br.dev.ci.deployer',
     description: 'Micro Application Deloyer.',
     script: __dirname + '/main.js',
-    // nodeOptions: [
-    //     '--harmony',
-    //     '--max_old_space_size=4096'
-    // ]
+    nodeOptions: [
+        '--harmony',
+        '--max_old_space_size=4096'
+    ]
     // , workingDirectory: 'C:\\projetos\\br.dev.ci.apps\\'
     // , allowServiceLogon: true
 });

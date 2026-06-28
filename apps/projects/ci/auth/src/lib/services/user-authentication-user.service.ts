@@ -40,7 +40,8 @@ export class UserAuthenticationService {
                     if (localStorage) localStorage.setItem('CIUSR', btoa(JSON.stringify(user_info, null, 2)));
                     this.notification?.requestPermission();
                 } else {
-                    if (typeof localStorage !== 'undefined') localStorage.removeItem('CIUSR');
+                    // TODO: este trecho esta causando falha na credenciação inicial
+                    // if (typeof localStorage !== 'undefined') localStorage.// removeItem('CIUSR');
                 }
             } catch (error) {
                 console.trace(error);
