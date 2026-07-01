@@ -13,6 +13,8 @@ import { CardSetting } from '@ci/components';
 import { Cards } from './cards';
 import { UnidadeMedidaPreset } from '../../projects/ci-apps/cadastros/src/lib/presets';
 import { NgxMaskConfig, NgxMaskDirective, provideEnvironmentNgxMask, provideNgxMask } from 'ngx-mask';
+import { IItemMenu } from '@ci/components/window';
+import { ProfileMenu, USER_MENU } from '@ci/auth';
 
 const maskConfig: Partial<NgxMaskConfig> = {
   validation: false,
@@ -66,5 +68,38 @@ export const appConfig: ApplicationConfig = {
     }),
     { provide: CardSetting, useValue: Cards },
     provideEnvironmentNgxMask(maskConfig),
+
+
+
+    {
+      provide: USER_MENU, useValue: [
+        {
+          component: ProfileMenu,
+          /* 
+          {{ (user | async)?.fullName || (user | async)?.username}}
+          */
+          label: 'Username'
+        },
+        /* {
+          label: 'Minha Conta',
+          onClick: (painel?: HomepageComponent) => {
+            painel?.profile();
+          }
+        },
+        {
+          label: 'Ajustar Visibilidade',
+          icon: 'visibility',
+          onClick: (painel?: PainelComponent) => {
+          }
+        },
+        {
+          label: 'Sair',
+          onClick: (painel?: PainelComponent) => {
+            painel?.sair();
+          }
+        }, */
+      ] as IItemMenu
+    }
+
   ],
 };

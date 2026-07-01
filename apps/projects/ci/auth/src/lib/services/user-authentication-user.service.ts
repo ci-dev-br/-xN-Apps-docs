@@ -1,11 +1,13 @@
-import { Injectable, Optional } from "@angular/core";
+import { Inject, Injectable, Optional, PLATFORM_ID } from "@angular/core";
 import { AuthService, User } from "@ci/portal-api";
 import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
 import { StorageService, NotificationService } from "@ci/core";
+import { isPlatformBrowser } from "@angular/common";
 
 @Injectable()
 export class UserAuthenticationService {
+    private isBrowser;
     /**
      * Serviço para gerenciamento do usuário autenticado.
      */
@@ -21,12 +23,15 @@ export class UserAuthenticationService {
         return undefined
     })());
     constructor(
+        @Inject(PLATFORM_ID) private platformId: Object,
         @Optional() private readonly authService?: AuthService,
         @Optional() private readonly router?: Router,
         @Optional() private readonly storage?: StorageService,
         @Optional() private readonly notification?: NotificationService,
 
     ) {
+        this.isBrowser = isPlatformBrowser(this.platformId);
+        if (!this.isBrowser) return;
         this.init();
     }
     /**
@@ -41,6 +46,7 @@ export class UserAuthenticationService {
                     this.notification?.requestPermission();
                 } else {
                     // TODO: este trecho esta causando falha na credenciação inicial
+                    // mesmo com estre trecho comentado, o comportamento permanece
                     // if (typeof localStorage !== 'undefined') localStorage.// removeItem('CIUSR');
                 }
             } catch (error) {

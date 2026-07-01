@@ -59,7 +59,7 @@ export class WsService {
         }, () => {
             console.info('{{ canal encerrado }}');
         });
-       /*  this.Emit({ event: 'events', data: { type: 'ping', momento: (new Date().getTime()) } }); */
+        /*  this.Emit({ event: 'events', data: { type: 'ping', momento: (new Date().getTime()) } }); */
     }
     listeners = new Map<string, Array<any>>();
     /**
@@ -151,14 +151,14 @@ export class WsService {
      * 
      */
     private Ping() {
-        this.Emit({
-            event: 'events',
-            data: {
-                type: 'ping',
-                momento: (new Date().getTime()),
-                lastPing: this.ping,
-            },
-        });
+        /*  this.Emit({
+             event: 'events',
+             data: {
+                 type: 'ping',
+                 momento: (new Date().getTime()),
+                 lastPing: this.ping,
+             },
+         }); */
     }
     /**
      * Assina evento no canal socket aberto.

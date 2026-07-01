@@ -48,6 +48,7 @@ import { WindowService } from "@ci/components/window";
         private readonly daoBuilder: DaoBuilder,
         private readonly router: Router,
     ) {
+        // (async () => this.loadPreloadedApplications())();
         (async () => this.loadGrid())();
         (async () => this.carregarListaAplicativos())();
     }
@@ -106,4 +107,9 @@ import { WindowService } from "@ci/components/window";
             }
         });
     }
+    /* 
+        async loadPreloadedApplications() {
+            let a = this.router.config;
+            a;
+        } */
 }

@@ -123,7 +123,7 @@ export class EventsGateway implements OnGatewayInit {
         // ping: (client, data) => this.pingHandler(client, data),
         'SMS.Send': (client, data) => this.sendSMSHandler(client, data),
         'Devices': (client, data) => this.devicesHandler(client, data),
-        'Ident': (client, data) => this.identification(client, data)
+        'Ident': (client, data) => this.Identification(client, data)
     };
     private devicesHandler(client, data) {
         this._$devices.subscribe(devices => {
@@ -447,7 +447,7 @@ export class EventsGateway implements OnGatewayInit {
             (Math.random() ** Math.random()).toString(36)
         return user_chat_context;
     }
-    private identification(client, data) {
-        // TODO: implementar auto-identificação da credencial (vincula o cliente com determinada chave de acesso, auto escalada)
+    private Identification(client, data) {
+        // TODO: implementar auto-identificação da credencial (vincula o cliente com determinada chave de acesso, auto escalada);
     }
 }

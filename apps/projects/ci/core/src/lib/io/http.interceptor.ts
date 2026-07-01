@@ -1,7 +1,7 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Inject, Injectable, Optional } from "@angular/core";
-import { Observable, throwError } from "rxjs";
-import { catchError, switchMap, tap, timeout } from "rxjs/operators";
+import { Observable, pipe, throwError } from "rxjs";
+import { catchError, debounce, debounceTime, switchMap, tap, timeout } from "rxjs/operators";
 import { StorageService } from "../storage/storage.service";
 import { AuthService } from "@ci/portal-api";
 import { CORE_ENV, ICoreEnvironment } from "../provider";
@@ -140,15 +140,14 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                     body: {
                         refreshToken: user.authentication.refreshToken
                     }
-                }).pipe(
-                    switchMap((token: { authorization: string }) => {
-                        user.authentication.bearer = token.authorization;
-                        this.storage.store('apps.ci.dev.br.store.User', user);
-                        setTimeout(() => { this.refreshing = false; });
-                        return next.handle(this.addBearerToken(request));
-                    }), catchError(error => {
-                        return throwError(error);
-                    })
+                }).pipe(switchMap((token: { authorization: string }) => {
+                    user.authentication.bearer = token.authorization;
+                    this.storage.store('apps.ci.dev.br.store.User', user);
+                    setTimeout(() => { this.refreshing = false; });
+                    return next.handle(this.addBearerToken(request));
+                }), catchError(error => {
+                    return throwError(error);
+                })
                 )
 
         }
