@@ -78,7 +78,7 @@ export class AuthController {
       return {
         status: 500,
         message: 'Falha',
-      } as any
+      }
     }
   }
   @Public()

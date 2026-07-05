@@ -4,6 +4,7 @@ import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
 import { StorageService, NotificationService } from "@ci/core";
 import { isPlatformBrowser } from "@angular/common";
+import { TechnicolorShader } from "three/examples/jsm/Addons.js";
 
 @Injectable()
 export class UserAuthenticationService {
@@ -28,7 +29,6 @@ export class UserAuthenticationService {
         @Optional() private readonly router?: Router,
         @Optional() private readonly storage?: StorageService,
         @Optional() private readonly notification?: NotificationService,
-
     ) {
         this.isBrowser = isPlatformBrowser(this.platformId);
         if (!this.isBrowser) return;
@@ -42,7 +42,8 @@ export class UserAuthenticationService {
             try {
                 if (!!user) {
                     const { /* photo,    */...user_info } = user;
-                    if (localStorage) localStorage.setItem('CIUSR', btoa(JSON.stringify(user_info, null, 2)));
+                    // if (localStorage) localStorage.setItem('CIUSR', btoa(JSON.stringify(user_info, null, 2)));
+                    this.SetupUserPreferences(user);
                     this.notification?.requestPermission();
                 } else {
                     // TODO: este trecho esta causando falha na credenciação inicial
@@ -79,23 +80,26 @@ export class UserAuthenticationService {
      * Tenta obter o perfil do usuário a partir do serviço de autenticação.
      */
     private async getFromMemory() {
-        let profile: User | null = null;
-        try {
-            if (this.authService)
-                profile = await lastValueFrom(this.authService.profile());
-        } catch (error) {
-            console.trace(error);
-            // this.router.navigate(['/']);
-        }
-        if (!!profile) {
-            this.$user.next(profile);
-            return profile;
-        } else {
-            this.$user.next(undefined);
-            // setTimeout(() => {
-            //     this.router.navigate(['/']);
-            // })
-            return undefined;
-        }
+        // let profile: User | null = null;
+        // try {
+        //     if (this.authService)
+        //         profile = await lastValueFrom(this.authService.profile());
+        // } catch (error) {
+        //     console.trace(error);
+        //     // this.router.navigate(['/']);
+        // }
+        // if (!!profile) {
+        //     this.$user.next(profile);
+        //     return profile;
+        // } else {
+        //     this.$user.next(undefined);
+        //     // setTimeout(() => {
+        //     //     this.router.navigate(['/']);
+        //     // })
+        //     return undefined;
+        // }
+    }
+    private async SetupUserPreferences(user: User) {
+        // TODO: get user preferences
     }
 }
