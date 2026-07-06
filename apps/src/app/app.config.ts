@@ -14,7 +14,7 @@ import { Cards } from './cards';
 import { UnidadeMedidaPreset } from '../../projects/ci-apps/cadastros/src/lib/presets';
 import { NgxMaskConfig, NgxMaskDirective, provideEnvironmentNgxMask, provideNgxMask } from 'ngx-mask';
 import { IItemMenu } from '@ci/components/window';
-import { ProfileMenu, USER_MENU } from '@ci/auth';
+import { AuthModule, ProfileMenu, USER_MENU } from '@ci/auth';
 
 const maskConfig: Partial<NgxMaskConfig> = {
   validation: false,
@@ -67,10 +67,6 @@ export const appConfig: ApplicationConfig = {
       ]
     }),
     { provide: CardSetting, useValue: Cards },
-    provideEnvironmentNgxMask(maskConfig),
-
-
-
     {
       provide: USER_MENU, useValue: [
         {
@@ -99,7 +95,10 @@ export const appConfig: ApplicationConfig = {
           }
         }, */
       ] as IItemMenu
-    }
+    },
+    provideEnvironmentNgxMask(maskConfig),
+    ...(AuthModule.forRoot().providers || []),
+
 
   ],
 };

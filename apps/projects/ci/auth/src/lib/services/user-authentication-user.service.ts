@@ -4,7 +4,6 @@ import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
 import { StorageService, NotificationService } from "@ci/core";
 import { isPlatformBrowser } from "@angular/common";
-import { TechnicolorShader } from "three/examples/jsm/Addons.js";
 
 @Injectable()
 export class UserAuthenticationService {

@@ -1,5 +1,7 @@
-<ci-user-photo></ci-user-photo>
+@if(!!(user | async)){
 <div class="col">
-    <h1>{{user?.surname || user?.fullName}}</h1>
-    <small>{{user?.username}}</small>
-</div>
+    @if((user | async)?.surname){<h1>{{(user | async)?.surname || (user | async)?.fullName}}</h1>}
+    @if((user | async)?.username){<small>{{(user | async)?.username}}</small>}
+</div>}@else{
+Crie uma conta para acessar recursos individualizados
+}

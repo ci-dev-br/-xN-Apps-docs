@@ -1,9 +1,10 @@
-import { Component, createNgModule, HostListener, Injector, isDevMode, OnDestroy, OnInit, Optional } from '@angular/core';
+import { Component, createNgModule, HostListener, Inject, Injector, isDevMode, OnDestroy, OnInit, Optional } from '@angular/core';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Route, Router, RouterModule, RouterOutlet, ROUTES } from '@angular/router';
-import { WindowModule, WindowService } from '@ci/components/window';
-import { CoreModule, CoreService, WsService } from '@ci/core';
+import { ProfileMenu, USER_MENU } from '@ci/auth';
+import { IItemMenu, WindowModule, WindowService } from '@ci/components/window';
+import { CoreModule, CoreService, MenuService, WsService } from '@ci/core';
 import { ApplicationService } from '@ci/portal-api';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
 
@@ -16,7 +17,7 @@ import { BehaviorSubject, lastValueFrom } from 'rxjs';
     MatIconModule,
     RouterModule,
     WindowModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -34,7 +35,10 @@ export class AppComponent implements OnInit, OnDestroy {
     //  // TODO: mover Web Seocket para Core Init;
     @Optional() private readonly window?: WindowService,
     @Optional() private readonly snack?: MatSnackBar,
+    @Optional() @Inject(USER_MENU) private readonly userMenu?: IItemMenu[],
+    private readonly menuService?: MenuService,
   ) {
+    if (!!menuService && userMenu) menuService.userMenu.next(userMenu);
     // This variable will save the event for later use.
     // let deferredPrompt;
     /* window.addEventListener('beforeinstallprompt', (e) => {

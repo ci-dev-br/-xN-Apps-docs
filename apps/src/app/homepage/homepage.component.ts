@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, OnInit, Optional, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, OnInit, Optional, Renderer2, ViewChild } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { Router, RouterModule } from '@angular/router';
-import { AuthModule, UserAuthenticationService } from '@ci/auth';
+import { AuthModule, USER_MENU, UserAuthenticationService } from '@ci/auth';
 import { FooterModule, NavbarModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { Application, User } from '@ci/portal-api';
@@ -14,6 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl } from '@angular/forms';
 import { Publicar } from './publicar/publicar.component';
+import { IItemMenu } from '@ci/components/window';
 const XD = <T>(a: T) => {
     (a as any).___styles_xd__internals = {
         m: { l: 0, r: 0, t: 0, b: 0 },
@@ -48,7 +49,9 @@ export class HomepageComponent implements OnInit {
         @Optional() private el?: ElementRef<Element>,
         @Optional() private readonly router?: Router,
         @Optional() private readonly dialog?: MatDialog,
+        @Inject(USER_MENU) userMenu?: IItemMenu[],
     ) {
+        userMenu;
     }
     protected sidebar = false;
     protected categorias?: any[];

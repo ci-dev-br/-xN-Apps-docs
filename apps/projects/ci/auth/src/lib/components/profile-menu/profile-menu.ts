@@ -1,7 +1,7 @@
-import { Component } from "@angular/core";
-import { User } from "@ci/portal-api";
-import { UserAuthenticationService } from "../../services/user-authentication-user.service";
+import { Component, forwardRef, Inject, Optional } from "@angular/core";
 import { UserPhoto } from "../user-photo/user-photo";
+import { CommonModule } from "@angular/common";
+import { UserAuthenticationService } from "@ci/auth";
 /**
  * Menu de perfil do usuário.
  * 
@@ -15,16 +15,12 @@ import { UserPhoto } from "../user-photo/user-photo";
     standalone: true,
     imports: [
         UserPhoto,
+        CommonModule,
     ]
 })
 export class ProfileMenu {
-    protected user?: User;
+    protected user = this.users.user;
     constructor(
-        private readonly users: UserAuthenticationService,
-    ) {
-        this.users.user.subscribe((user) => {
-            if (user)
-                this.user = user;
-        });
-    }
+        @Optional() @Inject(forwardRef(() => UserAuthenticationService)) private readonly users: UserAuthenticationService,
+    ) { }
 }

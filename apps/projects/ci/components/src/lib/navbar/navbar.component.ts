@@ -1,7 +1,8 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
-import { USER_MENU, UserAuthenticationService } from "@ci/auth";
+import { Component, Input, OnInit } from "@angular/core";
+import { UserAuthenticationService } from "@ci/auth";
 import { INavbarItemMenu } from "./i-menu-item";
 import { IItemMenu } from "@ci/components/window";
+import { MenuService } from "@ci/core";
 
 @Component({
     selector: 'ci-navbar',
@@ -12,18 +13,19 @@ import { IItemMenu } from "@ci/components/window";
     ]
 })
 export class NavbarComponent implements OnInit {
-    /*  @Input()
-     menuApps?: MatMenu; */
     @Input() apps?: any[];
     user = this.userService.user;
-    menuItens?: INavbarItemMenu[];
-    userMenuList?: IItemMenu[] = inject(USER_MENU, { optional: true }) || undefined;
+    @Input() menuItens?: INavbarItemMenu[];
+    @Input() userMenuList?: IItemMenu[];
     constructor(
         private readonly userService: UserAuthenticationService,
-    ) { }
-    ngOnInit(): void {
-        /* this.menuApps; */
+        menuService?: MenuService,
+    ) {
+        menuService?.userMenu.subscribe(menu => {
+            this.userMenuList = menu;
+        })
     }
+    ngOnInit(): void { }
     async sair() {
         this.userService?.sair();
     }

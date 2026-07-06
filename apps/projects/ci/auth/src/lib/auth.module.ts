@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { UserAuthenticationService } from './services/user-authentication-user.service';
 import { CoreModule } from '@ci/core';
 import { RouterModule } from '@angular/router';
@@ -12,7 +12,16 @@ import { RoleDirective } from './roles/role.directive';
     RoleDirective
   ],
   providers: [
-    UserAuthenticationService,
+    // UserAuthenticationService,
   ]
 })
-export class AuthModule { }
+export class AuthModule {
+  public static forRoot(): ModuleWithProviders<AuthModule> {
+    return {
+      ngModule: AuthModule,
+      providers: [
+        UserAuthenticationService
+      ]
+    }
+  }
+}

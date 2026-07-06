@@ -1,7 +1,9 @@
 <mat-toolbar>
     <h4>Formulários recentes</h4>
     <form [formGroup]="filtro" style="display: contents;">
-        <input type="text" placeholder="Filtrar" formControlName="filtro">
+        <mat-form-field>
+            <input matInput type="text" placeholder="Filtrar" formControlName="filtro">
+        </mat-form-field>
     </form>
 </mat-toolbar>
 <div class="files">

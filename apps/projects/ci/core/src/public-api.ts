@@ -17,3 +17,4 @@ export * from './lib/function';
 export * from './lib/abstractions/IAmSchmatization';
 export * from './lib/apps/apps.service';
 export * from './lib/notification/notification.service';
+export * from './lib/services/menu.service';

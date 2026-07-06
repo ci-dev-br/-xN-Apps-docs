@@ -143,7 +143,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                 }).pipe(switchMap((token: { authorization: string }) => {
                     user.authentication.bearer = token.authorization;
                     this.storage.store('apps.ci.dev.br.store.User', user);
-                    setTimeout(() => { this.refreshing = false; }, 1000);
+                    setTimeout(() => { this.refreshing = false; });
                     return next.handle(this.addBearerToken(request));
                 }), catchError(error => {
                     return throwError(error);
