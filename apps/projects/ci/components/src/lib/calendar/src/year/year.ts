@@ -8,7 +8,7 @@ import { CoreModule } from "@ci/core";
     standalone: true,
     styleUrl: 'year.scss',
     imports: [
-        MonthCalendar,
+        // MonthCalendar,
         CoreModule,
     ]
 })
@@ -30,7 +30,7 @@ export class YearCalendar implements OnChanges {
     year?: number;
     ngOnChanges(changes: SimpleChanges<{ currentYear: Date }>): void {
         if (changes?.currentYear?.currentValue) {
-
+            this.digest();
         }
     }
     digest() {

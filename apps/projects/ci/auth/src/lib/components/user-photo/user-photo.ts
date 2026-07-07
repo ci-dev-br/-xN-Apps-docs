@@ -1,6 +1,7 @@
-import { Component, Optional } from "@angular/core";
+import { Component, forwardRef, Inject, Optional } from "@angular/core";
 import { CoreModule } from "@ci/core";
 import { UserAuthenticationService } from "../../services/user-authentication-user.service";
+import { CommonModule } from "@angular/common";
 
 @Component({
     selector: 'ci-user-photo',
@@ -8,13 +9,13 @@ import { UserAuthenticationService } from "../../services/user-authentication-us
     styleUrl: 'user-photo.scss',
     standalone: true,
     imports: [
-        CoreModule,
+        CommonModule,
     ]
 })
 export class UserPhoto {
     protected profileImage?: string;
     constructor(
-        @Optional() private readonly authUserService?: UserAuthenticationService,
+        @Optional() @Inject(forwardRef(() => UserAuthenticationService)) private readonly authUserService?: UserAuthenticationService,
     ) {
         this.authUserService?.user.subscribe(user => {
             if (user?.photo && user?.photo.format) {

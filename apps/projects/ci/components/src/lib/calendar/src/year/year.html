@@ -1,8 +1,13 @@
 <!-- Visão dos Mêses pelo ano -->
-@if(!!monthsOfYear && !!selectedDate){
+@if(!!monthsOfYear){
 @for(month of monthsOfYear;track $index){
 <div class="card">
-    2026
+    <div class="title">
+        {{month | date: 'MMMM'}}
+    </div>
+    <div>
+        <!-- TOOD: adicionar calendario -->
+    </div>
 </div>
 }
 }
