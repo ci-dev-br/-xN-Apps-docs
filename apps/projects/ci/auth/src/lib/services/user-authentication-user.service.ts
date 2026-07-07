@@ -41,7 +41,7 @@ export class UserAuthenticationService {
             try {
                 if (!!user) {
                     const { /* photo,    */...user_info } = user;
-                    // if (localStorage) localStorage.setItem('CIUSR', btoa(JSON.stringify(user_info, null, 2)));
+                    if (localStorage) localStorage.setItem('CIUSR', btoa(JSON.stringify(user_info, null, 2)));
                     this.SetupUserPreferences(user);
                     this.notification?.requestPermission();
                 } else {
