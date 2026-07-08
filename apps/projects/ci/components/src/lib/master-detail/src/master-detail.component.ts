@@ -110,8 +110,13 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
         this.source;
     }
     async search() {
-        if (this.service && this.service.getList)
-            this.source = await this.daos?.read(await lastValueFrom(this.service.getList({ body: { ...(this.searchDefault || {}) } })), this.schemaName);
+        try {
+            if (this.service && this.service.getList)
+                this.source = await this.daos?.read(await lastValueFrom(this.service.getList({ body: { ...(this.searchDefault || {}) } })), this.schemaName);
+
+        } catch (error) {
+            console.trace(error);
+        }
     }
     async editar(data: T, event?: Event) {
         // TODO: refatorar para chamada da janela de edição, passando o componente de edição como parâmetro, para evitar dependência direta do componente de edição 

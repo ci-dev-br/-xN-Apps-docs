@@ -15,6 +15,7 @@ import { UnidadeMedidaPreset } from '../../projects/ci-apps/cadastros/src/lib/pr
 import { NgxMaskConfig, NgxMaskDirective, provideEnvironmentNgxMask, provideNgxMask } from 'ngx-mask';
 import { IItemMenu } from '@ci/components/window';
 import { AuthModule, ProfileMenu, USER_MENU } from '@ci/auth';
+import { PainelComponent } from './painel/painel.component';
 
 const maskConfig: Partial<NgxMaskConfig> = {
   validation: false,
@@ -87,13 +88,13 @@ export const appConfig: ApplicationConfig = {
           icon: 'visibility',
           onClick: (painel?: PainelComponent) => {
           }
-        },
+        },*/
         {
           label: 'Sair',
           onClick: (painel?: PainelComponent) => {
             painel?.sair();
           }
-        }, */
+        },
       ] as IItemMenu
     },
     provideEnvironmentNgxMask(maskConfig),

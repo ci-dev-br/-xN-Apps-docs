@@ -50,9 +50,7 @@ export class HomepageComponent implements OnInit {
         @Optional() private readonly router?: Router,
         @Optional() private readonly dialog?: MatDialog,
         @Inject(USER_MENU) userMenu?: IItemMenu[],
-    ) {
-        userMenu;
-    }
+    ) { }
     protected sidebar = false;
     protected categorias?: any[];
     protected apps?: Application[];
@@ -62,12 +60,17 @@ export class HomepageComponent implements OnInit {
     protected pesquisaControl = new FormControl();
     @ViewChild('video') protected video?: ElementRef<HTMLVideoElement>;
     async ngOnInit() {
-        this.mountStyle();
-        this.userService?.user.subscribe(user => this.updateUser(user));
-        // Set the playback speed to 0.5 (half speed)
-        if (this.video?.nativeElement) this.video.nativeElement.playbackRate = 0.1;
-        if ('document' in this && !!document && !!document.body && !!window) {
-            this.animacao();
+        try {
+
+            this.mountStyle();
+            this.userService?.user.subscribe(user => this.updateUser(user));
+            // Set the playback speed to 0.5 (half speed)
+            if (this.video?.nativeElement) this.video.nativeElement.playbackRate = 0.1;
+            if ('document' in this && !!document && !!document.body && !!window) {
+                this.animacao();
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
     async animacao() {

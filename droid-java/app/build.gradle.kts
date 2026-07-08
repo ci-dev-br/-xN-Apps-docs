@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "br.dev.ci.mobmanagerjavaedition"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "br.dev.ci.mobmanagerjavaedition"

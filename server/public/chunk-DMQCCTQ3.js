@@ -1,0 +1,1 @@
+import{c as i,q as m}from"./chunk-XM5VSVRC.js";import{j as e}from"./chunk-CF325F3B.js";import{da as o,yb as r}from"./chunk-KKBLFPRQ.js";var a=(()=>{class t{static forRoot(){return{ngModule:t,providers:[i]}}static{this.\u0275fac=function(n){return new(n||t)}}static{this.\u0275mod=r({type:t})}static{this.\u0275inj=o({imports:[m,e]})}}return t})();export{a};

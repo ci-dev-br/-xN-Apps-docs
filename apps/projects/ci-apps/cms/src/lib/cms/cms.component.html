@@ -5,8 +5,9 @@
 </mat-toolbar>
 <mat-drawer-container>
     <mat-drawer #sideMenu mode="over" opened>
-        @for(item of entidades; track item){
-        <button mat-menu-item [routerLink]="'./' + item"><mat-icon></mat-icon>{{item}}</button>
+        @for(entitie of entidades; track $index){
+        <button mat-menu-item [routerLink]="'./' + entitie">
+            <mat-icon>dashboard</mat-icon>{{entitie | nomenclatura}}</button>
         }
     </mat-drawer>
     <mat-drawer-content>

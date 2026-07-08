@@ -17,6 +17,7 @@ import { DaoPipe } from './pipes/dao.pipe';
 import { StageDirective } from './directives/stage.directive';
 import { IChangeable, OfString, SerializedObjectData } from './dao/models';
 import { AtOf, Handlers } from './services/handlers.service';
+import { NomenclaturaPipe } from './pipes/nomenclatura.pipe';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { AtOf, Handlers } from './services/handlers.service';
     DaoPipe,
     StageDirective,
     SafePipe,
+    NomenclaturaPipe,
   ],
   imports: [
     CommonModule,
@@ -45,6 +47,7 @@ import { AtOf, Handlers } from './services/handlers.service';
     AutoFocusDirective,
     AutoScollDirective,
     StageDirective,
+    NomenclaturaPipe,
   ]
 })
 export class CoreModule { }
@@ -68,4 +71,5 @@ export {
   WsService,
   Handlers,
   AtOf,
+  NomenclaturaPipe,
 }
