@@ -71,7 +71,7 @@ export class CalendarComponent implements OnInit, OnChanges, OnDestroy {
     }
     // Exemplo simples para simular eventos (ex: dias pares têm eventos)
     private checkIfHasEvents(date: Date): boolean {
-        return date.getDate() % 5 === 0;
+        return false; /// date.getDate() % 5 === 0;
     }
     ngOnInit() {
         try {

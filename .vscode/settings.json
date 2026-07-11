@@ -3,4 +3,7 @@
     "files.exclude": {
         "**/portal-api/src": true
     },
+    "cSpell.words": [
+        "Plataforma"
+    ],
 }

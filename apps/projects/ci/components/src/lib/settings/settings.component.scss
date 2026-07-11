@@ -29,3 +29,16 @@ form {
         flex: auto;
     }
 }
+
+.fields {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: stretch;
+    gap: 12px;
+
+    >* {
+        flex: 1;
+    }
+}

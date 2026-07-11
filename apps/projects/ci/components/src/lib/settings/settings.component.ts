@@ -37,7 +37,7 @@ export interface ISettings {
 export class SettingsComponent {
     editLayoutForm;
     pranchetaEditing?: Prancheta;
-    constructor( 
+    constructor(
         private readonly windowService: WindowService,
         @Inject(MAT_DIALOG_DATA) private readonly dataSettings: Object,
         formBuilder: FormBuilder,
@@ -45,6 +45,8 @@ export class SettingsComponent {
     ) {
         this.editLayoutForm = formBuilder.group({
             layoutOrientation: [,],
+            maxWidth: [,],
+            maxWidthUnidade: [,],
         })
         if (dataSettings && 'pranchetas' in dataSettings) this.pranchetas = dataSettings.pranchetas as Prancheta[];
     }

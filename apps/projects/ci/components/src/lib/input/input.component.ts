@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input, OnInit, Optional, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Optional, Output, ViewChild } from '@angular/core';
 import { FormControlDirective, FormGroupDirective, FormGroup } from '@angular/forms';
 
 @Component({
@@ -16,13 +16,21 @@ export class InputComponent implements OnInit {
   @Input()
   el?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'div' | 'sub' | 'html' | undefined;
   async confirm(event: MouseEvent | Event) {
-    event.stopPropagation();
-    this.stage = 'view';
+    /// revisar: o que 'confirm' deve fazer? 
+    // event.stopPropagation();
+    // this.stage = 'view';
   }
   @HostListener('click')
   async clickHandler() {
     if (this.stage === 'view') this.stage = 'edit';
   }
+  @HostListener('keydown', ['$event'])
+  async keydownHandler(event: KeyboardEvent) {
+    if (event.code === 'Escape') {
+      this.stage = 'view';
+    }
+  }
+  @Output('+confirm') confirmOutput = new EventEmitter<any>();
   @Input() form?: FormGroup<any>;
   private _input?: ElementRef<HTMLInputElement>;
   @ViewChild('input', { static: false })

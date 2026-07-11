@@ -8,7 +8,7 @@ import { CoreModule } from "@ci/core";
     standalone: true,
     styleUrl: 'year.scss',
     imports: [
-        // MonthCalendar,
+        MonthCalendar,
         CoreModule,
     ]
 })

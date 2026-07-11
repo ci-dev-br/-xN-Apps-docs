@@ -4,26 +4,31 @@
 @if(!!pranchetaEditing){
 <form [formGroup]="editLayoutForm">
     <p>Edite de forma simplificada o layout que a prancheta deve obedecer para
-        compor os Cartões Interativos para "{{pranchetaEditing.title}}" escolha o tipo de comportamento do layout, e
-        depois
-        configure as preferências.
+        compor os Cartões Interativos para "{{pranchetaEditing.title}}" escolha
+        o tipo de comportamento do layout, e depois configure as preferências.
     </p>
-    <mat-form-field>
-        <mat-label>Coportamento do Layout</mat-label>
-        <mat-select formControlName="layoutOrientation">
-            <mat-option value="Flex1.0">Linhas e colunas flexíveis</mat-option>
-            <mat-option value="Grid1.0">Layout em Grid</mat-option>
-            <mat-option>Não definido</mat-option>
-        </mat-select>
-    </mat-form-field>
-    <mat-form-field>
-        <mat-label>Largura Máxima de cada Cartão</mat-label>
-        <input type="text" matInput />
-    </mat-form-field>
-    <!-- <mat-form-field>
-        <mat-label>Largura Máxima</mat-label>
-        <input type="number" matInput />
-    </mat-form-field> -->
+    <div class="fields">
+
+        <mat-form-field>
+            <mat-label>Comportamento do Layout</mat-label>
+            <mat-select formControlName="layoutOrientation">
+                <mat-option value="Flex1.0">Linhas e colunas flexíveis</mat-option>
+                <mat-option value="Grid1.0">Layout em Grid</mat-option>
+                <mat-option>Não definido</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Largura Máxima</mat-label>
+            <input type="text" matInput formControlName="maxWidth" />
+            <mat-select matSuffix formControlName="maxWidthUnidade">
+                <mat-option value="flex">Flexível</mat-option>
+                <mat-option value="px">Pixels</mat-option>
+                <mat-option value="cm">Centímetros</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <h5>Exemplo</h5>
+
     <div class="row">
         <button mat-raised-button>Cartões</button>
         <button mat-raised-button (click)="confirmarEdicaoLayout()">

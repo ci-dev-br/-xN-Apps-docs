@@ -1,6 +1,8 @@
 @if(!!(user | async)){
-<ci-user-photo></ci-user-photo>
-@if((user | async)?.surname){<h1>{{(user | async)?.surname || (user | async)?.fullName}}</h1>}
+<div class="user-info-wrapper">
+    <ci-user-photo></ci-user-photo>
+    @if((user | async)?.surname){<h1>{{(user | async)?.surname || (user | async)?.fullName}}</h1>}
+</div>
 <div class="col">
     @if((user | async)?.username){<small>{{(user | async)?.username}}</small>}
 </div>}@else{

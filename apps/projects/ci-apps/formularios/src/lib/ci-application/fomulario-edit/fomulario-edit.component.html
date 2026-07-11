@@ -37,10 +37,15 @@
     <div class="container-menu">
         <div class="menu">
             <h6>Ações</h6>
-            <button mat-icon-button matTooltip="Adicionar pergunta" matTooltipPosition="left"
-                (click)="adicionarPergunta()">
+            <button mat-icon-button matTooltip="Adicionar ..." matTooltipPosition="left"
+                [matMenuTriggerFor]="adicionarItemMenu">
                 <mat-icon>add</mat-icon>
             </button>
+            <mat-menu #adicionarItemMenu>
+                <button mat-menu-item (click)="adicionarPergunta()">
+                    Adicionar pergunta
+                </button>
+            </mat-menu>
             <button mat-icon-button [matMenuTriggerFor]="shareMenu">
                 <mat-icon>share</mat-icon>
             </button>

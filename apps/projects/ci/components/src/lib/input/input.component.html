@@ -2,8 +2,8 @@
 <mat-form-field [formGroup]="form">
     <mat-label>{{label || placeholder || ''}}</mat-label>
     @if(form.controls[fieldName]?.value?.length > 100){
-    <textarea matInput [formControlName]="fieldName" rows="10" [placeholder]="placeholder || label||''"
-       (blur)="confirm($event)"></textarea>
+    <textarea #input matInput [formControlName]="fieldName" rows="10" [placeholder]="placeholder || label||''"
+        (blur)="confirm($event)"></textarea>
     }@else{
     <input #input type="text" matInput [placeholder]="placeholder || label||''" (keydown.enter)="confirm($event)"
         (blur)="confirm($event)" [formControlName]="fieldName" />

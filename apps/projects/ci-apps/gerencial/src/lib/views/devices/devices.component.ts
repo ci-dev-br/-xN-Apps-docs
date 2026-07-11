@@ -54,7 +54,7 @@ export interface DeviceItem {
             if (!!data?.data?.devices) {
                 this.devices?.forEach(deviceItem => {
                     let device_result = data.data.devices.find(d => d.mac === deviceItem.device?.mac);
-                    deviceItem.status = (device_result as any).status;
+                    deviceItem.status = (device_result as any)?.status;
                 });
             }
         })

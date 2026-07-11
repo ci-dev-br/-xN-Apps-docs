@@ -53,7 +53,7 @@ export class PainelComponent implements OnInit {
       gusers: { url: 'icons/gerencial/users.svg' },
       gdevices: { url: 'icons/gerencial/devices.svg' },
       gapps: { url: 'icons/gerencial/apps.svg' },
-      assis: { url: 'assis.svg' },
+      assis: { url: 'icons/icon-assistant.svg' },
       imersao: { url: 'icons/imersao.svg' },
       agenda: { url: 'icons/agenda.svg' },
       anotacoes: { url: 'icons/anotacoes.svg' },
