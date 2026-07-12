@@ -27,8 +27,16 @@
     <button mat-icon-button [matMenuTriggerFor]="deployMenu">
         <mat-icon>deployed_code</mat-icon>
     </button>
+    <button mat-icon-button [matMenuTriggerFor]="communitiesMenu">
+        <mat-icon>communities</mat-icon>
+    </button>
     <mat-menu #deployMenu>
         <!-- TODO: Deploy menu -->
+    </mat-menu>
+    <mat-menu #communitiesMenu>
+        <button mat-menu-item>
+            Encontrar grupos
+        </button>
     </mat-menu>
     <button mat-icon-button [matMenuTriggerFor]="userMenu">
         <mat-icon>people</mat-icon>

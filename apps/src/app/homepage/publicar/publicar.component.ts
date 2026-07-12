@@ -34,7 +34,7 @@ import { CoreModule } from "@ci/core";
 export class Publicar {
     hasTitle?: boolean = false;
     authorName?: string;
-    visibilidade?: 'public' | 'nearby' | 'region' | 'group' | 'contacts' = 'public';
+    visibilidade?: 'public' | 'nearby' | 'region' | 'group' | 'contacts' | 'private' = 'public';
     postForm = this.fb.group({
         title: [, []],
         content: [, []],

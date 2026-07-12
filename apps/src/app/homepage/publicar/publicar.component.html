@@ -31,12 +31,15 @@
             <button mat-menu-item (click)="visibilidade='group'">
                 Apenas para um Grupo
             </button>
+            <button mat-menu-item (click)="visibilidade='private'">
+                Apenas para mim
+            </button>
         </mat-menu>
-        <button mat-raised-button (click)="publicar()">
-            Publicar
-        </button>
         <button class="--comb" mat-raised-button [mat-menu-trigger-for]="publisherSettingsMenu">
             +
+        </button>
+        <button mat-raised-button (click)="publicar()">
+            Publicar
         </button>
         <mat-menu #publisherSettingsMenu>
             <button mat-menu-item>

@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
         webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("https://apps.ci.dev.br/launcher");
+        webView.loadUrl("https://development.ci.dev.br/launcher");
         // webView.addJavascriptInterface(new WebAppInterface(this), "AndroidLauncher");
         this.message = findViewById(R.id.message);
         solicitarPermissoes();

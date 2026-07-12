@@ -1,10 +1,21 @@
 @if(locked){
-<div>
+<div class="lock-screen">
     <h1>20:20</h1>
-
+    <div style="flex:auto"></div>
+    <div class="unlock" (click)="unlock()">
+        <small>{{msg}}</small>
+    </div>
 </div>
 }@else {
 <div>
-    não bloqueado
+    <!--  TODO:  acontecimentos -->
+    <!--  não bloqueado -->
+    <div class="bar-apps">
+        @for (item of barApps; track $index) {
+        <button mat-icon-button [matTooltip]="item.name">
+            <mat-icon>{{item.icon}}</mat-icon>
+        </button>
+        }
+    </div>
 </div>
 }
