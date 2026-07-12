@@ -1,13 +1,16 @@
 @if(locked){
 <div class="lock-screen">
-    <h1>20:20</h1>
+    <h1>{{time | date:'HH:MM:ss'}}</h1>
     <div style="flex:auto"></div>
     <div class="unlock" (click)="unlock()">
         <small>{{msg}}</small>
     </div>
 </div>
 }@else {
-<div>
+<div class="lock-screen">
+    <h1>{{time | date:'HH:MM:ss'}}</h1>
+    <div style="flex:auto"></div>
+
     <!--  TODO:  acontecimentos -->
     <!--  não bloqueado -->
     <div class="bar-apps">

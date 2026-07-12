@@ -28,6 +28,7 @@ export class Home implements OnInit {
   }
   localApps = [
   ]
+  get time() { return new Date() }
   barApps = [
     { icon: 'video_camera_back_add', name: 'Registrar momento' },
     { icon: 'phone', name: 'Ligações' },
