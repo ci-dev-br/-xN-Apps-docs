@@ -2,6 +2,10 @@ import { Component, forwardRef, Inject, Optional } from "@angular/core";
 import { UserPhoto } from "../user-photo/user-photo";
 import { CommonModule } from "@angular/common";
 import { UserAuthenticationService } from "@ci/auth";
+import { MatButtonModule } from "@angular/material/button";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { RouterModule } from "@angular/router";
+import { MatIconModule } from "@angular/material/icon";
 /**
  * Menu de perfil do usuário.
  * 
@@ -15,7 +19,11 @@ import { UserAuthenticationService } from "@ci/auth";
     standalone: true,
     imports: [
         UserPhoto,
+        MatButtonModule,
         CommonModule,
+        RouterModule,
+        MatIconModule,
+        MatExpansionModule,
     ]
 })
 export class ProfileMenu {

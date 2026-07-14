@@ -112,3 +112,9 @@ button.app {
         padding: 8px;
     }
 }
+
+.recent {
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+}

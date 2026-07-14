@@ -30,6 +30,8 @@ const PIECE_VALUES: { [key: string]: number } = {
     styleUrls: ['./chess.scss']
 })
 export class ChessGameComponent implements OnInit {
+    renderMode: '3d' | '2d' = '2d';
+
     @ViewChild('rendererContainer', { static: true }) rendererContainer!: ElementRef<HTMLDivElement>;
     @ViewChild('th', { static: true }) th?: ThrejsComponent;
     objetos: Objeto[] = [

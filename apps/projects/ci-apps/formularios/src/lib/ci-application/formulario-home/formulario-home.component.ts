@@ -5,6 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, RouterModule } from '@angular/router';
@@ -30,6 +31,7 @@ import { lastValueFrom } from 'rxjs';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
+    MatTabsModule,
   ],
   standalone: true,
   templateUrl: './formulario-home.component.html',

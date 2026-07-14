@@ -21,6 +21,14 @@
             }
         </div>
     </mat-menu>}
+    <div class="recent">
+        @for (app of recentes; track $index) {
+        <button mat-icon-button class="app" routerLinkActive="side-ativo" [routerLink]="'/' + app.url"
+            (click)="appClickHandler($event, app)">
+            <mat-icon [svgIcon]="app.icon"></mat-icon>
+        </button>
+        }
+    </div>
     <ci-logo></ci-logo>
     <span style="flex: auto;"></span>
     <span style="flex: auto;"></span>

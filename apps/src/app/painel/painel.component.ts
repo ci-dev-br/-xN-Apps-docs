@@ -142,7 +142,7 @@ export class PainelComponent implements OnInit {
     try {
       if (typeof c === 'string') c = JSON.parse(c) as number[];
       this.apps?.forEach((e, i, a) => {
-        e.__cta_hndlred = (c as any)[i];
+        if (!!c) e.__cta_hndlred = (c as any)[i];
       });
     } catch (error) {
       console.trace(error);
