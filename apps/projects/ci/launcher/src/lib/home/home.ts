@@ -5,7 +5,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { BoardModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
 
 @Component({
@@ -16,8 +15,6 @@ import { CoreModule } from '@ci/core';
     MatIconModule,
     RouterModule,
     MatTooltipModule,
-    //  BoardModule,
-    // ThrejsComponent,
   ],
   templateUrl: `home.html`,
   styleUrl: `home.scss`,
@@ -55,5 +52,9 @@ export class Home implements OnInit {
       this.msg = 'desbloquear'
       // }, 1000);
     }
+  }
+  @HostListener('window:mousemove', ['$event'])
+  async onMouseMove(event: MouseEvent) {
+    // TODO: implementar estratégia para realizar o bloquei da tela em caso inatividade do usuário, como por exemplo, utilizando o evento de mousemove para resetar um timer que bloqueia a tela após um período de inatividade.
   }
 }

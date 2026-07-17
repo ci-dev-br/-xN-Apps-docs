@@ -27,7 +27,7 @@
             "type": "node",
             "request": "attach",
             "name": "Attach NestJS WS",
-            "port": 9228,
+            "port": 5915,
             "restart": true,
             "stopOnEntry": false,
             "protocol": "inspector"

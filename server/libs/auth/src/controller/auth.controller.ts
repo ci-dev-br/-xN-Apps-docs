@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Ip, Post, Req, Request, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Get, Ip, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
 import { AcessoPayload, AuthorizationOutput, RefreshPayloadInputDto, RegistrarInputDto } from './dto/dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../service/user.service';
@@ -8,6 +8,7 @@ import { CredencialService } from '../service/credencial.service';
 import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import { AuthService } from '../service/auth.service';
+import { Request, Response } from 'express';
 import { TwoFactorAuthenticationService } from '../service/two-factors.service';
 @Controller('auth')
 @ApiTags('Auth')
@@ -26,7 +27,7 @@ export class AuthController {
     type: User
   })
   async registrar(
-    @Request() req: Request,
+    @Req() req: Request,
     @Body() input?: RegistrarInputDto,
   ) {
     /***
@@ -68,7 +69,7 @@ export class AuthController {
     type: User
   })
   async profile(
-    @Request() req: Request,
+    @Req() req: Request,
   ) {
     try {
       let { refreshToken, password, ...user } = await this.userService.findById((req as any)?.user?.id);
@@ -90,7 +91,8 @@ export class AuthController {
   async Acessar(
     @Ip() ip,
     @Body() payload: AcessoPayload,
-    @Request() req: Request,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
   ) {
     try {
       if (payload?.chaveAcesso && payload?.password) {
@@ -103,8 +105,8 @@ export class AuthController {
           if (!authenticated_user) {
             throw new UnauthorizedException();
           }
-          chave.valid = false;
-          chave.alive = true;
+          chave.valid = true;
+          chave.alive = false;
           await this.credencialService.atualizar(chave);
           const permission_uuid = randomUUID();
           const refresh_token = await this.jwtService.signAsync(
@@ -115,7 +117,7 @@ export class AuthController {
             },
             {
               // TODO: obter chave para criptografia do jwt para o usuário,
-              // secret: jwtConstants.secret,
+              //secret: jwtConstants.secret,
               expiresIn: '90d',
             },
           );
@@ -125,15 +127,23 @@ export class AuthController {
           chave.refreshToken = refreshTokenArg2;
           await this.credencialService.atualizar(chave);
           const { /* photo, */ ...user_payload } = authenticated_user;
-          return {
+          // Set the refresh token in an HttpOnly cookie
+          res.cookie('refresh_token', refresh_token, {
+            httpOnly: true,
+            path: '/',
+            secure: true, // process.env.NODE_ENV === 'production', // true in production (HTTPS)
+            sameSite: 'none', // or 'none' if backend and frontend are on different domains
+            maxAge: 90 * 24 * 60 * 60 * 1000, // 90 days in milliseconds
+          });
+          res.json({
             user: authenticated_user,
             bearer: await this.jwtService.signAsync({
               id: user_payload.id,
               chaveAcesso: chave.id,
               tenants: user_payload.tenants,
             }),
-            refreshToken: refresh_token
-          } as AcessoPayload;
+            // refreshToken: refresh_token
+          } as AcessoPayload);
         }
       } else if (payload?.chaveAcesso) {
         let chave = await this.credencialService.obterChaveAcesso(payload.chaveAcesso);
@@ -151,26 +161,25 @@ export class AuthController {
           //}
           chave.identifiedUser = identified_user.id;
           chave = await this.credencialService.atualizar(chave);
-          return new AcessoPayload({ ...chave, id: undefined }, identified_user.passwordMode);
+          res.json(new AcessoPayload({ ...chave, id: undefined }, identified_user.passwordMode));
         } else {
           throw new Error('Falha ao localizar chave de acesso.');
         }
       } else {
         const chaveAcesso = (await this.credencialService.solicitarCredencial({
           ip: ip,
-          headers: req.headers
+          headers: req.headers as any
         }));
-        return {
+        res.json({
           chaveAcesso: chaveAcesso.id,
-        };
+        });
       }
-
     } catch (error) {
       console.trace(error);
-      return {
+      res.status(error?.status || 500).json({
         status: 500,
         message: 'Falha'
-      } as any
+      } as any);
     }
   }
   @Post('Logout')
@@ -181,7 +190,7 @@ export class AuthController {
     } catch (error) {
       console.trace(error);
       return {
-        status: 500,
+        status: error.status || 500,
         message: 'Falha'
       } as any
     }
@@ -192,19 +201,23 @@ export class AuthController {
   @ApiOperation({ operationId: 'RefreshAuth' })
   async refresh(
     @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
     @Body() payload: RefreshPayloadInputDto,
     @Ip() ip,
   ) {
     try {
-      return await this.authService.refreshToken(
-        null, payload?.refreshToken, req, ip
-      );
+      console.info(req.cookies['refresh_token']);
+      res.json((await this.authService.refreshToken(
+        null, req.cookies['refresh_token'], req as any, ip
+      )));
     } catch (error) {
       console.trace(error);
-      return {
-        status: 500,
-        message: 'Falha'
-      } as any
+      const return_message = {
+        status: error.status || 500,
+        error,
+        message: error?.message || 'Ocorreu um erro não identificado relaizar a operação de refresh do token de acesso'
+      } as any;
+      res.status(return_message.status).json(return_message);
     }
   }
 }

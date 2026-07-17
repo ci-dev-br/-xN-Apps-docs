@@ -28,13 +28,17 @@ export class AppController {
   @Public()
   async handleAllRequests(@Req() request: Request, @Res() response: Response) {
     // Nota: Removi o setTimeout para evitar crash de headers enviados em requisições lentas.
-    console.log(request.url)
-    console.log(request.originalUrl)
-    console.log(request.baseUrl)
-    console.log(...Object.keys(request.headers).map((p) => {
-      return `${p} > ${request.headers[p]};`;
-    }))
+    // console.log('URL > ' + request.url);
+    // console.log(request.originalUrl)
+    // console.log(request.baseUrl)
+    // console.log(...Object.keys(request.headers).map((p) => {
+    //   return `${p} > ${request.headers[p]};`;
+    // }))
     try {
+      if (request.url.indexOf('manifest.webmanifest') > -1) {
+        const host: string = this.appService.getHost(request);
+        return response.send(this.getManifestApplication(host, ''));
+      }
       // 1. Tenta servir dinamicamente via CMS (SitePageService)
       if (this.sitePage) {
         const host: string = this.appService.getHost(request);
@@ -45,7 +49,6 @@ export class AppController {
           return response.send(page.content.join());
         }
       }
-
       // 2. Se não achou no CMS, serve arquivos estáticos com cache
       return this.serveStaticWithCache(request, response);
 
@@ -83,7 +86,7 @@ export class AppController {
       // --- Configuração Cloudflare ---
       if (isIndex) {
         // Força a Cloudflare e o navegador a sempre revalidar o Index
-        response.setHeader('Cache-Control', 'public, max-age=1000');
+        response.setHeader('Cache-Control', 'public, max-age=60000');
       } else {
         // Cache na Cloudflare de 10 dias (864000 segundos) para os outros arquivos
         response.setHeader('Cache-Control', 'public, max-age=864000');
@@ -149,5 +152,23 @@ export class AppController {
       '.svg': 'image/svg+xml',
     };
     return mimeTypes[ext] || 'application/octet-stream';
+  }
+
+  private getManifestApplication(host: string, application: string = "Apps") {
+    return {
+      "name": "Aplicativos",
+      "short_name": application,
+      "start_url": `https://${host}/`,
+      "display": "standalone",
+      "background_color": "#99DDAA",
+      "description": "Apps.",
+      "icons": [
+        {
+          "src": "apps.png",
+          "sizes": "48x48",
+          "type": "image/png"
+        }
+      ]
+    }
   }
 }

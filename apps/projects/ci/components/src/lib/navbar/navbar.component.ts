@@ -26,14 +26,15 @@ export class NavbarComponent implements OnInit {
             this.userMenuList = menu;
         })
     }
-    ngOnInit(): void { }
+    ngOnInit(): void {
+        if (!!this.apps)
+            this.recentes = localStorage.getItem('NAV(RECENTES)')?.split(',').map(x => this.apps?.find(a => a.name === x))
+    }
     async sair() {
         this.userService?.sair();
     }
     protected async itemMenuActionHandler(itemMenu: IItemMenu, event: Event) {
         if (itemMenu.onClick) itemMenu.onClick(this, event);
-
-
     }
     async appClickHandler(event: MouseEvent, app: any) {
         if (event.ctrlKey) {
@@ -54,5 +55,6 @@ export class NavbarComponent implements OnInit {
         this.recentes.reverse();
         if (this.recentes.length > 4) this.recentes.length = 4;
         this.recentes = [...this.recentes];
+        localStorage.setItem('NAV(RECENTES)', this.recentes.map((e: any) => String(e.name)).join(','))
     }
 }

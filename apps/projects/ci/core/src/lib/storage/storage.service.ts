@@ -28,7 +28,7 @@ export class StorageService implements OnInit {
                     SHA512(key).toString()
                 );
                 if (a) {
-                    return JSON.parse(atob(a));
+                    return (() => JSON.parse(atob(a)))();
                 }
             }
         } catch (error) {

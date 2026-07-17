@@ -879,3 +879,53 @@ Stacktrace:   em System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInter
    em winsw.WrapperService.OnShutdown()
 2026-07-12 11:38:23 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
 2026-07-12 11:38:24 - Started 6640
+2026-07-14 18:36:05 - Stopping brdevcideployer.exe
+2026-07-14 18:36:05 - ProcessKill 6640
+2026-07-14 18:36:05 - Shutdown exception
+Message:O sistema está sendo desligado.
+
+Stacktrace:   em System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   em System.Management.ManagementScope.InitializeGuts(Object o)
+   em System.Management.ManagementScope.Initialize()
+   em System.Management.ManagementObjectSearcher.Initialize()
+   em System.Management.ManagementObjectSearcher.Get()
+   em winsw.WrapperService.GetChildPids(Int32 pid)
+   em winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   em winsw.WrapperService.StopIt()
+   em winsw.WrapperService.OnShutdown()
+2026-07-14 18:37:43 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-07-14 18:37:43 - Started 7128
+2026-07-14 19:06:15 - Stopping brdevcideployer.exe
+2026-07-14 19:06:15 - ProcessKill 7128
+2026-07-14 19:06:15 - Shutdown exception
+Message:O sistema está sendo desligado.
+
+Stacktrace:   em System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   em System.Management.ManagementScope.InitializeGuts(Object o)
+   em System.Management.ManagementScope.Initialize()
+   em System.Management.ManagementObjectSearcher.Initialize()
+   em System.Management.ManagementObjectSearcher.Get()
+   em winsw.WrapperService.GetChildPids(Int32 pid)
+   em winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   em winsw.WrapperService.StopIt()
+   em winsw.WrapperService.OnShutdown()
+2026-07-14 19:07:48 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-07-14 19:07:49 - Started 6972
+2026-07-15 07:11:17 - Stopping brdevcideployer.exe
+2026-07-15 07:11:17 - ProcessKill 6972
+2026-07-15 07:11:18 - Shutdown exception
+Message:O sistema está sendo desligado.
+
+Stacktrace:   em System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   em System.Management.ManagementScope.InitializeGuts(Object o)
+   em System.Management.ManagementScope.Initialize()
+   em System.Management.ManagementObjectSearcher.Initialize()
+   em System.Management.ManagementObjectSearcher.Get()
+   em winsw.WrapperService.GetChildPids(Int32 pid)
+   em winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   em winsw.WrapperService.StopIt()
+   em winsw.WrapperService.OnShutdown()
+2026-07-15 07:12:57 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-07-15 07:12:58 - Started 7536
+2026-07-16 12:52:57 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-07-16 12:52:58 - Started 8124

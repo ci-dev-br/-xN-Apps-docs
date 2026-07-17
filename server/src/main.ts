@@ -9,6 +9,7 @@ import * as express from 'express';
 import { spawn, spawnSync } from 'child_process';
 import { WsAdapter } from '@nestjs/platform-ws';
 import { corsOptionsDelegate } from './cors-option-delegate';
+import * as cookieParser from 'cookie-parser';
 /***
  * 
  * Inicializa variáveis de ambiente
@@ -71,8 +72,12 @@ async function bootstrap() {
     AppModule,
     new ExpressAdapter(server),
   );
+  app.set('trust proxy', 'loopback');
+  app.use(cookieParser());
   // Configuração de CORS
-  app.enableCors(corsOptionsDelegate);
+  app.enableCors(
+    corsOptionsDelegate
+  );
   /**
    * Configuração do Open API v3 (Swagger)
    */

@@ -10,6 +10,7 @@ import { RouterModule } from "@angular/router";
 import { IconModule } from "../icon/icon.module";
 import { LogoComponent } from "../logo/logo.component";
 import { NavbarComponent } from "./navbar.component";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @NgModule({
     declarations: [
@@ -26,6 +27,7 @@ import { NavbarComponent } from "./navbar.component";
         MatInputModule,
         MatMenuModule,
         RouterModule,
+        MatTooltipModule,
     ],
     exports: [
         NavbarComponent,
