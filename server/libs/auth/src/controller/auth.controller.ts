@@ -128,13 +128,14 @@ export class AuthController {
           await this.credencialService.atualizar(chave);
           const { /* photo, */ ...user_payload } = authenticated_user;
           // Set the refresh token in an HttpOnly cookie
-          res.cookie('refresh_token', refresh_token, {
+          // TODO: Ajustar a implemetação do refresh token para utilização de cookies HttpOnly, para maior segurança.
+          /*  res.cookie('refresh_token', refresh_token, {
             httpOnly: true,
             path: '/',
             secure: true, // process.env.NODE_ENV === 'production', // true in production (HTTPS)
             sameSite: 'none', // or 'none' if backend and frontend are on different domains
             maxAge: 90 * 24 * 60 * 60 * 1000, // 90 days in milliseconds
-          });
+          }); */
           res.json({
             user: authenticated_user,
             bearer: await this.jwtService.signAsync({
@@ -142,7 +143,7 @@ export class AuthController {
               chaveAcesso: chave.id,
               tenants: user_payload.tenants,
             }),
-            // refreshToken: refresh_token
+            refreshToken: refresh_token
           } as AcessoPayload);
         }
       } else if (payload?.chaveAcesso) {
