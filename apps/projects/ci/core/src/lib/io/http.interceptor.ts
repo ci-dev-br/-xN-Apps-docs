@@ -74,6 +74,11 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             }))
             .pipe(catchError(error => {
                 if (error) {
+                    if (error?.error?.error?.options?.message?.indexOf('expirou') > -1) {
+                        this.storage.clean();
+                        this.router.navigate(['/']);
+                        return throwError(error);
+                    }
                     if (error?.error?.message?.indexOf('Acesso negado. Não corresponde ao nível de acesso necessário.') > -1) {
                         setTimeout(() => {
                             this.router.navigate(['/']);
@@ -134,11 +139,10 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         this.refreshing = true;
         if (error?.status === 401) {
             let user: { authentication: { bearer: string, refreshToken: string } } = this.storage.restore('apps.ci.dev.br.store.User');
-            user;
-            if (!!user?.authentication?.refreshToken)
+            if (!!user?.authentication)
                 return this.auth.refresh({
                     body: {
-                        refreshToken: user.authentication.refreshToken
+                        refreshToken: user.authentication?.refreshToken
                     }
                 }).pipe(switchMap((token: { authorization: string }) => {
                     user.authentication.bearer = token.authorization;

@@ -13,8 +13,8 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 12px;
-    padding: 0px;
+    gap: 1em;
+    padding: 1.2em;
     justify-content: space-evenly;
 
     flex: auto;
@@ -34,7 +34,7 @@ ci-file {
     height: #{$size};
     min-width: #{$size};
     min-height: #{$size};
-    max-width: #{$size};
+    max-width: 33%;
     // max-height: #{$size};
     cursor: pointer;
 

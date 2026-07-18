@@ -47,8 +47,8 @@ export class AuthService {
                         confiance += 'o';
                     }
                     if (chave_acesso?.valid === false) {
-                        confiance += 'x';
-                        throw new UnauthorizedException('A sua sessão expirou. Por favor, identifique-se novamente para continuar.');
+                        // confiance += 'x';
+                        // throw new UnauthorizedException('A sua sessão expirou. Por favor, identifique-se novamente // para continuar.');
                     }
                     if (!chave_acesso?.refreshToken) {
                         confiance += 'e';
