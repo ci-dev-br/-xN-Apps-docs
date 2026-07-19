@@ -88,4 +88,7 @@ export class FormularioHomeComponent implements OnInit {
       );
     this.find();
   }
+  async openConfig() {
+    // TODO: Implementar a tela de configuração do formulário
+  }
 }

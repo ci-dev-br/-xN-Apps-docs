@@ -13,7 +13,7 @@
     </form>
     <button mat-icon-button [matMenuTriggerFor]="settingsMenu"><mat-icon>more_vert</mat-icon></button>
     <mat-menu #settingsMenu>
-        <button mat-menu-item>
+        <button mat-menu-item (click)="openConfig()">
             Configurar visualização
         </button>
     </mat-menu>

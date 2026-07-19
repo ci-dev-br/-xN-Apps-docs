@@ -4,7 +4,7 @@
         <div class="menu">
             <ng-container *ngFor="let item of menu">
                 <button mat-menu-item (click)="abrirItemMenu(item.path ||'')">
-                    <mat-icon>{{item.icon || 'article'}}</mat-icon>{{item.title}}
+                    <mat-icon>{{item.icon || 'article'}}</mat-icon>{{item.title | nomenclatura}}
                 </button>
             </ng-container>
         </div>

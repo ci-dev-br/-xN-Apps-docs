@@ -9,10 +9,14 @@
     color: white;
 
     user-select: none;
+    pointer-events: visible;
 
-    * {
-        user-select: none;
+    ::ng-deep * {
+        user-select: none !important;
     }
+
+    background: url('/imagens/d41586-026-02173-5_52959440.webp') center no-repeat;
+    background-size: cover;
 }
 
 .unlock {
@@ -31,4 +35,13 @@
     justify-content: center;
     //border: solid 1px red;
     padding: 2em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    text-shadow: 2px 2px 1px black, 4px 4px 2px white;
 }
