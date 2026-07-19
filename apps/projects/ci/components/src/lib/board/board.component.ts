@@ -10,6 +10,7 @@ import { moveItemInArray } from "@angular/cdk/drag-drop";
 import { WindowService } from "../window/src/window.service";
 import { CardFinderComponent } from "../card-finder/card-finder.component";
 import { SettingsComponent } from "@ci/components";
+import { ActivatedRoute } from "@angular/router";
 /**
  * Componente de Visualização de Prancheta para construção de Dashboards
  * dinâmico com Cartões Extensíveis e Configuráveis por Multi-Inquilinos
@@ -35,12 +36,20 @@ export class BoardComponent implements OnInit {
         @Optional() private readonly dialog?: MatDialog,
         @Optional() private readonly injector?: Injector,
         @Optional() @Inject(CardSetting) public cardsFound?: ImplCard[],
+        @Optional() private route?: ActivatedRoute,
+
     ) {
         this.cardsFound?.forEach(c => {
             if (!!c && !!c?.componentName) {
                 this.cards.set((c?.componentName || ''), c);
             }
         })
+        this.route?.data.subscribe(async (data: any) => {
+            if (!!data.DefaultBoard) {
+                this.default = data.DefaultBoard;
+                this.ngOnInit();
+            }
+        });
     }
     async ngOnInit() {
         try {
