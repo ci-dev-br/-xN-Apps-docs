@@ -4,12 +4,12 @@ import { catchError, Observable, tap, throwError, timeout, TimeoutError } from '
 export class LoggingInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
         const TIMEOUT_MS = 700;
-        // console.log('Before...', context.getClass().name, context.getHandler().name);
+        console.log('Before...', context.getClass().name, context.getHandler().name);
         const request = context.switchToHttp()?.getRequest()
         // console.log(`[${request.url}] ${request.method} `);
-        // console.log(...Object.keys(request.headers).map((p) => {
-        //     return `${p} > ${request.headers[p]};`;
-        // }))
+        console.log(...Object.keys(request.headers).filter(p => p.indexOf('ip') > -1).map((p) => {
+            return `${p} > ${request.headers[p]};`;
+        }))
         const now = Date.now();
         return next
             .handle()

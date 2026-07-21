@@ -22,7 +22,7 @@ import { MatButtonModule } from "@angular/material/button";
             @else if(view){<iframe mat-card-image [src]="view | safe" ></iframe>}
             <mat-card-footer>
                 @if(icon){<mat-icon>{{icon}}</mat-icon>}
-                <div class="col">
+                <div class="col auto">
                     @if(title){{{title}}}
                 </div>
                 <button mat-icon-button class="actions" (click)="$event.stopPropagation()" [matMenuTriggerFor]="menu" >

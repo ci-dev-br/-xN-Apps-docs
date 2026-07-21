@@ -1,11 +1,16 @@
 :host {
     display: flex;
     flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    font-size: 10px;
 }
 
 mat-card {
     flex: auto;
     overflow: hidden;
+    padding: .8em;
+
 }
 
 iframe {
@@ -41,4 +46,18 @@ mat-card-footer {
 .col {
     display: flex;
     flex-direction: column;
+}
+
+
+.auto {
+    flex: auto;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: justify;
 }
