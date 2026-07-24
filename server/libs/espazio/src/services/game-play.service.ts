@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, Optional } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { EzGamePlay } from "../model/ez-game-play.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -17,11 +17,32 @@ export class GamePlayService {
         // @Optional()
         private playerService?: PlayerService,
     ) { }
-    async getGamePlayByUser() {
+    async createNewGamePlay(request: any) {
+        const gameplay = this.gameplayrepository.create();
+        gameplay.createdBy = { id: request.chaveAcesso };
+        /* gameplay.players = [];
+        gameplay.players.push(await this.playerService.create(request.user.internalId)); */
+        await this.gameplayrepository.save(gameplay);
 
+        try {
+            const player = await this.playerService.create(request.user.internalId);
+            if (!gameplay.players) gameplay.players = [];
+            gameplay.players.push(player);
+            await this.gameplayrepository.save(gameplay);
+        } catch (error) {
+            console.trace(error);
+        }
+
+        return gameplay;
     }
-    async createNewGamePlay() {
-
+    async getGamePlayOrCreate(request: any) {
+        return await this.gameplayrepository.findOne({
+            where: {
+                createdBy: {
+                    identifiedUser: request.user.internalId
+                }
+            }
+        }) || await this.createNewGamePlay(request.user.internalId);
     }
     /**
      * Entra em Hall de Jogo 

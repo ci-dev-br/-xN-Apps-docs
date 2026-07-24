@@ -10,12 +10,12 @@ export interface Prancheta {
   codigoGlobal?: string | null;
   createdAt?: Date | null;
   createdBy?: {
-  } | null;
+} | null;
   deleted?: boolean | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
   lastModifiedBy?: {
-  } | null;
+} | null;
   layout?: any | null;
   order?: number | null;
   tenants?: Array<string> | null;

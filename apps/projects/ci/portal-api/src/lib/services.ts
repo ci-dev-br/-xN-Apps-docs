@@ -52,4 +52,5 @@ export { AtendimentoService } from './services/atendimento.service';
 export { AgendamentoService } from './services/agendamento.service';
 export { DeployerService } from './services/deployer.service';
 export { ChessService } from './services/chess.service';
+export { GameplayService } from './services/gameplay.service';
 export { ChangelogService } from './services/changelog.service';

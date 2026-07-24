@@ -9,7 +9,7 @@ import { PesquisarService } from '../pesquisar-contato/pesquisar-contato.service
 import { ReactiveFormsModule } from '@angular/forms';
 import { Conversation } from '@ci/portal-api';
 import { MessagerService } from '../mensagens.service';
-
+import {MatSidenavModule} from '@angular/material/sidenav';
 @Component({
   selector: 'ci-conversas',
   imports: [
@@ -20,6 +20,7 @@ import { MessagerService } from '../mensagens.service';
     MatIconModule,
     MatTooltipModule,
     ReactiveFormsModule,
+    MatSidenavModule,
   ],
   standalone: true,
   templateUrl: './conversas.component.html',

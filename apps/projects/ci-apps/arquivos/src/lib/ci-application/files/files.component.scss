@@ -68,6 +68,11 @@
             background: rgba(#215ad6, .2);
             border: solid 1px #3c21d6;
         }
+
+        .title {
+            font-size: small;
+            word-wrap: normal;
+        }
     }
 
     .folder-wrapper {
@@ -90,11 +95,11 @@
             flex: unset;
             display: block;
             width: 100%;
-            overflow: hidden;
+            overflow: visible;
             text-wrap: balance;
             white-space: normal;
 
-            // font-size: 8px;
+            font-size: 8px;
             margin: 0;
             padding: 0;
         }

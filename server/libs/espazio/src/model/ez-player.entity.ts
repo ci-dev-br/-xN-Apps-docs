@@ -1,8 +1,9 @@
-import { Column, Entity, OneToMany } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { schema } from "./schema";
 import { FullAuditedEntity } from "@ci/manager";
 import { ApiProperty } from "@nestjs/swagger";
 import { User } from "@ci/auth/models/user.entity";
+import { EzGamePlay } from "./ez-game-play.entity";
 
 @Entity({
     schema
@@ -10,4 +11,6 @@ import { User } from "@ci/auth/models/user.entity";
 export class EzPlayer extends FullAuditedEntity {
     @ApiProperty({ nullable: true, required: false }) @Column({ nullable: true }) publicPlayerName?: string;
     @OneToMany(() => User, 'player') user?: User;
+    @ManyToOne(() => EzGamePlay, gameplay => gameplay.players, { nullable: true })
+    gameplay?: EzGamePlay;
 }

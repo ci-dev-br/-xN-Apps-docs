@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { CoreModule } from '@ci/core';
 import { Objeto, ThrejsComponent } from '@ci/espazio';
-import { ChessService } from '@ci/portal-api';
+import { ChessService, GameplayService } from '@ci/portal-api';
 import { Chess, Move } from 'chess.js';
 import { lastValueFrom } from 'rxjs';
 import { PerspectiveCamera } from 'three';
@@ -80,7 +80,9 @@ export class ChessGameComponent implements OnInit {
         });
         ///this.objetos.
     }
-    startVsIA() {
+    gameplay?: any;
+    async startVsIA() {
+        this.gameplay = (await lastValueFrom(this.gameplays.createNew({})));
         this.isVsIA = true;
         this.resetGame();
     }
@@ -134,6 +136,7 @@ export class ChessGameComponent implements OnInit {
         }
     } */
     constructor(
+        private readonly gameplays: GameplayService,
         private chess: ChessService,
         @Optional() private readonly er: ElementRef<any>,
         @Optional() private readonly cr: ComponentRef<any>

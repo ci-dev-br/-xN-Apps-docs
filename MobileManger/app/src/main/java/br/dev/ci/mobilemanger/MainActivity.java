@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             this.message.setText("Iniciando conexção... (1)");
         }*/
          /* if(this.message != null){
-            this.message.setText("Identificando números disponíveis");
+            this.message.setText("Identifica/*ndo números disponíveis");
         }*/
         try {
             // TODO: alterar para worker events em segundo plano
