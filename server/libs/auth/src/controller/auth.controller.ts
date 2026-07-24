@@ -117,7 +117,7 @@ export class AuthController {
             },
             {
               // TODO: obter chave para criptografia do jwt para o usuário,
-              // secret: jwtConstants.secret,
+              //secret: jwtConstants.secret,
               expiresIn: '90d',
             },
           );
