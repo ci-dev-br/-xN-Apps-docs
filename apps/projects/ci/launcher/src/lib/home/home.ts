@@ -57,13 +57,9 @@ export class Home implements OnInit {
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private http: HttpClient,
     private readonly dialog: MatDialog,
   ) {
-
     // is browser ?
     if (isPlatformBrowser(this.platformId)) {
       // Código específico para o navegador
-
-
-
     }
   }
   @HostListener('window:mousemove', ['$event'])

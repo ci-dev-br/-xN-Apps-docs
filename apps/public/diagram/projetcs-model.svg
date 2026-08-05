@@ -1,0 +1,129 @@
+<svg version="1.1" baseProfile="full" width="465.0" height="526.0" viewbox="0 0 465 526" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events">
+<desc >#.interface: fill=lightblue
+#.enumeration: fill=lightgreen
+#.type: fill=lightgray
+[ClienteProjeto|+nome?: string;+tipo?: string;+documento?: string;+email?: string;+telefone?: string;+endereco?: Endereco\[\];+pessoa?: Pessoa|]
+[Projeto|+nome?: string;+descricao?: string;+visibilidade?: ProjetoVisibilidade;+controleVersao?: string;+cliente?: ClienteProjeto;+dataInicio?: Date|]
+[Projeto]  -  [ProjetoVisibilidade]
+[Projeto]  -  [ClienteProjeto]
+[&lt;enumeration&gt;ProjetoVisibilidade|&quot;Público&quot;;&quot;Privado&quot;]
+[WorkItem|+code?: number;+project?: Projeto|]
+[WorkItem]  -  [Projeto]</desc>
+<g stroke-width="1.0" text-align="left" font="12pt Helvetica, Arial, sans-serif" font-size="12pt" font-family="Helvetica" font-weight="normal" font-style="normal">
+<g font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" stroke-width="3.0" stroke-linejoin="round" stroke-linecap="round" stroke="#33322E">
+<g stroke="transparent" fill="transparent">
+<rect x="0.0" y="0.0" height="526.0" width="465.0" stroke="none"></rect>
+</g>
+<g transform="translate(8, 8)" fill="#33322E">
+<g transform="translate(20, 20)" fill="#33322E" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal">
+<path d="M105.3 270.0 L81 290 L81 351.5 L81.0 351.5 " fill="none"></path>
+<path d="M281.2 270.0 L305.5 290 L305.5 310 L305.5 310.0 " fill="none"></path>
+<path d="M193.3 85.0 L193.25 105 L193.25 125 L193.3 125.0 " fill="none"></path>
+<g data-name="ClienteProjeto">
+<g fill="#eee8d5" stroke="#33322E" data-name="ClienteProjeto">
+<rect x="202.0" y="310.0" height="160.0" width="207.0" data-name="ClienteProjeto"></rect>
+<path d="M202.0 341.0 L409.0 341.0" fill="none" data-name="ClienteProjeto"></path>
+<path d="M202.0 462.0 L409.0 462.0" fill="none" data-name="ClienteProjeto"></path>
+</g>
+<g transform="translate(202, 310)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="ClienteProjeto">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="ClienteProjeto">
+<a id="c:\projetos\br.dev.ci.apps\server\libs\projetos\src\models\cliente-projeto.entity.ts.ClienteProjeto" xlink:href="c:\projetos\br.dev.ci.apps\server\libs\projetos\src\models\cliente-projeto.entity.ts"><text x="95.5" y="13.5" stroke="none" text-anchor="middle" data-name="ClienteProjeto">ClienteProjeto</text></a>
+
+</g>
+</g>
+<g transform="translate(202, 341)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ClienteProjeto">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="ClienteProjeto">
+<text x="0.0" y="13.5" stroke="none" data-name="ClienteProjeto">+nome?: string</text>
+<text x="0.0" y="28.5" stroke="none" data-name="ClienteProjeto">+tipo?: string</text>
+<text x="0.0" y="43.5" stroke="none" data-name="ClienteProjeto">+documento?: string</text>
+<text x="0.0" y="58.5" stroke="none" data-name="ClienteProjeto">+email?: string</text>
+<text x="0.0" y="73.5" stroke="none" data-name="ClienteProjeto">+telefone?: string</text>
+<text x="0.0" y="88.5" stroke="none" data-name="ClienteProjeto">+endereco?: Endereco[]</text>
+<text x="0.0" y="103.5" stroke="none" data-name="ClienteProjeto">+pessoa?: Pessoa</text>
+
+</g>
+</g>
+<g transform="translate(202, 462)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ClienteProjeto">
+<g transform="translate(8, 8)" fill="#33322E" data-name="ClienteProjeto">
+
+</g>
+</g>
+</g>
+<g data-name="Projeto">
+<g fill="#eee8d5" stroke="#33322E" data-name="Projeto">
+<rect x="53.3" y="125.0" height="145.0" width="280.0" data-name="Projeto"></rect>
+<path d="M53.3 156.0 L333.3 156.0" fill="none" data-name="Projeto"></path>
+<path d="M53.3 262.0 L333.3 262.0" fill="none" data-name="Projeto"></path>
+</g>
+<g transform="translate(53.25, 125)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Projeto">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Projeto">
+<a id="c:\projetos\br.dev.ci.apps\server\libs\projetos\src\models\projeto.entity.ts.Projeto" xlink:href="c:\projetos\br.dev.ci.apps\server\libs\projetos\src\models\projeto.entity.ts"><text x="132.0" y="13.5" stroke="none" text-anchor="middle" data-name="Projeto">Projeto</text></a>
+
+</g>
+</g>
+<g transform="translate(53.25, 156)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Projeto">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Projeto">
+<text x="0.0" y="13.5" stroke="none" data-name="Projeto">+nome?: string</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Projeto">+descricao?: string</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Projeto">+visibilidade?: ProjetoVisibilidade</text>
+<text x="0.0" y="58.5" stroke="none" data-name="Projeto">+controleVersao?: string</text>
+<text x="0.0" y="73.5" stroke="none" data-name="Projeto">+cliente?: ClienteProjeto</text>
+<text x="0.0" y="88.5" stroke="none" data-name="Projeto">+dataInicio?: Date</text>
+
+</g>
+</g>
+<g transform="translate(53.25, 262)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Projeto">
+<g transform="translate(8, 8)" fill="#33322E" data-name="Projeto">
+
+</g>
+</g>
+</g>
+<g data-name="ProjetoVisibilidade">
+<g fill="lightgreen" stroke="#33322E" data-name="ProjetoVisibilidade">
+<rect x="0.0" y="351.5" height="77.0" width="162.0" data-name="ProjetoVisibilidade"></rect>
+<path d="M0.0 382.5 L162.0 382.5" fill="none" data-name="ProjetoVisibilidade"></path>
+</g>
+<g transform="translate(0, 351.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ProjetoVisibilidade">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="ProjetoVisibilidade">
+<a id="c:\projetos\br.dev.ci.apps\server\libs\projetos\src\models\visibilidade.enum.ts.ProjetoVisibilidade" xlink:href="c:\projetos\br.dev.ci.apps\server\libs\projetos\src\models\visibilidade.enum.ts"><text x="73.0" y="13.5" stroke="none" text-anchor="middle" data-name="ProjetoVisibilidade">ProjetoVisibilidade</text></a>
+
+</g>
+</g>
+<g transform="translate(0, 382.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ProjetoVisibilidade">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="ProjetoVisibilidade">
+<text x="0.0" y="13.5" stroke="none" data-name="ProjetoVisibilidade">&quot;Público&quot;</text>
+<text x="0.0" y="28.5" stroke="none" data-name="ProjetoVisibilidade">&quot;Privado&quot;</text>
+
+</g>
+</g>
+</g>
+<g data-name="WorkItem">
+<g fill="#eee8d5" stroke="#33322E" data-name="WorkItem">
+<rect x="115.3" y="0.0" height="85.0" width="156.0" data-name="WorkItem"></rect>
+<path d="M115.3 31.0 L271.3 31.0" fill="none" data-name="WorkItem"></path>
+<path d="M115.3 77.0 L271.3 77.0" fill="none" data-name="WorkItem"></path>
+</g>
+<g transform="translate(115.25, 0)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="WorkItem">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="WorkItem">
+<a id="c:\projetos\br.dev.ci.apps\server\libs\projetos\src\models\work-item.entity.ts.WorkItem" xlink:href="c:\projetos\br.dev.ci.apps\server\libs\projetos\src\models\work-item.entity.ts"><text x="70.0" y="13.5" stroke="none" text-anchor="middle" data-name="WorkItem">WorkItem</text></a>
+
+</g>
+</g>
+<g transform="translate(115.25, 31)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="WorkItem">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="WorkItem">
+<text x="0.0" y="13.5" stroke="none" data-name="WorkItem">+code?: number</text>
+<text x="0.0" y="28.5" stroke="none" data-name="WorkItem">+project?: Projeto</text>
+
+</g>
+</g>
+<g transform="translate(115.25, 77)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="WorkItem">
+<g transform="translate(8, 8)" fill="#33322E" data-name="WorkItem">
+
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+</svg>

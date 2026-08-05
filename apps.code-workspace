@@ -9,6 +9,9 @@
 		},
 		{
 			"path": "apps"
+		},
+		{
+			"path": "server/libs"
 		}
 	],
 	"settings": {

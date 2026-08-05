@@ -11,10 +11,12 @@ import { EzGamePlay } from "./model/ez-game-play.entity";
 import { PlayerService } from "./services/player.service";
 import { GameplayController } from "./controllers/gameplay.controller";
 import { EventsGateway } from "@ci/core/events/events.gateway";
+import { EzGamePlaySnap } from "./model/ez-game-play-snap.entity";
 export const Entities = [
     EzWorld,
     EzPlayer,
     EzGamePlay,
+    EzGamePlaySnap,
 ];
 /**
  * # Espazio module
