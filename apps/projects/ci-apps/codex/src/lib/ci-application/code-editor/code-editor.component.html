@@ -5,9 +5,7 @@
             <mat-icon>fullscreen</mat-icon>
         </button>
         <span style="flex:auto"></span>
-        <button mat-button (click)="confirmar()">
-            Confirmar
-        </button>
+
         <!-- <button mat-button>
         Voltar ultima versão
     </button> -->
@@ -29,3 +27,9 @@
         <nu-monaco-editor [(ngModel)]="value" [options]="editorOptions" height="calc(100vh - 154px)"></nu-monaco-editor>
     </ng-template>
 </div>
+<mat-form-field>
+    <input #desc matInput placeholder="Descrição das modificações" />
+    <button matSuffix mat-button [disabled]="!desc.value" (click)="confirmar()">
+        Confirmar
+    </button>
+</mat-form-field>

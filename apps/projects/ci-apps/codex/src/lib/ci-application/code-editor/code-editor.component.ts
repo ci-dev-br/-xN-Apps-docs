@@ -8,6 +8,8 @@ import { lastValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 // Declaração para evitar erros de compilação caso o monaco seja injetado globalmente
 declare const monaco: any;
@@ -22,6 +24,9 @@ declare const monaco: any;
         MatButtonModule,
         MatIconModule,
         BreadcrumbComponent,
+        MatInputModule,
+        MatFormFieldModule,
+        MatButtonModule,
     ],
     templateUrl: './code-editor.component.html',
     styleUrl: './code-editor.component.scss'
@@ -57,14 +62,14 @@ export class CodeEditorComponent {
                     console.error("Erro ao carregar arquivo", e);
                 }
 
-                if (!this.oppenedFile?.data) {
+                /* if (!this.oppenedFile?.data) {
                     alert("Arquivo inexistente, criado novo arquivo");
                     this.oppenedFile = {
                         path: query.file,
                         data: '// novo arquivo criado ...'
                     }
                     this.value = '// novo arquivo criado ...';
-                }
+                } */
 
                 if (query?.file?.indexOf('.ts') > -1) {
                     this.selectLanguage('typescript');
