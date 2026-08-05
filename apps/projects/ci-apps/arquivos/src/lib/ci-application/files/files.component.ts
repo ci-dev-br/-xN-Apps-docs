@@ -10,8 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IArquivo } from './i-file';
-import {MatSelectModule} from '@angular/material/select';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'ci-files',
@@ -128,9 +128,9 @@ export class FilesComponent implements OnInit, OnDestroy {
   }
 
   async abrir(file: IArquivo) {
-    if (file.info) {
+    if (file.info && file.info.path) {
       if (file.name?.indexOf('.') === -1) {
-        this.ir(file.info.path + '/' + file.name);
+        this.ir(file.info.path /* + file.name */ || '');
       } else {
         if (!!this.dialogRef && !!file) {
           this.dialogRef.close(file);
