@@ -15,6 +15,7 @@ import { File } from "./models/file.entity";
 import { FileService } from "./service/file.service";
 import { FileController } from "./controller/file.controller";
 import { FileExplorerService } from "./models/file-explorer.service";
+import { GitService } from "./service/git.service";
 export const StorageEntities = [
     Photo,
     FilePermission,
@@ -39,10 +40,12 @@ export const StorageEntities = [
         FileService,
         FilePermissionService,
         FileExplorerService,
+        GitService,
     ],
     exports: [
         PhotoService,
         FilePermissionService,
+        GitService,
     ]
 })
 export class StorageModule { }

@@ -1,7 +1,7 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Inject, Injectable, Optional } from "@angular/core";
 import { Observable, pipe, throwError } from "rxjs";
-import { catchError, debounce, debounceTime, switchMap, tap, timeout } from "rxjs/operators";
+import { catchError, debounce, debounceTime, switchMap, tap, timeout, delay } from "rxjs/operators";
 import { StorageService } from "../storage/storage.service";
 import { AuthService } from "@ci/portal-api";
 import { CORE_ENV, ICoreEnvironment } from "../provider";
@@ -137,6 +137,24 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         request: HttpRequest<any>
     ) {
         this.refreshing = true;
+        if (error?.status === 408) {
+            let user: { authentication: { bearer: string, refreshToken: string } } = this.storage.restore('apps.ci.dev.br.store.User');
+            if (!!user?.authentication)
+                return this.auth.refresh({
+                    body: {
+                        refreshToken: user.authentication?.refreshToken
+                    }
+                })
+                    .pipe(delay(1000))
+                    .pipe(switchMap((token: { authorization: string }) => {
+                        user.authentication.bearer = token.authorization;
+                        this.storage.store('apps.ci.dev.br.store.User', user);
+                        setTimeout(() => { this.refreshing = false; });
+                        return next.handle(this.addBearerToken(request));
+                    }), catchError(error => {
+                        return throwError(error);
+                    }));
+        }
         if (error?.status === 401) {
             let user: { authentication: { bearer: string, refreshToken: string } } = this.storage.restore('apps.ci.dev.br.store.User');
             if (!!user?.authentication)
@@ -151,9 +169,9 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                     return next.handle(this.addBearerToken(request));
                 }), catchError(error => {
                     return throwError(error);
-                })
-                )
-
+                }));
+        } else {
+            debugger;
         }
         return throwError(error);
     }

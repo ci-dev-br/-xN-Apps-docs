@@ -31,6 +31,7 @@ export class FileExplorerController {
         @Body() input: FileDto,
         @Req() request: Request,
     ) {
-        return await this.fileExplorer.readFile(input, request)
+        return await this.fileExplorer
+            .readFile(input, request);
     }
 }

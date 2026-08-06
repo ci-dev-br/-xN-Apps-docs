@@ -3,10 +3,12 @@ import { FilePermissionService } from "../service/file-permission.service";
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { FileDto } from "../controller/dto/file-dto";
 import { join } from 'path';
+import { GitService } from "../service/git.service";
 
 @Injectable()
 export class FileExplorerService {
     constructor(
+        private readonly gitService: GitService,
         @Optional() private readonly filePermissions: FilePermissionService,
     ) { }
 
@@ -75,11 +77,12 @@ export class FileExplorerService {
                 input.data = readed.toString();
             } else if (typeof input.data === 'string') {
                 // TODO: implementar controle de versão em cima das alterações realizadas via API.
-                console.log('writing file... ')
+                console.log('writing file... ');
                 writeFileSync(input.path,
                     input.data, { encoding: 'utf-8' }
                 )
             }
+            input.gitStatus = await this.gitService.status(input, request);
             return input;
         } catch (error) {
             console.trace(error);
