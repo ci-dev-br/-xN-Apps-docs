@@ -4,6 +4,10 @@
         <button mat-icon-button (click)="fullscreen = !fullscreen">
             <mat-icon>fullscreen</mat-icon>
         </button>
+        <!-- TODO: adicionar visão de uml -->
+        <button mat-icon-button>
+            <mat-icon>diagram</mat-icon>
+        </button>
         <span style="flex:auto"></span>
 
         <!-- <button mat-button>
@@ -15,6 +19,7 @@
         <!-- inner here -->
         <ng-container *ngTemplateOutlet="inner"></ng-container>
     </div>
+    
     }@else{
     <div class="loading">
         Carregando arquivo...
@@ -26,7 +31,11 @@
     <ng-template #inner>
         <nu-monaco-editor [(ngModel)]="value" [options]="editorOptions" height="calc(100vh - 154px)"></nu-monaco-editor>
     </ng-template>
+    <div class="flutuante" >
+        <uml-viewer [javascriptCode]="value"></uml-viewer>
+    </div>
 </div>
+
 <mat-form-field>
     <input #desc matInput placeholder="Descrição das modificações" />
     <button matSuffix mat-button [disabled]="!desc.value" (click)="confirmar()">

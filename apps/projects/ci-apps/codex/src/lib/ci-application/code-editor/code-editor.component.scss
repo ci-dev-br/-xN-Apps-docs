@@ -44,17 +44,25 @@ button {
 }
 
 .container {
-    flex:auto;
+    flex: auto;
     display: flex;
     flex-direction: column;
 
-    &.fullscreen{
+    &.fullscreen {
         position: absolute;
         inset: 0;
         z-index: 500;
         background: black;
     }
 }
-nu-monaco-editor{
+
+nu-monaco-editor {
     // max-height:50vh;
+}
+
+.flutuante {
+    position: fixed;
+    right: 50px;
+    bottom: 50px;
+    z-index: 100;
 }

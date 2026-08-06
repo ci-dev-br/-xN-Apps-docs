@@ -10,6 +10,7 @@ import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { UmlViewer } from '../uml-viewer/uml-viewer';
 
 // Declaração para evitar erros de compilação caso o monaco seja injetado globalmente
 declare const monaco: any;
@@ -27,6 +28,7 @@ declare const monaco: any;
         MatInputModule,
         MatFormFieldModule,
         MatButtonModule,
+        UmlViewer,
     ],
     templateUrl: './code-editor.component.html',
     styleUrl: './code-editor.component.scss'
@@ -80,6 +82,8 @@ export class CodeEditorComponent {
 
                 } else if (query?.file?.indexOf('.html') > -1) {
                     this.selectLanguage('html');
+                } else if (query?.file?.indexOf('.js') > -1) {
+                    this.selectLanguage('javascript');
                 } else if (query?.file?.indexOf('.scss') > -1) {
                     this.selectLanguage('scss');
                 } else {
@@ -130,7 +134,7 @@ export class CodeEditorComponent {
      * o Monaco precisa conhecer o conteúdo de './meu-arquivo.ts'.
      */
     async carregarDependenciasDeImport(currentFilePath: string) {
-        // if (typeof monaco === 'undefined') return;
+        if (typeof monaco === 'undefined') return;
 
         // EXEMPLO 1: Injetando tipagens externas (node_modules)
         // Em um cenário real, você buscaria esse .d.ts do seu backend NestJS.
@@ -138,7 +142,7 @@ export class CodeEditorComponent {
             export declare class Component { constructor(props?: any); }
             export declare class Input { constructor(props?: any); }
         `;
-        monaco.languages.typescript.typescriptDefaults.addExtraLib(
+        monaco?.languages?.typescript?.typescriptDefaults?.addExtraLib(
             angularCoreDts,
             'file:///node_modules/@angular/core/index.d.ts'
         );
