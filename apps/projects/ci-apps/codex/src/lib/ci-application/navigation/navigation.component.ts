@@ -77,7 +77,8 @@ export class NavigationComponent {
   ]
   openProject() {
     this.dialog.open(OpenProjectComponent, {
-      data: {}
+      data: {
+      }
     })
   }
 
@@ -87,7 +88,7 @@ export class NavigationComponent {
       maxHeight: '95vh',
       minWidth: '95vw',
       data: {
-        // acceptedFiles: ['.ts']
+        // expectedFiles: ['.ts']
       }
     })
     dialog_files.afterClosed().subscribe(value => {

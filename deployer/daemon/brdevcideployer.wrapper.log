@@ -1137,3 +1137,19 @@ Stacktrace:   em System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInter
    em winsw.WrapperService.OnShutdown()
 2026-08-04 00:14:14 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
 2026-08-04 00:14:15 - Started 7724
+2026-08-06 18:34:29 - Stopping brdevcideployer.exe
+2026-08-06 18:34:29 - ProcessKill 7724
+2026-08-06 18:34:29 - Shutdown exception
+Message:O sistema está sendo desligado.
+
+Stacktrace:   em System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   em System.Management.ManagementScope.InitializeGuts(Object o)
+   em System.Management.ManagementScope.Initialize()
+   em System.Management.ManagementObjectSearcher.Initialize()
+   em System.Management.ManagementObjectSearcher.Get()
+   em winsw.WrapperService.GetChildPids(Int32 pid)
+   em winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   em winsw.WrapperService.StopIt()
+   em winsw.WrapperService.OnShutdown()
+2026-08-06 18:36:14 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-08-06 18:36:14 - Started 7496

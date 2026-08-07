@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, ElementRef, ViewChild, AfterViewInit, SimpleChanges } from '@angular/core';
-import mermaid from 'mermaid';
+import mermaid, { MermaidConfig } from 'mermaid';
 import * as babelParser from '@babel/parser';
 
 @Component({
@@ -21,7 +21,7 @@ import * as babelParser from '@babel/parser';
         <div 
           class="zoom-wrapper" 
           [style.transform]="transformStyle">
-          <div #mermaidContainer></div>
+          <div #mermaidContainer class="mermaid-container" ></div>
         </div>
         
       </div>
@@ -39,8 +39,8 @@ import * as babelParser from '@babel/parser';
     }
     .mermaid-viewport { 
       width: 100%; 
-      max-width: 300px; /* Limite exigido */
-      height: 300px;    /* Limite exigido */
+      max-width: 600px; /* Limite exigido */
+      height: 400px;    /* Limite exigido */
       background: #f8f9fa; 
       border-radius: 8px; 
       border: 1px solid #ddd; 
@@ -64,6 +64,36 @@ import * as babelParser from '@babel/parser';
       color: #dc3545; 
       font-size: 14px; 
     }
+
+    /* Contêiner onde você coloca o texto do Mermaid */
+    .mermaid-container {
+    overflow: auto; /* Permite scroll horizontal e vertical */
+    width: 100%;
+    }
+
+    /* O SVG gerado pelo Mermaid */
+    .mermaid-container svg {
+        height: auto;
+        /* Isso garante que ao dar zoom pelo navegador, os nós do SVG se expandam limpos */
+        transform-origin: top left; 
+        will-change: auto !important;
+        transform: translateZ(0); /* Às vezes força o recalculo vetorial */
+        backface-visibility: visible !important;
+    }
+
+    /* O contêiner pai do diagrama */
+    .mermaid {
+    overflow: visible; /* ou auto para scroll */
+    }
+
+    /* O SVG gerado pelo Mermaid (forçando qualidade vetorial) */
+    .mermaid ::ng-deep svg {
+    max-width: none !important; /* Impede que ele seja espremido */
+    height: auto !important;
+    transform-origin: 0 0;
+    /* Dica de ouro para navegadores baseados em Chromium não borrarem SVGs em transformações: */
+    shape-rendering: geometricPrecision; 
+    }
   `]
 })
 export class UmlViewer implements OnChanges, AfterViewInit {
@@ -81,10 +111,10 @@ export class UmlViewer implements OnChanges, AfterViewInit {
     constructor() {
         // Inicializa as configurações do Mermaid
         mermaid.initialize({
-            startOnLoad: false,
+            startOnLoad: true,
             theme: 'default',
-            securityLevel: 'loose',
-        });
+            useMaxWidth: false
+        } as MermaidConfig & { useMaxWidth?: boolean });
     }
 
     get transformStyle(): string {
@@ -288,9 +318,7 @@ export class UmlViewer implements OnChanges, AfterViewInit {
                         const visibility = getVisibility(member.accessibility);
                         const modifier = member.static ? '$' : (member.abstract ? '*' : '');
 
-                        // Tratamento para propriedades de classe e propriedades de interface
                         const isProperty = member.type === 'ClassProperty' || member.type === 'TSPropertySignature';
-                        // Tratamento para métodos de classe e métodos de interface
                         const isMethod = member.type === 'ClassMethod' || member.type === 'TSMethodSignature';
 
                         if (isProperty && member.key.type === 'Identifier') {
@@ -311,12 +339,10 @@ export class UmlViewer implements OnChanges, AfterViewInit {
                             const isConstructor = member.kind === 'constructor';
                             const methodName = isConstructor ? 'constructor' : (member.key.name || 'method');
 
-                            // Interfaces usam typeAnnotation direto no método, classes usam returnType
                             const rawReturnType = member.returnType || member.typeAnnotation;
                             const returnType = isConstructor ? '' : getType(rawReturnType);
                             const returnSuffix = returnType ? ` ${returnType}` : '';
 
-                            // Babel pode alocar parametros em params ou parameters dependendo da versão/nó
                             const methodParams = member.params || member.parameters || [];
 
                             const params = methodParams.map((p: any) => {
@@ -372,12 +398,36 @@ export class UmlViewer implements OnChanges, AfterViewInit {
                 throw new Error('Nenhuma classe ou interface TypeScript encontrada no arquivo.');
             }
 
-            let importBlocks = '';
+            // 3. Agrupar imports em pacotes (namespaces do Mermaid)
+            const packages = new Map<string, string[]>();
+
             usedImports.forEach((source, importName) => {
-                importBlocks += `  class ${importName} {\n    <<Import>>\n    +from: '${source}'\n  }\n`;
+                // Se o from for relativo, cai no pacote 'Main' (pacote principal)
+                const isRelative = source.startsWith('.');
+                const packageName = isRelative ? 'Main' : source;
+
+                if (!packages.has(packageName)) {
+                    packages.set(packageName, []);
+                }
+                packages.get(packageName)!.push(importName);
             });
 
-            return `classDiagram\n${classBlocks}\n${importBlocks}\n${relationships}`;
+            let importBlocks = '';
+
+            packages.forEach((classes, pkgName) => {
+                // Mermaid não aceita caracteres especiais (@, /, ., -) no nome do namespace
+                const safePkgName = pkgName.replace(/[^a-zA-Z0-9_]/g, '_');
+
+                importBlocks += `  namespace ${safePkgName} {\n`;
+                classes.forEach(className => {
+                    importBlocks += `    class ${className} {\n      <<Import>>\n    }\n`;
+                });
+                importBlocks += `  }\n`;
+            });
+
+            const mermaidConfig = `%%{init: {"useMaxWidth": false, "theme": "default"}}%%`;
+
+            return `${mermaidConfig}\nclassDiagram\n${classBlocks}\n${importBlocks}\n${relationships}`;
         } catch (error) {
             console.error('Falha ao gerar diagrama:', error);
             throw new Error('Falha ao converter código em UML.');

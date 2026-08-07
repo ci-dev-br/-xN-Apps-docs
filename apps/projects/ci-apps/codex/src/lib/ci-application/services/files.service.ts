@@ -20,7 +20,7 @@ export class Files {
     public async openFile(file: IArquivo) {
         this.router.navigate(['Codex', 'editor'], {
             queryParams: {
-                file: (file?.info?.path! || '') + '/' + file.name
+                file: (file?.info?.path! || '')
             }
         })
     }
