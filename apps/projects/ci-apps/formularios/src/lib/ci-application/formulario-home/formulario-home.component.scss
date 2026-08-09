@@ -23,7 +23,7 @@ mat-toolbar {
     justify-content: space-evenly;
 
     flex: auto;
-    overflow: auto;
+    overflow: visible;
 }
 
 
@@ -42,7 +42,34 @@ ci-file {
 
     &:hover {
         ::ng-deep mat-card {
-            border: solid 1px rebeccapurple;
+            // border: solid 1px rebeccapurple;
+            position: relative;
+
+            /*  &::after {
+                z-index: -1;
+                background: var(--mat-card-elevated-container-color, var(--mat-sys-surface-container-low));
+                ;
+                top: 3px;
+                left: 3px;
+                right: 3px;
+                bottom: 3px;
+                content: " ";
+                position: absolute;
+            } */
+
+            &::before {
+                z-index: -1;
+                background: linear-gradient(137deg, blue 0%, green 33%, yellow 66%, red 100%);
+                content: " ";
+                inset: -2px;
+                transform: translateY(0.1234px);
+                z-index: -2;
+                border-radius: 12px;
+                position: absolute;
+                filter: blur(1px);
+                opacity: .7;
+
+            }
         }
     }
 }
@@ -83,8 +110,8 @@ ci-file {
     overflow: auto;
 
     >.col {
-        flex: 1;
-        overflow: scroll;
+        flex: auto;
+        overflow: auto;
 
         +.col {
             flex: 2.5;

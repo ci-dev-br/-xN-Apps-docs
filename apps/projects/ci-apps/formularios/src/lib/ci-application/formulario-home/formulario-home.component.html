@@ -19,6 +19,7 @@
     </mat-menu>
 </mat-toolbar>
 <div class="col scrollable">
+    @if (!outlet.isActivated) {
     <div class="col">
         <div class="files">
             @for (form of (formsFiltrered || forms); track $index) {
@@ -30,8 +31,9 @@
             }
         </div>
     </div>
+    }
     <div class="col">
-        <router-outlet></router-outlet>
+        <router-outlet #outlet="outlet"></router-outlet>
     </div>
 </div>
 <div class="float-menu">

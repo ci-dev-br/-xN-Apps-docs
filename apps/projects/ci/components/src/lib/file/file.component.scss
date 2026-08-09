@@ -8,7 +8,7 @@
 
 mat-card {
     flex: auto;
-    overflow: hidden;
+    // overflow: hidden;
     padding: .8em;
 
 }
@@ -57,7 +57,7 @@ mat-card-footer {
     display: flex;
     flex-direction: column;
     flex: auto;
-    overflow: hidden;
+    // overflow: hidden;
     text-overflow: ellipsis;
     text-align: justify;
 }
