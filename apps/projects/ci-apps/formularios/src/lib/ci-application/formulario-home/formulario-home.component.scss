@@ -9,32 +9,34 @@
     overflow: auto;
 }
 
+mat-toolbar {
+    z-index: 2;
+
+}
+
 .files {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 1em;
-    padding: 1.2em;
+    gap: .4em;
+    padding: .8em;
     justify-content: space-evenly;
 
     flex: auto;
     overflow: auto;
 }
 
-mat-toolbar {
-    z-index: 2;
 
-}
 
 ci-file {
     flex: auto;
-    $size: 128px;
+    $size: 230px;
 
     width: #{$size};
     height: #{$size};
-    min-width: #{$size};
-    min-height: #{$size};
-    max-width: 33%;
+    min-width: #{$size*.8};
+    min-height: #{$size*.8};
+    //  max-width: 33%;
     // max-height: #{$size};
     cursor: pointer;
 
@@ -55,5 +57,38 @@ ci-file {
     button[mat-fab] {
         border-radius: 50%;
         overflow: hidden;
+    }
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.col {
+    flex: auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    overflow: 1;
+}
+
+.scrollable {
+    flex: auto;
+    overflow: auto;
+
+    >.col {
+        flex: 1;
+        overflow: scroll;
+
+        +.col {
+            flex: 2.5;
+            overflow: auto;
+        }
     }
 }

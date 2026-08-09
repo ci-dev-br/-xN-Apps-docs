@@ -30,9 +30,9 @@ ci-logo ::ng-deep img {
 .row {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
+    flex: auto;
+    overflow: auto;
+
 }
 
 .container-menu {

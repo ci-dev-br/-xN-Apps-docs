@@ -18,6 +18,7 @@ import { StageDirective } from './directives/stage.directive';
 import { IChangeable, OfString, SerializedObjectData } from './dao/models';
 import { AtOf, Handlers } from './services/handlers.service';
 import { NomenclaturaPipe } from './pipes/nomenclatura.pipe';
+import { Message } from './services/message';
 
 @NgModule({
   declarations: [

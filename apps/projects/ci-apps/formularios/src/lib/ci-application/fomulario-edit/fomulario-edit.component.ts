@@ -40,7 +40,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatToolbarModule,
   ]
 })
-export class FormularioEditComponent implements OnInit {
+export class FormularioEditComponent {
   private _formulario?: Forms | undefined;
   public get formulario(): Forms | undefined {
     return this._formulario;
@@ -49,7 +49,6 @@ export class FormularioEditComponent implements OnInit {
   public set formulario(value: Forms | undefined) {
     if (this._formulario === value) return;
     this._formulario = value;
-
   }
   formGroup?: FormGroup = this.formBuilder?.group({
     title: [, [Validators.required]],
@@ -61,16 +60,16 @@ export class FormularioEditComponent implements OnInit {
     @Optional() private readonly formBuilder?: FormBuilder,
     @Optional() private readonly daos?: DaoService,
     @Optional() private readonly snap?: MatSnackBar,
-  ) { }
-  async ngOnInit() {
-    if (!!this.route && !!this.formsService) {
-      this.formsService.getByInternalId({ body: { internalId: this.route.snapshot.paramMap.get('FormId') } }).subscribe(form_data => {
+  ) {
+    this.route?.params.subscribe(params => {
+      this.formsService?.getByInternalId({ body: { internalId: params['FormId'] } }).subscribe(form_data => {
         this.formulario = form_data;
         this.daos?.prepareToEdit(this.formulario);
         if (this.formGroup) this.daos?.bindDataForm(this.formulario, this.formGroup);
         this.daos?.confirmation(this.formulario)?.subscribe(data => this.confirmationHandler(data))
       });
     }
+    );
   }
   private async confirmationHandler(data: any) {
     try {

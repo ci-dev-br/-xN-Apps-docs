@@ -7,6 +7,7 @@ import localePt from '@angular/common/locales/pt';
 import { DecimalPipe, registerLocaleData } from "@angular/common";
 import { Handlers } from "./services/handlers.service";
 import { Apps } from "./apps/apps.service";
+import { Message } from "./services/message";
 registerLocaleData(localePt, 'pt-BR');
 export interface ISchemaPreset<T, D> {
     primary?: string | string[];
@@ -37,6 +38,7 @@ export function coreProvider(
         ShortcutService,
         Apps,
         DecimalPipe,
+        Message,
         {
             provide: 'XNE.PIPES', useValue: {
                 'numeric': DecimalPipe

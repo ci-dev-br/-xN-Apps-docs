@@ -3,7 +3,7 @@ import { catchError, Observable, tap, throwError, timeout, TimeoutError } from '
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-        const TIMEOUT_MS = 700;
+        const TIMEOUT_MS = 5000; // Define o tempo limite de 5 segundos
         console.log('Before...', context.getClass().name, context.getHandler().name);
         const request = context.switchToHttp()?.getRequest()
         // console.log(`[${request.url}] ${request.method} `);

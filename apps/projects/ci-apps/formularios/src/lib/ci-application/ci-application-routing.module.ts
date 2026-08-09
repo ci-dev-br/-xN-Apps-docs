@@ -7,12 +7,12 @@ const routes: Routes = [
     path: '',
     component: FormularioHomeComponent,
     children: [
+      {
+        path: 'edit/:FormId',
+        component: FormularioEditComponent,
+      }
     ]
   },
-  {
-    path: 'edit/:FormId',
-    component: FormularioEditComponent,
-  }
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

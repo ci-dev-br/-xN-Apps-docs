@@ -5,96 +5,8 @@ import * as babelParser from '@babel/parser';
 @Component({
     selector: 'uml-viewer',
     standalone: true,
-    template: `
-    <div class="uml-wrapper">
-      <!-- Viewport de 300x300 com eventos de mouse -->
-      <div 
-        class="mermaid-viewport" 
-        [class.grabbing]="isDragging"
-        (wheel)="onWheel($event)"
-        (mousedown)="onMouseDown($event)"
-        (mousemove)="onMouseMove($event)"
-        (mouseup)="onMouseUp()"
-        (mouseleave)="onMouseUp()">
-        
-        <!-- Wrapper que recebe a transformação de matriz (Zoom/Pan) -->
-        <div 
-          class="zoom-wrapper" 
-          [style.transform]="transformStyle">
-          <div #mermaidContainer class="mermaid-container" ></div>
-        </div>
-        
-      </div>
-      
-      @if (error) {
-        <div class="error-message">Falhou ao gerar diagrama: {{ error }}</div>
-      }
-    </div>
-  `,
-    styles: [`
-    .uml-wrapper { 
-      display: flex; 
-      flex-direction: column; 
-      gap: 10px; 
-    }
-    .mermaid-viewport { 
-      width: 100%; 
-      max-width: 600px; /* Limite exigido */
-      height: 400px;    /* Limite exigido */
-      background: #f8f9fa; 
-      border-radius: 8px; 
-      border: 1px solid #ddd; 
-      overflow: hidden; /* Esconde as barras de rolagem para o pan funcionar visualmente */
-      cursor: grab;
-      position: relative;
-    }
-    .mermaid-viewport.grabbing {
-      cursor: grabbing;
-    }
-    .zoom-wrapper {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transform-origin: center center;
-      will-change: transform;
-    }
-    .error-message { 
-      color: #dc3545; 
-      font-size: 14px; 
-    }
-
-    /* Contêiner onde você coloca o texto do Mermaid */
-    .mermaid-container {
-    overflow: auto; /* Permite scroll horizontal e vertical */
-    width: 100%;
-    }
-
-    /* O SVG gerado pelo Mermaid */
-    .mermaid-container svg {
-        height: auto;
-        /* Isso garante que ao dar zoom pelo navegador, os nós do SVG se expandam limpos */
-        transform-origin: top left; 
-        will-change: auto !important;
-        transform: translateZ(0); /* Às vezes força o recalculo vetorial */
-        backface-visibility: visible !important;
-    }
-
-    /* O contêiner pai do diagrama */
-    .mermaid {
-    overflow: visible; /* ou auto para scroll */
-    }
-
-    /* O SVG gerado pelo Mermaid (forçando qualidade vetorial) */
-    .mermaid ::ng-deep svg {
-    max-width: none !important; /* Impede que ele seja espremido */
-    height: auto !important;
-    transform-origin: 0 0;
-    /* Dica de ouro para navegadores baseados em Chromium não borrarem SVGs em transformações: */
-    shape-rendering: geometricPrecision; 
-    }
-  `]
+    templateUrl: 'uml-viewer.html',
+    styleUrls: ['uml-viewer.scss'],
 })
 export class UmlViewer implements OnChanges, AfterViewInit {
     @Input({ required: true }) javascriptCode?: string;
@@ -420,7 +332,7 @@ export class UmlViewer implements OnChanges, AfterViewInit {
 
                 importBlocks += `  namespace ${safePkgName} {\n`;
                 classes.forEach(className => {
-                    importBlocks += `    class ${className} {\n      <<Import>>\n    }\n`;
+                    importBlocks += `    class ${className} {\n  }\n`;/*      <<Import>>\n    */
                 });
                 importBlocks += `  }\n`;
             });

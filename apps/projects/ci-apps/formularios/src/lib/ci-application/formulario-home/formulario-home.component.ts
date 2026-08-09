@@ -78,7 +78,7 @@ export class FormularioHomeComponent implements OnInit {
   }
   openFormById(internalId: string) {
     setTimeout(() => {
-      this.router?.navigate(['Formularios', 'edit', internalId]);
+      this.router?.navigate(['Formularios', 'edit', internalId], {});
     })
   }
   async remove(internalId: string) {

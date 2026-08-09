@@ -1,0 +1,89 @@
+.uml-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mermaid-viewport {
+    width: 100%;
+    max-width: 600px;
+    /* Limite exigido */
+    height: 400px;
+    /* Limite exigido */
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    overflow: hidden;
+    /* Esconde as barras de rolagem para o pan funcionar visualmente */
+    cursor: grab;
+    position: relative;
+}
+
+.mermaid-viewport.grabbing {
+    cursor: grabbing;
+}
+
+.zoom-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: center center;
+    will-change: transform;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 14px;
+}
+
+/* Contêiner onde você coloca o texto do Mermaid */
+.mermaid-container {
+    overflow: visible;
+    /* Permite scroll horizontal e vertical */
+    width: 200%;
+}
+
+/* O SVG gerado pelo Mermaid */
+.mermaid-container ::ng-deep svg {
+    width: 2000%;
+    scale: .25;
+    /* Isso garante que ao dar zoom pelo navegador, os nós do SVG se expandam limpos */
+    transform-origin: top left;
+    will-change: auto !important;
+    // transform: translateZ(0); /* Às vezes força o recalculo vetorial */
+    backface-visibility: visible !important;
+}
+
+.mermaid-container ::ng-deep {
+
+    /* 
+    /* O contêiner pai do diagrama */
+    // .mermaid {
+    //     overflow: visible;
+    //     /* ou auto para scroll */
+    // }
+
+    // */
+    //    /* O SVG gerado pelo Mermaid (forçando qualidade vetorial) */
+    //    /* .mermaid svg {
+    //        max-width: none !important;
+    //        /* Impede que ele seja espremido */
+    //        height: auto !important;
+    //        transform-origin: 0 0;
+    //        /* Dica de ouro para navegadores baseados em Chromium não borrarem SVGs em // transformações: */
+    //        shape-rendering: geometricPrecision;
+    // */
+    p {
+        // border: solid 1px red !important;
+        border-radius: 12px;
+        /* Apenas para depuração, remova depois */
+    }
+
+    rect {
+        border-radius: 12px;
+    }
+
+    /*  } */
+}

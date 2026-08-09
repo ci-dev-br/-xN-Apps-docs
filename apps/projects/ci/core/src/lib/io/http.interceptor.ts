@@ -1,11 +1,12 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Inject, Injectable, Optional } from "@angular/core";
-import { Observable, pipe, throwError } from "rxjs";
+import { Observable, of, pipe, throwError } from "rxjs";
 import { catchError, debounce, debounceTime, switchMap, tap, timeout, delay } from "rxjs/operators";
 import { StorageService } from "../storage/storage.service";
 import { AuthService } from "@ci/portal-api";
 import { CORE_ENV, ICoreEnvironment } from "../provider";
 import { Router } from "@angular/router";
+import { Message } from "../services/message";
 // import { AuthService } from "@ci/portal-api";
 /**
  *  Interceptador de requisições HTTP para adicionar o token de autorização e tratar erros.
@@ -44,6 +45,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         @Optional() private readonly router: Router,
         @Optional() private readonly storage: StorageService,
         @Optional() private readonly auth: AuthService,
+        @Optional() private readonly message: Message,
         @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
     ) {
         let efail = localStorage.getItem('e-fail');
@@ -64,15 +66,15 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                 })
             }
         }
-        return this._eTry(request, next)
+        return this._eTry(request, next) as any
     }
     private _eTry(request: HttpRequest<any>, next: HttpHandler) {
         return next.handle(this.addBearerToken(request))
             .pipe(timeout({
-                each: 1000,
+                each: 5000,
                 with: () => { throw new HttpErrorResponse({ status: 0, statusText: 'Interceptor Timeout' }) }
             }))
-            .pipe(catchError(error => {
+            .pipe(catchError((error) => {
                 if (error) {
                     if (error?.error?.error?.options?.message?.indexOf('expirou') > -1) {
                         this.storage.clean();
@@ -105,9 +107,9 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                     }
                 }
                 return throwError(error);
-            })).pipe(tap((e) => {
+            }))/* .pipe(tap((e) => {
                 //   console.info('[[tap]]', e);
-            }));
+            })); */
     }
     private addBearerToken(request: HttpRequest<any>) {
         let bearer = undefined;
@@ -119,7 +121,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         }
         return bearer ? request.clone({
             headers: new HttpHeaders({
-                timeout: '1000',
+                timeout: '10000',
                 'Authorization': `Bearer ${bearer}`
             })
         }) : request;
@@ -145,7 +147,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                         refreshToken: user.authentication?.refreshToken
                     }
                 })
-                    .pipe(delay(1000))
+                    .pipe(delay(3000))
                     .pipe(switchMap((token: { authorization: string }) => {
                         user.authentication.bearer = token.authorization;
                         this.storage.store('apps.ci.dev.br.store.User', user);
@@ -162,17 +164,18 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                     body: {
                         refreshToken: user.authentication?.refreshToken
                     }
-                }).pipe(switchMap((token: { authorization: string }) => {
-                    user.authentication.bearer = token.authorization;
-                    this.storage.store('apps.ci.dev.br.store.User', user);
-                    setTimeout(() => { this.refreshing = false; });
-                    return next.handle(this.addBearerToken(request));
-                }), catchError(error => {
-                    return throwError(error);
-                }));
-        } else {
-            debugger;
+                })
+                    .pipe(delay(1000))
+                    .pipe(switchMap((token: { authorization: string }) => {
+                        user.authentication.bearer = token.authorization;
+                        this.storage.store('apps.ci.dev.br.store.User', user);
+                        setTimeout(() => { this.refreshing = false; });
+                        return next.handle(this.addBearerToken(request));
+                    }), catchError(error => {
+                        return throwError(error);
+                    }));
         }
+
         return throwError(error);
     }
 }
