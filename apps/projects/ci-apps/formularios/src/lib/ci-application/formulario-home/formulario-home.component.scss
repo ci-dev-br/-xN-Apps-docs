@@ -40,12 +40,13 @@ ci-file {
     // max-height: #{$size};
     cursor: pointer;
 
-    &:hover {
+      //&:hover {
         ::ng-deep mat-card {
             // border: solid 1px rebeccapurple;
             position: relative;
 
             /*  &::after {
+                
                 z-index: -1;
                 background: var(--mat-card-elevated-container-color, var(--mat-sys-surface-container-low));
                 ;
@@ -58,10 +59,11 @@ ci-file {
             } */
 
             &::before {
+                transition: all ease .4s;
                 z-index: -1;
                 background: linear-gradient(137deg, blue 0%, green 33%, yellow 66%, red 100%);
                 content: " ";
-                inset: -2px;
+                inset: 0px;
                 transform: translateY(0.1234px);
                 z-index: -2;
                 border-radius: 12px;
@@ -71,7 +73,15 @@ ci-file {
 
             }
         }
+    // }
+    &:hover{
+        ::ng-deep mat-card{
+            &:before{
+                inset: -2px;
+            }
+        }
     }
+
 }
 
 .float-menu {

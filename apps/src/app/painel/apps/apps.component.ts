@@ -6,6 +6,9 @@ import { CoreModule } from '@ci/core';
 import { AuthModule, roles, UserAuthenticationService } from '@ci/auth';
 import { BoardModule } from '@ci/components';
 import { MatTabsModule } from '@angular/material/tabs';
+import { Prancheta, PranchetaService } from '@ci/portal-api';
+import { MatButtonModule } from '@angular/material/button';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'ci-apps',
@@ -16,6 +19,8 @@ import { MatTabsModule } from '@angular/material/tabs';
     BoardModule,
     AuthModule,
     MatTabsModule,
+    MatButtonModule,
+    BoardModule,
   ],
   standalone: true,
   providers: [
@@ -29,11 +34,13 @@ import { MatTabsModule } from '@angular/material/tabs';
   styleUrl: './apps.component.scss'
 })
 export class AppsComponent implements OnInit {
+  boards?: Prancheta[];
   abas?: { label: string, path: string, icon: string }[];
   constructor(
     private readonly userService: UserAuthenticationService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
+    private readonly pracheta_service: PranchetaService,
   ) { }
   async ngOnInit() {
     this.abas = this.route.routeConfig?.children?.filter(r => r.path?.indexOf('board') === -1)?.map(r => {
@@ -84,6 +91,9 @@ export class AppsComponent implements OnInit {
     }
   };
   async AddNavigation(event: MouseEvent) {
-
+    if (!this.boards) this.boards = [];
+    // this.boards.push({ title: 'Nova Prancheta' });
+    const board = await lastValueFrom(this.pracheta_service.pranchetaControllerSync({ body: { prancheta: {} } }))
+    this.boards.push(board);
   }
 }
