@@ -86,10 +86,19 @@ export class UmlViewer implements OnChanges, AfterViewInit {
 
     private async renderDiagram(): Promise<void> {
         if (!this.javascriptCode?.trim()) return;
-
         try {
             this.error = null;
-            const mermaidSyntax = this.generateMermaidClassDiagram(this.javascriptCode);
+            let code_for_generate_diagram = this.javascriptCode;
+            try {
+                if (this.javascriptCode.trim().indexOf('{') === 0) {
+                    const j = JSON.parse(this.javascriptCode.trim());
+                    const ts_class_converted = this.jsonToTs.convert(this.javascriptCode.trim());
+                    code_for_generate_diagram = ts_class_converted;
+                }
+            } catch (error) {
+                console.info(error);
+            }
+            const mermaidSyntax = this.generateMermaidClassDiagram(code_for_generate_diagram);
 
             // Gera um ID único para a renderização do SVG
             const id = `mermaid-svg-${Math.random().toString(36).substr(2, 9)}`;
