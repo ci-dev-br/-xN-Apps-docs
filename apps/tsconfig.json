@@ -108,6 +108,9 @@
       "@ci/nota": [
         "./projects/ci-apps/nota/src/public-api"
       ],
+      "@ci/cdk": [
+        "./projects/ci/cdk/src/public-api"
+      ],
       "@ci/organizacao": [
         "./projects/ci/organizacao/src/public-api"
       ],

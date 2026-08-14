@@ -137,7 +137,7 @@ export class FilesComponent implements OnInit, OnDestroy {
         } else if (!!this.activatedRoute) {
           let painel = await this.router?.config[4]?.loadChildren!();
           if (painel) {
-            painel;
+            // painel;
           }
         }
       }

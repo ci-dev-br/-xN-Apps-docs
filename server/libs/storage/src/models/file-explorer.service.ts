@@ -40,19 +40,19 @@ export class FileExplorerService {
 
         return items
             .filter(f => !f.name.startsWith('.') && !f.name.startsWith('$'))
-            .map(v => {
-                const isDirectory = v.isDirectory();
-                const itemPath = join(dirPath, v.name);
+            .map(dirent => {
+                const isDirectory = dirent.isDirectory();
+                const itemPath = join(dirPath, dirent.name);
 
                 return {
-                    ...v,
+                    ...dirent,
                     path: itemPath,
-                    isCharacterDevice: v.isCharacterDevice(),
-                    isFile: v.isFile(),
+                    isCharacterDevice: dirent.isCharacterDevice(),
+                    isFile: dirent.isFile(),
                     isDirectory: isDirectory,
-                    isSocket: v.isSocket(),
-                    isFIFO: v.isFIFO(),
-                    isSymbolicLink: v.isSymbolicLink(),
+                    isSocket: dirent.isSocket(),
+                    isFIFO: dirent.isFIFO(),
+                    isSymbolicLink: dirent.isSymbolicLink(),
                     // Se for um diretório e não tiver atingido o limite, busca as subpastas
                     children: isDirectory && currentDepth < maxDepth
                         ? this.getDirectoryContents(itemPath, currentDepth + 1, maxDepth)

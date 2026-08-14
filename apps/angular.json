@@ -1441,6 +1441,37 @@
         }
       }
     },
+    "@ci/cdk": {
+      "projectType": "library",
+      "root": "projects/ci/cdk",
+      "sourceRoot": "projects/ci/cdk/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci/cdk/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci/cdk/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/ci/cdk/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "karmaConfig": "karma.conf.js"
+          }
+        }
+      }
+    },
     "@ci/espazio": {
       "projectType": "library",
       "root": "projects/ci/espazio",

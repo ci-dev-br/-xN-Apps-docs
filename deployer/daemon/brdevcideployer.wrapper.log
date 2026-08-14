@@ -1237,3 +1237,53 @@ Stacktrace:   em System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInter
    em winsw.WrapperService.OnShutdown()
 2026-08-10 20:46:55 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
 2026-08-10 20:46:56 - Started 6132
+2026-08-11 22:50:07 - Stopping brdevcideployer.exe
+2026-08-11 22:50:07 - ProcessKill 6132
+2026-08-11 22:50:07 - Shutdown exception
+Message:O sistema está sendo desligado.
+
+Stacktrace:   em System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   em System.Management.ManagementScope.InitializeGuts(Object o)
+   em System.Management.ManagementScope.Initialize()
+   em System.Management.ManagementObjectSearcher.Initialize()
+   em System.Management.ManagementObjectSearcher.Get()
+   em winsw.WrapperService.GetChildPids(Int32 pid)
+   em winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   em winsw.WrapperService.StopIt()
+   em winsw.WrapperService.OnShutdown()
+2026-08-11 22:51:49 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-08-11 22:51:49 - Started 8472
+2026-08-12 18:08:10 - Stopping brdevcideployer.exe
+2026-08-12 18:08:10 - ProcessKill 8472
+2026-08-12 18:08:10 - Shutdown exception
+Message:O sistema está sendo desligado.
+
+Stacktrace:   em System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   em System.Management.ManagementScope.InitializeGuts(Object o)
+   em System.Management.ManagementScope.Initialize()
+   em System.Management.ManagementObjectSearcher.Initialize()
+   em System.Management.ManagementObjectSearcher.Get()
+   em winsw.WrapperService.GetChildPids(Int32 pid)
+   em winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   em winsw.WrapperService.StopIt()
+   em winsw.WrapperService.OnShutdown()
+2026-08-12 18:10:25 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-08-12 18:10:26 - Started 7816
+2026-08-12 20:40:25 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-08-12 20:40:25 - Started 7440
+2026-08-13 19:39:28 - Stopping brdevcideployer.exe
+2026-08-13 19:39:28 - ProcessKill 7440
+2026-08-13 19:39:28 - Shutdown exception
+Message:O sistema está sendo desligado.
+
+Stacktrace:   em System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   em System.Management.ManagementScope.InitializeGuts(Object o)
+   em System.Management.ManagementScope.Initialize()
+   em System.Management.ManagementObjectSearcher.Initialize()
+   em System.Management.ManagementObjectSearcher.Get()
+   em winsw.WrapperService.GetChildPids(Int32 pid)
+   em winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   em winsw.WrapperService.StopIt()
+   em winsw.WrapperService.OnShutdown()
+2026-08-13 19:41:10 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\projetos\br.dev.ci.apps\node_modules\node-windows\lib\wrapper.js --file C:\projetos\br.dev.ci.apps\deployer\main.js --scriptoptions= --log "br.dev.ci.deployer wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-08-13 19:41:10 - Started 7500

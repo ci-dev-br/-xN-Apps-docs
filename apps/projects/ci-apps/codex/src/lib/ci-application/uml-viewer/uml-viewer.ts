@@ -1,10 +1,14 @@
 import { Component, Input, OnChanges, ElementRef, ViewChild, AfterViewInit, SimpleChanges } from '@angular/core';
 import mermaid, { MermaidConfig } from 'mermaid';
 import * as babelParser from '@babel/parser';
+import { CiCdkModule, JsonToTsService } from '@ci/cdk';
 
 @Component({
     selector: 'uml-viewer',
     standalone: true,
+    imports: [
+        CiCdkModule,
+    ],
     templateUrl: 'uml-viewer.html',
     styleUrls: ['uml-viewer.scss'],
 })
@@ -20,7 +24,10 @@ export class UmlViewer implements OnChanges, AfterViewInit {
     isDragging = false;
     private startX = 0;
     private startY = 0;
-    constructor() {
+    constructor(
+        public jsonToTs: JsonToTsService
+    ) {
+        //   jsonToTs = jsonToTs || jsonToTs;
         // Inicializa as configurações do Mermaid
         mermaid.initialize({
             startOnLoad: true,
