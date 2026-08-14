@@ -90,11 +90,12 @@ export class UmlViewer implements OnChanges, AfterViewInit {
             this.error = null;
             let code_for_generate_diagram = this.javascriptCode;
             try {
-                if (this.javascriptCode.trim().indexOf('{') === 0) {
-                    const j = JSON.parse(this.javascriptCode.trim());
-                    const ts_class_converted = this.jsonToTs.convert(this.javascriptCode.trim());
-                    code_for_generate_diagram = ts_class_converted;
-                }
+                //  if (this.javascriptCode.trim().indexOf('{') === 0) {
+                const json_parsed = JSON.parse(this.javascriptCode.trim());
+                if (!json_parsed) throw new Error(`não é json`);
+                const ts_class_converted = this.jsonToTs.convert(this.javascriptCode.trim());
+                code_for_generate_diagram = ts_class_converted;
+                // }
             } catch (error) {
                 console.info(error);
             }
