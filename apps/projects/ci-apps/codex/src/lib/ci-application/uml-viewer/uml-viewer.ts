@@ -18,7 +18,7 @@ export class UmlViewer implements OnChanges, AfterViewInit {
 
     error: string | null = null;
     private isViewInit = false;
-    scale = 1;
+    scale = 2;
     translateX = 0;
     translateY = 0;
     isDragging = false;
@@ -50,6 +50,12 @@ export class UmlViewer implements OnChanges, AfterViewInit {
 
         // Limita o zoom entre 0.2x e 5x para não sumir na tela ou estourar a memória
         this.scale = Math.max(0.2, Math.min(this.scale + delta, 5));
+
+        let r = false;
+        setTimeout(() => {
+            if (!!r) return; r = true
+            this.renderDiagram();
+        }, 100);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -67,10 +73,17 @@ export class UmlViewer implements OnChanges, AfterViewInit {
         // Atualiza a translação baseada na movimentação do mouse
         this.translateX = event.clientX - this.startX;
         this.translateY = event.clientY - this.startY;
+
     }
 
     onMouseUp(): void {
         this.isDragging = false;
+        let r = false;
+        setTimeout(() => {
+            if (!!r) return; r = true
+            this.renderDiagram();
+        }, 100);
+
     }
 
     ngAfterViewInit(): void {
@@ -80,6 +93,14 @@ export class UmlViewer implements OnChanges, AfterViewInit {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['javascriptCode'] && this.isViewInit) {
+
+            // this.scale = 2;
+            this.translateX = 175;
+            this.translateY = 280;
+            this.isDragging = false;
+            this.startX = 0;
+            this.startY = 0;
+
             this.renderDiagram();
         }
     }
@@ -98,6 +119,11 @@ export class UmlViewer implements OnChanges, AfterViewInit {
                 // }
             } catch (error) {
                 console.info(error);
+            }
+            /// feat: Adicionar importações inline dos arquivos existentes....
+            let adicionar_modulos_importados = true;
+            if (adicionar_modulos_importados) {
+
             }
             const mermaidSyntax = this.generateMermaidClassDiagram(code_for_generate_diagram);
 
