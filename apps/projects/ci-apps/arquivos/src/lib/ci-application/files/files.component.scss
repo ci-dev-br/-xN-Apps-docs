@@ -106,13 +106,14 @@
     }
 }
 
+/* 
 input.navegacao {
     flex: auto;
     padding: 12px 8px;
     border: none;
     border-radius: 6px;
     box-shadow: inset 0px 0px 3px rgba(0, 0, 0, .44);
-}
+} */
 
 .scoller {
     flex: auto;
@@ -148,4 +149,11 @@ mat-toolbar {
 input {
     flex: auto;
     width: 100%;
+}
+
+mat-toolbar {
+    border: solid 1px;
+    border-radius: 12px;
+    margin: 6px;
+    width: calc(100% - 12px);
 }

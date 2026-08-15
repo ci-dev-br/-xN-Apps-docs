@@ -12,6 +12,8 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IArquivo } from './i-file';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'ci-files',
@@ -26,6 +28,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     RouterModule,
     MatSelectModule,
     MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
   ],
   standalone: true,
   templateUrl: './files.component.html',
