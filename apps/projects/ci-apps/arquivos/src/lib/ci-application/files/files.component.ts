@@ -14,6 +14,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'ci-files',
@@ -30,6 +32,8 @@ import { MatInputModule } from '@angular/material/input';
     MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
+    MatTooltipModule,
+    MatMenuModule,
   ],
   standalone: true,
   templateUrl: './files.component.html',
@@ -154,6 +158,9 @@ export class FilesComponent implements OnInit, OnDestroy {
     }
   }
   forward() {
-
+    if (!!this.navegacao) {
+      // this.navegacao.splice(this.navegacao.length - 1, 1);
+      //  this.ir(this.navegacao[this.navegacao.length + 1]);
+    }
   }
 }
