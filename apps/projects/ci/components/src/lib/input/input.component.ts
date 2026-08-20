@@ -67,6 +67,7 @@ export class InputComponent implements OnInit {
     }
   }
 
+
   async confirm(event: MouseEvent | Event) { }
 
   @HostListener('click')
