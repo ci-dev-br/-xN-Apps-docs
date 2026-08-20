@@ -19,7 +19,7 @@
         <!-- inner here -->
         <ng-container *ngTemplateOutlet="inner"></ng-container>
     </div>
-    
+
     }@else{
     <div class="loading">
         Carregando arquivo...
@@ -31,7 +31,7 @@
     <ng-template #inner>
         <nu-monaco-editor [(ngModel)]="value" [options]="editorOptions" height="calc(100vh - 154px)"></nu-monaco-editor>
     </ng-template>
-    <div class="flutuante" >
+    <div class="flutuante">
         <uml-viewer [javascriptCode]="value"></uml-viewer>
     </div>
 </div>

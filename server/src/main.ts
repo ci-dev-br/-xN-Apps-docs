@@ -11,7 +11,7 @@ import { WsAdapter } from '@nestjs/platform-ws';
 import { corsOptionsDelegate } from './cors-option-delegate';
 import * as cookieParser from 'cookie-parser';
 /***
- * 
+ *  
  * Inicializa variáveis de ambiente
  * 
 ***/

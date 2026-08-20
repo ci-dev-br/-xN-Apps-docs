@@ -4,11 +4,18 @@
     gap: 10px;
 }
 
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+}
+
 .mermaid-viewport {
     width: 100%;
-    max-width: 600px;
+    // max-width: 600px;
     /* Limite exigido */
-    height: 400px;
+    // height: 400px;
     /* Limite exigido */
     background: #f8f9fa;
     border-radius: 8px;
@@ -86,4 +93,11 @@
     }
 
     /*  } */
+}
+
+@media print {
+    ::ng-deep * {
+        overflow-x: hidden !important;
+        overflow-y: unset !important;
+    }
 }

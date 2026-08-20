@@ -18,7 +18,7 @@ export class UmlViewer implements OnChanges, AfterViewInit {
 
     error: string | null = null;
     private isViewInit = false;
-    scale = 2;
+    scale = 5;
     translateX = 0;
     translateY = 0;
     isDragging = false;
@@ -51,11 +51,16 @@ export class UmlViewer implements OnChanges, AfterViewInit {
         // Limita o zoom entre 0.2x e 5x para não sumir na tela ou estourar a memória
         this.scale = Math.max(0.2, Math.min(this.scale + delta, 5));
 
-        let r = false;
         setTimeout(() => {
-            if (!!r) return; r = true
             this.renderDiagram();
-        }, 100);
+            try {
+                this.translateX = (this.mermaidContainer.nativeElement.getBoundingClientRect().width / 2) - ((this.mermaidContainer.nativeElement.querySelector('svg')?.getBoundingClientRect().width || 100) / 2);
+                this.translateY = (this.mermaidContainer.nativeElement.getBoundingClientRect().height / 2) - ((this.mermaidContainer.nativeElement.querySelector('svg')?.getBoundingClientRect().height || 10) / 2);
+            } catch (error) {
+
+            }
+
+        }, 200);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -78,30 +83,42 @@ export class UmlViewer implements OnChanges, AfterViewInit {
 
     onMouseUp(): void {
         this.isDragging = false;
-        let r = false;
         setTimeout(() => {
-            if (!!r) return; r = true
             this.renderDiagram();
-        }, 100);
+        }, 200);
 
     }
 
     ngAfterViewInit(): void {
         this.isViewInit = true;
         this.renderDiagram();
+
+
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['javascriptCode'] && this.isViewInit) {
 
-            // this.scale = 2;
-            this.translateX = 175;
-            this.translateY = 280;
+            try {
+                this.translateX = (this.mermaidContainer.nativeElement.getBoundingClientRect().width / 2) - ((this.mermaidContainer.nativeElement.querySelector('svg')?.getBoundingClientRect().width || 100) / 2);
+                this.translateY = this.mermaidContainer.nativeElement.getBoundingClientRect().height / 2;
+                this.translateY = (this.mermaidContainer.nativeElement.getBoundingClientRect().height / 2) - ((this.mermaidContainer.nativeElement.querySelector('svg')?.getBoundingClientRect().height || 100) / 2);
+            } catch (error) {
+
+            }
+
             this.isDragging = false;
             this.startX = 0;
             this.startY = 0;
 
             this.renderDiagram();
+
+            try {
+                this.translateX = (this.mermaidContainer.nativeElement.getBoundingClientRect().width / 2) - ((this.mermaidContainer.nativeElement.querySelector('svg')?.getBoundingClientRect().width || 100) / 2);
+                this.translateY = (this.mermaidContainer.nativeElement.getBoundingClientRect().height / 2) - ((this.mermaidContainer.nativeElement.querySelector('svg')?.getBoundingClientRect().height || 100) / 2);
+            } catch (error) {
+
+            }
         }
     }
 
@@ -161,7 +178,11 @@ export class UmlViewer implements OnChanges, AfterViewInit {
                     const source = node.source.value;
                     for (const specifier of node.specifiers) {
                         if (specifier.local && specifier.local.name) {
-                            fileImports.set(specifier.local.name, source);
+                            try {
+                                fileImports.set(specifier.local.name, source);
+                            } catch (error) {
+                                console.trace(error);
+                            }
                         }
                     }
                 }
@@ -338,12 +359,16 @@ export class UmlViewer implements OnChanges, AfterViewInit {
                     findIdentifiers(classNode, identifiersInClass);
 
                     fileImports.forEach((source, importName) => {
-                        if (identifiersInClass.has(importName)) {
-                            usedImports.set(importName, source);
-                            if (!classConnections.has(importName)) {
-                                relationships += `  ${className} ..> ${importName} : use\n`;
-                                classConnections.add(importName);
+                        try {
+                            if (identifiersInClass.has(importName)) {
+                                usedImports.set(importName, source);
+                                if (!classConnections.has(importName)) {
+                                    relationships += `  ${className} ..> ${importName} : use\n`;
+                                    classConnections.add(importName);
+                                }
                             }
+                        } catch (error) {
+                            console.trace(error);
                         }
                     });
                 }
@@ -357,34 +382,45 @@ export class UmlViewer implements OnChanges, AfterViewInit {
             const packages = new Map<string, string[]>();
 
             usedImports.forEach((source, importName) => {
-                // Se o from for relativo, cai no pacote 'Main' (pacote principal)
-                const isRelative = source.startsWith('.');
-                const packageName = isRelative ? 'Main' : source;
+                try {
+                    // Se o from for relativo, cai no pacote 'Main' (pacote principal)
+                    const isRelative = source.startsWith('.');
+                    const packageName = isRelative ? 'Main' : source;
 
-                if (!packages.has(packageName)) {
-                    packages.set(packageName, []);
+                    if (!packages.has(packageName)) {
+                        packages.set(packageName, []);
+                    }
+                    packages.get(packageName)!.push(importName);
+                } catch (error) {
+                    console.trace(error);
+
                 }
-                packages.get(packageName)!.push(importName);
             });
 
             let importBlocks = '';
 
             packages.forEach((classes, pkgName) => {
-                // Mermaid não aceita caracteres especiais (@, /, ., -) no nome do namespace
-                const safePkgName = pkgName.replace(/[^a-zA-Z0-9_]/g, '_');
+                try {
+                    // Mermaid não aceita caracteres especiais (@, /, ., -) no nome do namespace
+                    const safePkgName = pkgName.replace(/[^a-zA-Z0-9_]/g, '_');
 
-                importBlocks += `  namespace ${safePkgName} {\n`;
-                classes.forEach(className => {
-                    importBlocks += `    class ${className} {\n  }\n`;/*      <<Import>>\n    */
-                });
-                importBlocks += `  }\n`;
+                    importBlocks += `  namespace ${safePkgName} {\n`;
+                    classes.forEach(className => {
+                        importBlocks += `    class ${className} {\n  }\n`;/*      <<Import>>\n    */
+                    });
+                    importBlocks += `  }\n`;
+                } catch (error) {
+                    console.trace(error);
+
+                }
+
             });
 
             const mermaidConfig = `%%{init: {"useMaxWidth": false, "theme": "default"}}%%`;
 
             return `${mermaidConfig}\nclassDiagram\n${classBlocks}\n${importBlocks}\n${relationships}`;
         } catch (error) {
-            console.error('Falha ao gerar diagrama:', error);
+            console.trace('Falha ao gerar diagrama:', error);
             throw new Error('Falha ao converter código em UML.');
         }
     }

@@ -16,10 +16,12 @@ import { FileService } from "./service/file.service";
 import { FileController } from "./controller/file.controller";
 import { FileExplorerService } from "./models/file-explorer.service";
 import { GitService } from "./service/git.service";
+import { StorageCollection } from "./models/storage-collection.entity";
 export const StorageEntities = [
     Photo,
     FilePermission,
     File,
+    StorageCollection,
 ];
 @Module({
     imports: [
