@@ -11,7 +11,8 @@
     <button matSuffix mat-icon-button (click)="confirm($event)">
         <mat-icon>check</mat-icon>
     </button>
-    <!-- hints -->
+    <button matSuffix mat-icon-button (click)="toggleTranscription()"><mat-icon>record_voice_over</mat-icon></button>
+    <mat-hint *ngIf="isRecording">Escutando</mat-hint>
 </mat-form-field>
 }@else if(stage === 'view'){
 @switch (el) {
