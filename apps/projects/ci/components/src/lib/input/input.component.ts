@@ -1,5 +1,11 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Optional, Output, ViewChild, NgZone } from '@angular/core';
 import { FormControlDirective, FormGroupDirective, FormGroup } from '@angular/forms';
+import { GeradorDeNomes } from './geradore-nome';
+
+export interface SpeakerProfile {
+  nickname: string;
+  avgHz: number;
+}
 
 @Component({
   selector: 'ci-input',
@@ -214,14 +220,53 @@ export class InputComponent implements OnInit {
     }, 50);
   }
 
+  // Lista para armazenar o padrão de cada falante reconhecido
+  private knownSpeakers: SpeakerProfile[] = [];
+
+  // Lista de apelidos disponíveis para novos falantes
+  private availableNicknames: string[] = [
+
+  ];
+
+  private readonly HZ_TOLERANCE: number = 15;
+  geradorNome = new GeradorDeNomes();
+
   private identifySpeakerByHz(): string {
-    if (this.pitchTracker.length === 0) return 'Voz Desconhecida';
+    try {
+      if (this.pitchTracker.length === 0) return 'Voz Desconhecida';
 
-    const sum = this.pitchTracker.reduce((a, b) => a + b, 0);
-    const avgHz = sum / this.pitchTracker.length;
+      // 1. Calcula a frequência média atual
+      const sum = this.pitchTracker.reduce((a, b) => a + b, 0);
+      const avgHz = sum / this.pitchTracker.length;
 
-    if (avgHz < 165) return 'Timbre Grave (A)';
-    return 'Timbre Agudo (B)';
+      // 2. Tenta encontrar um falante conhecido dentro da margem de tolerância
+      const matchedSpeaker = this.knownSpeakers.find(
+        speaker => Math.abs(speaker.avgHz - avgHz) <= this.HZ_TOLERANCE
+      );
+
+      // Se encontrou, retorna o apelido já registrado
+      if (matchedSpeaker) {
+        return matchedSpeaker.nickname;
+      }
+
+      // 3. Se não encontrou, é uma voz nova. Vamos registrar!
+      // Pega o próximo apelido da lista ou cria um genérico se a lista acabar
+      const newNickname = this.availableNicknames.length > 0
+        ? this.availableNicknames.shift()!
+        : this.geradorNome.gerarNomeCompleto(Math.floor(Math.random() * 5));
+
+      // Armazena o novo perfil de voz
+      this.knownSpeakers.push({
+        nickname: newNickname,
+        avgHz: avgHz
+      });
+
+      return newNickname;
+    } catch (error) {
+      return '(erro na identificação)';
+
+    }
+
   }
 
   private commitTranscript(speaker: string, transcript: string) {
