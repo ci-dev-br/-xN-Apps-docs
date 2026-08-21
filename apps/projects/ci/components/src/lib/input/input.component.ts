@@ -66,7 +66,10 @@ export class InputComponent implements OnInit {
       });
     }
   }
-
+  // Crie o contexto globalmente ou na inicialização para lidar com prefixos
+  private getAudioContextClass(): any {
+    return (window as any).AudioContext || (window as any).webkitAudioContext;
+  }
 
   async confirm(event: MouseEvent | Event) { }
 
@@ -85,11 +88,23 @@ export class InputComponent implements OnInit {
   // ==========================================
   // RECURSO DE TRANSCRIÇÃO AVANÇADA
   // ==========================================
-
   async toggleTranscription() {
     if (this.isRecording) {
       this.stopTranscription();
     } else {
+      // 1. INICIALIZAÇÃO SÍNCRONA DO AUDIO CONTEXT
+      // Precisa ocorrer exatamente no momento do clique (antes do await)
+      if (!this.audioContext) {
+        const AudioCtx = this.getAudioContextClass();
+        this.audioContext = new AudioCtx();
+      }
+
+      // 2. RESUME IMEDIATO
+      // Se estiver suspenso pelas políticas do mobile, forçamos o "acordar"
+      if (this.audioContext.state === 'suspended') {
+        await this.audioContext.resume();
+      }
+
       await this.startTranscription();
     }
   }
@@ -102,6 +117,13 @@ export class InputComponent implements OnInit {
       }
 
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+      // Validação extra caso o navegador mobile não suporte de forma alguma
+      if (!SpeechRecognition) {
+        alert('Reconhecimento de voz não suportado neste navegador.');
+        return;
+      }
+
       this.recognition = new SpeechRecognition();
       this.recognition.lang = 'pt-BR';
       this.recognition.continuous = true;
@@ -133,24 +155,28 @@ export class InputComponent implements OnInit {
         });
       };
 
-      // TRATAMENTO DE ERROS PARA EVITAR LOOP INFINITO EM CASO DE BLOQUEIO
       this.recognition.onerror = (event: any) => {
         console.warn('Alerta na transcrição:', event.error);
+        // Expor erro na UI pode ajudar a debugar nos celulares
         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-          // Se o usuário revogou a permissão de microfone, devemos forçar a parada
           this.isRecording = false;
+          alert('Permissão de microfone negada ou erro de rede (HTTP).');
         }
       };
 
-      // O SEGREDO ESTÁ AQUI: O AUTO-RESTART
       this.recognition.onend = () => {
         if (this.isRecording) {
           console.log('A API parou inesperadamente. Reiniciando...');
-          try {
-            this.recognition.start(); // Reinicia a escuta automaticamente
-          } catch (e) {
-            console.error('Falha ao tentar reiniciar o SpeechRecognition', e);
-          }
+          // No mobile, adicionar um pequeno delay evita bloqueio por spam de solicitações
+          setTimeout(() => {
+            if (this.isRecording) {
+              try {
+                this.recognition.start();
+              } catch (e) {
+                console.error('Falha ao tentar reiniciar', e);
+              }
+            }
+          }, 400);
         }
       };
 
@@ -159,41 +185,23 @@ export class InputComponent implements OnInit {
 
     } catch (err) {
       console.error('Erro ao iniciar gravação:', err);
+      alert(`Erro: verifique se a página está em HTTPS. (${err})`);
       this.isRecording = false;
     }
   }
 
-  private stopTranscription() {
-    this.isRecording = false; // Flag crucial para o `onend` saber que foi intencional
-
-    if (this.recognition) {
-      this.recognition.stop();
-    }
-
-    if (this.audioContext) {
-      this.audioContext.close();
-      this.audioContext = undefined;
-    }
-
-    if (this.microphoneStream) {
-      this.microphoneStream.getTracks().forEach(track => track.stop());
-      this.microphoneStream = undefined;
-    }
-
-    clearInterval(this.trackingInterval);
-    this.liveDraft = '';
-  }
-
   private setupAudioAnalysis(stream: MediaStream) {
-    if (this.audioContext) return; // Evita criar múltiplos contextos
-    this.audioContext = new AudioContext();
-    this.analyser = this.audioContext.createAnalyser();
-    const source = this.audioContext.createMediaStreamSource(stream);
+    // O AudioContext agora é garantido pela função toggleTranscription
+    if (!this.audioContext) return;
 
-    this.analyser.fftSize = 2048;
+    if (!this.analyser) {
+      this.analyser = this.audioContext.createAnalyser();
+      this.analyser.fftSize = 2048;
+    }
+
+    const source = this.audioContext.createMediaStreamSource(stream);
     source.connect(this.analyser);
   }
-
   private startPitchTracking() {
     if (this.trackingInterval) clearInterval(this.trackingInterval);
 
@@ -220,6 +228,8 @@ export class InputComponent implements OnInit {
       }
     }, 50);
   }
+
+
 
   // Lista para armazenar o padrão de cada falante reconhecido
   private knownSpeakers: SpeakerProfile[] = [];
