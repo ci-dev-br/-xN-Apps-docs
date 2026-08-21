@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { PitchControlsComponent } from './pitch-controls.component';
 @NgModule({
   declarations: [
     InputComponent
@@ -17,6 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatIconModule,
     ReactiveFormsModule,
     MatButtonModule,
+    PitchControlsComponent,
   ],
   exports: [
     InputComponent,

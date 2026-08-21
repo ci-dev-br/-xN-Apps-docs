@@ -1,0 +1,59 @@
+.pitch-controls-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    max-width: 350px;
+    background-color: #fcfcfc;
+    font-family: sans-serif;
+
+    h3 {
+        margin: 0 0 0.5rem 0;
+        color: #333;
+        font-size: 1.2rem;
+    }
+
+    .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        input[type="number"] {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+    }
+
+    .checkbox-group {
+        flex-direction: row;
+        align-items: center;
+        cursor: pointer;
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        label {
+            margin-left: 0.5rem;
+            cursor: pointer;
+        }
+    }
+}

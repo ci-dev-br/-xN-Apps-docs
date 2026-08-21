@@ -1,6 +1,7 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Optional, Output, ViewChild, NgZone } from '@angular/core';
 import { FormControlDirective, FormGroupDirective, FormGroup } from '@angular/forms';
 import { GeradorDeNomes } from './geradore-nome';
+import { PitchSettings } from './pitch-controls.component';
 
 export interface SpeakerProfile {
   nickname: string;
@@ -21,8 +22,38 @@ export class InputComponent implements OnInit {
   @Input() placeholder?: string;
   @Input() el?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'div' | 'sub' | 'html' | undefined;
 
-  @Output('+confirm') confirmOutput = new EventEmitter<any>();
+  @Output('confirm') confirmOutput = new EventEmitter<any>();
   @Input() form?: FormGroup<any>;
+
+  // ==========================================
+  // PARÂMETROS DE CALIBRAÇÃO (Ajuste via Template)
+  // ==========================================
+
+  // Margem de erro em Hz para considerar que é a mesma pessoa falando
+  @Input() pitchTolerance: number = 5.6;
+
+  // Volume mínimo (0 a 255) para considerar que é uma voz e não ruído de fundo
+  @Input() minVolume: number = 0;
+
+  // Corte de frequências (Filtro Passa-Banda para ignorar graves de motor e agudos de chiado)
+  @Input() minHz: number = 60;
+  @Input() maxHz: number = 700;
+
+  // Quantidade mínima de capturas válidas (a cada 50ms) para calcular um pitch confiável. 
+  // Evita que um suspiro ou tosse curta crie uma nova pessoa.
+  @Input() minSamples: number = 1;
+
+  // Ative para ver os valores exatos de Hz no console do navegador e facilitar a calibração
+  @Input() debugPitch: boolean = true;
+
+  onPitchSettingsChange(event: PitchSettings) {
+    this.pitchTolerance = event.pitchTolerance;
+    this.minVolume = event.minVolume;
+    this.minHz = event.minHz;
+    this.maxHz = event.maxHz;
+    this.minSamples = event.minSamples;
+    this.debugPitch = event.debugPitch;
+  }
 
   private _input?: ElementRef<HTMLInputElement>;
 
@@ -58,9 +89,6 @@ export class InputComponent implements OnInit {
   private knownSpeakers: SpeakerProfile[] = [];
   private availableNicknames: string[] = [];
 
-  // Tolerância ajustada: 25Hz é o ideal para diferenciar locutores sem criar nomes repetidos 
-  // para a mesma pessoa quando ela muda a entonação.
-  private readonly HZ_TOLERANCE: number = 25;
   geradorNome = new GeradorDeNomes();
 
   constructor(
@@ -93,10 +121,6 @@ export class InputComponent implements OnInit {
       this.stage = 'view';
     }
   }
-
-  // ==========================================
-  // RECURSO DE TRANSCRIÇÃO AVANÇADA
-  // ==========================================
 
   private getAudioContextClass(): any {
     return (window as any).AudioContext || (window as any).webkitAudioContext;
@@ -189,7 +213,7 @@ export class InputComponent implements OnInit {
             this.startPitchTracking();
           }
         } catch (mediaError) {
-          console.info('Diarização desativada (comum em mobile). Utilizando apenas um único locutor genérico.', mediaError);
+          console.info('Diarização desativada. Utilizando apenas um locutor.', mediaError);
         }
       }, 200);
 
@@ -232,18 +256,15 @@ export class InputComponent implements OnInit {
     this.liveDraft = '';
     this.pitchTracker = [];
     this.lastIdentifiedSpeaker = '';
-
-    // Opcional: Se quiser resetar os falantes a cada nova gravação, 
-    // descomente a linha abaixo. Caso queira que ele lembre das vozes enquanto a página 
-    // não for atualizada, mantenha comentado.
-    // this.knownSpeakers = []; 
+    this.knownSpeakers = []; // Resetando na V5 para facilitar novos testes sem recarregar a página
   }
 
   private setupAudioAnalysis(stream: MediaStream) {
     if (!this.audioContext) return;
     if (!this.analyser) {
       this.analyser = this.audioContext.createAnalyser();
-      this.analyser.fftSize = 2048;
+      // Aumentando a resolução da FFT ajuda a ser mais preciso na varredura
+      this.analyser.fftSize = 4096;
     }
     const source = this.audioContext.createMediaStreamSource(stream);
     source.connect(this.analyser);
@@ -262,21 +283,21 @@ export class InputComponent implements OnInit {
       let maxIndex = 0;
       let maxValue = 0;
 
-      for (let i = 1; i < 50; i++) {
+      // Calculando dinamicamente as "bandejas" (bins) da FFT baseado no minHz e maxHz configurado
+      const hzPerBin = this.audioContext.sampleRate / this.analyser.fftSize;
+      const minBin = Math.floor(this.minHz / hzPerBin);
+      const maxBin = Math.ceil(this.maxHz / hzPerBin);
+
+      for (let i = minBin; i <= maxBin; i++) {
         if (dataArray[i] > maxValue) {
           maxValue = dataArray[i];
           maxIndex = i;
         }
       }
 
-      // Threshold ajustado para 35: forte o suficiente para ignorar ruído de ventoinhas
-      // e chiados estáticos, mas sensível para voz.
-      if (maxValue > 35) {
-        const hz = (maxIndex * this.audioContext.sampleRate) / this.analyser.fftSize;
-
-        if (hz > 60 && hz < 500) {
-          this.pitchTracker.push(hz);
-        }
+      if (maxValue > this.minVolume) {
+        const hz = maxIndex * hzPerBin;
+        this.pitchTracker.push(hz);
       }
     }, 50);
   }
@@ -293,19 +314,23 @@ export class InputComponent implements OnInit {
 
   private identifySpeakerByHz(): string {
     try {
-      // 1. Garante um nome logo na partida (mesmo que seja silêncio ou mobile sem acesso ao mic)
       if (!this.lastIdentifiedSpeaker) {
         this.lastIdentifiedSpeaker = this.geradorNome.gerarNomeCompleto(Math.floor(Math.random() * 5));
       }
 
-      // 2. Se a frase foi muito rápida ou o threshold cortou (ruído), confia no nome atual
-      if (this.pitchTracker.length < 3) {
+      // Se a pessoa não falou o tempo mínimo (ex: tossiu rápido), descarta a avaliação
+      if (this.pitchTracker.length < this.minSamples) {
+        if (this.debugPitch) console.log(`[Pitch Debug] Poucas amostras (${this.pitchTracker.length}). Mantendo: ${this.lastIdentifiedSpeaker}`);
         return this.lastIdentifiedSpeaker;
       }
 
       const medianHz = this.getMedian(this.pitchTracker);
 
-      // 3. A CORREÇÃO CHAVE: Cadastra a primeira pessoa com a frequência dela
+      if (this.debugPitch) {
+        console.log(`[Pitch Debug] Mediana detectada: ${medianHz.toFixed(2)}Hz | Amostras: ${this.pitchTracker.length}`);
+        console.log(`[Pitch Debug] Base de locutores atual:`, JSON.parse(JSON.stringify(this.knownSpeakers)));
+      }
+
       if (this.knownSpeakers.length === 0) {
         this.knownSpeakers.push({
           nickname: this.lastIdentifiedSpeaker,
@@ -314,9 +339,8 @@ export class InputComponent implements OnInit {
         return this.lastIdentifiedSpeaker;
       }
 
-      // 4. Procura quem é o locutor na lista
       const matchedSpeaker = this.knownSpeakers.find(
-        speaker => Math.abs(speaker.medianHz - medianHz) <= this.HZ_TOLERANCE
+        speaker => Math.abs(speaker.medianHz - medianHz) <= this.pitchTolerance
       );
 
       if (matchedSpeaker) {
@@ -324,7 +348,6 @@ export class InputComponent implements OnInit {
         return matchedSpeaker.nickname;
       }
 
-      // 5. Se não encontrou, é uma nova pessoa
       const newNickname = this.availableNicknames.length > 0
         ? this.availableNicknames.shift()!
         : this.geradorNome.gerarNomeCompleto(Math.floor(Math.random() * 5));
@@ -333,6 +356,8 @@ export class InputComponent implements OnInit {
         nickname: newNickname,
         medianHz: medianHz
       });
+
+      if (this.debugPitch) console.log(`[Pitch Debug] NOVO LOCUTOR detectado! Nome: ${newNickname} | Frequência Base: ${medianHz.toFixed(2)}Hz`);
 
       this.lastIdentifiedSpeaker = newNickname;
       return newNickname;

@@ -14,6 +14,10 @@
     <button matSuffix mat-icon-button (click)="toggleTranscription()"><mat-icon>record_voice_over</mat-icon></button>
     <mat-hint *ngIf="isRecording">Escutando</mat-hint>
 </mat-form-field>
+@if(isRecording){
+<app-pitch-controls (settingsChange)="onPitchSettingsChange($event)">
+</app-pitch-controls>
+}
 }@else if(stage === 'view'){
 @switch (el) {
 @case ('h1') {<h1><ng-container *ngTemplateOutlet="inner"></ng-container></h1>}
