@@ -49,6 +49,13 @@ export class InputComponent implements OnInit {
 
   private pitchTracker: number[] = [];
   private trackingInterval: any;
+  private lastIdentifiedSpeaker: string = 'Voz Desconhecida'; // Memória para frases rápidas
+
+  // Lista para armazenar o padrão de cada falante reconhecido
+  private knownSpeakers: SpeakerProfile[] = [];
+  private availableNicknames: string[] = [];
+  private readonly HZ_TOLERANCE: number = 15;
+  geradorNome = new GeradorDeNomes();
 
   constructor(
     @Optional() private readonly formGroupDirective?: FormGroupDirective,
@@ -65,10 +72,6 @@ export class InputComponent implements OnInit {
         this.value = newValue;
       });
     }
-  }
-  // Crie o contexto globalmente ou na inicialização para lidar com prefixos
-  private getAudioContextClass(): any {
-    return (window as any).AudioContext || (window as any).webkitAudioContext;
   }
 
   async confirm(event: MouseEvent | Event) { }
@@ -88,20 +91,22 @@ export class InputComponent implements OnInit {
   // ==========================================
   // RECURSO DE TRANSCRIÇÃO AVANÇADA
   // ==========================================
+
+  private getAudioContextClass(): any {
+    return (window as any).AudioContext || (window as any).webkitAudioContext;
+  }
+
   async toggleTranscription() {
     if (this.isRecording) {
       this.stopTranscription();
     } else {
-      // 1. INICIALIZAÇÃO SÍNCRONA DO AUDIO CONTEXT
-      // Precisa ocorrer exatamente no momento do clique (antes do await)
+      // 1. Inicializa o contexto no evento de clique para evitar o estado "suspended" (Regra do Mobile)
       if (!this.audioContext) {
         const AudioCtx = this.getAudioContextClass();
-        this.audioContext = new AudioCtx();
+        if (AudioCtx) this.audioContext = new AudioCtx();
       }
 
-      // 2. RESUME IMEDIATO
-      // Se estiver suspenso pelas políticas do mobile, forçamos o "acordar"
-      if (this.audioContext.state === 'suspended') {
+      if (this.audioContext && this.audioContext.state === 'suspended') {
         await this.audioContext.resume();
       }
 
@@ -111,14 +116,8 @@ export class InputComponent implements OnInit {
 
   private async startTranscription() {
     try {
-      if (!this.microphoneStream) {
-        this.microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        this.setupAudioAnalysis(this.microphoneStream);
-      }
-
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
-      // Validação extra caso o navegador mobile não suporte de forma alguma
       if (!SpeechRecognition) {
         alert('Reconhecimento de voz não suportado neste navegador.');
         return;
@@ -128,8 +127,6 @@ export class InputComponent implements OnInit {
       this.recognition.lang = 'pt-BR';
       this.recognition.continuous = true;
       this.recognition.interimResults = true;
-
-      this.startPitchTracking();
 
       this.recognition.onresult = (event: any) => {
         let interimTranscript = '';
@@ -149,6 +146,8 @@ export class InputComponent implements OnInit {
           if (finalTranscript) {
             const speaker = this.identifySpeakerByHz();
             this.commitTranscript(speaker, finalTranscript);
+
+            // Reseta o rastreador para a próxima frase, mas mantém a memória no lastIdentifiedSpeaker
             this.pitchTracker = [];
             this.liveDraft = '';
           }
@@ -157,17 +156,14 @@ export class InputComponent implements OnInit {
 
       this.recognition.onerror = (event: any) => {
         console.warn('Alerta na transcrição:', event.error);
-        // Expor erro na UI pode ajudar a debugar nos celulares
         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
           this.isRecording = false;
-          alert('Permissão de microfone negada ou erro de rede (HTTP).');
         }
       };
 
       this.recognition.onend = () => {
         if (this.isRecording) {
           console.log('A API parou inesperadamente. Reiniciando...');
-          // No mobile, adicionar um pequeno delay evita bloqueio por spam de solicitações
           setTimeout(() => {
             if (this.isRecording) {
               try {
@@ -176,22 +172,58 @@ export class InputComponent implements OnInit {
                 console.error('Falha ao tentar reiniciar', e);
               }
             }
-          }, 400);
+          }, 400); // Pequeno delay evita que o mobile bloqueie por loop excessivo
         }
       };
 
+      // INICIAMOS O RECONHECIMENTO DE FALA PRIMEIRO!
+      // Isso garante que a API nativa pegue o microfone nos smartphones
       this.recognition.start();
       this.isRecording = true;
 
+      // SÓ ENTÃO tentamos pegar o Stream de Áudio para o tracking de Pitch.
+      // Se falhar (como acontece em muitos celulares por bloqueio de concorrência dupla do microfone),
+      // capturamos o erro e o reconhecimento de voz padrão continuará funcionando perfeitamente.
+      try {
+        if (!this.microphoneStream) {
+          this.microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          this.setupAudioAnalysis(this.microphoneStream);
+          this.startPitchTracking();
+        }
+      } catch (mediaError) {
+        console.warn('Falha ao iniciar diarização (comum em mobile por bloqueio de concorrência de microfone). A transcrição padrão continuará funcionando.', mediaError);
+      }
+
     } catch (err) {
       console.error('Erro ao iniciar gravação:', err);
-      alert(`Erro: verifique se a página está em HTTPS. (${err})`);
       this.isRecording = false;
     }
   }
 
+  private stopTranscription() {
+    this.isRecording = false;
+
+    if (this.recognition) {
+      this.recognition.stop();
+    }
+
+    if (this.audioContext) {
+      this.audioContext.close();
+      this.audioContext = undefined;
+    }
+
+    if (this.microphoneStream) {
+      this.microphoneStream.getTracks().forEach(track => track.stop());
+      this.microphoneStream = undefined;
+    }
+
+    clearInterval(this.trackingInterval);
+    this.liveDraft = '';
+    this.pitchTracker = [];
+    this.lastIdentifiedSpeaker = 'Voz Desconhecida';
+  }
+
   private setupAudioAnalysis(stream: MediaStream) {
-    // O AudioContext agora é garantido pela função toggleTranscription
     if (!this.audioContext) return;
 
     if (!this.analyser) {
@@ -202,6 +234,7 @@ export class InputComponent implements OnInit {
     const source = this.audioContext.createMediaStreamSource(stream);
     source.connect(this.analyser);
   }
+
   private startPitchTracking() {
     if (this.trackingInterval) clearInterval(this.trackingInterval);
 
@@ -222,62 +255,51 @@ export class InputComponent implements OnInit {
         }
       }
 
-      if (maxValue > 120) {
+      // Reduzimos o threshold de 120 para 50 para capturar falas mais baixas
+      if (maxValue > 50) {
         const hz = (maxIndex * this.audioContext.sampleRate) / this.analyser.fftSize;
-        this.pitchTracker.push(hz);
+        // Filtramos para ignorar ruídos ambientes fora do espectro de voz humana grave/médio
+        if (hz > 50 && hz < 1000) {
+          this.pitchTracker.push(hz);
+        }
       }
     }, 50);
   }
 
-
-
-  // Lista para armazenar o padrão de cada falante reconhecido
-  private knownSpeakers: SpeakerProfile[] = [];
-
-  // Lista de apelidos disponíveis para novos falantes
-  private availableNicknames: string[] = [
-
-  ];
-
-  private readonly HZ_TOLERANCE: number = 15;
-  geradorNome = new GeradorDeNomes();
-
   private identifySpeakerByHz(): string {
     try {
-      if (this.pitchTracker.length === 0) return 'Voz Desconhecida';
+      // Se não captou frequências (intervalo muito rápido ou voz baixa), reaproveita o último
+      if (this.pitchTracker.length === 0) {
+        return this.lastIdentifiedSpeaker;
+      }
 
-      // 1. Calcula a frequência média atual
       const sum = this.pitchTracker.reduce((a, b) => a + b, 0);
       const avgHz = sum / this.pitchTracker.length;
 
-      // 2. Tenta encontrar um falante conhecido dentro da margem de tolerância
       const matchedSpeaker = this.knownSpeakers.find(
         speaker => Math.abs(speaker.avgHz - avgHz) <= this.HZ_TOLERANCE
       );
 
-      // Se encontrou, retorna o apelido já registrado
       if (matchedSpeaker) {
+        this.lastIdentifiedSpeaker = matchedSpeaker.nickname;
         return matchedSpeaker.nickname;
       }
 
-      // 3. Se não encontrou, é uma voz nova. Vamos registrar!
-      // Pega o próximo apelido da lista ou cria um genérico se a lista acabar
       const newNickname = this.availableNicknames.length > 0
         ? this.availableNicknames.shift()!
         : this.geradorNome.gerarNomeCompleto(Math.floor(Math.random() * 5));
 
-      // Armazena o novo perfil de voz
       this.knownSpeakers.push({
         nickname: newNickname,
         avgHz: avgHz
       });
 
+      this.lastIdentifiedSpeaker = newNickname;
       return newNickname;
+
     } catch (error) {
-      return '(erro na identificação)';
-
+      return this.lastIdentifiedSpeaker || '(erro na identificação)';
     }
-
   }
 
   private commitTranscript(speaker: string, transcript: string) {
