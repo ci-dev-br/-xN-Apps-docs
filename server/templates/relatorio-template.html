@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* Estilos básicos para garantir a visualização */
+        body {
+            margin: 0;
+            padding: 0;
+            /* background-color: #f4f4f2; */
+            font-family: 'Times New Roman', Times, serif;
+            background: #414141;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border: 1px solid #d3d3d3;
+        }
+        .header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px double #333;
+        }
+        .journal-title {
+            font-size: 32px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+        .sub-header {
+            font-size: 14px;
+            font-style: italic;
+            border-bottom: 1px solid #333;
+            padding: 5px 0;
+            margin-bottom: 15px;
+        }
+        .headline {
+            padding: 20px;
+            text-align: left;
+        }
+        .headline h2 {
+            font-size: 24px;
+            margin: 0 0 10px 0;
+            color: #000;
+            line-height: 1.2;
+        }
+        .metrics-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .metrics-table td {
+            padding: 10px;
+            border: 1px solid #eee;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 20px;
+            font-weight: bold;
+            display: block;
+        }
+        .metric-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #666;
+        }
+        .section-title {
+            font-size: 18px;
+            border-left: 5px solid #333;
+            padding-left: 10px;
+            margin: 20px 0 10px 0;
+            text-transform: uppercase;
+        }
+        .content-text {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #333;
+            padding: 0 20px;
+        }
+        .footer {
+            background-color: #333;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="journal-title">O Diário do Sistema</h1>
+            <div class="sub-header">
+                Edição Digital | {{data_hoje}} | Relatório de Performance Geral
+            </div>
+        </div>
+        <div class="headline">
+            <span style="background: #000; color: #fff; padding: 2px 5px; font-size: 12px;">EXTRA! EXTRA!</span>
+            <h2>{{titulo_resumo_do_dia}}</h2>
+            <p class="content-text" style="padding: 0;">
+                {{descricao_curta_do_status}}
+            </p>
+        </div>
+        <hr style="margin: 0 20px; border: 0; border-top: 1px solid #333;">
+        <div style="padding: 0 20px;">
+            <h3 class="section-title">Indicadores Econômicos (KPIs)</h3>
+            <table class="metrics-table">
+                <tr>
+                    <td>
+                        <span class="metric-value">{{uptime}}%</span>
+                        <span class="metric-label">Disponibilidade</span>
+                    </td>
+                    <td>
+                        <span class="metric-value">{{total_usuarios}}</span>
+                        <span class="metric-label">Usuários Ativos</span>
+                    </td>
+                    <td>
+                        <span class="metric-value">{{erros_criticos}}</span>
+                        <span class="metric-label">Alertas Críticos</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="content-text">
+            <h3 class="section-title">Relatório da Redação Técnica</h3>
+            <p><strong>Infraestrutura:</strong> {{status_infra}}</p>
+            <p><strong>Último Deploy:</strong> {{versao_app}} realizado às {{hora_deploy}}.</p>
+            <p><em>"{{comentario_gestor}}"</em></p>
+        </div>
+        <div style="padding: 20px; background-color: #fafafa; border-top: 1px solid #eee;">
+            <h3 style="margin-top: 0;">🌤️ Previsão para as próximas 24h</h3>
+            <p style="font-size: 14px;">{{previsao_proximas_horas}}</p>
+            <center>
+                <a href="{{link_dashboard}}" class="btn">VER EDIÇÃO COMPLETA NO APP</a>
+            </center>
+        </div>
+        <div class="footer">
+            © {{ano}} Sistema de Relatórios Automáticos - Gerado via {{nome_plataforma}}.<br>
+            Este é um boletim informativo interno e confidencial.
+        </div>
+    </div>
+</body>
+</html>

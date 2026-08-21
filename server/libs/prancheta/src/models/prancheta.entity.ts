@@ -17,9 +17,9 @@ export class Prancheta extends FullAuditedEntity {
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })
     title?: string;
-    @ApiProperty({ nullable: true, required: false, title: 'Layout da Prancheta' })
-    @Column({ nullable: true })
-    layout?: string;
+    @ApiProperty({ nullable: true, required: false, title: 'Layout da Prancheta', type: 'any' })
+    @Column({ nullable: true, type: 'jsonb' })
+    layout?: any;
     @ApiProperty({ type: Card, nullable: true, required: false, isArray: true })
     @Column({ type: 'jsonb', nullable: true })
     cards?: Card[];

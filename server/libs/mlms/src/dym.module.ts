@@ -7,6 +7,8 @@ import { DyMSourceDefinition } from './models/dym-source-definition';
 import { ManagerModule } from '@ci/manager';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DyMJobStatus } from './models/dym-job-status';
+import { DeployerController } from './controllers/deployer.controller';
+import { DeployerBackdoorServices } from './services/deployer-backdoor.service';
 export const DyMEntities = [
   DyMArtifact,
   DyMBuildEnvironment,
@@ -19,9 +21,19 @@ export const DyMEntities = [
     TypeOrmModule.forFeature(DyMEntities),
   ],
   providers: [
+    {
+      provide: 'JENKINS_USERNAME',
+      useFactory: () => process.env.INTGR_CI_JENKINS_USER,
+    },
+    {
+      provide: 'JENKINS_PASSWORD',
+      useFactory: () => process.env.INTGR_CI_JENKINS_PASS,
+    },
     DyMService,
+    DeployerBackdoorServices,
   ],
   controllers: [
+    DeployerController,
   ],
   exports: [
     DyMService

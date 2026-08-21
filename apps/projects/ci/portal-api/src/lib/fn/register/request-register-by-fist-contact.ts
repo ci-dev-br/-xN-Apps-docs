@@ -29,4 +29,4 @@ export function requestRegisterByFistContact(http: HttpClient, rootUrl: string, 
   );
 }
 
-requestRegisterByFistContact.PATH = '/Register/requestRegisterByFistContact';
+requestRegisterByFistContact.PATH = '/Register/RequestRegisterByFistContact';

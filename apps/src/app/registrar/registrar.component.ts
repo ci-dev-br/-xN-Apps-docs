@@ -4,10 +4,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { AuthService, Register, RegisterService } from '@ci/portal-api';
-import { AuthModule, UserService } from '@ci/auth';
+import { AuthModule, UserAuthenticationService } from '@ci/auth';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { FooterModule } from '@ci/components';
 import { CoreModule, IsEmail, IsPhoneNumber, StageModule, StageService } from '@ci/core';
@@ -33,6 +33,7 @@ import { CoreModule, IsEmail, IsPhoneNumber, StageModule, StageService } from '@
   styleUrl: './registrar.component.scss'
 })
 export class RegistrarComponent implements OnInit {
+
   termos = {
     "M": 'e-mail',
     "P": 'sms'
@@ -67,12 +68,18 @@ export class RegistrarComponent implements OnInit {
   constructor(
     private readonly fb: FormBuilder,
     // private readonly authService: AuthService,
-    private readonly userService: UserService,
+    private readonly userService: UserAuthenticationService,
     // private readonly router: Router,
     /* // private readonly */ stages: StageService,
-    private readonly regitrar: RegisterService,
+    private readonly register: RegisterService,
+    private readonly route: ActivatedRoute,
   ) {
     stages.host = this;
+    route.params.subscribe((params: any) => {
+      if (params.invite) {
+
+      }
+    })
   }
   validar() {
     return this.form.valid;
@@ -93,7 +100,7 @@ export class RegistrarComponent implements OnInit {
     if (!this.validar()) return this.form.markAllAsTouched();
     const values = this.form.getRawValue() as Register;
     const register = await lastValueFrom(
-      this.regitrar.requestByFistContact({ body: { ...(values as any) } })
+      this.register.requestByFistContact({ body: { ...(values as any) } })
       // this.authService.registrar({ body: { ...(this.form.getRawValue() as any) } })
     );
     if (values.emailAuthorization) {
@@ -102,6 +109,20 @@ export class RegistrarComponent implements OnInit {
       this.stage = 'waiting_register';
     }
     this.userService.identificarUsuario(register);
+  }
+  async continue() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+    }
+    const data = this.form.getRawValue();
+    await lastValueFrom(
+      this.register.requestByFistContact({
+        body: {
+          identificacao: data.emailOrPhone as string,
+        }
+      })
+    )
+
   }
 }
 

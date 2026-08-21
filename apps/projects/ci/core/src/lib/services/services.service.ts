@@ -36,7 +36,7 @@ export class ServicesService {
                 try {
                     console.log = () => { }
                     console.info = () => { }
-                    console.error = () => { }
+                    console.trace = () => { }
                     window.eval = () => { }
 
                     console.clear();

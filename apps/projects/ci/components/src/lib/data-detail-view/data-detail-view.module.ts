@@ -2,8 +2,6 @@ import { NgModule } from "@angular/core";
 import { DataDetailViewComponent } from "./data-detail-view.component";
 import { CoreModule } from "@ci/core";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import { DataListModule } from "../data-list/data-list.module";
-import { GridModule } from "../data-grid/grid.module";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
@@ -11,8 +9,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
-import { WindowModule } from "../window/window.module";
-import { EditarDetailComponent } from "../editar-detail/src/editar-detail.component";
+import { DataGridModule } from "@ci/components/data-grid";
 @NgModule({
     declarations: [
         DataDetailViewComponent,
@@ -20,8 +17,7 @@ import { EditarDetailComponent } from "../editar-detail/src/editar-detail.compon
     imports: [
         CoreModule,
         MatToolbarModule,
-        DataListModule,
-        GridModule,
+        DataGridModule,
         MatButtonModule,
         MatIconModule,
         MatButtonToggleModule,
@@ -29,8 +25,6 @@ import { EditarDetailComponent } from "../editar-detail/src/editar-detail.compon
         MatFormFieldModule,
         MatInputModule,
         FormsModule,
-        WindowModule,
-        EditarDetailComponent,
     ],
     exports: [
         DataDetailViewComponent,

@@ -10,8 +10,12 @@ const https = require('https');
 const {
     client_dist_static_public: R734,
     server_local_static_public: R348,
+    ci_local_static_public: R758,
 } = process.env;
-const { NgBuildClientProd: C101 } = require('./ressources').CommonsCommands;
+const {
+    NgBuildClientProd: C101,
+    NgBuildClientDev: C100,
+} = require('./ressources').CommonsCommands;
 // Clean old files
 function CleanOldFiles(cb) {
     cb();
@@ -74,7 +78,7 @@ async function DeployFTPApplications(cb) {
     let clients = JSON.parse(process.env.ftp_clients).clients;
     try {
         let clientes_manager = await getObterMeusClientes();
-        
+
 
 
     } catch (error) {
@@ -140,12 +144,18 @@ async function DeployFTPApplications(cb) {
     }
     cb();
 }
-
+// Deploy Local Client Application
+function DeployPipeline(cb) {
+    // TODO: clean old public files
+    if (!!R734 && !!R758) src(R734 + '**', { encoding: false }).pipe(dest(R758, { overwrite: true }));
+    cb();
+}
 /// exports gulp tasks
 exports.CleanOldFiles = CleanOldFiles;
 exports.BuildPClientApplication = BuildPClientApplication;
 exports.DeployLocalClient = DeployLocalClient;
 exports.DeployFTPApplications = DeployFTPApplications;
+exports.DeployPipeline = DeployPipeline;
 exports.default = series(
     CleanOldFiles,
     BuildPClientApplication,

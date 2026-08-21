@@ -1,7 +1,36 @@
-<div class="user-profile">
-    <img src="" alt="" class="user-profile-image">
+@if(!!(user | async)){
+<div class="user-info-wrapper">
+    <ci-user-photo></ci-user-photo>
+    @if((user | async)?.surname){<h1>{{(user | async)?.surname || (user | async)?.fullName}}</h1>}
+    <div class="col">
+        @if((user | async)?.username){<small>{{(user | async)?.username}}</small>}
+    </div>
+    <button mat-stroked-button [routerLink]="'/Profile'">
+        Gerenciar sua conta ci.dev.br
+    </button>
+    <mat-accordion (click)="$event.stopPropagation()">
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>Mostrar mais contas</mat-panel-title>
+            </mat-expansion-panel-header>
+            <button mat-button>
+                <mat-icon>add</mat-icon>
+                Adicionar outra conta</button>
+            <button mat-button>
+                <mat-icon>exit_to_app</mat-icon>
+                Sair de todas as contas</button>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>Dispositivos Viinculados</mat-panel-title>
+            </mat-expansion-panel-header>
+            <button mat-button>
+                <mat-icon>device</mat-icon>
+                Este dispositivo</button>
+        </mat-expansion-panel>
+    </mat-accordion>
 </div>
-<div class="col">
-    <h1>{{user?.surname || user?.fullName}}</h1>
-    <small>{{user?.username}}</small>
-</div>
+}@else{
+Crie uma conta para acessar recursos individualizados
+}

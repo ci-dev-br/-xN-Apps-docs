@@ -1,23 +1,24 @@
-<h1>{{agora | date: 'dd MMMM y'}}</h1>
-<div class="horario">
-    <h1>{{agora | date: 'HH'}}</h1>
-    <h1>{{agora | date: 'mm'}}</h1>
-    <h1>{{segundos}}</h1>
-    <div class="ms"> {{n}} </div>
+@if(locked){
+<div class="lock-screen">
+    <h1>{{time | date:'HH:MM:ss'}}</h1>
+    <div style="flex:auto"></div>
+    <div class="unlock" (click)="unlock()">
+        <small>{{msg}}</small>
+    </div>
 </div>
-<div class="scroll">
-    <ci-board default="Launcher.Board"></ci-board>
+}@else {
+<div class="lock-screen">
+    <h1>{{time | date:'HH:MM:ss'}}</h1>
+    <div style="flex:auto"></div>
+
+    <!--  TODO:  acontecimentos -->
+    <!--  não bloqueado -->
+    <div class="bar-apps">
+        @for (item of barApps; track $index) {
+        <button mat-icon-button [matTooltip]="item.name">
+            <mat-icon>{{item.icon}}</mat-icon>
+        </button>
+        }
+    </div>
 </div>
-@if(x){<img class="bg" [src]="x" />}
-<div class="footer">
-    <button mat-icon-button (click)="load()">
-        <mat-icon>refresh</mat-icon>
-    </button>
-    <!-- <button mat-icon-button (click)="load()">
-        <mat-icon>visualize</mat-icon>
-    </button> -->
-    <span style="flex: auto"></span>
-    <button mat-icon-button [routerLink]="'/meus-apps'">
-        <mat-icon>apps</mat-icon>
-    </button>
-</div>
+}

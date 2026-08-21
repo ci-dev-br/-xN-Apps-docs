@@ -1,8 +1,9 @@
 <ci-navbar></ci-navbar>
 <div class="page--wrapper">
-    @if(!!(userService.user | async)){
-    <div #sidebarElement class="sidebar" [class.--inactive]="!sidebar" (click)="sidebar=!sidebar"
-        [style.top]="sidebarTop + 'px' " [style.left]="sidebarLeft + 'px'">
+    @if(userService && !!(userService.user | async)){
+    <div #sidebarElement class="sidebar" [class.--inactive]="!sidebar"
+        (click)="sidebar=!sidebar;$event.preventDefault()" [style.top]="sidebarTop + 'px' "
+        [style.left]="sidebarLeft + 'px'">
         <div class="row">
             <button mat-raised-button (click)="newPost()">
                 Texto
@@ -18,10 +19,11 @@
             </button>
         </div>
         <span style="flex:auto"></span>
-        <div class="row end">
+        <div class="row">
             <button mat-icon-button color="primary" routerLink="/meus-apps"><mat-icon>apps</mat-icon></button>
             <button mat-icon-button (click)="openSidebarSettings()"><mat-icon>settings</mat-icon></button>
         </div>
+        <mat-icon class="icon">draw</mat-icon>
     </div>
     <div class="wrapper">
         <div>
@@ -48,8 +50,8 @@
         </figure>
 
         <mat-form-field>
-            <mat-label>Pesqusiar ...</mat-label>
-            <input type="text" matInput placeholder="Pesqusiar...">
+            <mat-label>Pesquisar ...</mat-label>
+            <input type="text" matInput placeholder="Pesquisar...">
         </mat-form-field>
     </header>
     }

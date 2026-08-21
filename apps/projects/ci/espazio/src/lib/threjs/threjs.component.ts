@@ -1,75 +1,29 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Input, NgZone, OnDestroy, Optional, ViewChild } from '@angular/core';
-import { BoxGeometry, Color, DirectionalLight, Material, Mesh, MeshNormalMaterial, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from 'three';
+import { AnimationMixer, Mesh, PerspectiveCamera, PointLight, Scene, WebGLRenderer, Clock, PCFSoftShadowMap } from 'three';
 import { CoreModule } from '@ci/core';
-import { GLTFLoader } from 'three/addons'
-/**
- * Objeto Espacial
- */
-export class Objeto {
-  scene?: Scene;
-  mesh?: Mesh;
-  visible?: boolean;
-  peso?: number;
-  densidade?: number;
-  altura?: number;
-  largura?: number;
-  massa?: number;
-  glb_file?: string;
-  constructor(data?: {
-    mesh?: Mesh,
-    glb_file?: string
-  }) {
-    this.mesh = data?.mesh;
-    this.glb_file = data?.glb_file;
-  }
-  loadGBL(glb_file: string = this.glb_file || '') {
-    const loader = new GLTFLoader().setPath('./3d/');
-    loader.load(glb_file, (gltf) => {
-      this.scene?.add(gltf.scene);
-      // worldOctree.fromGraphNode(gltf.scene);
-      /* gltf.scene.traverse(child => {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-          if (child.material.map) {
-            child.material.map.anisotropy = 4;
-          }
-        }
-      }); */
-      //  const helper = new OctreeHelper(worldOctree);
-      // helper.visible = false;
-      // scene.add(helper);
-      /* const gui = new GUI({ width: 200 });
-       gui.add({ debug: false }, 'debug')
-         .onChange(function (value) {
-           helper.visible = value;
-         }); */
-    });
-  }
-}
+// Importamos o OrbitControls junto com o GLTFLoader
+import { OrbitControls } from 'three/addons';
+import { Objeto } from '../engine/objeto';
+import { Player } from '@ci/espazio';
+
 @Component({
   selector: 'c-threjs',
-  imports: [
-    CoreModule,
-  ],
+  imports: [CoreModule],
   standalone: true,
   templateUrl: './threjs.component.html',
   styleUrl: './threjs.component.scss',
 })
 export class ThrejsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('rendererContainer', { static: true }) rendererContainer!: ElementRef<HTMLDivElement>;
-  @Input()
-  scene?: Scene;
-  @Input()
-  camera?: PerspectiveCamera;
-  @Input()
-  renderer?: WebGLRenderer;
-  // @Input()
-  // cube?: Mesh;
-  @Input()
-  resizeObserver?: ResizeObserver;
-  @Input()
-  frameId: number = 0;
+  @Input() mixer?: AnimationMixer;
+  @Input() scene?: Scene;
+  @Input() camera?: PerspectiveCamera;
+  @Input() renderer?: WebGLRenderer;
+  @Input() resizeObserver?: ResizeObserver;
+  @Input() frameId: number = 0;
+  lights: PointLight[] = [];
+  clock = new Clock();
+  controls?: OrbitControls;
   private _objetos?: Objeto[] | undefined;
   public get objetos(): Objeto[] | undefined {
     return this._objetos;
@@ -89,9 +43,11 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
   adicionarMesh(mesh: Mesh): Objeto {
     return this.adicionarObjeto(new Objeto({ mesh }));
   }
-  constructor(
-    @Optional() private readonly ngZone?: NgZone,
-  ) { }
+  constructor(@Optional() private readonly ngZone?: NgZone) { }
+  private get localPlayer(): Player | undefined {
+    return this.objetos?.find(obj => obj instanceof Player) as Player;
+  }
+
   ngAfterViewInit(): void {
     this.initThree();
     this.setupResizeObserver();
@@ -106,25 +62,27 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
       this.resizeObserver.disconnect();
     }
     cancelAnimationFrame(this.frameId);
-    // Descartar geometrias e materiais
-    // if (this.cube) {
-    //   this.cube.geometry.dispose();
-    //   if (Array.isArray(this.cube.material)) {
-    //     this.cube.material.forEach(m => m.dispose());
-    //   } else {
-    //     (this.cube.material as Material).dispose();
-    //   }
-    // }
+
+    // Limpa os controles da câmera
+    if (this.controls) {
+      this.controls.dispose();
+    }
+
     if (this.renderer) {
       this.renderer.dispose();
     }
   }
+
   private initThree(): void {
     this.scene = new Scene();
-    this.scene.background = new Color(0x222222);
+    // this.scene.background = new Color(0x22222200);
+
     const { clientWidth, clientHeight } = this.rendererContainer.nativeElement;
-    this.camera = new PerspectiveCamera(75, clientWidth / clientHeight, 0.1, 1000);
-    this.camera.position.z = 5;
+
+    // this.camera = new PerspectiveCamera(75, clientWidth / // clientHeight, 0.1, 1000);
+    // this.camera.position.z = 5;
+    // this.camera.position.y = 1;
+
     this.renderer = new WebGLRenderer({
       antialias: true,
       alpha: true,
@@ -136,42 +94,63 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
       powerPreference: 'high-performance',
       precision: 'highp'
     });
+
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = PCFSoftShadowMap;
+
     this.renderer.setSize(clientWidth, clientHeight);
     this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
-    const geometry = new BoxGeometry();
-    const material = new MeshNormalMaterial();
 
-    const light = new PointLight(0xffffff, 10000, 100);
-    light.position.set(0, 0, 10);
-    // light.castShadow = true;
-    /* light.shadow.camera.near = 0.01;
-    light.shadow.camera.far = 500;
-    light.shadow.camera.right = 30;
-    light.shadow.camera.left = - 30;
-    light.shadow.camera.top = 30;
-    light.shadow.camera.bottom = - 30;
-    light.shadow.mapSize.width = 1024;
-    light.shadow.mapSize.height = 1024;
-    light.shadow.radius = 4;
-    light.shadow.bias = - 0.00006; */
+    // Configurando o OrbitControls para rotacionar, dar zoom e mover a câmera
+    if (this.camera) {
+
+      this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+      this.controls.enableDamping = true; // Adiciona uma inércia suave ao movimento
+      this.controls.dampingFactor = 0.05;
+      this.controls.enablePan = false; // Descomente se não quiser que o usuário arraste a câmera para fora do centro
+      this.controls.enableZoom = true; // O zoom usando o scroll do mouse já vem ativado por padrão
+    }
+
+    const light = new PointLight(0xffffff, 10, 100);
+
+    this.lights.push(light);
+    light.position.set(0, 40, -10);
     this.scene.add(light);
 
-    if (this.objetos) this.objetos.forEach(obj => {
-      obj.scene = this.scene;
-      if (!!obj.glb_file) obj.loadGBL();
-    })
-    // this.cube = new Mesh(geometry, material);
-    /// this.scene.add(this.cube);
+    if (this.objetos) {
+      this.objetos.forEach(async obj => {
+        obj.scene = this.scene;
+        if (!!obj.glb_file) {
+          // await obj.loadGBLFile();
+          if (!this.mixer && obj.scene) this.mixer = new AnimationMixer(obj.scene)
+          /*  if (!!obj?.gltf?.animations) this.mixer?.clipAction(obj.gltf.animations[5]).play(); */
+          if (!!obj?.gltf?.animations && Array.isArray(obj.gltf.animations)) {
+            obj.animations = obj.gltf.animations.map(x => this.mixer!.clipAction(x))
+          }
+        }
+      });
+    }
   }
+
   private animate(): void {
-    this.frameId = requestAnimationFrame(() => this.animate());
-    // if (this.cube) {
-    //   this.cube.rotation.x += 0.01;
-    //   this.cube.rotation.y += 0.01;
-    // }
-    if (this.scene && this.camera && this.renderer)
-      this.renderer.render(this.scene, this.camera);
+    try {
+      const delta = this.clock.getDelta();
+      this.frameId = requestAnimationFrame(() => this.animate());
+
+      this.mixer?.update(delta);
+
+      /*  if (!!this.controls) {
+         this.controls?.update();
+       } */
+
+      if (this.scene && this.camera && this.renderer) {
+        this.renderer.render(this.scene, this.camera);
+      }
+    } catch (err) {
+      console.trace(err);
+    }
   }
+
   private setupResizeObserver(): void {
     this.resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
@@ -182,6 +161,7 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     });
     this.resizeObserver.observe(this.rendererContainer.nativeElement);
   }
+
   private updateDimensions(width: number, height: number): void {
     if (!this.camera || !this.renderer) return;
     const h = height > 0 ? height : 1;
@@ -189,8 +169,31 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, h);
   }
+
   @HostListener('window:keydown', ['$event'])
   async keydownHandler(event: KeyboardEvent) {
-
+    /*  if (event.key === 'w') {
+       this.camera!.position!.z -= 1;
+     }else if (event.key === 's') {
+       this.camera!.position!.z += 1;
+     }
+     if (event.key === 'a') {
+       this.camera!.position!.x -= 1;
+     }else if (event.key === 'd') {
+       this.camera!.position!.x += 1;
+     } */
+  }
+  @HostListener('window:keyup', ['$event'])
+  async keyupHandler(event: KeyboardEvent) {
+    /*  if (event.key === 'w') {
+       this.camera!.position!.z -= 1;
+     }else if (event.key === 's') {
+       this.camera!.position!.z += 1;
+     }
+     if (event.key === 'a') {
+       this.camera!.position!.x -= 1;
+     }else if (event.key === 'd') {
+       this.camera!.position!.x += 1;
+     } */
   }
 }

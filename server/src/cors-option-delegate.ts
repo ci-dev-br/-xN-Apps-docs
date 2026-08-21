@@ -8,7 +8,8 @@ export const corsOptionsDelegate = (req, callback) => {
         corsOptions = {
             origin: true,
             methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-            allowedHeaders: '*'
+            allowedHeaders: '*',
+            credentials: true,
         };
     } else {
         corsOptions = { origin: false };

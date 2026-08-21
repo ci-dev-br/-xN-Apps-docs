@@ -1,0 +1,1 @@
+import{ca as e,h as r}from"./chunk-KKBLFPRQ.js";var a=(()=>{class t{constructor(){this.userMenu=new r([])}static{this.\u0275fac=function(o){return new(o||t)}}static{this.\u0275prov=e({token:t,factory:t.\u0275fac,providedIn:"root"})}}return t})();export{a};

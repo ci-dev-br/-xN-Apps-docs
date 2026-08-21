@@ -1,8 +1,11 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '@ci/core';
-import { TermosComponent } from './termos/termos.component';
 
 export const routes: Routes = [
+    {
+        path: '',
+        loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule)
+    },
     {
         path: 'acessar',
         loadChildren: () => import('./acessar/acessar.module').then(m => m.AcessarModule)
@@ -12,25 +15,11 @@ export const routes: Routes = [
         loadChildren: () => import('./registrar/registrar.module').then(m => m.RegistrarModule)
     },
     {
-        path: 'termos-de-uso',
-        component: TermosComponent
-    },
-    {
-        path: 'blog',
-        loadChildren: () => import('@ci-apps/blog').then(m => m.BlogModule)
-    },
-    {
         path: '',
-        loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule)
-    },
-    {
-        path: '',
-        canMatch: [authGuard], loadChildren: () => import('./painel/painel.module').then(m => m.PainelModule),
-    },
-    {
-        path: 'launcher', canMatch: [authGuard], loadChildren: () => import('@ci/Launcher').then(m => m.LauncherRouterModule)
+        canMatch: [authGuard],
+        loadChildren: () => import('./painel/painel.module').then(m => m.PainelModule),
     },
     {
         path: '**', redirectTo: '/acessar', pathMatch: 'full'
-    },
+    }
 ];

@@ -1,58 +1,11 @@
-<mat-toolbar color="accent">
-    <ci-logo></ci-logo>
-    <span style="flex: auto;"></span>
-    <span style="flex: auto;"></span>
-    <button mat-icon-button (click)="repo()">
-        <ci-icon icon="code"></ci-icon>
-    </button>
-    <button mat-icon-button [matMenuTriggerFor]="userMenu">
-        <mat-icon>people</mat-icon>
-    </button>
-    <mat-menu #userMenu>
-        @if(!!userMenu){@for(menu_item of userMenuList; track menu_item){
-        @if(menu_item.component !== undefined){
-            <ng-container *ngComponentOutlet="menu_item.component" ></ng-container>
-        }@else{
-        @if(!!menu_item.onClick){
-        <button mat-menu-item (click)="itemMenuActionHandler(menu_item, $event)">
-            <ng-container *ngTemplateOutlet="innerItemMenu"></ng-container>
-        </button>
-        }@else{
-        <ng-container *ngTemplateOutlet="innerItemMenu"></ng-container>
-        }
-        }
-        <ng-template #innerItemMenu>
-            @if(menu_item.label){
-            <div>{{menu_item.label}}</div>
-            }
-        </ng-template>
-        }}
-    </mat-menu>
-</mat-toolbar>
+@if(!!apps){
+<ci-navbar [apps]="apps"></ci-navbar>
 <mat-drawer-container class="container">
-    @if(!!apps){<mat-drawer mode="side" opened auto-scroll="vertical" tabindex="0">
+    <mat-drawer mode="over" [opened]="appsMenuOpened | async" auto-scroll="vertical" tabindex="0">
         <div class="inner">
-            <button mat-icon-button [matMenuTriggerFor]="menuX">
+            <!--  <button mat-icon-button [matMenuTriggerFor]="menuApps">
                 <mat-icon>apps</mat-icon>
-            </button>
-            <mat-menu #menuX>
-                <div class="menu--inner">
-                    @for (app of apps; track $index) {
-                    <button mat-icon-button class="app" routerLinkActive="side-ativo" [routerLink]="'/' + app.url"
-                        (click)="appClickHandler($event, app)">
-                        @if(app.icon){
-                        @if(app.type === 'svg'){
-                        <mat-icon [svgIcon]="app.icon"></mat-icon>
-                        }
-                        @else{
-                        <mat-icon>{{app.icon}}</mat-icon>
-                        }
-                        }
-                        <div class="title">{{app.name}}</div>
-                    </button>
-                    }
-                </div>
-            </mat-menu>
+            </button> -->
             <div class="apps">
                 @for (app of favs; track $index) {
                 <button [style.z-index]="100-(app.__presentation_order||0)"
@@ -60,20 +13,22 @@
                     [matTooltip]="app.name" [matTooltipPosition]="'right'" routerLinkActive="side-ativo"
                     [routerLink]="'/' + app.url" (click)="appClickHandler($event, app)">
                     @if(app.icon){
-                    @if(app.type === 'svg'){
+                    @if(app .type === 'svg'){
                     <mat-icon [svgIcon]="app.icon"></mat-icon>
                     }
                     @else{
                     <mat-icon>{{app.icon}}</mat-icon>
                     }
                     }
-                    <div class="title">{{app.name}}</div>
+                    <!--  <div class="title">{{app.name}}</div> -->
                 </button>
                 }
             </div>
         </div>
-    </mat-drawer>}
+    </mat-drawer>
     <mat-drawer-content>
-        <router-outlet></router-outlet>
+        <div class="container">
+            <router-outlet></router-outlet>
+        </div>
     </mat-drawer-content>
-</mat-drawer-container>
+</mat-drawer-container>}

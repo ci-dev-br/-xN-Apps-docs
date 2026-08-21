@@ -1,0 +1,12 @@
+<!-- Visão dos Mêses pelo ano -->
+@if(!!monthsOfYear){
+@for(month of monthsOfYear;track $index){
+<div class="card">
+    <div class="title">
+        {{month | date: 'MMMM'}}
+    </div>
+    <ci-calendar-month>
+    </ci-calendar-month>
+</div>
+}
+}

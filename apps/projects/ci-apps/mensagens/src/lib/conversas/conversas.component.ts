@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Optional } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,7 +9,7 @@ import { PesquisarService } from '../pesquisar-contato/pesquisar-contato.service
 import { ReactiveFormsModule } from '@angular/forms';
 import { Conversation } from '@ci/portal-api';
 import { MessagerService } from '../mensagens.service';
-
+import {MatSidenavModule} from '@angular/material/sidenav';
 @Component({
   selector: 'ci-conversas',
   imports: [
@@ -20,6 +20,7 @@ import { MessagerService } from '../mensagens.service';
     MatIconModule,
     MatTooltipModule,
     ReactiveFormsModule,
+    MatSidenavModule,
   ],
   standalone: true,
   templateUrl: './conversas.component.html',
@@ -28,19 +29,18 @@ import { MessagerService } from '../mensagens.service';
 export class ConversasComponent {
   conversas?: Conversation[];
   constructor(
-    private readonly pesquisar: PesquisarService,
-
-    private readonly messager: MessagerService,
+    @Optional() private readonly pesquisar?: PesquisarService,
+    @Optional() private readonly messager?: MessagerService,
   ) {
     this.carregarConversas();
   }
   async pesquisarContato() {
-    return await this.pesquisar.pesquisarContato();
+    return await this.pesquisar?.pesquisarContato();
   }
   async iniciarChamada() {
-    return this.messager.iniciarChamada();
+    return this.messager?.iniciarChamada();
   }
   async carregarConversas() {
-    this.conversas = await this.messager.carregarConversas();
+    this.conversas = await this.messager?.carregarConversas();
   }
 }

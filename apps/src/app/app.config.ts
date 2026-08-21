@@ -13,6 +13,9 @@ import { CardSetting } from '@ci/components';
 import { Cards } from './cards';
 import { UnidadeMedidaPreset } from '../../projects/ci-apps/cadastros/src/lib/presets';
 import { NgxMaskConfig, NgxMaskDirective, provideEnvironmentNgxMask, provideNgxMask } from 'ngx-mask';
+import { IItemMenu } from '@ci/components/window';
+import { AuthModule, ProfileMenu, USER_MENU } from '@ci/auth';
+import { PainelComponent } from './painel/painel.component';
 
 const maskConfig: Partial<NgxMaskConfig> = {
   validation: false,
@@ -28,6 +31,8 @@ const SETUP = {
     // 'ws://srv33.internals.ci.dev.br:87',
     // 'wss://apps.ci.dev.br:446',
     // 'ws://apps.ci.dev.br:87',
+
+    //  'https://paulorettamozo.com.br/dry'
   ],
   UNSATLY_WS_COMMON: 'wss://apps.ci.dev.br',
 }
@@ -63,6 +68,38 @@ export const appConfig: ApplicationConfig = {
       ]
     }),
     { provide: CardSetting, useValue: Cards },
+    {
+      provide: USER_MENU, useValue: [
+        {
+          component: ProfileMenu,
+          /* 
+          {{ (user | async)?.fullName || (user | async)?.username}}
+          */
+          label: 'Username'
+        },
+        /* {
+          label: 'Minha Conta',
+          onClick: (painel?: HomepageComponent) => {
+            painel?.profile();
+          }
+        },
+        {
+          label: 'Ajustar Visibilidade',
+          icon: 'visibility',
+          onClick: (painel?: PainelComponent) => {
+          }
+        },*/
+        {
+          label: 'Sair',
+          onClick: (painel?: PainelComponent) => {
+            painel?.sair();
+          }
+        },
+      ] as IItemMenu
+    },
     provideEnvironmentNgxMask(maskConfig),
+    ...(AuthModule.forRoot().providers || []),
+
+
   ],
 };

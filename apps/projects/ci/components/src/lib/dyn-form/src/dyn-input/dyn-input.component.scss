@@ -1,0 +1,18 @@
+:host {
+    display: contents;
+}
+
+/* 
+mat-form-field {
+    flex: auto;
+} */
+
+mat-form-field {
+    flex: 1;
+
+    &,
+    & ::ng-deep * {
+        min-width: unset !important;
+        // width: unset;
+    }
+}

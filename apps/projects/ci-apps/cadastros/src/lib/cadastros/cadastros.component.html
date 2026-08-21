@@ -4,7 +4,7 @@
         <div class="menu">
             <ng-container *ngFor="let item of menu">
                 <button mat-menu-item (click)="abrirItemMenu(item.path ||'')">
-                    <mat-icon>{{item.icon || 'article'}}</mat-icon>{{item.title}}
+                    <mat-icon>{{item.icon || 'article'}}</mat-icon>{{item.title | nomenclatura}}
                 </button>
             </ng-container>
         </div>
@@ -12,9 +12,9 @@
     <mat-drawer-content>
         <div class="container">
             <router-outlet></router-outlet>
+            <nav class="status">
+                Barra inferior
+            </nav>
         </div>
-        <nav class="status">
-            <!-- TODO: barra de status -->
-        </nav>
     </mat-drawer-content>
 </mat-drawer-container>

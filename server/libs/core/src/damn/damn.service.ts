@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-/// Damn Client Service
+/// Damn Client-Service
 /**
  *  Report and control client for diagnostics.
  */

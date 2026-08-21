@@ -1,21 +1,15 @@
 :host {
     flex: auto;
-
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: stretch;
     overflow: auto;
 }
-
-
 mat-drawer-container {
     flex: auto;
-
     --mat-sidenav-container-width: 250px;
-
 }
-
 mat-drawer-content {
     display: flex;
     flex-direction: column;

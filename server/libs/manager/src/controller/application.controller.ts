@@ -5,6 +5,7 @@ import { ApplicationService } from "../service/application.service";
 import { User } from "@ci/auth/models/user.entity";
 import { GetInputDtos } from "../dto/input-dto";
 import { Role } from "@ci/auth/decorators/role.decorator";
+import { SyncPayloadDao } from "@ci/core";
 
 @Role('MASTER')
 @ApiTags('Application')
@@ -20,7 +21,7 @@ export class ApplicationController {
         isArray: true, description: 'Obter Aplicações'
     })
     @ApiOperation({
-        operationId: 'GetApplication',
+        operationId: 'GetListApplication',
     })
     async get(
         @Request() req: Request,
@@ -44,12 +45,12 @@ export class ApplicationController {
         operationId: 'SyncApplication',
     })
     async sync(
-        @Body() application: Application,
+        @Body() application: SyncPayloadDao<Application>,
         @Request() req: Request,
 
     ) {
         try {
-            return await this.service.sync(application, req);
+            return await this.service.sync(application.data, req);
         } catch (error) {
             console.trace(error);
             throw error;

@@ -14,7 +14,7 @@
 }
 
 /**
- * Define a largura máxima baseada em uma estimativa de palavras por linha.
+ * Define a largura máxima a partir de estimativa de palavras por linha.
  * * @param {Number} $words - Quantidade de palavras desejada por linha.
  * @param {Boolean} $center - (Opcional) Se deve centralizar o container (margin: 0 auto).
  * @param {Number} $avg-chars - (Opcional) Média de caracteres por palavra (padrão 6: 5 letras + 1 espaço).

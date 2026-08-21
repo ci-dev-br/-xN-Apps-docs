@@ -9,7 +9,7 @@ import {
     JoinTable,
     ManyToOne,
 } from "typeorm";
-import { schema } from "../termos";
+import { schema } from "./schema";
 /**
  * Entidade que representa uma Organização Informacional
  */
@@ -23,6 +23,7 @@ export class Organizacao extends FullAuditedEntity {
     @ApiProperty({
         nullable: true,
         required: false,
+        title: 'Nome da Organização',
         description: 'Nome da Organização'
     })
     @Column({
@@ -36,6 +37,7 @@ export class Organizacao extends FullAuditedEntity {
         type: Photo,
         nullable: true,
         required: false,
+        title: 'Logomarca da Organização',
         description: 'Logomarca da Organização'
     })
     @ManyToOne(type => Photo,
@@ -49,10 +51,10 @@ export class Organizacao extends FullAuditedEntity {
      *  This field is a foreign key to the Tenant entity.
      */
     @ApiProperty({
-        title: 'Tenant',
+        title: 'Subordinação',
         description: 'Identificador do Inquilino',
         example: `'40e6215d-b5c6-4896-987c-f30f3678f608'`,
-        externalDocs: { url: '' },
+        // externalDocs: { url: '' },
         type: Tenant,
         nullable: true,
         required: false

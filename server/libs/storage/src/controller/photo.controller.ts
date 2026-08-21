@@ -45,17 +45,21 @@ export class PhotoController {
     async SendPart(
         @Req() req: Request,
         @Body() payload: PartPayloadDto) {
-        let result = await this.photoService.sendingPartialData(
-            payload.md5Part, payload.md5Full, payload.partialBase64, payload.currentPart, payload.TotalParts
-        )
-        if (!!result) {
-            return {
-                internalId: (await this.photoService.Sync(
-                    this.audt.doSync({
-                        originalFile: result,
-                    }, req)
-                )).internalId
-            };
+        try {
+            let result = await this.photoService.sendingPartialData(
+                payload.md5Part, payload.md5Full, payload.partialBase64, payload.currentPart, payload.TotalParts
+            )
+            if (!!result) {
+                return {
+                    internalId: (await this.photoService.Sync(
+                        this.audt.doSync({
+                            originalFile: result,
+                        }, req)
+                    )).internalId
+                };
+            }
+        } catch (err) {
+            console.trace(err);
         }
     }
     @Post('Get')
@@ -68,6 +72,10 @@ export class PhotoController {
         @Req() req: Request,
         @Body() payload: PhotoGetPaylodInputDto
     ) {
-        return await this.photoService.Get(payload.query);
+        try {
+            return await this.photoService.Get(payload.query);
+        } catch (error) {
+            console.trace(error);
+        }
     }
 }

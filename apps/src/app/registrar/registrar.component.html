@@ -1,27 +1,27 @@
 <header>
     <figure class="destaque">
         <img class="logo" src="logo-colorida.svg" alt="">
-        <small>Crie aplicativos incríveis. </small>
+        <!-- <small>Crie aplicativos incríveis. </small> -->
     </figure>
     <form [formGroup]="form" (ngSubmit)="next()">
         @if(stage==='initial-registring'){
-        <h1>Inscrição</h1>
+        <!-- <h1>Inscrição</h1>
         <p>Realize sua inscrição na plataforma para começar a criar. Forneça seu e-mail ou celular de contato
-            profissional para iniciar seu cadastro.</p>
+            profissional para iniciar seu cadastro.</p> -->
         <mat-form-field appearance="outline">
             <mat-label>E-mail ou Telefone celular</mat-label>
             <input matInput type="text" placeholder="Meu e-mail para contato" formControlName="emailOrPhone">
         </mat-form-field>
-        <p>Posteriormente, você poderá complementar seu cadastro com outras informações.</p>
-        <mat-checkbox formControlName="emailAuthorization">Autorizo o envio de
+        <!-- <p>Posteriormente, você poderá complementar seu cadastro com outras informações.</p> -->
+        <mat-checkbox formControlName="emailAuthorization">Concordo com o envio de
             @if(typeRegister){{{termos[typeRegister]}}}@else{mensagem} para validar meu
             cadastro.</mat-checkbox>
-        <mat-checkbox formControlName="confirmConsequencesOfNegationSendMail">Concordo que, ao não autorizar o envio de
+        <!-- <mat-checkbox formControlName="confirmConsequencesOfNegationSendMail">Concordo que, ao não autorizar o envio de
             @if(typeRegister){{{termos[typeRegister]}}}@else{mensagem}, não será possível recupera-lo caso minha senha
             seja
-            perdida.</mat-checkbox>
+            perdida.</mat-checkbox> -->
         <button [disabled]="form.invalid||false==form.controls.emailAuthorization.value" mat-raised-button type="submit"
-            color="accent">Pronto!</button>
+            color="accent" (click)="continue()" >Continuar e acessar</button>
         <small style="margin-top: 12px;" [stage]="'initial-registring'">
             Caso já possua uma conta ci.dev.br, <a routerLink="/acessar" href="/acessar">acesse aqui.</a>
         </small>

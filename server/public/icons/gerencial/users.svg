@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128">
+  <!-- Usuário Esquerdo -->
+  <circle cx="16" cy="30" r="6" fill="#E2E8F0" stroke="#1E3A8A" stroke-width="3"/>
+  <path d="M 4 54 C 4 44 28 44 28 54" fill="#E2E8F0" stroke="#1E3A8A" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Usuário Direito -->
+  <circle cx="48" cy="30" r="6" fill="#E2E8F0" stroke="#1E3A8A" stroke-width="3"/>
+  <path d="M 36 54 C 36 44 60 44 60 54" fill="#E2E8F0" stroke="#1E3A8A" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Usuário Administrador Central -->
+  <path d="M 18 56 C 18 42 46 42 46 56" fill="#3B82F6" stroke="#1E3A8A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="32" cy="32" r="8" fill="#3B82F6" stroke="#1E3A8A" stroke-width="4"/>
+  
+  <!-- Engrenagem de Gestão -->
+  <circle cx="32" cy="14" r="5" fill="#E2E8F0" stroke="#1E3A8A" stroke-width="3"/>
+  <path d="M 32 6 L 32 8 M 32 20 L 32 22 M 24 14 L 26 14 M 38 14 L 40 14 M 26.3 8.3 L 27.7 9.7 M 36.3 18.3 L 37.7 19.7 M 26.3 19.7 L 27.7 18.3 M 36.3 9.7 L 37.7 8.3" stroke="#1E3A8A" stroke-width="2" stroke-linecap="round"/>
+</svg>

@@ -1,5 +1,11 @@
-<ci-conversas>
-</ci-conversas>
-<div class="view">
-    <router-outlet></router-outlet>
-</div>
+<mat-sidenav-container>
+    <mat-sidenav mode="side" opened>
+        <ci-conversas>
+        </ci-conversas>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <div class="view">
+            <router-outlet></router-outlet>
+        </div>
+    </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,11 +1,9 @@
-import { AfterViewInit, Component, Injector, Input, OnDestroy, OnInit, Optional, Type } from "@angular/core";
-import { IDataGridOptions } from "../models/i-data-grid-options";
-import { DaoBuilder, DaoService, IHaveGetList, IHaveSync } from "@ci/core";
+import { AfterViewInit, Component, Injector, Input, OnDestroy, OnInit, Optional } from "@angular/core";
+import { DaoBuilder, DaoService, IHaveGetList } from "@ci/core";
 import { getServiceAsSchema } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
-import { WindowService } from "../window/window.service";
 import { ActivatedRoute } from "@angular/router";
-import { EditarDetailComponent } from "../editar-detail/src/editar-detail.component";
+import { IDataGridOptions } from "@ci/components/data-grid";
 
 /**
  * DataDetailViewComponent
@@ -48,7 +46,6 @@ import { EditarDetailComponent } from "../editar-detail/src/editar-detail.compon
         private readonly daoBuilder: DaoBuilder,
         private readonly injector: Injector,
         @Optional() private readonly route?: ActivatedRoute,
-        @Optional() private readonly window?: WindowService,
         @Optional() private readonly daos?: DaoService,
     ) {
     }
@@ -101,13 +98,15 @@ import { EditarDetailComponent } from "../editar-detail/src/editar-detail.compon
      * @param event 
      */
     async editar(data: I, event?: Event) {
-        const result: number | any = await this.window?.open(EditarDetailComponent,
-            { schemaName: this.schemaName, data },
-            this.schemaName, event)
-        if (result === -1 && this.list) {
-            let pos = this.list.indexOf(data);
-            this.list?.splice(pos, 1);
-        }
+        throw new Error('Not implemented yet');
+        /* TODO: Implementar injeção de componente para abertura em janela. */
+        /*  const result: number | any = await this.window?.open(EditarDetailComponent,
+             { schemaName: this.schemaName, data },
+             this.schemaName, event)
+         if (result === -1 && this.list) {
+             let pos = this.list.indexOf(data);
+             this.list?.splice(pos, 1);
+         } */
     }
     /**
      * Cria nova Entidade

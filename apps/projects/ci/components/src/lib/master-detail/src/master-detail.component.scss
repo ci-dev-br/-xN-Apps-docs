@@ -1,0 +1,28 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    justify-content: stretch;
+    align-items: stretch;
+    flex: auto;
+
+    >img {
+        width: 80px;
+        align-self: center;
+        justify-self: center;
+    }
+}
+
+ci-data-grid {
+    flex: auto;
+}
+
+mat-toolbar {
+    border: solid 1px #dedede;
+    box-shadow: 0 0 6px rgba(0, 0, 0, .44);
+    border-radius: 8px;
+
+    * {
+        flex: none;
+    }
+}

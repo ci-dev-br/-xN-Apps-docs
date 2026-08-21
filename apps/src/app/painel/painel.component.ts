@@ -1,17 +1,19 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, Optional, ViewChild } from '@angular/core';
 import { CoreModule, LoadIconsModule, IconLoaderSerices, StorageService } from '@ci/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatMenu, MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CI_STATIC_APPS, IApp } from './apps/apps';
-import { AuthModule, USER_MENU, UserService } from '@ci/auth';
-import { LogoComponent, IconModule, IItemMenu } from '@ci/components';
+import { AuthModule, USER_MENU, UserAuthenticationService } from '@ci/auth';
+import { IconModule, NavbarModule } from '@ci/components';
+import { IItemMenu } from '@ci/components/window';
+import { BehaviorSubject } from 'rxjs';
 @Component({
   selector: 'ci-painel',
   imports: [
@@ -26,25 +28,32 @@ import { LogoComponent, IconModule, IItemMenu } from '@ci/components';
     RouterModule,
     AuthModule,
     MatTooltipModule,
-    LogoComponent,
     LoadIconsModule,
     IconModule,
+    NavbarModule,
   ],
   standalone: true,
   templateUrl: './painel.component.html',
   styleUrl: './painel.component.scss'
 })
 export class PainelComponent implements OnInit {
-  user = this.userService.user
+  user = this.userAuthenticationInstanceService?.user
   apps?: any[];
+  appsMenuOpened = new BehaviorSubject<boolean>(false);
+  /*  @ViewChild('menuApps') menuApps?: MatMenu; */
   userMenuList?: IItemMenu[] = inject(USER_MENU, { optional: true }) || undefined;
   constructor(
-    private readonly router: Router,
-    private readonly userService: UserService,
-    private readonly route: ActivatedRoute,
-    iconLoader: IconLoaderSerices,
+    @Optional() private readonly router?: Router,
+    @Optional() private readonly userAuthenticationInstanceService?: UserAuthenticationService,
+    // @Optional() private readonly route: ActivatedRoute,
+    @Optional() iconLoader?: IconLoaderSerices,
   ) {
-    iconLoader.load({
+    iconLoader?.load({ /// TODO: mover para fora
+      'devtools': { url: 'icons/dev-tools-icon.svg' },
+      gusers: { url: 'icons/gerencial/users.svg' },
+      gdevices: { url: 'icons/gerencial/devices.svg' },
+      gapps: { url: 'icons/gerencial/apps.svg' },
+      assis: { url: 'icons/icon-assistant.svg' },
       imersao: { url: 'icons/imersao.svg' },
       agenda: { url: 'icons/agenda.svg' },
       anotacoes: { url: 'icons/anotacoes.svg' },
@@ -84,7 +93,7 @@ export class PainelComponent implements OnInit {
       MASTER: { url: 'icons/extras/master mode.svg' },
       GOD: { url: 'icons/extras/god mode.svg' },
     });
-    this.userService.user.subscribe(user => {
+    this.userAuthenticationInstanceService?.user.subscribe(user => {
       if (!!user) {
         this.apps = CI_STATIC_APPS.filter(app => !!app.roles?.find(role => !!user.roles?.find(r => r === role)))
       }
@@ -117,25 +126,27 @@ export class PainelComponent implements OnInit {
     this.appsFavoritos = this.apps;
   }
   async sair() {
-    this.userService.sair();
+    this.userAuthenticationInstanceService?.sair();
   }
   async repo() {
     window.open('https://github.com/ci-dev-br/-xN-Apps-docs', '_blank')
   }
   async profile() {
-    this.router.navigate(['/Profile'])
+    this.router?.navigate(['/profile'])
   }
   protected async itemMenuActionHandler(itemMenu: IItemMenu, event: Event) {
     if (itemMenu.onClick) itemMenu.onClick(this, event);
   }
-
   ngOnInit(): void {
     let c: string | number[] | null = localStorage.getItem('x-menu-cached-favs');
-    if (typeof c === 'string') c = JSON.parse(c) as number[];
-    this.apps?.forEach((e, i, a) => {
-      e.__cta_hndlred = (c as any)[i];
-    });
-
+    try {
+      if (typeof c === 'string') c = JSON.parse(c) as number[];
+      this.apps?.forEach((e, i, a) => {
+        if (!!c) e.__cta_hndlred = (c as any)[i];
+      });
+    } catch (error) {
+      console.trace(error);
+    }
     setTimeout(() => {
       this.appsFavoritos = [...this.apps || []];
     })

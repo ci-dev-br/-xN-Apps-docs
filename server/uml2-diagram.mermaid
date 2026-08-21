@@ -1,0 +1,3456 @@
+
+classDiagram
+
+class AuthGuard{
+            -jwtService: JwtService
+-reflector: Reflector
+-credencial: CredencialService
+-userService: UserService
+            +canActivate() Promise~boolean~
+-extractTokenFromHeader() string
+        }
+CanActivate<|..AuthGuard
+AuthGuard  --  CredencialService
+AuthGuard  --  UserService
+class AuthModule{
+            
+            
+        }
+class IAuthOption {
+            <<interface>>
+            +secret?: string
+            
+        }
+class CasdastroModule{
+            
+            
+        }
+class CadastroService{
+            
+            
+        }
+class CmsModule{
+            
+            
+        }
+class CodexModule{
+            
+            
+        }
+class CoreModule{
+            
+            +forRoot() DynamicModule$
+        }
+class LoggingInterceptor{
+            
+            +intercept() Observable~any~
+        }
+NestInterceptor~T,R~<|..LoggingInterceptor
+class CrmModule{
+            
+            
+        }
+class CrmService{
+            
+            
+        }
+class EspazioModule{
+            
+            
+        }
+class FinanceiroModule{
+            
+            
+        }
+class FiscalModule{
+            
+            
+        }
+class FormsModule{
+            
+            
+        }
+class IDictionary {
+            <<interface>>
+            +CurrentLang: string
++NomeCompleto?: string
++Docuemntos?: string
++TipoJuridico?: string
++Site?: string
++InformacaoParaContato?: string
++Endereco?: string
++Empresa?: string
++EmailPessoal?: string
++RGOE?: string
++RG?: string
++NomeFantasia?: string
++RazaoSocial?: string
++Sobrenome?: string
++DataNascimento?: string
++CPF?: string
++Nome?: string
+            
+        }
+class GlobalizationModule{
+            
+            
+        }
+class I11nModule{
+            
+            
+        }
+class IconsModule{
+            
+            
+        }
+class INPIModule{
+            
+            
+        }
+class IOptionApplication{
+            +icon?: string
++title?: string
++description?: string
++roles?: string[]
+            
+        }
+class IOptionsApplicationFeatures{
+            +application?: IOptionApplication
+            
+        }
+class ManagerModule{
+            
+            +forApplication() DynamicModule$
+        }
+IOptionsApplicationFeatures  --  IOptionApplication
+class MessagePayload{
+            +content?: string
++format?: string
++to?: string
+            
+        }
+class MessagerModule{
+            
+            
+        }
+class DyMModule{
+            
+            
+        }
+class DyMService{
+            
+            
+        }
+class NotificacaoModule{
+            
+            
+        }
+class OrganizacaoModule{
+            
+            
+        }
+class PaymentModule{
+            
+            
+        }
+class PranchetaModule{
+            
+            
+        }
+class ProdutoModule{
+            
+            
+        }
+class ProjetosModule{
+            
+            
+        }
+class ProlaboreModule{
+            
+            
+        }
+class SeoMarketingModule{
+            
+            
+        }
+class SeoMarketingService{
+            
+            
+        }
+class StorageModule{
+            
+            
+        }
+class TarefasModule{
+            
+            
+        }
+class TarefasService{
+            
+            
+        }
+class ChangelogController{
+            -changelogService: ChangelogService
+            +getChangelog() { passado: any[]; presente: any[]; futuro: any[]; }
++getActivityLogs() any
++updateStatus() { message: string; task: string; newStatus: string; }
+        }
+ChangelogController  --  ChangelogService
+class UpdateTaskStatusDto{
+            +taskName: string
++newStatus: string
+            
+        }
+class ChangelogService{
+            -filePath: string
+-logPath: string
+            +getGroupedChangelog() { passado: any[]; presente: any[]; futuro: any[]; }
++updateTaskStatus() { message: string; task: string; newStatus: string; }
+-logActivity() void
++getActivityLogs() any
+        }
+class TaskingModule{
+            
+            
+        }
+class TaskingService{
+            
+            
+        }
+class TenantModule{
+            
+            
+        }
+class UsersModule{
+            
+            
+        }
+class VendasModule{
+            
+            
+        }
+class VendasService{
+            
+            
+        }
+class AuthController{
+            -userService: UserService
+-credencialService: CredencialService
+-jwtService: JwtService
+-authService: AuthService
+-twoFactorAuthenticationService: TwoFactorAuthenticationService
+            +registrar() Promise~{ status: number; message: any; }~
++profile() Promise~{ id?: string; username?: string; fullName?: string; surname?: string; passwordMode?: string; email?: string; emailVerificado?: boolean; phone?: string; roles?: string[]; permission?: Policy[]; tenants?: Tenant[]; createdAt?: Date; updatedAt?: Date; photo?: Photo; preferences?: UserPreference[]; } | { ...; }~
++Acessar() Promise~void~
++logout() Promise~any~
++refresh() Promise~void~
+        }
+AuthController  --  UserService
+AuthController  --  CredencialService
+AuthController  --  AuthService
+AuthController  --  TwoFactorAuthenticationService
+class InviteController{
+            -invite: InviteService
+            +sendInvitation() Promise~void~
++GetInvite() Promise~void~
+        }
+InviteController  --  InviteService
+class RegisterController{
+            -register: RegisterService
+-mails: MailService
+            +requestRegisterByFistContact() Promise~{ status: number; message: string; }~
+        }
+RegisterController  --  RegisterService
+class UserPreferencesController{
+            
+            
+        }
+class DeviceAuthenticated{
+            +id: string
++lastAuthenticationHandshake?: Date
++user?: User
++refreshToken?: string
+            
+        }
+DeviceAuthenticated  --  User
+class Invite{
+            +email?: string
++friendlyName?: string
++mensagem?: string
++invited?: boolean
++accepted?: boolean
++phoneSMS?: string
++phoneWhatsApp?: string
+            
+        }
+class Policy{
+            +code?: string
++description?: string
+            
+        }
+class Register{
+            +phone?: string
++mail?: string
++createdAt?: Date
++modifiedAt?: Date
++deletedAt?: Date
++emailAuthorization?: boolean
++phoneAuthorization?: boolean
+            
+        }
+class AccessCredential{
+            +id?: string
++userIdentification: string
++createdAt?: Date
++modifiedAt?: Date
++operable?: Boolean
++refreshToken?: string
+            
+        }
+class UserPreference{
+            +userId?: string
++user?: User
++code?: string
++value?: string
+            
+        }
+UserPreference "0..*" --  User
+class User{
+            +id?: string
++username?: string
++fullName?: string
++surname?: string
++password?: string
++passwordMode?: string
++email?: string
++emailVerificado?: boolean
++phone?: string
++roles?: string[]
++permission?: Policy[]
++refreshToken?: string
++tenants?: Tenant[]
++createdAt?: Date
++updatedAt?: Date
++photo?: Photo
++preferences?: UserPreference[]
+            
+        }
+User  -- "0..*" Policy
+class AuthService{
+            -userService: UserService
+-userCredentialService: UserCredentialService
+-jwtService: JwtService
+-credencial: CredencialService
+            +refreshToken() Promise~{ authorization: string; }~
+        }
+AuthService  --  UserService
+AuthService  --  UserCredentialService
+AuthService  --  CredencialService
+class CredencialService{
+            -credentialAccessRepository: Repository~CredentialAccess~
+-credentialRepository: Repository~Credential~
+            +solicitarCredencial() Promise~Credential~
++obterChaveAcesso() Promise~Credential~
++obterChaveAcessoPorId() Promise~Credential~
++atualizar() Promise~any~
++eliminarChaves() Promise~void~
+        }
+class InviteService{
+            -mailer: MailService
+-repository?: Repository~Invite~
+            +createInvite() Promise~Invite~
++sendInvitation() Promise~void~
++getInvite() Promise~Invite~
+        }
+class RefreshTokenStrategy{
+            
+            +validate() any
+        }
+Strategy<|--RefreshTokenStrategy
+class RegisterService{
+            -repo: Repository~Register~
+-mails: MailService
+            +register() Promise~Register~
+        }
+class TwoFactorAuthenticationService{
+            -messageService: MessageService
+            +requestTwoFactorAuthentication() Promise~any~
+        }
+class UserCredentialService{
+            -userRepo: Repository~AccessCredential~
+            +credenciar() Promise~void~
+        }
+class UserPreferencesService{
+            -userPreferenceRepo: Repository~UserPreference~
+            +setNewPreference() Promise~void~
+        }
+class UserService{
+            -dataSource: DataSource
+-userRepo: Repository~User~
+-photos: PhotoService
+            +registrar() Promise~User~
++serdMailTemplate() Promise~void~
++sendEmailConfirmation() Promise~void~
++solicitarAcesso() Promise~void~
++existsUserByIdentification() Promise~User~
++verificarAssinaturaAutenticacao() Promise~User~
++hashData() Promise~string~
++logout() Promise~UpdateResult~
++updateRefreshToken() Promise~string~
++findById() Promise~User~
++sync() Promise~User~
++find() Promise~User[]~
++ocultaInformacaoSensivel() string
+        }
+class CadastroController{
+            -services: CadastroBase[]
+-injector: ModuleRef
+-_editables: string[]
+-FORM_PROVIDER_SERVICES?: any[]
+            +editables() Promise~string[]~
++getAll() Promise~any[]~
+        }
+CadastroController  -- "0..*" CadastroBase
+class CategoryController{
+            
+            +Sync() Promise~any~
++GetByInternalId() Promise~any~
++GetList() Promise~any~
+        }
+class EnderecoController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+class GetByInternalIdInputDto{
+            +internalId?: string
+            
+        }
+class InformacaoContatoController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+class PaisController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+class PessoaController{
+            
+            +Sync() Promise~any~
++GetByInternalId() Promise~any~
++GetList() Promise~any~
++Delete() Promise~any~
+        }
+class SyncPayloadDaoUnidadeMedida{
+            +data?: UnidadeMedida
+            
+        }
+class ObterListaUnidadeMedida{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~UnidadeMedida~ | FindOptionsWhere~UnidadeMedida~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class UnidadeMedidaController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoUnidadeMedida  --  UnidadeMedida
+class CategoryCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class CategoryCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class InformacaoContatoCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class ObterListaCategory{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Category~ | FindOptionsWhere~Category~[]
+            
+        }
+class ObterListaPessoa{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Pessoa~ | FindOptionsWhere~Pessoa~[]
+            
+        }
+class ObterListaEndereco{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Endereco~ | FindOptionsWhere~Endereco~[]
++relations?: any
+            
+        }
+class ObterListaInformacaoContato{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~InformacaoContato~ | FindOptionsWhere~InformacaoContato~[]
+            
+        }
+class ObterListaPais{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Pais~ | FindOptionsWhere~Pais~[]
+            
+        }
+class Payload~T~{
+            +data?: T
++fields?: string[]
++by?: string
++equals?: string
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class SyncPayloadDaoCategory{
+            +data?: Category
+            
+        }
+SyncPayloadDaoCategory  --  Category
+class SyncPayloadDaoEndereco{
+            +data?: Endereco
+            
+        }
+SyncPayloadDaoEndereco  --  Endereco
+class SyncPayloadDaoInformacaoContato{
+            +data?: InformacaoContato
+            
+        }
+SyncPayloadDaoInformacaoContato  --  InformacaoContato
+class SyncPayloadDaoPais{
+            +data?: Pais
+            
+        }
+SyncPayloadDaoPais  --  Pais
+class SyncPayloadDaoPessoa{
+            +data?: Pessoa
+            
+        }
+SyncPayloadDaoPessoa  --  Pessoa
+class CadastroGeneralista~T~{
+            +RAW?: T
++RULES?: ISchema
+            
+        }
+class ISchema {
+            <<interface>>
+            
+            
+        }
+CadastroGeneralista~T~  --  ISchema
+class Category{
+            +name?: string
++description?: string
+            
+        }
+class DocumentoIdentificacao{
+            +tipo?: TipoDocumentoIdentificacao
++numeroDocumento?: string
++pessoa?: Pessoa
+            
+        }
+DocumentoIdentificacao  --  TipoDocumentoIdentificacao
+DocumentoIdentificacao "0..*" --  Pessoa
+class Endereco{
+            +logradouro?: string
++address?: string
++addressNumber?: string
++complement?: string
++province?: string
+            
+        }
+class InformacaoContato{
+            +description?: string
++name?: string
++phoneNumber?: string
++whatsAppNumber?: string
++facebook?: string
++linkedin?: string
++tiktok?: string
++instagram?: string
+            
+        }
+class Pais{
+            +ibgeCode?: string
++internationaName?: string
++nome?: string
++referenciasExternas?: string[]
+            
+        }
+class Pessoa{
+            +nome?: string
++sobrenome?: string
++razaoSocial?: string
++nomeFantasia?: string
++registroGeralRepublicaBrasileira?: string
++registroGeralRepublicaBrasileiraOrgaoEmissorOrgaoEmissor?: string
++emailPessoal?: string
++empresa?: string
++endereco?: Endereco[]
++informacoesContato?: InformacaoContato[]
++site?: string
++tipoJuridico?: string
++documentos?: DocumentoIdentificacao[]
+            
+        }
+Pessoa  -- "0..*" Endereco
+Pessoa  -- "0..*" InformacaoContato
+class TipoDocumentoIdentificacao{
+            +code?: string
++description?: string
+            
+        }
+class UnidadeMedida{
+            +internationalCode: string
++name?: string
++description: string
++externalReferenceUrl: string[]
+            
+        }
+class IDynamicFormControl{
+            +label?: string
++placeholder?: string
++maxLenght?: number
++minLenght?: number
++max?: number | Date
++min?: number | Date
++options?: string[]
+            
+        }
+class IDynamicForm{
+            +controls?: { [key: string]: IDynamicFormControl; }
++title?: string
++description?: string
+            
+        }
+class CadastroBase{
+            +view: IDynamicForm*
+            
+        }
+CadastroBase  --  IDynamicForm
+class CategoryService{
+            +repository: Repository~Category~
+            
+        }
+class EnderecoService{
+            +repository: Repository~Endereco~
+            
+        }
+class InformacaoContatoService{
+            +repository: Repository~InformacaoContato~
+            
+        }
+class PaisService{
+            +repository: Repository~Pais~
+            +getById() Promise~Pais~
+        }
+class PessoaService{
+            +repository: Repository~Pessoa~
+            
+        }
+class UnidadeMedidaService{
+            +repository: Repository~UnidadeMedida~
+            +getById() Promise~UnidadeMedida~
+        }
+class SyncPayloadDaoCommentMeta{
+            +data?: CommentMeta
+            
+        }
+class ObterListaCommentMeta{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~CommentMeta~ | FindOptionsWhere~CommentMeta~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class CommentMetaController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoCommentMeta  --  CommentMeta
+class SyncPayloadDaoComment{
+            +data?: Comment
+            
+        }
+class ObterListaComment{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Comment~ | FindOptionsWhere~Comment~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class CommentController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoComment  --  Comment
+class SyncPayloadDaoLinks{
+            +data?: Links
+            
+        }
+class ObterListaLinks{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Links~ | FindOptionsWhere~Links~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class LinksController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoLinks  --  Links
+class IHaveRequiredToSearch {
+            <<interface>>
+            +requiredToSearch: any
+            
+        }
+class SyncPayloadDaoSiteOption{
+            +data?: SiteOption
+            
+        }
+class ObterListaSiteOption{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~SiteOption~ | FindOptionsWhere~SiteOption~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class SiteOptionController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
++Delete() Promise~any~
+        }
+SyncPayloadDaoSiteOption  --  SiteOption
+class SyncPayloadDaoSitePage{
+            +data?: SitePage
+            
+        }
+class ObterListaSitePage{
+            +requiredToSearch: any
++skip?: number
++take?: number
++where?: FindOptionsWhere~SitePage~ | FindOptionsWhere~SitePage~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class SitePageController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
++Delete() Promise~any~
+        }
+IHaveRequiredToSearch<|..ObterListaSitePage
+SyncPayloadDaoSitePage  --  SitePage
+class SyncPayloadDaoSitePost{
+            +data?: SitePost
+            
+        }
+class ObterListaSitePost{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~SitePost~ | FindOptionsWhere~SitePost~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class SitePostController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
++Delete() Promise~any~
+        }
+SyncPayloadDaoSitePost  --  SitePost
+class StreamingPayload{
+            +size?: number
++path?: string
++format?: string
++internalId?: string
+            
+        }
+class StreamingController{
+            
+            +GetChunk() Promise~void~
+        }
+class SyncPayloadDaoTermMeta{
+            +data?: TermMeta
+            
+        }
+class ObterListaTermMeta{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~TermMeta~ | FindOptionsWhere~TermMeta~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class TermMetaController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
++Delete() Promise~any~
+        }
+SyncPayloadDaoTermMeta  --  TermMeta
+class SyncPayloadDaoTerm{
+            +data?: Term
+            
+        }
+class ObterListaTerm{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Term~ | FindOptionsWhere~Term~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class TermController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
++Delete() Promise~any~
+        }
+SyncPayloadDaoTerm  --  Term
+class SyncPayloadDaoWebsite{
+            +data?: Website
+            
+        }
+class ObterListaWebsite{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Website~ | FindOptionsWhere~Website~[]
++order?: any
+            
+        }
+class WebsiteCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class WebsiteController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
++Delete() Promise~any~
+        }
+SyncPayloadDaoWebsite  --  Website
+class CommentMeta{
+            
+            
+        }
+class Comment{
+            +author: string
++authorEmail: string
++authorUrl: string
++authorIp: string
++post: SitePost
++publishingAt: Date
+            
+        }
+Comment  --  SitePost
+class Links{
+            +url: string
++name: string
++image: string
++target: string
++description: string
++visible: string
++owner: string
++rating: string
++update: string
++rel: string
++notes: string
++rss: string
+            
+        }
+class LocalResource{
+            +fullPath?: string
++engine?: string
++integrity?: string
+            
+        }
+class SiteOption{
+            
+            
+        }
+class SitePage{
+            +tempalte?: string
++content?: string[]
++contentType?: string
++urlMatch?: string
++website?: Website
+            
+        }
+SitePage  --  Website
+class SitePost{
+            +website?: Website
++title?: string
++author?: string
++content?: string[]
++excerpt?: string
++status?: string
++guid?: string
++menuOrder?: number
+            
+        }
+SitePost  --  Website
+class TermMeta{
+            +metaId?: string
++term?: Term
++key?: string
++value?: string
+            
+        }
+TermMeta  --  Term
+class Term{
+            +name?: string
++slug?: string
++termGroup?: string
+            
+        }
+class Website{
+            +atributes: { [atributeCodename: string]: string; }
++name?: string
++domain?: string
++theme?: string
++modules?: string[]
++admin?: User
++users?: User[]
+            
+        }
+class CommentMetaService{
+            +repository: Repository~CommentMeta~
+            
+        }
+class CommentService{
+            +repository: Repository~Comment~
+            
+        }
+class LinksService{
+            +repository: Repository~Links~
+            
+        }
+class SiteOptionService{
+            +repository: Repository~SiteOption~
+            
+        }
+class SitePageService{
+            +repository: Repository~SitePage~
+            +getPage() Promise~any~
+        }
+class SitePostService{
+            +repository: Repository~SitePost~
+            
+        }
+class TermMetaService{
+            +repository: Repository~TermMeta~
+            
+        }
+class TermService{
+            +repository: Repository~Term~
+            
+        }
+class WebsiteService{
+            +repository: Repository~Website~
+            
+        }
+class SyncPayloadDaoCodeBlock{
+            +data?: CodeBlock
+            
+        }
+class ObterListaCodeBlock{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~CodeBlock~ | FindOptionsWhere~CodeBlock~[]
+            
+        }
+class CodeBlockCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class CodeBlockController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoCodeBlock  --  CodeBlock
+class CodexController{
+            -service: CodexService
+            
+        }
+CodexController  --  CodexService
+class TerminalGateway{
+            +server: Server~DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any~
+-terminalService: TerminalService
+            +handleConnection() void
++handleDisconnect() void
++handleInput() void
++handleResize() void
+        }
+OnGatewayConnection~T~<|..TerminalGateway
+OnGatewayDisconnect~T~<|..TerminalGateway
+TerminalGateway  --  TerminalService
+class Agent{
+            +id?: string
++friendlyName?: string
+            
+        }
+class Block{
+            +name?: string
++lang?: string
++code?: string
+            
+        }
+class CodeBlock{
+            +language?: string
++sourceCode?: string
++version?: string
++description?: string
+            
+        }
+class CodigoFonte{
+            +files: File[]
+            
+        }
+CodigoFonte  -- "0..*" File
+class Parameter~T~{
+            +valueStrinOf: string
++value: T
+            
+        }
+class Context{
+            +Executor?: InstanceExecutor
+            
+        }
+class InstanceExecutor{
+            +ClientID?: string
++lastIp?: string
+            
+        }
+Context  --  InstanceExecutor
+class File{
+            +version?: string
++data?: Buffer
++relativePath?: string
+            
+        }
+class Lexico{
+            
+            
+        }
+class Terminoligia{
+            +internalRef: any
++evidence?: string
++categorization?: string
++examples?: string[]
+            
+        }
+class CodeBlockService{
+            -codeBlockRepo: Repository~CodeBlock~
+            +executeBlock() Promise~void~
+        }
+class CodexService{
+            -codeBlockRepo: Repository~CodeBlock~
+            
+        }
+class TerminalService{
+            -sessions: Map~string, IPty~
+            +createSession() void
++write() void
++resize() void
++killSession() void
+        }
+class AssistantService{
+            
+            +generateArtefact() Promise~void~
++requesAssist() Promise~void~
+        }
+class AudtService{
+            
+            +doSync() T
+        }
+class CredentialAccess{
+            +internalId?: string
++credential?: Credential
++header?: any
++cf_pseudo_ipv4?: string
++cf_connecting_ip?: string
++x_forwarded_for?: string
++createdAt: Date
+            
+        }
+CredentialAccess  --  Credential
+class Credential{
+            +id?: string
++identifiedUser?: string
++createdAt?: Date
++application?: Application
++createdFromIp?: string
++valid?: boolean
++alive?: boolean
++refreshToken?: string
++user?: any
+            
+        }
+class IAutentication {
+            <<interface>>
+            +identify?: string
++confirmation?: string
++roles?: string[]
++tenants?: string[]
+            
+        }
+class DamnService{
+            
+            +sentence() Promise~void~
+        }
+class LazyListRollBack{
+            
+            
+        }
+class BusEvent{
+            +name: string
+-data?: any
+            
+        }
+class BusClientSignal{
+            +signal: number
++clients: WebSocket[]
+            +addClient() void
++addEventListner() void
++emit() void
+-silent() Promise~void~
+        }
+class BusService{
+            -clients: Map~string, BusClientSignal~$
++events?: EventsGateway
+            +registry() void
++addEventListner() Promise~void~
++sendMessgeToDevice() Promise~void~
+        }
+BusService  --  EventsGateway
+class EventsLocalGateway{
+            +server: Server~typeof WebSocket, typeof IncomingMessage~
+-events?: EventsGateway
+-bus?: BusService
+            +afterInit() void
++eventHandler() Promise~void~
+        }
+class IEventPayload {
+            <<interface>>
+            +mac?: string
++iam?: string
+            
+        }
+OnGatewayInit~T~<|..EventsLocalGateway
+EventsLocalGateway  --  EventsGateway
+EventsLocalGateway  --  BusService
+class EventsGateway{
+            -lastWaitingTime?: number
+-eventsListeners: { [eventType: string]: (client: WebSocket, data: any) =~ void; }
+-_$devices: BehaviorSubject~Device[]~
++pings: any[]
++globalPing: number
++server: Server~typeof WebSocket, typeof IncomingMessage~
++momento: any[]
+-clients: Map~string, { ws: WebSocket; returned: boolean; momento: number; }~
+-listeners: Map~String, ((r?: any) =~ void)[]~
+-_notices?: ReplaySubject~{ event: string; data: any; }~
+-_attentionDatas: Map~string, any~
++lasts: string[]
+-bus: BusService
+            -pingHandler() { event: string; type: string; wait: number; momento: number; globalPing: number; pingMedium: number; }
+-sendSMSHandler() void
+-devicesHandler() void
++onEvent() void
++identity() Promise~IDataMessage~
+-addEventListener() void
++emitEvent() Promise~void~
++listening() Promise~void~
++Attention() Promise~void~
++set() void
++Changes() Promise~void~
++afterInit() void
++sing() boolean
++createUserChat() Promise~{ options?: any; connections?: any[]; __user_identification?: string; }~
+-Identification() void
+        }
+OnGatewayInit~T~<|..EventsGateway
+class InfraModule{
+            
+            +forRoot() DynamicModule$
+        }
+class L10nModule{
+            
+            
+        }
+class L10nService{
+            
+            +update() Promise~void~
+        }
+class Localization{
+            +chaveAcesso?: Credential
++latitude?: number
++longitude?: number
++time?: Date
+            
+        }
+Localization  --  Credential
+class Log{
+            +internalId: string
++chaveAcessoReference?: string
++log?: any
++level?: string
++cratedAt?: Date
++origem?: string
++application?: string
+            
+        }
+class LoggerController{
+            
+            +registry() Promise~void~
+        }
+class LoggerModule{
+            
+            
+        }
+class LoggerService{
+            
+            
+        }
+class Logger{
+            -error: { (...data: any[]): void; (message?: any, ...optionalParams: any[]): void; }
+-info: { (...data: any[]): void; (message?: any, ...optionalParams: any[]): void; }
+-log: { (...data: any[]): void; (message?: any, ...optionalParams: any[]): void; }
+-trace: { (...data: any[]): void; (message?: any, ...optionalParams: any[]): void; }
+-console: Console
+            -errorHandler() void
+-infoHandler() void
+-logHandler() void
+-print() void
+-traceHandler() void
+        }
+class SystemController{
+            -service: SystemService
+            +Leitura() Promise~CPUInfo[]~
+        }
+SystemController  --  SystemService
+class SystemModule{
+            
+            
+        }
+class CPUInfo{
+            +system?: number
++user?: number
++momento?: Date
++heapTotal?: number
++heapUsed?: number
++rss?: number
++external?: number
+            
+        }
+class SystemService{
+            -_cpu_cached_history?: CPUInfo[]
+-statusRepo: Repository~Status~
+            -readCpu() void
++leitura() Promise~CPUInfo[]~
+        }
+SystemService  -- "0..*" CPUInfo
+class ThemeController{
+            
+            
+        }
+class ThemeService{
+            
+            
+        }
+class SyncPayloadDaoAgendamento{
+            +data?: Agendamento
+            
+        }
+class ObterListaAgendamento{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Agendamento~ | FindOptionsWhere~Agendamento~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class AgendamentoController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoAgendamento  --  Agendamento
+class SyncPayloadDaoAtendimento{
+            +data?: Atendimento
+            
+        }
+class ObterListaAtendimento{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Atendimento~ | FindOptionsWhere~Atendimento~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class AtendimentoController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoAtendimento  --  Atendimento
+class SyncPayloadDaoClienteCrm{
+            +data?: ClienteCrm
+            
+        }
+class ObterListaClienteCrm{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~ClienteCrm~ | FindOptionsWhere~ClienteCrm~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class ClienteCrmController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoClienteCrm  --  ClienteCrm
+class SyncPayloadDaoHistoricoContato{
+            +data?: HistoricoContato
+            
+        }
+class ObterListaHistoricoContato{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~HistoricoContato~ | FindOptionsWhere~HistoricoContato~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class HistoricoContatoController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoHistoricoContato  --  HistoricoContato
+class SyncPayloadDaoPagamento{
+            +data?: Pagamento
+            
+        }
+class ObterListaPagamento{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Pagamento~ | FindOptionsWhere~Pagamento~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class PagamentoController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoPagamento  --  Pagamento
+class SyncPayloadDaoProduto{
+            +data?: Produto
+            
+        }
+class ProdutoCotrollerGetInputDto{
+            +where?: any
++take?: number
++skip?: number
++orderBy?: any
+            
+        }
+class ProdutoController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoProduto  --  Produto
+class SyncPayloadDaoProfissional{
+            +data?: Profissional
+            
+        }
+class ObterListaProfissional{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Profissional~ | FindOptionsWhere~Profissional~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class ProfissionalController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoProfissional  --  Profissional
+class SyncPayloadDaoPromocao{
+            +data?: Promocao
+            
+        }
+class ObterListaPromocao{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Promocao~ | FindOptionsWhere~Promocao~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class PromocaoController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoPromocao  --  Promocao
+class SyncPayloadDaoServico{
+            +data?: Servico
+            
+        }
+class ObterListaServico{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Servico~ | FindOptionsWhere~Servico~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class ServicoController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoServico  --  Servico
+class SyncPayloadDaoVendaProduto{
+            +data?: VendaProduto
+            
+        }
+class ObterListaVendaProduto{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~VendaProduto~ | FindOptionsWhere~VendaProduto~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class VendaProdutoController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoVendaProduto  --  VendaProduto
+class AgendamentoStatus {
+        <<enumeration>>
+        AGENDADO
+CONFIRMADO
+CANCELADO
+CONCLUIDO
+      }
+class Agendamento{
+            +clienteId: number
++cliente: ClienteCrm
++servicoId: number
++servico: Servico
++profissionalId: number
++profissional: Profissional
++dataHora: Date
++duracao: string
++status: AgendamentoStatus
++valor: number
++observacoes?: string
++atendimento?: Atendimento
++pagamento?: Pagamento
+            
+        }
+Agendamento "0..*" --  ClienteCrm
+Agendamento "0..*" --  Servico
+Agendamento "0..*" --  Profissional
+Agendamento  --  AgendamentoStatus
+Agendamento  --  Atendimento
+Agendamento  --  Pagamento
+class Atendimento{
+            +agendamentoId?: number
++agendamento?: Agendamento
++dataInicio: Date
++dataFim: Date
++profissionalId: number
++profissional: Profissional
++clienteId: number
++cliente: ClienteCrm
++servicoId: number
++servico: Servico
++anotacoes?: string
++avaliacaoCliente?: number
++vendasProdutos: VendaProduto[]
++pagamento?: Pagamento
+            
+        }
+Atendimento "0..*" --  Profissional
+Atendimento "0..*" --  ClienteCrm
+Atendimento "0..*" --  Servico
+Atendimento  -- "0..*" VendaProduto
+Atendimento  --  Pagamento
+class CampanhaMarketing{
+            +nome: string
++dataInicio?: Date
++dataFim?: Date
++descricao?: string
++publicoAlvo?: string
++tipo: TipoCampanha
++clientes: ClienteCrm[]
+            
+        }
+CampanhaMarketing  --  TipoCampanha
+CampanhaMarketing "0..*" -- "0..*" ClienteCrm
+class ClienteCrm{
+            +nome: string
++cpf?: string
++dataNascimento?: Date
++email?: string
++telefone?: string
++endereco?: string
++cidade?: string
++estado?: string
++cep?: string
++dataCadastro: Date
++observacoes?: string
++agendamentos: Agendamento[]
++atendimentos: Atendimento[]
++historicoContatos: HistoricoContato[]
++vendasProdutos: VendaProduto[]
++pagamentos: Pagamento[]
++campanhasMarketing: CampanhaMarketing[]
+            
+        }
+ClienteCrm  -- "0..*" HistoricoContato
+ClienteCrm  -- "0..*" VendaProduto
+ClienteCrm  -- "0..*" Pagamento
+class FormaPagamento {
+        <<enumeration>>
+        DINHEIRO
+CARTAO_CREDITO
+CARTAO_DEBITO
+PIX
+OUTRO
+      }
+class HistoricoContato{
+            +clienteId: number
++cliente: ClienteCrm
++dataHora: Date
++tipoContato: TipoContato
++detalhes?: string
++responsavel?: string
+            
+        }
+HistoricoContato  --  TipoContato
+class Pagamento{
+            +agendamentoId?: number
++agendamento?: Agendamento
++vendaProdutoId?: number
++vendaProduto?: VendaProduto
++atendimentoId?: number
++atendimento?: Atendimento
++clienteId: number
++cliente: ClienteCrm
++dataPagamento: Date
++valor: number
++formaPagamento: FormaPagamento
++status: StatusPagamento
++numeroTransacao?: string
++dataCriacao: Date
++dataAtualizacao: Date
+            
+        }
+Pagamento  --  VendaProduto
+Pagamento  --  FormaPagamento
+Pagamento  --  StatusPagamento
+class Produto{
+            +nome?: string
++descricao?: string
++precoCusto: number
++precoVenda: number
++estoque: number
++marca?: string
++categoria?: string
++vendasProdutos: VendaProduto[]
+            
+        }
+Produto  -- "0..*" VendaProduto
+class Profissional{
+            +nome: string
++especialidade?: string
++dataContratacao?: Date
++email?: string
++telefone?: string
++agendamentos: Agendamento[]
++atendimentos: Atendimento[]
+            
+        }
+class Promocao{
+            +nome: string
++descricao?: string
++dataInicio?: Date
++dataFim?: Date
++descontoPercentual?: number
++descontoValor?: number
++servicosAplicaveis?: string
++servicos: Servico[]
+            
+        }
+Promocao "0..*" -- "0..*" Servico
+class Servico{
+            +nome: string
++descricao?: string
++preco: number
++duracaoEstimada?: string
++categoria?: string
++agendamentos: Agendamento[]
++atendimentos: Atendimento[]
++promocoes: Promocao[]
+            
+        }
+class StatusPagamento {
+        <<enumeration>>
+        PENDENTE
+PAGO
+CANCELADO
+      }
+class TipoCampanha {
+        <<enumeration>>
+        EMAIL_MARKETING
+SMS
+REDES_SOCIAIS
+OUTRO
+      }
+class TipoContato {
+        <<enumeration>>
+        TELEFONE
+EMAIL
+WHATSAPP
+PRESENCIAL
+      }
+class VendaProduto{
+            +atendimentoId?: number
++atendimento?: Atendimento
++clienteId: number
++cliente: ClienteCrm
++produtoId: number
++produto: Produto
++quantidade: number
++precoUnitario: number
++pagamento?: Pagamento
+            
+        }
+class AgendamentoService{
+            +repository: Repository~Agendamento~
+            +getById() Promise~Agendamento~
+        }
+class AtendimentoService{
+            +repository: Repository~Atendimento~
+            +getById() Promise~Atendimento~
+        }
+class ClienteCrmService{
+            +repository: Repository~ClienteCrm~
+            
+        }
+class HistoricoContatoService{
+            +repository: Repository~HistoricoContato~
+            +getById() Promise~HistoricoContato~
+        }
+class PagamentoService{
+            +repository: Repository~Pagamento~
+            +getById() Promise~Pagamento~
+        }
+class ProdutoService{
+            +repository: Repository~Produto~
+            
+        }
+class ProfissionalService{
+            +repository: Repository~Profissional~
+            +getById() Promise~Profissional~
+        }
+class PromocaoService{
+            +repository: Repository~Promocao~
+            +getById() Promise~Promocao~
+        }
+class ServicoService{
+            +repository: Repository~Servico~
+            +getById() Promise~Servico~
+        }
+class VendaProdutoService{
+            +repository: Repository~VendaProduto~
+            +getById() Promise~VendaProduto~
+        }
+class GamePayload{
+            +fen?: string
++partidaInternalId?: string
++move?: Move
+            
+        }
+class ChessController{
+            -chessService: ChessService
+            +move() Promise~GamePayload~
+        }
+ChessController  --  ChessService
+class GameplayController{
+            -gameplay: GamePlayService
+            +CreateNewGameplay() Promise~any~
++getGamePlayByUser() Promise~any~
+        }
+GameplayController  --  GamePlayService
+class EzGamePlay{
+            +players?: EzPlayer[]
+            
+        }
+EzGamePlay  -- "0..*" EzPlayer
+class EzPlayer{
+            +publicPlayerName?: string
++user?: User
++gameplay?: EzGamePlay
+            
+        }
+class EzWorld{
+            
+            
+        }
+class ChessService{
+            
+            +getMoveByFen() Promise~any~
+-getNextMovie() Promise~any~
+        }
+class GamePlayService{
+            -hallList: any[]
+-gameplayrepository: Repository~EzGamePlay~
+-events?: EventsGateway
+-playerService?: PlayerService
+            +createNewGamePlay() Promise~EzGamePlay~
++getGamePlayOrCreate() Promise~EzGamePlay~
++hall() Promise~any~
+        }
+GamePlayService  --  PlayerService
+class PlayerService{
+            -repo: Repository~EzPlayer~
+            +create() Promise~EzPlayer~
+        }
+class SyncPayloadDaoBillingType{
+            +data?: BillingType
+            
+        }
+class ObterListaBillingType{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~BillingType~ | FindOptionsWhere~BillingType~[]
+            
+        }
+class BillingTypeCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class BillingTypeController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoBillingType  --  BillingType
+class SyncPayloadDaoConta{
+            +data?: ContaFinanceira
+            
+        }
+class ObterListaConta{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~ContaFinanceira~ | FindOptionsWhere~ContaFinanceira~[]
+            
+        }
+class ContaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class ContaController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoConta  --  ContaFinanceira
+class FaturamentoController{
+            
+            +obterFaturamentoPorPeriodo() Promise~void~
+        }
+class SyncPayloadDaoLancamentoFinanceiro{
+            +data?: LancamentoFinanceiro
+            
+        }
+class ObterListaLancamentoFinanceiro{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~LancamentoFinanceiro~ | FindOptionsWhere~LancamentoFinanceiro~[]
+            
+        }
+class PessoaCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class LancamentoFinanceiroController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoLancamentoFinanceiro  --  LancamentoFinanceiro
+class SyncPayloadDaoTransacao{
+            +data?: Transacao
+            
+        }
+class ObterListaTransacao{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Transacao~ | FindOptionsWhere~Transacao~[]
+            
+        }
+class TransacaoCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class TransacaoController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoTransacao  --  Transacao
+class BillingType{
+            +code?: string
++descricao?: string
+            
+        }
+class ClienteFinanceiro{
+            +pessoa?: Pessoa
++nomeTratamento?: string
++cnpjOuCpf?: string
++endereço?: string
++telefone?: string
++email?: string
+            
+        }
+class ContaFinanceira{
+            +tipoConta?: string
++numero?: string
++saldo?: string
++dataAbertura?: string
++status?: string
+            
+        }
+class LancamentoFinanceiro{
+            +valor?: number
++description?: string
++categoria?: string
+            
+        }
+class Transacao{
+            +data?: Date
++hora?: Date
++valor?: Date
++tipo?: "C" | "D"
++descrição?: string
+            
+        }
+class BillingTypeService{
+            +repository: Repository~BillingType~
+            
+        }
+class ContaService{
+            +repository: Repository~ContaFinanceira~
+            
+        }
+class LancamentoFinanceiroService{
+            +repository: Repository~LancamentoFinanceiro~
+            
+        }
+class TransacaoService{
+            +repository: Repository~Transacao~
+            
+        }
+class DocumentoFiscalAnexo{
+            
+            
+        }
+class DocumentoFiscal{
+            +title?: string
++description?: string
++hash?: string
++attachements?: DocumentoFiscalAnexo[]
+            
+        }
+DocumentoFiscal  -- "0..*" DocumentoFiscalAnexo
+class DoocumentoFiscalService{
+            
+            +getById() Promise~DocumentoFiscal~
+        }
+class SyncPayloadDaoForm{
+            +data?: Forms
+            
+        }
+class FormCotrollerGetInputDto{
+            +where?: any
++take?: number
++skip?: number
++orderBy?: any
+            
+        }
+class FormsController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
++GetByInternalId() Promise~any~
++Delete() Promise~any~
+        }
+SyncPayloadDaoForm  --  Forms
+class Option{
+            +label?: string
++type?: string
+            
+        }
+class Pergunta{
+            +questao?: string
++type?: string
++options: Option[]
+            
+        }
+class Perguntas{
+            +perguntas?: Pergunta[]
+            
+        }
+class Forms{
+            +title?: string
++description?: string
++perguntas?: Perguntas
+            
+        }
+Pergunta  -- "0..*" Option
+Perguntas  -- "0..*" Pergunta
+Forms  --  Perguntas
+class FormsService{
+            +repo: Repository~Forms~
+            
+        }
+class Context{
+            
+            
+        }
+class Term{
+            
+            
+        }
+class I11NInput{
+            +codes: string[]
++languageCode: string
+            
+        }
+class I11nController{
+            -service: I11nService
+            +GetDictionary() Promise~[Dictionary[], number]~
+        }
+I11nController  --  I11nService
+class CurrencyCode{
+            -code: string
+-id: string
+            
+        }
+class Dictionary{
+            +descrition?: string
++language?: Language
++translations?: Translation[]
++localRepoUri?: string
+            
+        }
+Dictionary  --  Language
+Dictionary  -- "0..*" Translation
+class Language{
+            +code: string
++description?: string
+            
+        }
+class Translation{
+            -code?: string
+-source: string
+-translation?: string
++dictionary?: Dictionary
+            
+        }
+class I11nService{
+            -dictionary_repository?: Repository~Dictionary~
+            +getDictionaryByCodes() Promise~[Dictionary[], number]~
+        }
+class IconsController{
+            
+            +registrarNovoIcone() Promise~void~
++get() Promise~void~
+        }
+class Icon{
+            +code?: string
+            
+        }
+class IconsServices{
+            -repo: Repository~Icon~
+            +obterIcones() Promise~[Icon[], number]~
+        }
+class MarcaController{
+            
+            
+        }
+class AtivoIntelectual{
+            +id: string
++titulo: string
++descricao: string
++tipo: TipoAtivo
++processo: ProcessoINPI
+            
+        }
+AtivoIntelectual  --  TipoAtivo
+AtivoIntelectual  --  ProcessoINPI
+class ClienteINPI{
+            +id: string
++nome: string
++processos: ProcessoINPI[]
+            
+        }
+ClienteINPI  -- "0..*" ProcessoINPI
+class Marca{
+            +name?: string
++code?: string
++description?: string
++siteUrl?: string
+            
+        }
+class Patente{
+            +resumoTecnico: string
++reivindicacoes: string[]
+            
+        }
+class PrazoINPI{
+            +id: string
++descricao: string
++dataVencimento: Date
++status: StatusPrazo
++dataCriacao: Date
++processo: ProcessoINPI
+            
+        }
+PrazoINPI  --  StatusPrazo
+PrazoINPI "0..*" --  ProcessoINPI
+class ProcessoINPI{
+            +id: string
++numeroProcesso: string
++status: StatusProcesso
++dataDeposito: Date
++ativo: AtivoIntelectual
++prazos: PrazoINPI[]
++cliente: ClienteINPI
+            
+        }
+ProcessoINPI  --  StatusProcesso
+class StatusPrazo {
+        <<enumeration>>
+        PENDENTE
+CONCLUIDO
+ATRASADO
+      }
+class StatusProcesso {
+        <<enumeration>>
+        EM_ANALISE
+DEFERIDO
+INDEFERIDO
+ARQUIVADO
+PUBLICADO
+      }
+class TipoAtivo {
+        <<enumeration>>
+        MARCA
+PATENTE
+      }
+class ApplicationController{
+            -service: ApplicationService
+            +get() Promise~Application[]~
++sync() Promise~Application~
++Delete() Promise~DeleteResult~
+        }
+ApplicationController  --  ApplicationService
+class SyncPayloadDaoDomain{
+            +data?: Domain
+            
+        }
+class ObterListaDomain{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Domain~ | FindOptionsWhere~Domain~[]
+            
+        }
+class DomainCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class DomainController{
+            -domainService: DomainService
+            +get() Promise~Domain[]~
++sync() Promise~Domain~
++Delete() Promise~DeleteResult~
+        }
+SyncPayloadDao~Entity~<|--SyncPayloadDaoDomain
+SyncPayloadDaoDomain  --  Domain
+DomainController  --  DomainService
+class ServerController{
+            
+            
+        }
+class ControllerDaoBase~Service,E~{
+            -_service: Service
+            +Sync() Promise~any~
++GetList() Promise~E[]~
++GetByInternalId() Promise~E~
++Delete() Promise~void~
+        }
+class DaoFullAuditedServiceBase~E~{
+            #_snap: SnapshotService
+#_repo?: Repository~E~
+            +sincronizar() Promise~E~
++obterLista() Promise~E[]~
++getByInternalId() Promise~E~
++delete() Promise~void~
+        }
+DaoFullAuditedServiceBase~E~  --  SnapshotService
+class DaoServiceBase~E~{
+            #_snap: SnapshotService
+#_repo?: Repository~E~
+-_dataSource?: DataSource
+            +sincronizar() Promise~E~
++obterLista() Promise~E[]~
++getById() Promise~E~*
++delete() Promise~void~
+        }
+DaoServiceBase~E~  --  SnapshotService
+class BasicIdentifiedEntity{
+            +internalId?: string
+            
+        }
+class AuditedEntity{
+            +internalId?: string
++tenants?: Tenant[]
++createdAt?: Date
++createdBy?: Credential
++lastModifiedAt?: Date
++lastModifiedBy?: Credential
++deleted?: boolean
+            
+        }
+class Snapshot{
+            +snap: any
++hash: string
+            
+        }
+class FullAuditedEntity{
+            +snapshots?: Snapshot[]
+            
+        }
+BasicIdentifiedEntity<|--AuditedEntity
+AuditedEntity<|--Snapshot
+AuditedEntity<|--FullAuditedEntity
+FullAuditedEntity  -- "0..*" Snapshot
+class GetByInternalIdInputDto{
+            +internalId?: string
+            
+        }
+class SnapshotService{
+            +lastSnapshotHash: string
+-snapRepo: Repository~Snapshot~
+            +carregarUltimoHash() Promise~void~
++snapshot() Promise~void~
++prepareToSync() Promise~void~
+        }
+class SyncPayloadDao~Entity~{
+            +data?: Entity
+            
+        }
+class GetInputDtos{
+            +all?: boolean
+            
+        }
+class ApplicationServer{
+            +endpoint?: string
++description?: string
++port?: string
++status?: string
+            
+        }
+FullAuditedEntity<|--ApplicationServer
+class Application{
+            +id?: string
++url?: string
++icon?: string
++logo?: string
++name?: string
++description?: string
++roles?: string[]
++domain?: Domain
++menuGroupName: string
++categoria: string
++domains: Domain[]
++hoster?: User
++responsibility?: User[]
++managers?: User[]
++masters?: User[]
++administrators?: User[]
++users?: User[]
+            
+        }
+Application  --  Domain
+Application "0..*" -- "0..*" Domain
+class Categoria{
+            +name?: string
++description?: string
++icon?: string
++parent?: Categoria
++children?: Categoria[]
+            
+        }
+Categoria "0..*" --  Categoria
+class ManagerDeployOption{
+            +deployMode?: string
++commonName?: string
++host?: string
++user?: string
++password?: string
+            
+        }
+FullAuditedEntity<|--ManagerDeployOption
+class DinamycPageView{
+            +applicationDefaultRoute?: string
++componentCodename?: string
++chunkJsUMD?: string
++chunkJsAMD?: string
++origin?: string
++fakedRouteRequested?: string
+            
+        }
+FullAuditedEntity<|--DinamycPageView
+class DNS{
+            
+            
+        }
+class Domain{
+            +hostname?: string
++aplications?: Application[]
++varified?: boolean
+            
+        }
+FullAuditedEntity<|--Domain
+class Painel{
+            +internalId?: string
++endpoint?: string
+            
+        }
+class ApplicationService{
+            -repo: Repository~Application~
+            +find() Promise~Application[]~
++sync() Promise~Application~
++delete() Promise~DeleteResult~
+        }
+class DNSService{
+            
+            +getRules() void
+        }
+class DomainService{
+            -_request: any[]$
+-_whitelist: any[]$
+-_service: DomainService$
+-repo: Repository~Domain~
+            +requestWhitelist() Promise~void~$
++onModuleInit() Promise~void~
++find() Promise~Domain[]~
++requestDomains() Promise~any[]~
++sync() Promise~Domain~
++delete() Promise~DeleteResult~
+        }
+OnModuleInit<|..DomainService
+DomainService  --  DomainService
+class HomeView{
+            
+            
+        }
+class ChamadaController{
+            -atendimentoService: ChamadaService
+            +NovaChamada() Promise~void~
++IniciarChamada() Promise~void~
+        }
+ChamadaController  --  ChamadaService
+class ContactController{
+            
+            +FindByNameOrPhonenumber() Promise~any~
+        }
+class ConversationController{
+            -service: ConversationService
+            +GetList() Promise~any~
++Sync() Promise~any~
++Log() Promise~any~
+        }
+ConversationController  --  ConversationService
+class DirectMessageController{
+            
+            +recive() Promise~void~
+        }
+class MessageController{
+            
+            +sendDirectMessage() Promise~void~
+        }
+class Chamada{
+            +status?: string
+            
+        }
+class Contact{
+            +friendlyName?: string
++InternalIndentifiedUserCredentials?: User
++statusMessage?: string
++phoneNumber?: string
+            
+        }
+class Conversation{
+            +participants?: Contact[]
++title?: string
+            
+        }
+Conversation  -- "0..*" Contact
+class DirectMessage{
+            +from?: Contact
++to?: Contact
++conversation?: Conversation
+            
+        }
+DirectMessage  --  Contact
+DirectMessage  --  Contact
+DirectMessage  --  Conversation
+class ChamadaService{
+            -_webDriver?: WebDriver
+-chamadaRepository: Repository~Chamada~
+-mailService: MailService
+            -getDriver() Promise~WebDriver~
++IniciarChamada() Promise~void~
++FinalizarChamada() Promise~void~
++AbrirNovaSessao() Promise~void~
+        }
+class ContactService{
+            -repo: Repository~Contact~
+            +findContactByNameOrPhonenumber() Promise~void~
+        }
+class ConversationService{
+            
+            
+        }
+class MessageService{
+            -repo: Repository~DirectMessage~
+            +SendMessage() Promise~void~
+        }
+class DeployerController{
+            -username: string
+-passwordOrToken: string
+-backdoorService: DeployerBackdoorServices
+            +Report() Promise~{ status: number; }~
+-downloadDistribuction() Promise~void~
++autenticarJenkins() Promise~string~
++getCommits() Promise~GetCommitsResponseDto~
++executeCommit() Promise~ActionResponseDto~
++startApp() Promise~ActionResponseDto~
++stopApp() Promise~ActionResponseDto~
++getAppStatus() Promise~AppStatusResponseDto~
+        }
+DeployerController  --  DeployerBackdoorServices
+class DeployPayload{
+            +BUILD_URL?: string
++BUILD_TAG?: string
+            
+        }
+class JenkinsHook{
+            
+            +autenticar() Promise~void~
+        }
+class ConnectionIntegration{
+            +name?: string
++tokenAuthority?: string
++accessAuthority?: any
+            
+        }
+class DyMArtifact{
+            +storageLocation?: string
++checksum?: string
++metadata?: any
++job?: "BuildJob"
+            
+        }
+class DyMBuildEnvironment{
+            +language?: string
++compilerVersion?: string
++envVariables?: Record~string, string~
+            
+        }
+class DyMBuildJob{
+            +createdAt?: Date
++status?: DyMJobStatus
++source?: DyMSourceDefinition
++environment?: DyMBuildEnvironment
++artifact?: DyMArtifact
++processingNodeId?: string
+            
+        }
+DyMBuildJob  --  DyMJobStatus
+DyMBuildJob  --  DyMSourceDefinition
+DyMBuildJob  --  DyMBuildEnvironment
+DyMBuildJob  --  DyMArtifact
+class DyMJobStatus {
+        <<enumeration>>
+        PENDING
+FETCHING
+BUILDING
+COMPLETED
+FAILED
+      }
+class DyMSourceDefinition{
+            +repoUrl?: string
++commitHash?: string
++branch?: string
+            
+        }
+class Report{
+            
+            
+        }
+class ConnectionIntegrationService{
+            -connection_int_rep?: Repository~ConnectionIntegration~
+            +autenticar() Promise~void~
+        }
+class GetCommitsQueryDto{
+            +limit?: number
++skip?: number
++all?: boolean
++author?: string
+            
+        }
+class StartAppDto{
+            +port?: number
+            
+        }
+class AuthorDto{
+            +name: string
++email: string
+            
+        }
+class CommitDto{
+            +hash: string
++short_hash: string
++parents: string[]
++short_parents: string[]
++branches: string[]
++author: AuthorDto
++date: string
++message: string
+            
+        }
+class GetCommitsResponseDto{
+            +parametros: Record~string, any~
++total_retornado: number
++commits: CommitDto[]
+            
+        }
+class ActionResponseDto{
+            +mensagem: string
++saida?: string
++status?: string
++erro?: string
++detalhes?: string
+            
+        }
+class AppStatusResponseDto{
+            +status: string
++porta: number
++logs: string[]
+            
+        }
+CommitDto  --  AuthorDto
+GetCommitsResponseDto  -- "0..*" CommitDto
+class DeployerBackdoorServices{
+            -backdoorUrl: "http://localhost:4666"
+            -makeRequest() Promise~T~
++getCommits() Promise~GetCommitsResponseDto~
++executeCommit() Promise~ActionResponseDto~
++startApp() Promise~ActionResponseDto~
++stopApp() Promise~ActionResponseDto~
++getAppStatus() Promise~AppStatusResponseDto~
+        }
+class DeviceController{
+            -deviceService: DeviceService
+            +connectDevice() Promise~Device~
++Pool() Promise~PoolDto~
++GetAll() Promise~Device[]~
+        }
+DeviceController  --  DeviceService
+class FiendClientByPayload{
+            +search?: string
++username?: string
++documentId?: string
++cellPhone?: string
+            
+        }
+class SendMessagePayload{
+            +clientId?: string
++message?: string
+            
+        }
+class MessageController{
+            
+            +SendMessage() Promise~void~
++FindClientBy() Promise~void~
+        }
+class Device{
+            +id?: string
++mac?: string
++type?: string
++numbers?: PhoneNumber[]
++createdAt?: Date
++changedAt?: Date
++phones?: PhoneNumber[]
+            
+        }
+Device  -- "0..*" PhoneNumber
+Device  -- "0..*" PhoneNumber
+class Message{
+            +id?: string
++from?: PhoneNumber
++to?: string
++createdAt?: Date
++sent?: boolean
++textMessage?: string
++htmlMessage?: string
++metadata?: string
++type?: string
+            
+        }
+Message  --  PhoneNumber
+class PhoneNumber{
+            +device?: Device
++deviceId: string
++number?: string
++createdAt?: Date
++subscriptionId?: number
++carrierName?: string
+            
+        }
+class DeviceService{
+            -repo: Repository~Device~
+-phoneNumberRepo: Repository~PhoneNumber~
+            +connect() Promise~Device~
++createAndSave() Promise~Device~
++find() Promise~Device~
++findAll() Promise~Device[]~
+        }
+class MailService{
+            -tentativas: number
+-imap?: any
+-messages: MessageService
+            -openInbox() void
+-readyHandler() Promise~any~
+-fetchHandler() Promise~any~
++readMail() Promise~string~
++requestSendMessageToMail() Promise~void~
+        }
+MailService  --  MessageService
+class SendMessagePayload{
+            +message?: string
++to?: string
++templateHtml?: string
+            
+        }
+class MessageService{
+            -phoneNumberRepository: Repository~PhoneNumber~
+-messageRepository: Repository~Message~
+-bus: BusService
+            +sendSMS() Promise~void~
++sendMail() Promise~void~
++devileryMessages() Promise~void~
++markAsDelivered() Promise~void~
+        }
+class NotificationService{
+            
+            
+        }
+class GetByInternalIdInputDto{
+            +internalId?: string
+            
+        }
+class OrganizacaoCotrollerGetInputDto{
+            +where?: any
++take?: number
++skip?: number
++orderBy?: any
+            
+        }
+class OrganizacaoController{
+            
+            +Sync() Promise~any~
++GetByInternalId() Promise~any~
++GetList() Promise~any~
+        }
+class ObterListaOrganizacao{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Organizacao~ | FindOptionsWhere~Organizacao~[]
+            
+        }
+class OrganizacaoCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class SyncPayloadDaoOrganizacao{
+            +data?: Organizacao
+            
+        }
+SyncPayloadDaoOrganizacao  --  Organizacao
+class Organizacao{
+            +organizatioName?: string
++logo?: Photo
++tenant?: Tenant
++responsavel?: Pessoa
+            
+        }
+class Setor{
+            +name?: string
++organizacao?: Organizacao
+            
+        }
+Setor  --  Organizacao
+class OrganizacaoService{
+            +repository: Repository~Organizacao~
+            
+        }
+class PaymentAuthorization{
+            
+            
+        }
+class MethodPayment{
+            +invernalCode?: string
+            
+        }
+class Payment{
+            +evaluation?: number
++description?: number
++authorization?: PaymentAuthorization
+            
+        }
+Payment  --  PaymentAuthorization
+class PaymentService{
+            -userRepo: Repository~Payment~
+            +autorization() Promise~void~
++create() Promise~void~
+        }
+class PranchetaSyncPayloadDto{
+            +prancheta?: Prancheta
++defaultGlobalCode?: string
+            
+        }
+class PranchetaController{
+            -service: PranchetaService
+-audt: AudtService
+            +Sync() Promise~Prancheta~
++Get() Promise~Prancheta~
+        }
+PranchetaSyncPayloadDto  --  Prancheta
+PranchetaController  --  PranchetaService
+class PranchetaItemMetadata{
+            +id: string
+            
+        }
+class CardOption{
+            
+            
+        }
+class Card{
+            +componentName?: string
++componentVersion?: string
++settings: CardOption
+            
+        }
+class Prancheta{
+            +title?: string
++layout?: any
++cards?: Card[]
++order?: number
++codigoGlobal?: string
+            
+        }
+Card  --  CardOption
+Prancheta  -- "0..*" Card
+class PranchetaService{
+            -prancheta_reppository: Repository~Prancheta~
+-_snap: SnapshotService
+            +sincronize() Promise~Prancheta~
++Get() Promise~Prancheta~
+        }
+class OfferController{
+            
+            +Get() Promise~void~
++Sync() Promise~void~
+        }
+class SyncPayloadDaoProduct{
+            +data?: Product
+            
+        }
+class ProductCotrollerGetInputDto{
+            +where?: any
++take?: number
++skip?: number
++orderBy?: any
+            
+        }
+class ProductController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoProduct  --  Product
+class Offer{
+            +id?: string
++currency?: CurrencyCode
++ammount?: number
++createdAt: Date
+            
+        }
+class Product{
+            +gtin?: string
++codigoBarras?: string
++nossoCodigo?: string
++codigoFabricanete?: string
++sku?: string
++description?: string
++name?: string
++shortDescription?: string
++urlWebsiteOficial?: string
++marca?: Marca
++subGrupo?: string
++moeda?: string
++unidadeMedida?: UnidadeMedida
+            
+        }
+class ProdutoService{
+            -repo: Repository~Product~
+            +sync() Promise~Product~
++listar() Promise~void~
+        }
+class IOptions {
+            <<interface>>
+            +offset?: number
++limit?: number
++query?: string
++autentication?: IAutentication
+            
+        }
+class ProductService{
+            +repository: Repository~Product~
+            
+        }
+class SyncPayloadDaoClienteProjeto{
+            +data?: ClienteProjeto
+            
+        }
+class ObterListaClienteProjeto{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~ClienteProjeto~ | FindOptionsWhere~ClienteProjeto~[]
+            
+        }
+class ClienteProjetoCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class ClienteProjetoController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoClienteProjeto  --  ClienteProjeto
+class SyncPayloadDaoProjeto{
+            +data?: Projeto
+            
+        }
+class ObterListaProjeto{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~Projeto~ | FindOptionsWhere~Projeto~[]
+            
+        }
+class ProjetoCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class ProjetoController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoProjeto  --  Projeto
+class SyncPayloadDaoWorkItem{
+            +data?: WorkItem
+            
+        }
+class ObterListaWorkItem{
+            +skip?: number
++take?: number
++where?: FindOptionsWhere~WorkItem~ | FindOptionsWhere~WorkItem~[]
+            
+        }
+class WorkItemCotrollerGetInputDto{
+            +query?: string
++limit?: number
+            
+        }
+class WorkItemController{
+            
+            +Sync() Promise~any~
++GetList() Promise~any~
+        }
+SyncPayloadDaoWorkItem  --  WorkItem
+class ClienteProjeto{
+            +nome?: string
++tipo?: string
++documento?: string
++email?: string
++telefone?: string
++endereco?: Endereco[]
++pessoa?: Pessoa
+            
+        }
+class Projeto{
+            +nome?: string
++descricao?: string
++visibilidade?: ProjetoVisibilidade
++controleVersao?: string
++cliente?: ClienteProjeto
++dataInicio?: Date
+            
+        }
+Projeto  --  ProjetoVisibilidade
+Projeto  --  ClienteProjeto
+class ProjetoVisibilidade {
+        <<enumeration>>
+        "Público"
+"Privado"
+      }
+class WorkItem{
+            +code?: number
++project?: Projeto
+            
+        }
+WorkItem  --  Projeto
+class ClienteProjetoService{
+            +repository: Repository~ClienteProjeto~
+            
+        }
+class ProjetoService{
+            +repository: Repository~Projeto~
+            
+        }
+class WorkItemService{
+            +repository: Repository~WorkItem~
+            
+        }
+class Account{
+            
+            
+        }
+class Autonomo{
+            +id?: string
++user?: User
++cpfCnpj?: string
++rg?: string
++rgOrgaoEmissor?: string
+            
+        }
+class Banco{
+            +code: string
++descricao: string
+            
+        }
+class ClienteAssas{
+            +cliente?: Cliente
++customer?: string
++name?: string
++cpfCnpj?: string
++mobilePhone?: string
++contaBancaria?: ContaBancaria[]
+            
+        }
+ClienteAssas  --  Cliente
+ClienteAssas  -- "0..*" ContaBancaria
+class Cliente{
+            +id?: string
++user?: User
++sobre?: string
++clienteAssas: string
+            
+        }
+class ContaBancaria{
+            +bank: Banco
++agency: string
++ownerName: string
++cpfCnpj: string
++account: string
++accountDigit: string
++bankAccountType: "CONTA_CORRENTE" | "CONTA_POUPANCA"
+            
+        }
+ContaBancaria  --  Banco
+class Contrato{
+            +id?: string
+            
+        }
+class Order{
+            +id?: string
+            
+        }
+class ProlaborePayment{
+            +customer?: Cliente
++amount?: number
++description?: string
+            
+        }
+ProlaborePayment  --  Cliente
+class Receipt{
+            
+            
+        }
+class TransferenciaPix{
+            +customer: Cliente
+            
+        }
+TransferenciaPix  --  Cliente
+class SEOController{
+            
+            +ListarAgentes() Promise~void~
++SincronizarAgente() Promise~void~
+        }
+class HappyPage{
+            +id: string
++url: string
++title: string
++snippet: string
++catalogedAt: Date
+            
+        }
+class SeoBackLink{
+            +enderecoRetorno?: string
+            
+        }
+class SeoCampanha{
+            +nome: string
+            
+        }
+class SeoDomain{
+            +hostname: string
++ipsHandShake: string[]
+            
+        }
+class SeoKeyWord{
+            +termo?: string
++voulePesquisa?: number
++dificuldadeClassificacao?: number
++intencaoPesquisa?: number
+            
+        }
+class SeoPage{
+            +url?: string
+            
+        }
+class SeoPost{
+            +url?: string
+            
+        }
+class PostmetaValue{
+            +raw?: string
+            
+        }
+class SeoPostmeta{
+            +post: SeoPost
++key?: string
++value?: PostmetaValue
+            
+        }
+SeoPostmeta  --  SeoPost
+SeoPostmeta  --  PostmetaValue
+class BaseCrawler{
+            #visitedUrls: Set~string~
+#queue: string[]
+            #evaluatePage() boolean*
+#onPageMatched() Promise~void~*
++start() Promise~void~
+-processUrl() Promise~void~
+-extractAndQueueLinks() Promise~void~
+-isValidUrl() boolean
+        }
+class CampanhaService{
+            +repo: Repository~SeoCampanha~
+            
+        }
+class DomainService{
+            +repo: Repository~SeoDomain~
+            
+        }
+class HappyNewsCrawler{
+            -happyKeywords: string[]
+-pageRepository: Repository~HappyPage~
+            #evaluatePage() boolean
+#onPageMatched() Promise~void~
+        }
+BaseCrawler<|--HappyNewsCrawler
+class PageService{
+            +repo: Repository~SeoPage~
+            
+        }
+class PostService{
+            +repo: Repository~SeoPost~
+            
+        }
+class RSSServices{
+            
+            
+        }
+class SearchService{
+            -snap: SnapshotService
+            +findByText() Promise~void~
+        }
+class FileExplorerController{
+            -filePermissions: FilePermissionService
+-fileExplorer: FileExplorerService
+            +readDirectory() Promise~any~
++readFile() Promise~FileDto | { status: number; cause: any; }~
+        }
+FileExplorerController  --  FilePermissionService
+FileExplorerController  --  FileExplorerService
+class FileGetPaylodInputDto{
+            +query: string
++limit: string
++offset: string
+            
+        }
+class PartPayloadDto{
+            +md5Part?: string
++md5Full?: string
++partialBase64?: string
++currentPart?: number
++TotalParts?: number
+            
+        }
+class FileController{
+            -photoService: FileService
+-userService: UserService
+-audt: AudtService
+            +Sync() Promise~void~
++Get() Promise~File[]~
+        }
+FileController  --  FileService
+class PhotoGetPaylodInputDto{
+            +query: string
++limit: string
++offset: string
+            
+        }
+class PartPayloadDto{
+            +md5Part?: string
++md5Full?: string
++partialBase64?: string
++currentPart?: number
++TotalParts?: number
+            
+        }
+class PhotoController{
+            -photoService: PhotoService
+-userService: UserService
+-audt: AudtService
+            +Sync() Promise~Photo~
++SendPart() Promise~{ internalId: string; }~
++Get() Promise~Photo[]~
+        }
+PhotoController  --  PhotoService
+class VideoController{
+            
+            +Get() Promise~ReadStream~
+        }
+class FileExplorerService{
+            -filePermissions: FilePermissionService
+            +readDirectory() Promise~any~
+-getDirectoryContents() any
++readFile() Promise~FileDto | { status: number; cause: any; }~
+        }
+FileExplorerService  --  FilePermissionService
+class FilePermission{
+            +type: "GRANT" | "DANY"
++path?: string
+            
+        }
+class File{
+            +format?: string
++data?: any
++title?: string
++metadata?: any
+            
+        }
+class Photo{
+            +internalId?: string
++originalFile?: Buffer
++format?: string
+            
+        }
+class FilePermissionService{
+            -filePermissionRepo: Repository~FilePermission~
+            +grant() Promise~boolean~
+        }
+class FileService{
+            -partialDataSendingBook: Map~string, PartialData~$
+-userRepo: Repository~File~
+            +Sync() Promise~void~
++Get() Promise~File[]~
++sendingPartialData() Promise~Buffer~
+        }
+class PartialData {
+            <<interface>>
+            +parts: string[]
+            
+        }
+class PhotoService{
+            -partialDataSendingBook: Map~string, PartialData~$
+-userRepo: Repository~Photo~
+            +Sync() Promise~Photo~
++Get() Promise~Photo[]~
++sendingPartialData() Promise~Buffer~
+        }
+class PartialData {
+            <<interface>>
+            +parts: string[]
+            
+        }
+class Tenant{
+            +id?: string
++name?: string
++descriptions?: string
++createdBy?: string
+            
+        }
+class UserController{
+            -user?: UserService
+            +sync() Promise~any~
++getList() Promise~any~
+        }
+class InvitationPayload{
+            +email?: string
++friendlyName?: string
++mensagem?: string
++convite?: string
+            
+        }
+class UserService{
+            
+            
+        }
+class PaymentMethod {
+        <<enumeration>>
+        CREDIT_CARD
+DEBIT_CARD
+PIX
+CASH
+BOLETO
+      }
+class PaymentStatus {
+        <<enumeration>>
+        PENDING
+APPROVED
+REJECTED
+      }
+class SaleItem{
+            +sale: Sale
++productId: string
++productName: string
++sku: string
++quantity: number
++unitPrice: number
++discount: number
++total: number
+            
+        }
+SaleItem "0..*" --  Sale
+class SalePayment{
+            +sale: Sale
++method: PaymentMethod
++amount: number
++status: PaymentStatus
++gatewayTransactionId: string
++metadata: any
+            
+        }
+SalePayment "0..*" --  Sale
+SalePayment  --  PaymentMethod
+SalePayment  --  PaymentStatus
+class SaleStatus {
+        <<enumeration>>
+        DRAFT
+PENDING
+PAID
+CANCELED
+REFUNDED
+      }
+class Sale{
+            +customerId: string
++customerName: string
++status: SaleStatus
++subtotal: number
++discountTotal: number
++total: number
++channel: string
++items: SaleItem[]
++payments: SalePayment[]
+            
+        }
+Sale  --  SaleStatus
+class RegistrarInputDto{
+            +identificacao?: string
++fullName?: string
++surname?: string
++email?: string
++password?: string
++phone?: string
++emailAuthorization: boolean
++phoneAuthorization: boolean
+            
+        }
+class AcessoPayload{
+            +identificacao?: string
++solicitarSessao?: string
++chaveAcesso?: string
++password?: string
++user?: User
++bearer?: string
++refreshToken?: string
++mode?: string
+            
+        }
+class RefreshPayloadInputDto{
+            +refreshToken: string
+            
+        }
+class AuthorizationOutput{
+            +authorization: string
+            
+        }
+class CadastroEnderecoForm{
+            +view: IDynamicForm
+            
+        }
+CadastroBase<|--CadastroEnderecoForm
+class CadastroImagensForm{
+            +view: IDynamicForm
+            
+        }
+CadastroBase<|--CadastroImagensForm
+class CadastroPessoaForm{
+            +view: IDynamicForm
+            
+        }
+CadastroBase<|--CadastroPessoaForm
+class PingPong{
+            
+            
+        }
+class IDataMessage {
+            <<interface>>
+            +type: string
++client: string
++mac?: string
++momento?: number
+            
+        }
+class ServerController{
+            -server: ServerService
+            +handShake() Promise~void~
+        }
+ServerController  --  ServerService
+class Server{
+            +fullInfo?: IServerInfo
+            
+        }
+class IServerInfo {
+            <<interface>>
+            
+            
+        }
+Server  --  IServerInfo
+class ServerService{
+            -userRepo: Repository~Server~
+            +registrar() Promise~void~
+        }
+class DetalheFalha{
+            
+            +toJSON() { status: number; mensagem: string; }
+        }
+class Status{
+            +id: number
++memory?: number
++createdAt?: Date
+            
+        }
+class System{
+            +mac?: string
+            
+        }
+class MensagemRecebimento{
+            +retorno?: any
+            
+        }
+class IconGetInput{
+            +icons: string[]
+            
+        }
+class ContactFindInput{
+            +query?: string
+            
+        }
+class DevicePayload{
+            +id?: string
++mac?: string
++name?: string
++applicationId?: string
++model?: string
++authentication?: string
++numbers?: PhoneNumber[]
+            
+        }
+class GetDeviceInput{
+            +query?: string
+            
+        }
+class PoolDto{
+            +messages?: String[]
+            
+        }
+class FileDto{
+            +path?: string
++encoding?: string
++data?: any
+            
+        }
+class ReadDirectoryInput{
+            +path?: string
+            
+        }
+class ReadDirectoryOutput{
+            +path?: string
++name?: string
++isFile?: boolean
++isDirectory?: boolean
++isSocket?: boolean
++isFIFO?: boolean
++isSymbolicLink?: boolean
+            
+        }
+class VideoGetInput{
+            +range: string
++videoPath: string
+            
+        }

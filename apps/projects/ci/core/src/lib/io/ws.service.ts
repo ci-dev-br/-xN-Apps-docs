@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Inject, Injectable, PLATFORM_ID, SimpleChange, SimpleChanges } from "@angular/core";
+import { Inject, Injectable, Optional, PLATFORM_ID, SimpleChange, SimpleChanges } from "@angular/core";
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 
 /**
@@ -23,7 +23,7 @@ export class WsService {
         return this._subject;
     }
     constructor(
-        @Inject(PLATFORM_ID) private platformId: Object
+        @Optional() @Inject(PLATFORM_ID) private platformId: Object
     ) {
         setTimeout(() => this.init());
     }
@@ -57,9 +57,9 @@ export class WsService {
                 this.retryWait = this.retryWait + 500;
             }
         }, () => {
-            console.info('{{Fim do canal de comunicação WebSocket}}');
+            console.info('{{ canal encerrado }}');
         });
-        this.Emit({ event: 'events', data: { type: 'ping', momento: (new Date().getTime()) } });
+        /*  this.Emit({ event: 'events', data: { type: 'ping', momento: (new Date().getTime()) } }); */
     }
     listeners = new Map<string, Array<any>>();
     /**
@@ -151,14 +151,14 @@ export class WsService {
      * 
      */
     private Ping() {
-        this.Emit({
-            event: 'events',
-            data: {
-                type: 'ping',
-                momento: (new Date().getTime()),
-                lastPing: this.ping,
-            },
-        });
+        /*  this.Emit({
+             event: 'events',
+             data: {
+                 type: 'ping',
+                 momento: (new Date().getTime()),
+                 lastPing: this.ping,
+             },
+         }); */
     }
     /**
      * Assina evento no canal socket aberto.

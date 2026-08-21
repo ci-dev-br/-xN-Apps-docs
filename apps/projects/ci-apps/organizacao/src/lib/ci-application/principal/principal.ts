@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
-import { EditarDetailComponent, MasterDetailComponent, WindowModule, WindowService } from "@ci/components";
+import { EditarDetailComponent } from "@ci/components/editar-detail";
+import { MasterDetailModule } from "@ci/components/master-detail";
+import { WindowModule, WindowService } from "@ci/components/window";
 import { CoreModule } from "@ci/core";
 import { Organizacao, OrganizacaoService } from "@ci/portal-api";
 import { BehaviorSubject, lastValueFrom } from "rxjs";
@@ -12,7 +14,7 @@ import { BehaviorSubject, lastValueFrom } from "rxjs";
         CoreModule,
         WindowModule,
         MatButtonModule,
-        MasterDetailComponent,
+        MasterDetailModule,
     ],
     styleUrl: 'principal.scss',
     standalone: true,
@@ -48,7 +50,7 @@ export class Principal implements AfterViewInit, OnInit {
                 }
             }));
         } catch (error) {
-            console.error(error);
+            console.trace(error);
         }
         this.load.next(false);
     }

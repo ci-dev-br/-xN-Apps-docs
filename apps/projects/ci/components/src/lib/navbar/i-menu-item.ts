@@ -1,4 +1,4 @@
-export interface IMenuItem {
+export interface INavbarItemMenu {
     label?: string;
     routerLink?: string;
 }

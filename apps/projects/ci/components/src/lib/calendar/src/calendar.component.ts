@@ -1,12 +1,18 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from "@angular/core";
 import { CoreModule } from "@ci/core";
 import { CalendarDay } from "./calendar-day";
-import { Day } from "./day/day";
+import { DayCalendar } from "./day/day";
+import { HeaderCalendar } from "./header/header";
+import { YearCalendar } from "./year/year";
+import { MonthCalendar } from "./month/month";
 @Component({
     selector: 'ci-calendar',
     imports: [
         CoreModule,
-        Day,
+        DayCalendar,
+        HeaderCalendar,
+        YearCalendar,
+        // MonthCalendar
     ],
     standalone: true,
     templateUrl: `calendar.component.html`,
@@ -65,14 +71,18 @@ export class CalendarComponent implements OnInit, OnChanges, OnDestroy {
     }
     // Exemplo simples para simular eventos (ex: dias pares têm eventos)
     private checkIfHasEvents(date: Date): boolean {
-        return date.getDate() % 5 === 0;
+        return false; /// date.getDate() % 5 === 0;
     }
     ngOnInit() {
-        this.generateCalendar();
-        this.updateTimeMarker();
-        this.timerId = setInterval(() => {
+        try {
+            this.generateCalendar();
             this.updateTimeMarker();
-        }, 1000);
+            this.timerId = setInterval(() => {
+                this.updateTimeMarker();
+            }, 1000);
+        } catch (error) {
+            console.trace(error);
+        }
     }
     // --- Getters para o Cabeçalho ---
     get isToday(): boolean {

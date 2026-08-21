@@ -1,0 +1,68 @@
+.loading {
+    padding: 3px;
+    background: black;
+    color: white;
+    margin: 24px;
+    box-shadow: 3px 6px 8px rgba(0, 0, 0, 0.3);
+    display: block;
+}
+
+:host {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    align-items: stretch;
+    justify-content: stretch;
+    flex: auto;
+}
+
+.wrapper,
+.loading {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    height: 100px;
+}
+
+.status {
+    border: solid 1px blue;
+    background-color: orange;
+    color: black;
+}
+
+button {
+    border: transparent;
+    background: transparent;
+
+    cursor: pointer;
+
+    &:hover {
+        background: black;
+        color: white;
+    }
+}
+
+.container {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+
+    &.fullscreen {
+        position: absolute;
+        inset: 0;
+        z-index: 500;
+        background: black;
+    }
+}
+
+nu-monaco-editor {
+    // max-height:50vh;
+}
+
+.flutuante {
+    position: fixed;
+    right: 50px;
+    bottom: 92px;
+    z-index: 100;
+}

@@ -1,0 +1,21 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    color: var(--mat-app-text-color);
+    overflow: auto;
+    max-height: 80vh;
+
+
+    >div {
+        display: flex;
+        flex-direction: column;
+        flex: auto;
+        overflow: auto;
+    }
+
+    >div>div {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+}

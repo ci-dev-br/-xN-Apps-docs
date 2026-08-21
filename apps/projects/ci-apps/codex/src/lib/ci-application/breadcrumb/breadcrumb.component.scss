@@ -1,0 +1,61 @@
+:host {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    font-size: 11px;
+}
+
+/* :host ::ng-deep {
+
+    * {
+        padding: 0;
+        margin: 0;
+        min-height: unset;
+        height: unset;
+    }
+} */
+
+.path {
+    cursor: pointer;
+}
+
+.path+.path {
+    position: relative;
+    margin-left: 20px;
+
+    &::before {
+        content: '>';
+        position: absolute;
+        left: -15px;
+        transform: scaleY(1.8) scaleX(.7);
+    }
+}
+
+/* 
+::ng-deep mat-menu {
+    border: solid 0.1px orange;
+    background: black;
+} */
+/* 
+button {
+    padding: 0;
+    margin: 0;
+    min-height: unset;
+    height: unset;
+    background: black;
+
+    ::ng-deep {
+
+        * {
+            padding: 0;
+            margin: 0;
+            min-height: unset;
+            height: unset;
+        }
+
+        .mat-mdc-menu-submenu-icon {
+            width: 8px;
+            height: 8px;
+        }
+    }
+} */

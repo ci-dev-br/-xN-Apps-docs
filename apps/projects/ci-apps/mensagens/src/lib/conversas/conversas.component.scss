@@ -1,13 +1,22 @@
 :host {
     position: relative;
-    flex: 1;
+    // flex: 1;
     flex-direction: row;
     align-items: stretch;
     justify-content: stretch;
-    
-    &,.container,.container .conversas-list{  display: flex; }
-    &, ::ng-deep mat-icon{ color: white; }
+
+    &,
+    .container,
+    .container .conversas-list {
+        display: flex;
+    }
+
+    &,
+    ::ng-deep mat-icon {
+        color: white;
+    }
 }
+
 .container {
     overflow: auto;
 
@@ -20,11 +29,13 @@
 
     background: #333;
 
-    .conversas-list {
-        flex: auto;
-        overflow: auto;
 
-        display: flex;
-        flex-direction: column;
-    }
+}
+
+.conversas-list {
+    flex: auto;
+    overflow: auto;
+
+    display: flex;
+    flex-direction: column;
 }

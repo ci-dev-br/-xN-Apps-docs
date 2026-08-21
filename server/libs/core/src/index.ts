@@ -9,3 +9,5 @@ export * from './logging.interceptor';
 export * from './system';
 export * from './webhook';
 export * from './logger/logger';
+export * from './events/events.gateway';
+export * from './data-io/response';

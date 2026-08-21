@@ -1,18 +1,38 @@
 <mat-tab-group>
     <mat-tab label="Minha Imagens">
         <mat-toolbar>
-            <button mat-icon-button>
+            <button mat-icon-button (click)="back()" matTooltip="Clique para voltar, pressione e veja o histórico">
                 <mat-icon>arrow_back</mat-icon>
             </button>
-            <button mat-icon-button>
+            <mat-menu #histMenu>
+                <button>
+
+                </button>
+            </mat-menu>
+            <button mat-icon-button (click)="forward()" matTooltip="Clique para avançar, precione e veja o histórico">
                 <mat-icon>arrow_forward</mat-icon>
             </button>
             <button mat-icon-button (click)="voltar()">
                 <mat-icon>arrow_upward</mat-icon>
             </button>
-            <input type="text" class="navegacao" #urlInput [(ngModel)]="endereco"
-                (keydown.enter)="ir(urlInput.value)" />
-            <input type="text" class="navegacao" [(ngModel)]="filtrar" />
+            <button mat-icon-button>
+                <mat-icon>edit</mat-icon>
+            </button>
+            <mat-form-field appearance="outline">
+                <input type="text" matInput class="navegacao" #urlInput [(ngModel)]="endereco"
+                    (keydown.enter)="ir(urlInput.value)" [matAutocomplete]="historicoAuto" />
+                <mat-autocomplete #historicoAuto="matAutocomplete">
+                    @if(historico){@for (hist of historico; track hist) {<mat-option
+                        [value]="hist">{{hist}}</mat-option>}}
+                </mat-autocomplete>
+                <button mat-icon-button matSuffix>
+                    <mat-icon>arrow_forward</mat-icon>
+                </button>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-icon matPrefix>search</mat-icon>
+                <input matInput type="text" class="navegacao" [(ngModel)]="filtrar" />
+            </mat-form-field>
         </mat-toolbar>
         <div class="scoller">
             <h4>Pastas</h4>

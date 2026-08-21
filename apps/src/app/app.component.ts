@@ -1,10 +1,13 @@
-import { Component, HostListener, isDevMode, OnDestroy, OnInit, Optional } from '@angular/core';
+import { Component, createNgModule, HostListener, Inject, Injector, isDevMode, OnDestroy, OnInit, Optional } from '@angular/core';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Router, RouterModule, RouterOutlet } from '@angular/router';
-import { WindowModule, WindowService } from '@ci/components';
-import { CoreModule, CoreService, WsService } from '@ci/core';
-import { BehaviorSubject } from 'rxjs';
+import { Route, Router, RouterModule, RouterOutlet, ROUTES } from '@angular/router';
+import { ProfileMenu, USER_MENU } from '@ci/auth';
+import { IItemMenu, WindowModule, WindowService } from '@ci/components/window';
+import { CoreModule, CoreService, MenuService, WsService } from '@ci/core';
+import { ApplicationService } from '@ci/portal-api';
+import { BehaviorSubject, lastValueFrom } from 'rxjs';
+
 @Component({
   selector: 'ci-root',
   standalone: true,
@@ -14,7 +17,7 @@ import { BehaviorSubject } from 'rxjs';
     MatIconModule,
     RouterModule,
     WindowModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -24,13 +27,18 @@ export class AppComponent implements OnInit, OnDestroy {
   isDevMode = isDevMode();
   title = 'apps';
   constructor(
-    private readonly matIconReg: MatIconRegistry,
-    private readonly core: CoreService,
-    private readonly router: Router,
-    private readonly websocket: WsService,
-    private readonly window: WindowService,
-    private readonly snack?: MatSnackBar,
+    @Optional() private readonly matIconReg?: MatIconRegistry,
+    @Optional() private readonly core?: CoreService,
+    // @Optional() private readonly router: Router, 
+    // // TODO: mover controle ativo de rota para camapra Core Init;
+    // @Optional() private readonly websocket: WsService,
+    //  // TODO: mover Web Seocket para Core Init;
+    @Optional() private readonly window?: WindowService,
+    @Optional() private readonly snack?: MatSnackBar,
+    @Optional() @Inject(USER_MENU) private readonly userMenu?: IItemMenu[],
+    private readonly menuService?: MenuService,
   ) {
+    if (!!menuService && userMenu) menuService.userMenu.next(userMenu);
     // This variable will save the event for later use.
     // let deferredPrompt;
     /* window.addEventListener('beforeinstallprompt', (e) => {
@@ -46,10 +54,11 @@ export class AppComponent implements OnInit, OnDestroy {
     }); */
   }
   ngOnDestroy(): void {
-
   }
   ngOnInit() {
-    this.matIconReg.setDefaultFontSetClass('material-symbols-sharp');
+    // this.preparePreloadedApplication();
+    this.core?.init();
+    this.matIconReg?.setDefaultFontSetClass('material-symbols-sharp');
     // this.router.events.subscribe(r => console.log(r))
     // This variable will save the event for later use.
     let deferredPrompt;
@@ -69,16 +78,16 @@ export class AppComponent implements OnInit, OnDestroy {
     }
     // this.worker();
     this.window?.addEventListener('log', (...args) => {
-      this.snack?.open(String(args), 'De acordo')
+      this.snack?.open(String(args), 'Visto')
     })
     this.window?.addEventListener('error', (...args) => {
-      this.snack?.open(String(args), 'De acordo')
+      this.snack?.open(String(args), 'Visto')
     })
     this.window?.addEventListener('warn', (...args) => {
-      this.snack?.open(String(args), 'De acordo')
+      this.snack?.open(String(args), 'Visto')
     })
     this.window?.addEventListener('info', (...args) => {
-      this.snack?.open(String(args), 'De acordo')
+      this.snack?.open(String(args), 'Visto')
     })
   }
   private showInAppInstallPromotion() {
@@ -87,6 +96,14 @@ export class AppComponent implements OnInit, OnDestroy {
   private worker() {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register("https://apps.ci.dev.br/sw.js");
+    }
+  }
+  @HostListener('window:keydown', ['$event'])
+  keyDownHandler(event: KeyboardEvent) {
+    // disabled user force reload page ... 
+    if (event.code === 'F5' || (event.code === 'KeyR' && event.ctrlKey)) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
     }
   }
 }

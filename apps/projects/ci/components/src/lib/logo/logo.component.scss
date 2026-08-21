@@ -1,8 +1,17 @@
-img {
-    // user-select: none;
+:host {
+    position: relative;
+    align-self: stretch;
+    self-align: center;
+    flex: auto;
+    height: 48px;
+    min-width: 96px;
 }
-:host{
-    flex: unset;
-    width: 150px;
-    // filter: drop-shadow(0 0 10px #fff);
+
+img {
+    position: absolute;
+    inset: 0 0 0 0;
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    object-position: center;
 }

@@ -1,6 +1,6 @@
 import { Component, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { WindowService } from '@ci/components';
+import { WindowService } from '@ci/components/window';
 import { CoreModule } from '@ci/core';
 
 @Component({

@@ -3,7 +3,6 @@
     <p class="loading-text">Preparando seu ambiente de trabalho...</p>
 </div>
 }@else{
-<div [class.--dev-mode]="isDevMode">
-    <router-outlet />
-</div>
+<div [class.--dev-mode]="isDevMode"></div>
+<router-outlet />
 }

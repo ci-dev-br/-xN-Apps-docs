@@ -14,5 +14,6 @@ import { Component } from "@angular/core";
     `
 })
 export class Footer {
-    protected ano = new Date().getFullYear();
+    ano = '2026';
+    //  protected ano = new Date().getFullYear();
 }

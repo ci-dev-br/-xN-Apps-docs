@@ -24,6 +24,7 @@ export class EventsGateway implements OnGatewayInit {
     ) {
         bus.events = this;
         let verifyAndPropagateStatusHandlersOfClients = () => {
+
             if (!!this.server?.clients) {
                 let clientes = [...this.server.clients].filter((c) =>
                     c.readyState === 1 && 'mac' in c);
@@ -56,8 +57,11 @@ export class EventsGateway implements OnGatewayInit {
             this.globalPing = ((this.globalPing + (data.lastPing || 0)) / 2)
             this.pings.push(data.lastPing)
             if (this.pings.length > 500) {
-                this.pings = this.pings.splice(this.pings.length - 500, this.pings.length);
+                this.pings.reverse()
+                this.pings.length = 250; // = this.pings.splice(this.pings.length - 500, this.pings.length);
+                this.pings.reverse()
             }
+            console.log(this.pings);
         }
         let pm = 0;
         try {
@@ -65,7 +69,7 @@ export class EventsGateway implements OnGatewayInit {
         } catch (error) {
             console.trace(error);
         }
-        const waiting = 1000 + Math.random() * 32000;
+        const waiting = 15000;// 1000 + Math.random() * 32000;
         const last = {
             event: 'events',
             type: 'pong',
@@ -75,6 +79,7 @@ export class EventsGateway implements OnGatewayInit {
             pingMedium: pm,
         };
         setTimeout(() => {
+            console.log(this.clients);
             const c = this.clients.get(data.client);
             if (c && data.momento === c.momento) {
                 c.returned = false;
@@ -82,6 +87,7 @@ export class EventsGateway implements OnGatewayInit {
             }
         }, waiting + 1000);
         return last;
+
     }
 
     /**
@@ -90,7 +96,9 @@ export class EventsGateway implements OnGatewayInit {
      * @param data 
      */
     private sendSMSHandler(client: WebSocket, data: IDataMessage) {
+        console.log('sendSMSHandler')
         this.clients.forEach(c => {
+
             if ('mac' in c.ws && c.ws.OPEN) {
                 c.ws.send(JSON.stringify({
                     event: 'events',
@@ -102,40 +110,48 @@ export class EventsGateway implements OnGatewayInit {
                     }
                 }));
             }
+
         })
+
     }
     private lastWaitingTime?: number;
     /**
      * Mapeamento de listeners de eventos
      */
     private eventsListeners: { [eventType: string]: (client: WebSocket, data: any) => void } = {
-        ping: (client, data) => this.pingHandler(client, data),
+        // TODO: Problema em Ping;
+        // ping: (client, data) => this.pingHandler(client, data),
         'SMS.Send': (client, data) => this.sendSMSHandler(client, data),
         'Devices': (client, data) => this.devicesHandler(client, data),
+        'Ident': (client, data) => this.Identification(client, data)
     };
-    devicesHandler(client, data) {
+    private devicesHandler(client, data) {
         this._$devices.subscribe(devices => {
-            let self = this;
-            let waiting_time = (this.lastWaitingTime + 3500) || 1000;
-            [...this.clients.values()].forEach(c => {
-                devices.forEach(device => {
-                    (device as any).tt = this.lastWaitingTime;
-                    (device as any).lastTime = (Date.now() - ((c.ws as any).lastTime || Number.MAX_SAFE_INTEGER));
-                    (device as any).status = (device as any).lastTime < waiting_time ? 1 : (device as any).lastTime < waiting_time + 10000 ? 0 : 0;
+            try {
+                let self = this;
+                let waiting_time = (this.lastWaitingTime + 3500) || 1000;
+                [...this.clients.values()].forEach(c => {
+                    devices.forEach(device => {
+                        (device as any).tt = this.lastWaitingTime;
+                        (device as any).lastTime = (Date.now() - ((c.ws as any).lastTime || Number.MAX_SAFE_INTEGER));
+                        (device as any).status = (device as any).lastTime < waiting_time ? 1 : (device as any).lastTime < waiting_time + 10000 ? 0 : 0;
+                    });
                 });
-            });
-            client.send(JSON.stringify({
-                event: 'events',
-                type: 'Devices.Response',
-                momento: Date.now(),
-                data: {
-                    devices: devices
-                    /*  devices.filter(device => [...this.clients.values()].find(c => {
-                        (device as any).lastTime = (c.ws as any).lastTime;
-                        return (c.ws as any).mac === device.mac && c.ws.readyState === c.ws.OPEN && ((Date.now() - ((c.ws as any).lastTime || 0)) < 20000);
-                    })) */
-                }
-            }));
+                client.send(JSON.stringify({
+                    event: 'events',
+                    type: 'Devices.Response',
+                    momento: Date.now(),
+                    data: {
+                        devices: devices
+                        /*  devices.filter(device => [...this.clients.values()].find(c => {
+                            (device as any).lastTime = (c.ws as any).lastTime;
+                            return (c.ws as any).mac === device.mac && c.ws.readyState === c.ws.OPEN && ((Date.now() - ((c.ws as any).lastTime || 0)) < 20000);
+                        })) */
+                    }
+                }));
+            } catch (error) {
+                console.trace(error);
+            }
         });
     }
     private _$devices = new BehaviorSubject<Device[]>([]);
@@ -166,6 +182,7 @@ export class EventsGateway implements OnGatewayInit {
         (client as { lastTime?: number }).lastTime = Date.now();
         try {
             if (data.type in this.eventsListeners) {
+                console.log(data.type)
                 return this.eventsListeners[data.type](client, data);
             }
         } catch (error) {
@@ -194,7 +211,7 @@ export class EventsGateway implements OnGatewayInit {
             console.trace(error);
         }
         if (data.momento && this.momento.indexOf(data.momento) !== -1) return;
-        this.momento.push(data.momento)
+        this.momento?.push(data.momento)
     }
     /**
      *  Identifica o cliente conectado
@@ -216,11 +233,13 @@ export class EventsGateway implements OnGatewayInit {
      * Adiciona listener para evento
      */
     private addEventListener(eventName: string, callBack: (r?: any) => void) {
+
         let listeners = this.listeners.has(eventName) ? this.listeners.get(eventName) : [];
         if (!this.listeners.has(eventName)) {
             this.listeners.set(eventName, listeners);
         }
         listeners.push(callBack);
+
     }
     /**
      *  Emite evento para os listeners cadastrados
@@ -235,6 +254,7 @@ export class EventsGateway implements OnGatewayInit {
                 console.trace(error);
             }
         });
+
     }
     private _notices?: ReplaySubject<{ event: string, data: any }> = new ReplaySubject();
 
@@ -310,13 +330,22 @@ export class EventsGateway implements OnGatewayInit {
                 }
                 this.clients.delete((ws as any).id)
                 setTimeout(() => {
-                    this.clients.forEach(client => {
-                        if (client.ws.OPEN) {
-                            client.ws.send(JSON.stringify({
-                                clients: this.clients.size
-                            }))
-                        }
-                    })
+
+                    try {
+                        this.clients.forEach(client => {
+                            try {
+                                if (client.ws.OPEN) {
+                                    client.ws.send(JSON.stringify({
+                                        clients: this.clients.size
+                                    }))
+                                }
+                            } catch (error) {
+                                console.trace(error);
+                            }
+                        });
+                    } catch (error) {
+                        console.trace(error);
+                    }
                 })
             });
         }
@@ -357,22 +386,31 @@ export class EventsGateway implements OnGatewayInit {
             const __last_data = this._attentionDatas.get(data.internalId);
             if (data.changes && __last_data) {
                 Object.keys(data.changes).forEach(property => {
-                    if (data.changes[property].currentValue
-                    ) {
-                        __last_data[property] = data.changes[property].currentValue;
+                    try {
+                        if (data.changes[property].currentValue
+                        ) {
+                            __last_data[property] = data.changes[property].currentValue;
+                        }
+                    } catch (error) {
+                        console.trace(error);
                     }
                 })
             }
             this.clients.forEach((v, k) => {
-                if (
-                    (v as any).id !== data.client &&
-                    (v as any).id !== data.setOrigem
-                ) v.ws.send(JSON.stringify({
-                    event: 'Changes',
-                    data
-                }))
+                try {
+                    if (
+                        (v as any).id !== data.client &&
+                        (v as any).id !== data.setOrigem
+                    ) v.ws.send(JSON.stringify({
+                        event: 'Changes',
+                        data
+                    }))
+                } catch (error) {
+                    console.trace(error);
+                }
             })
         }
+
     }
     /**
      * Executa após o início
@@ -395,5 +433,21 @@ export class EventsGateway implements OnGatewayInit {
             return true;
         }
         else false;
+    }
+
+    async createUserChat(options?: any) {
+        const user_chat_context: {
+            options?: any,
+            connections?: any[],
+            __user_identification?: string,
+        } = {
+            options
+        }
+        user_chat_context.__user_identification =
+            (Math.random() ** Math.random()).toString(36)
+        return user_chat_context;
+    }
+    private Identification(client, data) {
+        // TODO: implementar auto-identificação da credencial (vincula o cliente com determinada chave de acesso, auto escalada);
     }
 }

@@ -1,14 +1,17 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
-
+/**
+ * Controle de Logger interdo da aplicação para integração
+ * 
+ */
 export class Logger {
-    private readonly error = this.console.error;
+    private readonly error = this.console.trace;
     private readonly info = this.console.info;
     private readonly log = this.console.log;
     private readonly trace = this.console.trace;
     constructor(private readonly console: Console) {
         setTimeout(() => {
-            console.error = (...a) => this.errorHandler(...a);
+            console.trace = (...a) => this.errorHandler(...a);
             console.info = (...a) => this.infoHandler(...a);
             console.log = (...a) => this.logHandler(...a);
             console.trace = (...a) => this.traceHandler(...a);

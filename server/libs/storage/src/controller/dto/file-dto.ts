@@ -7,4 +7,6 @@ export class FileDto {
     encoding?: string;
     @ApiProperty({ nullable: true, required: false })
     data?: any;
+    @ApiProperty({ nullable: true, required: false })
+    gitStatus?: any;
 }

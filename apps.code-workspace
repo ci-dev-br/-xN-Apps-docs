@@ -5,14 +5,17 @@
 			"path": "server"
 		},
 		{
-			"name": "Apps",
-			"path": "client/src"
+			"path": "."
 		},
 		{
-			"path": "."
+			"path": "apps"
+		},
+		{
+			"path": "server/libs"
 		}
 	],
 	"settings": {
-		"vsicons.presets.angular": true
+		"vsicons.presets.angular": true,
+		"js/ts.tsdk.path": "apps\\node_modules\\typescript\\lib"
 	}
 }

@@ -18,7 +18,8 @@
     "build:client": "cd client && ng build -c production",
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy": "node deploy",
-    "sync": "git push --all origin && git push --all azure && git pull --all"
+    "sync": "git push --all origin && git push --all azure && git pull --all",
+    "commiter": "node commiter"
   },
   "dependencies": {
     "d3-scale": "^4.0.2",
@@ -36,7 +37,8 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "fs-extra": "^11.2.0",
-    "node-windows": "1.0.0-beta.8",
+    "karma-junit-reporter": "^2.0.1",
+    "node-windows": "^1.0.0-beta.8",
     "sha256": "^0.2.0"
   }
 }

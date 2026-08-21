@@ -1,0 +1,44 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    color: var(--mat-app-text-color);
+    padding: 12px 18px;
+}
+
+.item {
+    display: flex;
+    flex: autxo;
+    flex-direction: row;
+    align-items: center;
+    justify-content: stretch;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+
+    >button:last-child {
+        flex: auto;
+    }
+}
+
+.fields {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: stretch;
+    gap: 12px;
+
+    >* {
+        flex: 1;
+    }
+}

@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "Visão",
+			"path": "apps/projects/ci-apps/seo/src/lib"
+		}
+		{
+			"name": "Controle",
+			"path": "server/libs/seo-marketing/src"
+		},
+	],
+	"settings": {}
+}

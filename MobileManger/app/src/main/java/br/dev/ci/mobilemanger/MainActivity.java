@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
         webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("https://apps.ci.dev.br/launcher");
+        webView.loadUrl("https://development.ci.dev.br/launcher");
         // webView.addJavascriptInterface(new WebAppInterface(this), "AndroidLauncher");
         this.message = findViewById(R.id.message);
         solicitarPermissoes();
@@ -70,11 +70,11 @@ public class MainActivity extends AppCompatActivity {
             this.message.setText("Iniciando conexção... (1)");
         }*/
          /* if(this.message != null){
-            this.message.setText("Identificando números disponíveis");
+            this.message.setText("Identifica/*ndo números disponíveis");
         }*/
-        /*try {
+        try {
             // TODO: alterar para worker events em segundo plano
-            ManagerClient.getInstance().setupNewGateway(
+            ManagerClient.getInstance().setupGateway(
                     "https://apps.ci.dev.br/",
                     "wss://apps.ci.dev.br/");
             // Na sua Activity (ex: no clique de um botão)
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             /// ContextCompat.startForegroundService(this, serviceIntent);
         }catch(Exception ex){
             this.message.setText("Falha ao conectar");
-        }*/
+        }
         if(this.appsButton != null){
             this.appsButton.setOnClickListener(v -> this.openApps());
         }
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         // TODO: abrir menu de aplicativos do dispositivo
     }
     public AsyncTask<Device, Void, String> adicionarGateway(String api, String ws) {
-        return ManagerClient.getInstance().setupNewGateway( api, ws);
+        return ManagerClient.getInstance().setupGateway( api, ws);
     }
     private void solicitarPermissoes() {
         // if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {

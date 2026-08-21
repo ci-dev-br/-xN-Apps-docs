@@ -12,7 +12,12 @@
     max-width: 60vw;
 }
 
-
 mat-tab-group {
     flex: auto;
+
+    ::ng-deep {
+        &.mat-mdc-tab-body-wrapper {
+            flex: auto;
+        }
+    }
 }

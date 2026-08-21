@@ -3,107 +3,45 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: auto;
+
     flex: auto;
-    user-select: none;
-    background: linear-gradient(to top, rgba(12, 13, 14) 0%, rgba(0, 0, 0) 100%);
-    padding: 24px;
-    z-index: 1;
-}
 
-// @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Germania+One&display=swap');
-
-::ng-deep {
-    * {
-        // font-family: "Anton", sans-serif;
-        font-family: "Germania One", system-ui;
-        font-weight: 400;
-        font-style: normal;
-    }
-}
-
-:host ::ng-deep * {
     color: white;
+
+    user-select: none;
+    pointer-events: visible;
+
+    ::ng-deep * {
+        user-select: none !important;
+    }
+
+    background: url('/imagens/d41586-026-02173-5_52959440.webp') center no-repeat;
+    background-size: cover;
 }
 
-.scroll {
+.unlock {
+    display: inline-block;
+    cursor: pointer;
+    //border: solid 1px yellow;
+}
+
+.lock-screen {
+    flex: auto;
+
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    justify-content: stretch;
-    justify-self: stretch;
-    flex: auto;
-    border-radius: 48px;
-    overflow-y: auto;
-    max-height: 65vh;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    //border: solid 1px red;
+    padding: 2em;
 }
 
-h1 {
-    margin: 0;
-    padding: 0;
-    color: rgb(182, 15, 98);
-    text-shadow: 0 3px 3px rgba(0, 0, 0, 0.151);
-    mix-blend-mode: exclusion;
-}
-
-.horario {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-
-    >* {
-        margin: 0;
-        padding: 0;
-        font-size: 92px;
-        font-weight: bold;
-        color: rgb(182, 15, 98);
-        margin-top: #{+25 * 0}px;
-        text-shadow: 0 3px 3px rgba(0, 0, 0, 0.151);
-        z-index: 3;
-        mix-blend-mode: exclusion;
-        margin-left: -20px;
-
-        +* {
-            color: rgb(117, 22, 70);
-            margin-top: #{+15 * 1}px;
-            z-index: 2;
-
-            +* {
-                color: rgb(90, 54, 72);
-                margin-top: #{+15 * 2}px;
-                z-index: 1;
-            }
-        }
-    }
-
-
-}
-
-.horario .ms {
-    font-size: 12px;
-    margin: 0;
-    padding: 0;
-    align-self: flex-end;
-}
-
-.footer {
-    display: flex;
-    flex-direction: row;
-    justify-self: stretch;
-    width: 100%;
-}
-
-.bg {
-    position: fixed;
-    inset: -12px;
-    z-index: 12;
-    width: 102%;
-    height: 102%;
-    object-fit: cover;
-    user-select: none;
-    pointer-events: none;
-    mix-blend-mode: hard-light;
-    opacity: .245;
-    filter: blur(24px);
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    text-shadow: 2px 2px 1px black, 4px 4px 2px white;
 }

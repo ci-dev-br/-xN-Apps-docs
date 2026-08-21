@@ -1,12 +1,14 @@
 import { EnvironmentProviders, InjectionToken, isDevMode, LOCALE_ID, makeEnvironmentProviders, Provider, Type } from "@angular/core";
 import { WsService } from "./io/ws.service";
 import { NotificationService } from "./notification/notification.service";
-import { UserService } from "@ci/auth";
+import { UserAuthenticationService } from "@ci/auth";
 import { ShortcutService } from "./services/shortcut.service";
 import localePt from '@angular/common/locales/pt';
-import { registerLocaleData } from "@angular/common";
+import { DecimalPipe, registerLocaleData } from "@angular/common";
+import { Handlers } from "./services/handlers.service";
+import { Apps } from "./apps/apps.service";
+import { Message } from "./services/message";
 registerLocaleData(localePt, 'pt-BR');
-
 export interface ISchemaPreset<T, D> {
     primary?: string | string[];
     schemaName?: string;
@@ -29,12 +31,21 @@ export function coreProvider(
     if (isDevMode()) {
     }
     const providers: Provider[] = [
+        Handlers,
         WsService,
-        UserService,
+        UserAuthenticationService,
         NotificationService,
         ShortcutService,
+        Apps,
+        DecimalPipe,
+        Message,
+        {
+            provide: 'XNE.PIPES', useValue: {
+                'numeric': DecimalPipe
+            },
+        },
         { provide: CORE_ENV, useValue: options },
-        { provide: LOCALE_ID, useValue: 'pt-BR' }
+        { provide: LOCALE_ID, useValue: 'pt-BR' } // Default ?
     ];
     return makeEnvironmentProviders(providers);
 }

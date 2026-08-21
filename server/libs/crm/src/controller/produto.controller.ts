@@ -35,7 +35,11 @@ export class ProdutoController extends ControllerDaoBase<ProdutoService, Produto
         @Body() input: SyncPayloadDaoProduto,
         @Req() req?: any,
     ) {
-        return await super.Sync(input, req);
+        try {
+            return await super.Sync(input, req);
+        } catch (err) {
+            console.trace(err);
+        }
     }
     @Post('Get')
     @ApiResponse({
@@ -50,6 +54,10 @@ export class ProdutoController extends ControllerDaoBase<ProdutoService, Produto
         @Body() input: ProdutoCotrollerGetInputDto,
         @Req() req,
     ) {
-        return await super.GetList(input, req);
+        try {
+            return await super.GetList(input, req);
+        } catch (err) {
+            console.trace(err);
+        }
     }
 }

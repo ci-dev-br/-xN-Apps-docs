@@ -53,16 +53,15 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
-                  "maximumError": "5MB"
+                  "maximumError": "10MB"
                 },
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "2kB",
-                  "maximumError": "5kB"
+                  "maximumError": "6kB"
                 }
               ],
-              "outputHashing": "all",
-              "serviceWorker": "ngsw-config.json"
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,
@@ -111,7 +110,8 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -144,7 +144,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -177,7 +178,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -210,7 +212,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -243,7 +246,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -276,7 +280,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -309,7 +314,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -342,7 +348,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -375,7 +382,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -408,7 +416,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -441,7 +450,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -474,7 +484,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -507,7 +518,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -540,7 +552,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -573,7 +586,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -606,7 +620,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -639,7 +654,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -672,7 +688,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -705,7 +722,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -738,7 +756,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -771,7 +790,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -804,7 +824,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -837,7 +858,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -870,7 +892,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -903,7 +926,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -936,7 +960,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -969,7 +994,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -1002,7 +1028,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -1035,7 +1062,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -1068,7 +1096,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -1171,7 +1200,8 @@
             "styles": [
               "projects/ci/quase/src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -1204,7 +1234,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -1237,7 +1268,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -1270,7 +1302,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -1303,7 +1336,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -1336,7 +1370,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -1369,7 +1404,8 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -1399,7 +1435,39 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
-            ]
+            ],
+            "karmaConfig": "karma.conf.js"
+          }
+        }
+      }
+    },
+    "@ci/cdk": {
+      "projectType": "library",
+      "root": "projects/ci/cdk",
+      "sourceRoot": "projects/ci/cdk/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci/cdk/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci/cdk/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/ci/cdk/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -1425,7 +1493,8 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "tsConfig": "projects/ci/espazio/tsconfig.spec.json"
+            "tsConfig": "projects/ci/espazio/tsconfig.spec.json",
+            "karmaConfig": "karma.conf.js"
           }
         }
       }

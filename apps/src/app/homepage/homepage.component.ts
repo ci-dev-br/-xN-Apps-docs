@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, ComponentRef, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, OnInit, Optional, Renderer2, ViewChild } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { Router, RouterModule } from '@angular/router';
-import { AuthModule, UserService } from '@ci/auth';
+import { AuthModule, USER_MENU, UserAuthenticationService } from '@ci/auth';
 import { FooterModule, NavbarModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { Application, User } from '@ci/portal-api';
@@ -13,6 +13,8 @@ import { SidebarSettings } from './sidebar-settings/sidebar-settings.components'
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl } from '@angular/forms';
+import { Publicar } from './publicar/publicar.component';
+import { IItemMenu } from '@ci/components/window';
 const XD = <T>(a: T) => {
     (a as any).___styles_xd__internals = {
         m: { l: 0, r: 0, t: 0, b: 0 },
@@ -42,13 +44,13 @@ const XD = <T>(a: T) => {
 export class HomepageComponent implements OnInit {
     stage?: 'loading' | 'loaded' = 'loading';
     constructor(
-        protected readonly userService: UserService,
-        private render: Renderer2,
-        private el: ElementRef<Element>,
-        private readonly router: Router,
-        private readonly dialog: MatDialog,
-    ) {
-    }
+        @Optional() protected readonly userService?: UserAuthenticationService,
+        @Optional() private render?: Renderer2,
+        @Optional() private el?: ElementRef<Element>,
+        @Optional() private readonly router?: Router,
+        @Optional() private readonly dialog?: MatDialog,
+        @Inject(USER_MENU) userMenu?: IItemMenu[],
+    ) { }
     protected sidebar = false;
     protected categorias?: any[];
     protected apps?: Application[];
@@ -58,12 +60,17 @@ export class HomepageComponent implements OnInit {
     protected pesquisaControl = new FormControl();
     @ViewChild('video') protected video?: ElementRef<HTMLVideoElement>;
     async ngOnInit() {
-        this.mountStyle();
-        this.userService.user.subscribe(user => this.updateUser(user));
-        // Set the playback speed to 0.5 (half speed)
-        if (this.video?.nativeElement) this.video.nativeElement.playbackRate = 0.1;
-        if ('document' in this && !!document && !!document.body && !!window) {
-            this.animacao();
+        try {
+
+            this.mountStyle();
+            this.userService?.user.subscribe(user => this.updateUser(user));
+            // Set the playback speed to 0.5 (half speed)
+            if (this.video?.nativeElement) this.video.nativeElement.playbackRate = 0.1;
+            if ('document' in this && !!document && !!document.body && !!window) {
+                this.animacao();
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
     async animacao() {
@@ -100,7 +107,7 @@ export class HomepageComponent implements OnInit {
         this.bg = this.bgs[Math.round((this.bgs.length - 1) * Math.random())];
     }
     @ViewChild('sidebarElement') protected sidebarEl?: ElementRef<HTMLElement>;
-    private updateUser(user: User | null) {
+    private updateUser(user: User | undefined) {
         this.apps = [
             // TODO: revisar isto
             // XD({ name: 'Meus Apps', url: '/meus-apps' }),
@@ -111,11 +118,11 @@ export class HomepageComponent implements OnInit {
         if (event.ctrlKey) {
             window.open(location.href + '/' + app.url, '')
         } else {
-            this.router.navigate([app.url], {/*  relativeTo: this.route */ });
+            this.router?.navigate([app.url], {/*  relativeTo: this.route */ });
         }
     }
     protected openSidebarSettings() {
-        this.dialog.open(SidebarSettings, {
+        this.dialog?.open(SidebarSettings, {
             data: {
                 origin: this
             }
@@ -136,15 +143,22 @@ export class HomepageComponent implements OnInit {
         }
     }
     async newPost() {
-
+        this.createNewPost('post');
     }
     async newCitation() {
-
+        this.createNewPost('citation');
     }
     async newPhoto() {
-
+        this.createNewPost('photo');
     }
     async newVideo() {
-
+        this.createNewPost('video');
+    }
+    async createNewPost(tipo_postagem: 'post' | 'citation' | 'photo' | 'video') {
+        this.dialog?.open(Publicar, {
+            data: {
+                tipo_postagem,
+            }
+        });
     }
 }

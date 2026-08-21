@@ -14,7 +14,7 @@
 
 .folders,
 .files {
-    $size: 100px;
+    $size: 60px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -55,8 +55,8 @@
         // border: solid 1px #cecece;
         padding: 4px;
         border-radius: 8px;
-        min-height: 120px;
-        min-width: 120px;
+        min-height: 60px;
+        min-width: 60px;
         border: solid 1px transparent;
 
         &:hover {
@@ -67,6 +67,11 @@
         &:focus {
             background: rgba(#215ad6, .2);
             border: solid 1px #3c21d6;
+        }
+
+        .title {
+            font-size: small;
+            word-wrap: normal;
         }
     }
 
@@ -90,7 +95,7 @@
             flex: unset;
             display: block;
             width: 100%;
-            overflow: hidden;
+            overflow: visible;
             text-wrap: balance;
             white-space: normal;
 
@@ -101,19 +106,21 @@
     }
 }
 
+/* 
 input.navegacao {
     flex: auto;
     padding: 12px 8px;
     border: none;
     border-radius: 6px;
     box-shadow: inset 0px 0px 3px rgba(0, 0, 0, .44);
-}
+} */
 
 .scoller {
     flex: auto;
     display: flex;
     overflow: auto;
     flex-direction: column;
+    padding: 24px;
 }
 
 mat-tab-group,
@@ -128,4 +135,25 @@ mat-tab-group ::ng-deep {
     .mat-mdc-tab-body-content {
         display: contents;
     }
+}
+
+mat-toolbar {
+    display: flex;
+    flex-direction: row;
+
+    >* {
+        flex: auto;
+    }
+}
+
+input {
+    flex: auto;
+    width: 100%;
+}
+
+mat-toolbar {
+    border: solid 1px;
+    border-radius: 12px;
+    margin: 6px;
+    width: calc(100% - 12px);
 }

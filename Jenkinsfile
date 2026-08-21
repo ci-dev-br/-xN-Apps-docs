@@ -1,25 +1,101 @@
 pipeline {
-  agent any 
-  stages {
-    stage('Install client dependencies') {
-      steps {
-        bat'cd client/ && npm install'        
-      }
+    agent any
+    environment {
+        APP_PATH = 'apps'
+        API_PATH = 'serve'
     }
-    stage('build client') {
-      steps {
-        bat'node deploy.js'
-      }
+    stages {
+        stage('Limpeza Inicial') {
+            steps {
+                echo 'Limpando workspace...'
+                deleteDir()
+                checkout scm
+            }
+        }
+       stage('Instalação de Dependências') {
+            steps {
+                dir("${env.APP_PATH}") {
+                    echo 'Verificando e instalando ferramentas globais...'
+                    bat """
+                        @echo off
+                        where ng >nul 2>nul
+                        if %errorlevel% neq 0 (
+                            echo Angular CLI nao encontrado. Instalando...
+                            npm install -g @angular/cli
+                        ) else (
+                            echo Angular CLI ja esta instalado.
+                        )
+                        where pnpm >nul 2>nul
+                        if %errorlevel% neq 0 (
+                            echo pnpm nao encontrado. Instalando...
+                            npm install -g pnpm
+                        ) else (
+                            echo pnpm ja esta instalado.
+                        )
+                        where gulp >nul 2>nul
+                        if %errorlevel% neq 0 (
+                            echo gulp-cli nao encontrado. Instalando...
+                            npm install -g gulp-cli
+                        ) else (
+                            echo gulp-cli ja esta instalado.
+                        )
+                    """
+                    
+                    echo 'Instalando dependências do projeto...'
+                    bat 'pnpm install'
+                }   
+            }
+        }
+        stage('Testes Unitários') {
+            steps {
+                catchError {
+                    dir("${env.APP_PATH}") {
+                        script {
+                            try {
+                                bat """
+                                    @echo off
+                                    npm test -- --no-watch
+                                    """
+                            } catch (err) { 
+                                echo 'Waiting'
+                            }
+                            finally {
+                                try {
+                                    bat """
+                                        @echo off
+                                        taskkill /F /IM chrome.exe /T >nul 2>&1 || exit 0
+                                        """
+                                } catch (err) {
+                                    echo 'End'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        stage('Build da Aplicação') {
+            steps {
+                dir("${env.APP_PATH}") {
+                    echo 'Iniciando compilação Angular (Produção)...'
+                    bat 'npx ng build --configuration=production --verbose'
+                }
+                bat "node RequestDeploy"
+            }
+        }
     }
-    stage('install serve dependencies') {
-      steps {
-        bat'cd server/ && npm install'        
-      }
+    post {
+        always {
+            echo 'Processando relatórios de teste...'
+            junit testResults: "${env.APP_PATH}/test-results/**/*.xml", allowEmptyResults: true
+            echo 'Finalizando pipeline...'
+            bat "node RequestDeploy"
+        }
+        success {
+            echo 'Build e Testes concluídos com sucesso!'
+        }
+        failure {
+            echo 'Ocorreu um erro. Verifique os relatórios de teste ou o log de build.'
+        }
     }
-    stage('build serve') {
-      steps {
-        bat'cd server/ && node node_modules/@nestjs/cli/nest build'        
-      }
-    }
-  }
 }

@@ -11,9 +11,7 @@ export class AuthService {
         private readonly userCredentialService: UserCredentialService,
         private jwtService: JwtService,
         private readonly credencial: CredencialService,
-    ) {
-        console.log('[Authenticantion service created]')
-    }
+    ) { }
     async refreshToken(
         userId?: string,
         refreshToken?: string,
@@ -48,6 +46,10 @@ export class AuthService {
                     } else {
                         confiance += 'o';
                     }
+                    if (chave_acesso?.valid === false) {
+                        // confiance += 'x';
+                        // throw new UnauthorizedException('A sua sessão expirou. Por favor, identifique-se novamente // para continuar.');
+                    }
                     if (!chave_acesso?.refreshToken) {
                         confiance += 'e';
                         if (confiance.indexOf('o') === -1) {
@@ -58,7 +60,7 @@ export class AuthService {
             } catch (error) {
                 console.trace(error);
                 confiance += 'e';
-                throw new UnauthorizedException('Sem autenticidade.', error);
+                throw new UnauthorizedException('Acesso negado.', error);
             }
         }
         const user = await this.userService.findById(userId);
@@ -69,8 +71,8 @@ export class AuthService {
                 identificacao_inicial: chave_acesso?.identifiedUser,  //  old_authorization.id
                 headers: req.headers
             }));
-            chaveAcesso.alive = true;
-            chaveAcesso.valid = false;
+            chaveAcesso.alive = true; // Chave ativa permite autenticar na aplicação
+            chaveAcesso.valid = false; // Chave válida permite gerar nova chave
             await this.credencial.atualizar(chaveAcesso);
             return {
                 authorization: await this.jwtService.signAsync({

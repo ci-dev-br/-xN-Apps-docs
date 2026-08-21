@@ -1,18 +1,19 @@
 <div class="row">
     <div class="col">
-        <ng-container [formGroup]="form">
+        @if(form){<ng-container [formGroup]="form">
             <mat-card>
                 <mat-card-content>
                     <div class="row">
                         <div class="user-profile">
-                            <img src="" alt="" class="user-profile-image" (click)="takeAPhoto() ">
+                            @if(profileImage){<img [src]="profileImage" alt="" class="user-profile-image"
+                                (click)="takeAPhoto() ">}
                             <div class="wrap">
                                 <button mat-icon-button
                                     [matMenuTriggerFor]="userPhotoOptions"><mat-icon>photo_camera</mat-icon></button>
                             </div>
                             <mat-menu #userPhotoOptions>
                                 <button mat-menu-item (click)="uploadPhoto()">Arquivo local</button>
-                                <button mat-menu-item>Tirar foto</button>
+                                <button mat-menu-item (click)="takeAPhoto()">Tirar foto</button>
                             </mat-menu>
                         </div>
                         <div class="content">
@@ -47,7 +48,7 @@
                     </div>
                 </mat-card-content>
             </mat-card>
-        </ng-container>
+        </ng-container>}
     </div>
     <div class="col">
         <mat-card>
@@ -69,3 +70,30 @@
         }}
     </div>
 </div>
+@if(isCameraActive){<div class="camera-container">
+    <h2>Foto de Perfil</h2>
+    <div class="video-wrapper" [hidden]="!isCameraActive">
+        <video #videoElement autoplay playsinline></video>
+    </div>
+    <div class="image-wrapper" *ngIf="capturedImage">
+        <img [src]="capturedImage" alt="Foto de Perfil Capturada" />
+    </div>
+    <canvas #canvasElement style="display: none;"></canvas>
+    <div class="controls">
+        @if(!isCameraActive && !capturedImage){<button mat-raised-button (click)="startCamera()">
+            Ligar Câmera
+        </button>}
+        @if(isCameraActive){<button mat-raised-button (click)="capturePhoto()">
+            Tirar Foto
+        </button>}
+        @if(isCameraActive){<button mat-raised-button (click)="stopCamera()">
+            Cancelar
+        </button>}
+        @if(capturedImage){<button mat-raised-button (click)="retakePhoto()">
+            Tirar Outra Foto
+        </button>}
+        @if(capturedImage){<button mat-raised-button class="save-btn" (click)="saveProfile()">
+            Salvar Perfil
+        </button>}
+    </div>
+</div>}

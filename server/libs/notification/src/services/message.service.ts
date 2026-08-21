@@ -22,68 +22,85 @@ export class MessageService {
         // console.log('[Message Service]');
     }
     async sendSMS(payload: SendMessagePayload) {
-        const phone_number = await this.phoneNumberRepository.findOne({
-            where: {}
-        })
-        const message = this.messageRepository.create({
-            from: phone_number,
-            textMessage: payload.message,
-            to: payload.to,
-            sent: false,
-        })
-        await this.messageRepository.save(message);
-        setTimeout(() => {
-            this.devileryMessages()
-        }, 100);
+        try {
+            const phone_number = await this.phoneNumberRepository.findOne({
+                where: {}
+            })
+            const message = this.messageRepository.create({
+                from: phone_number,
+                textMessage: payload.message,
+                to: payload.to,
+                sent: false,
+            })
+            await this.messageRepository.save(message);
+            setTimeout(() => {
+                this.devileryMessages()
+            }, 100);
+        } catch (error) {
+            console.trace(error);
+        }
     }
     async sendMail(payload: SendMessagePayload) {
-        const message = this.messageRepository.create({
-            textMessage: payload.message,
-            to: payload.to,
-            htmlMessage: payload.templateHtml,
-            type: 'mail',
-            sent: false,
-        });
-        this.messageRepository.save(message);
-        setTimeout(() => {
-            this.devileryMessages()
-        }, Math.floor(5000 * Math.random()));
+        try {
+
+            const message = this.messageRepository.create({
+                textMessage: payload.message,
+                to: payload.to,
+                htmlMessage: payload.templateHtml,
+                type: 'mail',
+                sent: false,
+            });
+            this.messageRepository.save(message);
+            setTimeout(() => {
+                try {
+                    this.devileryMessages()
+                } catch (error) { console.trace(error); }
+            }, Math.floor(5000 * Math.random()));
+        } catch (error) { console.trace(error); }
     }
     public async devileryMessages() {
-        let phones = await this.phoneNumberRepository.find({
-            where: {
-                device: {
-                    // mac
-                }
-            }
-        })
-        let messages = await this.messageRepository.find({
-            where: {
-                sent: false,
-            }
-        });
+        try {
 
-        let msg;
-        if (!!messages)
-            messages.forEach(message => {
-                this.bus.sendMessgeToDevice(null, 'events', JSON.stringify(msg = {
-                    type: 'dispatch',
-                    origin: 'any',
-                    deliveryId: message.id,
-                    authorizationDelivery: 'any',
-                    message: {
-                        from: message.from,
-                        to: message.to,
-                        content: message.textMessage,
+            let phones = await this.phoneNumberRepository.find({
+                where: {
+                    device: {
+                        // mac
                     }
-                }));
+                }
+            })
+            let messages = await this.messageRepository.find({
+                where: {
+                    sent: false,
+                }
             });
+            let msg;
+            if (!!messages)
+                messages.forEach(message => {
+                    this.bus.sendMessgeToDevice(null, 'events', JSON.stringify(msg = {
+                        type: 'dispatch',
+                        origin: 'any',
+                        deliveryId: message.id,
+                        authorizationDelivery: 'any',
+                        message: {
+                            from: message.from,
+                            to: message.to,
+                            content: message.textMessage,
+                        }
+                    }));
+                });
+        } catch (error) {
+            console.trace(error);
+        }
     }
     async markAsDelivered(id: string) {
-        let a = (await this.messageRepository.findOneBy({
-            id
-        }));
-        a.sent = true
-        await this.messageRepository.save(a);
+        try {
+            let message = (await this.messageRepository.findOneBy({
+                id
+            }));
+            message.sent = true
+            await this.messageRepository.save(message);
+        } catch (error) {
+            console.trace(error);
+        }
     }
 }

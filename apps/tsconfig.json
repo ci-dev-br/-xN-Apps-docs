@@ -4,73 +4,73 @@
   "compilerOptions": {
     "paths": {
       "@ci-apps/Arquivos": [
-        "./projects/ci-apps/arquivos"
+        "./projects/ci-apps/arquivos/src/public-api"
       ],
       "@ci-apps/Cadastros": [
-        "./projects/ci-apps/cadastros"
+        "./projects/ci-apps/cadastros/src/public-api"
       ],
       "@ci-apps/Codex": [
-        "./projects/ci-apps/codex"
+        "./projects/ci-apps/codex/src/public-api"
       ],
       "@ci-apps/DevTools": [
-        "./projects/ci-apps/dev-tools"
+        "./projects/ci-apps/dev-tools/src/public-api"
       ],
       "@ci-apps/Dynamic": [
-        "./projects/ci-apps/dynamic"
+        "./projects/ci-apps/dynamic/src/public-api"
       ],
       "@ci-apps/Financeiro": [
-        "./projects/ci-apps/financeiro"
+        "./projects/ci-apps/financeiro/src/public-api"
       ],
       "@ci-apps/Formularios": [
-        "./projects/ci-apps/formularios"
+        "./projects/ci-apps/formularios/src/public-api"
       ],
       "@ci-apps/Gerencial": [
-        "./projects/ci-apps/gerencial"
+        "./projects/ci-apps/gerencial/src/public-api"
       ],
       "@ci-apps/Grencial": [
-        "./projects/ci-apps/grencial"
+        "./projects/ci-apps/grencial/src/public-api"
       ],
       "@ci-apps/Icons": [
-        "./projects/ci-apps/icons"
+        "./projects/ci-apps/icons/src/public-api"
       ],
       "@ci-apps/Imersao": [
-        "./projects/ci-apps/imersao"
+        "./projects/ci-apps/imersao/src/public-api"
       ],
       "@ci-apps/Infra": [
-        "./projects/ci-apps/infra"
+        "./projects/ci-apps/infra/src/public-api"
       ],
       "@ci-apps/Instalacao": [
-        "./projects/ci-apps/instalacao"
+        "./projects/ci-apps/instalacao/src/public-api"
       ],
       "@ci-apps/LowCode": [
-        "./projects/ci-apps/low-code"
+        "./projects/ci-apps/low-code/src/public-api"
       ],
       "@ci-apps/Mensagens": [
-        "./projects/ci-apps/mensagens"
+        "./projects/ci-apps/mensagens/src/public-api"
       ],
       "@ci-apps/Organizacao": [
-        "./projects/ci-apps/organizacao"
+        "./projects/ci-apps/organizacao/src/public-api"
       ],
       "@ci-apps/Produtos": [
-        "./projects/ci-apps/produtos"
+        "./projects/ci-apps/produtos/src/public-api"
       ],
       "@ci-apps/Profile": [
-        "./projects/ci-apps/profile"
+        "./projects/ci-apps/profile/src/public-api"
       ],
       "@ci-apps/Projetos": [
-        "./projects/ci-apps/projetos"
+        "./projects/ci-apps/projetos/src/public-api"
       ],
       "@ci-apps/SEO": [
-        "./projects/ci-apps/seo"
+        "./projects/ci-apps/seo/src/public-api"
       ],
       "@ci-apps/Threejs": [
-        "./projects/ci-apps/threejs"
+        "./projects/ci-apps/threejs/src/public-api"
       ],
       "@ci-apps/Treinamento": [
-        "./projects/ci-apps/treinamento"
+        "./projects/ci-apps/treinamento/src/public-api"
       ],
       "@ci-apps/Vendas": [
-        "./projects/ci-apps/vendas"
+        "./projects/ci-apps/vendas/src/public-api"
       ],
       "@ci-apps/blog": [
         "./projects/ci-apps/blog/src/public-api"
@@ -91,16 +91,16 @@
         "./projects/ci/launcher/src/public-api"
       ],
       "@ci/auth": [
-        "./projects/ci/auth"
+        "./projects/ci/auth/src/public-api"
       ],
       "@ci/components": [
-        "./projects/ci/components"
+        "./projects/ci/components/src/public-api"
       ],
       "@ci/core": [
-        "./projects/ci/core"
+        "./projects/ci/core/src/public-api"
       ],
       "@ci/data-grid": [
-        "./projects/ci/data-grid"
+        "./projects/ci/data-grid/src/public-api"
       ],
       "@ci/ilustrador": [
         "./projects/ci-apps/ilustrador/src/public-api"
@@ -108,11 +108,14 @@
       "@ci/nota": [
         "./projects/ci-apps/nota/src/public-api"
       ],
+      "@ci/cdk": [
+        "./projects/ci/cdk/src/public-api"
+      ],
       "@ci/organizacao": [
-        "./projects/ci/organizacao"
+        "./projects/ci/organizacao/src/public-api"
       ],
       "@ci/portal-api": [
-        "./projects/ci/portal-api"
+        "./projects/ci/portal-api/src/public-api"
       ],
       "@ci/components/calendar": [
         "./projects/ci/components/src/lib/calendar/public-api"
@@ -125,6 +128,9 @@
       ],
       "@ci/components/context-menu": [
         "./projects/ci/components/src/lib/context-menu/public-api"
+      ],
+      "@ci/components/cardboard": [
+        "./projects/ci/components/src/lib/cardboard/public-api"
       ],
       "@ci/espazio": [
         "./projects/ci/espazio/src/public-api"
@@ -140,6 +146,33 @@
       ],
       "@ci/apps/imersao/chess": [
         "./projects/ci-apps/imersao/games/chess/public-api"
+      ],
+      "@ci/components/feed": [
+        "./projects/ci/components/src/lib/feed/public-api"
+      ],
+      "@ci/components/aio": [
+        "./projects/ci/components/src/lib/aio/public-api"
+      ],
+      "@ci/components/master-detail": [
+        "./projects/ci/components/src/lib/master-detail/public-api"
+      ],
+      "@ci/components/data-grid": [
+        "./projects/ci/components/src/lib/data-grid/public-api"
+      ],
+      "@ci/components/models": [
+        "./projects/ci/components/src/lib/models/public-api"
+      ],
+      "@ci/components/window": [
+        "./projects/ci/components/src/lib/window/public-api"
+      ],
+      "@ci/components/dyn-form": [
+        "./projects/ci/components/src/lib/dyn-form/public-api"
+      ],
+      "@ci/components/action": [
+        "./projects/ci/components/src/lib/action/public-api"
+      ],
+      "@ci/components/devtools": [
+        "./projects/ci/components/src/lib/devtools/public-api"
       ],
     },
     "outDir": "./dist/out-tsc",

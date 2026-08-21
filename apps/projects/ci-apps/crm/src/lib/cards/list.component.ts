@@ -1,15 +1,15 @@
-import { Component } from "@angular/core";
-import { CoreModule } from "@ci/core";
+import { Component, Input, Type } from "@angular/core";
+import { CoreModule, ServicesService } from "@ci/core";
 
 @Component({
-    selector: 'ci-card--crm-totalizador',
+    selector: 'ci-card--list',
     template: `
-        <h4>Top agents</h4>
+        @if(source){<h4 ci-title>Lista de itens</h4>
         <div class="list">
-            <div class="item">asds</div>
-            <div class="item">erqge</div>
-            <div class="item">h45h</div>
-        </div>
+            @for(item of source;track item){<div class="item-renderer">
+                {{item | dao}}
+            </div>}
+        </div>}@else{Carregando...}
     `,
     standalone: true,
     imports: [
@@ -17,16 +17,18 @@ import { CoreModule } from "@ci/core";
     ]
 })
 export class ListComponent {
-
+    @Input() source?: any[];
+    constructor() { }
 }
 export const ListCardInfo = {
-    title: 'Top agents',
-    descricao: `Top Agents.`,
-    tags: ['CRM', 'Receita', 'List'],
+    title: 'Lista de dados',
+    descricao: `Visualização de conjunto de dados em forma de lista.`,
+    tags: ['Valores', 'List', 'Listar'],
     componentRef: ListComponent,
-    componentVersion: '1.0.0',
+    componentVersion: '1.0.0-beta',
     componentName: 'ListComponent',
     settings: {
-
+        service: ServicesService,
+        type: Date.name
     }
 };

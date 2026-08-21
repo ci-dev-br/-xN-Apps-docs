@@ -12,12 +12,12 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { CoreModule } from "@ci/core";
-import { DynFormModule, LNavModule, StatusBarModule } from "@ci/components";
+import { LNavModule, StatusBarModule } from "@ci/components";
 import { EditarAplicativoComponent } from './editar-aplicativo/editar-aplicativo.component';
 import { GerencialComponent } from "./gerencial.component";
-import { WindowModule } from "@ci/components";
+import { WindowModule } from "@ci/components/window";
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { GridModule } from "@ci/components";
+import { DataGridModule } from "@ci/components/data-grid";
 import { MatSelectModule } from "@angular/material/select";
 import { MatChipsModule } from "@angular/material/chips";
 import { MobFakeComponent } from "./mob-fake/mob-fake.component";
@@ -27,6 +27,9 @@ import { GerecialSettingsComponent } from "./views/settings/gerecial-settigns.co
 
 import { DevicesComponent } from "./views/devices/devices.component";
 import { UsersComponent } from "./views/users/users.component";
+import { DynFormModule } from "@ci/components/dyn-form";
+import { MasterDetailComponent, MasterDetailModule } from "@ci/components/master-detail";
+import { HomeComponent } from "./views/home/home.component";
 
 const routes: Routes = [
     {
@@ -36,10 +39,29 @@ const routes: Routes = [
             role: 'MASTER',
         },
         children: [
-            { path: 'devices', component: DevicesComponent, data: { title: '    ', icon: 'smartphone' } },
+            {
+                path: 'home', component: HomeComponent,
+                data: { title: '    ', icon: 'smartphone' }
+            },
+            {
+                path: 'devices', component: DevicesComponent,
+                data: { title: '    ', icon: 'smartphone' }
+            },
             // { path: 'settings', component: undefined },
-            { path: 'applications', component: ApplicationManagerComponent, data: { title: 'Apps', icon: 'apps' } },
-            { path: 'user-manager', component: UsersComponent, data: { title: 'Gestão de Usuários', icon: 'badge' } },
+            {
+                path: 'applications', component: MasterDetailComponent
+                /* ApplicationManagerComponent */,
+                data: {
+                    title: 'Apps', icon: 'apps', schema: 'Application',
+                    search: {
+                        all: true
+                    }
+                }
+            },
+            {
+                path: 'user-manager', component: UsersComponent,
+                data: { title: 'Gestão de Usuários', icon: 'badge' }
+            },
         ]
     },
     {
@@ -72,13 +94,14 @@ const routes: Routes = [
         MatTooltipModule,
         MatInputModule,
         WindowModule,
-        GridModule,
+        DataGridModule,
         MatButtonToggleModule,
         FormsModule,
         MatSelectModule,
         MatChipsModule,
         MobFakeModule,
         StatusBarModule,
+        MasterDetailModule,
         DynFormModule,
         RouterModule.forChild(routes)
     ]

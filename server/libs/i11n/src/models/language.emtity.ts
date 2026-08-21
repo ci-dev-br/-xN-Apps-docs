@@ -9,7 +9,7 @@ import { ApiProperty } from "@nestjs/swagger";
 @Entity({ schema })
 export class Language {
     @ApiProperty({ nullable: true, required: false }) @PrimaryColumn({ length: 8 })
-    private code: string;
+    code: string;
     @ApiProperty({ nullable: true, required: false }) @Column({ nullable: true })
-    private description?: string;
+    description?: string;
 }

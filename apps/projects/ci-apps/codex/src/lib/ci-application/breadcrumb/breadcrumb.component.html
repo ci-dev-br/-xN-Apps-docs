@@ -1,0 +1,27 @@
+@if(!!paths){@for(path of paths;track path){
+<ng-container *ngTemplateOutlet="item;context: {path:path}"></ng-container>
+}}
+<ng-template #item let-path="path">
+    <div class="path" [matMenuTriggerFor]="menu" (menuOpened)="loadMenu(path)">{{path.name}}
+        <mat-menu #menu>
+            <ng-container *ngTemplateOutlet="innerMenu;context: {path:path}"></ng-container>
+            <ng-template #innerMenu let-path="path">
+                @for (item of path.list || []; track $index) {
+                @if(item.isDirectory){
+                <button mat-menu-item (menuOpened)="loadMenu(item)" [matMenuTriggerFor]="submenu">{{item.name}}</button>
+                <mat-menu #submenu>
+                    <ng-container *ngTemplateOutlet="itemMenu;context: {item:item}"></ng-container>
+                </mat-menu>
+                }@else{ <!-- : isFile -->
+                <button mat-menu-item>{{item.name}}</button>
+                }
+                }
+            </ng-template>
+            <ng-template #itemMenu let-item="item">
+                @for (child of item.list; track $index) {
+                <button mat-menu-item>{{child.name}}</button>
+                }
+            </ng-template>
+        </mat-menu>
+    </div>
+</ng-template>

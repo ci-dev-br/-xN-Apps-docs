@@ -24,22 +24,30 @@ export class DeviceController {
     @Post('Connect')
     @ApiResponse({ type: DevicePayload })
     public async connectDevice(@Body() input: DevicePayload) {
-        console.log(input);
-        return await this.deviceService.connect({
-            mac: input.mac,
-            type: input.name,
-            numbers: input.numbers
-            // numbers: (input.numbers || []).filter(e => !!e.number && e.number.length > 0),
-        });
+        try {
+            console.log(input);
+            return await this.deviceService.connect({
+                mac: input.mac,
+                type: input.name,
+                numbers: input.numbers
+                // numbers: (input.numbers || []).filter(e => !!e.number && e.number.length > 0),
+            });
+        } catch (err) {
+            console.trace(err)
+        }
     }
     @Public()
     @ApiOperation({ operationId: 'DevicePool' })
     @Post('Pool')
     @ApiResponse({ type: PoolDto })
     public async Pool(@Body() input: DevicePayload) {
-        let pool = new PoolDto();
-        pool.messages = [];
-        return await pool;
+        try {
+            let pool = new PoolDto();
+            pool.messages = [];
+            return await pool;
+        } catch (err) {
+            console.trace(err)
+        }
     }
 
     @ApiOperation({ operationId: 'GetAll' })
@@ -47,6 +55,10 @@ export class DeviceController {
     @Role('ADMIN')
     @ApiResponse({ type: Device, isArray: true })
     public async GetAll(@Body() input?: GetDeviceInput) {
-        return await this.deviceService.findAll(input?.query);
+        try {
+            return await this.deviceService.findAll(input?.query);
+        } catch (err) {
+            console.trace(err)
+        }
     }
 }

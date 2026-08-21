@@ -1,3 +1,11 @@
 # Task list
 
 [ ] Implementar deploy por gulp, incluindo todos os clients privados que são distribuídos por @ci/Apps.
+[ ] Corrigir em CMS abertura da linha para edição dos itens;
+[ ] Corrigir em CMS criação de novos itens;
+[ ] Adicionar ao CMS o componente de Dashboard na Página de apresentação do módulo CMS;
+[ ] Componente SplitViewer para divisão lateral da layouts;
+[ ] UML Viewer;
+    [ ] Mermaid Implementation;
+[ ] Mermaid Universal Interpretor;
+[ ] -

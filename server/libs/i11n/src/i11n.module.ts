@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { I11nService } from './i11n.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CurrencyCode } from '@ci/g11n';
 import { Language } from './models/language.emtity';
 import { Translation } from './models/translation.entity';
 import { Dictionary } from './models/dictionary.entity';
+import { I11nController } from './controller/i11n.controller';
+import { I11nService } from './services/i11n.service';
 export const I11nEntities = [
   CurrencyCode,
   Language,
@@ -32,6 +33,9 @@ export const I11nEntities = [
   ],
   providers: [
     I11nService,
+  ],
+  controllers: [
+    I11nController,
   ],
   exports: [
     I11nService,

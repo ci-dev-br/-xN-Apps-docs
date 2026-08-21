@@ -1,0 +1,14 @@
+<!-- <h2>{{currentViewDate | date: 'MMMM' }} <span>{{ currentViewDate | date: 'yyyy' }}</span></h2> -->
+<mat-toolbar>
+    <span>{{ currentViewDate | date: 'yyyy' }}</span>
+    <button mat-button (click)="viewMode='day'">Dia</button>
+    <button mat-button (click)="viewMode='month'">Mês</button>
+    <button mat-button (click)="viewMode='year'">Ano</button>
+    <button mat-icon-button (click)="prevMonth()" aria-label="Mês anterior">
+        <mat-icon>arrow_left</mat-icon>
+    </button>
+    <button mat-button (click)="goToToday()">Hoje</button>
+    <button mat-icon-button (click)="nextMonth()" aria-label="Próximo mês">
+        <mat-icon>arrow_right</mat-icon>
+    </button>
+</mat-toolbar>

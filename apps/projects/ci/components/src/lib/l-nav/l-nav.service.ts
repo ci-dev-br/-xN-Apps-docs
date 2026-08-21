@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { IItemMenu } from "../window/window.component";
+import { IItemMenu } from "../window/src/window.component";
 
 @Injectable()
 export class LNavService {

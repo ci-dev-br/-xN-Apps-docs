@@ -3,7 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AuthModule } from '@ci/auth';
-import { LNavModule } from '@ci/components';
+import { BoardModule, LNavModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { CadastroService, IDynamicForm } from '@ci/portal-api';
 import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
@@ -33,6 +33,7 @@ interface IMenuItem {
     RouterModule,
     LayoutModule,
     MatMenuModule,
+    BoardModule,
   ],
   standalone: true,
   templateUrl: './cadastros.component.html',

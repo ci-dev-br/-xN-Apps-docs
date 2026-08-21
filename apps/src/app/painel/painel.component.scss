@@ -72,6 +72,7 @@ mat-toolbar {
 
 mat-drawer {
     z-index: 1001;
+    border-radius: 0;
 }
 
 .wrapper {
@@ -105,16 +106,16 @@ mat-drawer {
 .side-ativo {
     position: relative;
 
-    &::before {
-        content: " ";
-        position: absolute;
-        left: 0;
-        top: 10px;
-        bottom: 10px;
-        width: 4px;
-        border-radius: 4px;
-        background-color: var(--mdc-protected-button-label-text-color);
-    }
+   //  &::before {
+   //      content: " ";
+   //      position: absolute;
+   //      left: 0;
+   //      top: 10px;
+   //      bottom: 10px;
+   //      width: 4px;
+   //      border-radius: 0px;
+   //      // background-color: var(--mdc-protected-button-label-text-color);
+   //  }
 }
 
 mat-drawer {
@@ -131,24 +132,24 @@ mat-drawer {
 mat-drawer-container {
 
     // margin-left: 60px;
-    &::before {
-        position: absolute;
-        content: " ";
-        top: 0;
-        bottom: 0;
-        width: 50px;
-        background-color: #ffffff;
-        z-index: -1;
-    }
+    // &::before {
+    //     position: absolute;
+    //     content: " ";
+    //     top: 0;
+    //     bottom: 0;
+    //     width: 50px;
+    //     background-color: #ffffff;
+    //     z-index: -1;
+    // }
 }
 
 .apps {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    justify-content: flex-start;
-    gap: 2px;
-    padding: 4px 0;
+    justify-content: center;
+    gap: 0px;
+    padding: 0;
     height: 80vh;
     flex: auto;
     position: relative;
@@ -159,6 +160,10 @@ mat-drawer-container {
         left: 0;
         top: 0;
         right: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         transition: all ease-in-out 2s !important;
     }
 }
@@ -173,7 +178,7 @@ button.app {
     height: unset;
     min-height: unset;
     max-height: unset;
-    gap: 4px;
+    gap: 0px;
     border-radius: 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -237,4 +242,40 @@ button.app {
         box-shadow: 1px 3px 6px -1px rgba(#000, .33);
         // }
     }
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+
+    /**
+        vertical center
+    */
+    &.--vc {
+        align-items: center;
+    }
+}
+
+.mat-drawer-content {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+    align-items: stretch;
+    justify-content: stretch;
+
+    background-color: var(--mdc-protected-button-label-text-color);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+
+    flex: auto;
+    align-items: stretch;
+    justify-content: stretch;
+    overflow: hidden;
+    background-color: var(--mdc-protected-button-label-text-color);
+}
+ci-navbar{
+    z-index: 500;
 }

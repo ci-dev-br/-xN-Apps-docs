@@ -1,12 +1,11 @@
-import { EnvironmentProviders, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StorageService } from './storage/storage.service';
 import { CoreService } from './core.service';
 import { AutoFocusDirective } from './directives/auto-focus.directive';
-import { DaoService, IChangeable } from './dao/dao.service';
+import { DaoService } from './dao/dao.service';
 import { ServicesService } from './services/services.service';
 import { Localizacao } from './models/localozacao';
-import { Damn } from './services/damn.service';
 import { AutoScollDirective } from './directives/auto-scroll.directive';
 import { ConsoleService } from './services/console.service';
 import { ThemeService } from './theme/theme.service';
@@ -16,6 +15,10 @@ import { ContextMenuServices } from './contextmenu/contextmenu.service';
 import { DaoBuilder, ISchema, ISchemaProperty } from './dao/dao-builder.service';
 import { DaoPipe } from './pipes/dao.pipe';
 import { StageDirective } from './directives/stage.directive';
+import { IChangeable, OfString, SerializedObjectData } from './dao/models';
+import { AtOf, Handlers } from './services/handlers.service';
+import { NomenclaturaPipe } from './pipes/nomenclatura.pipe';
+import { Message } from './services/message';
 
 @NgModule({
   declarations: [
@@ -24,6 +27,7 @@ import { StageDirective } from './directives/stage.directive';
     DaoPipe,
     StageDirective,
     SafePipe,
+    NomenclaturaPipe,
   ],
   imports: [
     CommonModule,
@@ -33,7 +37,6 @@ import { StageDirective } from './directives/stage.directive';
     CoreService,
     DaoService,
     ServicesService,
-    Damn,
     ConsoleService,
     ContextMenuServices,
     DaoBuilder,
@@ -45,6 +48,7 @@ import { StageDirective } from './directives/stage.directive';
     AutoFocusDirective,
     AutoScollDirective,
     StageDirective,
+    NomenclaturaPipe,
   ]
 })
 export class CoreModule { }
@@ -55,6 +59,8 @@ export {
   DaoBuilder,
   DaoPipe,
   IChangeable,
+  SerializedObjectData,
+  OfString,
   ISchemaProperty,
   ISchema,
   Localizacao,
@@ -64,4 +70,7 @@ export {
   SafePipe,
   ThemeService,
   WsService,
+  Handlers,
+  AtOf,
+  NomenclaturaPipe,
 }

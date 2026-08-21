@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Inject, OnInit, PLATFORM_ID } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatToolbarModule } from "@angular/material/toolbar";
@@ -8,6 +8,9 @@ import { Device, DeviceService } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { isPlatformBrowser } from "@angular/common";
+import { MatMenuModule } from "@angular/material/menu";
 
 export interface DeviceItem {
     device?: Device;
@@ -27,12 +30,18 @@ export interface DeviceItem {
         MatButtonModule,
         MatFormFieldModule,
         MatInputModule,
+        MatTooltipModule,
+        MatMenuModule,
     ]
 }) export class DevicesComponent implements OnInit {
+    isBrowser: boolean;
     constructor(
         private readonly deviceService: DeviceService,
         private readonly events: WsService,
-    ) { }
+        @Inject(PLATFORM_ID) private platformId: Object
+    ) {
+        this.isBrowser = isPlatformBrowser(this.platformId);
+    }
     async ngOnInit() {
         this.LoadDevices();
         this.events.addMessageListener('notice', (data: any) => {
@@ -45,7 +54,7 @@ export interface DeviceItem {
             if (!!data?.data?.devices) {
                 this.devices?.forEach(deviceItem => {
                     let device_result = data.data.devices.find(d => d.mac === deviceItem.device?.mac);
-                    deviceItem.status = (device_result as any).status;
+                    deviceItem.status = (device_result as any)?.status;
                 });
             }
         })
@@ -54,8 +63,12 @@ export interface DeviceItem {
                 this.statusConnection = this.events?.status || 'loading';
             }, 0);
         });
+        if (this.isBrowser) {
+            this.isAndroid = navigator.userAgent.indexOf('Android') > -1;
+        }
     }
     statusConnection = 'loading';
+    isAndroid: boolean = false;
     conectarDispositivo() { }
     token = '';
     async openFakeMobileService() {
@@ -86,4 +99,18 @@ export interface DeviceItem {
         })
     }
     devices?: DeviceItem[];
+    async InstallLauncher() {
+        const url = '/downloads/launcher.1.0.2.apk';
+        const link = document.createElement('a');
+
+        link.href = url;
+        link.setAttribute('download', 'launcher.1.0.2.apk');
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    async AdicionarNumero() {
+
+    }
 }

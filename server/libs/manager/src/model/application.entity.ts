@@ -114,7 +114,8 @@ export class Application {
     @ApiProperty({
         nullable: true,
         required: false,
-        title: 'Domínio'
+        title: 'Domínio',
+        type: Domain,
     })
     @ManyToOne(() => Domain)
     @JoinTable()
@@ -221,7 +222,7 @@ export class Application {
     administrators?: User[];
     @ApiProperty({
         title: 'Usuários da Aplicação',
-        description: 'Os usuários da aplicação são aqueles que fizeram registro ou possuem licensa de uso da aplicação. Algumas aplicações podem exigir licença para uso de módulos específicos.',
+        description: 'Os usuários da aplicação são aqueles que fizeram registro ou possuem licença de uso da aplicação. Algumas aplicações podem exigir licença para uso de módulos específicos.',
         type: User,
         isArray: true,
         nullable: true,

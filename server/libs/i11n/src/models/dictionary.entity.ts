@@ -12,9 +12,17 @@ import { Translation } from "./translation.entity";
 })
 export class Dictionary extends FullAuditedEntity {
     @Column({ nullable: true }) @ApiProperty({ nullable: true, required: false })
-    private descrition?: string;
+    descrition?: string;
     @ManyToOne(() => Language) @ApiProperty({ nullable: true, required: false, type: Language })
-    private language?: Language;
+    language?: Language;
     @ManyToMany(type => Translation, translation => translation.dictionary)
     translations?: Translation[];
+
+    @ApiProperty({
+        title: 'Endereço de Repositório local',
+        nullable: true,
+        required: false
+    })
+    @Column({ nullable: true })
+    localRepoUri?: string;
 }

@@ -1,25 +1,19 @@
-import { Injectable, Injector, Optional } from '@angular/core';
-import { Damn } from './services/damn.service';
-import { ActivatedRoute, NavigationEnd, NavigationStart, Router } from '@angular/router';
-import { ThemeService, WsService } from './core.module';
+import { Injectable, Optional } from '@angular/core';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { NotificationService } from './notification/notification.service';
-import { ContextMenuServices } from './contextmenu/contextmenu.service';
+import { Apps } from './apps/apps.service';
 @Injectable()
 export class CoreService {
   constructor(
-    inject: Injector,
+    @Optional() private readonly apps?: Apps,
     @Optional() private readonly router?: Router,
-    @Optional() private readonly ar?: ActivatedRoute,
-    @Optional() private readonly themeService?: ThemeService,
     @Optional() private readonly notification?: NotificationService,
-    @Optional() private readonly contextMenu?: ContextMenuServices,
-    @Optional() private readonly ws?: WsService,
-  ) {
-    if (!!router) this.initRouterFixings()
-    setTimeout(() => inject.get(Damn));
-    notification?.requestPermission();
-  }
-
+    //  @Optional() inject: Injector,
+    // @Optional() private readonly ar?: ActivatedRoute,
+    // @Optional() private readonly themeService?: ThemeService,
+    // @Optional() private readonly contextMenu?: ContextMenuServices,
+    // @Optional() private readonly ws?: WsService,
+  ) { }
   /**
    * 
    * para que serve este trecho? qual era a intenção inicial?
@@ -41,5 +35,17 @@ export class CoreService {
       }, 0)
     })
   }
-
+  init() {
+    try {
+      if (!!this.router) this.initRouterFixings()
+      //  setTimeout(() => inject.get(Damn));
+    } catch (error) {
+      console.info('[0xf1]');
+    }
+    /*  try {
+       this.notification?.requestPermission();
+     } catch (error) {
+       console.info('[0xf2]');
+     } */
+  }
 }

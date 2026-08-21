@@ -1,0 +1,12 @@
+<header>
+
+    <img src="" alt="">
+</header>
+@if(colecoes){@for(colecao of colecoes; track $index){
+<h1>{{colecao.title}}</h1>
+<div class="thumbs">
+    @for(x of colecao.galeria; track $index){
+    <div class="thumb">
+        <p>{{x.desc}}</p>
+    </div>}
+</div>}}

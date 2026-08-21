@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component'
-import { MasterDetailComponent } from '@ci/components';
+import { MasterDetailComponent } from '@ci/components/master-detail';
+import { BoardComponent } from '@ci/components';
 const routes: Routes = [
   {
     path: '', component: HomeComponent, data: {
@@ -9,10 +10,18 @@ const routes: Routes = [
     },
     children: [
       {
+        path: '',
+        component: BoardComponent
+      },
+      {
         path: ':EntityName',
         component: MasterDetailComponent,
         data: {
-          /// dataType: 'EntityMasterDetail', title: 'Unidade de Medida', icon: 'svg:unidade_medida',
+          schema: 'LancamentoFinanceiro',
+          /* TODO: replace at to dictionary */
+          // dataType: 'EntityMasterDetail',
+          title: 'Lançamento Financeiro',
+          // icon: 'svg:unidade_medida',
         }
       },
     ]

@@ -1,14 +1,16 @@
 <nav mat-tab-nav-bar [tabPanel]="tabPanel">
+    @if(menus){
     <button mat-icon-button (click)="menus.opened.next(!menus.opened.value)">
         <mat-icon>{{menus.opened.value ? 'close' : 'menu'}}</mat-icon>
     </button>
+    }
     @if(abas){
     @for (aba of abas; track aba) {
     <a mat-tab-link [routerLink]="'./' + aba.path">
         @if(aba.icon){<mat-icon>
             {{aba.icon}}
         </mat-icon>}
-        {{aba.label}}</a>
+        {{aba.label | nomenclatura}}</a>
     }
     }
 </nav>

@@ -1,7 +1,14 @@
 :host {
+    height: inherit;
+    max-height: calc(100vh - #{60px * 2});
+
+    align-items: stretch;
+    justify-content: stretch;
+    overflow: auto;
     display: flex;
     flex-direction: column;
 }
+
 
 .after-setting {
     display: flex;
@@ -11,12 +18,48 @@
 }
 
 .cards-container {
+    // display: flex;
+    // flex-direction: row;
+    // flex-wrap: wrap;
+    // align-items: center;
+    // justify-content: center;
+    // gap: 0;
+    // // margin: 0 0px;
+    // border-radius: 5px;
+    // border: solid 1px rgba(255, 255, 255, .3);
+    // // overflow: hidden;
+    // box-shadow: 2px 3px 6px 12px rgba(0, 0, 0, .75);
+    // position: absolute;
+}
+
+.card {
+    border: solid 1px red;
+    flex: 1;
+    min-height: 120px;
+}
+
+.board-wrap {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    flex: auto;
+    overflow: auto;
+
+    .inner-content {
+        display: flex;
+        flex-direction: column;
+        flex: auto;
+        overflow: auto;
+    }
+}
+
+.empty-board {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0;
-    margin: 0 0px;
-    border: solid 1px red;
+    gap: 10px;
+    padding: 20px;
+    text-align: center;
 }

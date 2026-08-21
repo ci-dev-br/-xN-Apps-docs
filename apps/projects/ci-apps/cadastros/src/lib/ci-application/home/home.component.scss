@@ -5,16 +5,40 @@
     overflow: auto;
 }
 
+
+:host {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    align-items: stretch;
+    justify-content: stretch;
+}
+
+
 mat-tab-nav-panel {
     flex: auto;
     display: flex;
     flex-direction: column;
+    overflow: auto;
 
     & ::ng-deep>* {
         flex: auto;
     }
 }
 
-router-outlet{
+router-outlet {
     display: contents;
+}
+
+
+.container {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    justify-content: stretch;
+    flex: auto;
+    height: 100%;
 }

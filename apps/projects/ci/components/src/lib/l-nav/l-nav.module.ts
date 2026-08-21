@@ -8,7 +8,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatBadgeModule } from '@angular/material/badge';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { WindowModule } from '../window/window.module';
+import { WindowModule } from '../window/src/window.module';
 
 @NgModule({
   declarations: [

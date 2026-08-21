@@ -1,11 +1,13 @@
-import { Component, ComponentRef, ElementRef, OnInit, Optional } from '@angular/core';
+import { Component, ComponentRef, ElementRef, OnInit, Optional, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { CoreModule } from '@ci/core';
-import { ChessService } from '@ci/portal-api';
+import { Objeto, ThrejsComponent } from '@ci/espazio';
+import { ChessService, GameplayService } from '@ci/portal-api';
 import { Chess, Move } from 'chess.js';
 import { lastValueFrom } from 'rxjs';
+import { PerspectiveCamera } from 'three';
 const PIECE_VALUES: { [key: string]: number } = {
     p: 10 * 2.1,
     n: 30 * 2.2,
@@ -22,14 +24,23 @@ const PIECE_VALUES: { [key: string]: number } = {
         MatButtonModule,
         MatIconModule,
         MatMenuModule,
+        ThrejsComponent,
     ],
     templateUrl: './chess.html',
     styleUrls: ['./chess.scss']
 })
 export class ChessGameComponent implements OnInit {
+    renderMode: '3d' | '2d' = '2d';
+
+    @ViewChild('rendererContainer', { static: true }) rendererContainer!: ElementRef<HTMLDivElement>;
+    @ViewChild('th', { static: true }) th?: ThrejsComponent;
+    objetos: Objeto[] = [
+        new Objeto({ glb_file: 'chess.glb' }),
+    ];
     stage: 'menu' | 'play' | 'viewer' = 'menu';
     player: 'white' | 'black' = 'white';
     game = new Chess();
+    camera = new PerspectiveCamera(75, 400 / 300, 0.1, 1000);
     virtualGame = new Chess();
     board: any[][] = [];
     selectedSquare: string | null = null;
@@ -39,14 +50,39 @@ export class ChessGameComponent implements OnInit {
         'hard',]
     difficulty: 'easy' | 'medium' | 'hard' = 'hard';
     ngOnInit() {
+
+        this.camera.position.z = 4;
+        this.camera.position.y = 3;
         this.updateBoard();
     }
     start() {
         this.isVsIA = false;
         this.stage = 'play';
+        // const { clientWidth, clientHeight } = this.rendererContainer?.nativeElement;
         this.resetGame();
+        setTimeout(() => {
+            this.updatePosition();
+        }, 600)
     }
-    startVsIA() {
+    updatePosition() {
+        if (!this.objetos) return;
+        let objetos = this.objetos[0].gltf?.scene?.children;
+
+        objetos?.forEach(mesh => {
+            if (mesh?.name?.indexOf('Dark') > -1) {
+                // mesh.position.x = 0;
+                // mesh.position.z = 0;
+            }
+            if (mesh?.name?.indexOf('Light') > -1) {
+                // mesh.position.x = 0;
+                // mesh.position.z = 0;
+            }
+        });
+        ///this.objetos.
+    }
+    gameplay?: any;
+    async startVsIA() {
+        this.gameplay = (await lastValueFrom(this.gameplays.createNew({})));
         this.isVsIA = true;
         this.resetGame();
     }
@@ -87,7 +123,7 @@ export class ChessGameComponent implements OnInit {
             console.log("Movimento inválido");
         }
     }
-    private getHeuristicMove(moves: any[]): any {
+    /* private getHeuristicMove(moves: any[]): any {
         try {
             return moves.sort((a, b) => {
                 const aValue = a.captured ? PIECE_VALUES[a.captured] : 0;
@@ -98,8 +134,9 @@ export class ChessGameComponent implements OnInit {
             error;
             debugger;
         }
-    }
+    } */
     constructor(
+        private readonly gameplays: GameplayService,
         private chess: ChessService,
         @Optional() private readonly er: ElementRef<any>,
         @Optional() private readonly cr: ComponentRef<any>
@@ -110,26 +147,16 @@ export class ChessGameComponent implements OnInit {
 
     async makeAIMove() {
         const possibilidades = this.game.moves({ verbose: true });
-        let move = undefined;
+        let moviment = undefined;
         if (possibilidades.length === 0) return;
         try {
-            switch (this.difficulty) {
-                case 'hard':
-                    let server_play = await lastValueFrom(this.chess.chessMove({ body: { fen: this.game.fen() } }));
-                    move = server_play.move as any;
-                    break;
-                case 'medium':
-                    move = this.getHeuristicMove(possibilidades);
-                    break;
-                default:
-                    const randomIndex = Math.floor(Math.random() * possibilidades.length);
-                    move = possibilidades[randomIndex];
-            }
+            let reaction = await lastValueFrom(this.chess.chessMove({ body: { fen: this.game.fen() } }));
+            if ('move' in reaction) moviment = reaction.move as any;
         } catch (error) {
             console.trace(error);
         }
-        if (!!move)
-            this.game.move(move);
+        if (!!moviment)
+            this.game.move(moviment);
         this.updateBoard();
         this.checkGameStatus();
     }

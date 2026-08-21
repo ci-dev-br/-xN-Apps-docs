@@ -3,9 +3,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { /* ActivatedRoute */ ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CoreModule } from '@ci/core';
 // import { APPS, IApp } from './apps';
-import { AuthModule, roles, UserService } from '@ci/auth';
+import { AuthModule, roles, UserAuthenticationService } from '@ci/auth';
 import { BoardModule } from '@ci/components';
 import { MatTabsModule } from '@angular/material/tabs';
+import { Prancheta, PranchetaService } from '@ci/portal-api';
+import { MatButtonModule } from '@angular/material/button';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'ci-apps',
@@ -16,6 +19,8 @@ import { MatTabsModule } from '@angular/material/tabs';
     BoardModule,
     AuthModule,
     MatTabsModule,
+    MatButtonModule,
+    BoardModule,
   ],
   standalone: true,
   providers: [
@@ -29,12 +34,13 @@ import { MatTabsModule } from '@angular/material/tabs';
   styleUrl: './apps.component.scss'
 })
 export class AppsComponent implements OnInit {
-  // apps?: IApp[];
+  boards?: Prancheta[];
   abas?: { label: string, path: string, icon: string }[];
   constructor(
-    private readonly userService: UserService,
+    private readonly userService: UserAuthenticationService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
+    private readonly pracheta_service: PranchetaService,
   ) { }
   async ngOnInit() {
     this.abas = this.route.routeConfig?.children?.filter(r => r.path?.indexOf('board') === -1)?.map(r => {
@@ -68,7 +74,6 @@ export class AppsComponent implements OnInit {
   contextMenuHanlder(event: MouseEvent | PointerEvent | Event) {
     event.preventDefault;
   }
-
   @HostListener('keyup', ['$event'])
   keyUpHandler(e: KeyboardEvent) {
     if (e.key == 'PrintScreen') {
@@ -76,7 +81,6 @@ export class AppsComponent implements OnInit {
       alert('Screenshots disabled!');
     }
   };
-
   @HostListener('keydown', ['$event'])
   keyDownHandler(e: KeyboardEvent) {
     if (e.ctrlKey && e.key == 'p') {
@@ -87,6 +91,9 @@ export class AppsComponent implements OnInit {
     }
   };
   async AddNavigation(event: MouseEvent) {
-
+    if (!this.boards) this.boards = [];
+    // this.boards.push({ title: 'Nova Prancheta' });
+    const board = await lastValueFrom(this.pracheta_service.pranchetaControllerSync({ body: { prancheta: {} } }))
+    this.boards.push(board);
   }
 }

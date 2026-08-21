@@ -1,0 +1,15 @@
+<div class="uml-wrapper">
+    @if (error) {
+    <div class="error-message">Falhou ao gerar diagrama: {{ error }}</div>
+    }@else{
+    <!-- Viewport de 300x300 com eventos de mouse -->
+    <div class="mermaid-viewport" [class.grabbing]="isDragging" (wheel)="onWheel($event)"
+        (mousedown)="onMouseDown($event)" (mousemove)="onMouseMove($event)" (mouseup)="onMouseUp()"
+        (mouseleave)="onMouseUp()">
+        <!-- Wrapper que recebe a transformação de matriz (Zoom/Pan) -->
+        <div class="zoom-wrapper" [style.transform]="transformStyle">
+            <div #mermaidContainer class="mermaid-container"></div>
+        </div>
+    </div>
+    }
+</div>

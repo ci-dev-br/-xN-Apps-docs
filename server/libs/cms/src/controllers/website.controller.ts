@@ -10,14 +10,16 @@ export class SyncPayloadDaoWebsite extends SyncPayloadDao<Website> {
 }
 export class ObterListaWebsite {
     // override data?: Website;
-    @ApiProperty({})
+    @ApiProperty({ nullable: true, required: false })
     skip?: number;
-    @ApiProperty({})
+    @ApiProperty({ nullable: true, required: false })
     take?: number;
-    @ApiProperty({})
+    @ApiProperty({ nullable: true, required: false })
     where?: FindOptionsWhere<Website>[] | FindOptionsWhere<Website>;
+    @ApiProperty({ nullable: true, required: false })
+    order?: any;
 }
-export class PessoaCotrollerGetInputDto {
+export class WebsiteCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
     query?: string;
     @ApiProperty({ nullable: true, required: false })

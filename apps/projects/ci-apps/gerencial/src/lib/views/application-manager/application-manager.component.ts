@@ -1,11 +1,12 @@
 import { Component } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
-import { MatIcon, MatIconModule } from "@angular/material/icon";
+import { MatIconModule } from "@angular/material/icon";
 import { MatTableModule } from "@angular/material/table";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { Application, ApplicationService } from "@ci/portal-api";
 import { CoreModule, DaoBuilder } from "@ci/core";
-import { DataListModule, WindowService, GridModule, IDataGridOptions, IColumnOption } from "@ci/components";
+import { DataListModule } from "@ci/components";
+import { DataGridModule, IDataGridOptions, IColumnOption } from "@ci/components/data-grid";
 import { lastValueFrom } from "rxjs";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
@@ -14,6 +15,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { FormsModule } from "@angular/forms";
 import { EditarAplicativoComponent } from "../../editar-aplicativo/editar-aplicativo.component";
 import { Router } from "@angular/router";
+import { WindowService } from "@ci/components/window";
 @Component({
     selector: 'ci-application-manager',
     templateUrl: 'application-manager.component.html',
@@ -31,7 +33,7 @@ import { Router } from "@angular/router";
         MatSelectModule,
         MatIconModule,
         FormsModule,
-        GridModule,
+        DataGridModule,
         DataListModule,
     ]
 }) export class ApplicationManagerComponent {
@@ -46,6 +48,7 @@ import { Router } from "@angular/router";
         private readonly daoBuilder: DaoBuilder,
         private readonly router: Router,
     ) {
+        // (async () => this.loadPreloadedApplications())();
         (async () => this.loadGrid())();
         (async () => this.carregarListaAplicativos())();
     }
@@ -94,7 +97,7 @@ import { Router } from "@angular/router";
         this.apps = [...app];
     }
     async carregarListaAplicativos() {
-        this.apps = await lastValueFrom(this.applications.get({ body: { all: true } }));
+        this.apps = await lastValueFrom(this.applications.getList({ body: { all: true } }));
     }
     async adicionarAplicacao() {
         // TODO: adicionar aplicação.
@@ -104,4 +107,9 @@ import { Router } from "@angular/router";
             }
         });
     }
+    /* 
+        async loadPreloadedApplications() {
+            let a = this.router.config;
+            a;
+        } */
 }

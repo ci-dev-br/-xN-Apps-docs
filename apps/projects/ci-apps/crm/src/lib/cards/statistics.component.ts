@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { CoreModule } from "@ci/core";
 
 @Component({
-    selector: 'ci-card--crm-totalizador',
+    selector: 'ci-card--statics',
     template: `
         <h3>Statistics</h3>
         CHART

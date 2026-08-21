@@ -1,0 +1,20 @@
+:host {
+    display: contents;
+}
+
+form {
+    // display: contents;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0 6px;
+    // padding: 6px;
+    // justify-content: stretch;
+    // align-items: stretch;
+    // overflow: auto;
+
+    mat-form-field {
+        min-width: initial;
+        width: initial;
+    }
+}

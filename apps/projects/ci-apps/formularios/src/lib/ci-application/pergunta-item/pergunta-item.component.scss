@@ -1,0 +1,22 @@
+.row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: stretch;
+
+    flex: auto;
+
+    >* {
+        flex: auto;
+    }
+
+    mat-form-field {
+        min-width: unset;
+    }
+
+}
+:host{
+    display: flex;
+    flex-direction: column;
+}

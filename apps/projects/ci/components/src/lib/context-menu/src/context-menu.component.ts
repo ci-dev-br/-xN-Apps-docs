@@ -9,4 +9,13 @@ import { IContextMenu } from "./i-contex-menu";
 }) export class ContextMenuComponent {
     action = new Subject();
     items?: IContextMenu[];
+    async ationHandle(event: Event, item: IContextMenu) {
+        try {
+            if (!!item.handler) {
+                item.handler(item/* + options */);
+            }
+        } catch (error) {
+            console.trace(error)
+        }
+    }
 }

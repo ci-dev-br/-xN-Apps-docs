@@ -1,0 +1,39 @@
+:host {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+
+    * {
+        flex: 20%;
+    }
+}
+
+ci-calendar-month {
+    width: 100%;
+    height: 100%;
+}
+
+.card {
+    border-radius: 8px;
+    border: solid 1px rgba(0, 0, 0, 1);
+    overflow: hidden;
+    width: 20%;
+    height: 20%;
+    position: relative;
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        padding: 0;
+        margin: 0;
+        color: black;
+        text-align: center;
+        font-size: 8px;
+    }
+
+}

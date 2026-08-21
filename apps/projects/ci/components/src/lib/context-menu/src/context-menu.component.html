@@ -1,5 +1,5 @@
 @for (item of items; track $index) {
-<button mat-menu-item>
+<button mat-menu-item (click)="ationHandle($event, item)" >
     {{item.label}}
 </button>
 }

@@ -9,7 +9,8 @@ import { AcessoPayload, AuthService } from '@ci/portal-api';
 import { SHA512 } from 'crypto-js';
 import { Router, RouterModule } from '@angular/router';
 import { CoreModule, StorageService } from '@ci/core';
-import { AuthModule, UserService } from '@ci/auth';
+import { AuthModule, UserAuthenticationService } from '@ci/auth';
+import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'ci-acessar',
   imports: [
@@ -20,13 +21,16 @@ import { AuthModule, UserService } from '@ci/auth';
     ReactiveFormsModule,
     RouterModule,
     AuthModule,
+    MatIconModule,
   ],
   standalone: true,
   templateUrl: './acessar.component.html',
   styleUrl: './acessar.component.scss'
 })
 export class AcessarComponent implements OnInit {
+  autenticado = false;
   // private argon2?: Argon2;
+  passwordVisibility = false;
   year = (new Date()).getFullYear();
   private acesso_payload?: AcessoPayload;
   stage?: 'identification' | 'loading' | 'captcha' | 'authentication' = 'identification';
@@ -39,16 +43,20 @@ export class AcessarComponent implements OnInit {
   }
   constructor(
     private readonly storageService: StorageService,
-    private readonly userService: UserService,
+    private readonly userService: UserAuthenticationService,
     private readonly authService: AuthService,
     private readonly snack: MatSnackBar,
     private readonly fb: FormBuilder,
     private readonly router: Router,
   ) {
-    // if (!!this.storageService.restore('apps.ci.dev.br.store.User')) router.navigate(['/']); // TODO: acho que esta correto mas deve ser revisado a necessidade de roteamento neste ponto...
+
     if (this.stage) this.criarFormulario(this.stage)
   }
   async ngOnInit() {
+
+    if (!!this.userService?.user?.value) this.router.navigate(['/'], {
+      //  from: this.router.url
+    })
   }
   private criarFormulario(stage: 'identification' | 'loading' | 'captcha' | 'authentication') {
     if (this.stage !== stage) this.stage = stage;

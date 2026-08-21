@@ -1,4 +1,13 @@
 <nav mat-tab-nav-bar [tabPanel]="tabPanel">
+    <a mat-tab-link (click)="AddNavigation($event)">
+        <mat-icon>add</mat-icon>
+    </a>
+    @if(boards && boards.length > 0){
+    @for (board of boards; track $index) {
+    <a mat-tab-link>{{board.title}}
+    </a>
+    }
+    }
     @if(abas){
     @for (aba of abas; track aba) {
     <a mat-tab-link [routerLink]="'./' + aba.path">
@@ -7,9 +16,6 @@
         </mat-icon>}
         {{aba.label}}</a>
     }}
-    <a mat-tab-link (click)="AddNavigation($event)">
-        <mat-icon>add</mat-icon>
-    </a>
     <span style="flex:auto;width: 100%;"></span>
 </nav>
 <mat-tab-nav-panel #tabPanel>

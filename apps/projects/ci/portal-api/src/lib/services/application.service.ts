@@ -12,8 +12,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 import { Application } from '../models/application';
 import { deleteApplication } from '../fn/application/delete-application';
 import { DeleteApplication$Params } from '../fn/application/delete-application';
-import { getApplication } from '../fn/application/get-application';
-import { GetApplication$Params } from '../fn/application/get-application';
+import { getListApplication } from '../fn/application/get-list-application';
+import { GetListApplication$Params } from '../fn/application/get-list-application';
 import { syncApplication } from '../fn/application/sync-application';
 import { SyncApplication$Params } from '../fn/application/sync-application';
 
@@ -23,27 +23,27 @@ export class ApplicationService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `getApplication()` */
-  static readonly GetApplicationPath = '/Application/Get';
+  /** Path part for operation `getListApplication()` */
+  static readonly GetListApplicationPath = '/Application/Get';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getApplication()` instead.
+   * To access only the response body, use `getListApplication()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  getApplication$Response(params: GetApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Application>>> {
-    return getApplication(this.http, this.rootUrl, params, context);
+  getListApplication$Response(params: GetListApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Application>>> {
+    return getListApplication(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getApplication$Response()` instead.
+   * To access the full response (for headers, for example), `getListApplication$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  get(params: GetApplication$Params, context?: HttpContext): Observable<Array<Application>> {
-    return this.getApplication$Response(params, context).pipe(
+  getList(params: GetListApplication$Params, context?: HttpContext): Observable<Array<Application>> {
+    return this.getListApplication$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Application>>): Array<Application> => r.body)
     );
   }
@@ -55,9 +55,9 @@ export class ApplicationService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `syncApplication()` instead.
    *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * This method doesn't expect any request body.
    */
-  syncApplication$Response(params: SyncApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
+  syncApplication$Response(params?: SyncApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
     return syncApplication(this.http, this.rootUrl, params, context);
   }
 
@@ -65,9 +65,9 @@ export class ApplicationService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `syncApplication$Response()` instead.
    *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * This method doesn't expect any request body.
    */
-  sync(params: SyncApplication$Params, context?: HttpContext): Observable<Application> {
+  sync(params?: SyncApplication$Params, context?: HttpContext): Observable<Application> {
     return this.syncApplication$Response(params, context).pipe(
       map((r: StrictHttpResponse<Application>): Application => r.body)
     );

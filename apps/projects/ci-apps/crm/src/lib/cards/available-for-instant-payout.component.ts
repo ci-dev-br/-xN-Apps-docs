@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { CoreModule } from "@ci/core";
 
 @Component({
-    selector: 'ci-card--crm-totalizador',
+    selector: 'ci-card--available-for-instant-payout',
     template: `
         <h3>Available for Instant payout</h3>
     `,

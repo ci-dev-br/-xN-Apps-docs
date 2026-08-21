@@ -11,5 +11,5 @@ import { CoreModule } from '@ci/core';
     styleUrl: './logo.component.scss'
 })
 export class LogoComponent {
-    link = location.origin;
+    link = undefined; // location.origin;
 }

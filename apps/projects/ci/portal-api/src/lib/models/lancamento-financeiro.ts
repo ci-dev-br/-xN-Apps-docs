@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface LancamentoFinanceiro {
+  categoria?: string | null;
   createdAt?: Date | null;
   createdBy?: {
 } | null;
@@ -13,7 +14,7 @@ export interface LancamentoFinanceiro {
   tenants?: Array<string> | null;
 
   /**
-   * Valor incial de do Lançameto
+   * Valor incial do Lançameto
    */
   valor?: number | null;
 }

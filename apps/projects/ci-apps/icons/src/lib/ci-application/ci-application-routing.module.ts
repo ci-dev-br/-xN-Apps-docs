@@ -4,7 +4,11 @@ import { HomeComponent } from './home/home.component'
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'Home', loadChildren: () => import('./../views/home/home.module').then(m => m.HomeModule) },
-  { path: 'Editor', loadChildren: () => import('./../views/svg-editor/svg-editor.module').then(m => m.SvgEditorModule) },
+  {
+    path: 'Editor', loadChildren: () => import('./../views/svg-editor/svg-editor.module').then(m => m.SvgEditorModule), data: {
+      'files': [{ format: 'png' }, { format: 'jpg' }]
+    }
+  },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

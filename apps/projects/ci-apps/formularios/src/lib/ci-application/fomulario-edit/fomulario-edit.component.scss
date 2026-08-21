@@ -1,0 +1,81 @@
+:host {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: auto;
+
+    >* {
+        max-width: 850px;
+        width: 100%;
+    }
+}
+
+h4 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-weight: 100;
+
+    margin: {
+        top: 48px;
+    }
+}
+
+ci-logo ::ng-deep img {
+    width: 100px;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    flex: auto;
+    overflow: auto;
+
+}
+
+.container-menu {
+    position: sticky;
+    top: 30vh;
+    bottom: 30vh;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-radius: 6px;
+    background-color: var(--mdc-elevated-card-container-color, var(--mat-sys-surface-container-low));
+    box-shadow: 2px 4px 12px rgba(0, 0, 0, .44);
+    position: relative;
+    padding: 6px;
+
+    h6 {
+        position: absolute;
+        text-align: center;
+        top: -50px;
+        left: 0;
+        right: 0;
+    }
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+@media (mix-width: 750px) {
+    .small-container {
+        min-width: 750px;
+    }
+}
+
+mat-card-footer {
+    padding: 6px;
+}
+
+.auto {
+    flex: auto;
+}

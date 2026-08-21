@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { CoreModule } from "@ci/core";
 
 @Component({
-    selector: 'ci-card--crm-totalizador',
+    selector: 'ci-card--customer-by-contry',
     template: `
         <h3>Consumiudores por Países</h3>
     `,

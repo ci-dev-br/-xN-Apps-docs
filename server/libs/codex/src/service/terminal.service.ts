@@ -26,9 +26,13 @@ export class TerminalService {
     console.log(`Sessão de terminal criada para: ${socketId} (PID: ${ptyProcess.pid})`);
   }
   write(socketId: string, data: string) {
-    const session = this.sessions.get(socketId);
-    if (session) {
-      session.write(data);
+    try {
+      const session = this.sessions.get(socketId);
+      if (session) {
+        session.write(data);
+      }
+    } catch (error) {
+      console.trace(error);
     }
   }
   resize(socketId: string, cols: number, rows: number) {

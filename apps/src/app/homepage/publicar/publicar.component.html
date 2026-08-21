@@ -1,0 +1,59 @@
+<mat-card-title [formGroup]="postForm">
+    <div class="row">
+        <ci-user-photo></ci-user-photo>
+        @if(authorName){<h3>{{authorName}}</h3>}
+        @if(hasTitle){<mat-form-field style="flex: auto;">
+            <mat-label>Título</mat-label>
+            <input type="text" formControlName="title" matInput placeholder="Sem título">
+        </mat-form-field>}
+    </div>
+</mat-card-title>
+<mat-card-content [formGroup]="postForm">
+    <div class="col">
+        <mat-form-field>
+            <textarea matInput placeholder="Conteúdo" formControlName="content" row="10">
+            </textarea>
+            <!--  <button (click)="publicar()" matSuffix mat-icon-button><mat-icon>publish</mat-icon></button> -->
+        </mat-form-field>
+    </div>
+    <mat-card-footer>
+        <button mat-stroked-button [matMenuTriggerFor]="visibility_menu">
+            @if(!visibilidade){Visibilidade}@else{{{visibilidade}}}
+        </button>
+        <mat-menu #visibility_menu>
+            <button mat-menu-item (click)="visibilidade='public'">Para todo mundo</button>
+            <button mat-menu-item (click)="visibilidade='nearby'">
+                Visível por perto
+            </button>
+            <button mat-menu-item (click)="visibilidade='contacts'">
+                Visível para meus contatos
+            </button>
+            <button mat-menu-item (click)="visibilidade='group'">
+                Apenas para um Grupo
+            </button>
+            <button mat-menu-item (click)="visibilidade='private'">
+                Apenas para mim
+            </button>
+        </mat-menu>
+        <button class="--comb" mat-raised-button [mat-menu-trigger-for]="publisherSettingsMenu">
+            +
+        </button>
+        <button mat-raised-button (click)="publicar()">
+            Publicar
+        </button>
+        <mat-menu #publisherSettingsMenu>
+            <button mat-menu-item>
+                Agendar Publicação
+            </button>
+            <button mat-menu-item>
+                Guardar como Rascunhos
+            </button>
+            <button mat-menu-item>
+                Guardar como Formulário
+            </button>
+            <button mat-menu-item (click)="hasTitle=!hasTitle">
+                <mat-icon>title</mat-icon> @if(!hasTitle){Adicionar título}@else{Ocultar título}
+            </button>
+        </mat-menu>
+    </mat-card-footer>
+</mat-card-content>

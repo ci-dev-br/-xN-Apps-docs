@@ -1,10 +1,11 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { BoardModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
 
 @Component({
@@ -14,71 +15,70 @@ import { CoreModule } from '@ci/core';
     MatButtonModule,
     MatIconModule,
     RouterModule,
-    BoardModule,
+    MatTooltipModule,
   ],
   templateUrl: `home.html`,
   styleUrl: `home.scss`,
 })
 export class Home implements OnInit {
-  g = [
-    'https://images.pexels.com/photos/33258471/pexels-photo-33258471.jpeg',
-    'https://images.pexels.com/photos/33869022/pexels-photo-33869022.jpeg',
-    'https://images.pexels.com/photos/34234277/pexels-photo-34234277.png',
-    'https://images.pexels.com/photos/6009490/pexels-photo-6009490.jpeg',
-    'https://images.pexels.com/photos/11394988/pexels-photo-11394988.jpeg',
-    'https://images.pexels.com/photos/34442367/pexels-photo-34442367.jpeg',
-  ];
-  x?: string;
-  agora = new Date();
-  n?: string;
-  segundos?: string = ('0' + ((new Date()).getSeconds().toFixed())).substr(-2);
-  y?: string;
-  lapse: number = 0;
-  t = false;
+  locked = true;
   ngOnInit(): void {
-    this.agora = new Date();
-    this.updateTime();
   }
-  constructor(
-    private readonly http: HttpClient,
-  ) { }
-  async updateTime() {
-    let o = this.n || 0;
-    this.n = (Date.now()).toString().substr(-3);
-    try {
-      this.lapse = Number(((Number(this.n) || 0) / 100).toFixed().substr(-1));
-    } catch (error) { }
-    setTimeout(() => { this.updateTime() }, 10);
-    try {
-      if (this.lapse !== 0) {
-        if (!!this.t) this.t = false;
-        return;
-      }
-      if (!this.t) {
-        let os = ('0' + (new Date()).getSeconds()).substr(-2);
-        if (os !== this.segundos) {
-          this.t = true;
-          this.segundos = os;
-        }
-        if (this.segundos === '00') {
-          this.agora = new Date();
-        }
-      }
-    } catch (error) {
-
+  localApps = [
+  ]
+  get time() { return new Date() }
+  barApps = [
+    { icon: 'video_camera_back_add', name: 'Registrar momento', onClick: () => this.criarMomento() },
+    { icon: 'phone', name: 'Ligações', onClick: () => this.criarLigacao() },
+    { icon: 'add_notes', name: 'Anotações', onClick: () => this.criarAnotacao() },
+  ];
+  msg = 'desbloquear'
+  unlock() {
+    if (this.msg === 'desbloquear') {
+      setTimeout(() => {
+        this.msg = '... mais uma vez';
+      }, 350);
+    } else if ('... mais uma vez' === this.msg) {
+      setTimeout(() => {
+        this.msg = 'ultima vez';
+      }, 350);
+    } else if ('ultima vez' === this.msg) {
+      this.msg = 'aguarde para confirmação... clique para reiniciar';
+      setTimeout(() => {
+        this.locked = false;
+      }, 1350);
+    } else {
+      //setTimeout(() => {
+      this.locked = true;
+      this.msg = 'desbloquear'
+      // }, 1000);
     }
   }
-  async load() {
-    // removidor temporariamente: Esta provocando travamento no contador.
-    // let a = this.g[Math.round(Math.random() * (this.g.length - 1))];
-    // this.http
-    /* fetch('' + a).then((r) => {
-      if (r.status === 200) {
-        this.x = a;
-        a = this.g[Math.round(Math.random() * (this.g.length - 1))];
-      } else {
-        this.load();
-      }
-    }) */
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private http: HttpClient,
+    private readonly dialog: MatDialog,
+  ) {
+    // is browser ?
+    if (isPlatformBrowser(this.platformId)) {
+      // Código específico para o navegador
+    }
+  }
+  @HostListener('window:mousemove', ['$event'])
+  async onMouseMove(event: MouseEvent) {
+    // TODO: implementar estratégia para realizar o bloquei da tela em caso inatividade do usuário, como por exemplo, utilizando o evento de mousemove para resetar um timer que bloqueia a tela após um período de inatividade.
+  }
+  async criarAnotacao() {
+    // this.dialog.open(/* AnotacaoDialogComponent */, {
+    //   data: { title: 'Nova Anotação' }
+    // });
+  }
+  async criarLigacao() {
+    // this.dialog.open(/* LigacaoDialogComponent */, {
+    // data: { title: 'Nova Ligação' }
+    // });
+  }
+  async criarMomento() {
+    // this.dialog.open(/* MomentoDialogComponent */, {
+    // data: { title: 'Novo Momento' }
+    // });
   }
 }

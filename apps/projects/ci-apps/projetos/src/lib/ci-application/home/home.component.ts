@@ -1,13 +1,50 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
-import { ContainerModule, InputModule, WindowModule } from '@ci/components';
+import { ContainerModule, InputModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
-import { models } from '../../models';
 import { MatIconModule } from '@angular/material/icon';
-import { ProjetosService } from '../../projetos.service';
+import { WindowModule } from '@ci/components/window';
+export enum ProjetoVisibilidade {
+    Publico = 'Público',
+    Privado = 'Privado'
+}
 
+export interface Endereco {
+    logradouro?: string;
+    cidade?: string;
+    estado?: string;
+}
+
+export interface Pessoa {
+    nome?: string;
+    cpf?: string;
+}
+
+export interface ClienteProjeto {
+    nome?: string;
+    tipo?: string;
+    documento?: string;
+    email?: string;
+    telefone?: string;
+    endereco?: Endereco[];
+    pessoa?: Pessoa;
+}
+
+export interface WorkItem {
+    code?: number;
+}
+
+export interface Projeto {
+    nome?: string;
+    descricao?: string;
+    visibilidade?: ProjetoVisibilidade;
+    controleVersao?: string;
+    cliente?: ClienteProjeto;
+    dataInicio?: Date;
+    workItems?: WorkItem[];
+}
 @Component({
     selector: 'ci-home',
     standalone: true,
@@ -25,11 +62,10 @@ import { ProjetosService } from '../../projetos.service';
     styleUrl: './home.component.scss'
 })
 export class HomeComponent {
-    models = models;
+    @Input({ required: true }) projeto!: Projeto;
+    visibilidadeEnum = ProjetoVisibilidade;
     constructor(
-        private readonly projetos: ProjetosService,
     ) { }
     async CreateNewProject() {
-        return await this.projetos.CriarNovoProjeto();
     }
 }

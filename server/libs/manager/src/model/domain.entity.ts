@@ -3,6 +3,15 @@ import { Application } from "./application.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { schema } from "../noms";
 import { FullAuditedEntity } from "../dao/entities";
+
+/**
+ * Domínio da Aplicação
+ * 
+ * Esta entidade representa um domínio associado a uma ou mais aplicações dentro do sistema.
+ * Ela contém informações sobre o hostname do domínio, as aplicações correspondentes a esse domínio e se o domínio foi verificado ou não.
+ * 
+ * Os domínios são usados para organizar e gerenciar as aplicações, permitindo que elas sejam acessadas por meio de endereços URL específicos.  
+ */
 @Entity({ schema })
 export class Domain extends FullAuditedEntity {
     @ApiProperty({

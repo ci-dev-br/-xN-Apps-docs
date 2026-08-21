@@ -28,8 +28,17 @@ export class SendMessagePayload {
 export class MessageController {
     constructor() { }
     @Post()
-    async SendMessage(@Body() payload?: SendMessagePayload) { }
+    async SendMessage(@Body() payload?: SendMessagePayload) {
+        try {
+        } catch (err) {
+            console.trace(err)
+        }
+    }
     @Post()
     async FindClientBy(@Body() payload?: FiendClientByPayload) {
+        try {
+        } catch (err) {
+            console.trace(err)
+        }
     }
 }
