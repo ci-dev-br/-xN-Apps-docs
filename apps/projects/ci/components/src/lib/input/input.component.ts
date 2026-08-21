@@ -4,7 +4,7 @@ import { GeradorDeNomes } from './geradore-nome';
 
 export interface SpeakerProfile {
   nickname: string;
-  avgHz: number;
+  medianHz: number;
 }
 
 @Component({
@@ -40,7 +40,7 @@ export class InputComponent implements OnInit {
 
   // --- Propriedades de Transcrição e Áudio ---
   isRecording = false;
-  liveDraft = '';
+  liveDraft = ''; // Funciona como preview para o usuário
 
   private recognition: any;
   private audioContext?: AudioContext;
@@ -49,12 +49,17 @@ export class InputComponent implements OnInit {
 
   private pitchTracker: number[] = [];
   private trackingInterval: any;
-  private lastIdentifiedSpeaker: string = 'Voz Desconhecida'; // Memória para frases rápidas
+  private lastIdentifiedSpeaker: string = 'Voz Desconhecida';
 
-  // Lista para armazenar o padrão de cada falante reconhecido
+  // Controle de agrupamento de blocos de fala (melhora a pontuação e reduz repetições do nome)
+  private commitTimeout: any;
+  private pendingTranscript: string = '';
+
   private knownSpeakers: SpeakerProfile[] = [];
   private availableNicknames: string[] = [];
-  private readonly HZ_TOLERANCE: number = 15;
+
+  // Tolerância maior (45Hz) para cobrir a variação natural da entonação da mesma pessoa
+  private readonly HZ_TOLERANCE: number = 45;
   geradorNome = new GeradorDeNomes();
 
   constructor(
@@ -100,7 +105,6 @@ export class InputComponent implements OnInit {
     if (this.isRecording) {
       this.stopTranscription();
     } else {
-      // 1. Inicializa o contexto no evento de clique para evitar o estado "suspended" (Regra do Mobile)
       if (!this.audioContext) {
         const AudioCtx = this.getAudioContextClass();
         if (AudioCtx) this.audioContext = new AudioCtx();
@@ -130,26 +134,32 @@ export class InputComponent implements OnInit {
 
       this.recognition.onresult = (event: any) => {
         let interimTranscript = '';
-        let finalTranscript = '';
+        let finalSegment = '';
 
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript;
+            finalSegment += event.results[i][0].transcript;
           } else {
             interimTranscript += event.results[i][0].transcript;
           }
         }
 
         this.ngZone?.run(() => {
-          this.liveDraft = interimTranscript;
+          // Atualiza a preview em tempo real para o usuário
+          this.liveDraft = (this.pendingTranscript + ' ' + interimTranscript).trim();
 
-          if (finalTranscript) {
-            const speaker = this.identifySpeakerByHz();
-            this.commitTranscript(speaker, finalTranscript);
+          if (finalSegment) {
+            this.pendingTranscript += ' ' + finalSegment;
+            this.liveDraft = this.pendingTranscript.trim();
 
-            // Reseta o rastreador para a próxima frase, mas mantém a memória no lastIdentifiedSpeaker
-            this.pitchTracker = [];
-            this.liveDraft = '';
+            // Cancela o timer anterior se a pessoa continuar falando rápido
+            if (this.commitTimeout) clearTimeout(this.commitTimeout);
+
+            // Aguarda 700ms de silêncio antes de confirmar o bloco.
+            // Isso permite que a API nativa construa o contexto para aplicar a pontuação correta.
+            this.commitTimeout = setTimeout(() => {
+              this.processAndCommitPendingTranscript();
+            }, 700);
           }
         });
       };
@@ -163,36 +173,30 @@ export class InputComponent implements OnInit {
 
       this.recognition.onend = () => {
         if (this.isRecording) {
-          console.log('A API parou inesperadamente. Reiniciando...');
+          // Restart rápido e silencioso
           setTimeout(() => {
             if (this.isRecording) {
-              try {
-                this.recognition.start();
-              } catch (e) {
-                console.error('Falha ao tentar reiniciar', e);
-              }
+              try { this.recognition.start(); } catch (e) { }
             }
-          }, 400); // Pequeno delay evita que o mobile bloqueie por loop excessivo
+          }, 50);
         }
       };
 
-      // INICIAMOS O RECONHECIMENTO DE FALA PRIMEIRO!
-      // Isso garante que a API nativa pegue o microfone nos smartphones
       this.recognition.start();
       this.isRecording = true;
 
-      // SÓ ENTÃO tentamos pegar o Stream de Áudio para o tracking de Pitch.
-      // Se falhar (como acontece em muitos celulares por bloqueio de concorrência dupla do microfone),
-      // capturamos o erro e o reconhecimento de voz padrão continuará funcionando perfeitamente.
-      try {
-        if (!this.microphoneStream) {
-          this.microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          this.setupAudioAnalysis(this.microphoneStream);
-          this.startPitchTracking();
+      // Inicia captura de áudio para pitch separadamente, sem bloquear a interface
+      setTimeout(async () => {
+        try {
+          if (!this.microphoneStream) {
+            this.microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            this.setupAudioAnalysis(this.microphoneStream);
+            this.startPitchTracking();
+          }
+        } catch (mediaError) {
+          console.info('Aviso: Tracking de múltiplos falantes desativado. Utilizando apenas transcrição de voz padrão.', mediaError);
         }
-      } catch (mediaError) {
-        console.warn('Falha ao iniciar diarização (comum em mobile por bloqueio de concorrência de microfone). A transcrição padrão continuará funcionando.', mediaError);
-      }
+      }, 200);
 
     } catch (err) {
       console.error('Erro ao iniciar gravação:', err);
@@ -200,18 +204,31 @@ export class InputComponent implements OnInit {
     }
   }
 
+  private processAndCommitPendingTranscript() {
+    if (!this.pendingTranscript.trim()) return;
+
+    const speaker = this.identifySpeakerByHz();
+    this.commitTranscript(speaker, this.pendingTranscript);
+
+    // Limpeza para a próxima frase
+    this.pendingTranscript = '';
+    this.liveDraft = '';
+    this.pitchTracker = [];
+  }
+
   private stopTranscription() {
     this.isRecording = false;
 
-    if (this.recognition) {
-      this.recognition.stop();
+    if (this.commitTimeout) clearTimeout(this.commitTimeout);
+    if (this.pendingTranscript.trim()) {
+      this.processAndCommitPendingTranscript();
     }
 
+    if (this.recognition) this.recognition.stop();
     if (this.audioContext) {
       this.audioContext.close();
       this.audioContext = undefined;
     }
-
     if (this.microphoneStream) {
       this.microphoneStream.getTracks().forEach(track => track.stop());
       this.microphoneStream = undefined;
@@ -225,12 +242,10 @@ export class InputComponent implements OnInit {
 
   private setupAudioAnalysis(stream: MediaStream) {
     if (!this.audioContext) return;
-
     if (!this.analyser) {
       this.analyser = this.audioContext.createAnalyser();
       this.analyser.fftSize = 2048;
     }
-
     const source = this.audioContext.createMediaStreamSource(stream);
     source.connect(this.analyser);
   }
@@ -255,29 +270,39 @@ export class InputComponent implements OnInit {
         }
       }
 
-      // Reduzimos o threshold de 120 para 50 para capturar falas mais baixas
       if (maxValue > 50) {
         const hz = (maxIndex * this.audioContext.sampleRate) / this.analyser.fftSize;
-        // Filtramos para ignorar ruídos ambientes fora do espectro de voz humana grave/médio
-        if (hz > 50 && hz < 1000) {
+        // Escala normal da voz humana (homens ~85-180Hz, mulheres ~165-255Hz)
+        if (hz > 80 && hz < 300) {
           this.pitchTracker.push(hz);
         }
       }
     }, 50);
   }
 
+  // Substitui a Média pela Mediana para ignorar picos isolados (outliers)
+  private getMedian(values: number[]): number {
+    if (values.length === 0) return 0;
+    const sorted = [...values].sort((a, b) => a - b);
+    const middle = Math.floor(sorted.length / 2);
+    if (sorted.length % 2 === 0) {
+      return (sorted[middle - 1] + sorted[middle]) / 2;
+    }
+    return sorted[middle];
+  }
+
   private identifySpeakerByHz(): string {
     try {
-      // Se não captou frequências (intervalo muito rápido ou voz baixa), reaproveita o último
-      if (this.pitchTracker.length === 0) {
+      if (this.pitchTracker.length < 3) {
+        // Se capturou poucos samples de áudio, confia na última voz reconhecida
         return this.lastIdentifiedSpeaker;
       }
 
-      const sum = this.pitchTracker.reduce((a, b) => a + b, 0);
-      const avgHz = sum / this.pitchTracker.length;
+      // Mediana é muito mais precisa que a média para ignorar ruídos e tosse
+      const medianHz = this.getMedian(this.pitchTracker);
 
       const matchedSpeaker = this.knownSpeakers.find(
-        speaker => Math.abs(speaker.avgHz - avgHz) <= this.HZ_TOLERANCE
+        speaker => Math.abs(speaker.medianHz - medianHz) <= this.HZ_TOLERANCE
       );
 
       if (matchedSpeaker) {
@@ -291,7 +316,7 @@ export class InputComponent implements OnInit {
 
       this.knownSpeakers.push({
         nickname: newNickname,
-        avgHz: avgHz
+        medianHz: medianHz
       });
 
       this.lastIdentifiedSpeaker = newNickname;
@@ -303,6 +328,7 @@ export class InputComponent implements OnInit {
   }
 
   private commitTranscript(speaker: string, transcript: string) {
+    // Formata o texto final com o nome gerado e quebra de linha
     const formattedText = `\n[${speaker}]: ${transcript.trim()}`;
 
     if (this.form && this.fieldName) {
