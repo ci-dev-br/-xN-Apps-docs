@@ -40,7 +40,7 @@ export class InputComponent implements OnInit {
 
   // --- Propriedades de Transcrição e Áudio ---
   isRecording = false;
-  liveDraft = ''; // Funciona como preview para o usuário
+  liveDraft = '';
 
   private recognition: any;
   private audioContext?: AudioContext;
@@ -49,17 +49,18 @@ export class InputComponent implements OnInit {
 
   private pitchTracker: number[] = [];
   private trackingInterval: any;
-  private lastIdentifiedSpeaker: string = 'Voz Desconhecida';
 
-  // Controle de agrupamento de blocos de fala (melhora a pontuação e reduz repetições do nome)
+  private lastIdentifiedSpeaker: string = '';
+
   private commitTimeout: any;
   private pendingTranscript: string = '';
 
   private knownSpeakers: SpeakerProfile[] = [];
   private availableNicknames: string[] = [];
 
-  // Tolerância maior (45Hz) para cobrir a variação natural da entonação da mesma pessoa
-  private readonly HZ_TOLERANCE: number = 45;
+  // Tolerância ajustada: 25Hz é o ideal para diferenciar locutores sem criar nomes repetidos 
+  // para a mesma pessoa quando ela muda a entonação.
+  private readonly HZ_TOLERANCE: number = 25;
   geradorNome = new GeradorDeNomes();
 
   constructor(
@@ -145,18 +146,14 @@ export class InputComponent implements OnInit {
         }
 
         this.ngZone?.run(() => {
-          // Atualiza a preview em tempo real para o usuário
           this.liveDraft = (this.pendingTranscript + ' ' + interimTranscript).trim();
 
           if (finalSegment) {
             this.pendingTranscript += ' ' + finalSegment;
             this.liveDraft = this.pendingTranscript.trim();
 
-            // Cancela o timer anterior se a pessoa continuar falando rápido
             if (this.commitTimeout) clearTimeout(this.commitTimeout);
 
-            // Aguarda 700ms de silêncio antes de confirmar o bloco.
-            // Isso permite que a API nativa construa o contexto para aplicar a pontuação correta.
             this.commitTimeout = setTimeout(() => {
               this.processAndCommitPendingTranscript();
             }, 700);
@@ -173,7 +170,6 @@ export class InputComponent implements OnInit {
 
       this.recognition.onend = () => {
         if (this.isRecording) {
-          // Restart rápido e silencioso
           setTimeout(() => {
             if (this.isRecording) {
               try { this.recognition.start(); } catch (e) { }
@@ -185,7 +181,6 @@ export class InputComponent implements OnInit {
       this.recognition.start();
       this.isRecording = true;
 
-      // Inicia captura de áudio para pitch separadamente, sem bloquear a interface
       setTimeout(async () => {
         try {
           if (!this.microphoneStream) {
@@ -194,7 +189,7 @@ export class InputComponent implements OnInit {
             this.startPitchTracking();
           }
         } catch (mediaError) {
-          console.info('Aviso: Tracking de múltiplos falantes desativado. Utilizando apenas transcrição de voz padrão.', mediaError);
+          console.info('Diarização desativada (comum em mobile). Utilizando apenas um único locutor genérico.', mediaError);
         }
       }, 200);
 
@@ -210,7 +205,6 @@ export class InputComponent implements OnInit {
     const speaker = this.identifySpeakerByHz();
     this.commitTranscript(speaker, this.pendingTranscript);
 
-    // Limpeza para a próxima frase
     this.pendingTranscript = '';
     this.liveDraft = '';
     this.pitchTracker = [];
@@ -237,7 +231,12 @@ export class InputComponent implements OnInit {
     clearInterval(this.trackingInterval);
     this.liveDraft = '';
     this.pitchTracker = [];
-    this.lastIdentifiedSpeaker = 'Voz Desconhecida';
+    this.lastIdentifiedSpeaker = '';
+
+    // Opcional: Se quiser resetar os falantes a cada nova gravação, 
+    // descomente a linha abaixo. Caso queira que ele lembre das vozes enquanto a página 
+    // não for atualizada, mantenha comentado.
+    // this.knownSpeakers = []; 
   }
 
   private setupAudioAnalysis(stream: MediaStream) {
@@ -270,17 +269,18 @@ export class InputComponent implements OnInit {
         }
       }
 
-      if (maxValue > 50) {
+      // Threshold ajustado para 35: forte o suficiente para ignorar ruído de ventoinhas
+      // e chiados estáticos, mas sensível para voz.
+      if (maxValue > 35) {
         const hz = (maxIndex * this.audioContext.sampleRate) / this.analyser.fftSize;
-        // Escala normal da voz humana (homens ~85-180Hz, mulheres ~165-255Hz)
-        if (hz > 80 && hz < 300) {
+
+        if (hz > 60 && hz < 500) {
           this.pitchTracker.push(hz);
         }
       }
     }, 50);
   }
 
-  // Substitui a Média pela Mediana para ignorar picos isolados (outliers)
   private getMedian(values: number[]): number {
     if (values.length === 0) return 0;
     const sorted = [...values].sort((a, b) => a - b);
@@ -293,14 +293,28 @@ export class InputComponent implements OnInit {
 
   private identifySpeakerByHz(): string {
     try {
+      // 1. Garante um nome logo na partida (mesmo que seja silêncio ou mobile sem acesso ao mic)
+      if (!this.lastIdentifiedSpeaker) {
+        this.lastIdentifiedSpeaker = this.geradorNome.gerarNomeCompleto(Math.floor(Math.random() * 5));
+      }
+
+      // 2. Se a frase foi muito rápida ou o threshold cortou (ruído), confia no nome atual
       if (this.pitchTracker.length < 3) {
-        // Se capturou poucos samples de áudio, confia na última voz reconhecida
         return this.lastIdentifiedSpeaker;
       }
 
-      // Mediana é muito mais precisa que a média para ignorar ruídos e tosse
       const medianHz = this.getMedian(this.pitchTracker);
 
+      // 3. A CORREÇÃO CHAVE: Cadastra a primeira pessoa com a frequência dela
+      if (this.knownSpeakers.length === 0) {
+        this.knownSpeakers.push({
+          nickname: this.lastIdentifiedSpeaker,
+          medianHz: medianHz
+        });
+        return this.lastIdentifiedSpeaker;
+      }
+
+      // 4. Procura quem é o locutor na lista
       const matchedSpeaker = this.knownSpeakers.find(
         speaker => Math.abs(speaker.medianHz - medianHz) <= this.HZ_TOLERANCE
       );
@@ -310,6 +324,7 @@ export class InputComponent implements OnInit {
         return matchedSpeaker.nickname;
       }
 
+      // 5. Se não encontrou, é uma nova pessoa
       const newNickname = this.availableNicknames.length > 0
         ? this.availableNicknames.shift()!
         : this.geradorNome.gerarNomeCompleto(Math.floor(Math.random() * 5));
@@ -323,12 +338,11 @@ export class InputComponent implements OnInit {
       return newNickname;
 
     } catch (error) {
-      return this.lastIdentifiedSpeaker || '(erro na identificação)';
+      return this.lastIdentifiedSpeaker;
     }
   }
 
   private commitTranscript(speaker: string, transcript: string) {
-    // Formata o texto final com o nome gerado e quebra de linha
     const formattedText = `\n[${speaker}]: ${transcript.trim()}`;
 
     if (this.form && this.fieldName) {
