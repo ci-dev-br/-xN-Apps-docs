@@ -13,7 +13,9 @@ export class CoreService {
     // @Optional() private readonly themeService?: ThemeService,
     // @Optional() private readonly contextMenu?: ContextMenuServices,
     // @Optional() private readonly ws?: WsService,
-  ) { }
+  ) {
+    console.log('[app]')
+  }
   /**
    * 
    * para que serve este trecho? qual era a intenção inicial?

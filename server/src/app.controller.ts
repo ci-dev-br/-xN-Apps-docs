@@ -55,7 +55,7 @@ export class AppController {
     } catch (error) {
       console.error(error);
       if (!response.headersSent) {
-        return response.status(500).send('Erro interno');
+        return response.status(404).send('Não existe');
       }
     }
   }

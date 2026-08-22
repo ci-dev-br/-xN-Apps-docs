@@ -13,12 +13,29 @@ import { LancamentoFinanceiroService } from "./service/lancamento-financeiro.ser
 import { CoreModule } from "@ci/core";
 import { ManagerModule } from "@ci/manager";
 import { TenantModule } from "@ci/tenant";
+import { Asset } from "./model/asset.entity";
+import { Company } from "./model/company.entity";
+import { DailyQuote } from "./model/daily-quote.entity";
+import { FinancialStatement } from "./model/financial-statement.entity";
+import { IndicatorsController } from "./controller/indicators.controller";
+import { IndicatorsService } from "./service/indicators.service";
+import { ScraperService } from "./service/scraper.service";
+import { ScheduleModule } from "@nestjs/schedule";
+import { MacroIndicator } from "./model/macro-indicator.entity";
+import { BcbScraperService } from "./service/bcb-scraper.service";
 export const FinanceiroEntities = [
     LancamentoFinanceiro,
     BillingType,
     Transacao,
     ContaFinanceira,
     ClienteFinanceiro,
+
+    MacroIndicator,
+    Asset,
+    Company,
+    DailyQuote,
+    FinancialStatement,
+
 ];
 @Module({
     imports: [
@@ -30,6 +47,7 @@ export const FinanceiroEntities = [
         TenantModule,
         ManagerModule,
         CasdastroModule,
+        ScheduleModule.forRoot(),
     ],
     exports: [
         LancamentoFinanceiroService,
@@ -37,9 +55,13 @@ export const FinanceiroEntities = [
     controllers: [
         LancamentoFinanceiroController,
         FaturamentoController,
+        IndicatorsController,
     ],
     providers: [
         LancamentoFinanceiroService,
+        IndicatorsService,
+        ScraperService,
+        BcbScraperService,
     ],
 })
 export class FinanceiroModule { }
@@ -47,4 +69,9 @@ export {
     LancamentoFinanceiro,
     BillingType,
     Transacao,
+
+    Asset,
+    Company,
+    DailyQuote,
+    FinancialStatement,
 }

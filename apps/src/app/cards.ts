@@ -3,11 +3,13 @@ import { Cards as CardsCrm } from "@ci-apps/crm";
 import { Cards as CardsBlog } from "@ci-apps/blog";
 import { Cards as CardsTerminal } from "@ci/components/terminal";
 import { Cards as CardsAIO } from "@ci/components/aio";
+import { Cards as CardsFinanceiro } from "@ci-apps/Financeiro";
 const CardModule = [
     CardsCrm,
     CardsBlog,
     CardsTerminal,
     CardsAIO,
+    CardsFinanceiro,
 ];
 export const Cards: ImplCard[] = [
     ...((CardModule) as any)

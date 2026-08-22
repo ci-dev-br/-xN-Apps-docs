@@ -11,10 +11,10 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
     async sincronizar(data: E, request?: any) {
         let ___receipt_data = data;
         let ___internal_data: E = null;
-        if ('at' in data && 'what' in data) {
-
-            return await { status: 'fail' };
-        }
+        /*  if ('at' in data && 'what' in data) {
+ 
+             return await { status: 'fail' };
+         } */
         /// if (data instanceof AuditedEntity) {
         if (data && !('internalId' in data) && !data.internalId) {
             ___internal_data = this._repo.create(data);
