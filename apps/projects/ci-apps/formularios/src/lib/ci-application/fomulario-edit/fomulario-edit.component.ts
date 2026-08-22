@@ -104,8 +104,11 @@ export class FormularioEditComponent {
       this.snap.open('Alguns campos precisam ser corrigidos...')
       return;
     } */
-    await this.daos?.confirmChanges(this.formulario);
-    this.snap?.open('Ajustado!', 'Visualizar histórico')
+    if (await this.daos?.confirmChanges(this.formulario)) {
+      this.snap?.open('Ajuste aplicado');
+    } else {
+      this.snap?.open('Falha...');
+    }
   }
   async adicionarPergunta() {
     if (this.formulario) {

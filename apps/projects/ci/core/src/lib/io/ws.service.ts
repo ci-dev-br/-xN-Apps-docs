@@ -217,7 +217,7 @@ export class WsService {
      * durante modificação. Recebendo retorno dos clientes que estão consumindo os eventos da 
      * aplicação.
      */
-    async Attention(objectRef: any) {
+    async Propagar(objectRef: any) {
         if (objectRef && !!objectRef.internalId) {
             this._attentionDatas.set(objectRef.internalId, objectRef);
             this.Emit({

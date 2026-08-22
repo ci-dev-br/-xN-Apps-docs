@@ -11,6 +11,10 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
     async sincronizar(data: E, request?: any) {
         let ___receipt_data = data;
         let ___internal_data: E = null;
+        if ('at' in data && 'what' in data) {
+
+            return await { status: 'fail' };
+        }
         /// if (data instanceof AuditedEntity) {
         if (data && !('internalId' in data) && !data.internalId) {
             ___internal_data = this._repo.create(data);
@@ -88,7 +92,9 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
             createdBy: IsNull()
         }
         ] as FindOptionsWhere<E>[];
-        return await this._repo.findOne({ where, relations: { createdBy: true, lastModifiedBy: true } as any })
+        const objeto_retorno = await this._repo.findOne({ where, relations: { createdBy: true, lastModifiedBy: true } as any });
+        (objeto_retorno as any).__name = objeto_retorno.constructor.name;
+        return objeto_retorno;
     }
     /**
      * Marca registro com deletado. Posteriormente é removido da base principal em processo separado.

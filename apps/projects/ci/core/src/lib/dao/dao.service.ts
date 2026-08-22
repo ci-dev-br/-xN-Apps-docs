@@ -1,10 +1,35 @@
 import { EventEmitter, Injectable, Optional, SimpleChanges } from "@angular/core";
 import { FormGroup } from "@angular/forms";
-import { of, Subject } from "rxjs";
+import { BehaviorSubject, lastValueFrom, of, Subject } from "rxjs";
 import { IChangeable, OfString } from "./models";
 import { EMITTER } from "../emitter/token";
-import { WsService } from "../core.module";
-
+import { HttpClient } from "@angular/common/http";
+import { ApiConfiguration } from "@ci/portal-api";
+import { WsService } from "../io/ws.service";
+import { ISchema } from "./dao-builder.service";
+/**
+ * Aguardar verdadeiro
+ * @param condition 
+ * @returns 
+ */
+async function waitTrue(condition: () => boolean) {
+    return new Promise<void>((res, rej) => {
+        const repeat = () => {
+            setTimeout(async () => {
+                if (condition()) {
+                    res();
+                } else {
+                    repeat();
+                }
+            }, 5);
+        }
+        if (condition()) {
+            res();
+        } else {
+            repeat();
+        }
+    })
+}
 /** 
  *   Mapeamento de entidade
  *   Objeto com meta informação para realizar o mapeamento do objeto
@@ -12,12 +37,24 @@ import { WsService } from "../core.module";
 @Injectable()
 export class DaoService {
     constructor(
-        @Optional() private readonly ws?: WsService
+        private readonly apiConfig: ApiConfiguration,
+        private readonly http: HttpClient,
+        @Optional() private readonly ws?: WsService,
     ) {
-
+        this.loadApiJson();
     }
     private states = new Map<any, any>();
-
+    api_json = new BehaviorSubject<any>(undefined);
+    async loadApiJson() {
+        this.api_json.next(await lastValueFrom(
+            this.http.get(this.apiConfig.rootUrl + '/api-json')
+        ));
+    }
+    async getSchema(name: string) {
+        await waitTrue(() => !!this.api_json.value)
+        const schema: ISchema = this.api_json.value.components.schemas[name];
+        return schema;
+    }
     /**
      * Prepara o objeto para ser editado por ReactiveFormsModule ou FormsModule Strategies.
      * 
@@ -31,6 +68,14 @@ export class DaoService {
          */
         schemaName?: string,
     }): /* SerializedObjectData */  Promise<IChangeable[] | IChangeable | Date | undefined> {
+        if ('__name' in data) {
+            // this.
+            const schema = await this.getSchema(data.__name);
+            schema;
+            options;
+        }
+
+
         return of().toPromise();
     }
     getChanges(data?: IChangeable, options?: {
@@ -153,14 +198,24 @@ export class DaoService {
     async confirmChanges(data: any,) {
         try {
             if (!!data && typeof data === 'object' && '__confirmation_subject' in data && data?.__confirmation_subject instanceof Subject) {
-                (data.__confirmation_subject as Subject<any>).next(this.getChanges(data));
+                const changes = this.getChanges(data);
+                changes;
+                (data.__confirmation_subject as Subject<any>).next({
+                    at: new Date(),
+                    what: this.ObjectIdentification(data),
+                });
             }
             /// TODO: remover assinatura de evento Attention para Objeto quando for abandonado pelo componente.
-            this.ws?.Attention(data);
+            this.ws?.Propagar(data);
         } catch (error) {
             console.log(data)
         }
     }
+
+    ObjectIdentification(object_synchronizable: any) {
+        return object_synchronizable.id || object_synchronizable.internalId;
+    }
+
     confirmation<T>(data: T) {
         // try {
         if (!data) return undefined;
