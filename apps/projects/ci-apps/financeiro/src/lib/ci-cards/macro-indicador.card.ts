@@ -53,7 +53,7 @@ interface MacroIndicator {
     </mat-card>
     `,
     styles: [`
-        .macro-card { max-width: 450px; margin: 16px auto; }
+        .macro-card {  }
         .indicators-grid { 
             display: grid; 
             grid-template-columns: repeat(2, 1fr); 

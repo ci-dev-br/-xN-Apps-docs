@@ -74,7 +74,7 @@ import { CurrencyPipe, DatePipe, DecimalPipe } from "@angular/common";
     </mat-card>
     `,
     styles: [`
-        .invest-card { max-width: 400px; margin: 16px auto; }
+        .invest-card {  }
         .full-width { width: 100%; }
         .config-row { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
         .results-container { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }

@@ -67,7 +67,7 @@ interface QuoteResponse {
     </mat-card>
     `,
     styles: [`
-        .invest-card { max-width: 400px; margin: 16px auto; }
+        .invest-card {   }
         .full-width { width: 100%; }
         .mt-16 { margin-top: 16px; }
         .config-row { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
