@@ -1,13 +1,13 @@
-import { Controller, Get, Param, Query, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Param, Query, BadRequestException, Post } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { InflationService } from './inflation.service';
+import { InflationService } from './../service/inflation.service';
 
 @ApiTags('Análise Macroeconômica')
 @Controller('analysis/inflation')
 export class InflationController {
     constructor(private readonly inflationService: InflationService) { }
 
-    @Get(':ticker')
+    @Post(':ticker')
     @ApiOperation({
         summary: 'Ajusta o preço histórico de um ativo pela inflação (IPCA)',
         description: 'Calcula o valor presente de uma ação baseado na inflação acumulada no período, retornando a rentabilidade real vs nominal.'

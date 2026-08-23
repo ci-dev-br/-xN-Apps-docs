@@ -23,6 +23,12 @@ import { ScraperService } from "./service/scraper.service";
 import { ScheduleModule } from "@nestjs/schedule";
 import { MacroIndicator } from "./model/macro-indicator.entity";
 import { BcbScraperService } from "./service/bcb-scraper.service";
+import { InflationController } from "./controller/inflation.controller";
+import { InflationService } from "./service/inflation.service";
+import { MacroIndicatorsService } from "./service/macro-indicators.service";
+import { MacroIndicatorsController } from "./controller/macro-indicators.controller";
+import { FinancialsService } from "./service/financials.service";
+import { FinancialsController } from "./controller/financials.controller";
 export const FinanceiroEntities = [
     LancamentoFinanceiro,
     BillingType,
@@ -56,12 +62,18 @@ export const FinanceiroEntities = [
         LancamentoFinanceiroController,
         FaturamentoController,
         IndicatorsController,
+        InflationController,
+        MacroIndicatorsController,
+        FinancialsController,
     ],
     providers: [
         LancamentoFinanceiroService,
         IndicatorsService,
         ScraperService,
         BcbScraperService,
+        InflationService,
+        MacroIndicatorsService,
+        FinancialsService,
     ],
 })
 export class FinanceiroModule { }

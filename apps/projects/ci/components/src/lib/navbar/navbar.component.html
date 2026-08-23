@@ -4,9 +4,10 @@
         <mat-icon>apps</mat-icon>
     </button>
     <mat-menu #menuApps>
+        <h1>Principais Àpps</h1>
         <div class="menu--inner">
             @for (app of apps; track $index) {
-            <button mat-icon-button class="app" routerLinkActive="side-ativo" [routerLink]="'/' + app.url"
+            <button mat-button routerLinkActive="side-ativo" [routerLink]="'/' + app.url"
                 (click)="appClickHandler($event, app)">
                 @if(app.icon){
                 @if(app.type === 'svg'){
@@ -16,14 +17,15 @@
                 <mat-icon>{{app.icon}}</mat-icon>
                 }
                 }
-                <div class="title">{{app.name}}</div>
+                <!--  <div class="title"> -->{{app.name}}<!-- </div> -->
             </button>
             }
         </div>
+        <a routerLink="/meus-apps/apps">Todos os Àpps</a>
     </mat-menu>}
     <div class="recent">
         @for (app of recentes; track $index) {
-        <button mat-icon-button class="app" routerLinkActive="side-ativo" [matTooltip]="app.name"
+        <button mat-raised-button class="app" routerLinkActive="side-ativo" [matTooltip]="app.name"
             [routerLink]="'/' + app.url" (click)="appClickHandler($event, app)">
             <mat-icon [svgIcon]="app.icon"></mat-icon>
         </button>

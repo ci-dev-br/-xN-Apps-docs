@@ -1,17 +1,30 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MacroIndicator } from '../model/macro-indicator.entity';
 
 @Injectable()
-export class BcbScraperService {
+export class BcbScraperService implements OnModuleInit {
     private readonly logger = new Logger(BcbScraperService.name);
 
-    // Mapeamento dos códigos do SGS
+    // Mapeamento dos códigos do SGS (Sistema Gerenciador de Séries Temporais - BCB)
     private readonly INDICATORS = [
-        { name: 'SELIC', code: 11 },   // Selic Diária
-        { name: 'IPCA', code: 433 },   // IPCA Mensal
+        // --- Taxas Básicas de Juros ---
+        { name: 'SELIC', code: 11 },         // Taxa Selic apurada diariamente (% a.d.)
+        { name: 'META_SELIC', code: 432 },   // Taxa Meta Selic fixada pelo COPOM (% a.a.)
+        { name: 'CDI', code: 12 },           // Taxa CDI apurada diariamente (% a.d.) - Principal benchmark de Renda Fixa
+
+        // --- Inflação ---
+        { name: 'IPCA', code: 433 },         // IPCA - Índice Nacional de Preços ao Consumidor Amplo (% a.m.)
+        { name: 'IGPM', code: 189 },         // IGP-M - Índice Geral de Preços do Mercado (% a.m.) - Inflação do aluguel
+
+        // --- Câmbio (Cotação Diária) ---
+        { name: 'DOLAR', code: 1 },          // Taxa de câmbio - Dólar comercial (Venda)
+        { name: 'EURO', code: 21619 },       // Taxa de câmbio - Euro (Venda)
+
+        // --- Outros ---
+        { name: 'POUPANCA', code: 195 },     // Rendimento mensal da Poupança (% a.m.)
     ];
 
     constructor(
@@ -19,7 +32,23 @@ export class BcbScraperService {
         private readonly macroIndicatorRepository: Repository<MacroIndicator>,
     ) {
         console.log('[BcbScraperService]')
-        // setTimeout(() => this.fetchMacroIndicators());
+    }
+
+    // ... (mantenha a lista de INDICATORS e o construtor iguais)
+
+    // 1. O NestJS vai chamar esse método automaticamente ao rodar "npm run start"
+    async onModuleInit() {
+        this.logger.log('Verificando carga inicial de dados macroeconômicos...');
+
+        // Verifica se já existe algum dado na tabela
+        const count = await this.macroIndicatorRepository.count();
+
+        if (count === 0) {
+            this.logger.warn('Tabela de indicadores está vazia! Forçando a primeira carga agora...');
+            await this.fetchMacroIndicators();
+        } else {
+            this.logger.log(`Tabela já possui ${count} registros. Aguardando próximo Cron.`);
+        }
     }
 
     /**
@@ -33,7 +62,7 @@ export class BcbScraperService {
         // atualizações mensais (como o IPCA) e cobrir finais de semana/feriados
         const endDate = new Date();
         const startDate = new Date();
-        startDate.setDate(endDate.getDate() - 60);
+        startDate.setDate(endDate.getDate() - 1000);
 
         const dataInicial = this.formatBcbDate(startDate);
         const dataFinal = this.formatBcbDate(endDate);

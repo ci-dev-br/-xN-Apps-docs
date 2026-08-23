@@ -15,7 +15,11 @@ export class ScraperService {
     private readonly assetRepository: Repository<Asset>,
     @InjectRepository(DailyQuote)
     private readonly quoteRepository: Repository<DailyQuote>,
-  ) { }
+  ) {
+    setTimeout(() => {
+      this.fetchDailyQuotes();
+    })
+  }
 
   /**
    * Roda de Segunda a Sexta às 19:00 (após o fechamento da B3)

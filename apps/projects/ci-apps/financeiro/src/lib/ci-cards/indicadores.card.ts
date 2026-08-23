@@ -99,7 +99,7 @@ export class FundamentalIndicatorsCard implements OnInit {
     @Input() ticker?: string;
 
     // Substitua pela URL base real da sua API NestJS
-    private readonly API_URL = 'http://localhost:3000/indicators';
+    private readonly API_URL = 'https://apps.ci.dev.br/indicators';
 
     constructor(private readonly http: HttpClient) { }
 
@@ -111,7 +111,7 @@ export class FundamentalIndicatorsCard implements OnInit {
         if (this.ticker && this.ticker.trim().length > 0) {
             try {
                 this.data = await lastValueFrom(
-                    this.http.get(`${this.API_URL}/${this.ticker.toUpperCase()}`)
+                    this.http.post(`${this.API_URL}/${this.ticker.toUpperCase()}`, {})
                 );
                 this.stage = 'run';
             } catch (error) {

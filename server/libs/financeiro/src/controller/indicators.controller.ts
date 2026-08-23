@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { IndicatorsService } from '../service/indicators.service';
 
@@ -7,7 +7,7 @@ import { IndicatorsService } from '../service/indicators.service';
 export class IndicatorsController {
     constructor(private readonly indicatorsService: IndicatorsService) { }
 
-    @Get(':ticker')
+    @Post(':ticker')
     @ApiOperation({ summary: 'Obtém indicadores fundamentalistas (P/L, P/VP) de um ativo na data atual ou especificada' })
     @ApiQuery({ name: 'date', required: false, description: 'Data de referência (YYYY-MM-DD)' })
     @ApiResponse({ status: 200, description: 'Indicadores calculados com sucesso' })
