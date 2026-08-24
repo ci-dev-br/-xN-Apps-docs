@@ -27,6 +27,8 @@ import { InviteService } from "./service/invite.service";
 import { InviteController } from "./controller/invite.controller";
 import { StorageModule } from "@ci/storage";
 import { UserPreference } from "./models/user-preference.entity";
+import { FaceAuthController } from "./controller/face-auth.controller";
+import { FaceAuthService } from "./service/face-auth.service";
 export interface IAuthOption {
     secret?: string;
 }
@@ -63,6 +65,7 @@ export const AuthEntities = [
         AuthController,
         RegisterController,
         InviteController,
+        FaceAuthController,
     ],
     providers: [
         UserService,
@@ -72,6 +75,7 @@ export const AuthEntities = [
         RefreshTokenStrategy,
         RegisterService,
         TwoFactorAuthenticationService,
+        FaceAuthService,
         {
             provide: APP_GUARD,
             useClass: AuthGuard,

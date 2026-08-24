@@ -3,6 +3,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MacroIndicator } from '../model/macro-indicator.entity';
+import { IndicatorConfig } from '../model/indicator-config.entity';
 
 @Injectable()
 export class BcbScraperService implements OnModuleInit {
@@ -30,8 +31,11 @@ export class BcbScraperService implements OnModuleInit {
     constructor(
         @InjectRepository(MacroIndicator)
         private readonly macroIndicatorRepository: Repository<MacroIndicator>,
+        @InjectRepository(IndicatorConfig)
+        private readonly indicatorConfigRepository: Repository<IndicatorConfig>,
     ) {
-        console.log('[BcbScraperService]')
+        console.log('[BcbScraperService]');
+        setTimeout(() => this.fetchMacroIndicators())
     }
 
     // ... (mantenha a lista de INDICATORS e o construtor iguais)
@@ -62,7 +66,7 @@ export class BcbScraperService implements OnModuleInit {
         // atualizações mensais (como o IPCA) e cobrir finais de semana/feriados
         const endDate = new Date();
         const startDate = new Date();
-        startDate.setDate(endDate.getDate() - 1000);
+        startDate.setDate(endDate.getDate() - 30);
 
         const dataInicial = this.formatBcbDate(startDate);
         const dataFinal = this.formatBcbDate(endDate);

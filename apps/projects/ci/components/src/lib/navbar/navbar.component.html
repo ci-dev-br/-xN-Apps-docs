@@ -9,6 +9,7 @@
             @for (app of apps; track $index) {
             <button mat-button routerLinkActive="side-ativo" [routerLink]="'/' + app.url"
                 (click)="appClickHandler($event, app)">
+                <!-- <div class="content"> -->
                 @if(app.icon){
                 @if(app.type === 'svg'){
                 <mat-icon [svgIcon]="app.icon"></mat-icon>
@@ -18,6 +19,7 @@
                 }
                 }
                 <!--  <div class="title"> -->{{app.name}}<!-- </div> -->
+                <!-- </div> -->
             </button>
             }
         </div>

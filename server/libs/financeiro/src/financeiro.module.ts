@@ -29,6 +29,8 @@ import { MacroIndicatorsService } from "./service/macro-indicators.service";
 import { MacroIndicatorsController } from "./controller/macro-indicators.controller";
 import { FinancialsService } from "./service/financials.service";
 import { FinancialsController } from "./controller/financials.controller";
+import { IndicatorConfig } from "./model/indicator-config.entity";
+import { IndicatorConfigService } from "./service/indicator-config.service";
 export const FinanceiroEntities = [
     LancamentoFinanceiro,
     BillingType,
@@ -41,6 +43,7 @@ export const FinanceiroEntities = [
     Company,
     DailyQuote,
     FinancialStatement,
+    IndicatorConfig,
 
 ];
 @Module({
@@ -74,6 +77,7 @@ export const FinanceiroEntities = [
         InflationService,
         MacroIndicatorsService,
         FinancialsService,
+        IndicatorConfigService,
     ],
 })
 export class FinanceiroModule { }
@@ -86,4 +90,5 @@ export {
     Company,
     DailyQuote,
     FinancialStatement,
+    IndicatorConfig,
 }

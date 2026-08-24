@@ -57,13 +57,10 @@ interface MacroIndicator {
         .indicators-grid { 
             display: grid; 
             grid-template-columns: repeat(2, 1fr); 
-            gap: 16px; 
-            margin-top: 16px; 
         }
         .indicator-box { 
             background: #fafafa; 
             border: 1px solid #eee;
-            padding: 16px 12px; 
             border-radius: 8px; 
             display: flex; 
             flex-direction: column;
@@ -89,7 +86,6 @@ interface MacroIndicator {
         }
         .loading-state, .empty-state {
             text-align: center;
-            padding: 24px;
             color: #666;
         }
     `],

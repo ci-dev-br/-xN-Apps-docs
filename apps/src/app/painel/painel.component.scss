@@ -106,16 +106,16 @@ mat-drawer {
 .side-ativo {
     position: relative;
 
-   //  &::before {
-   //      content: " ";
-   //      position: absolute;
-   //      left: 0;
-   //      top: 10px;
-   //      bottom: 10px;
-   //      width: 4px;
-   //      border-radius: 0px;
-   //      // background-color: var(--mdc-protected-button-label-text-color);
-   //  }
+    //  &::before {
+    //      content: " ";
+    //      position: absolute;
+    //      left: 0;
+    //      top: 10px;
+    //      bottom: 10px;
+    //      width: 4px;
+    //      border-radius: 0px;
+    //      // background-color: var(--mdc-protected-button-label-text-color);
+    //  }
 }
 
 mat-drawer {
@@ -236,10 +236,10 @@ button.app {
         //  position: absolute;
         // inset: 0;
         //content: " ";
-        background: rgba(#000, .3);
-        backdrop-filter: blur(48px);
+        background: rgba(#000, .7);
+        backdrop-filter: blur(64px);
         border: solid 1px #444;
-        box-shadow: 1px 3px 6px -1px rgba(#000, .33);
+        box-shadow: 1px 3px 6px -1px rgba(#000, .5);
         // }
     }
 }
@@ -276,6 +276,7 @@ button.app {
     overflow: hidden;
     background-color: var(--mdc-protected-button-label-text-color);
 }
-ci-navbar{
+
+ci-navbar {
     z-index: 500;
 }
