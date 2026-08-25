@@ -9,7 +9,7 @@ import { CardSetting, ImplCard } from "./card";
 import { moveItemInArray } from "@angular/cdk/drag-drop";
 import { WindowService } from "../window/src/window.service";
 import { CardFinderComponent } from "../card-finder/card-finder.component";
-import { SettingsComponent } from "@ci/components";
+import { SettingsComponent } from "@ci/components/settings";
 import { ActivatedRoute } from "@angular/router";
 /**
  * Componente de Visualização de Prancheta para construção de Dashboards
