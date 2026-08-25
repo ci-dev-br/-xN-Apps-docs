@@ -1,5 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import { FormBuilder, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -32,7 +32,8 @@ export interface ISettings {
         MatTooltipModule,
     ],
     templateUrl: 'settings.component.html',
-    styleUrl: 'settings.component.scss'
+    styleUrl: 'settings.component.scss',
+    standalone: true
 })
 export class SettingsComponent {
     editLayoutForm;

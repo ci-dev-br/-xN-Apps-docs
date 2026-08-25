@@ -23,7 +23,6 @@ interface MacroIndicator {
                 Atualizado em: {{ lastUpdate | date:'dd/MM/yyyy HH:mm' }}
             </mat-card-subtitle>
         </mat-card-header>
-
         <mat-card-content>
             @if(loading){
                 <div class="loading-state">Carregando indicadores...</div>
@@ -160,5 +159,7 @@ export const MacroIndicatorsCardInfo = {
     componentRef: MacroIndicatorsCard,
     componentVersion: '1.0.0',
     componentName: 'MacroIndicatorsCard',
-    settings: {} // Sem configurações necessárias, roda automaticamente
-};
+    settings: {
+        indicadores: { type: 'text', isArray: true }
+    } // Sem configurações necessárias, roda automaticamente
+}; 

@@ -13,9 +13,9 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouterModule } from "@angular/router";
 import { WindowModule } from "../window/src/window.module";
-import { SettingsComponent } from "../settings/settings.component";
 import { CardboardModule } from "@ci/components/cardboard";
 import { CardFinderModule } from "../card-finder/card-finder.module";
+import { SettingsComponent } from "@ci/components/settings";
 
 @NgModule({
     imports: [
