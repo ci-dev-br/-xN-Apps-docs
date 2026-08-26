@@ -73,9 +73,10 @@ export class DaoService {
             const schema = await this.getSchema(data.__name);
             schema;
             options;
+            data['::initial_pepare_snapshot::'] = [
+                { ...{ ...data } }
+            ];
         }
-
-
         return of().toPromise();
     }
     getChanges(data?: IChangeable, options?: {
@@ -83,14 +84,15 @@ export class DaoService {
     }) {
         if (!data) return undefined;
         const r: any = {};
+        const pre = options?.pre || ((data as any)['::initial_pepare_snapshot::'] || [])[0];
         try {
             Object.getOwnPropertyNames(data).forEach(p => {
                 if (p.indexOf('_') === 0 || p.indexOf(':') === 0) return;
                 // TODO:  identificar mudança em relação ao pre
-                if (!options || !options.pre || (!!options && !!options.pre && JSON.stringify((data as any)[p]) !== JSON.stringify(options?.pre[p]))) {
+                if (p === 'internalId' || !pre || (!!pre && JSON.stringify((data as any)[p]) !== JSON.stringify(pre[p]))) {
                     r[p] = (data as any)[p];
                 } else {
-
+                    // TODO: não sei se deveria faze algo aqui...
                 }
             })
         } catch (error) {
@@ -200,10 +202,11 @@ export class DaoService {
             if (!!data && typeof data === 'object' && '__confirmation_subject' in data && data?.__confirmation_subject instanceof Subject) {
                 const changes = this.getChanges(data);
                 changes;
-                (data.__confirmation_subject as Subject<any>).next({
+                /* (data.__confirmation_subject as Subject<any>).next({
                     at: new Date(),
                     what: this.ObjectIdentification(data),
-                });
+                }); */
+                (data.__confirmation_subject as Subject<any>).next(changes);
             }
             /// TODO: remover assinatura de evento Attention para Objeto quando for abandonado pelo componente.
             this.ws?.Propagar(data);
