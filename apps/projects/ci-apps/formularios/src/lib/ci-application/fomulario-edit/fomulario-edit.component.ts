@@ -104,9 +104,10 @@ export class FormularioEditComponent {
       this.snap.open('Alguns campos precisam ser corrigidos...')
       return;
     } */
-    if (await this.daos?.confirmChanges(this.formulario)) {
+    try {
+      await this.daos?.confirmChanges(this.formulario)
       this.snap?.open('Ajuste aplicado');
-    } else {
+    } catch (error) {
       this.snap?.open('Falha...');
     }
   }
