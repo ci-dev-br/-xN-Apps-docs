@@ -7,7 +7,7 @@ import { firstValueFrom } from 'rxjs';
 import * as Parser from 'rss-parser';
 import * as cheerio from 'cheerio';
 
-// Entidades (Certifique-se de que os caminhos estão corretos na sua estrutura)
+// Entidades (Certifique-se de que os caminhos refletem a sua estrutura de pastas)
 import { News } from '../models/news.entity';
 import { Category } from '../models/category.entity';
 import { Source, SourceStatus } from '../models/source.entity';
@@ -36,10 +36,23 @@ export class ScraperService implements OnModuleInit {
     private readonly httpService: HttpService,
   ) { }
 
-  // Executado de forma segura assim que o módulo terminar de subir
+  // =====================================================================
+  // BOOT DA APLICAÇÃO (NON-BLOCKING)
+  // =====================================================================
   async onModuleInit() {
-    await this.seedSources();
-    await this.catalogTrendingCategories();
+    try {
+      this.logger.log('Iniciando rotinas de base (Cold Start)...');
+      await this.seedSources();
+      await this.catalogTrendingCategories();
+
+      // Libera o boot do NestJS e joga a raspagem pesada para o background (5 segundos depois)
+      setTimeout(() => {
+        this.logger.log('Disparando primeira raspagem pós-boot...');
+        this.scrapeNewsData().catch(e => this.logger.error('Erro no primeiro scrape:', e));
+      }, 5000);
+    } catch (error) {
+      this.logger.error('Erro ao inicializar dados base no OnModuleInit', error);
+    }
   }
 
   // =====================================================================
@@ -48,7 +61,7 @@ export class ScraperService implements OnModuleInit {
   private async seedSources() {
     const count = await this.sourceRepository.count();
     if (count === 0) {
-      this.logger.log('Cadastrando fontes de notícias iniciais...');
+      this.logger.log('Base de fontes vazia. Cadastrando fontes iniciais...');
 
       const defaultSources = [
         {
@@ -64,19 +77,15 @@ export class ScraperService implements OnModuleInit {
           domain: 'bing.com',
           status: SourceStatus.ACTIVE,
           supportsSearch: true,
-        },
-        {
-          name: 'Yahoo News Brasil',
-          searchUrlTemplate: 'https://br.news.yahoo.com/rss/search?p={{query}}',
-          domain: 'br.news.yahoo.com',
-          status: SourceStatus.ACTIVE,
-          supportsSearch: true,
         }
+        // O Yahoo foi removido do seed inicial para evitar instabilidades, 
+        // mas o Auto-Discovery descobrirá novas fontes em breve!
       ];
 
       for (const src of defaultSources) {
         await this.sourceRepository.save(this.sourceRepository.create(src));
       }
+      this.logger.log('Fontes iniciais cadastradas com sucesso!');
     }
   }
 
@@ -88,8 +97,11 @@ export class ScraperService implements OnModuleInit {
     this.logger.log('Iniciando scraper de notícias multi-fontes (1h)...');
 
     const categories = await this.categoryRepository.find({ where: { isTrending: true } });
+    if (categories.length === 0) {
+      this.logger.warn('Nenhuma categoria em alta no momento. Abortando scrape.');
+      return;
+    }
 
-    // Busca apenas as fontes que estão no status ACTIVE
     const activeSources = await this.sourceRepository.find({
       where: { status: SourceStatus.ACTIVE }
     });
@@ -104,18 +116,18 @@ export class ScraperService implements OnModuleInit {
         try {
           let feedUrl = source.searchUrlTemplate;
 
-          // Se a fonte suporta pesquisa (ex: Google News), injetamos o termo
           if (source.supportsSearch) {
             feedUrl = feedUrl.replace('{{query}}', encodeURIComponent(category.name));
           }
 
           const feed = await this.rssParser.parseURL(feedUrl);
-          let itemsToProcess = feed.items;
 
-          // Filtro na memória para fontes nativas que não suportam parâmetro ?q=
+          // Defesa contra falha na leitura do feed (Safe Navigation)
+          let itemsToProcess = feed?.items || [];
+
           if (!source.supportsSearch) {
             const categoryWord = category.name.toLowerCase();
-            itemsToProcess = feed.items.filter(item => {
+            itemsToProcess = itemsToProcess.filter(item => {
               const title = (item.title || '').toLowerCase();
               const content = (item.contentSnippet || item.content || '').toLowerCase();
               return title.includes(categoryWord) || content.includes(categoryWord);
@@ -127,7 +139,6 @@ export class ScraperService implements OnModuleInit {
               const exists = await this.newsRepository.findOneBy({ url: item.link });
 
               if (!exists) {
-                // Entra na página para raspar o conteúdo e procurar novos feeds
                 const extractedText = await this.scrapePageContent(item.link);
 
                 const news = this.newsRepository.create({
@@ -141,7 +152,6 @@ export class ScraperService implements OnModuleInit {
                 await this.newsRepository.save(news);
               }
             } catch (itemError) {
-              // Ignora colisões de concorrência no Postgres (Unique Violation)
               if (itemError.code === '23505') {
                 this.logger.debug(`Ignorando URL duplicada: ${item.link}`);
               } else {
@@ -171,8 +181,9 @@ export class ScraperService implements OnModuleInit {
       const trendsUrl = 'https://trends.google.com/trending/rss';
       const feed = await this.rssParser.parseURL(trendsUrl);
 
-      // Limpa os dados de volume
-      const feedTrends = feed.items.map(item => {
+      const items = feed?.items || [];
+
+      const feedTrends = items.map(item => {
         const rawTraffic = item['approx_traffic'] || '0';
         const volumeStr = rawTraffic.replace(/\D/g, '');
         return {
@@ -184,7 +195,6 @@ export class ScraperService implements OnModuleInit {
       const feedTrendNames = feedTrends.map(t => t.name);
       const currentDbTrends = await this.categoryRepository.find({ where: { isTrending: true } });
 
-      // Desmarca quem caiu e REGISTRA QUEDA
       const obsoleteTrends = currentDbTrends.filter(dbTrend => !feedTrendNames.includes(dbTrend.name));
       for (const obsolete of obsoleteTrends) {
         obsolete.isTrending = false;
@@ -201,12 +211,10 @@ export class ScraperService implements OnModuleInit {
         this.logger.log(`[Queda] Categoria deixou de ser tendência: ${obsolete.name}`);
       }
 
-      // Atualiza tendências atuais e REGISTRA MUDANÇAS
       for (const trend of feedTrends) {
         let category = await this.categoryRepository.findOneBy({ name: trend.name });
 
         if (!category) {
-          // NOVA TENDÊNCIA
           category = this.categoryRepository.create({
             name: trend.name,
             isTrending: true,
@@ -219,7 +227,6 @@ export class ScraperService implements OnModuleInit {
           );
           this.logger.log(`[Nova Tendência] ${category.name} (Vol: ${category.trendVolume})`);
         } else {
-          // TENDÊNCIA EXISTENTE
           const volumeChanged = category.trendVolume !== trend.volume;
           const wasNotTrending = category.isTrending === false;
 
@@ -242,7 +249,7 @@ export class ScraperService implements OnModuleInit {
       }
       this.logger.log('Sincronização de tendências e histórico finalizada.');
     } catch (error) {
-      this.logger.error('Erro ao catalogar tendências', error);
+      this.logger.error('Erro ao catalogar tendências', error.message);
     }
   }
 
@@ -271,9 +278,8 @@ export class ScraperService implements OnModuleInit {
       const rssLink = $('link[type="application/rss+xml"]').attr('href');
       if (rssLink) {
         const absoluteRssUrl = new URL(rssLink, url).toString();
-        const domain = new URL(url).hostname;
 
-        this.registerDiscoveredSource(absoluteRssUrl, domain).catch(e =>
+        this.registerDiscoveredSource(absoluteRssUrl).catch(e =>
           this.logger.debug(`Erro ao registrar fonte descoberta: ${e.message}`)
         );
       }
@@ -305,21 +311,38 @@ export class ScraperService implements OnModuleInit {
   }
 
   // =====================================================================
-  // 5. REGISTRO E SANDBOX DE NOVAS FONTES
+  // 5. REGISTRO (AUTO-DISCOVERY) E SANDBOX DE NOVAS FONTES
   // =====================================================================
-  private async registerDiscoveredSource(rssUrl: string, domain: string) {
-    const exists = await this.sourceRepository.findOne({ where: { searchUrlTemplate: rssUrl } });
+  private async registerDiscoveredSource(rssUrl: string) {
+    try {
+      const parsedUrl = new URL(rssUrl);
+      const domain = parsedUrl.hostname;
 
-    if (!exists) {
-      const newSource = this.sourceRepository.create({
-        name: domain,
-        searchUrlTemplate: rssUrl,
-        domain: domain,
-        status: SourceStatus.DISCOVERED,
-        supportsSearch: false,
-      });
-      await this.sourceRepository.save(newSource);
-      this.logger.log(`🎯 [Auto-Discovery] Nova fonte encontrada: ${domain} (${rssUrl})`);
+      // Ignora dominios de buscadores para não poluir a tabela
+      if (domain.includes('google') || domain.includes('bing') || domain.includes('yahoo')) {
+        return;
+      }
+
+      const exists = await this.sourceRepository.findOne({ where: { searchUrlTemplate: rssUrl } });
+
+      if (!exists) {
+        // Formata o nome a partir do domínio (ex: "veja.abril.com.br" vira "Veja")
+        let cleanName = domain.replace('www.', '').split('.')[0];
+        cleanName = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
+
+        const newSource = this.sourceRepository.create({
+          name: cleanName,
+          searchUrlTemplate: rssUrl,
+          domain: domain,
+          status: SourceStatus.DISCOVERED,
+          supportsSearch: false, // Por padrão, feeds recém descobertos usarão filtro local (na memória)
+        });
+
+        await this.sourceRepository.save(newSource);
+        this.logger.log(`🎯 [Auto-Discovery] Nova fonte encontrada: ${cleanName} (${rssUrl})`);
+      }
+    } catch (e) {
+      this.logger.debug(`Erro ao processar URL de Auto-Discovery: ${e.message}`);
     }
   }
 
@@ -340,7 +363,8 @@ export class ScraperService implements OnModuleInit {
         const feed = await this.rssParser.parseURL(source.searchUrlTemplate);
 
         if (feed && feed.items && feed.items.length > 0) {
-          source.name = feed.title || source.domain;
+          // Atualiza com o título oficial do feed, se disponível
+          source.name = feed.title || source.name;
           source.status = SourceStatus.ACTIVE;
           this.logger.log(`✅ [Sandbox Aprovou] Fonte ${source.name} promovida para ACTIVE.`);
         } else {

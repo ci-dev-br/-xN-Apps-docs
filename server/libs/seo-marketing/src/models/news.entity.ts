@@ -11,7 +11,7 @@ export class News {
     id: string;
 
     @ApiProperty()
-    @Column()
+    @Column({ unique: true })
     title: string;
 
     @ApiProperty()
@@ -27,17 +27,22 @@ export class News {
     @Column({ type: 'text', nullable: true })
     content: string;
 
-    @ManyToOne(() => Category, (category) => category.news)
-    category: Category;
-
     @CreateDateColumn()
     scrapedAt: Date;
 
     @ApiProperty()
     @Column({ nullable: true })
     sourceName: string; // Renomeado de source para sourceName (texto original vindo do RSS)
+    // Se a fonte for deletada, apenas seta como NULL na notícia, sem apagar a notícia
+    @ManyToOne(() => Source, (source) => source.news, {
+        nullable: true,
+        onDelete: 'SET NULL'
+    })
+    sourceInfo: Source;
 
-    @ManyToOne(() => Source, (source) => source.news, { nullable: true })
-    sourceInfo: Source; // Relacionamento com a nova tabela
-
+    // Se a categoria for apagada do banco, todas as notícias atreladas a ela são apagadas junto (Cascade)
+    @ManyToOne(() => Category, (category) => category.news, {
+        onDelete: 'CASCADE'
+    })
+    category: Category;
 }

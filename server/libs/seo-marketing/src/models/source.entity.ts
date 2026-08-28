@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { News } from './news.entity';
+import { schema } from './schema';
 
 export enum SourceStatus {
     DISCOVERED = 'DISCOVERED', // Recém encontrada pelo robô
@@ -8,7 +9,7 @@ export enum SourceStatus {
     SUSPENDED = 'SUSPENDED',   // Com muitos erros
 }
 
-@Entity('sources')
+@Entity({ schema })
 export class Source {
     @PrimaryGeneratedColumn('uuid')
     id: string;
