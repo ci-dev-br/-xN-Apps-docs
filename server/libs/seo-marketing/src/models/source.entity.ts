@@ -1,29 +1,33 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
 import { News } from './news.entity';
-import { schema } from './schema';
 
-@Entity({ schema })
+export enum SourceStatus {
+    DISCOVERED = 'DISCOVERED', // Recém encontrada pelo robô
+    SANDBOX = 'SANDBOX',       // Em fase de testes
+    ACTIVE = 'ACTIVE',         // Validada e pronta para uso
+    SUSPENDED = 'SUSPENDED',   // Com muitos erros
+}
+
+@Entity('sources')
 export class Source {
-    @ApiProperty()
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @ApiProperty({ example: 'Google News' })
-    @Column({ unique: true })
+    @Column({ nullable: true })
     name: string;
 
-    @ApiProperty({ description: 'URL base com a tag {{query}} para substituição' })
-    @Column()
-    searchUrlTemplate: string;
+    @Column({ unique: true })
+    searchUrlTemplate: string; // URL do feed RSS
 
-    @ApiProperty({ description: 'Define se a fonte está ativa para buscas' })
+    @Column({ nullable: true })
+    domain: string; // ex: techtudo.com.br
+
+    @Column({ type: 'varchar', default: SourceStatus.DISCOVERED })
+    status: SourceStatus;
+
     @Column({ default: true })
-    isActive: boolean;
+    supportsSearch: boolean; // Se false, o robô vai baixar o feed todo e filtrar no código
 
-    // ==========================================
-    // CARACTERÍSTICAS / FEEDBACK DINÂMICO
-    // ==========================================
     @Column({ default: 0 })
     consecutiveErrors: number;
 
@@ -32,10 +36,6 @@ export class Source {
 
     @Column({ default: 0 })
     successfulRequests: number;
-
-    @ApiProperty({ description: 'Características flexíveis (ex: precisa de proxy, limite de rate, etc)' })
-    @Column({ type: 'jsonb', nullable: true })
-    characteristics: Record<string, any>;
 
     @OneToMany(() => News, (news) => news.sourceInfo)
     news: News[];
