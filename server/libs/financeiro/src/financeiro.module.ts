@@ -31,6 +31,7 @@ import { FinancialsService } from "./service/financials.service";
 import { FinancialsController } from "./controller/financials.controller";
 import { IndicatorConfig } from "./model/indicator-config.entity";
 import { IndicatorConfigService } from "./service/indicator-config.service";
+import { CategoryEvent } from "@ci/seo-marketing/models/category-event.entity";
 export const FinanceiroEntities = [
     LancamentoFinanceiro,
     BillingType,
@@ -44,6 +45,8 @@ export const FinanceiroEntities = [
     DailyQuote,
     FinancialStatement,
     IndicatorConfig,
+
+    CategoryEvent,
 
 ];
 @Module({
