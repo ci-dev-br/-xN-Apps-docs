@@ -21,6 +21,7 @@ interface ScrapeTask {
 @Injectable()
 export class ScraperService implements OnModuleInit {
   private readonly logger = new Logger(ScraperService.name);
+  private isScrapingContinuous = false;
 
   // Configuramos o parser para ler a tag de tráfego quantitativo do Google Trends
   private rssParser = new Parser({
@@ -50,10 +51,9 @@ export class ScraperService implements OnModuleInit {
       await this.seedSources();
       await this.catalogTrendingCategories();
 
-      // Libera o boot do NestJS e joga a raspagem pesada para o background (5 segundos depois)
+      // Libera o boot do NestJS e joga o worker de raspagem contínua para o background (5 segundos depois)
       setTimeout(() => {
-        this.logger.log('Disparando primeira raspagem pós-boot...');
-        this.scrapeNewsData().catch(e => this.logger.error('Erro no primeiro scrape:', e));
+        this.startContinuousScraper().catch(e => this.logger.error('Erro fatal no worker contínuo:', e));
       }, 5000);
     } catch (error) {
       this.logger.error('Erro ao inicializar dados base no OnModuleInit', error);
@@ -74,10 +74,10 @@ export class ScraperService implements OnModuleInit {
         { name: 'Yahoo News', searchUrlTemplate: 'https://news.search.yahoo.com/rss?p={{query}}', domain: 'news.search.yahoo.com', status: SourceStatus.ACTIVE, supportsSearch: true },
         { name: 'Reddit', searchUrlTemplate: 'https://www.reddit.com/search.rss?q={{query}}', domain: 'reddit.com', status: SourceStatus.ACTIVE, supportsSearch: true },
         { name: 'Hacker News', searchUrlTemplate: 'https://hnrss.org/newest?q={{query}}', domain: 'hnrss.org', status: SourceStatus.ACTIVE, supportsSearch: true },
-        { name: 'Stack Overflow (Por Tag)', searchUrlTemplate: 'https://stackoverflow.com/feeds/tag?tagnames={{query}}&sort=newest', domain: 'stackoverflow.com', status: SourceStatus.ACTIVE, supportsSearch: true },
-        { name: 'Medium (Por Tag)', searchUrlTemplate: 'https://medium.com/feed/tag/{{query}}', domain: 'medium.com', status: SourceStatus.ACTIVE, supportsSearch: true },
-        { name: 'arXiv (Artigos Científicos)', searchUrlTemplate: 'http://export.arxiv.org/api/query?search_query=all:{{query}}&start=0&max_results=20', domain: 'export.arxiv.org', status: SourceStatus.ACTIVE, supportsSearch: true },
-        { name: 'Flickr (Fotos por Tag)', searchUrlTemplate: 'https://www.flickr.com/services/feeds/photos_public.gne?tags={{query}}&format=rss_200', domain: 'flickr.com', status: SourceStatus.ACTIVE, supportsSearch: true }
+        { name: 'Stack Overflow', searchUrlTemplate: 'https://stackoverflow.com/feeds/tag?tagnames={{query}}&sort=newest', domain: 'stackoverflow.com', status: SourceStatus.ACTIVE, supportsSearch: true },
+        { name: 'Medium', searchUrlTemplate: 'https://medium.com/feed/tag/{{query}}', domain: 'medium.com', status: SourceStatus.ACTIVE, supportsSearch: true },
+        { name: 'arXiv', searchUrlTemplate: 'http://export.arxiv.org/api/query?search_query=all:{{query}}&start=0&max_results=20', domain: 'export.arxiv.org', status: SourceStatus.ACTIVE, supportsSearch: true },
+        { name: 'Flickr', searchUrlTemplate: 'https://www.flickr.com/services/feeds/photos_public.gne?tags={{query}}&format=rss_200', domain: 'flickr.com', status: SourceStatus.ACTIVE, supportsSearch: true }
       ];
 
       for (const src of defaultSources) {
@@ -88,29 +88,38 @@ export class ScraperService implements OnModuleInit {
   }
 
   // =====================================================================
-  // 2. BUSCA DE NOTÍCIAS MULTI-FONTES (OTIMIZADO COM ROUND-ROBIN E DELAY)
+  // 2. WORKER CONTÍNUO (ALWAYS-ON) COM ROUND-ROBIN E MARGEM MINIMA
   // =====================================================================
-  @Cron(CronExpression.EVERY_HOUR)
-  async scrapeNewsData() {
-    this.logger.log('Iniciando scraper de notícias multi-fontes (1h)...');
+  private async startContinuousScraper() {
+    if (this.isScrapingContinuous) return;
+    this.isScrapingContinuous = true;
 
+    this.logger.log('🚀 Worker de raspagem contínua iniciado. Nunca irá parar.');
+
+    while (true) {
+      try {
+        await this.runScrapeCycle();
+
+        // Pequena pausa entre ciclos completos caso a base de dados esteja vazia, para não fritar a CPU.
+        // Se houver tarefas, o ciclo volta imediatamente após processar todas.
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      } catch (error) {
+        this.logger.error('Erro no ciclo principal de raspagem. Reiniciando em 10s...', error);
+        await new Promise(resolve => setTimeout(resolve, 10000));
+      }
+    }
+  }
+
+  private async runScrapeCycle() {
     const categories = await this.categoryRepository.find({ where: { isTrending: true } });
-    if (categories.length === 0) {
-      this.logger.warn('Nenhuma categoria em alta no momento. Abortando scrape.');
-      return;
+    const activeSources = await this.sourceRepository.find({ where: { status: SourceStatus.ACTIVE } });
+
+    if (categories.length === 0 || activeSources.length === 0) {
+      return; // Se não houver dados, retorna para o loop aguardar alguns segundos
     }
 
-    const activeSources = await this.sourceRepository.find({
-      where: { status: SourceStatus.ACTIVE }
-    });
-
-    if (activeSources.length === 0) {
-      this.logger.error('Nenhuma fonte de busca ativa disponível!');
-      return;
-    }
-
-    // 2.1 Construção da Fila de Tarefas (Alternando Fontes)
-    // Isso garante que não faremos 10 requisições seguidas na mesma fonte.
+    // Construção da Fila Round-Robin (Intercala Sites)
+    // Resultado gerado: [A(cat1), B(cat1), C(cat1), A(cat2), B(cat2), C(cat2)...]
     const tasks: ScrapeTask[] = [];
     for (const category of categories) {
       for (const source of activeSources) {
@@ -118,37 +127,14 @@ export class ScraperService implements OnModuleInit {
       }
     }
 
-    // 2.2 Cálculo de Pesos e Tempo Disponível
-    // Temos 1 hora até a próxima Cron. Usaremos uma janela segura de 50 minutos (3000000 ms).
-    const SAFE_WINDOW_MS = 50 * 60 * 1000;
-
-    // Calcula o delay ideal dividindo a janela pelo total de tarefas
-    let calculatedDelayMs = Math.floor(SAFE_WINDOW_MS / tasks.length);
-
-    // Estabelece limites para não demorar demais (se houver poucas tarefas) nem ir rápido demais
-    const MIN_DELAY_MS = 3000;  // Mínimo de 3 segundos entre qualquer requisição
-    const MAX_DELAY_MS = 15000; // Máximo de 15 segundos de ociosidade
-
-    calculatedDelayMs = Math.max(MIN_DELAY_MS, Math.min(calculatedDelayMs, MAX_DELAY_MS));
-
-    this.logger.log(`Enfileiradas ${tasks.length} tarefas. Carga recalculada: ${calculatedDelayMs}ms de intervalo-alvo por requisição.`);
-
-    // 2.3 Execução da Fila com compensação de latência
+    // Executa a fila de forma síncrona
     for (const task of tasks) {
-      const startTime = Date.now();
-
+      // 1. Processamento (O tempo natural de carga de rede atua como o delay principal)
       await this.processSingleTask(task.source, task.category);
 
-      // Desconta o tempo que a requisição demorou do delay total calculado
-      const elapsedTime = Date.now() - startTime;
-      const timeToWait = Math.max(0, calculatedDelayMs - elapsedTime);
-
-      if (timeToWait > 0) {
-        await new Promise(resolve => setTimeout(resolve, timeToWait));
-      }
+      // 2. Margem Mínima (Adiciona rigidamente 45ms extras exigidos)
+      await new Promise(resolve => setTimeout(resolve, 45));
     }
-
-    this.logger.log(`Ciclo de extração de notícias finalizado com sucesso.`);
   }
 
   private async processSingleTask(source: Source, category: Category) {
@@ -162,6 +148,7 @@ export class ScraperService implements OnModuleInit {
       const feed = await this.rssParser.parseURL(feedUrl);
       let itemsToProcess = feed?.items || [];
 
+      // Filtro local caso a fonte não tenha suporte a query string nativa
       if (!source.supportsSearch) {
         const categoryWord = category.name.toLowerCase();
         itemsToProcess = itemsToProcess.filter(item => {
@@ -171,11 +158,13 @@ export class ScraperService implements OnModuleInit {
         });
       }
 
+      // Processa até 10 resultados para evitar prender numa única categoria/fonte
       for (const item of itemsToProcess.slice(0, 10)) {
         try {
           const exists = await this.newsRepository.findOneBy({ url: item.link });
 
           if (!exists) {
+            // Este método também depende de rede, agregando ao "tempo de espera natural"
             const extractedText = await this.scrapePageContent(item.link);
 
             const news = this.newsRepository.create({
@@ -190,7 +179,7 @@ export class ScraperService implements OnModuleInit {
           }
         } catch (itemError) {
           if (itemError.code === '23505') {
-            this.logger.debug(`Ignorando URL duplicada: ${item.link}`);
+            // Silencia URL duplicada, é um comportamento normal
           } else {
             this.logger.error(`Erro ao salvar a notícia "${item.title}"`, itemError.message);
           }
@@ -199,13 +188,14 @@ export class ScraperService implements OnModuleInit {
 
       await this.registerSourceFeedback(source, true);
     } catch (error) {
-      this.logger.warn(`Erro na fonte ${source.name} ao buscar "${category.name}": ${error.message}`);
+      // Se ocorrer timeout ou erro 403, etc., falha silenciosa para não travar o loop
       await this.registerSourceFeedback(source, false);
     }
   }
 
   // =====================================================================
   // 3. CATALOGAÇÃO DINÂMICA DE TENDÊNCIAS COM HISTÓRICO (TIME-SERIES)
+  // Continua usando Cron, já que as tendências do Google mudam a cada hora/meia-hora
   // =====================================================================
   @Cron(CronExpression.EVERY_30_MINUTES)
   async catalogTrendingCategories() {
@@ -241,7 +231,6 @@ export class ScraperService implements OnModuleInit {
             volume: 0,
           })
         );
-        this.logger.log(`[Queda] Categoria deixou de ser tendência: ${obsolete.name}`);
       }
 
       for (const trend of feedTrends) {
@@ -258,7 +247,6 @@ export class ScraperService implements OnModuleInit {
           await this.categoryEventRepository.save(
             this.categoryEventRepository.create({ category, type: CategoryEventType.TREND_STARTED, volume: trend.volume })
           );
-          this.logger.log(`[Nova Tendência] ${category.name} (Vol: ${category.trendVolume})`);
         } else {
           const volumeChanged = category.trendVolume !== trend.volume;
           const wasNotTrending = category.isTrending === false;
@@ -271,7 +259,6 @@ export class ScraperService implements OnModuleInit {
             await this.categoryEventRepository.save(
               this.categoryEventRepository.create({ category, type: CategoryEventType.TREND_RESTARTED, volume: trend.volume })
             );
-            this.logger.log(`[Re-Tendência] O assunto voltou a subir: ${category.name}`);
           } else if (volumeChanged) {
             await this.categoryEventRepository.save(
               this.categoryEventRepository.create({ category, type: CategoryEventType.VOLUME_CHANGED, volume: trend.volume })
@@ -310,10 +297,7 @@ export class ScraperService implements OnModuleInit {
       const rssLink = $('link[type="application/rss+xml"]').attr('href');
       if (rssLink) {
         const absoluteRssUrl = new URL(rssLink, url).toString();
-
-        this.registerDiscoveredSource(absoluteRssUrl).catch(e =>
-          this.logger.debug(`Erro ao registrar fonte descoberta: ${e.message}`)
-        );
+        this.registerDiscoveredSource(absoluteRssUrl).catch(() => { });
       }
       // ----------------------------------------------
 
@@ -337,7 +321,6 @@ export class ScraperService implements OnModuleInit {
       }
       return articleContent.trim();
     } catch (error) {
-      this.logger.debug(`Falha ao burlar proteção/paywall da URL: ${url}`);
       return null;
     }
   }
@@ -372,7 +355,7 @@ export class ScraperService implements OnModuleInit {
         this.logger.log(`🎯 [Auto-Discovery] Nova fonte encontrada: ${cleanName} (${rssUrl})`);
       }
     } catch (e) {
-      this.logger.debug(`Erro ao processar URL de Auto-Discovery: ${e.message}`);
+      // Falha silenciosa em URLs corrompidas
     }
   }
 
@@ -398,12 +381,10 @@ export class ScraperService implements OnModuleInit {
           this.logger.log(`✅ [Sandbox Aprovou] Fonte ${source.name} promovida para ACTIVE.`);
         } else {
           source.status = SourceStatus.SUSPENDED;
-          this.logger.warn(`❌ [Sandbox Reprovou] Fonte ${source.domain} retornou feed vazio.`);
         }
       } catch (error) {
         source.status = SourceStatus.SUSPENDED;
         source.consecutiveErrors += 1;
-        this.logger.warn(`❌ [Sandbox Reprovou] Erro ao ler RSS de ${source.domain}: ${error.message}`);
       }
 
       await this.sourceRepository.save(source);
