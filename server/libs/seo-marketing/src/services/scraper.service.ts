@@ -13,6 +13,11 @@ import { Category } from '../models/category.entity';
 import { Source, SourceStatus } from '../models/source.entity';
 import { CategoryEvent, CategoryEventType } from '../models/category-event.entity';
 
+interface ScrapeTask {
+  category: Category;
+  source: Source;
+}
+
 @Injectable()
 export class ScraperService implements OnModuleInit {
   private readonly logger = new Logger(ScraperService.name);
@@ -64,22 +69,15 @@ export class ScraperService implements OnModuleInit {
       this.logger.log('Base de fontes vazia. Cadastrando fontes iniciais...');
 
       const defaultSources = [
-        {
-          name: 'Google News',
-          searchUrlTemplate: 'https://news.google.com/rss/search?q={{query}}&hl=pt-BR&gl=BR&ceid=BR:pt-419',
-          domain: 'news.google.com',
-          status: SourceStatus.ACTIVE,
-          supportsSearch: true,
-        },
-        {
-          name: 'Bing News',
-          searchUrlTemplate: 'https://www.bing.com/news/search?q={{query}}&format=rss',
-          domain: 'bing.com',
-          status: SourceStatus.ACTIVE,
-          supportsSearch: true,
-        }
-        // O Yahoo foi removido do seed inicial para evitar instabilidades, 
-        // mas o Auto-Discovery descobrirá novas fontes em breve!
+        { name: 'Google News', searchUrlTemplate: 'https://news.google.com/rss/search?q={{query}}&hl=pt-BR&gl=BR&ceid=BR:pt-419', domain: 'news.google.com', status: SourceStatus.ACTIVE, supportsSearch: true },
+        { name: 'Bing News', searchUrlTemplate: 'https://www.bing.com/news/search?q={{query}}&format=rss', domain: 'bing.com', status: SourceStatus.ACTIVE, supportsSearch: true },
+        { name: 'Yahoo News', searchUrlTemplate: 'https://news.search.yahoo.com/rss?p={{query}}', domain: 'news.search.yahoo.com', status: SourceStatus.ACTIVE, supportsSearch: true },
+        { name: 'Reddit', searchUrlTemplate: 'https://www.reddit.com/search.rss?q={{query}}', domain: 'reddit.com', status: SourceStatus.ACTIVE, supportsSearch: true },
+        { name: 'Hacker News', searchUrlTemplate: 'https://hnrss.org/newest?q={{query}}', domain: 'hnrss.org', status: SourceStatus.ACTIVE, supportsSearch: true },
+        { name: 'Stack Overflow (Por Tag)', searchUrlTemplate: 'https://stackoverflow.com/feeds/tag?tagnames={{query}}&sort=newest', domain: 'stackoverflow.com', status: SourceStatus.ACTIVE, supportsSearch: true },
+        { name: 'Medium (Por Tag)', searchUrlTemplate: 'https://medium.com/feed/tag/{{query}}', domain: 'medium.com', status: SourceStatus.ACTIVE, supportsSearch: true },
+        { name: 'arXiv (Artigos Científicos)', searchUrlTemplate: 'http://export.arxiv.org/api/query?search_query=all:{{query}}&start=0&max_results=20', domain: 'export.arxiv.org', status: SourceStatus.ACTIVE, supportsSearch: true },
+        { name: 'Flickr (Fotos por Tag)', searchUrlTemplate: 'https://www.flickr.com/services/feeds/photos_public.gne?tags={{query}}&format=rss_200', domain: 'flickr.com', status: SourceStatus.ACTIVE, supportsSearch: true }
       ];
 
       for (const src of defaultSources) {
@@ -90,7 +88,7 @@ export class ScraperService implements OnModuleInit {
   }
 
   // =====================================================================
-  // 2. BUSCA DE NOTÍCIAS MULTI-FONTES
+  // 2. BUSCA DE NOTÍCIAS MULTI-FONTES (OTIMIZADO COM ROUND-ROBIN E DELAY)
   // =====================================================================
   @Cron(CronExpression.EVERY_HOUR)
   async scrapeNewsData() {
@@ -111,62 +109,98 @@ export class ScraperService implements OnModuleInit {
       return;
     }
 
+    // 2.1 Construção da Fila de Tarefas (Alternando Fontes)
+    // Isso garante que não faremos 10 requisições seguidas na mesma fonte.
+    const tasks: ScrapeTask[] = [];
     for (const category of categories) {
       for (const source of activeSources) {
+        tasks.push({ category, source });
+      }
+    }
+
+    // 2.2 Cálculo de Pesos e Tempo Disponível
+    // Temos 1 hora até a próxima Cron. Usaremos uma janela segura de 50 minutos (3000000 ms).
+    const SAFE_WINDOW_MS = 50 * 60 * 1000;
+
+    // Calcula o delay ideal dividindo a janela pelo total de tarefas
+    let calculatedDelayMs = Math.floor(SAFE_WINDOW_MS / tasks.length);
+
+    // Estabelece limites para não demorar demais (se houver poucas tarefas) nem ir rápido demais
+    const MIN_DELAY_MS = 3000;  // Mínimo de 3 segundos entre qualquer requisição
+    const MAX_DELAY_MS = 15000; // Máximo de 15 segundos de ociosidade
+
+    calculatedDelayMs = Math.max(MIN_DELAY_MS, Math.min(calculatedDelayMs, MAX_DELAY_MS));
+
+    this.logger.log(`Enfileiradas ${tasks.length} tarefas. Carga recalculada: ${calculatedDelayMs}ms de intervalo-alvo por requisição.`);
+
+    // 2.3 Execução da Fila com compensação de latência
+    for (const task of tasks) {
+      const startTime = Date.now();
+
+      await this.processSingleTask(task.source, task.category);
+
+      // Desconta o tempo que a requisição demorou do delay total calculado
+      const elapsedTime = Date.now() - startTime;
+      const timeToWait = Math.max(0, calculatedDelayMs - elapsedTime);
+
+      if (timeToWait > 0) {
+        await new Promise(resolve => setTimeout(resolve, timeToWait));
+      }
+    }
+
+    this.logger.log(`Ciclo de extração de notícias finalizado com sucesso.`);
+  }
+
+  private async processSingleTask(source: Source, category: Category) {
+    try {
+      let feedUrl = source.searchUrlTemplate;
+
+      if (source.supportsSearch) {
+        feedUrl = feedUrl.replace('{{query}}', encodeURIComponent(category.name));
+      }
+
+      const feed = await this.rssParser.parseURL(feedUrl);
+      let itemsToProcess = feed?.items || [];
+
+      if (!source.supportsSearch) {
+        const categoryWord = category.name.toLowerCase();
+        itemsToProcess = itemsToProcess.filter(item => {
+          const title = (item.title || '').toLowerCase();
+          const content = (item.contentSnippet || item.content || '').toLowerCase();
+          return title.includes(categoryWord) || content.includes(categoryWord);
+        });
+      }
+
+      for (const item of itemsToProcess.slice(0, 10)) {
         try {
-          let feedUrl = source.searchUrlTemplate;
+          const exists = await this.newsRepository.findOneBy({ url: item.link });
 
-          if (source.supportsSearch) {
-            feedUrl = feedUrl.replace('{{query}}', encodeURIComponent(category.name));
-          }
+          if (!exists) {
+            const extractedText = await this.scrapePageContent(item.link);
 
-          const feed = await this.rssParser.parseURL(feedUrl);
-
-          // Defesa contra falha na leitura do feed (Safe Navigation)
-          let itemsToProcess = feed?.items || [];
-
-          if (!source.supportsSearch) {
-            const categoryWord = category.name.toLowerCase();
-            itemsToProcess = itemsToProcess.filter(item => {
-              const title = (item.title || '').toLowerCase();
-              const content = (item.contentSnippet || item.content || '').toLowerCase();
-              return title.includes(categoryWord) || content.includes(categoryWord);
+            const news = this.newsRepository.create({
+              title: item.title,
+              url: item.link,
+              sourceName: item.creator || item['source'] || source.name,
+              content: extractedText,
+              category: category,
+              sourceInfo: source,
             });
+            await this.newsRepository.save(news);
           }
-
-          for (const item of itemsToProcess.slice(0, 10)) {
-            try {
-              const exists = await this.newsRepository.findOneBy({ url: item.link });
-
-              if (!exists) {
-                const extractedText = await this.scrapePageContent(item.link);
-
-                const news = this.newsRepository.create({
-                  title: item.title,
-                  url: item.link,
-                  sourceName: item.creator || item['source'] || source.name,
-                  content: extractedText,
-                  category: category,
-                  sourceInfo: source,
-                });
-                await this.newsRepository.save(news);
-              }
-            } catch (itemError) {
-              if (itemError.code === '23505') {
-                this.logger.debug(`Ignorando URL duplicada: ${item.link}`);
-              } else {
-                this.logger.error(`Erro ao salvar a notícia "${item.title}"`, itemError.message);
-              }
-            }
+        } catch (itemError) {
+          if (itemError.code === '23505') {
+            this.logger.debug(`Ignorando URL duplicada: ${item.link}`);
+          } else {
+            this.logger.error(`Erro ao salvar a notícia "${item.title}"`, itemError.message);
           }
-
-          await this.registerSourceFeedback(source, true);
-        } catch (error) {
-          this.logger.warn(`Erro na fonte ${source.name} ao buscar "${category.name}": ${error.message}`);
-          await this.registerSourceFeedback(source, false);
         }
       }
-      this.logger.log(`Notícias atualizadas para a categoria: ${category.name}`);
+
+      await this.registerSourceFeedback(source, true);
+    } catch (error) {
+      this.logger.warn(`Erro na fonte ${source.name} ao buscar "${category.name}": ${error.message}`);
+      await this.registerSourceFeedback(source, false);
     }
   }
 
@@ -180,7 +214,6 @@ export class ScraperService implements OnModuleInit {
     try {
       const trendsUrl = 'https://trends.google.com/trending/rss';
       const feed = await this.rssParser.parseURL(trendsUrl);
-
       const items = feed?.items || [];
 
       const feedTrends = items.map(item => {
@@ -243,7 +276,6 @@ export class ScraperService implements OnModuleInit {
             await this.categoryEventRepository.save(
               this.categoryEventRepository.create({ category, type: CategoryEventType.VOLUME_CHANGED, volume: trend.volume })
             );
-            this.logger.debug(`[Volume Atualizado] ${category.name} -> ${trend.volume}`);
           }
         }
       }
@@ -318,7 +350,6 @@ export class ScraperService implements OnModuleInit {
       const parsedUrl = new URL(rssUrl);
       const domain = parsedUrl.hostname;
 
-      // Ignora dominios de buscadores para não poluir a tabela
       if (domain.includes('google') || domain.includes('bing') || domain.includes('yahoo')) {
         return;
       }
@@ -326,7 +357,6 @@ export class ScraperService implements OnModuleInit {
       const exists = await this.sourceRepository.findOne({ where: { searchUrlTemplate: rssUrl } });
 
       if (!exists) {
-        // Formata o nome a partir do domínio (ex: "veja.abril.com.br" vira "Veja")
         let cleanName = domain.replace('www.', '').split('.')[0];
         cleanName = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
 
@@ -335,7 +365,7 @@ export class ScraperService implements OnModuleInit {
           searchUrlTemplate: rssUrl,
           domain: domain,
           status: SourceStatus.DISCOVERED,
-          supportsSearch: false, // Por padrão, feeds recém descobertos usarão filtro local (na memória)
+          supportsSearch: false,
         });
 
         await this.sourceRepository.save(newSource);
@@ -363,7 +393,6 @@ export class ScraperService implements OnModuleInit {
         const feed = await this.rssParser.parseURL(source.searchUrlTemplate);
 
         if (feed && feed.items && feed.items.length > 0) {
-          // Atualiza com o título oficial do feed, se disponível
           source.name = feed.title || source.name;
           source.status = SourceStatus.ACTIVE;
           this.logger.log(`✅ [Sandbox Aprovou] Fonte ${source.name} promovida para ACTIVE.`);
