@@ -19,6 +19,7 @@ export * from './models/comment-meta';
 export * from './models/commit-dto';
 export * from './models/conversation';
 export * from './models/cpu-info';
+export * from './models/create-nota-fiscal-dto';
 export * from './models/deploy-payload';
 export * from './models/device';
 export * from './models/device-payload';

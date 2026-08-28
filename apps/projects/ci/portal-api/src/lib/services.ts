@@ -24,6 +24,7 @@ export { InformacaoContatoService } from './services/informacao-contato.service'
 export { PessoaService } from './services/pessoa.service';
 export { UnidadeMedidaService } from './services/unidade-medida.service';
 export { PaisService } from './services/pais.service';
+export { NotasFiscaisService } from './services/notas-fiscais.service';
 export { LancamentoFinanceiroService } from './services/lancamento-financeiro.service';
 export { AnaliseFundamentalistaService } from './services/analise-fundamentalista.service';
 export { AnaliseMacroeconomicaService } from './services/analise-macroeconomica.service';
