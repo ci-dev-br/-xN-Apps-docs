@@ -37,7 +37,9 @@
         <div class="scoller">
             <h4>Pastas</h4>
             <div class="folders">
-                @for (file of filteredFiles || files; track $index) {
+                @if(isLoading){
+                Trabalhando nisso...
+                }@else{@for (file of filteredFiles || files; track $index) {
                 <div [tabIndex]="$index + 1" class="folder" (click)="abrir(file)">
                     <div class="folder-wrapper">
                         @if(file.iconType=== 'svg' && !!file.icon){<mat-icon [svgIcon]="file.icon"></mat-icon>}
@@ -47,7 +49,7 @@
                         </div>
                     </div>
                 </div>
-                }
+                }}
             </div>
         </div>
     </mat-tab>

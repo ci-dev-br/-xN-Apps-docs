@@ -87,6 +87,7 @@ export class BoardComponent implements OnInit {
     }
     synchronizing?: boolean;
     prancheta?: Prancheta;
+    classes?: string[];
     async loadBoard() {
         if (!this.pranchetas) return;
         this.prancheta = await lastValueFrom(
@@ -103,6 +104,11 @@ export class BoardComponent implements OnInit {
             if (!!this.default) {
                 this.pranchetas.pranchetaControllerGet({ body: { defaultGlobalCode: this.default } });
             }
+        }
+        if (this.prancheta?.layout.layoutOrientation === 'Flex1.0') {
+            this.classes = ['--flex-1-0'];
+        } else {
+            this.classes;
         }
     }
 

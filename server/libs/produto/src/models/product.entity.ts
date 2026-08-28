@@ -1,9 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToOne } from "typeorm";
 import { FullAuditedEntity } from "@ci/core";
 import { Marca } from "@ci/inpi/model/marca.entity";
-import { schema } from "./schema";
 import { UnidadeMedida } from "@ci/cadastro/model/unidade-medida.entity";
+import { schema } from "./schema";
 @Entity({
     schema
 })
@@ -69,9 +69,4 @@ export class Product extends FullAuditedEntity {
     @ManyToOne(type => UnidadeMedida)
     @JoinTable()
     unidadeMedida?: UnidadeMedida;
-    // categoria:Catego
-    /* @ApiProperty({ nullable: true, required: false })
-    @ManyToOne(() => Tenant)
-    @JoinTable()
-    tenant: Tenant; */
 }

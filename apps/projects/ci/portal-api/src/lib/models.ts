@@ -45,6 +45,7 @@ export * from './models/invitation-payload';
 export * from './models/lancamento-financeiro';
 export * from './models/language';
 export * from './models/links';
+export * from './models/macro-indicator';
 export * from './models/marca';
 export * from './models/move';
 export * from './models/obter-lista-agendamento';

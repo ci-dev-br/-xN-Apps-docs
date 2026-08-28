@@ -1,6 +1,6 @@
 @if(!!form){<div class="board-wrap" [formGroup]="form">
     <ci-input mode="content-editable" fieldName="title" label="Título" el="h1" placeholder=""></ci-input>
-    <div class="inner-content">
+    <div class="inner-content" [ngClass]="classes">
         @if(!!prancheta && !!prancheta.cards && prancheta.cards.length > 0) {
         @for(item of prancheta.cards; track $index) {
         <ci-cardboard [cardInfo]="item" [board]="this">

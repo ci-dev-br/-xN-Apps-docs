@@ -40,6 +40,7 @@ import { MatMenuModule } from '@angular/material/menu';
   styleUrl: './files.component.scss'
 })
 export class FilesComponent implements OnInit, OnDestroy {
+  isLoading = true;
   historico?: string[];
   files?: IArquivo[];
   navegacao?: string[];
@@ -101,6 +102,8 @@ export class FilesComponent implements OnInit, OnDestroy {
     })
   }
   async ir(endereco: string) {
+    this.isLoading = true;
+
     const endereco_anterior = this.endereco;
     try {
       let endereco_novo = endereco;
@@ -121,6 +124,7 @@ export class FilesComponent implements OnInit, OnDestroy {
             info: f
           }
         })
+      this.isLoading = false;
     } catch (error) {
       console.trace(error);
       this.endereco = endereco_anterior;

@@ -1,4 +1,4 @@
-import { Controller, Post } from "@nestjs/common";
+import { Controller, Get, Post, Query } from "@nestjs/common";
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Public } from "../decorators/public.decorator";
 import { Body, Request } from '@nestjs/common';
@@ -8,6 +8,7 @@ import { RegisterService, registerToMessagePayload } from "../service/register.s
 import { Register } from "../models/register.entity";
 import { MailService } from "@ci/notification/services/mail.service";
 import { templateHtml } from "@ci/core/template/load-template.fn";
+import { createHash } from "crypto";
 @ApiTags('Register')
 @Controller('Register')
 export class RegisterController {
@@ -66,7 +67,9 @@ export class RegisterController {
                     this.mails.requestSendMessageToMail({
                         template_html: templateHtml('register--initial-confirmation-template', {
                             logo_base64: '',
-                            act_url: '',
+                            act_url: 'https://apps.ci.dev.br/?invite=' + createHash('sha256').update(
+                                register.internalId.substring(8)
+                            ).digest('hex').toString(),
                             new_report_link: '',
                             unsubscribe_link: '',
                             footer_assinatura: '',

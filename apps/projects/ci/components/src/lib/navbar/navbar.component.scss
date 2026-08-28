@@ -22,9 +22,9 @@ nav {
     }
 }
 
-:host ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+/* :host ::ng-deep .mat-mdc-form-field-subscript-wrapper {
     display: none;
-}
+} */
 
 mat-toolbar {
     flex-wrap: wrap;
@@ -68,12 +68,12 @@ h1 {
     gap: 6px;
 
     button ::ng-deep .mdc-button__label {
-        display: flex;
+        /*  display: flex;
         flex-direction: row;
         gap: 12px;
         align-items: center;
         justify-content: stretch;
-        flex: auto;
+        flex: auto; */
     }
 
     /*  button {
@@ -86,4 +86,9 @@ h1 {
     display: flex;
     flex-direction: row;
     gap: 2px;
+    background-color: white;
+    padding: 8px 12px;
+    margin: -8px 0;
+    border-radius: 18px;
+    box-shadow: 2px 4px 6px rgba(255, 255, 255, .3);
 }
