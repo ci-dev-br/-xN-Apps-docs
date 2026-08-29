@@ -79,7 +79,7 @@ export class DiscoveryService implements OnModuleInit {
 
                 // Pausa de 30 minutos entre cada execução de estratégia
                 this.logger.log('Aguardando 30 minutos para a próxima estratégia de descoberta...');
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                await new Promise(resolve => setTimeout(resolve, 100));
             } catch (error) {
                 this.logger.error('Erro no ciclo de descoberta. Retentando em 5 minutos...', error);
                 await new Promise(resolve => setTimeout(resolve, 10000));
@@ -115,7 +115,7 @@ export class DiscoveryService implements OnModuleInit {
                 if (href) links.push(href);
             });
 
-            for (const link of links.slice(0, 5)) { // Testar os 5 primeiros resultados
+            for (const link of links) { // Testar os 5 primeiros resultados
                 await this.tryExtractRssFromDomain(link);
             }
         } catch (e) {
@@ -139,14 +139,14 @@ export class DiscoveryService implements OnModuleInit {
 
             // Vamos investigar 3 fontes aleatórias por ciclo para manter a fila rodando.
             // O processo é: abre a fonte A -> investiga -> abre a fonte B -> investiga...
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 15; i++) {
                 const randomSource = activeSources[Math.floor(Math.random() * activeSources.length)];
                 const homepageUrl = `https://${randomSource.domain}`;
 
                 this.logger.log(`[Discovery] Investigando parceiros na homepage de: ${homepageUrl}`);
 
                 const response = await firstValueFrom(
-                    this.httpService.get(homepageUrl, { headers: this.getDefaultHeaders(), timeout: 8000 }).pipe()
+                    this.httpService.get(homepageUrl, { headers: this.getDefaultHeaders(), timeout: 2000 }).pipe()
                 ).catch(() => null);
 
                 if (!response) continue; // Pula silenciosamente se o site principal falhar
@@ -187,7 +187,7 @@ export class DiscoveryService implements OnModuleInit {
 
                 // Converte para array. Limitamos a 5 parceiros por homepage para evitar 
                 // gargalos caso um site tenha um rodapé gigante com 50 links.
-                const partnersToTest = Array.from(externalDomains).slice(0, 5);
+                const partnersToTest = Array.from(externalDomains);
 
                 if (partnersToTest.length > 0) {
                     this.logger.log(`[Discovery] Encontrados ${partnersToTest.length} possíveis parceiros externos. Testando...`);
@@ -199,7 +199,7 @@ export class DiscoveryService implements OnModuleInit {
                 }
 
                 // Pequena pausa (3 segundos) entre a investigação de uma fonte e outra
-                await new Promise(resolve => setTimeout(resolve, 3000));
+                await new Promise(resolve => setTimeout(resolve, 100));
             }
         } catch (e) {
             this.logger.warn(`Falha na busca de parceiros: ${e.message}`);
@@ -250,7 +250,7 @@ export class DiscoveryService implements OnModuleInit {
 
             for (const news of recentNews) {
                 const response = await firstValueFrom(
-                    this.httpService.get(news.url, { headers: this.getDefaultHeaders(), timeout: 5000 }).pipe()
+                    this.httpService.get(news.url, { headers: this.getDefaultHeaders(), timeout: 2000 }).pipe()
                 ).catch(() => null);
 
                 if (!response) continue;
@@ -272,7 +272,7 @@ export class DiscoveryService implements OnModuleInit {
                 });
 
                 // Testa no máximo 3 domínios de saída por notícia para não gargalar
-                const linksToTest = Array.from(outboundLinks).slice(0, 3);
+                const linksToTest = Array.from(outboundLinks);
                 for (const outLink of linksToTest) {
                     await this.tryExtractRssFromDomain(outLink);
                 }
@@ -295,7 +295,7 @@ export class DiscoveryService implements OnModuleInit {
         try {
             const response = await firstValueFrom(
                 this.httpService.get(`https://crt.sh/?q=${randomTerm}&output=json`, {
-                    timeout: 10000,
+                    timeout: 2000,
                 })
             );
 
@@ -303,7 +303,7 @@ export class DiscoveryService implements OnModuleInit {
             // Pega domínios únicos da resposta (crt.sh retorna muitos duplicados)
             const uniqueDomains = [...new Set(certs.map(c => c.common_name))]
                 .filter(d => typeof d === 'string' && !d.includes('*'))
-                .slice(0, 10); // Processar os 10 primeiros
+                ;// .slice(0, 50); // Processar os 10 primeiros
 
             for (const domain of uniqueDomains) {
                 const url = `https://${domain}`;
@@ -324,7 +324,7 @@ export class DiscoveryService implements OnModuleInit {
     private async tryExtractRssFromDomain(url: string) {
         try {
             const response = await firstValueFrom(
-                this.httpService.get(url, { headers: this.getDefaultHeaders(), timeout: 6000 })
+                this.httpService.get(url, { headers: this.getDefaultHeaders(), timeout: 2000 })
             );
 
             const $ = cheerio.load(response.data);
@@ -353,7 +353,7 @@ export class DiscoveryService implements OnModuleInit {
             const url = new URL(endpoint, baseUrl).toString();
             try {
                 const response = await firstValueFrom(
-                    this.httpService.head(url, { headers: this.getDefaultHeaders(), timeout: 3000 })
+                    this.httpService.head(url, { headers: this.getDefaultHeaders(), timeout: 2000 })
                 );
 
                 const contentType: string = (response.headers['content-type'] || '') as string;
