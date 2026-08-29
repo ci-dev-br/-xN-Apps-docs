@@ -14,6 +14,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { HttpModule } from '@nestjs/axios';
 import { Source } from './models/source.entity';
 import { CategoryEvent } from './models/category-event.entity';
+import { DiscoveryService } from './services/discovery.service';
 export const SeoMarketingEntities = [
   SeoKeyWord,
   SeoPage,
@@ -31,12 +32,13 @@ export const SeoMarketingEntities = [
     CoreModule,
     TypeOrmModule.forFeature([
       ...SeoMarketingEntities
-    ])
+    ]),
   ],
   providers: [
     SeoMarketingService,
     SearchService,
     ScraperService,
+    DiscoveryService,
   ],
   exports: [SeoMarketingService],
 })
