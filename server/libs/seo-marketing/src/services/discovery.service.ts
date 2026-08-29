@@ -245,7 +245,7 @@ export class DiscoveryService implements OnModuleInit {
             // Pega 10 notícias recentes cadastradas no seu banco
             const recentNews = await this.newsRepository.find({
                 order: { id: 'DESC' }, // Ajuste para sua coluna de datação/ID
-                take: 10,
+                take: 25,
             });
 
             for (const news of recentNews) {

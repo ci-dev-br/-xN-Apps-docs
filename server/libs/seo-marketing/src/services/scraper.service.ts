@@ -54,7 +54,17 @@ export class ScraperService implements OnModuleInit {
       // Libera o boot do NestJS e joga o worker de raspagem contínua para o background (5 segundos depois)
       setTimeout(() => {
         this.startContinuousScraper().catch(e => this.logger.error('Erro fatal no worker contínuo:', e));
-      }, 5000);
+      }, 1000);
+      // Libera o boot do NestJS e joga o worker de raspagem contínua para o background (5 segundos depois)
+      setTimeout(() => {
+        this.startContinuousScraper().catch(e => this.logger.error('Erro fatal no worker contínuo:', e));
+      }, 2000);
+      setTimeout(() => {
+        this.startContinuousScraper().catch(e => this.logger.error('Erro fatal no worker contínuo:', e));
+      }, 3000);
+      setTimeout(() => {
+        this.startContinuousScraper().catch(e => this.logger.error('Erro fatal no worker contínuo:', e));
+      }, 4000);
     } catch (error) {
       this.logger.error('Erro ao inicializar dados base no OnModuleInit', error);
     }
@@ -221,14 +231,13 @@ export class ScraperService implements OnModuleInit {
       const obsoleteTrends = currentDbTrends.filter(dbTrend => !feedTrendNames.includes(dbTrend.name));
       for (const obsolete of obsoleteTrends) {
         obsolete.isTrending = false;
-        obsolete.trendVolume = 0;
+        obsolete.trendVolume = Math.max(obsolete.trendVolume + -10, 0);
         await this.categoryRepository.save(obsolete);
-
         await this.categoryEventRepository.save(
           this.categoryEventRepository.create({
             category: obsolete,
             type: CategoryEventType.TREND_ENDED,
-            volume: 0,
+            volume: obsolete.trendVolume,
           })
         );
       }
@@ -306,7 +315,7 @@ export class ScraperService implements OnModuleInit {
       let articleContent = '';
       $('article p, main p, .post-content p, .news-content p, .materia-conteudo p').each((i, element) => {
         const text = $(element).text().trim();
-        if (text.length > 40 && !text.includes('Assine a Folha') && !text.includes('Leia mais:')) {
+        if (text.length > 125 && !text.includes('Assine a Folha') && !text.includes('Leia mais:')) {
           articleContent += text + '\n\n';
         }
       });
@@ -314,7 +323,7 @@ export class ScraperService implements OnModuleInit {
       if (!articleContent.trim()) {
         $('p').each((i, element) => {
           const text = $(element).text().trim();
-          if (text.length > 50) {
+          if (text.length > 512) {
             articleContent += text + '\n\n';
           }
         });
