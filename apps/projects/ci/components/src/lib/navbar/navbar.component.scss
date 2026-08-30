@@ -36,6 +36,7 @@ mat-toolbar {
 
 }
 
+
 mat-form-field {
     min-width: 150px;
     flex: 1;
@@ -70,14 +71,14 @@ h1 {
     flex-wrap: wrap;
     gap: 6px;
 
-    button ::ng-deep .mdc-button__label {
-        /*  display: flex;
+    /*  button ::ng-deep .mdc-button__label { */
+    /*  display: flex;
         flex-direction: row;
         gap: 12px;
         align-items: center;
         justify-content: stretch;
         flex: auto; */
-    }
+    /*  } */
 
     /*  button {
         box-shadow: 1px 3px 6px -1px rgba(#000, .5);
@@ -99,6 +100,7 @@ ci-logo {
     margin: -8px 0;
     margin-right: 32px;
     border-radius: 18px;
+    transition: box-shadow ease 1s;
     box-shadow: inset 7px -12px 32px rgba(60, 113, 228, 0.318),
         inset 1px 3px 3px rgba(255, 255, 255, 0.219),
         inset 0px 0px 2px rgb(255, 255, 255),
@@ -107,6 +109,18 @@ ci-logo {
         inset 120px 0px 60px rgb(255, 238, 0),
         inset 3px -24px 0px rgba(244, 248, 255, 0.6),
         2px 3px 5px rgba(0, 0, 0, .7);
+
+
+    &:hover {
+        box-shadow: inset 7px -12px 32px rgba(60, 113, 228, 0.318),
+            inset 1px 3px 3px rgba(255, 255, 255, 0.219),
+            inset 0px 0px 2px rgb(255, 255, 255),
+            inset 7px -48px 64px rgb(0, 0, 0),
+            inset 120px -12px 120px rgba(255, 0, 170, 0.712),
+            inset -120px 0px 60px rgb(255, 238, 0),
+            inset 3px -24px 0px rgba(244, 248, 255, 0.6),
+            2px 3px 5px rgba(0, 0, 0, .7);
+    }
 
     button {
         mix-blend-mode: lighten;
