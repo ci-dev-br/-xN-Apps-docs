@@ -17,7 +17,10 @@ export class NavbarComponent implements OnInit {
     user = this.userService.user;
     @Input() menuItens?: INavbarItemMenu[];
     @Input() userMenuList?: IItemMenu[];
-    @Input() recentes?: any[]
+    @Input() recentes?: any[];
+    get isDeveloper() {
+        return this.userService?.user?.value;
+    }
     constructor(
         private readonly userService: UserAuthenticationService,
         menuService?: MenuService,

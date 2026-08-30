@@ -29,20 +29,20 @@
         </div>
         <a routerLink="/meus-apps/apps">Todos os Àpps</a>
     </mat-menu>}
-    <div class="recent">
+    @if(!!recentes?.length){<div class="recent">
         @for (app of recentes; track $index) {
-        <button mat-raised-button class="app" routerLinkActive="side-ativo" [matTooltip]="app.name"
-            [routerLink]="'/' + app.url" (click)="appClickHandler($event, app)">
+        <button mat-icon-button routerLinkActive="side-ativo" [matTooltip]="app.name" [routerLink]="'/' + app.url"
+            (click)="appClickHandler($event, app)">
             <mat-icon [svgIcon]="app.icon"></mat-icon>
         </button>
         }
-    </div>
+    </div>}
     <ci-logo></ci-logo>
     <span style="flex: auto;"></span>
     <span style="flex: auto;"></span>
-    <!-- <button mat-icon-button [matMenuTriggerFor]="deployMenu">
+    <button mat-icon-button [matMenuTriggerFor]="deployMenu">
         <mat-icon>deployed_code</mat-icon>
-    </button> -->
+    </button>
     <button mat-icon-button [matMenuTriggerFor]="communitiesMenu">
         <mat-icon>communities</mat-icon>
     </button>

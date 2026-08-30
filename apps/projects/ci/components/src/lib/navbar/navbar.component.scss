@@ -85,6 +85,11 @@ h1 {
     } */
 }
 
+ci-logo {
+    filter: drop-shadow(0px 1.76px 6px rgba(255, 255, 255, .9));
+    min-width: 125px;
+}
+
 .recent {
     display: flex;
     flex-direction: row;
@@ -92,17 +97,23 @@ h1 {
     background: rgba(255, 255, 255, .1);
     padding: 8px 12px;
     margin: -8px 0;
+    margin-right: 32px;
     border-radius: 18px;
-    box-shadow: inset 7px -12px 12px rgba(60, 113, 228, 0.418),
+    box-shadow: inset 7px -12px 32px rgba(60, 113, 228, 0.318),
         inset 1px 3px 3px rgba(255, 255, 255, 0.219),
-        inset 0px 0px 2px rgba(255, 255, 255, 0.692),
+        inset 0px 0px 2px rgb(255, 255, 255),
         inset 7px -48px 64px rgb(0, 0, 0),
-        inset -120px -12px 120px rgba(255, 0, 170, 0.418),
-        inset 120px 0px 60px rgba(255, 238, 0, 0.63),
+        inset -120px -12px 120px rgba(255, 0, 170, 0.712),
+        inset 120px 0px 60px rgb(255, 238, 0),
         inset 3px -24px 0px rgba(244, 248, 255, 0.6),
         2px 3px 5px rgba(0, 0, 0, .7);
 
     button {
         mix-blend-mode: lighten;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
     }
 }
