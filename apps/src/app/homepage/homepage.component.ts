@@ -5,16 +5,17 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthModule, USER_MENU, UserAuthenticationService } from '@ci/auth';
 import { FooterModule, NavbarModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
-import { Application, User } from '@ci/portal-api';
+import { Application, NewsService, User } from '@ci/portal-api';
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { SidebarSettings } from './sidebar-settings/sidebar-settings.components';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Publicar } from './publicar/publicar.component';
 import { IItemMenu } from '@ci/components/window';
+import { lastValueFrom } from 'rxjs';
 const XD = <T>(a: T) => {
     (a as any).___styles_xd__internals = {
         m: { l: 0, r: 0, t: 0, b: 0 },
@@ -36,12 +37,16 @@ const XD = <T>(a: T) => {
         MatFormFieldModule,
         FooterModule,
         MatInputModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatIconModule,
     ],
     templateUrl: './homepage.component.html',
     standalone: true,
     styleUrl: './homepage.component.scss'
 })
 export class HomepageComponent implements OnInit {
+    pesquisa;
     stage?: 'loading' | 'loaded' = 'loading';
     constructor(
         @Optional() protected readonly userService?: UserAuthenticationService,
@@ -50,7 +55,22 @@ export class HomepageComponent implements OnInit {
         @Optional() private readonly router?: Router,
         @Optional() private readonly dialog?: MatDialog,
         @Inject(USER_MENU) userMenu?: IItemMenu[],
-    ) { }
+        formBuilder?: FormBuilder,
+        private readonly news?: NewsService,
+    ) {
+        this.pesquisa = formBuilder?.group({
+            q: [],
+        });
+        this.pesquisa?.valueChanges.subscribe(async value => {
+            this.info = await lastValueFrom(
+                this.news!.newsControllerGetFeed({
+                    dataFinal: new Date().toISOString(),
+                    dataInicial: new Date().toISOString()
+                })
+            )
+        })
+    }
+    protected info?: any[];
     protected sidebar = false;
     protected categorias?: any[];
     protected apps?: Application[];

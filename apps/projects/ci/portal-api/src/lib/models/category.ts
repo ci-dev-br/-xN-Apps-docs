@@ -1,15 +1,16 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface Category {
-  createdAt?: Date | null;
-  createdBy?: {
-} | null;
-  deleted?: boolean | null;
-  description: string;
-  internalId?: string | null;
-  lastModifiedAt?: Date | null;
-  lastModifiedBy?: {
-} | null;
+  id: string;
+
+  /**
+   * Se o assunto está em alta no momento
+   */
+  isTrending: boolean;
   name: string;
-  tenants?: Array<string> | null;
+
+  /**
+   * Volume aproximado de buscas que tornou o assunto tendência
+   */
+  trendVolume: number;
 }

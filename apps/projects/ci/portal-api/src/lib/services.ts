@@ -32,6 +32,7 @@ export { IndicadoresMacroeconomicosService } from './services/indicadores-macroe
 export { DadosFundamentalistasCvmService } from './services/dados-fundamentalistas-cvm.service';
 export { I11NService } from './services/i-11-n.service';
 export { OrganizacaoService } from './services/organizacao.service';
+export { NewsService } from './services/news.service';
 export { FormsService } from './services/forms.service';
 export { WebsiteService } from './services/website.service';
 export { SitePageService } from './services/site-page.service';

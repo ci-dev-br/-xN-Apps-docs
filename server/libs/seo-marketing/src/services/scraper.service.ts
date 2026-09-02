@@ -418,4 +418,51 @@ export class ScraperService implements OnModuleInit {
     }
     await this.sourceRepository.save(source);
   }
+
+  // =====================================================================
+  // 7. ENDPOINT DO FRONTEND (ALIMENTAÇÃO DO FEED)
+  // =====================================================================
+  async getTrendingFeed(dataInicial?: Date, dataFinal?: Date) {
+    this.logger.log(`Gerando feed para o período: ${dataInicial?.toISOString()} a ${dataFinal?.toISOString()}`);
+    const categorias = (await this.categoryRepository.find({ where: { isTrending: true } })).map(c => c.id);
+    let query = this.newsRepository.createQueryBuilder('news')
+      .where('news.category_id IN (:...categoryIds) or news.createdAt::date = now()::date', { categoryIds: categorias })
+      ;
+    if (dataInicial) {
+      query = query.andWhere('news.scrapedAt >= :dataInicial', { dataInicial });
+    }
+    if (dataFinal) {
+      query = query.andWhere('news.scrapedAt <= :dataFinal', { dataFinal });
+    }
+    query = query.orderBy('news.scrapedAt', 'DESC').limit(60);
+    const newsList = await query.getMany();
+    // Passo 3: Agrupar as notícias por Fonte (Source) para montar o FeedColumn
+    const columnsMap = new Map<string, any[]>();
+    for (const news of newsList) {
+      const sourceKey = news.sourceName || 'Diversos';
+      if (!columnsMap.has(sourceKey)) {
+        columnsMap.set(sourceKey, []);
+      }
+      // Limita a quantidade de posts por coluna (ex: máx 5 notícias por veículo/fonte)
+      /* if (columnsMap.get(sourceKey).length < 100) { */
+      if (news.content && news.content.length > 100) {
+        columnsMap.get(sourceKey).push({
+          id: news.id,
+          title: news.title,
+          content: news.content || '',
+          link: news.url, // Mapeado para o DTO do frontend
+          source: sourceKey,
+          date: news.scrapedAt, // Mapeado para o DTO do frontend
+        });
+      }
+      /* } */
+    }
+    // Passo 4: Transformar o Map no Array final do DTO esperado pelo Frontend
+    const feedColumns = Array.from(columnsMap.entries()).map(([mainSource, posts]) => ({
+      mainSource,
+      posts,
+    })).sort((a, b) => b.mainSource.localeCompare(a.mainSource)); // Ordena alfabeticamente por nome da fonte
+    // Retorna ordenando pelas colunas que têm mais conteúdo primeiro
+    return feedColumns.sort((a, b) => b.posts.length - a.posts.length);
+  }
 }

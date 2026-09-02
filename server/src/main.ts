@@ -6,7 +6,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
 import { config } from 'dotenv';
 import * as express from 'express';
-import { spawn, spawnSync } from 'child_process';
+import { spawnSync } from 'child_process';
 import { WsAdapter } from '@nestjs/platform-ws';
 import { corsOptionsDelegate } from './cors-option-delegate';
 import * as cookieParser from 'cookie-parser';

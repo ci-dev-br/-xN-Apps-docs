@@ -15,6 +15,7 @@ import { HttpModule } from '@nestjs/axios';
 import { Source } from './models/source.entity';
 import { CategoryEvent } from './models/category-event.entity';
 import { DiscoveryService } from './services/discovery.service';
+import { NewsController } from './controller/news.controller';
 export const SeoMarketingEntities = [
   SeoKeyWord,
   SeoPage,
@@ -39,6 +40,9 @@ export const SeoMarketingEntities = [
     SearchService,
     ScraperService,
     DiscoveryService,
+  ],
+  controllers: [
+    NewsController,
   ],
   exports: [SeoMarketingService],
 })

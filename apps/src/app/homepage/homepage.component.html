@@ -48,11 +48,13 @@
             <img class="logo" src="logo-colorida.svg"
                 alt-label="Logo 'apps.ci.dev.br' escrita em manuscrito e colida degradê em minúsculo">
         </figure>
-
-        <mat-form-field>
-            <mat-label>Pesquisar ...</mat-label>
-            <input type="text" matInput placeholder="Pesquisar...">
-        </mat-form-field>
+        @if(!!pesquisa){<ng-container [formGroup]="pesquisa">
+            <mat-form-field>
+                <mat-label>Pesquisar ...</mat-label>
+                <input type="text" matInput placeholder="Pesquisar..." formControlName="q">
+            </mat-form-field>
+        </ng-container>}
+        {{info|json}}
     </header>
     }
 </div>
