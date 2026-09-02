@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Or, Repository } from 'typeorm';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import * as Parser from 'rss-parser';
@@ -424,9 +424,16 @@ export class ScraperService implements OnModuleInit {
   // =====================================================================
   async getTrendingFeed(dataInicial?: Date, dataFinal?: Date) {
     this.logger.log(`Gerando feed para o período: ${dataInicial?.toISOString()} a ${dataFinal?.toISOString()}`);
-    const categorias = (await this.categoryRepository.find({ where: { isTrending: true } })).map(c => c.id);
+    const categorias = (await this.categoryRepository.find({
+      where: [{
+        isTrending: true,
+      },
+      {
+        createdAt: Between(dataInicial, dataFinal)
+      }]
+    })).map(c => c.id);
     let query = this.newsRepository.createQueryBuilder('news')
-      .where('news.category_id IN (:...categoryIds) or news.createdAt::date = now()::date', { categoryIds: categorias })
+      .where('news.category_id IN (:...categoryIds)', { categoryIds: categorias })
       ;
     if (dataInicial) {
       query = query.andWhere('news.scrapedAt >= :dataInicial', { dataInicial });
@@ -434,7 +441,7 @@ export class ScraperService implements OnModuleInit {
     if (dataFinal) {
       query = query.andWhere('news.scrapedAt <= :dataFinal', { dataFinal });
     }
-    query = query.orderBy('news.scrapedAt', 'DESC').limit(60);
+    query = query.orderBy('news.scrapedAt', 'DESC').limit(50);
     const newsList = await query.getMany();
     // Passo 3: Agrupar as notícias por Fonte (Source) para montar o FeedColumn
     const columnsMap = new Map<string, any[]>();
