@@ -96,14 +96,17 @@ export class RegisterController {
              });
              return created_user; */
         } catch (error) {
-            console.trace(error);
+            let mensagem_error = 'Não foi possível realizar o registro, tente novamente mais tarde.';
+            try {
+                console.trace(error);
+                mensagem_error = error?.message || mensagem_error;
+            } catch (e) {
+                console.trace(e);
+            }
             return {
                 status: 500,
-                message: String(error),
-                /* error: {
-                    severity: error.severity,
-                    detail: error.detail,
-                } */
+                message: mensagem_error,
+
             }
         }
     }

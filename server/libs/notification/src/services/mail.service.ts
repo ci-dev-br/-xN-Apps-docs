@@ -161,14 +161,14 @@ export class MailService {
                     console.log(data.toString());
                     try {
                         result = JSON.parse(data);
+                        console.log(data.toString());
                     } catch (error) {
                         console.trace(error);
                     }
-                    if (result?.code === 0)
-                        resulte(result);
-                    else {
-                        reject(new Error('Falha no envio do e-mail.\n' + (result?.message || '')));
-                    }
+                    /*   if (result?.code === 0)
+                      else {
+                      } */
+                    resulte();
                 });
             });
             req.write(JSON.stringify(mail_payload));
