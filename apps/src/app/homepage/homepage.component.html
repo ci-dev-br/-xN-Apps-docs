@@ -51,10 +51,18 @@
         @if(!!pesquisa){<ng-container [formGroup]="pesquisa">
             <mat-form-field>
                 <mat-label>Pesquisar ...</mat-label>
-                <input type="text" matInput placeholder="Pesquisar..." formControlName="q">
+                <input type="text" matInput placeholder="Pesquisar..." formControlName="q" (keyup.enter)="pesquisar()">
+                <button mat-icon-button matSuffix (click)="pesquisar()">
+                    <mat-icon>search</mat-icon>
+                </button>
             </mat-form-field>
         </ng-container>}
-        {{info|json}}
+        <!-- {{info|json}} -->
+        @if(info) {@for(item of info; track $index) {
+        <div class="feed-column">
+            <h2>{{item}}</h2>
+        </div>
+        }}
     </header>
     }
 </div>

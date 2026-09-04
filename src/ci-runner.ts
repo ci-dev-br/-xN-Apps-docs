@@ -20,8 +20,9 @@ export class CiRunner extends RunnerX {
                         const p = join(__dirname, '..', 'apps');
                         console.log(p);
                         const s = spawn('npm run apil', {
-                            cwd: p,
-                            // env: process.env,/*  detached: true, */
+                            cwd: 'c:/projetos/br.dev.ci.apps/apps/',
+                            shell: true,
+                            stdio: 'inherit'
                         });
                         s.on('error', (error) => {
                             console.trace(error);

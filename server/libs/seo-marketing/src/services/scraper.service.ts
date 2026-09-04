@@ -464,12 +464,54 @@ export class ScraperService implements OnModuleInit {
       }
       /* } */
     }
-    // Passo 4: Transformar o Map no Array final do DTO esperado pelo Frontend
     const feedColumns = Array.from(columnsMap.entries()).map(([mainSource, posts]) => ({
       mainSource,
       posts,
     })).sort((a, b) => b.mainSource.localeCompare(a.mainSource)); // Ordena alfabeticamente por nome da fonte
     // Retorna ordenando pelas colunas que têm mais conteúdo primeiro
+    return feedColumns.sort((a, b) => b.posts.length - a.posts.length);
+  }
+  /**
+   * Pesquisar por termo e periodo, retornando feed agrupado por fonte (Source) e ordenado por data de publicação.
+   * @param dataInicial Data inicial do período de pesquisa (opcional)
+   * @param dataFinal Data final do período de pesquisa (opcional)
+   */
+  async pesquisar(dataInicial?: Date, dataFinal?: Date, textoConsulta?: string) {
+    let query = this.newsRepository.createQueryBuilder('news')
+      ;
+    if (dataInicial) {
+      query = query.andWhere('news.scrapedAt >= :dataInicial', { dataInicial });
+    }
+    if (dataFinal) {
+      query = query.andWhere('news.scrapedAt <= :dataFinal', { dataFinal });
+    }
+    if (textoConsulta) {
+      query = query.andWhere('news.title ILIKE :textoConsulta OR news.content ILIKE :textoConsulta', { textoConsulta: `%${textoConsulta.replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('%', '\\%').replaceAll(' ', '%')}%` });
+    }
+    query = query.orderBy('news.scrapedAt', 'DESC').limit(10);
+    const newsList = await query.getMany();
+    // Passo 3: Agrupar as notícias por Fonte (Source) para montar o FeedColumn
+    const columnsMap = new Map<string, any[]>();
+    for (const news of newsList) {
+      const sourceKey = news.sourceName || 'Diversos';
+      if (!columnsMap.has(sourceKey)) {
+        columnsMap.set(sourceKey, []);
+      }
+      if (news.content && news.content.length > 100) {
+        columnsMap.get(sourceKey).push({
+          id: news.id,
+          title: news.title,
+          content: news.content || '',
+          link: news.url, // Mapeado para o DTO do frontend
+          source: sourceKey,
+          date: news.scrapedAt, // Mapeado para o DTO do frontend
+        });
+      }
+    }
+    const feedColumns = Array.from(columnsMap.entries()).map(([mainSource, posts]) => ({
+      mainSource,
+      posts,
+    })).sort((a, b) => b.mainSource.localeCompare(a.mainSource));
     return feedColumns.sort((a, b) => b.posts.length - a.posts.length);
   }
 }

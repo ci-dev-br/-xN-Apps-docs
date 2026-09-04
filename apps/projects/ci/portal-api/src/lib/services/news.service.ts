@@ -11,13 +11,12 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { Category } from '../models/category';
 import { FeedColumnDto } from '../models/feed-column-dto';
-import { News } from '../models/news';
 import { newsControllerGetCategories } from '../fn/news/news-controller-get-categories';
 import { NewsControllerGetCategories$Params } from '../fn/news/news-controller-get-categories';
 import { newsControllerGetFeed } from '../fn/news/news-controller-get-feed';
 import { NewsControllerGetFeed$Params } from '../fn/news/news-controller-get-feed';
-import { newsControllerGetNewsByCategory } from '../fn/news/news-controller-get-news-by-category';
-import { NewsControllerGetNewsByCategory$Params } from '../fn/news/news-controller-get-news-by-category';
+import { newsControllerPesquisar } from '../fn/news/news-controller-pesquisar';
+import { NewsControllerPesquisar$Params } from '../fn/news/news-controller-pesquisar';
 
 @Injectable()
 export class NewsService extends BaseService {
@@ -58,41 +57,8 @@ export class NewsService extends BaseService {
     );
   }
 
-  /** Path part for operation `newsControllerGetNewsByCategory()` */
-  static readonly NewsControllerGetNewsByCategoryPath = '/News/{categoryId}';
-
-  /**
-   * Busca notícias por categoria.
-   *
-   *
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `newsControllerGetNewsByCategory()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  newsControllerGetNewsByCategory$Response(params: NewsControllerGetNewsByCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<News>>> {
-    return newsControllerGetNewsByCategory(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Busca notícias por categoria.
-   *
-   *
-   *
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `newsControllerGetNewsByCategory$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  newsControllerGetByCategory(params: NewsControllerGetNewsByCategory$Params, context?: HttpContext): Observable<Array<News>> {
-    return this.newsControllerGetNewsByCategory$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<News>>): Array<News> => r.body)
-    );
-  }
-
   /** Path part for operation `newsControllerGetFeed()` */
-  static readonly NewsControllerGetFeedPath = '/News';
+  static readonly NewsControllerGetFeedPath = '/News/getFeed';
 
   /**
    * Retorna o feed de notícias agrupado por fonte, filtrado pelas top tendências do período.
@@ -104,7 +70,7 @@ export class NewsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  newsControllerGetFeed$Response(params: NewsControllerGetFeed$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<FeedColumnDto>>> {
+  newsControllerGetFeed$Response(params?: NewsControllerGetFeed$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<FeedColumnDto>>> {
     return newsControllerGetFeed(this.http, this.rootUrl, params, context);
   }
 
@@ -118,8 +84,41 @@ export class NewsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  newsControllerGetFeed(params: NewsControllerGetFeed$Params, context?: HttpContext): Observable<Array<FeedColumnDto>> {
+  newsControllerGetFeed(params?: NewsControllerGetFeed$Params, context?: HttpContext): Observable<Array<FeedColumnDto>> {
     return this.newsControllerGetFeed$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<FeedColumnDto>>): Array<FeedColumnDto> => r.body)
+    );
+  }
+
+  /** Path part for operation `newsControllerPesquisar()` */
+  static readonly NewsControllerPesquisarPath = '/News/pesquisar';
+
+  /**
+   * Pesquisar notícias por termo e período, retornando feed agrupado por fonte (Source) e ordenado por data de publicação.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `newsControllerPesquisar()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  newsControllerPesquisar$Response(params?: NewsControllerPesquisar$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<FeedColumnDto>>> {
+    return newsControllerPesquisar(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Pesquisar notícias por termo e período, retornando feed agrupado por fonte (Source) e ordenado por data de publicação.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `newsControllerPesquisar$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  newsControllerPesquisar(params?: NewsControllerPesquisar$Params, context?: HttpContext): Observable<Array<FeedColumnDto>> {
+    return this.newsControllerPesquisar$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<FeedColumnDto>>): Array<FeedColumnDto> => r.body)
     );
   }

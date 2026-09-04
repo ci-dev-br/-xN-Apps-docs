@@ -46,7 +46,6 @@ export class RegisterController {
                         template_html: 'bem-vindo',
                         from: 'apps@ci.dev.br',
                         to: input.email,
-
                     })
                 }
             }
@@ -91,7 +90,7 @@ export class RegisterController {
                surname: input.surname,
                password: await argon2.hash(input.password),
                username: input.identificacao,
-               phone: input.phone,
+               phone: input.phone, 
                passwordMode: 'argon2',
              });
              return created_user; */

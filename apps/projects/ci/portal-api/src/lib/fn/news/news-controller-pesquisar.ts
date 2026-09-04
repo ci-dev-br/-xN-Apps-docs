@@ -6,16 +6,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { News } from '../../models/news';
+import { FeedColumnDto } from '../../models/feed-column-dto';
 
-export interface NewsControllerGetNewsByCategory$Params {
-  categoryId: string;
+export interface NewsControllerPesquisar$Params {
+  textoConsulta?: string;
 }
 
-export function newsControllerGetNewsByCategory(http: HttpClient, rootUrl: string, params: NewsControllerGetNewsByCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<News>>> {
-  const rb = new RequestBuilder(rootUrl, newsControllerGetNewsByCategory.PATH, 'get');
+export function newsControllerPesquisar(http: HttpClient, rootUrl: string, params?: NewsControllerPesquisar$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<FeedColumnDto>>> {
+  const rb = new RequestBuilder(rootUrl, newsControllerPesquisar.PATH, 'post');
   if (params) {
-    rb.path('categoryId', params.categoryId, {});
+    rb.query('textoConsulta', params.textoConsulta, {});
   }
 
   return http.request(
@@ -23,9 +23,9 @@ export function newsControllerGetNewsByCategory(http: HttpClient, rootUrl: strin
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<News>>;
+      return r as StrictHttpResponse<Array<FeedColumnDto>>;
     })
   );
 }
 
-newsControllerGetNewsByCategory.PATH = '/News/{categoryId}';
+newsControllerPesquisar.PATH = '/News/pesquisar';

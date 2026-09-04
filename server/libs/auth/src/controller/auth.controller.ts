@@ -103,7 +103,7 @@ export class AuthController {
               chave.identifiedUser, payload.password, chave.id
             );
           if (!authenticated_user) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException('Acesso negado. Usuário não identificado ou senha incorreta.');
           }
           chave.valid = true;
           chave.alive = false;

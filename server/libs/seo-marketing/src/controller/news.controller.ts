@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, Post, Query, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -7,7 +7,6 @@ import { Category } from '../models/category.entity';
 import { FeedColumnDto } from '../dto/feed.dto';
 import { ScraperService } from '../services/scraper.service';
 import { Public } from '@ci/auth/decorators/public.decorator';
-
 
 @ApiTags('News')
 @Controller('News')
@@ -27,7 +26,7 @@ export class NewsController {
         return this.categoryRepo.find({ order: { isTrending: 'DESC' } });
     }
 
-    @Post(':categoryId')
+    /* @Post(':categoryId')
     @ApiOperation({ summary: 'Busca notícias por categoria' })
     @ApiResponse({ status: 200, type: [News] })
     async getNewsByCategory(@Param('categoryId') categoryId: string) {
@@ -36,13 +35,13 @@ export class NewsController {
             order: { scrapedAt: 'DESC' },
             take: 50
         });
-    }
+    } */
 
     @Public()
-    @Post()
+    @Post('getFeed')
     @ApiOperation({ summary: 'Retorna o feed de notícias agrupado por fonte, filtrado pelas top tendências do período' })
-    @ApiQuery({ name: 'dataInicial', type: String, example: '2026-08-20T00:00:00.000Z' })
-    @ApiQuery({ name: 'dataFinal', type: String, example: '2026-08-28T23:59:59.999Z' })
+    @ApiQuery({ name: 'dataInicial', type: String, example: '2026-08-20T00:00:00.000Z', required: false })
+    @ApiQuery({ name: 'dataFinal', type: String, example: '2026-08-28T23:59:59.999Z', required: false })
     @ApiResponse({ status: 200, type: [FeedColumnDto] })
     async getFeed(
         @Query('dataInicial') dataInicialStr: string,
@@ -60,5 +59,23 @@ export class NewsController {
             throw new BadRequestException('Formato de data inválido. Utilize o formato ISO 8601.');
         }
         return await this.service?.getTrendingFeed(dataInicial, dataFinal);
+    }
+
+    @Post('pesquisar')
+    @ApiOperation({ summary: 'Pesquisar notícias por termo e período, retornando feed agrupado por fonte (Source) e ordenado por data de publicação.' })
+    @ApiQuery({ name: 'textoConsulta', type: String, example: 'tecnologia', required: false })
+    @ApiResponse({ status: 200, type: [FeedColumnDto] })
+    @Public()
+    async pesquisar(
+        @Query('textoConsulta') textoConsulta?: string,
+    ) {
+        try {
+            let dataInicial: Date | undefined;
+            let dataFinal: Date | undefined;
+
+            return await this.service?.pesquisar(dataInicial, dataFinal, textoConsulta);
+        } catch (error) {
+            console.error('Erro ao processar a pesquisa:', error);
+        }
     }
 }

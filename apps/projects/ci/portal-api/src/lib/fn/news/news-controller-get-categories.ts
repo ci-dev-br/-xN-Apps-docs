@@ -12,7 +12,7 @@ export interface NewsControllerGetCategories$Params {
 }
 
 export function newsControllerGetCategories(http: HttpClient, rootUrl: string, params?: NewsControllerGetCategories$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Category>>> {
-  const rb = new RequestBuilder(rootUrl, newsControllerGetCategories.PATH, 'get');
+  const rb = new RequestBuilder(rootUrl, newsControllerGetCategories.PATH, 'post');
   if (params) {
   }
 

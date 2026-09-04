@@ -61,14 +61,14 @@ export class HomepageComponent implements OnInit {
         this.pesquisa = formBuilder?.group({
             q: [],
         });
-        this.pesquisa?.valueChanges.subscribe(async value => {
+        /* this.pesquisa?.valueChanges.subscribe(async value => {
             this.info = await lastValueFrom(
                 this.news!.newsControllerGetFeed({
                     dataFinal: new Date().toISOString(),
                     dataInicial: new Date().toISOString()
                 })
             )
-        })
+        }) */
     }
     protected info?: any[];
     protected sidebar = false;
@@ -121,6 +121,11 @@ export class HomepageComponent implements OnInit {
             setTimeout(() => anima(), 900);
         }
         anima();
+    }
+    async pesquisar() {
+        this.info = await lastValueFrom(this.news!.newsControllerPesquisar({
+            textoConsulta: this.pesquisa?.value.q || undefined,
+        }));
     }
     protected bg?: string;
     async mountStyle() {

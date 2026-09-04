@@ -50,7 +50,6 @@ export * from './models/links';
 export * from './models/macro-indicator';
 export * from './models/marca';
 export * from './models/move';
-export * from './models/news';
 export * from './models/obter-lista-agendamento';
 export * from './models/obter-lista-atendimento';
 export * from './models/obter-lista-category';

@@ -21,11 +21,7 @@ export class AuthGuard implements CanActivate {
     private readonly userService: UserService,
   ) { }
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-    const role = this.reflector.getAllAndOverride<string>(ROLE_KEY, [
+    const isPublic = this.reflector.getAllAndOverride<any>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
@@ -33,10 +29,14 @@ export class AuthGuard implements CanActivate {
       // 💡 See this condition
       return true;
     }
+    const role = this.reflector?.getAllAndOverride<string>(ROLE_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
     const request: IncomingMessage = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Falha na autenticação. Token não fornecido.');
     }
     try {
       const payload: { id: string, roles: string[], permission: string, chaveAcesso: string } = await this.jwtService.verifyAsync(token, {
@@ -56,7 +56,7 @@ export class AuthGuard implements CanActivate {
         if (!payload || !payload.roles.includes(role)) throw new UnauthorizedException('Acesso negado. Não corresponde ao nível de acesso necessário.');
       }
     } catch (err) {
-      throw new UnauthorizedException(err);
+      throw new UnauthorizedException('Falha na autenticação. Token inválido ou expirado.');
     }
     return true;
   }

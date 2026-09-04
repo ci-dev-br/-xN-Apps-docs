@@ -9,12 +9,12 @@ import { RequestBuilder } from '../../request-builder';
 import { FeedColumnDto } from '../../models/feed-column-dto';
 
 export interface NewsControllerGetFeed$Params {
-  dataInicial: string;
-  dataFinal: string;
+  dataInicial?: string;
+  dataFinal?: string;
 }
 
-export function newsControllerGetFeed(http: HttpClient, rootUrl: string, params: NewsControllerGetFeed$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<FeedColumnDto>>> {
-  const rb = new RequestBuilder(rootUrl, newsControllerGetFeed.PATH, 'get');
+export function newsControllerGetFeed(http: HttpClient, rootUrl: string, params?: NewsControllerGetFeed$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<FeedColumnDto>>> {
+  const rb = new RequestBuilder(rootUrl, newsControllerGetFeed.PATH, 'post');
   if (params) {
     rb.query('dataInicial', params.dataInicial, {});
     rb.query('dataFinal', params.dataFinal, {});
@@ -30,4 +30,4 @@ export function newsControllerGetFeed(http: HttpClient, rootUrl: string, params:
   );
 }
 
-newsControllerGetFeed.PATH = '/News';
+newsControllerGetFeed.PATH = '/News/getFeed';
