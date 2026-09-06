@@ -7,7 +7,7 @@ function d() {
 console.error = (...arg) => { __error(d(), ...arg); }
 console.log = (...arg) => { __log(d(), ...arg); }
 console.trace = (...arg) => {
-    __trace(d(), ...(arg || []).map(x => {
+    __trace(d(), ...(arg || [])?.map(x => {
         try {
             if (x instanceof Buffer)
                 return x.toString('utf8');
