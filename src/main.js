@@ -48,18 +48,19 @@ class CiDevAppsSerices extends ServiceBase {
 /**
  * Serviço da Aplicação
  */
-const service_process = spawn('node',
+const service_process = spawn('run.ps1',
     [
-        './node_modules/@nestjs/cli/bin/nest',
+        /*  'run.ps1' */
+        /* './node_modules/@nestjs/cli/bin/nest',
         'start',
         '--watch',
-        '--debug'
+        '--debug' */
     ],
     {
         cwd: 'C:/projetos/br.dev.ci.apps/server',
-        env: {
+        /* env: {
             NODE_OPTIONS: '--openssl-legacy-provider'
-        }
+        } */
     })
     .on('data', m => console.log(m))
     .on('error', m => console.log(m))

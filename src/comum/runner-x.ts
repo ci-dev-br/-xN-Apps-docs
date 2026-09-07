@@ -1,6 +1,4 @@
 import { IncomingMessage } from 'http';
-import { get as https_get, } from 'https';
-import { get as http_get } from 'http';
 import { CloudflareIntegration } from '../integration/cloudflare.integration';
 import { ChildProcessWithoutNullStreams, execSync, Serializable, spawn } from 'node:child_process';
 import { join } from 'node:path';
