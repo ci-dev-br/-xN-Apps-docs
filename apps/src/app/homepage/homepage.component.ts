@@ -48,12 +48,12 @@ const XD = <T>(a: T) => {
 export class HomepageComponent implements OnInit {
     pesquisa;
     stage?: 'loading' | 'loaded' = 'loading';
-    feeds: any[] = [
+    feeds?: any[];/* [
         { author: 'John Doe', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', date: new Date() },
         { author: 'Jane Smith', content: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', date: new Date() },
         { author: 'Bob Johnson', content: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.', date: new Date() },
         { author: 'Alice Williams', content: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', date: new Date() }
-    ];
+    ]; */
     constructor(
         @Optional() protected readonly userService?: UserAuthenticationService,
         @Optional() private render?: Renderer2,

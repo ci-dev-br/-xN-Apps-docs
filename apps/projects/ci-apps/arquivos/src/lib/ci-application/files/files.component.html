@@ -1,5 +1,5 @@
 <mat-tab-group>
-    <mat-tab label="Minha Imagens">
+    <mat-tab [label]="endereco || 'Arquivos'">
         <mat-toolbar>
             <button mat-icon-button (click)="back()" matTooltip="Clique para voltar, pressione e veja o histórico">
                 <mat-icon>arrow_back</mat-icon>

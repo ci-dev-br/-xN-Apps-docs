@@ -26,7 +26,7 @@
         <mat-icon class="icon">draw</mat-icon>
     </div>
     <div class="wrapper">
-        @if(!feeds.length){ <div>
+        @if(!feeds || feeds.length === 0){ <div>
             <p>
                 Nada por perto até o momento,
             </p>
@@ -84,4 +84,4 @@
     </header>
     }
 </div>
-<x-footer />
+<!-- <x-footer /> -->
