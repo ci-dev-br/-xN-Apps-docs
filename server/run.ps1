@@ -6,7 +6,7 @@ while ($true) {
     "[$startTime] Aplicação iniciada." | Out-File -FilePath $logFile -Append
     
     # Executa o Node diretamente, aumentando o limite de heap para evitar a queda imediata
-    node --max-old-space-size=4096 dist/main.js *>&1 | Tee-Object -FilePath $logFile -Append
+    node --max-old-space-size=512 dist/main.js *>&1 | Tee-Object -FilePath $logFile -Append
     
     $endTime = Get-Date
     $uptime = $endTime - $startTime
