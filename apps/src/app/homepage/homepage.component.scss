@@ -33,6 +33,9 @@ header {
     display: flex;
     flex-direction: column;
     align-self: center;
+
+    flex: auto;
+    overflow: auto;
 }
 
 .apps {
@@ -210,4 +213,10 @@ video {
 
 mat-form-field {
     min-width: 60vw;
+}
+
+.feed-item {
+    margin-bottom: 48px;
+    border-bottom: 1px solid #ccc;
+    padding: 8px 0 8px 124px;
 }

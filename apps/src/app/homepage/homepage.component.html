@@ -26,7 +26,7 @@
         <mat-icon class="icon">draw</mat-icon>
     </div>
     <div class="wrapper">
-        <div>
+        @if(!feeds.length){ <div>
             <p>
                 Nada por perto até o momento,
             </p>
@@ -34,6 +34,24 @@
                 seja o publicar algo por perto!
             </p>
         </div>
+        }@else {
+        <div class="feed">
+            @for(item of feeds; track $index) {
+            <div class="feed-item">
+                <h3>{{item.author}} <span class="date">{{item.date | date:'short'}}</span></h3>
+                <p>{{item.content}}</p>
+                <div class="interactions">
+                    <button mat-icon-button color="primary"><mat-icon>thumb_up</mat-icon></button>
+                    <button mat-icon-button color="primary"><mat-icon>comment</mat-icon></button>
+                    <button mat-icon-button color="primary"><mat-icon>share</mat-icon></button>
+                    <button mat-icon-button color="primary"><mat-icon>bookmark</mat-icon></button>
+                    <button mat-icon-button color="primary"><mat-icon>more_vert</mat-icon></button>
+                    <button mat-icon-button color="primary"><mat-icon>report</mat-icon></button>
+                    <button mat-icon-button color="primary"><mat-icon>flag</mat-icon></button>
+                </div>
+            </div>
+            }
+        </div>}
         <div class="apps">
             @for (item of apps; track $index) {
             <mat-card (click)="appClickHandler($event, item)">
