@@ -78,10 +78,11 @@ export class HomepageComponent implements OnInit {
                     try {
                         if (post.content.toLocaleLowerCase().indexOf('oferta') > -1) return false;
                         if (post.content.toLocaleLowerCase().indexOf('sex') > -1) return false;
-                        if (post.content.toLocaleLowerCase().indexOf('na bet') > -1) return false;
+                        if (post.content.toLocaleLowerCase().indexOf('bet') > -1) return false;
                         if (post.content.toLocaleLowerCase().indexOf(' odds') > -1) return false;
                         if (post.content.toLocaleLowerCase().indexOf('member') > -1) return false;
                         if (post.content.toLocaleLowerCase().indexOf('vip') > -1) return false;
+                        if (post.content.toLocaleLowerCase().indexOf('cassino') > -1) return false;
                     } catch (error) {
 
                     }
