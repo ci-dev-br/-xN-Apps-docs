@@ -70,7 +70,11 @@ export class HomepageComponent implements OnInit {
         });
         (async () => {
             this.news?.newsControllerGetFeed({
-                dataInicial: (() => { const data_final = new Date(); data_final.setHours(0, 0, 0); return data_final; })().toISOString(),
+                dataInicial: (() => {
+                    const data_final = new Date();
+                    data_final.setDate(data_final.getDate() - 1);
+                    return data_final;
+                })().toISOString(),
                 dataFinal: new Date().toISOString()
             }).subscribe(feeds => {
                 const digest = feeds.map(feed => feed.posts).reduce((a, b) => [...(a || []), ...(b || [])]);
