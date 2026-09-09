@@ -39,7 +39,7 @@
             @for(item of feeds; track $index) {
             <div class="feed-item">
                 <h3>{{item.author}} <span class="date">{{item.date | date:'short'}}</span></h3>
-                <p>{{item.content}}</p>
+                <div [innerHtml]="item.content" class="feed-content"></div>
                 <div class="interactions">
                     <button mat-icon-button color="primary"><mat-icon>thumb_up</mat-icon></button>
                     <button mat-icon-button color="primary"><mat-icon>comment</mat-icon></button>

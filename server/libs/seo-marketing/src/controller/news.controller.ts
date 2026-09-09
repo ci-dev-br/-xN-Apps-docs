@@ -19,12 +19,12 @@ export class NewsController {
 
     }
 
-    @Post('categories')
-    @ApiOperation({ summary: 'Lista todas as categorias catalogadas' })
-    @ApiResponse({ status: 200, type: [Category] })
-    async getCategories() {
-        return this.categoryRepo.find({ order: { isTrending: 'DESC' } });
-    }
+    /*  @Post('categories')
+     @ApiOperation({ summary: 'Lista todas as categorias catalogadas' })
+     @ApiResponse({ status: 200, type: [Category] })
+     async getCategories() {
+         return this.categoryRepo.find({ order: { isTrending: 'DESC' } });
+     } */
 
     /* @Post(':categoryId')
     @ApiOperation({ summary: 'Busca notícias por categoria' })
@@ -39,7 +39,7 @@ export class NewsController {
 
     @Public()
     @Post('getFeed')
-    @ApiOperation({ summary: 'Retorna o feed de notícias agrupado por fonte, filtrado pelas top tendências do período' })
+    @ApiOperation({ operationId: 'getFeed' })
     @ApiQuery({ name: 'dataInicial', type: String, example: '2026-08-20T00:00:00.000Z', required: false })
     @ApiQuery({ name: 'dataFinal', type: String, example: '2026-08-28T23:59:59.999Z', required: false })
     @ApiResponse({ status: 200, type: [FeedColumnDto] })

@@ -35,7 +35,8 @@ header {
     align-self: center;
 
     flex: auto;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .apps {
@@ -220,4 +221,11 @@ mat-form-field {
     border-bottom: 1px solid RGBA(0, 0, 0, 0.1);
     padding: 8px 0 8px 52px;
     font-size: 14px;
+}
+
+.feed-content {
+    white-space: pre;
+    max-width: max(50vw, 500px);
+    text-wrap: wrap;
+    text-justify: distribute;
 }

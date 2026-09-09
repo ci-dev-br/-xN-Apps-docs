@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { Router, RouterModule } from '@angular/router';
 import { AuthModule, USER_MENU, UserAuthenticationService } from '@ci/auth';
 import { FooterModule, NavbarModule } from '@ci/components';
-import { CoreModule } from '@ci/core';
+import { CoreModule, TranslatePipe } from '@ci/core';
 import { Application, NewsService, User } from '@ci/portal-api';
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from '@angular/material/icon';
@@ -40,6 +40,7 @@ const XD = <T>(a: T) => {
         ReactiveFormsModule,
         MatInputModule,
         MatIconModule,
+        TranslatePipe,
     ],
     templateUrl: './homepage.component.html',
     standalone: true,
@@ -67,6 +68,27 @@ export class HomepageComponent implements OnInit {
         this.pesquisa = formBuilder?.group({
             q: [],
         });
+        (async () => {
+            this.news?.newsControllerGetFeed({
+                dataInicial: (() => { const data_final = new Date(); data_final.setHours(0, 0, 0); return data_final; })().toISOString(),
+                dataFinal: new Date().toISOString()
+            }).subscribe(feeds => {
+                const digest = feeds.map(feed => feed.posts).reduce((a, b) => [...(a || []), ...(b || [])]);
+                this.feeds = digest.filter(post => {
+                    try {
+                        if (post.content.toLocaleLowerCase().indexOf('oferta') > -1) return false;
+                        if (post.content.toLocaleLowerCase().indexOf('sex') > -1) return false;
+                        if (post.content.toLocaleLowerCase().indexOf('na bet') > -1) return false;
+                        if (post.content.toLocaleLowerCase().indexOf(' odds') > -1) return false;
+                        if (post.content.toLocaleLowerCase().indexOf('member') > -1) return false;
+                        if (post.content.toLocaleLowerCase().indexOf('vip') > -1) return false;
+                    } catch (error) {
+
+                    }
+                    return true;
+                });
+            })
+        })();
         /* this.pesquisa?.valueChanges.subscribe(async value => {
             this.info = await lastValueFrom(
                 this.news!.newsControllerGetFeed({
