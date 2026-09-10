@@ -16,7 +16,7 @@ function runCommand(command, ignoreErrors = false) {
 }
 function updateAllPackages() {
     console.log("=== Iniciando Rotina Robusta de Atualização em CI/CD ===");
-    runCommand('npm install --legacy-peer-deps');
+    //runCommand('npm install --legacy-peer-deps');
     runCommand('npx @angular/cli update @angular/core @angular/cli --allow-dirty --force');
     runCommand('npx @angular/cli update @angular/material @angular/cdk --allow-dirty --force', true);
     runCommand('npx @angular/cli update @ngrx/store @ngrx/effects --allow-dirty --force', true);

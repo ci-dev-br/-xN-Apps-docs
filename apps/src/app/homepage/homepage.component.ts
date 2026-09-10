@@ -69,7 +69,7 @@ export class HomepageComponent implements OnInit {
             q: [],
         });
         (async () => {
-            this.news?.newsControllerGetFeed({
+            this.news?.getFeed({
                 dataInicial: (() => {
                     const data_final = new Date();
                     data_final.setDate(data_final.getDate() - 1);
@@ -77,7 +77,7 @@ export class HomepageComponent implements OnInit {
                 })().toISOString(),
                 dataFinal: new Date().toISOString()
             }).subscribe(feeds => {
-                const digest = feeds.map(feed => feed.posts).reduce((a, b) => [...(a || []), ...(b || [])]);
+                const digest = feeds.map(feed => feed.posts).reduce((a: any, b: any) => [...(a || []), ...(b || [])]);
                 this.feeds = digest.filter(post => {
                     try {
                         if (post.content.toLocaleLowerCase().indexOf('oferta') > -1) return false;

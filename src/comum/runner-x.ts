@@ -95,8 +95,10 @@ export abstract class RunnerX {
                 writeFileSync(join(__dirname, '..', 'server', 'src', 'main.ts'), main, { encoding: 'utf-8' });
             }, 1);
         }
-        console.log(`[Retorno ${eventName}]`, error);
-        console.trace(error);
+        if (error) {
+            console.log(`[Retorno ${eventName}]`, error);
+            console.trace(error);
+        }
     }
     private taskDataHandler(message: any, task: RunnerTask) {
         console.log('[task]', (message.toString() || message));

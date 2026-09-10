@@ -6,14 +6,18 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Category } from '../../models/category';
+import { FeedColumnDto } from '../../models/feed-column-dto';
 
-export interface NewsControllerGetCategories$Params {
+export interface GetFeed$Params {
+  dataInicial?: string;
+  dataFinal?: string;
 }
 
-export function newsControllerGetCategories(http: HttpClient, rootUrl: string, params?: NewsControllerGetCategories$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Category>>> {
-  const rb = new RequestBuilder(rootUrl, newsControllerGetCategories.PATH, 'post');
+export function getFeed(http: HttpClient, rootUrl: string, params?: GetFeed$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<FeedColumnDto>>> {
+  const rb = new RequestBuilder(rootUrl, getFeed.PATH, 'post');
   if (params) {
+    rb.query('dataInicial', params.dataInicial, {});
+    rb.query('dataFinal', params.dataFinal, {});
   }
 
   return http.request(
@@ -21,9 +25,9 @@ export function newsControllerGetCategories(http: HttpClient, rootUrl: string, p
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<Category>>;
+      return r as StrictHttpResponse<Array<FeedColumnDto>>;
     })
   );
 }
 
-newsControllerGetCategories.PATH = '/News/categories';
+getFeed.PATH = '/News/getFeed';
