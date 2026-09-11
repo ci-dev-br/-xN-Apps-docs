@@ -7,6 +7,7 @@ import { IItemMenu, WindowModule, WindowService } from '@ci/components/window';
 import { CoreModule, CoreService, MenuService, WsService } from '@ci/core';
 import { ApplicationService } from '@ci/portal-api';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
+import { AssistenteComponent } from './assistente/assistente';
 
 @Component({
   selector: 'ci-root',
@@ -18,6 +19,7 @@ import { BehaviorSubject, lastValueFrom } from 'rxjs';
     RouterModule,
     WindowModule,
     MatSnackBarModule,
+    AssistenteComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'

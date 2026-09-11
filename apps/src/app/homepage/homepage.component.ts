@@ -40,7 +40,7 @@ const XD = <T>(a: T) => {
         ReactiveFormsModule,
         MatInputModule,
         MatIconModule,
-        TranslatePipe,
+        // TranslatePipe,
     ],
     templateUrl: './homepage.component.html',
     standalone: true,

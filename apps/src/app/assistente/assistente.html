@@ -1,0 +1,64 @@
+<div class="assistant-wrapper" (mouseenter)="isHovered = true" (mouseleave)="isHovered = false">
+
+    <!-- Balão de Informação -->
+    <div class="info-bubble"
+        [class.show]="isHovered || voiceService.isListening || recog.isSpeaking || voiceService.text">
+        <span class="status-text" [class.active]="voiceService.isListening" [class.narrating]="recog.isSpeaking">
+            <ng-container *ngIf="recog.isSpeaking; else listeningOrIdle">
+                AIA: Falando com você...
+            </ng-container>
+            <ng-template #listeningOrIdle>
+                {{ voiceService.isListening ? 'AIA: Ouvindo você...' : 'AIA: Dormindo (Clique para acordar)' }}
+            </ng-template>
+        </span>
+
+        <span class="transcript" *ngIf="voiceService.text">
+            "{{ voiceService.text }}"
+        </span>
+
+        <!-- Mini equalizador que só aparece quando ela fala -->
+        <div class="audio-equalizer" *ngIf="recog.isSpeaking">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+
+        <!-- O seletor de voz que criamos antes pode ficar aqui embaixo -->
+        <!-- <div class="voice-selector">...</div> -->
+    </div>
+
+    <!-- A Bolinha (Orb) -->
+    <div class="orb-container" (click)="toggleListen()">
+
+        <!-- Ondas de escuta -->
+        <div class="ripple" *ngIf="voiceService.isListening && !recog.isSpeaking"></div>
+
+        <!-- Ondas sonoras de FALA (mais agressivas) -->
+        <div class="speak-wave" *ngIf="recog.isSpeaking"></div>
+        <div class="speak-wave delay" *ngIf="recog.isSpeaking"></div>
+
+        <!-- Aqui adicionamos a classe "speaking" -->
+        <div class="orb" [class.listening]="recog.isListening" [class.speaking]="recog.isSpeaking">
+
+            <div class="core"></div>
+            <div class="ring ring-1"></div>
+            <div class="ring ring-2"></div>
+
+            <div class="icon">
+                <!-- Ícone muda para um "alto-falante" ou ondas quando fala -->
+                <svg *ngIf="recog.isSpeaking" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <path
+                        d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                </svg>
+                <svg *ngIf="!recog.isSpeaking && !voiceService.isListening" viewBox="0 0 24 24" width="24" height="24"
+                    fill="currentColor">
+                    <path
+                        d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+</div>

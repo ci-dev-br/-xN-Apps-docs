@@ -1,11 +1,13 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '@ci/core';
+import { AssistenteComponent } from './assistente/assistente';
 
 export const routes: Routes = [
     {
         path: '',
         loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule)
     },
+    /* { path: 'assistente', component: AssistenteComponent }, */
     {
         path: 'acessar',
         loadChildren: () => import('./acessar/acessar.module').then(m => m.AcessarModule)
