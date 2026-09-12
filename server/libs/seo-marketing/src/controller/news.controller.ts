@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, Param, Post, Query, Request } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, Post, Query, Req, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -7,6 +7,7 @@ import { Category } from '../models/category.entity';
 import { FeedColumnDto } from '../dto/feed.dto';
 import { ScraperService } from '../services/scraper.service';
 import { Public } from '@ci/auth/decorators/public.decorator';
+import { Policy } from '@ci/core';
 
 @ApiTags('News')
 @Controller('News')
@@ -46,6 +47,8 @@ export class NewsController {
     async getFeed(
         @Query('dataInicial') dataInicialStr: string,
         @Query('dataFinal') dataFinalStr: string,
+        @Query('offset') offset: number,
+        @Req() request?: any,
     ) {
         if (!dataInicialStr || !dataFinalStr) {
             throw new BadRequestException('Os parâmetros dataInicial e dataFinal são obrigatórios.');
@@ -58,7 +61,17 @@ export class NewsController {
         if (isNaN(dataInicial.getTime()) || isNaN(dataFinal.getTime())) {
             throw new BadRequestException('Formato de data inválido. Utilize o formato ISO 8601.');
         }
-        return await this.service?.getTrendingFeed(dataInicial, dataFinal);
+        return (await this.service?.getTrendingFeed(dataInicial, dataFinal, { limit: (request?.user?.roles as string[])?.includes('READER') ? 250 : 25, offset: 0 })).map(origem => {
+            origem.posts.map(post => {
+                /**
+                 * Proposta de implementação:
+                 * post.content = Policy({reading: post.content}, request, 'READER')
+                 */
+                post.content = Policy({ reading: post.content }, request, 'READER', r => r.substring(0, 170) + ' [...]').reading;
+                return post;
+            })
+            return origem;
+        });
     }
 
     @Public()

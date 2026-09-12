@@ -40,6 +40,7 @@ const XD = <T>(a: T) => {
         ReactiveFormsModule,
         MatInputModule,
         MatIconModule,
+        MatCardModule,
         // TranslatePipe,
     ],
     templateUrl: './homepage.component.html',
@@ -87,6 +88,8 @@ export class HomepageComponent implements OnInit {
                         if (post.content.toLocaleLowerCase().indexOf('member') > -1) return false;
                         if (post.content.toLocaleLowerCase().indexOf('vip') > -1) return false;
                         if (post.content.toLocaleLowerCase().indexOf('cassino') > -1) return false;
+                        if (post.content.toLocaleLowerCase().indexOf('unathorized') > -1) return false;
+                        if (post.content.toLocaleLowerCase().indexOf('token') > -1) return false;
                     } catch (error) {
 
                     }
@@ -218,5 +221,8 @@ export class HomepageComponent implements OnInit {
                 tipo_postagem,
             }
         });
+    }
+    async interacao(origem: any, event: string) {
+
     }
 }

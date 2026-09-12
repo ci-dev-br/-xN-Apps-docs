@@ -1,30 +1,29 @@
 <ci-navbar></ci-navbar>
-<div class="page--wrapper">
-    @if(userService && !!(userService.user | async)){
-    <div #sidebarElement class="sidebar" [class.--inactive]="!sidebar"
-        (click)="sidebar=!sidebar;$event.preventDefault()" [style.top]="sidebarTop + 'px' "
-        [style.left]="sidebarLeft + 'px'">
-        <div class="row">
-            <!--  <button mat-raised-button (click)="newPost()">
+@if(userService && !!(userService.user | async)){
+<div #sidebarElement class="sidebar" [class.--inactive]="!sidebar" (click)="sidebar=!sidebar;$event.preventDefault()"
+    [style.top]="sidebarTop + 'px' " [style.left]="sidebarLeft + 'px'">
+    <div class="row">
+        <!--  <button mat-raised-button (click)="newPost()">
                 Texto
             </button> -->
-            <!--  <button mat-raised-button (click)="newCitation()">
+        <!--  <button mat-raised-button (click)="newCitation()">
                 Citação
             </button> -->
-            <!-- <button mat-raised-button (click)="newPhoto()">
+        <!-- <button mat-raised-button (click)="newPhoto()">
                 Foto
             </button> -->
-            <!--  <button mat-raised-button (click)="newVideo()">
+        <!--  <button mat-raised-button (click)="newVideo()">
                 Vídeo
             </button> -->
-        </div>
-        <span style="flex:auto"></span>
-        <div class="row">
-            <button mat-icon-button color="primary" routerLink="/meus-apps"><mat-icon>apps</mat-icon></button>
-            <button mat-icon-button (click)="openSidebarSettings()"><mat-icon>settings</mat-icon></button>
-        </div>
-        <mat-icon class="icon">draw</mat-icon>
     </div>
+    <span style="flex:auto"></span>
+    <div class="row">
+        <button mat-icon-button color="primary" routerLink="/meus-apps"><mat-icon>apps</mat-icon></button>
+        <button mat-icon-button (click)="openSidebarSettings()"><mat-icon>settings</mat-icon></button>
+    </div>
+    <mat-icon class="icon">draw</mat-icon>
+</div>}
+<div class="page--wrapper">
     <div class="wrapper">
         @if(!feeds || feeds.length === 0){ <div>
             <p>
@@ -38,18 +37,21 @@
         <div class="feed">
             @for(feed of feeds; track $index) {
             <div class="feed-item">
-                <h3>{{feed.author}} <span class="date">{{feed.date | date:'short'}}</span></h3>
-                @if(feed.title){<h4>{{feed.title}}</h4>}
+                <!--  <h3>{{feed.author}} <span class="date">{{feed.date | date:'short'}}</span></h3> -->
+                @if(feed.title){<h4 [innerHtml]="feed.title"></h4>}
                 <div [innerHtml]="feed.content" class="feed-content"></div>
                 <div class="interactions">
-                    <button mat-icon-button color="primary"><mat-icon>thumb_up</mat-icon></button>
                     <button mat-icon-button color="primary"
+                        (click)="interacao(feed, 'liked')"><mat-icon>thumb_up</mat-icon></button>
+                    <button mat-icon-button color="primary"
+                        (click)="interacao(feed, 'open')"><mat-icon>open_in_new</mat-icon></button>
+                    <!-- <button mat-icon-button color="primary"
                         [routerLink]="'/'+ feed.id+'/comment'"><mat-icon>comment</mat-icon></button>
                     <button mat-icon-button color="primary"><mat-icon>share</mat-icon></button>
                     <button mat-icon-button color="primary"><mat-icon>bookmark</mat-icon></button>
                     <button mat-icon-button color="primary"><mat-icon>more_vert</mat-icon></button>
                     <button mat-icon-button color="primary"><mat-icon>report</mat-icon></button>
-                    <button mat-icon-button color="primary"><mat-icon>flag</mat-icon></button>
+                    <button mat-icon-button color="primary"><mat-icon>flag</mat-icon></button> -->
                 </div>
                 <div>{{feed.categoria}}</div>
             </div>
@@ -63,7 +65,13 @@
             }
         </div>
     </div>
-    }@else {
+</div>
+<!-- <x-footer /> -->
+
+<!-- 
+
+
+  @else {
     <header class="container">
         <figure>
             <img class="logo" src="logo-colorida.svg"
@@ -78,7 +86,7 @@
                 </button>
             </mat-form-field>
         </ng-container>}
-        <!-- {{info|json}} -->
+        < !-- {{info|json}} -- >
         @if(info) {@for(item of info; track $index) {
         <div class="feed-column">
             <h2>{{item}}</h2>
@@ -86,5 +94,6 @@
         }}
     </header>
     }
-</div>
-<!-- <x-footer /> -->
+
+
+-->

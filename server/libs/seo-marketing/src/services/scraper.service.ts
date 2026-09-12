@@ -423,7 +423,9 @@ export class ScraperService implements OnModuleInit {
   // =====================================================================
   // 7. ENDPOINT DO FRONTEND (ALIMENTAÇÃO DO FEED)
   // =====================================================================
-  async getTrendingFeed(dataInicial?: Date, dataFinal?: Date) {
+  async getTrendingFeed(dataInicial?: Date, dataFinal?: Date, options = {
+    limit: 25, offset: 0
+  }) {
     this.logger.log(`Gerando feed para o período: ${dataInicial?.toISOString()} a ${dataFinal?.toISOString()}`);
     /*  const categorias = (await this.categoryRepository.find({
        where: [{
@@ -443,7 +445,7 @@ export class ScraperService implements OnModuleInit {
     /* if (dataFinal) {
       query = query.andWhere('news.scrapedAt <= :dataFinal', { dataFinal });
     } */
-    query = query.orderBy('news.scrapedAt', 'DESC').limit(25);
+    query = query.orderBy('news.scrapedAt', 'DESC').limit(options.limit).offset(options.offset);
     const newsList = await query.getMany();
     // Passo 3: Agrupar as notícias por Fonte (Source) para montar o FeedColumn
     const columnsMap = new Map<string, any[]>();

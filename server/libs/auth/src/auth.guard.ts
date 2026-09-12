@@ -25,10 +25,7 @@ export class AuthGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (isPublic) {
-      // 💡 See this condition
-      return true;
-    }
+    const by_pass = isPublic ? true : false;
     const role = this.reflector?.getAllAndOverride<string>(ROLE_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -36,7 +33,8 @@ export class AuthGuard implements CanActivate {
     const request: IncomingMessage = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new UnauthorizedException('Falha na autenticação. Token não fornecido.');
+      if (!by_pass)
+        throw new UnauthorizedException('Falha na autenticação. Token não fornecido.');
     }
     try {
       const payload: { id: string, roles: string[], permission: string, chaveAcesso: string } = await this.jwtService.verifyAsync(token, {
@@ -49,14 +47,15 @@ export class AuthGuard implements CanActivate {
       request['chaveAcesso'] = payload.chaveAcesso;
       let chave_acesso_local = await this.credencial.obterChaveAcessoPorId(payload.chaveAcesso);
       if (!chave_acesso_local || (!chave_acesso_local.alive)) {
-        throw new UnauthorizedException('Acesso revogado, favor autenticar novamente.');
+        if (!by_pass)
+          throw new UnauthorizedException('Acesso revogado, favor autenticar novamente.');
       }
       request['user'] = await this.userService.findById(payload.id);
       if (!!role) {
-        if (!payload || !payload.roles.includes(role)) throw new UnauthorizedException('Acesso negado. Não corresponde ao nível de acesso necessário.');
+        if (!payload || !payload.roles.includes(role) || !by_pass) throw new UnauthorizedException('Acesso negado. Não corresponde ao nível de acesso necessário.');
       }
     } catch (err) {
-      throw new UnauthorizedException('Falha na autenticação. Token inválido ou expirado.');
+      if (!by_pass) throw new UnauthorizedException('Falha na autenticação. Token inválido ou expirado.');
     }
     return true;
   }
