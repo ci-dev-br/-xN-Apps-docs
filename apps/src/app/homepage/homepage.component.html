@@ -5,18 +5,18 @@
         (click)="sidebar=!sidebar;$event.preventDefault()" [style.top]="sidebarTop + 'px' "
         [style.left]="sidebarLeft + 'px'">
         <div class="row">
-            <button mat-raised-button (click)="newPost()">
+            <!--  <button mat-raised-button (click)="newPost()">
                 Texto
-            </button>
-            <button mat-raised-button (click)="newCitation()">
+            </button> -->
+            <!--  <button mat-raised-button (click)="newCitation()">
                 Citação
-            </button>
-            <button mat-raised-button (click)="newPhoto()">
+            </button> -->
+            <!-- <button mat-raised-button (click)="newPhoto()">
                 Foto
-            </button>
-            <button mat-raised-button (click)="newVideo()">
+            </button> -->
+            <!--  <button mat-raised-button (click)="newVideo()">
                 Vídeo
-            </button>
+            </button> -->
         </div>
         <span style="flex:auto"></span>
         <div class="row">
@@ -36,20 +36,22 @@
         </div>
         }@else {
         <div class="feed">
-            @for(item of feeds; track $index) {
+            @for(feed of feeds; track $index) {
             <div class="feed-item">
-                <h3>{{item.author}} <span class="date">{{item.date | date:'short'}}</span></h3>
-                <div [innerHtml]="item.content" class="feed-content"></div>
+                <h3>{{feed.author}} <span class="date">{{feed.date | date:'short'}}</span></h3>
+                @if(feed.title){<h4>{{feed.title}}</h4>}
+                <div [innerHtml]="feed.content" class="feed-content"></div>
                 <div class="interactions">
                     <button mat-icon-button color="primary"><mat-icon>thumb_up</mat-icon></button>
                     <button mat-icon-button color="primary"
-                        [routerLink]="'/'+ item.id+'/comment'"><mat-icon>comment</mat-icon></button>
+                        [routerLink]="'/'+ feed.id+'/comment'"><mat-icon>comment</mat-icon></button>
                     <button mat-icon-button color="primary"><mat-icon>share</mat-icon></button>
                     <button mat-icon-button color="primary"><mat-icon>bookmark</mat-icon></button>
                     <button mat-icon-button color="primary"><mat-icon>more_vert</mat-icon></button>
                     <button mat-icon-button color="primary"><mat-icon>report</mat-icon></button>
                     <button mat-icon-button color="primary"><mat-icon>flag</mat-icon></button>
                 </div>
+                <div>{{feed.categoria}}</div>
             </div>
             }
         </div>}

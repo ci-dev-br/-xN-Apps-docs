@@ -13,6 +13,8 @@
     align-items: stretch;
     justify-content: stretch;
     overflow: hidden;
+
+    background: var(--mat-sys-background);
 }
 
 div {
@@ -34,7 +36,7 @@ div {
     border: 3px dashed rgba(red, .5);
     position: fixed;
     inset: 1px;
-    z-index: 10000000;
+    z-index: 100;
     display: block;
     border-radius: 12px;
     user-select: none;
@@ -43,7 +45,7 @@ div {
 
 ::ng-deep body {
     /* :has(.--dev-mode) */
-    background-color: black;
+    // background-color: black;
 }
 
 .loader-container {

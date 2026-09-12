@@ -71,9 +71,9 @@ export class HomepageComponent implements OnInit {
         (async () => {
             this.news?.getFeed({
                 dataInicial: (() => {
-                    const data_final = new Date();
-                    data_final.setDate(data_final.getDate() - 1);
-                    return data_final;
+                    const data_inicial = new Date();
+                    data_inicial.setDate(data_inicial.getDate() - 15);
+                    return data_inicial;
                 })().toISOString(),
                 dataFinal: new Date().toISOString()
             }).subscribe(feeds => {

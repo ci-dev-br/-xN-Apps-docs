@@ -53,19 +53,19 @@ export class NewsController {
         const dataInicial = new Date(dataInicialStr);
         const dataFinal = new Date(dataFinalStr);
 
-        console.log('Data Inicial:', dataInicial);
-        console.log('Data Final:', dataFinal);
+        // console.log('Data Inicial:', dataInicial);
+        // console.log('Data Final:', dataFinal);
         if (isNaN(dataInicial.getTime()) || isNaN(dataFinal.getTime())) {
             throw new BadRequestException('Formato de data inválido. Utilize o formato ISO 8601.');
         }
         return await this.service?.getTrendingFeed(dataInicial, dataFinal);
     }
 
+    @Public()
     @Post('pesquisar')
     @ApiOperation({ summary: 'Pesquisar notícias por termo e período, retornando feed agrupado por fonte (Source) e ordenado por data de publicação.' })
     @ApiQuery({ name: 'textoConsulta', type: String, example: 'tecnologia', required: false })
     @ApiResponse({ status: 200, type: [FeedColumnDto] })
-    @Public()
     async pesquisar(
         @Query('textoConsulta') textoConsulta?: string,
     ) {

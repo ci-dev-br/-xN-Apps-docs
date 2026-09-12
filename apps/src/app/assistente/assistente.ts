@@ -27,7 +27,6 @@ export class AssistenteComponent implements OnInit {
         this.commandSub = this.voiceService.commandSubject.subscribe(comando => {
             this.processarComando(comando);
         });
-        setTimeout(() => this.voiceService.start(), 1000);
     }
     toggleListen(): void {
         if (this.voiceService.isListening) {
@@ -75,7 +74,7 @@ export class AssistenteComponent implements OnInit {
             await this.falar('Carregando todas rotas');
             const rotasDisponiveis = await this.achatarRotas(this.router.config);
             console.log(rotasDisponiveis);
-            await this.falar('Analisando as rotas diponíveis');
+            await this.falar('Analisando as rotas disponíveis');
             let rotaEncontrada: string | null = null;
             for (const rota of rotasDisponiveis) {
                 if (await this.rotaCorrespondeAoTermo(rota, termoBusca)) {

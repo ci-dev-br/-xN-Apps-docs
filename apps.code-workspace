@@ -19,6 +19,6 @@
 	],
 	"settings": {
 		"vsicons.presets.angular": true,
-		"js/ts.tsdk.path": "apps\\node_modules\\typescript\\lib"
+		"js/ts.tsdk.path": "BaaS\\node_modules\\typescript\\lib"
 	}
 }

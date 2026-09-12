@@ -295,8 +295,9 @@ export class ScraperService implements OnModuleInit {
             'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
             'Cache-Control': 'no-cache',
           },
-          timeout: 10000,
-          maxRedirects: 5,
+          timeout: 1000,
+          maxContentLength: 1024 * 4,
+          maxRedirects: 2,
         })
       );
 
@@ -424,24 +425,25 @@ export class ScraperService implements OnModuleInit {
   // =====================================================================
   async getTrendingFeed(dataInicial?: Date, dataFinal?: Date) {
     this.logger.log(`Gerando feed para o período: ${dataInicial?.toISOString()} a ${dataFinal?.toISOString()}`);
-    const categorias = (await this.categoryRepository.find({
-      where: [{
-        isTrending: true,
-      },
-      {
-        createdAt: Between(dataInicial, dataFinal)
-      }]
-    })).map(c => c.id);
+    /*  const categorias = (await this.categoryRepository.find({
+       where: [{
+         isTrending: true,
+       },
+       {
+         createdAt: Between(dataInicial, dataFinal)
+       }]
+     })).map(c => c.id); */
     let query = this.newsRepository.createQueryBuilder('news')
-      .where('news.category_id IN (:...categoryIds)', { categoryIds: categorias })
+      .where(`news.content is not null`)
+      ///.where('news.content is not null')// news.category_id IN (:...categoryIds)', { categoryIds: categorias })
       ;
-    if (dataInicial) {
+    /* if (dataInicial) {
       query = query.andWhere('news.scrapedAt >= :dataInicial', { dataInicial });
-    }
-    if (dataFinal) {
+    } */
+    /* if (dataFinal) {
       query = query.andWhere('news.scrapedAt <= :dataFinal', { dataFinal });
-    }
-    query = query.orderBy('news.scrapedAt', 'DESC').limit(50);
+    } */
+    query = query.orderBy('news.scrapedAt', 'DESC').limit(25);
     const newsList = await query.getMany();
     // Passo 3: Agrupar as notícias por Fonte (Source) para montar o FeedColumn
     const columnsMap = new Map<string, any[]>();
@@ -452,14 +454,14 @@ export class ScraperService implements OnModuleInit {
       }
       // Limita a quantidade de posts por coluna (ex: máx 5 notícias por veículo/fonte)
       /* if (columnsMap.get(sourceKey).length < 100) { */
-      if (news.content && news.content.length > 100) {
+      if (news.content) {
         columnsMap.get(sourceKey).push({
           id: news.id,
           title: news.title,
-          content: news.content || '',
+          content: news.content,
           link: news.url, // Mapeado para o DTO do frontend
           source: sourceKey,
-          date: news.scrapedAt, // Mapeado para o DTO do frontend
+          date: news.scrapedAt, // Mapeado para o DTO do frontend,
         });
       }
       /* } */
@@ -485,9 +487,9 @@ export class ScraperService implements OnModuleInit {
     if (dataFinal) {
       query = query.andWhere('news.scrapedAt <= :dataFinal', { dataFinal });
     }
-    if (textoConsulta) {
-      query = query.andWhere('news.title ILIKE :textoConsulta OR news.content ILIKE :textoConsulta', { textoConsulta: `%${textoConsulta.replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('%', '\\%').replaceAll(' ', '%')}%` });
-    }
+    /*  if (textoConsulta) {
+       query = query.andWhere('news.title ILIKE :textoConsulta OR news.content ILIKE :textoConsulta', { textoConsulta: `%${textoConsulta.replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('%', '\\%').replaceAll(' ', '%')}%` });
+     } */
     query = query.orderBy('news.scrapedAt', 'DESC').limit(10);
     const newsList = await query.getMany();
     // Passo 3: Agrupar as notícias por Fonte (Source) para montar o FeedColumn

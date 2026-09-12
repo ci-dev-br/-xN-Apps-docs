@@ -1,5 +1,5 @@
 :host {
-    background: linear-gradient(to top, #000000e3 0%, #000000e8 100%);
+    background: linear-gradient(to top, #00000013 0%, #00000006 100%);
     min-height: 100vh;
     overflow: auto;
     overflow-x: hidden;
@@ -21,7 +21,7 @@ footer {
     padding: 24px;
     width: auto;
     align-self: stretch;
-    background: #000;
+    // background: #000;
     color: #999;
     font-weight: bold;
 
@@ -49,7 +49,7 @@ nav {
     flex-direction: row;
     gap: 6px;
     align-self: stretch;
-    background: #dedede;
+    // background: #dedede;
     align-items: center;
 
     padding: {
