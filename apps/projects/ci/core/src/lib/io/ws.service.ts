@@ -1,5 +1,6 @@
 import { isPlatformBrowser } from "@angular/common";
 import { Inject, Injectable, Optional, PLATFORM_ID, SimpleChange, SimpleChanges } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 
 /**
@@ -11,7 +12,14 @@ export class WsService {
     globalPing?: number = 0;
     pingMedium?: number = 0;
     ping?: number = 0;
-    status: 'connecting' | 'online' = 'connecting';
+    //status: 'connecting' | 'online' = 'connecting';
+    get status(): 'connecting' | 'online' {
+        return this.status$.value;
+    }
+    set status(value: 'connecting' | 'online') {
+        this.status$.next(value);
+    }
+    public status$: BehaviorSubject<'connecting' | 'online'> = new BehaviorSubject<'connecting' | 'online'>('connecting');
     private isBrowser: boolean = isPlatformBrowser(this.platformId);
     private retryWait = 100;
     private _grant_connection = false;

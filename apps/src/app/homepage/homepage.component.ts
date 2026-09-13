@@ -71,6 +71,7 @@ export class HomepageComponent implements OnInit {
         });
         (async () => {
             this.news?.getFeed({
+                offset: 0,
                 dataInicial: (() => {
                     const data_inicial = new Date();
                     data_inicial.setDate(data_inicial.getDate() - 15);
@@ -78,7 +79,7 @@ export class HomepageComponent implements OnInit {
                 })().toISOString(),
                 dataFinal: new Date().toISOString()
             }).subscribe(feeds => {
-                const digest = feeds.map(feed => feed.posts).reduce((a: any, b: any) => [...(a || []), ...(b || [])]);
+                const digest = feeds/* .map(feed => feed.posts).reduce((a: any, b: any) => [...(a || []), ...(b || [])]) */;
                 this.feeds = digest.filter(post => {
                     try {
                         if (post.content.toLocaleLowerCase().indexOf('oferta') > -1) return false;
@@ -223,6 +224,8 @@ export class HomepageComponent implements OnInit {
         });
     }
     async interacao(origem: any, event: string) {
-
+        if (event === 'open') {
+            window.open(origem.url, '_blank', '');
+        }
     }
 }

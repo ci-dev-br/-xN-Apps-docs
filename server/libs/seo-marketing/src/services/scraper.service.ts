@@ -295,9 +295,9 @@ export class ScraperService implements OnModuleInit {
             'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
             'Cache-Control': 'no-cache',
           },
-          timeout: 1000,
+          timeout: 4000,
           maxContentLength: 1024 * 4,
-          maxRedirects: 2,
+          maxRedirects: 4,
         })
       );
 
@@ -436,7 +436,10 @@ export class ScraperService implements OnModuleInit {
        }]
      })).map(c => c.id); */
     let query = this.newsRepository.createQueryBuilder('news')
-      .where(`news.content is not null`)
+      .where(`news."content" is not null and length(news."content") > 512 
+and 
+news."title" is not null and length(news."title") > 80
+and news."url" ilike '%.br/%'`)
       ///.where('news.content is not null')// news.category_id IN (:...categoryIds)', { categoryIds: categorias })
       ;
     /* if (dataInicial) {
@@ -473,7 +476,7 @@ export class ScraperService implements OnModuleInit {
       posts,
     })).sort((a, b) => b.mainSource.localeCompare(a.mainSource)); // Ordena alfabeticamente por nome da fonte
     // Retorna ordenando pelas colunas que têm mais conteúdo primeiro
-    return feedColumns.sort((a, b) => b.posts.length - a.posts.length);
+    return newsList;// feedColumns.sort((a, b) => b.posts.length - a.posts.length);
   }
   /**
    * Pesquisar por termo e periodo, retornando feed agrupado por fonte (Source) e ordenado por data de publicação.

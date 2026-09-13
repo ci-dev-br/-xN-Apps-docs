@@ -6,18 +6,20 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { FeedColumnDto } from '../../models/feed-column-dto';
+import { News } from '../../models/news';
 
 export interface GetFeed$Params {
   dataInicial?: string;
   dataFinal?: string;
+  offset: number;
 }
 
-export function getFeed(http: HttpClient, rootUrl: string, params?: GetFeed$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<FeedColumnDto>>> {
+export function getFeed(http: HttpClient, rootUrl: string, params: GetFeed$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<News>>> {
   const rb = new RequestBuilder(rootUrl, getFeed.PATH, 'post');
   if (params) {
     rb.query('dataInicial', params.dataInicial, {});
     rb.query('dataFinal', params.dataFinal, {});
+    rb.query('offset', params.offset, {});
   }
 
   return http.request(
@@ -25,7 +27,7 @@ export function getFeed(http: HttpClient, rootUrl: string, params?: GetFeed$Para
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<FeedColumnDto>>;
+      return r as StrictHttpResponse<Array<News>>;
     })
   );
 }

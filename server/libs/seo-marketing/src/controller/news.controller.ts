@@ -43,7 +43,7 @@ export class NewsController {
     @ApiOperation({ operationId: 'getFeed' })
     @ApiQuery({ name: 'dataInicial', type: String, example: '2026-08-20T00:00:00.000Z', required: false })
     @ApiQuery({ name: 'dataFinal', type: String, example: '2026-08-28T23:59:59.999Z', required: false })
-    @ApiResponse({ status: 200, type: [FeedColumnDto] })
+    @ApiResponse({ status: 200, type: [News] })
     async getFeed(
         @Query('dataInicial') dataInicialStr: string,
         @Query('dataFinal') dataFinalStr: string,
@@ -61,16 +61,9 @@ export class NewsController {
         if (isNaN(dataInicial.getTime()) || isNaN(dataFinal.getTime())) {
             throw new BadRequestException('Formato de data inválido. Utilize o formato ISO 8601.');
         }
-        return (await this.service?.getTrendingFeed(dataInicial, dataFinal, { limit: (request?.user?.roles as string[])?.includes('READER') ? 250 : 25, offset: 0 })).map(origem => {
-            origem.posts.map(post => {
-                /**
-                 * Proposta de implementação:
-                 * post.content = Policy({reading: post.content}, request, 'READER')
-                 */
-                post.content = Policy({ reading: post.content }, request, 'READER', r => r.substring(0, 170) + ' [...]').reading;
-                return post;
-            })
-            return origem;
+        return (await this.service?.getTrendingFeed(dataInicial, dataFinal, { limit: (request?.user?.roles as string[])?.includes('READER') ? 250 : 25, offset: 0 })).map(post => {
+            post.content = Policy({ reading: post.content }, request, 'READER', r => r.substring(0, 170) + ' [...]').reading;
+            return post;
         });
     }
 

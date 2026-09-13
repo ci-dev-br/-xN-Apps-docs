@@ -35,27 +35,27 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       if (!by_pass)
         throw new UnauthorizedException('Falha na autenticação. Token não fornecido.');
-    }
-    try {
-      const payload: { id: string, roles: string[], permission: string, chaveAcesso: string } = await this.jwtService.verifyAsync(token, {
-        secret: process.env.MASTER_PASSWORD_AUTHORYTHY || jwtConstants.secret,
-      });
-      // 💡 We're assigning the payload to the request object here
-      // so that we can access it in our route handlers
-      // console.log('ROLE', role)
-      // console.log('PAYLOAD', payload)
-      request['chaveAcesso'] = payload.chaveAcesso;
-      let chave_acesso_local = await this.credencial.obterChaveAcessoPorId(payload.chaveAcesso);
-      if (!chave_acesso_local || (!chave_acesso_local.alive)) {
-        if (!by_pass)
+    } else {
+      try {
+        const payload: { id: string, roles: string[], permission: string, chaveAcesso: string } = await this.jwtService.verifyAsync(token, {
+          secret: process.env.MASTER_PASSWORD_AUTHORYTHY || jwtConstants.secret,
+        });
+        // 💡 We're assigning the payload to the request object here
+        // so that we can access it in our route handlers
+        // console.log('ROLE', role)
+        // console.log('PAYLOAD', payload)
+        request['chaveAcesso'] = payload.chaveAcesso;
+        let chave_acesso_local = await this.credencial.obterChaveAcessoPorId(payload.chaveAcesso);
+        if (!chave_acesso_local || (!chave_acesso_local.alive)) {
           throw new UnauthorizedException('Acesso revogado, favor autenticar novamente.');
+        }
+        request['user'] = await this.userService.findById(payload.id);
+        if (!!role) {
+          if (!payload || !payload.roles.includes(role)) throw new UnauthorizedException('Acesso negado. Não corresponde ao nível de acesso necessário.');
+        }
+      } catch (err) {
+     /*  if (!by_pass) */ throw new UnauthorizedException('Falha na autenticação. Token inválido ou expirado.');
       }
-      request['user'] = await this.userService.findById(payload.id);
-      if (!!role) {
-        if (!payload || !payload.roles.includes(role) || !by_pass) throw new UnauthorizedException('Acesso negado. Não corresponde ao nível de acesso necessário.');
-      }
-    } catch (err) {
-      if (!by_pass) throw new UnauthorizedException('Falha na autenticação. Token inválido ou expirado.');
     }
     return true;
   }

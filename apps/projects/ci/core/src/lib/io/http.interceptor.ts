@@ -1,12 +1,13 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from "@angular/common/http";
-import { Inject, Injectable, Optional } from "@angular/core";
-import { Observable, of, pipe, throwError } from "rxjs";
-import { catchError, debounce, debounceTime, switchMap, tap, timeout, delay } from "rxjs/operators";
+import { Inject, Injectable, Injector, Optional } from "@angular/core";
+import { Observable, throwError } from "rxjs";
+import { catchError, switchMap, timeout, delay, filter, take } from "rxjs/operators";
 import { StorageService } from "../storage/storage.service";
 import { AuthService } from "@ci/portal-api";
 import { CORE_ENV, ICoreEnvironment } from "../provider";
 import { Router } from "@angular/router";
 import { Message } from "../services/message";
+import { WsService } from "./ws.service";
 // import { AuthService } from "@ci/portal-api";
 /**
  *  Interceptador de requisições HTTP para adicionar o token de autorização e tratar erros.
@@ -26,7 +27,7 @@ import { Message } from "../services/message";
  */
 @Injectable()
 export class AuthorizationHttpInterceptor implements HttpInterceptor {
-    private refreshing?: boolean;
+    private _refreshing?: boolean;
     private _pipocate: number = 0;
     private _efail?: string | number | undefined;
     public get efail(): string | number | undefined {
@@ -46,6 +47,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         @Optional() private readonly storage: StorageService,
         @Optional() private readonly auth: AuthService,
         @Optional() private readonly message: Message,
+        private readonly injector: Injector, // <-- Adicionado Injector para evitar Circular Dependency
         @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
     ) {
         let efail = localStorage.getItem('e-fail');
@@ -58,6 +60,39 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         }
     }
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        /* const { method, url } = request;
+        if (this.config && this.config.alternativeApiGateways && this.config.rootApi) {
+            if (!!this._efail && typeof this.efail === 'string') {
+                request = request.clone({
+                    url: url.replace(/((http|ws)[s]{0,1}:\/\/[\w.]{0,}[:]{0,1}[\d]{0,5})/g, this.efail)
+                })
+            }
+        }
+        return this._eTry(request, next) as any */
+        // Proteção: não intercepta URLs que são intrinsecamente do WebSocket (handshake etc)
+        const isWebSocketProtocol = request.url.startsWith('ws://') || request.url.startsWith('wss://');
+
+        // Pega o serviço sob demanda pelo Injector (Evita CircularDependency caso WsService use HttpClient no futuro)
+        const wsService = this.injector.get(WsService, null);
+
+        // Se for protocolo WS, se o serviço WsService não estiver injetado, 
+        // ou se já estiver 'online', prossegue imediatamente.
+        if (isWebSocketProtocol || !wsService || wsService.status === 'online') {
+            return this._executeRequest(request, next);
+        }
+
+        // Aguarda o status do WebSocket ficar 'online' antes de seguir com o pipeline
+        return wsService.status$.pipe(
+            filter(status => status === 'online'),
+            take(1), // Interrompe o listener assim que ficar online
+            switchMap(() => this._executeRequest(request, next))
+        );
+    }
+
+    /**
+     * Lógica original isolada para ser acionada após a liberação do status
+     */
+    private _executeRequest(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const { method, url } = request;
         if (this.config && this.config.alternativeApiGateways && this.config.rootApi) {
             if (!!this._efail && typeof this.efail === 'string') {
@@ -66,8 +101,9 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                 })
             }
         }
-        return this._eTry(request, next) as any
+        return this._eTry(request, next) as any;
     }
+
     private _eTry(request: HttpRequest<any>, next: HttpHandler) {
         return next.handle(this.addBearerToken(request))
             .pipe(timeout({
@@ -138,7 +174,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         next: HttpHandler,
         request: HttpRequest<any>
     ) {
-        this.refreshing = true;
+        this._refreshing = true;
         if (error?.status === 408) {
             let user: { authentication: { bearer: string, refreshToken: string } } = this.storage.restore('apps.ci.dev.br.store.User');
             if (!!user?.authentication)
@@ -151,7 +187,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                     .pipe(switchMap((token: { authorization: string }) => {
                         user.authentication.bearer = token.authorization;
                         this.storage.store('apps.ci.dev.br.store.User', user);
-                        setTimeout(() => { this.refreshing = false; });
+                        setTimeout(() => { this._refreshing = false; });
                         return next.handle(this.addBearerToken(request));
                     }), catchError(error => {
                         return throwError(error);
@@ -169,7 +205,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                     .pipe(switchMap((token: { authorization: string }) => {
                         user.authentication.bearer = token.authorization;
                         this.storage.store('apps.ci.dev.br.store.User', user);
-                        setTimeout(() => { this.refreshing = false; });
+                        setTimeout(() => { this._refreshing = false; });
                         return next.handle(this.addBearerToken(request));
                     }), catchError(error => {
                         return throwError(error);

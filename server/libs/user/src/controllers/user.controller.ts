@@ -2,6 +2,7 @@ import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { UserService } from "@ci/auth/auth.module";
 import { User } from "@ci/auth/models/user.entity";
+import { InteractionPayload } from "../dto/interaction-payload";
 @ApiTags('User')
 @Controller('User')
 export class UserController {
@@ -59,6 +60,21 @@ export class UserController {
             return users;
         } catch (error) {
             throw error;
+        }
+    }
+
+    @Post('Interaction')
+    @ApiOperation({ operationId: 'Interaction' })
+    public async interaction(
+        @Body() payload: InteractionPayload,
+        @Req() request: any) {
+        try {
+
+        } catch (error) {
+            return {
+                status: 500,
+                message: 'Falha'
+            }
         }
     }
 }
