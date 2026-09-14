@@ -58,10 +58,10 @@ export class WsService {
             this.retryWait = 100;
             this.ReceiveDataHandler(message)
         }, erros => {
+            this.status = 'connecting';
             if (erros instanceof CloseEvent || (erros instanceof Event && erros.type === 'error')) {
                 if (this.websocket_subject) this.websocket_subject?.complete();
                 this.websocket_subject = undefined;
-                this.status = 'connecting';
                 setTimeout(() => {
                     this.init();
                 }, this.retryWait);

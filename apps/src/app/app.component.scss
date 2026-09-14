@@ -87,3 +87,17 @@ div {
         opacity: 1;
     }
 }
+
+span {
+    transition: filter ease .4s;
+}
+
+.connecting {
+    filter: blur(14px) opacity(.75);
+    pointer-events: none;
+    user-select: none;
+}
+
+::ng-deep body:has(.connecting) {
+    background-color: #000000;
+}

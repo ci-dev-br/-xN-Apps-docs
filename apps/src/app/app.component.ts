@@ -28,7 +28,9 @@ export class AppComponent implements OnInit, OnDestroy {
   load = new BehaviorSubject<boolean>(true);
   isDevMode = isDevMode();
   title = 'apps';
+  status$;
   constructor(
+    protected readonly ws: WsService,
     @Optional() private readonly matIconReg?: MatIconRegistry,
     @Optional() private readonly core?: CoreService,
     // @Optional() private readonly router: Router, 
@@ -40,6 +42,7 @@ export class AppComponent implements OnInit, OnDestroy {
     @Optional() @Inject(USER_MENU) private readonly userMenu?: IItemMenu[],
     private readonly menuService?: MenuService,
   ) {
+    this.status$ = ws.status$;
     if (!!menuService && userMenu) menuService.userMenu.next(userMenu);
     // This variable will save the event for later use.
     // let deferredPrompt;

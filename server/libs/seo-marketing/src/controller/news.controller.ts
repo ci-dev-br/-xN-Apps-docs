@@ -16,28 +16,7 @@ export class NewsController {
         @InjectRepository(News) private newsRepo: Repository<News>,
         @InjectRepository(Category) private categoryRepo: Repository<Category>,
         private readonly service: ScraperService,
-    ) {
-
-    }
-
-    /*  @Post('categories')
-     @ApiOperation({ summary: 'Lista todas as categorias catalogadas' })
-     @ApiResponse({ status: 200, type: [Category] })
-     async getCategories() {
-         return this.categoryRepo.find({ order: { isTrending: 'DESC' } });
-     } */
-
-    /* @Post(':categoryId')
-    @ApiOperation({ summary: 'Busca notícias por categoria' })
-    @ApiResponse({ status: 200, type: [News] })
-    async getNewsByCategory(@Param('categoryId') categoryId: string) {
-        return this.newsRepo.find({
-            where: { category: { id: categoryId } },
-            order: { scrapedAt: 'DESC' },
-            take: 50
-        });
-    } */
-
+    ) { }
     @Public()
     @Post('getFeed')
     @ApiOperation({ operationId: 'getFeed' })
@@ -66,7 +45,6 @@ export class NewsController {
             return post;
         });
     }
-
     @Public()
     @Post('pesquisar')
     @ApiOperation({ summary: 'Pesquisar notícias por termo e período, retornando feed agrupado por fonte (Source) e ordenado por data de publicação.' })
@@ -78,7 +56,6 @@ export class NewsController {
         try {
             let dataInicial: Date | undefined;
             let dataFinal: Date | undefined;
-
             return await this.service?.pesquisar(dataInicial, dataFinal, textoConsulta);
         } catch (error) {
             console.error('Erro ao processar a pesquisa:', error);
