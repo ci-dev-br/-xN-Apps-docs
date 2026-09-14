@@ -12,23 +12,23 @@ export class WsService {
     globalPing?: number = 0;
     pingMedium?: number = 0;
     ping?: number = 0;
-    //status: 'connecting' | 'online' = 'connecting';
-    get status(): 'connecting' | 'online' {
+    get status(): 'connecting' | 'online' | 'closed' {
         return this.status$.value;
     }
-    set status(value: 'connecting' | 'online') {
+    set status(value: 'connecting' | 'online' | 'closed') {
+        console.log(value)
         this.status$.next(value);
     }
-    public status$: BehaviorSubject<'connecting' | 'online'> = new BehaviorSubject<'connecting' | 'online'>('connecting');
+    public status$: BehaviorSubject<'connecting' | 'online' | 'closed'> = new BehaviorSubject<'connecting' | 'online' | 'closed'>('connecting');
     private isBrowser: boolean = isPlatformBrowser(this.platformId);
     private retryWait = 100;
     private _grant_connection = false;
-    private _subject?: WebSocketSubject<any>;
+    private websocket_subject?: WebSocketSubject<any>;
     get subject() {
-        if (!this._subject) {
+        if (!this.websocket_subject) {
             this.init();
         }
-        return this._subject;
+        return this.websocket_subject;
     }
     constructor(
         @Optional() @Inject(PLATFORM_ID) private platformId: Object
@@ -45,19 +45,22 @@ export class WsService {
      */
     async init() {
         if (!this.isBrowser) return;
-        if (this._subject) {
-            this._subject.complete();
+        if (this.websocket_subject) {
+            this.websocket_subject.complete();
         }
-        let gateway_api = 'wss://apps.ci.dev.br' /* location.origin.replace('http', 'ws').replace(':4200', ':86'); */
-        this._subject = webSocket(gateway_api);
-        this._subject.subscribe(message => {
+        let gateway_api = 'wss://apps.ci.dev.br'
+        /* location.origin.replace('http', 'ws').replace(':4200', ':86'); */
+        this.websocket_subject = webSocket(gateway_api);
+        this.status = 'connecting';
+        this.websocket_subject.subscribe(message => {
+            // console.log(message);
             this.status = 'online';
             this.retryWait = 100;
             this.ReceiveDataHandler(message)
         }, erros => {
             if (erros instanceof CloseEvent || (erros instanceof Event && erros.type === 'error')) {
-                if (this._subject) this._subject?.complete();
-                this._subject = undefined;
+                if (this.websocket_subject) this.websocket_subject?.complete();
+                this.websocket_subject = undefined;
                 this.status = 'connecting';
                 setTimeout(() => {
                     this.init();
@@ -65,7 +68,13 @@ export class WsService {
                 this.retryWait = this.retryWait + 500;
             }
         }, () => {
-            console.info('{{ canal encerrado }}');
+            console.info('[[end]]');
+            this.status = 'connecting';
+        });
+        this.Emit({
+            event: 'events', data: {
+                type: 'Wake', momento: (new Date().getTime())
+            }
         });
         /*  this.Emit({ event: 'events', data: { type: 'ping', momento: (new Date().getTime()) } }); */
     }
