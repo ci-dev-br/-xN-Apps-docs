@@ -47,7 +47,7 @@ export class AuthGuard implements CanActivate {
         request['chaveAcesso'] = payload.chaveAcesso;
         let chave_acesso_local = await this.credencial.obterChaveAcessoPorId(payload.chaveAcesso);
         if (!chave_acesso_local || (!chave_acesso_local.alive)) {
-          throw new UnauthorizedException('Acesso revogado, favor autenticar novamente.');
+          if (!by_pass) throw new UnauthorizedException('Acesso revogado, favor autenticar novamente.');
         }
         request['user'] = await this.userService.findById(payload.id);
         if (!!role) {

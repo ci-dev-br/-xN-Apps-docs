@@ -107,7 +107,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
     private _eTry(request: HttpRequest<any>, next: HttpHandler) {
         return next.handle(this.addBearerToken(request))
             .pipe(timeout({
-                each: 5000,
+                each: 15000,
                 with: () => { throw new HttpErrorResponse({ status: 0, statusText: 'Interceptor Timeout' }) }
             }))
             .pipe(catchError((error) => {
@@ -194,14 +194,15 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                     }));
         }
         if (error?.status === 401) {
-            let user: { authentication: { bearer: string, refreshToken: string } } = this.storage.restore('apps.ci.dev.br.store.User');
+            let user: { authentication: { bearer: string, refreshToken: string } } =
+                this.storage.restore('apps.ci.dev.br.store.User');
             if (!!user?.authentication)
                 return this.auth.refresh({
                     body: {
                         refreshToken: user.authentication?.refreshToken
                     }
                 })
-                    .pipe(delay(1000))
+                    .pipe(delay(5000))
                     .pipe(switchMap((token: { authorization: string }) => {
                         user.authentication.bearer = token.authorization;
                         this.storage.store('apps.ci.dev.br.store.User', user);

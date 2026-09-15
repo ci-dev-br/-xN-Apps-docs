@@ -49,7 +49,6 @@ export class AcessarComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly router: Router,
   ) {
-
     if (this.stage) this.criarFormulario(this.stage)
   }
   async ngOnInit() {
@@ -57,6 +56,12 @@ export class AcessarComponent implements OnInit {
     if (!!this.userService?.user?.value) this.router.navigate(['/'], {
       //  from: this.router.url
     })
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+    } catch (error) {
+
+    }
   }
   private criarFormulario(stage: 'identification' | 'loading' | 'captcha' | 'authentication') {
     if (this.stage !== stage) this.stage = stage;

@@ -49,11 +49,9 @@ export class WsService {
             this.websocket_subject.complete();
         }
         let gateway_api = 'wss://apps.ci.dev.br'
-        /* location.origin.replace('http', 'ws').replace(':4200', ':86'); */
         this.websocket_subject = webSocket(gateway_api);
         this.status = 'connecting';
         this.websocket_subject.subscribe(message => {
-            // console.log(message);
             this.status = 'online';
             this.retryWait = 100;
             this.ReceiveDataHandler(message)
@@ -68,7 +66,6 @@ export class WsService {
                 this.retryWait = this.retryWait + 500;
             }
         }, () => {
-            console.info('[[end]]');
             this.status = 'connecting';
         });
         this.Emit({
@@ -76,7 +73,6 @@ export class WsService {
                 type: 'Wake', momento: (new Date().getTime())
             }
         });
-        /*  this.Emit({ event: 'events', data: { type: 'ping', momento: (new Date().getTime()) } }); */
     }
     listeners = new Map<string, Array<any>>();
     /**

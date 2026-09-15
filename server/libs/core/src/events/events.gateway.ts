@@ -183,7 +183,6 @@ export class EventsGateway implements OnGatewayInit {
         (client as { lastTime?: number }).lastTime = Date.now();
         try {
             if (data.type in this.eventsListeners) {
-                console.log(data.type)
                 return this.eventsListeners[data.type](client, data);
             }
         } catch (error) {
