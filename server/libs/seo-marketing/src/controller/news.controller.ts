@@ -40,7 +40,7 @@ export class NewsController {
         if (isNaN(dataInicial.getTime()) || isNaN(dataFinal.getTime())) {
             throw new BadRequestException('Formato de data inválido. Utilize o formato ISO 8601.');
         }
-        return (await this.service?.getTrendingFeed(dataInicial, dataFinal, { limit: (request?.user?.roles as string[])?.includes('READER') ? 30 : 25, offset: 0 })).map(post => {
+        return (await this.service?.getTrendingFeed(dataInicial, dataFinal, { limit: (request?.user?.roles as string[])?.includes('READER') ? 30 : 25, offset })).map(post => {
             post.content = Policy({ reading: post.content }, request, 'READER', r => r.substring(0, 170) + ' [...]').reading;
             return post;
         });

@@ -72,7 +72,7 @@ export class HomepageComponent implements OnInit {
 
         if (this._feedContainer?.nativeElement) {
             this._feedContainer.nativeElement.addEventListener('scrollend', (event) => {
-                const chegouNoFim = this._feedContainer!.nativeElement.scrollTop + this._feedContainer!.nativeElement.clientHeight >= this._feedContainer!.nativeElement.scrollHeight - 500;
+                const chegouNoFim = this._feedContainer!.nativeElement.scrollTop + this._feedContainer!.nativeElement.clientHeight >= this._feedContainer!.nativeElement.scrollHeight - 2000;
 
                 if (chegouNoFim && this.pagesize) {
                     this.carregarItens(this.pagesize + this.pos);
