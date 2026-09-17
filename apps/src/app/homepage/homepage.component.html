@@ -38,7 +38,7 @@
             </p>
         </div>
         }@else {
-        <div class="feed">
+        <div class="feed" #feedContainer>
             @for(feed of feeds; track $index) {
             <div class="feed-item">
                 <!--  <h3>{{feed.author}} <span class="date">{{feed.date | date:'short'}}</span></h3> -->

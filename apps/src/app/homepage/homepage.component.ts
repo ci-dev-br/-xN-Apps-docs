@@ -56,6 +56,30 @@ export class HomepageComponent implements OnInit {
         { author: 'Bob Johnson', content: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.', date: new Date() },
         { author: 'Alice Williams', content: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', date: new Date() }
     ]; */
+    private _feedContainer?: ElementRef<HTMLDivElement
+    > | undefined;
+    public get feedContainer(): ElementRef<HTMLDivElement
+    > | undefined {
+        return this._feedContainer;
+    }
+    pos = 0;
+    pagesize?: number;
+    @ViewChild('feedContainer')
+    public set feedContainer(value: ElementRef<HTMLDivElement
+    > | undefined) {
+        if (this._feedContainer === value) return;
+        this._feedContainer = value;
+
+        if (this._feedContainer?.nativeElement) {
+            this._feedContainer.nativeElement.addEventListener('scrollend', (event) => {
+                const chegouNoFim = this._feedContainer!.nativeElement.scrollTop + this._feedContainer!.nativeElement.clientHeight >= this._feedContainer!.nativeElement.scrollHeight - 500;
+
+                if (chegouNoFim && this.pagesize) {
+                    this.carregarItens(this.pagesize + this.pos);
+                }
+            });
+        }
+    }
     constructor(
         @Optional() protected readonly userService?: UserAuthenticationService,
         @Optional() private render?: Renderer2,
@@ -69,43 +93,7 @@ export class HomepageComponent implements OnInit {
         this.pesquisa = formBuilder?.group({
             q: [],
         });
-        (async () => {
-            this.news?.getFeed({
-                offset: 0,
-                dataInicial: (() => {
-                    const data_inicial = new Date();
-                    data_inicial.setDate(data_inicial.getDate() - 15);
-                    return data_inicial;
-                })().toISOString(),
-                dataFinal: new Date().toISOString()
-            }).subscribe(feeds => {
-                const digest = feeds/* .map(feed => feed.posts).reduce((a: any, b: any) => [...(a || []), ...(b || [])]) */;
-                this.feeds = digest.filter(post => {
-                    try {
-                        if (post.content.toLocaleLowerCase().indexOf('oferta') > -1) return false;
-                        if (post.content.toLocaleLowerCase().indexOf('sex') > -1) return false;
-                        if (post.content.toLocaleLowerCase().indexOf('bet') > -1) return false;
-                        if (post.content.toLocaleLowerCase().indexOf(' odds') > -1) return false;
-                        if (post.content.toLocaleLowerCase().indexOf('member') > -1) return false;
-                        if (post.content.toLocaleLowerCase().indexOf('vip') > -1) return false;
-                        if (post.content.toLocaleLowerCase().indexOf('cassino') > -1) return false;
-                        if (post.content.toLocaleLowerCase().indexOf('unathorized') > -1) return false;
-                        if (post.content.toLocaleLowerCase().indexOf('token') > -1) return false;
-                    } catch (error) {
-
-                    }
-                    return true;
-                });
-            })
-        })();
-        /* this.pesquisa?.valueChanges.subscribe(async value => {
-            this.info = await lastValueFrom(
-                this.news!.newsControllerGetFeed({
-                    dataFinal: new Date().toISOString(),
-                    dataInicial: new Date().toISOString()
-                })
-            )
-        }) */
+        this.carregarItens()
     }
     protected info?: any[];
     protected sidebar = false;
@@ -114,6 +102,43 @@ export class HomepageComponent implements OnInit {
     protected bgs = [
         '/bg-apps-290847.jpg'
     ]
+    loading?: boolean;
+    async carregarItens(offset = 0) {
+        if (this.loading) return;
+        this.loading = true;
+        this.news?.getFeed({
+            offset: offset,
+            dataInicial: (() => {
+                const data_inicial = new Date();
+                data_inicial.setDate(data_inicial.getDate() - 15);
+                return data_inicial;
+            })().toISOString(),
+            dataFinal: new Date().toISOString()
+        }).subscribe(feeds => {
+            this.pos = offset; this.loading = false;
+            if (this.pagesize === undefined) {
+                this.pagesize = feeds.length;
+            }
+            const digest = feeds/* .map(feed => feed.posts).reduce((a: any, b: any) => [...(a || []), ...(b || [])]) */;
+            this.feeds = [...(this.feeds || []), ...digest.filter(post => {
+                try {
+                    if (post.content.toLocaleLowerCase().indexOf('oferta') > -1) return false;
+                    if (post.content.toLocaleLowerCase().indexOf('sex') > -1) return false;
+                    if (post.content.toLocaleLowerCase().indexOf('bet') > -1) return false;
+                    if (post.content.toLocaleLowerCase().indexOf(' odds') > -1) return false;
+                    if (post.content.toLocaleLowerCase().indexOf('member') > -1) return false;
+                    if (post.content.toLocaleLowerCase().indexOf('vip') > -1) return false;
+                    if (post.content.toLocaleLowerCase().indexOf('cassino') > -1) return false;
+                    if (post.content.toLocaleLowerCase().indexOf('unathorized') > -1) return false;
+                    if (post.content.toLocaleLowerCase().indexOf('token') > -1) return false;
+                } catch (error) {
+
+                }
+                return true;
+            })];
+        })
+    }
+
     protected pesquisaControl = new FormControl();
     @ViewChild('video') protected video?: ElementRef<HTMLVideoElement>;
     async ngOnInit() {
