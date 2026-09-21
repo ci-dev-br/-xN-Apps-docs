@@ -278,7 +278,7 @@ export class ScraperService implements OnModuleInit {
   // =====================================================================
   private async scrapePageContent(url: string): Promise<string> {
     try {
-      return await new Promise<string>(async rr => {
+      return await new Promise<string>(async result_scrapePageContent => {
         const domain = /^(?:https?:\/\/)?(?:www\.)?([^\/:]+)/g.exec(url.trim())[1];
         const source = (await this.sourceRepository.findOne({
           where: {
@@ -286,9 +286,10 @@ export class ScraperService implements OnModuleInit {
           }
         }));
         if (source && source.status === SourceStatus.SUSPENDED) {
-          return await rr(null);
+          console.log(`[domain] ${domain} IGNORED`);
+          return await result_scrapePageContent(null);
         }
-        return await rr(await (async () => {
+        return await result_scrapePageContent(await (async () => {
           const response = await new Promise<any>(async r0 => {
             const req = this.httpService.get(url, {
               headers: {
@@ -302,17 +303,31 @@ export class ScraperService implements OnModuleInit {
             });
             req.pipe(
               catchError(async (err: AxiosError) => {
-                const domain = /^(?:https?:\/\/)?(?:www\.)?([^\/:]+)/g.exec(url)[1];
-                const source = (await this.sourceRepository.findOne({
-                  where: {
-                    domain: Equal(domain)
-                  }
-                })) || (await this.sourceRepository.create({ domain: domain }))
-                source.consecutiveErrors = (source.consecutiveErrors || 0) + 1;
-                if (source.consecutiveErrors >= 10) {
-                  source.status = SourceStatus.SUSPENDED;
+                try {
+                  (async () => {
+                    try {
+                      const domain = /^(?:https?:\/\/)?(?:www\.)?([^\/:]+)/g.exec(url)[1];
+                      const source = (await this.sourceRepository.findOne({
+                        where: {
+                          domain: Equal(domain)
+                        }
+                      })) || (await this.sourceRepository.create({
+                        domain: domain,
+                        searchUrlTemplate: 'https://' + domain + '/feed',
+                      }))
+                      source.consecutiveErrors = (source.consecutiveErrors || 0) + 1;
+                      if (source.consecutiveErrors >= 10) {
+                        source.status = SourceStatus.SUSPENDED;
+                      }
+                      await this.sourceRepository.save(source);
+                      console.log(`[domain] ${domain} SUSPENDED`);
+                    } catch (error) {
+                      console.trace(error);
+                    }
+                  })()
+                } catch (error) {
+                  console.trace(error);
                 }
-                await this.sourceRepository.save(source);
                 r0(null);
                 return of(null)
               }),
