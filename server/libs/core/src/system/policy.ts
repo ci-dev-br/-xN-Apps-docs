@@ -3,7 +3,6 @@ export function Policy(content: any, pool_user_access_datas: any, policyName: st
     let user = request?.user;
     let roles = user?.roles;
     let confiance = 0;
-
     if ('reading' in content
     ) {
         if (!roles?.includes(policyName)) {

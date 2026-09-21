@@ -35,8 +35,6 @@ export class NewsController {
         const dataInicial = new Date(dataInicialStr);
         const dataFinal = new Date(dataFinalStr);
 
-        // console.log('Data Inicial:', dataInicial);
-        // console.log('Data Final:', dataFinal);
         if (isNaN(dataInicial.getTime()) || isNaN(dataFinal.getTime())) {
             throw new BadRequestException('Formato de data inválido. Utilize o formato ISO 8601.');
         }
@@ -45,20 +43,5 @@ export class NewsController {
             return post;
         });
     }
-    /* @Public()
-    @Post('pesquisar')
-    @ApiOperation({ summary: 'Pesquisar notícias por termo e período, retornando feed agrupado por fonte (Source) e ordenado por data de publicação.' })
-    @ApiQuery({ name: 'textoConsulta', type: String, example: 'tecnologia', required: false })
-    @ApiResponse({ status: 200, type: [FeedColumnDto] })
-    async pesquisar(
-        @Query('textoConsulta') textoConsulta?: string,
-    ) {
-        try {
-            let dataInicial: Date | undefined;
-            let dataFinal: Date | undefined;
-            return await this.service?.pesquisar(dataInicial, dataFinal, textoConsulta);
-        } catch (error) {
-            console.error('Erro ao processar a pesquisa:', error);
-        }
-    } */
+
 }

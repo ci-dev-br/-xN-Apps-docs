@@ -26,7 +26,7 @@ export class LoggingInterceptor implements NestInterceptor {
              catchError(error => {
                  console.trace(context.getClass().name, context.getHandler().name, error)
                  return EMPTY
-             })
+             }) 
          ) */ .pipe(tap(() => console.log(`${request.url} ${request.method} :: ${context.getClass().name} ${context.getHandler().name} ${Date.now() - now}ms`)),);
     }
 }

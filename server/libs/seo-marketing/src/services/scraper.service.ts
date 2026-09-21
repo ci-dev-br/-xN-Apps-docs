@@ -266,7 +266,7 @@ export class ScraperService implements OnModuleInit {
           news.content = content;
           news.modifiedAt = new Date();
           await this.newsRepository.save(news);
-          console.log('Atualizado conteúdo nulo de: ' + news.title + ' ' + (!!content ? '[ok]' : '[bad]'));
+          //  console.log('Atualizado conteúdo nulo de: ' + news.title + ' ' + (!!content ? '[ok]' : '[bad]'));
           await new Promise<void>(r => setTimeout(() => r(), 1));
         }, 2), toArray()
       ));
@@ -287,7 +287,7 @@ export class ScraperService implements OnModuleInit {
           }
         }));
         if (source && source.status === SourceStatus.SUSPENDED) {
-          console.log(`[domain] ${domain} IGNORED`);
+          // console.log(`[domain] ${domain} IGNORED`);
           return await result_scrapePageContent(null);
         }
         return await result_scrapePageContent(await (async () => {
@@ -321,7 +321,7 @@ export class ScraperService implements OnModuleInit {
                         source.status = SourceStatus.SUSPENDED;
                       }
                       await this.sourceRepository.save(source);
-                      console.log(`[domain] ${domain} SUSPENDED`);
+                      //  console.log(`[domain] ${domain} SUSPENDED`);
                     } catch (error) {
                       console.trace(error);
                     }
