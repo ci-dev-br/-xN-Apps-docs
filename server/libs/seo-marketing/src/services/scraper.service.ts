@@ -268,7 +268,7 @@ export class ScraperService implements OnModuleInit {
           await this.newsRepository.save(news);
           console.log('Atualizado conteúdo nulo de: ' + news.title + ' ' + (!!content ? '[ok]' : '[bad]'));
           await new Promise<void>(r => setTimeout(() => r(), 1));
-        }, 4), toArray()
+        }, 2), toArray()
       ));
     else { return }
     setTimeout(() => this.AtualizaConteudo(), 1);
@@ -446,58 +446,14 @@ export class ScraperService implements OnModuleInit {
   }) {
     this.logger.log(`Gerando feed para o período: ${dataInicial?.toISOString()} a ${dataFinal?.toISOString()}`);
     let query = this.newsRepository.createQueryBuilder('news')
-      .where(`news."content" is not null and length(news."content") > 250 
-and news."title" is not null and length(news."title") > 75
-and news."url" ilike '%.br/%'`);
     query = query.leftJoinAndSelect('news.sourceInfo', 'source');
+    query = query.where(`news."content" is not null and length(news."content") > 250 
+and news."title" is not null and length(news."title") > 75
+and news."url" ilike '%.br/%' and source."status"='ACTIVE'`);
     query = query.orderBy('news.scrapedAt', 'DESC')
       .limit(options.limit)
       .offset(options.offset);
     const newsList = await query.getMany();
     return newsList;
-  }
-  /**
-   * Pesquisar por termo e periodo, retornando feed agrupado por fonte (Source) e ordenado por data de publicação.
-   * @param dataInicial Data inicial do período de pesquisa (opcional)
-   * @param dataFinal Data final do período de pesquisa (opcional)
-   */
-  async pesquisar(dataInicial?: Date, dataFinal?: Date, textoConsulta?: string) {
-    let query = this.newsRepository.createQueryBuilder('news')
-      ;
-    if (dataInicial) {
-      query = query.andWhere('news.scrapedAt >= :dataInicial', { dataInicial });
-    }
-    if (dataFinal) {
-      query = query.andWhere('news.scrapedAt <= :dataFinal', { dataFinal });
-    }
-    query = query.andWhere('length(news.content) > :size and title is not null', { size: 100 });
-    /*  if (textoConsulta) {
-       query = query.andWhere('news.title ILIKE :textoConsulta OR news.content ILIKE :textoConsulta', { textoConsulta: `%${textoConsulta.replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('%', '\\%').replaceAll(' ', '%')}%` });
-     } */
-    query = query.orderBy('news.scrapedAt', 'DESC').limit(10);
-    const newsList = await query.getMany();
-    // Passo 3: Agrupar as notícias por Fonte (Source) para montar o FeedColumn
-    const columnsMap = new Map<string, any[]>();
-    for (const news of newsList) {
-      const sourceKey = news.sourceName || 'Diversos';
-      if (!columnsMap.has(sourceKey)) {
-        columnsMap.set(sourceKey, []);
-      }
-      //if (news.content && news.content.length > 100) {
-      columnsMap.get(sourceKey).push({
-        id: news.id,
-        title: news.title,
-        content: news.content || '',
-        link: news.url, // Mapeado para o DTO do frontend
-        source: sourceKey,
-        date: news.scrapedAt, // Mapeado para o DTO do frontend
-      });
-      // }
-    }
-    const feedColumns = Array.from(columnsMap.entries()).map(([mainSource, posts]) => ({
-      mainSource,
-      posts,
-    })).sort((a, b) => b.mainSource.localeCompare(a.mainSource));
-    return feedColumns.sort((a, b) => b.posts.length - a.posts.length);
   }
 }
