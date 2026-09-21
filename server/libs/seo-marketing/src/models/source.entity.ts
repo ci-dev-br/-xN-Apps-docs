@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, Index } from 'typeorm';
 import { News } from './news.entity';
 import { schema } from './schema';
 export enum SourceStatus {
@@ -17,6 +17,7 @@ export class Source {
     searchUrlTemplate?: string; // URL do feed RSS
     @Column({ nullable: true })
     domain?: string; // ex: techtudo.com.br
+    @Index({})
     @Column({ type: 'varchar', default: SourceStatus.DISCOVERED })
     status?: SourceStatus;
     @Column({ default: true })

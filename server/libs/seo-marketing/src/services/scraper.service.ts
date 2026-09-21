@@ -279,10 +279,11 @@ export class ScraperService implements OnModuleInit {
   private async scrapePageContent(url: string): Promise<string> {
     try {
       return await new Promise<string>(async result_scrapePageContent => {
-        const domain = /^(?:https?:\/\/)?(?:www\.)?([^\/:]+)/g.exec(url.trim())[1];
+        const domain = /^(?:https?:\/\/)?(?:www\.)?([^\/:]+)/g.exec(url?.trim());
+        if (!domain || !domain[1]) return null;
         const source = (await this.sourceRepository.findOne({
           where: {
-            domain: Equal(domain)
+            domain: Equal(domain[1])
           }
         }));
         if (source && source.status === SourceStatus.SUSPENDED) {
