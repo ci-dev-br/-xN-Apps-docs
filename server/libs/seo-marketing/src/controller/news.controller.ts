@@ -41,7 +41,7 @@ export class NewsController {
             throw new BadRequestException('Formato de data inválido. Utilize o formato ISO 8601.');
         }
         return (await this.service?.getTrendingFeed(dataInicial, dataFinal, { limit: (request?.user?.roles as string[])?.includes('READER') ? 30 : 25, offset })).map(post => {
-            post.content = Policy({ reading: post.content }, request, 'READER', r => r.substring(0, 170) + ' [...]').reading;
+            post.content = Policy({ reading: post.content }, request, 'READER', r => r.substring(0, 170) + ' \n\n[...]').reading;
             return post;
         });
     }

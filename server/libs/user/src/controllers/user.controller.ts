@@ -2,7 +2,6 @@ import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { UserService } from "@ci/auth/auth.module";
 import { User } from "@ci/auth/models/user.entity";
-import { InteractionPayload } from "../dto/interaction-payload";
 @ApiTags('User')
 @Controller('User')
 export class UserController {
@@ -47,7 +46,7 @@ export class UserController {
                     try {
                         delete u.password;
                         if (!!u.email) {
-                            u.email = u.email.substring(0, 3) + '***' + u.email.substring(u.email.length - 8, 3);
+                            u.email = u.email.substring(0, 3) + '••••' + u.email.substring(u.email.length - 8, 3);
                         }
                         delete u.email;
                         delete u.passwordMode;
@@ -63,18 +62,4 @@ export class UserController {
         }
     }
 
-    @Post('Interaction')
-    @ApiOperation({ operationId: 'Interaction' })
-    public async interaction(
-        @Body() payload: InteractionPayload,
-        @Req() request: any) {
-        try {
-
-        } catch (error) {
-            return {
-                status: 500,
-                message: 'Falha'
-            }
-        }
-    }
 }

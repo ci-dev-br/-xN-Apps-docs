@@ -1,42 +1,31 @@
 <ci-navbar></ci-navbar>
 @if(userService && !!(userService.user | async)){
-<div #sidebarElement class="sidebar" [class.--inactive]="!sidebar" (click)="sidebar=!sidebar;$event.preventDefault()"
+<!-- <div #sidebarElement class="sidebar" [class.--inactive]="!sidebar" (click)="sidebar=!sidebar;$event.preventDefault()"
     [style.top]="sidebarTop + 'px' " [style.left]="sidebarLeft + 'px'">
-    <div class="row">
-        <!--  <button mat-raised-button (click)="newPost()">
+    <div class="row"> -->
+<!--  <button mat-raised-button (click)="newPost()">
                 Texto
             </button> -->
-        <!--  <button mat-raised-button (click)="newCitation()">
+<!--  <button mat-raised-button (click)="newCitation()">
                 Citação
             </button> -->
-        <!-- <button mat-raised-button (click)="newPhoto()">
+<!-- <button mat-raised-button (click)="newPhoto()">
                 Foto
             </button> -->
-        <!--  <button mat-raised-button (click)="newVideo()">
+<!--  <button mat-raised-button (click)="newVideo()">
                 Vídeo
             </button> -->
-    </div>
+<!-- </div>
     <span style="flex:auto"></span>
     <div class="row">
         <button mat-icon-button color="primary" routerLink="/meus-apps"><mat-icon>apps</mat-icon></button>
         <button mat-icon-button (click)="openSidebarSettings()"><mat-icon>settings</mat-icon></button>
     </div>
     <mat-icon class="icon">draw</mat-icon>
-</div>}
+</div> -->}
 <div class="page--wrapper">
-
     <div class="wrapper">
-        <mat-form-field>
-            <input matInput placeholder="Consultar..." />
-        </mat-form-field>
-        @if(!feeds || feeds.length === 0){ <div>
-            <p>
-                Nada por perto até o momento,
-            </p>
-            <p>
-                seja o publicar algo por perto!
-            </p>
-        </div>
+        @if(!feeds || feeds.length === 0){
         }@else {
         <div class="feed" #feedContainer>
             @for(feed of feeds; track $index) {
@@ -44,18 +33,14 @@
                 <!--  <h3>{{feed.author}} <span class="date">{{feed.date | date:'short'}}</span></h3> -->
                 @if(feed.title){<h4 [innerHtml]="feed.title"></h4>}
                 <div [innerHtml]="feed.content" class="feed-content"></div>
+                <div style="text-align:right"><a target="_blank"
+                        [href]="'https://' + feed?.sourceInfo?.domain">{{feed?.sourceInfo?.name}}</a>
+                </div>
                 <div class="interactions">
                     <button mat-icon-button color="primary"
                         (click)="interacao(feed, 'liked')"><mat-icon>thumb_up</mat-icon></button>
                     <button mat-icon-button color="primary"
                         (click)="interacao(feed, 'open')"><mat-icon>open_in_new</mat-icon></button>
-                    <!-- <button mat-icon-button color="primary"
-                        [routerLink]="'/'+ feed.id+'/comment'"><mat-icon>comment</mat-icon></button>
-                    <button mat-icon-button color="primary"><mat-icon>share</mat-icon></button>
-                    <button mat-icon-button color="primary"><mat-icon>bookmark</mat-icon></button>
-                    <button mat-icon-button color="primary"><mat-icon>more_vert</mat-icon></button>
-                    <button mat-icon-button color="primary"><mat-icon>report</mat-icon></button>
-                    <button mat-icon-button color="primary"><mat-icon>flag</mat-icon></button> -->
                 </div>
                 <div>{{feed.categoria}}</div>
             </div>
@@ -70,34 +55,3 @@
         </div>
     </div>
 </div>
-<!-- <x-footer /> -->
-
-<!-- 
-
-
-  @else {
-    <header class="container">
-        <figure>
-            <img class="logo" src="logo-colorida.svg"
-                alt-label="Logo 'apps.ci.dev.br' escrita em manuscrito e colida degradê em minúsculo">
-        </figure>
-        @if(!!pesquisa){<ng-container [formGroup]="pesquisa">
-            <mat-form-field>
-                <mat-label>Pesquisar ...</mat-label>
-                <input type="text" matInput placeholder="Pesquisar..." formControlName="q" (keyup.enter)="pesquisar()">
-                <button mat-icon-button matSuffix (click)="pesquisar()">
-                    <mat-icon>search</mat-icon>
-                </button>
-            </mat-form-field>
-        </ng-container>}
-        < !-- {{info|json}} -- >
-        @if(info) {@for(item of info; track $index) {
-        <div class="feed-column">
-            <h2>{{item}}</h2>
-        </div>
-        }}
-    </header>
-    }
-
-
--->

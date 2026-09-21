@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, UpdateDateColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Category } from './category.entity';
 import { schema } from './schema';
@@ -45,4 +45,8 @@ export class News {
         onDelete: 'CASCADE'
     })
     category: Category;
+
+    @ApiProperty({ nullable: true, required: false })
+    @UpdateDateColumn({ nullable: true, default: null })
+    modifiedAt?: Date;
 }

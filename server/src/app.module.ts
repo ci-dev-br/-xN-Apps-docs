@@ -141,7 +141,7 @@ process.env.MODULES.split(',').forEach(e => {
       autoSave: true,
       cache: true,
       logger: 'file',
-      maxQueryExecutionTime: 600,
+      maxQueryExecutionTime: 1000,
       namingStrategy: new SnakeNamingStrategy(),
       verboseRetryLog: true,
       dropSchema: false,

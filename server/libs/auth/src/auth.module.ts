@@ -29,6 +29,7 @@ import { StorageModule } from "@ci/storage";
 import { UserPreference } from "./models/user-preference.entity";
 import { FaceAuthController } from "./controller/face-auth.controller";
 import { FaceAuthService } from "./service/face-auth.service";
+import { UserInteraction } from "./models/user-interaction.entity";
 export interface IAuthOption {
     secret?: string;
 }
@@ -40,6 +41,7 @@ export const AuthEntities = [
     Register,
     Invite,
     UserPreference,
+    UserInteraction,
 ];
 @Module({
     imports: [
