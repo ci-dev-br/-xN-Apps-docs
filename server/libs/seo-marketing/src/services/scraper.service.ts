@@ -1,9 +1,9 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, Or, Repository } from 'typeorm';
+import { Between, Equal, Or, Repository } from 'typeorm';
 import { HttpService } from '@nestjs/axios';
-import { firstValueFrom, from, lastValueFrom, mergeMap, toArray } from 'rxjs';
+import { catchError, firstValueFrom, from, lastValueFrom, mergeMap, of, throwError, toArray } from 'rxjs';
 import * as Parser from 'rss-parser';
 import * as cheerio from 'cheerio';
 // Entidades (Certifique-se de que os caminhos refletem a sua estrutura de pastas)
@@ -11,6 +11,7 @@ import { News } from '../models/news.entity';
 import { Category } from '../models/category.entity';
 import { Source, SourceStatus } from '../models/source.entity';
 import { CategoryEvent, CategoryEventType } from '../models/category-event.entity';
+import { AxiosError } from 'axios';
 interface ScrapeTask {
   category: Category;
   source: Source;
@@ -267,7 +268,7 @@ export class ScraperService implements OnModuleInit {
           await this.newsRepository.save(news);
           console.log('Atualizado conteúdo nulo de: ' + news.title + ' ' + (!!content ? '[ok]' : '[bad]'));
           await new Promise<void>(r => setTimeout(() => r(), 1));
-        }, 6), toArray()
+        }, 4), toArray()
       ));
     else { return }
     setTimeout(() => this.AtualizaConteudo(), 1);
@@ -276,31 +277,63 @@ export class ScraperService implements OnModuleInit {
   // 4. EXTRATOR DE CONTEÚDO ANTI-PAYWALL E CAÇADOR DE RSS
   // =====================================================================
   private async scrapePageContent(url: string): Promise<string> {
-    return await new Promise<string>(resultado => {
-      try {
-        this.httpService.get(url, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-            'Referer': 'https://www.google.com/',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
-            'Cache-Control': 'no-cache',
-          },
-          maxRedirects: 5,
-        }).subscribe((response) => {
+    try {
+      return await new Promise<string>(async rr => {
+        const domain = /^(?:https?:\/\/)?(?:www\.)?([^\/:]+)/g.exec(url.trim())[1];
+        const source = (await this.sourceRepository.findOne({
+          where: {
+            domain: Equal(domain)
+          }
+        }));
+        if (source && source.status === SourceStatus.SUSPENDED) {
+          return await rr(null);
+        }
+        return await rr(await (async () => {
+          const response = await new Promise<any>(async r0 => {
+            const req = this.httpService.get(url, {
+              headers: {
+                'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+                'Referer': 'https://www.google.com/',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+                'Cache-Control': 'no-cache',
+              },
+              maxRedirects: 5,
+            });
+            req.pipe(
+              catchError(async (err: AxiosError) => {
+                const domain = /^(?:https?:\/\/)?(?:www\.)?([^\/:]+)/g.exec(url)[1];
+                const source = (await this.sourceRepository.findOne({
+                  where: {
+                    domain: Equal(domain)
+                  }
+                })) || (await this.sourceRepository.create({ domain: domain }))
+                source.consecutiveErrors = (source.consecutiveErrors || 0) + 1;
+                if (source.consecutiveErrors >= 10) {
+                  source.status = SourceStatus.SUSPENDED;
+                }
+                await this.sourceRepository.save(source);
+                r0(null);
+                return of(null)
+              }),
+            ).subscribe((response_value) => {
+              r0(response_value)
+            })
+          });
+          if (!response || !response.data) return null;
           try {
             const $ = cheerio.load(response.data);
             // --- AUTO-DISCOVERY: Garimpo de novos feeds ---
-            const rssLink = $('link[type="application/rss+xml"]').attr('href');
+            const rssLink = $('link[type="application/rss+xml"]')?.attr('href');
             if (rssLink) {
               const absoluteRssUrl = new URL(rssLink, url).toString();
               this.registerDiscoveredSource(absoluteRssUrl).catch(() => { });
             }
-            $('script, style, nav, footer, header, aside, .paywall-banner, #paywall, .assine-ja').remove();
+            $('script, style, nav, footer, header, aside, .paywall-banner, #paywall, .assine-ja')?.remove();
             let articleContent = '';
-            $('article p, main p, .post-content p, .news-content p, .materia-conteudo p').each((i, element) => {
+            $('article p, main p, .post-content p, .news-content p, .materia-conteudo p')?.each((i, element) => {
               const text = $(element).text().trim();
-              if (text.length > 125 && !text.includes('Assine a Folha') && !text.includes('Leia mais:')) {
+              if (text.length > 125 && !text.includes('Assine') && !text.includes('Leia mais:')) {
                 articleContent += text + '\n\n';
               }
             });
@@ -312,15 +345,14 @@ export class ScraperService implements OnModuleInit {
                 }
               });
             }
-            resultado(articleContent.trim());
+            return articleContent?.trim();
           } catch (error) {
-            resultado(null);
+            return null;
           }
-        }, (err) => resultado(null), () => { })
-      } catch (error) {
-        resultado(null);
-      }
-    });
+        })());
+      });
+    } catch (error) {
+    }
   }
   // =====================================================================
   // 5. REGISTRO (AUTO-DISCOVERY) E SANDBOX DE NOVAS FONTES

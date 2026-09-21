@@ -1,49 +1,36 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { News } from './news.entity';
 import { schema } from './schema';
-
 export enum SourceStatus {
     DISCOVERED = 'DISCOVERED', // Recém encontrada pelo robô
     SANDBOX = 'SANDBOX',       // Em fase de testes
     ACTIVE = 'ACTIVE',         // Validada e pronta para uso
     SUSPENDED = 'SUSPENDED',   // Com muitos erros
 }
-
 @Entity({ schema })
 export class Source {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
-
+    id?: string;
     @Column({ nullable: true })
-    name: string;
-
+    name?: string;
     @Column({ unique: true })
-    searchUrlTemplate: string; // URL do feed RSS
-
+    searchUrlTemplate?: string; // URL do feed RSS
     @Column({ nullable: true })
-    domain: string; // ex: techtudo.com.br
-
+    domain?: string; // ex: techtudo.com.br
     @Column({ type: 'varchar', default: SourceStatus.DISCOVERED })
-    status: SourceStatus;
-
+    status?: SourceStatus;
     @Column({ default: true })
     supportsSearch: boolean; // Se false, o robô vai baixar o feed todo e filtrar no código
-
     @Column({ default: 0 })
-    consecutiveErrors: number;
-
+    consecutiveErrors?: number;
     @Column({ default: 0 })
     totalRequests: number;
-
     @Column({ default: 0 })
-    successfulRequests: number;
-
+    successfulRequests?: number;
     @OneToMany(() => News, (news) => news.sourceInfo)
-    news: News[];
-
+    news?: News[];
     @CreateDateColumn()
-    createdAt: Date;
-
+    createdAt?: Date;
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt?: Date;
 }

@@ -45,7 +45,7 @@ export class NewsController {
             return post;
         });
     }
-    @Public()
+    /* @Public()
     @Post('pesquisar')
     @ApiOperation({ summary: 'Pesquisar notícias por termo e período, retornando feed agrupado por fonte (Source) e ordenado por data de publicação.' })
     @ApiQuery({ name: 'textoConsulta', type: String, example: 'tecnologia', required: false })
@@ -60,5 +60,5 @@ export class NewsController {
         } catch (error) {
             console.error('Erro ao processar a pesquisa:', error);
         }
-    }
+    } */
 }
