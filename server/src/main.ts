@@ -18,6 +18,11 @@ import * as cookieParser from 'cookie-parser';
 config();
 // Inicialização do Logger customizado (assumindo que seja um setup global/side-effect)
 new Logger(console);
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  // Handle gracefully or log to monitoring service
+});
 /**
  * Tenta iniciar a aplicação na porta especificada.
  * Caso a porta esteja em uso (EADDRINUSE), tenta parar o serviço Windows associado
