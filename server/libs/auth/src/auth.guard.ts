@@ -32,6 +32,7 @@ export class AuthGuard implements CanActivate {
     ]);
     const request: IncomingMessage = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
+    if (request.url.indexOf('Refresh') !== -1) { return true }
     if (!token) {
       if (!by_pass)
         throw new UnauthorizedException('Falha na autenticação. Token não fornecido.');
@@ -51,10 +52,10 @@ export class AuthGuard implements CanActivate {
         }
         request['user'] = await this.userService.findById(payload.id);
         if (!!role) {
-          if (!payload || !payload.roles.includes(role)) throw new UnauthorizedException('Acesso negado. Não corresponde ao nível de acesso necessário.');
+          if (!payload || !payload.roles.includes(role)) if (!by_pass) throw new UnauthorizedException('Acesso negado. Não corresponde ao nível de acesso necessário.');
         }
       } catch (err) {
-     /*  if (!by_pass) */ throw new UnauthorizedException('Falha na autenticação. Token inválido ou expirado.');
+       /*  if (!by_pass) */ throw new UnauthorizedException('Falha na autenticação. Token inválido ou expirado.');
       }
     }
     return true;

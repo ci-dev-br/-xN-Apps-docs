@@ -60,7 +60,7 @@ export class AuthService {
             } catch (error) {
                 console.trace(error);
                 confiance += 'e';
-                throw new UnauthorizedException('Acesso negado.', error);
+                throw new UnauthorizedException('Acesso negado [1].', error);
             }
         }
         const user = await this.userService.findById(userId);
