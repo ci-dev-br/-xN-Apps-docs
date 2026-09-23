@@ -1,18 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TEXTOBASE } from './texto_base';
-
 interface AndroidBridge {
   onKey(character: string): void;
   onAction(action: string): void;
 }
-
 declare global {
   interface Window {
     AndroidKeyboard?: AndroidBridge;
   }
 }
-
 interface KeyboardKey {
   label: string;
   value?: string;
@@ -20,10 +17,8 @@ interface KeyboardKey {
   action?: string;
   flex?: number;
 }
-
 // Texto Base em Português para o Teclado Dinâmico
 const REFERENCE_TEXT = TEXTOBASE;
-
 // Mapa de resolução de acentos
 const ACCENT_MAP: Record<string, Record<string, string>> = {
   '´': { 'a': 'á', 'e': 'é', 'i': 'í', 'o': 'ó', 'u': 'ú', 'A': 'Á', 'E': 'É', 'I': 'Í', 'O': 'Ó', 'U': 'Ú', 'c': 'ç', 'C': 'Ç' },
@@ -32,7 +27,6 @@ const ACCENT_MAP: Record<string, Record<string, string>> = {
   '^': { 'a': 'â', 'e': 'ê', 'i': 'î', 'o': 'ô', 'u': 'û', 'A': 'Â', 'E': 'Ê', 'I': 'Î', 'O': 'Ô', 'U': 'Û' },
   '¨': { 'a': 'ä', 'e': 'ë', 'i': 'ï', 'o': 'ö', 'u': 'ü', 'A': 'Ä', 'E': 'Ë', 'I': 'Ï', 'O': 'Ö', 'U': 'Ü' }
 };
-
 // Definição dos layouts pré-configurados
 const LAYOUT_PROGRAMMING: KeyboardKey[][] = [
   [
@@ -65,7 +59,6 @@ const LAYOUT_PROGRAMMING: KeyboardKey[][] = [
     { label: '↵', type: 'action', action: 'ENTER', flex: 1.5 }
   ]
 ];
-
 const LAYOUT_TEXT: KeyboardKey[][] = [
   ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].map(k => ({ label: k, type: 'char' })),
   ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'].map(k => ({ label: k, type: 'char' })),
@@ -85,7 +78,6 @@ const LAYOUT_TEXT: KeyboardKey[][] = [
     { label: '.', type: 'char' }, { label: '-', type: 'char' }
   ]
 ];
-
 const LAYOUT_SOCIAL: KeyboardKey[][] = [
   ['@', '#', '😂', '❤️', '👍', '🔥', '✨', '🎉'].map(k => ({ label: k, type: 'char' })),
   ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'].map(k => ({ label: k, type: 'char' })),
@@ -104,7 +96,6 @@ const LAYOUT_SOCIAL: KeyboardKey[][] = [
     { label: '.', type: 'char' }, { label: '?', type: 'char' }
   ]
 ];
-
 const LAYOUT_GAME: KeyboardKey[][] = [
   [
     { label: 'Esc', type: 'action', action: 'ESC' },
@@ -125,7 +116,6 @@ const LAYOUT_GAME: KeyboardKey[][] = [
     { label: 'Space', value: ' ', type: 'char', flex: 3 }
   ]
 ];
-
 @Component({
   selector: 'app-keyboard',
   standalone: true,
@@ -170,7 +160,6 @@ const LAYOUT_GAME: KeyboardKey[][] = [
           </button>
         }
       </div>
-
       <!-- Overlay do Menu -->
       <div class="menu-overlay" *ngIf="isMenuOpen">
         <div class="menu-content">
@@ -184,7 +173,6 @@ const LAYOUT_GAME: KeyboardKey[][] = [
             <button [class.active]="activeMenuTab === 'layouts'" (click)="activeMenuTab = 'layouts'">Layouts</button>
             <button [class.active]="activeMenuTab === 'custom'" (click)="activeMenuTab = 'custom'">Custom</button>
           </div>
-
           <!-- Aba Temas -->
           <div class="tab-content" *ngIf="activeMenuTab === 'themes'">
             <div class="options-grid">
@@ -195,7 +183,6 @@ const LAYOUT_GAME: KeyboardKey[][] = [
               <button (click)="setTheme('theme-prince')" [class.selected]="currentTheme === 'theme-prince'">Prince (Pop Star)</button>
             </div>
           </div>
-
           <!-- Aba Layouts -->
           <div class="tab-content" *ngIf="activeMenuTab === 'layouts'">
             <div class="options-grid">
@@ -214,7 +201,6 @@ const LAYOUT_GAME: KeyboardKey[][] = [
               }
             </div>
           </div>
-
           <!-- Aba Criar Custom -->
           <div class="tab-content" *ngIf="activeMenuTab === 'custom'">
             <div class="form-group">
@@ -228,7 +214,6 @@ const LAYOUT_GAME: KeyboardKey[][] = [
             </div>
             <button class="save-btn" (click)="saveCustomLayout(layoutName.value, layoutData.value)">Salvar Layout</button>
           </div>
-
         </div>
       </div>
     </div>
@@ -256,12 +241,10 @@ const LAYOUT_GAME: KeyboardKey[][] = [
       font-family: var(--font-family);
       position: relative;
     }
-
     .theme-farm { --bg: #3e4a36; --key-bg: #5a6646; --key-color: #e5e0cd; --key-radius: 8px; --key-action-bg: #b75e39; --key-action-color: #fce4d6; --key-mod-bg: #d1c8b0; --key-mod-color: #3e4a36; --key-shadow: 0 4px 0 #2a3324; --font-family: 'Courier New', Courier, monospace; }
     .theme-ios { --bg: #d1d4d9; --key-bg: #ffffff; --key-color: #000000; --key-radius: 5px; --key-action-bg: #aeb3ba; --key-action-color: #000000; --key-mod-bg: #aeb3ba; --key-mod-color: #000000; --key-shadow: 0 1px 1px rgba(0,0,0,0.3); --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     .theme-circular { --bg: linear-gradient(135deg, #185a6d, #082d3f); --key-bg: rgba(255, 255, 255, 0.15); --key-color: #ffffff; --key-radius: 50px; --key-action-bg: rgba(255, 255, 255, 0.25); --key-action-color: #ffffff; --key-mod-bg: rgba(255, 255, 255, 0.25); --key-mod-color: #ffffff; --key-shadow: none; --font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
     .theme-prince { --bg: #1a0033; --key-bg: #4b0082; --key-color: #ffd700; --key-radius: 12px; --key-action-bg: #ff00ff; --key-action-color: #ffffff; --key-mod-bg: #8a2be2; --key-mod-color: #ffd700; --key-shadow: 0 0 8px rgba(255, 0, 255, 0.6); --font-family: 'Trebuchet MS', sans-serif; }
-
     .keyboard-container { 
       display: flex; flex-direction: column; gap: var(--key-gap); padding: 10px; flex-grow: 1;
       touch-action: manipulation; user-select: none; justify-content: stretch; align-items: stretch;
@@ -277,23 +260,19 @@ const LAYOUT_GAME: KeyboardKey[][] = [
     button.action { background: var(--key-action-bg); color: var(--key-action-color); font-weight: bold; }
     button.modifier { background: var(--key-mod-bg); color: var(--key-mod-color); }
     button.active { background: #007acc !important; color: white !important; box-shadow: 0 0 10px #007acc; }
-
     /* Modos de Ocultação do Layout Dinâmico */
     button.hidden-key { visibility: hidden; pointer-events: none; }
     button.collapsed-key { display: none !important; }
-
     button.pending-accent {
       background: #e6a23c !important;
       color: #000 !important;
       box-shadow: 0 0 8px #e6a23c;
       transform: scale(0.95);
     }
-
     .bottom-bar { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; padding: 10px; background: rgba(0,0,0,0.3); }
     .menu-toggle-btn { background: transparent; color: var(--key-color); border: 1px solid var(--key-color); padding: 8px 14px; border-radius: 20px; font-size: 0.85rem; flex: 0 1 auto; box-shadow: none; }
     .secondary-btn { border-color: #007acc; color: #66b3ff; }
     .tertiary-btn { border-color: #e6a23c; color: #e6a23c; }
-
     .menu-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; z-index: 100; font-family: sans-serif; padding: 20px; color: white; justify-content: flex-end; }
     .menu-content { background: #2a2a2a; border-radius: 12px; display: flex; flex-direction: column; max-height: 90%; overflow: hidden; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
     .menu-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #444; }
@@ -303,13 +282,11 @@ const LAYOUT_GAME: KeyboardKey[][] = [
     .menu-tabs { display: flex; background: #1e1e1e; }
     .menu-tabs button { flex: 1; padding: 12px; border-radius: 0; background: transparent; box-shadow: none; color: #aaa; font-size: 0.9rem; border-bottom: 2px solid transparent; }
     .menu-tabs button.active { color: #fff; border-bottom-color: #007acc; }
-
     .tab-content { padding: 15px; overflow-y: auto; }
     .options-grid { display: flex; flex-direction: column; gap: 0px; }
     .options-grid button { padding: 12px; background: #333; border-radius: 8px; box-shadow: none; justify-content: flex-start; }
     .options-grid button.selected { background: #007acc; border-left: 4px solid white; }
     .divider { margin: 15px 0 5px 0; color: #888; font-size: 0.8rem; text-transform: uppercase; }
-
     .form-group { display: flex; flex-direction: column; gap: 0px; margin-bottom: 15px; }
     .form-group label { font-size: 0.9rem; color: #ccc; }
     .form-group small { font-size: 0.75rem; color: #888; }
@@ -323,25 +300,19 @@ export class KeyboardComponent implements OnInit {
   pendingAccent: string | null = null;
   isMenuOpen = false;
   activeMenuTab: 'themes' | 'layouts' | 'custom' = 'themes';
-
   currentTheme = 'theme-default';
   currentLayoutName = 'dynamic';
-
   layout: KeyboardKey[][] = LAYOUT_PROGRAMMING;
-
   // Estados para o Teclado Dinâmico
   dynamicTypedSequence: string = '';
   forceShowAllKeys: boolean = false;
   dynamicLayoutMode: 'hidden' | 'collapse' = 'hidden';
-
   customLayouts: Record<string, KeyboardKey[][]> = {};
   customLayoutsNames: string[] = [];
-
   ngOnInit() {
     this.loadCustomLayouts();
     this.loadPreferences();
   }
-
   loadPreferences() {
     try {
       const prefsStr = localStorage.getItem('angular_keyboard_prefs');
@@ -357,7 +328,6 @@ export class KeyboardComponent implements OnInit {
       console.error('Erro ao ler preferências do teclado', e);
     }
   }
-
   savePreferences() {
     try {
       const prefs = {
@@ -368,28 +338,22 @@ export class KeyboardComponent implements OnInit {
       localStorage.setItem('angular_keyboard_prefs', JSON.stringify(prefs));
     } catch (e) { }
   }
-
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
   }
-
   toggleDynamicMode() {
     this.dynamicLayoutMode = this.dynamicLayoutMode === 'hidden' ? 'collapse' : 'hidden';
     this.savePreferences();
   }
-
   setTheme(theme: string) {
     this.currentTheme = theme;
     this.savePreferences();
   }
-
   setLayout(layoutName: string, savePref: boolean = true) {
     this.currentLayoutName = layoutName;
-
     // Reseta o estado dinâmico se trocar de layout
     this.dynamicTypedSequence = '';
     this.forceShowAllKeys = false;
-
     switch (layoutName) {
       case 'dynamic':
       case 'programming': this.layout = LAYOUT_PROGRAMMING; break;
@@ -402,12 +366,9 @@ export class KeyboardComponent implements OnInit {
         }
         break;
     }
-
     if (savePref) this.savePreferences();
   }
-
   // --- Lógica do Teclado Dinâmico ---
-
   isKeyVisible(key: KeyboardKey): boolean {
     if (this.currentLayoutName !== 'dynamic') return true;
     if (this.forceShowAllKeys) return true;
@@ -417,67 +378,75 @@ export class KeyboardComponent implements OnInit {
     if (key.label === 'Space' || key.value === ' ' || key.action === 'ENTER') return true;
 
     const char = (key.value !== undefined ? key.value : key.label);
+    const normChar = this.normalize(char); // <- Aplicamos normalização na tecla testada
 
-    // Se há um acento pendente, mostrar SOMENTE as letras compatíveis com esse acento
+    // Lógica do acento pendente continua reinando absoluta
     if (this.pendingAccent) {
-      // Ajusta para testar com Shift se estiver ativo
       const charToTest = (this.shiftActive && char.length === 1 && /[a-zç]/.test(char))
         ? char.toUpperCase()
         : char;
       return !!ACCENT_MAP[this.pendingAccent][charToTest];
     }
 
-    // Mantém sempre visível caracteres que não sejam letras e números básicos (símbolos, pontuações)
-    if (!/^[a-záéíóúâêîôûãõç0-9]$/i.test(char)) return true;
+    // Mantém pontuações e símbolos livres
+    if (!/^[a-zç0-9]$/i.test(normChar)) return true;
 
-    // Se nada foi digitado na palavra atual, mostra tudo
     if (!this.dynamicTypedSequence) return true;
 
     const availableChars = this.getAvailableNextChars();
 
-    // Se esbarrou num beco sem saída (nenhuma predição), mostra o teclado todo
+    // A MÁGICA ACONTECE AQUI: Se o motor retornou um Set vazio,
+    // significa que a regra gramatical pede fluxo livre para o usuário.
     if (availableChars.size === 0) return true;
 
-    return availableChars.has(char.toLowerCase());
+    return availableChars.has(normChar);
   }
   getAvailableNextChars(): Set<string> {
-    const available = new Set<string>();
-    if (!this.dynamicTypedSequence) return available;
-
-    const refText = REFERENCE_TEXT.toLowerCase();
-
-    // Analisa as ultimas 3 letras no máximo (Trigrama)
-    const MAX_LOOKBACK = 3;
-    let sequence = this.dynamicTypedSequence.toLowerCase().slice(-MAX_LOOKBACK);
-
+    const allowed = new Set<string>();
+    if (!this.dynamicTypedSequence) return allowed;
+    const normSequence = this.normalize(this.dynamicTypedSequence);
+    const refText = this.normalize(REFERENCE_TEXT);
+    // 1. TENTA BUSCAR NO TEXTO DE REFERÊNCIA (Max Trigrama)
+    let sequence = normSequence.slice(-3);
     while (sequence.length > 0) {
       let startIndex = 0;
       let index;
-
-      // Busca todas as ocorrências da sequência atual
       while ((index = refText.indexOf(sequence, startIndex)) > -1) {
         const nextCharIndex = index + sequence.length;
         if (nextCharIndex < refText.length) {
-          available.add(refText[nextCharIndex]);
+          allowed.add(refText[nextCharIndex]);
         }
-        startIndex = index + 1; // Continua buscando pelo resto do texto
+        startIndex = index + 1;
       }
-
-      // O "Pulo do Gato": 
-      // Se encontramos opções, mas são MUITO restritas (ex: só tem 1 ou 2 letras),
-      // nós NÃO paramos o loop. Cortamos a 1ª letra e somamos as opções do sufixo menor.
-      // Isso impede que o teclado trave o usuário em uma única palavra do dicionário!
-      // Se acharmos 4 ou mais opções, consideramos que o teclado tem fluidez suficiente e paramos.
-      if (available.size >= 4) {
-        return available;
-      }
-
+      // Se achou predições fortes no texto base (>= 4 opções), ele assume o controle.
+      if (allowed.size >= 4) return allowed;
       sequence = sequence.slice(1);
     }
-
-    return available;
+    // 2. MOTOR FONOTÁTICO (Fallback de Regras do Português)
+    // Se o texto base não previu a palavra (ex: palíndromo), aplicamos regras reais da língua.
+    const lastChar = normSequence.slice(-1);
+    const vowels = 'aeiou';
+    if (lastChar === 'q') allowed.add('u');
+    else if (lastChar === 'ç') ['a', 'o', 'u'].forEach(c => allowed.add(c));
+    else if (lastChar === 'm') ['a', 'e', 'i', 'o', 'u', 'p', 'b'].forEach(c => allowed.add(c));
+    else if (['b', 'c', 'd', 'f', 'g', 'p', 't', 'v'].includes(lastChar)) {
+      // Consoantes de ataque podem receber Vogais, R, L, ou S (ex: psicologia, absoluto)
+      let options = vowels + 'rls';
+      if (lastChar === 'c') options += 'hç';
+      options.split('').forEach(c => allowed.add(c));
+    }
+    else {
+      // Se paramos em uma Vogal ou consoante de final de sílaba (n, r, s, l, x, z)...
+      // A matemática do português permite quase qualquer letra seguir adiante.
+      // Retornar um Set VAZIO é a nossa instrução secreta para "LIBERAR TODAS AS TECLAS".
+      return new Set();
+    }
+    return allowed;
   }
-
+  // Normalizador: Transforma "palíndromo" em "palindromo" para a lógica do filtro
+  private normalize(str: string): string {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
   // --- Sistema de Layouts Customizados ---
   loadCustomLayouts() {
     try {
@@ -488,7 +457,6 @@ export class KeyboardComponent implements OnInit {
       }
     } catch (e) { }
   }
-
   saveCustomLayout(name: string, rawData: string) {
     if (!name.trim() || !rawData.trim()) { alert('Preencha os dados.'); return; }
     const parsedLayout: KeyboardKey[][] = rawData.split('\n').map(row => {
@@ -509,7 +477,6 @@ export class KeyboardComponent implements OnInit {
     this.setLayout(name);
     this.activeMenuTab = 'layouts';
   }
-
   // --- Lógica de Digitação ---
   getLabel(key: KeyboardKey): string {
     let label = key.label;
@@ -520,25 +487,21 @@ export class KeyboardComponent implements OnInit {
     }
     return label;
   }
-
   isModifierActive(action?: string): boolean {
     if (action === 'SHIFT') return this.shiftActive;
     if (action === 'CTRL') return this.ctrlActive;
     return false;
   }
-
   isAccentPending(key: KeyboardKey): boolean {
     if (!this.pendingAccent) return false;
     return this.getLabel(key) === this.pendingAccent;
   }
-
   handleKey(key: KeyboardKey) {
     if (key.type === 'modifier') {
       if (key.action === 'SHIFT') this.shiftActive = !this.shiftActive;
       if (key.action === 'CTRL') this.ctrlActive = !this.ctrlActive;
       return;
     }
-
     if (key.type === 'action') {
       if (key.action === 'BACKSPACE') {
         if (this.pendingAccent) {
@@ -551,14 +514,11 @@ export class KeyboardComponent implements OnInit {
       } else if (key.action === 'ENTER' && this.currentLayoutName === 'dynamic') {
         this.dynamicTypedSequence = ''; // Reset do contexto ao quebrar linha
       }
-
       this.sendAction(key.action!);
       this.forceShowAllKeys = false; // Desativa visualização forçada após uso
       return;
     }
-
     let charToSend = key.value !== undefined ? key.value : key.label;
-
     if (this.shiftActive) {
       if (charToSend.length === 1 && /[a-zç]/.test(charToSend)) {
         charToSend = charToSend.toUpperCase();
@@ -566,9 +526,7 @@ export class KeyboardComponent implements OnInit {
       else if (charToSend === '~') charToSend = '^';
       this.shiftActive = false;
     }
-
     const isAccentKey = Object.keys(ACCENT_MAP).includes(charToSend);
-
     if (isAccentKey) {
       if (this.pendingAccent) {
         this.recordDynamicCharAndSend(this.pendingAccent);
@@ -576,7 +534,6 @@ export class KeyboardComponent implements OnInit {
       this.pendingAccent = charToSend;
       return;
     }
-
     if (this.pendingAccent) {
       const combinedMap = ACCENT_MAP[this.pendingAccent];
       if (combinedMap && combinedMap[charToSend]) {
@@ -588,11 +545,9 @@ export class KeyboardComponent implements OnInit {
       }
       this.pendingAccent = null;
     }
-
     this.recordDynamicCharAndSend(charToSend);
     this.forceShowAllKeys = false; // Desativa visualização forçada após digitar letra
   }
-
   private recordDynamicCharAndSend(char: string) {
     if (this.currentLayoutName === 'dynamic') {
       // O Espaço ou Quebra de Linha libera todas as letras limpando o contexto da palavra anterior
@@ -604,7 +559,6 @@ export class KeyboardComponent implements OnInit {
     }
     this.sendKey(char);
   }
-
   private sendKey(character: string) {
     if (window.AndroidKeyboard) {
       window.AndroidKeyboard.onKey(character);
@@ -612,7 +566,6 @@ export class KeyboardComponent implements OnInit {
       console.log(`[Web Debug] Tecla: ${character}`);
     }
   }
-
   private sendAction(action: string) {
     if (window.AndroidKeyboard) {
       window.AndroidKeyboard.onAction(action);
