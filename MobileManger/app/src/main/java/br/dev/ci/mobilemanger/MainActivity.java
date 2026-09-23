@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
+import android.webkit.PermissionRequest;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -49,9 +51,26 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
         webView = findViewById(R.id.minhaWebView);
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onPermissionRequest(final PermissionRequest request) {
+                String[] resources = request.getResources();
+                for (String resource : resources) {
+                    if (resource.equals(PermissionRequest.RESOURCE_AUDIO_CAPTURE)) {
+                        request.grant(new String[]{PermissionRequest.RESOURCE_AUDIO_CAPTURE});
+                        break;
+                    }
+                }
+            }
+        });
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
+        webSettings.setGeolocationEnabled(true);
+        webSettings.setAllowContentAccess(true);
+        webSettings.setDatabaseEnabled(true);
+        webSettings.setMediaPlaybackRequiresUserGesture(false);
+
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl("https://development.ci.dev.br/launcher");
         // webView.addJavascriptInterface(new WebAppInterface(this), "AndroidLauncher");

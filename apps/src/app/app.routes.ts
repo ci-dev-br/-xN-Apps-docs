@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '@ci/core';
 import { AssistenteComponent } from './assistente/assistente';
+import { KeyboardComponent } from './keyboard';
 
 export const routes: Routes = [
     {
@@ -21,6 +22,7 @@ export const routes: Routes = [
         canMatch: [authGuard],
         loadChildren: () => import('./painel/painel.module').then(m => m.PainelModule),
     },
+    { path: 'keyboard', component: KeyboardComponent },
     {
         path: '**', redirectTo: '/acessar', pathMatch: 'full'
     }

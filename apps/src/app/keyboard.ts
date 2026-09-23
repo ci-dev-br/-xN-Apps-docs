@@ -1,0 +1,537 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+interface AndroidBridge {
+  onKey(character: string): void;
+  onAction(action: string): void;
+}
+
+declare global {
+  interface Window {
+    AndroidKeyboard?: AndroidBridge;
+  }
+}
+
+interface KeyboardKey {
+  label: string;
+  value?: string;
+  type: 'char' | 'action' | 'modifier';
+  action?: string;
+  flex?: number;
+}
+// Mapa de resolução de acentos
+const ACCENT_MAP: Record<string, Record<string, string>> = {
+  '´': { 'a': 'á', 'e': 'é', 'i': 'í', 'o': 'ó', 'u': 'ú', 'A': 'Á', 'E': 'É', 'I': 'Í', 'O': 'Ó', 'U': 'Ú', 'c': 'ç', 'C': 'Ç' },
+  '`': { 'a': 'à', 'e': 'è', 'i': 'ì', 'o': 'ò', 'u': 'ù', 'A': 'À', 'E': 'È', 'I': 'Ì', 'O': 'Ò', 'U': 'Ù' },
+  '~': { 'a': 'ã', 'o': 'õ', 'n': 'ñ', 'A': 'Ã', 'O': 'Õ', 'N': 'Ñ' },
+  '^': { 'a': 'â', 'e': 'ê', 'i': 'î', 'o': 'ô', 'u': 'û', 'A': 'Â', 'E': 'Ê', 'I': 'Î', 'O': 'Ô', 'U': 'Û' },
+  '¨': { 'a': 'ä', 'e': 'ë', 'i': 'ï', 'o': 'ö', 'u': 'ü', 'A': 'Ä', 'E': 'Ë', 'I': 'Ï', 'O': 'Ö', 'U': 'Ü' }
+};
+// Definição dos layouts pré-configurados
+const LAYOUT_PROGRAMMING: KeyboardKey[][] = [
+  [
+    { label: 'Esc', type: 'action', action: 'ESC', flex: 1.5 },
+    { label: '{', type: 'char' }, { label: '}', type: 'char' },
+    { label: '(', type: 'char' }, { label: ')', type: 'char' },
+    { label: '<', type: 'char' }, { label: '>', type: 'char' },
+    { label: '"', type: 'char' }, { label: "'", type: 'char' },
+    { label: '_', type: 'char' }, { label: '|', type: 'char' }
+  ],
+  [...['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '='].map(k => ({ label: k, type: 'char' } as KeyboardKey))],
+  [...['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '´', '['].map(k => ({ label: k, type: 'char' } as KeyboardKey))],
+  [...['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ç', '~', ']'].map(k => ({ label: k, type: 'char' } as KeyboardKey))],
+  [
+    { label: '⇧', type: 'modifier', action: 'SHIFT', flex: 1.5 },
+    { label: '\\', type: 'char' },
+    ...['z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.'].map(k => ({ label: k, type: 'char' } as KeyboardKey)),
+    { label: '⌫', type: 'action', action: 'BACKSPACE', flex: 1.5 }
+  ],
+  [
+    { label: 'Ctrl', type: 'modifier', action: 'CTRL', flex: 1.2 },
+    { label: 'Tab', type: 'action', action: 'TAB', flex: 1.2 },
+    { label: '@', type: 'char' },
+    { label: 'Space', value: ' ', type: 'char', flex: 4 },
+    { label: ';', type: 'char' },
+    { label: '/', type: 'char' },
+    { label: '↵', type: 'action', action: 'ENTER', flex: 1.5 }
+  ]
+];
+
+const LAYOUT_TEXT: KeyboardKey[][] = [
+  ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].map(k => ({ label: k, type: 'char' })),
+  ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'].map(k => ({ label: k, type: 'char' })),
+  [
+    ...['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'].map(k => ({ label: k, type: 'char' } as KeyboardKey)),
+    { label: '⌫', type: 'action', action: 'BACKSPACE', flex: 1.5 }
+  ],
+  [
+    { label: '⇧', type: 'modifier', action: 'SHIFT', flex: 1.5 },
+    ...['z', 'x', 'c', 'v', 'b', 'n', 'm'].map(k => ({ label: k, type: 'char' } as KeyboardKey)),
+    { label: '↵', type: 'action', action: 'ENTER', flex: 1.5 }
+  ],
+  [
+    { label: '?', type: 'char' }, { label: '!', type: 'char' },
+    { label: ',', type: 'char' },
+    { label: 'Space', value: ' ', type: 'char', flex: 4 },
+    { label: '.', type: 'char' }, { label: '-', type: 'char' }
+  ]
+];
+
+const LAYOUT_SOCIAL: KeyboardKey[][] = [
+  ['@', '#', '😂', '❤️', '👍', '🔥', '✨', '🎉'].map(k => ({ label: k, type: 'char' })),
+  ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'].map(k => ({ label: k, type: 'char' })),
+  [
+    ...['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'].map(k => ({ label: k, type: 'char' } as KeyboardKey)),
+    { label: '⌫', type: 'action', action: 'BACKSPACE', flex: 1.5 }
+  ],
+  [
+    { label: '⇧', type: 'modifier', action: 'SHIFT', flex: 1.5 },
+    ...['z', 'x', 'c', 'v', 'b', 'n', 'm'].map(k => ({ label: k, type: 'char' } as KeyboardKey)),
+    { label: '↵', type: 'action', action: 'ENTER', flex: 1.5 }
+  ],
+  [
+    { label: '_', type: 'char' }, { label: '&', type: 'char' },
+    { label: 'Space', value: ' ', type: 'char', flex: 5 },
+    { label: '.', type: 'char' }, { label: '?', type: 'char' }
+  ]
+];
+
+const LAYOUT_GAME: KeyboardKey[][] = [
+  [
+    { label: 'Esc', type: 'action', action: 'ESC' },
+    ...['1', '2', '3', '4', '5'].map(k => ({ label: k, type: 'char' } as KeyboardKey)),
+    { label: 'M', type: 'char' }, { label: 'I', type: 'char' }
+  ],
+  [
+    { label: 'Tab', type: 'action', action: 'TAB', flex: 1.5 },
+    ...['Q', 'W', 'E', 'R', 'T', 'Y'].map(k => ({ label: k, value: k.toLowerCase(), type: 'char' } as KeyboardKey))
+  ],
+  [
+    { label: '⇧', type: 'modifier', action: 'SHIFT', flex: 1.5 },
+    ...['A', 'S', 'D', 'F', 'G', 'H'].map(k => ({ label: k, value: k.toLowerCase(), type: 'char' } as KeyboardKey))
+  ],
+  [
+    { label: 'Ctrl', type: 'modifier', action: 'CTRL', flex: 1.5 },
+    ...['Z', 'X', 'C', 'V', 'B'].map(k => ({ label: k, value: k.toLowerCase(), type: 'char' } as KeyboardKey)),
+    { label: 'Space', value: ' ', type: 'char', flex: 3 }
+  ]
+];
+
+@Component({
+  selector: 'app-keyboard',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div class="keyboard-wrapper" [ngClass]="currentTheme">
+      
+     <!-- Teclado Principal -->
+      <div class="keyboard-container">
+        @for (row of layout; track $index) {
+          <div class="row">
+            @for (key of row; track key.label) {
+              <button 
+                [class]="key.type"
+                [class.active]="isModifierActive(key.action)"
+                [class.pending-accent]="isAccentPending(key)"
+                [style.flex]="key.flex || 1"
+                (click)="handleKey(key)">
+                {{ getLabel(key) }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+      
+      <!-- Único Botão de Configuração Inferior -->
+      <div class="bottom-bar">
+        <button class="menu-toggle-btn" (click)="toggleMenu()">
+          ⚙️ Configurações
+        </button>
+      </div>
+
+      <!-- Overlay do Menu -->
+      <div class="menu-overlay" *ngIf="isMenuOpen">
+        <div class="menu-content">
+          <div class="menu-header">
+            <h3>Configurações</h3>
+            <button class="close-btn" (click)="toggleMenu()">✕</button>
+          </div>
+          
+          <div class="menu-tabs">
+            <button [class.active]="activeMenuTab === 'themes'" (click)="activeMenuTab = 'themes'">Temas</button>
+            <button [class.active]="activeMenuTab === 'layouts'" (click)="activeMenuTab = 'layouts'">Layouts</button>
+            <button [class.active]="activeMenuTab === 'custom'" (click)="activeMenuTab = 'custom'">Criar Custom</button>
+          </div>
+
+          <!-- Aba Temas -->
+          <div class="tab-content" *ngIf="activeMenuTab === 'themes'">
+            <div class="options-grid">
+              <button (click)="setTheme('theme-default')" [class.selected]="currentTheme === 'theme-default'">Padrão (Dark)</button>
+              <button (click)="setTheme('theme-farm')" [class.selected]="currentTheme === 'theme-farm'">Farm</button>
+              <button (click)="setTheme('theme-ios')" [class.selected]="currentTheme === 'theme-ios'">iOS</button>
+              <button (click)="setTheme('theme-circular')" [class.selected]="currentTheme === 'theme-circular'">Circular Cyan</button>
+              <button (click)="setTheme('theme-prince')" [class.selected]="currentTheme === 'theme-prince'">Prince (Pop Star)</button>
+            </div>
+          </div>
+
+          <!-- Aba Layouts -->
+          <div class="tab-content" *ngIf="activeMenuTab === 'layouts'">
+            <div class="options-grid">
+              <button (click)="setLayout('programming')" [class.selected]="currentLayoutName === 'programming'">Programação</button>
+              <button (click)="setLayout('text')" [class.selected]="currentLayoutName === 'text'">Texto</button>
+              <button (click)="setLayout('social')" [class.selected]="currentLayoutName === 'social'">Redes Sociais</button>
+              <button (click)="setLayout('game')" [class.selected]="currentLayoutName === 'game'">Jogos</button>
+              
+              <div class="divider" *ngIf="customLayoutsNames.length > 0">Meus Layouts</div>
+              
+              @for (custom of customLayoutsNames; track custom) {
+                  <button (click)="setLayout(custom)" [class.selected]="currentLayoutName === custom">
+                      {{ custom }}
+                  </button>
+              }
+            </div>
+          </div>
+
+          <!-- Aba Criar Custom -->
+          <div class="tab-content" *ngIf="activeMenuTab === 'custom'">
+            <div class="form-group">
+                <label>Nome do Layout:</label>
+                <input type="text" #layoutName placeholder="Ex: Meu Teclado" class="input-text">
+            </div>
+            <div class="form-group">
+                <label>Teclas (Separe por espaço, quebre linha para nova linha):</label>
+                <textarea #layoutData placeholder="q w e r t y&#10;a s d f g h&#10;z x c v b n" rows="5" class="input-text"></textarea>
+                <small>Use SHIFT, ENTER, BACKSPACE, SPACE, TAB, CTRL, ESC para teclas especiais.</small>
+            </div>
+            <button class="save-btn" (click)="saveCustomLayout(layoutName.value, layoutData.value)">Salvar Layout</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  `,
+  styles: [`
+    /* Mesmos estilos da etapa anterior mantidos */
+    ::ng-deep body { margin: 0; background-color: black; overflow: hidden; }
+    
+    .keyboard-wrapper {
+      --bg: #1e1e1e;
+      --key-bg: #333;
+      --key-color: #fff;
+      --key-radius: 6px;
+      --key-action-bg: #2d4558;
+      --key-action-color: #fff;
+      --key-mod-bg: #444;
+      --key-mod-color: #fff;
+      --key-shadow: 0 4px 0 rgba(0,0,0,0.2);
+      --font-family: monospace;
+      --key-gap: 4px;
+      
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: var(--bg);
+      font-family: var(--font-family);
+      position: relative;
+    }
+
+    .theme-farm { --bg: #3e4a36; --key-bg: #5a6646; --key-color: #e5e0cd; --key-radius: 8px; --key-action-bg: #b75e39; --key-action-color: #fce4d6; --key-mod-bg: #d1c8b0; --key-mod-color: #3e4a36; --key-shadow: 0 4px 0 #2a3324; --font-family: 'Courier New', Courier, monospace; }
+    .theme-ios { --bg: #d1d4d9; --key-bg: #ffffff; --key-color: #000000; --key-radius: 5px; --key-action-bg: #aeb3ba; --key-action-color: #000000; --key-mod-bg: #aeb3ba; --key-mod-color: #000000; --key-shadow: 0 1px 1px rgba(0,0,0,0.3); --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; --key-gap: 6px; }
+    .theme-circular { --bg: linear-gradient(135deg, #185a6d, #082d3f); --key-bg: rgba(255, 255, 255, 0.15); --key-color: #ffffff; --key-radius: 50px; --key-action-bg: rgba(255, 255, 255, 0.25); --key-action-color: #ffffff; --key-mod-bg: rgba(255, 255, 255, 0.25); --key-mod-color: #ffffff; --key-shadow: none; --font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; --key-gap: 8px; }
+    .theme-prince { --bg: #1a0033; --key-bg: #4b0082; --key-color: #ffd700; --key-radius: 12px; --key-action-bg: #ff00ff; --key-action-color: #ffffff; --key-mod-bg: #8a2be2; --key-mod-color: #ffd700; --key-shadow: 0 0 8px rgba(255, 0, 255, 0.6); --font-family: 'Trebuchet MS', sans-serif; }
+
+    .keyboard-container { 
+      display: flex; flex-direction: column; gap: var(--key-gap); padding: 10px; flex-grow: 1;
+      touch-action: manipulation; user-select: none; justify-content: stretch; align-items: stretch;
+    }
+    .row { display: flex; justify-content: center; gap: var(--key-gap); width: 100%; flex-grow: 1; }
+    button { 
+      padding: 0px; font-size: 1.1rem; border-radius: var(--key-radius); border: none; 
+      background: var(--key-bg); color: var(--key-color); box-shadow: var(--key-shadow);
+      display: flex; align-items: center; justify-content: center; cursor: pointer; 
+      transition: all 0.1s; font-family: inherit;
+    }
+    button:active { transform: translateY(2px) scale(0.95); box-shadow: none; opacity: 0.8; }
+    button.action { background: var(--key-action-bg); color: var(--key-action-color); font-weight: bold; }
+    button.modifier { background: var(--key-mod-bg); color: var(--key-mod-color); }
+    button.active { background: #007acc !important; color: white !important; box-shadow: 0 0 10px #007acc; }
+
+    .bottom-bar { display: flex; justify-content: center; padding: 10px; background: rgba(0,0,0,0.3); }
+    .menu-toggle-btn { background: transparent; color: var(--key-color); border: 1px solid var(--key-color); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; flex: 0 1 auto; box-shadow: none; }
+
+    .menu-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; z-index: 100; font-family: sans-serif; padding: 20px; color: white; justify-content: flex-end; }
+    .menu-content { background: #2a2a2a; border-radius: 12px; display: flex; flex-direction: column; max-height: 90%; overflow: hidden; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
+    .menu-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #444; }
+    .menu-header h3 { margin: 0; font-size: 1.1rem; }
+    .close-btn { background: transparent; box-shadow: none; width: 30px; height: 30px; }
+    
+    .menu-tabs { display: flex; background: #1e1e1e; }
+    .menu-tabs button { flex: 1; padding: 12px; border-radius: 0; background: transparent; box-shadow: none; color: #aaa; font-size: 0.9rem; border-bottom: 2px solid transparent; }
+    .menu-tabs button.active { color: #fff; border-bottom-color: #007acc; }
+
+    .tab-content { padding: 15px; overflow-y: auto; }
+    .options-grid { display: flex; flex-direction: column; gap: 8px; }
+    .options-grid button { padding: 12px; background: #333; border-radius: 8px; box-shadow: none; justify-content: flex-start; }
+    .options-grid button.selected { background: #007acc; border-left: 4px solid white; }
+    .divider { margin: 15px 0 5px 0; color: #888; font-size: 0.8rem; text-transform: uppercase; }
+
+    .form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px; }
+    .form-group label { font-size: 0.9rem; color: #ccc; }
+    .form-group small { font-size: 0.75rem; color: #888; }
+    .input-text { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #111; color: white; font-family: monospace; box-sizing: border-box; }
+    .save-btn { background: #28a745; width: 100%; padding: 12px; margin-top: 10px; }
+    button.pending-accent {
+      background: #e6a23c !important; /* Laranja de alerta */
+      color: #000 !important;
+      box-shadow: 0 0 8px #e6a23c;
+      transform: scale(0.95);
+    }
+  `]
+})
+export class KeyboardComponent implements OnInit {
+  shiftActive = false;
+  ctrlActive = false;
+  // Novo estado para segurar o acento
+  pendingAccent: string | null = null;
+  isMenuOpen = false;
+  activeMenuTab: 'themes' | 'layouts' | 'custom' = 'themes';
+
+  currentTheme = 'theme-default';
+  currentLayoutName = 'programming';
+
+  layout: KeyboardKey[][] = LAYOUT_PROGRAMMING;
+
+  customLayouts: Record<string, KeyboardKey[][]> = {};
+  customLayoutsNames: string[] = [];
+
+  ngOnInit() {
+    // Primeiro, carregamos os customizados para que estejam disponíveis caso a preferência seja um deles
+    this.loadCustomLayouts();
+    // Segundo, carregamos o tema e o layout ativos salvos
+    this.loadPreferences();
+  }
+
+  // --- Sistema de Preferências Ativas ---
+
+  loadPreferences() {
+    try {
+      const prefsStr = localStorage.getItem('angular_keyboard_prefs');
+      if (prefsStr) {
+        const prefs = JSON.parse(prefsStr);
+
+        if (prefs.theme) {
+          this.currentTheme = prefs.theme;
+        }
+
+        if (prefs.layoutName) {
+          this.setLayout(prefs.layoutName, false); // false para evitar loop de salvamento
+        }
+      } else {
+        // Se não houver preferência salva, força o padrão
+        this.setLayout('programming', false);
+      }
+    } catch (e) {
+      console.error('Erro ao ler preferências do teclado', e);
+    }
+  }
+
+  savePreferences() {
+    try {
+      const prefs = {
+        theme: this.currentTheme,
+        layoutName: this.currentLayoutName
+      };
+      localStorage.setItem('angular_keyboard_prefs', JSON.stringify(prefs));
+    } catch (e) {
+      console.error('Erro ao salvar preferências do teclado', e);
+    }
+  }
+
+  // --- Controles de UI e Tema/Layout ---
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  setTheme(theme: string) {
+    this.currentTheme = theme;
+    this.savePreferences();
+  }
+
+  setLayout(layoutName: string, savePref: boolean = true) {
+    this.currentLayoutName = layoutName;
+
+    switch (layoutName) {
+      case 'programming': this.layout = LAYOUT_PROGRAMMING; break;
+      case 'text': this.layout = LAYOUT_TEXT; break;
+      case 'social': this.layout = LAYOUT_SOCIAL; break;
+      case 'game': this.layout = LAYOUT_GAME; break;
+      default:
+        if (this.customLayouts[layoutName]) {
+          this.layout = this.customLayouts[layoutName];
+        }
+        break;
+    }
+
+    if (savePref) {
+      this.savePreferences();
+    }
+  }
+
+  // --- Sistema de Layouts Customizados ---
+
+  loadCustomLayouts() {
+    try {
+      const saved = localStorage.getItem('angular_custom_keyboards');
+      if (saved) {
+        this.customLayouts = JSON.parse(saved);
+        this.customLayoutsNames = Object.keys(this.customLayouts);
+      }
+    } catch (e) {
+      console.error('Erro ao ler layouts customizados', e);
+    }
+  }
+
+  saveCustomLayout(name: string, rawData: string) {
+    if (!name.trim() || !rawData.trim()) {
+      alert('Preencha o nome e os dados do teclado.');
+      return;
+    }
+
+    const parsedLayout: KeyboardKey[][] = rawData.split('\n').map(row => {
+      return row.trim().split(/\s+/).filter(char => char).map(char => {
+        if (char.toUpperCase() === 'SPACE') return { label: 'Space', value: ' ', type: 'char', flex: 3 };
+        if (char.toUpperCase() === 'BACKSPACE') return { label: '⌫', type: 'action', action: 'BACKSPACE', flex: 1.5 };
+        if (char.toUpperCase() === 'ENTER') return { label: '↵', type: 'action', action: 'ENTER', flex: 1.5 };
+        if (char.toUpperCase() === 'SHIFT') return { label: '⇧', type: 'modifier', action: 'SHIFT', flex: 1.5 };
+        if (char.toUpperCase() === 'TAB') return { label: 'Tab', type: 'action', action: 'TAB', flex: 1.2 };
+        if (char.toUpperCase() === 'CTRL') return { label: 'Ctrl', type: 'modifier', action: 'CTRL', flex: 1.2 };
+        if (char.toUpperCase() === 'ESC') return { label: 'Esc', type: 'action', action: 'ESC', flex: 1.5 };
+
+        return { label: char, type: 'char' };
+      });
+    });
+
+    this.customLayouts[name] = parsedLayout;
+    this.customLayoutsNames = Object.keys(this.customLayouts);
+
+    try {
+      localStorage.setItem('angular_custom_keyboards', JSON.stringify(this.customLayouts));
+      alert(`Layout "${name}" salvo com sucesso!`);
+      this.setLayout(name);
+      this.activeMenuTab = 'layouts';
+    } catch (e) {
+      alert('Erro ao salvar layout customizado no localStorage.');
+    }
+  }
+
+  // --- Lógica de digitação ---
+  getLabel(key: KeyboardKey): string {
+    let label = key.label;
+    if (this.shiftActive && key.type === 'char') {
+      if (label.length === 1 && /[a-zç]/.test(label)) {
+        return label.toUpperCase();
+      }
+      // Transforma acentos com shift (Padrão ABNT2)
+      if (label === '´') return '\`';
+      if (label === '~') return '^';
+    }
+    return label;
+  }
+
+  isModifierActive(action?: string): boolean {
+    if (action === 'SHIFT') return this.shiftActive;
+    if (action === 'CTRL') return this.ctrlActive;
+    return false;
+  }
+
+  // Função auxiliar para o CSS saber qual acento pintar
+  isAccentPending(key: KeyboardKey): boolean {
+    if (!this.pendingAccent) return false;
+    const currentLabel = this.getLabel(key);
+    return currentLabel === this.pendingAccent;
+  }
+
+  handleKey(key: KeyboardKey) {
+    if (key.type === 'modifier') {
+      if (key.action === 'SHIFT') this.shiftActive = !this.shiftActive;
+      if (key.action === 'CTRL') this.ctrlActive = !this.ctrlActive;
+      return;
+    }
+
+    if (key.type === 'action') {
+      // Se apertar Backspace enquanto um acento está pendente, apenas cancela o acento
+      if (key.action === 'BACKSPACE' && this.pendingAccent) {
+        this.pendingAccent = null;
+        return;
+      }
+      this.sendAction(key.action!);
+      return;
+    }
+
+    let charToSend = key.value !== undefined ? key.value : key.label;
+
+    // Resolve o Shift primeiro
+    if (this.shiftActive) {
+      if (charToSend.length === 1 && /[a-zç]/.test(charToSend)) {
+        charToSend = charToSend.toUpperCase();
+        this.shiftActive = false;
+      } else if (charToSend === '´') {
+        charToSend = '`';
+        this.shiftActive = false;
+      } else if (charToSend === '~') {
+        charToSend = '^';
+        this.shiftActive = false;
+      }
+    }
+
+    // Verifica se a tecla digitada é um acento
+    const isAccentKey = Object.keys(ACCENT_MAP).includes(charToSend);
+
+    if (isAccentKey) {
+      // Se já tinha um acento pendente e digita outro acento, imprime o primeiro e guarda o segundo
+      if (this.pendingAccent) {
+        this.sendKey(this.pendingAccent);
+      }
+      this.pendingAccent = charToSend;
+      return; // Interrompe o fluxo (não envia para o Android ainda)
+    }
+
+    // Se existe um acento aguardando uma letra
+    if (this.pendingAccent) {
+      const combinedMap = ACCENT_MAP[this.pendingAccent];
+
+      if (combinedMap && combinedMap[charToSend]) {
+        // Combinação válida (ex: ´ + a = á)
+        charToSend = combinedMap[charToSend];
+      } else if (charToSend === ' ') {
+        // Se digitou espaço, imprime apenas o acento solto
+        charToSend = this.pendingAccent;
+      } else {
+        // Combinação inválida (ex: ´ + q). Envia o acento solto e deixa a letra seguir
+        this.sendKey(this.pendingAccent);
+        // charToSend continua sendo 'q', vai ser enviado no final da função
+      }
+      // Limpa o acento pendente
+      this.pendingAccent = null;
+    }
+
+    this.sendKey(charToSend);
+  }
+
+  private sendKey(character: string) {
+    if (window.AndroidKeyboard) {
+      window.AndroidKeyboard.onKey(character);
+    } else {
+      console.log(`[Web Debug] Tecla: ${character}`);
+    }
+  }
+
+  private sendAction(action: string) {
+    if (window.AndroidKeyboard) {
+      window.AndroidKeyboard.onAction(action);
+    } else {
+      console.log(`[Web Debug] Ação: ${action}`);
+    }
+  }
+}

@@ -61,11 +61,15 @@ export class AssistenteComponent implements OnInit {
         }, 200);
     }
     async falar(conteudo: string) {
-        await this.recog.falar(conteudo);
-        setTimeout(() => {
-            this.voiceService.text = '';
-            this.voiceService.start();
-        }, 200);
+        try {
+            await this.recog.falar(conteudo);
+            setTimeout(() => {
+                this.voiceService.text = '';
+                this.voiceService.start();
+            }, 200);
+        } catch (error) {
+
+        }
     }
     private proccessing_navegarParaRotaEquivalente = false;
     private async navegarParaRotaEquivalente(termoBusca: string) {

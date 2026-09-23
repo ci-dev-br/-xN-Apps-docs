@@ -31,6 +31,7 @@ export class Home implements OnInit {
     { icon: 'video_camera_back_add', name: 'Registrar momento', onClick: () => this.criarMomento() },
     { icon: 'phone', name: 'Ligações', onClick: () => this.criarLigacao() },
     { icon: 'add_notes', name: 'Anotações', onClick: () => this.criarAnotacao() },
+    { icon: 'update', name: 'Atualizar', onClick: () => this.InstallLauncher() },
   ];
   msg = 'desbloquear'
   unlock() {
@@ -80,5 +81,17 @@ export class Home implements OnInit {
     // this.dialog.open(/* MomentoDialogComponent */, {
     // data: { title: 'Novo Momento' }
     // });
+  }
+
+  async InstallLauncher() {
+    const url = '/downloads/launcher.1.0.5.apk';
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.setAttribute('download', 'launcher.1.0.5.apk');
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 }

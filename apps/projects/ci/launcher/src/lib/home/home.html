@@ -15,7 +15,7 @@
     <!--  não bloqueado -->
     <div class="bar-apps">
         @for (item of barApps; track $index) {
-        <button mat-icon-button [matTooltip]="item.name">
+        <button mat-icon-button [matTooltip]="item.name" (click)="item.onClick()">
             <mat-icon>{{item.icon}}</mat-icon>
         </button>
         }
