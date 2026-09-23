@@ -440,34 +440,41 @@ export class KeyboardComponent implements OnInit {
 
     return availableChars.has(char.toLowerCase());
   }
-
   getAvailableNextChars(): Set<string> {
     const available = new Set<string>();
     if (!this.dynamicTypedSequence) return available;
 
     const refText = REFERENCE_TEXT.toLowerCase();
-    let sequence = this.dynamicTypedSequence.toLowerCase();
 
-    // Rolagem de sufixo: se não achar a palavra toda, corta o inicio e tenta achar fragmentos
+    // Analisa as ultimas 3 letras no máximo (Trigrama)
+    const MAX_LOOKBACK = 3;
+    let sequence = this.dynamicTypedSequence.toLowerCase().slice(-MAX_LOOKBACK);
+
     while (sequence.length > 0) {
       let startIndex = 0;
       let index;
-      let foundAnyMatch = false;
 
+      // Busca todas as ocorrências da sequência atual
       while ((index = refText.indexOf(sequence, startIndex)) > -1) {
-        foundAnyMatch = true;
         const nextCharIndex = index + sequence.length;
         if (nextCharIndex < refText.length) {
           available.add(refText[nextCharIndex]);
         }
-        startIndex = index + 1;
+        startIndex = index + 1; // Continua buscando pelo resto do texto
       }
 
-      if (foundAnyMatch && available.size > 0) {
+      // O "Pulo do Gato": 
+      // Se encontramos opções, mas são MUITO restritas (ex: só tem 1 ou 2 letras),
+      // nós NÃO paramos o loop. Cortamos a 1ª letra e somamos as opções do sufixo menor.
+      // Isso impede que o teclado trave o usuário em uma única palavra do dicionário!
+      // Se acharmos 4 ou mais opções, consideramos que o teclado tem fluidez suficiente e paramos.
+      if (available.size >= 4) {
         return available;
       }
+
       sequence = sequence.slice(1);
     }
+
     return available;
   }
 
