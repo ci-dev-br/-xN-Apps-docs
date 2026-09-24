@@ -1,28 +1,7 @@
-<ci-navbar></ci-navbar>
+<ci-navbar [apps]="apps"></ci-navbar>
 @if(userService && !!(userService.user | async)){
-<!-- <div #sidebarElement class="sidebar" [class.--inactive]="!sidebar" (click)="sidebar=!sidebar;$event.preventDefault()"
-    [style.top]="sidebarTop + 'px' " [style.left]="sidebarLeft + 'px'">
-    <div class="row"> -->
-<!--  <button mat-raised-button (click)="newPost()">
-                Texto
-            </button> -->
-<!--  <button mat-raised-button (click)="newCitation()">
-                Citação
-            </button> -->
-<!-- <button mat-raised-button (click)="newPhoto()">
-                Foto
-            </button> -->
-<!--  <button mat-raised-button (click)="newVideo()">
-                Vídeo
-            </button> -->
-<!-- </div>
-    <span style="flex:auto"></span>
-    <div class="row">
-        <button mat-icon-button color="primary" routerLink="/meus-apps"><mat-icon>apps</mat-icon></button>
-        <button mat-icon-button (click)="openSidebarSettings()"><mat-icon>settings</mat-icon></button>
-    </div>
-    <mat-icon class="icon">draw</mat-icon>
-</div> -->}
+
+}
 <div class="page--wrapper">
     <div class="wrapper">
         @if(!feeds || feeds.length === 0){

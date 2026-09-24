@@ -16,6 +16,7 @@ import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Publicar } from './publicar/publicar.component';
 import { IItemMenu } from '@ci/components/window';
 import { lastValueFrom } from 'rxjs';
+import { CI_STATIC_APPS } from '../painel/apps/apps';
 const XD = <T>(a: T) => {
     (a as any).___styles_xd__internals = {
         m: { l: 0, r: 0, t: 0, b: 0 },
@@ -88,12 +89,18 @@ export class HomepageComponent implements OnInit {
         @Optional() private readonly dialog?: MatDialog,
         @Inject(USER_MENU) userMenu?: IItemMenu[],
         formBuilder?: FormBuilder,
+        @Optional() private readonly userAuthenticationInstanceService?: UserAuthenticationService,
         private readonly news?: NewsService,
     ) {
+        this.userAuthenticationInstanceService?.user.subscribe(user => {
+            if (!!user) {
+                this.apps = CI_STATIC_APPS.filter(app => !!app.roles?.find(role => !!user.roles?.find(r => r === role)))
+            }
+        })
         this.pesquisa = formBuilder?.group({
             q: [],
         });
-        this.carregarItens()
+        this.carregarItens();
     }
     protected info?: any[];
     protected sidebar = false;
@@ -250,7 +257,7 @@ export class HomepageComponent implements OnInit {
     }
     async interacao(origem: any, event: string) {
         if (event === 'open') {
-            window.open(origem.url, '_blank', '');
+            window.open('?navigate-to=' + origem.url, '_blank', '');
         }
     }
 }

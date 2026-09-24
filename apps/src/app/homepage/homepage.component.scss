@@ -5,13 +5,8 @@
     flex: auto;
     display: flex;
     flex-direction: column;
-
     align-items: center;
     justify-content: center;
-    max-height: 100vh;
-    max-width: 100vw;
-    height: 100vh;
-    width: 100vw;
 }
 
 .logo {
@@ -27,13 +22,7 @@ header {
 }
 
 .page--wrapper {
-    /* padding: 0 48px; */
-    flex: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: stretch;
-
+    display: contents;
 }
 
 .qra:has(.sidebar) {
@@ -138,7 +127,6 @@ video {
     }
 }
 
-
 ::ng-deep img {
     max-width: 50vw !important;
 }
@@ -151,9 +139,7 @@ mat-form-field {
     border-bottom: 1px solid var(--mat-app-text-color);
     font-size: 14px;
     margin-bottom: 48px;
-
     padding: 0 48px;
-
 }
 
 .feed {
@@ -162,17 +148,10 @@ mat-form-field {
     overflow: auto;
     display: flex;
     flex-direction: column;
-    max-height: 90vh;
-
-
 }
 
 .wrapper {
-    flex: auto;
-
-    display: flex;
-    flex-direction: column;
-
+    display: contents;
 }
 
 .feed-content {
@@ -184,7 +163,6 @@ mat-form-field {
     margin : {
         bottom: 24px;
     }
-
 
     ::ng-deep * {
         white-space: pre !important;
