@@ -151,7 +151,13 @@ mat-form-field {
 }
 
 .wrapper {
-    display: contents;
+    display: flex;
+    flex: auto;
+    overflow: auto;
+
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
 }
 
 .feed-content {
@@ -159,6 +165,22 @@ mat-form-field {
     text-wrap: wrap !important;
     text-justify: distribute;
     padding: 8px 0 8px 52px;
+    max-height: 200px;
+    overflow: hidden;
+    position: relative;
+
+    &::before {
+        content: " ";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 70px;
+        z-index: 10;
+        background: linear-gradient(to top,
+                var(--mat-app-background-color) 70%,
+                rgba(0, 0, 0, 0) 100%);
+    }
 
     margin : {
         bottom: 24px;

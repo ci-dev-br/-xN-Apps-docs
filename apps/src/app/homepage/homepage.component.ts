@@ -257,7 +257,7 @@ export class HomepageComponent implements OnInit {
     }
     async interacao(origem: any, event: string) {
         if (event === 'open') {
-            window.open('?navigate-to=' + origem.url, '_blank', '');
+            window.open(origem.url, '_blank', '');
         }
     }
 }
