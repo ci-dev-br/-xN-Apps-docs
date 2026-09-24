@@ -407,7 +407,7 @@ export class KeyboardComponent implements OnInit {
     const normSequence = this.normalize(this.dynamicTypedSequence);
     const refText = this.normalize(REFERENCE_TEXT);
     // 1. TENTA BUSCAR NO TEXTO DE REFERÊNCIA (Max Trigrama)
-    let sequence = normSequence.slice(-3);
+    let sequence = normSequence.slice(-1);
     while (sequence.length > 0) {
       let startIndex = 0;
       let index;
