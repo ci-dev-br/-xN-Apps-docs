@@ -119,7 +119,9 @@ const LAYOUT_GAME: KeyboardKey[][] = [
 @Component({
   selector: 'app-keyboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+  ],
   template: `
     <div class="keyboard-wrapper" [ngClass]="currentTheme">
       
@@ -144,19 +146,22 @@ const LAYOUT_GAME: KeyboardKey[][] = [
       </div>
       
       <!-- Botões Inferiores -->
-      <div class="bottom-bar">
+      <div class="bottom-bar" style="padding-left: 10px">
+        <button class="menu-toggle-btn" (click)="auto()">
+          Auto
+        </button>
         <button class="menu-toggle-btn" (click)="toggleMenu()">
-          ⚙️ Configurações
+          ⚙️ 
         </button>
         
         <!-- Botões exclusivos para o layout dinâmico -->
         @if (currentLayoutName === 'dynamic') {
           <button class="menu-toggle-btn secondary-btn" (click)="forceShowAllKeys = !forceShowAllKeys">
-            {{ forceShowAllKeys ? '🎯 Ativar Filtro' : '👁️ Mostrar Todas' }}
+            {{ forceShowAllKeys ? '🎯 Filtrar' : '👁️ Tudo' }}
           </button>
           
           <button class="menu-toggle-btn tertiary-btn" (click)="toggleDynamicMode()">
-            {{ dynamicLayoutMode === 'hidden' ? '🔲 Preencher Espaço' : '📏 Manter Posição' }}
+            {{ dynamicLayoutMode === 'hidden' ? 'Esticar' : 'Preservar Posição' }}
           </button>
         }
       </div>
@@ -312,6 +317,12 @@ export class KeyboardComponent implements OnInit {
   ngOnInit() {
     this.loadCustomLayouts();
     this.loadPreferences();
+  }
+  auto() {
+    this.sendKey('oiewn');
+    setTimeout(() => {
+      this.sendAction('ENTER');
+    }, 100)
   }
   loadPreferences() {
     try {

@@ -17,6 +17,7 @@ import { Publicar } from './publicar/publicar.component';
 import { IItemMenu } from '@ci/components/window';
 import { lastValueFrom } from 'rxjs';
 import { CI_STATIC_APPS } from '../painel/apps/apps';
+import { MatTabsModule, MatTabHeader } from '@angular/material/tabs';
 const XD = <T>(a: T) => {
     (a as any).___styles_xd__internals = {
         m: { l: 0, r: 0, t: 0, b: 0 },
@@ -42,7 +43,8 @@ const XD = <T>(a: T) => {
         MatInputModule,
         MatIconModule,
         MatCardModule,
-        // TranslatePipe,
+        MatTabsModule,
+        MatTabHeader
     ],
     templateUrl: './homepage.component.html',
     standalone: true,
