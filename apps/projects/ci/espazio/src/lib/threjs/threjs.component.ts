@@ -151,19 +151,21 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     this.lights.push(light);
     light.position.set(0, 40, -10);
     this.scene.add(light);
-    // 1. Criar a malha de Highlight (um quadrado ligeiramente menor que o step 1.714)
+    // 1. Criar a malha de Highlight
     const geometry = new PlaneGeometry(1.65, 1.65);
     const material = new MeshBasicMaterial({
-      color: 0x7b61ff, // Cor roxa igual ao CSS do Angular
+      color: 0x7b61ff,
       transparent: true,
       opacity: 0.6,
       side: DoubleSide,
-      depthWrite: false // Previne flickering (z-fighting) com outras peças
+      depthWrite: false // Previne flickering
     });
     this.highlightMesh = new Mesh(geometry, material);
     this.highlightMesh.rotation.x = -Math.PI / 2; // Deita o plano no eixo X
-    this.highlightMesh.position.y = 0.26; // Eleva o plano acima da base do tabuleiro (y=0.25)
-    this.highlightMesh.visible = false;   // Inicia escondido
+    // 👇 A CORREÇÃO ESTÁ AQUI 👇
+    // A base das peças está em 1.322. Colocamos o plano em 1.33 para ficar por cima da casa!
+    this.highlightMesh.position.y = 1.33;
+    this.highlightMesh.visible = false;
     this.scene.add(this.highlightMesh);
     if (this.objetos) {
       this.objetos.forEach(async obj => {

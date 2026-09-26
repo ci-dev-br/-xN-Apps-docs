@@ -61,30 +61,35 @@ export class ChessGameComponent implements OnInit {
         this.isVsIA = false;
         this.resetGame();
     }
-    // Adicione este método na classe ChessGameComponent
     handle3DClick(event: ThreeClickEvent) {
         if (this.game.isGameOver()) return;
         if (this.isVsIA && this.game.turn() === 'b') return;
+
         const step = 1.714;
         let file: number, rank: number;
-        const isBoardOrCube = event.meshName.toLowerCase().includes('board') || event.meshName.toLowerCase().includes('cube');
-        // Se o clique atingiu uma peça, usamos a raiz (centro) global dela
-        if (event.meshName && !isBoardOrCube) {
+
+        // Os seus logs mostram que o tabuleiro é composto por malhas chamadas "Cube_1", "Cube_2", etc.
+        const nome = event.meshName.toLowerCase();
+        const isBoard = nome.includes('board') || nome.includes('cube');
+
+        if (!isBoard) {
+            // Se for peça, usa o centro global dela (WorldPos)
             file = Math.round((event.objectPosition.x / step) + 3.5);
             rank = Math.round((event.objectPosition.z / step) + 3.5);
         } else {
-            // Se o clique foi numa casa vazia (tabuleiro), usamos o ponto exato da colisão da luz
+            // Se for o tabuleiro, usa o ponto exato onde a luz do rato bateu
             file = Math.round((event.point.x / step) + 3.5);
             rank = Math.round((event.point.z / step) + 3.5);
         }
-        // [DEPURAÇÃO]: Abra o F12 no browser e verifique estes valores ao clicar!
-        console.log(`[🎯 Raycaster] Malha atingida: ${event.meshName}`);
-        console.log(`[♟️ Xadrez] Ponto (X: ${event.point.x.toFixed(2)}, Z: ${event.point.z.toFixed(2)}) mapeado para -> Coluna (File): ${file} | Linha (Rank): ${rank}`);
-        // Só processa se o clique cair dentro dos índices 0 a 7 da matriz 8x8
+
+        // Apenas para confirmar no F12 que a ligação foi feita com sucesso
+        console.log(`[🎯 Lógica Xadrez] Convertido para Linha: ${rank}, Coluna: ${file}`);
+
+        // Garante que o clique não saiu das bordas do tabuleiro 8x8
         if (file >= 0 && file <= 7 && rank >= 0 && rank <= 7) {
+            // Dispara o método original do jogo 2D!
             this.onSquareClick(rank, file);
         } else {
-            // Clique fora das bordas do tabuleiro
             this.selectedSquare = null;
             this.th?.setHighlight(null, null);
         }
