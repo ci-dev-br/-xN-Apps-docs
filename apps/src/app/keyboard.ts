@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TEXTOBASE } from './texto_base';
+import { ApiModule, KeyboardTheme, KeyboardThemesService, NewsService } from '@ci/portal-api';
 interface AndroidBridge {
   onKey(character: string): void;
   onAction(action: string): void;
@@ -121,9 +122,10 @@ const LAYOUT_GAME: KeyboardKey[][] = [
   standalone: true,
   imports: [
     CommonModule,
+    ApiModule,
   ],
   template: `
-    <div class="keyboard-wrapper" [ngClass]="currentTheme">
+    <div class="keyboard-wrapper" [ngStyle]="getDynamicStyles()">
       
      <!-- Teclado Principal -->
       <div class="keyboard-container">
@@ -178,14 +180,19 @@ const LAYOUT_GAME: KeyboardKey[][] = [
             <button [class.active]="activeMenuTab === 'layouts'" (click)="activeMenuTab = 'layouts'">Layouts</button>
             <button [class.active]="activeMenuTab === 'custom'" (click)="activeMenuTab = 'custom'">Custom</button>
           </div>
-          <!-- Aba Temas -->
+          <!-- Aba Temas (AGORA DINÂMICA) -->
           <div class="tab-content" *ngIf="activeMenuTab === 'themes'">
             <div class="options-grid">
-              <button (click)="setTheme('theme-default')" [class.selected]="currentTheme === 'theme-default'">Padrão (Dark)</button>
-              <button (click)="setTheme('theme-farm')" [class.selected]="currentTheme === 'theme-farm'">Farm</button>
-              <button (click)="setTheme('theme-ios')" [class.selected]="currentTheme === 'theme-ios'">iOS</button>
-              <button (click)="setTheme('theme-circular')" [class.selected]="currentTheme === 'theme-circular'">Circular Cyan</button>
-              <button (click)="setTheme('theme-prince')" [class.selected]="currentTheme === 'theme-prince'">Prince (Pop Star)</button>
+              @if (themesFromApi && themesFromApi.length > 0) {
+                <!-- Renderiza os temas que vieram do Postgresql via NestJS -->
+                @for (theme of themesFromApi; track theme.name) {
+                  <button (click)="setTheme(theme.name)" [class.selected]="currentTheme === theme.name">
+                    {{ theme.displayName }}
+                  </button>
+                }
+              } @else {
+                <p style="color: #888; text-align: center; font-size: 0.9rem;">Carregando temas...</p>
+              }
             </div>
           </div>
           <!-- Aba Layouts -->
@@ -227,6 +234,7 @@ const LAYOUT_GAME: KeyboardKey[][] = [
     ::ng-deep body { margin: 0; background-color: black; overflow: hidden; }
     
     .keyboard-wrapper {
+      /* Valores padrão de fallback caso a API demore a carregar ou o tema não exista */
       --bg: #1e1e1e;
       --key-bg: #333;
       --key-color: #fff;
@@ -246,10 +254,7 @@ const LAYOUT_GAME: KeyboardKey[][] = [
       font-family: var(--font-family);
       position: relative;
     }
-    .theme-farm { --bg: #3e4a36; --key-bg: #5a6646; --key-color: #e5e0cd; --key-radius: 8px; --key-action-bg: #b75e39; --key-action-color: #fce4d6; --key-mod-bg: #d1c8b0; --key-mod-color: #3e4a36; --key-shadow: 0 4px 0 #2a3324; --font-family: 'Courier New', Courier, monospace; }
-    .theme-ios { --bg: #d1d4d9; --key-bg: #ffffff; --key-color: #000000; --key-radius: 5px; --key-action-bg: #aeb3ba; --key-action-color: #000000; --key-mod-bg: #aeb3ba; --key-mod-color: #000000; --key-shadow: 0 1px 1px rgba(0,0,0,0.3); --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    .theme-circular { --bg: linear-gradient(135deg, #185a6d, #082d3f); --key-bg: rgba(255, 255, 255, 0.15); --key-color: #ffffff; --key-radius: 50px; --key-action-bg: rgba(255, 255, 255, 0.25); --key-action-color: #ffffff; --key-mod-bg: rgba(255, 255, 255, 0.25); --key-mod-color: #ffffff; --key-shadow: none; --font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
-    .theme-prince { --bg: #1a0033; --key-bg: #4b0082; --key-color: #ffd700; --key-radius: 12px; --key-action-bg: #ff00ff; --key-action-color: #ffffff; --key-mod-bg: #8a2be2; --key-mod-color: #ffd700; --key-shadow: 0 0 8px rgba(255, 0, 255, 0.6); --font-family: 'Trebuchet MS', sans-serif; }
+    /* As classes fixas de tema (.theme-farm, .theme-ios, etc) foram removidas pois os estilos vêm da API via [ngStyle] */
     .keyboard-container { 
       display: flex; flex-direction: column; gap: var(--key-gap); padding: 10px; flex-grow: 1;
       touch-action: manipulation; user-select: none; justify-content: stretch; align-items: stretch;
@@ -265,6 +270,7 @@ const LAYOUT_GAME: KeyboardKey[][] = [
     button.action { background: var(--key-action-bg); color: var(--key-action-color); font-weight: bold; }
     button.modifier { background: var(--key-mod-bg); color: var(--key-mod-color); }
     button.active { background: #007acc !important; color: white !important; box-shadow: 0 0 10px #007acc; }
+    
     /* Modos de Ocultação do Layout Dinâmico */
     button.hidden-key { visibility: hidden; pointer-events: none; }
     button.collapsed-key { display: none !important; }
@@ -314,15 +320,37 @@ export class KeyboardComponent implements OnInit {
   dynamicLayoutMode: 'hidden' | 'collapse' = 'hidden';
   customLayouts: Record<string, KeyboardKey[][]> = {};
   customLayoutsNames: string[] = [];
+  themesFromApi?: KeyboardTheme[];
+  constructor(
+    private readonly keyboardThemes: KeyboardThemesService,
+    private readonly news: NewsService,
+  ) { }
   ngOnInit() {
     this.loadCustomLayouts();
     this.loadPreferences();
+    this.keyboardThemes.keyboardThemesControllerFindAll({}).subscribe((r => this.themesFromApi = r));
   }
   auto() {
-    this.sendKey('oiewn');
-    setTimeout(() => {
-      this.sendAction('ENTER');
-    }, 100)
+    this.news.getFeed({
+      offset: Math.floor(Math.random() * 10000),
+      dataFinal: new Date().toISOString(),
+      dataInicial: new Date('2026-05-05').toISOString()
+    }).subscribe(async r => {
+      const n = r[0];
+      let t = n.title;
+      setTimeout(() => {
+        this.sendKey(
+          n.title.substring(0, 40 + Math.floor(Math.random() * 60)
+          ));
+        this.sendAction('ENTER');
+        setTimeout(() => {
+          setTimeout(() => {
+            this.sendAction('ENTER');
+            this.auto();
+          }, 20000);
+        }, 100);
+      }, 100);
+    })
   }
   loadPreferences() {
     try {
@@ -383,33 +411,23 @@ export class KeyboardComponent implements OnInit {
   isKeyVisible(key: KeyboardKey): boolean {
     if (this.currentLayoutName !== 'dynamic') return true;
     if (this.forceShowAllKeys) return true;
-
     // Controles, Modificadores e Espaço sempre visíveis
     if (key.type === 'action' || key.type === 'modifier') return true;
     if (key.label === 'Space' || key.value === ' ' || key.action === 'ENTER') return true;
-
     const char = (key.value !== undefined ? key.value : key.label);
-    const normChar = this.normalize(char); // <- Aplicamos normalização na tecla testada
-
-    // Lógica do acento pendente continua reinando absoluta
+    const normChar = this.normalize(char);
+    // Lógica do acento pendente
     if (this.pendingAccent) {
       const charToTest = (this.shiftActive && char.length === 1 && /[a-zç]/.test(char))
         ? char.toUpperCase()
         : char;
       return !!ACCENT_MAP[this.pendingAccent][charToTest];
     }
-
     // Mantém pontuações e símbolos livres
     if (!/^[a-zç0-9]$/i.test(normChar)) return true;
-
     if (!this.dynamicTypedSequence) return true;
-
     const availableChars = this.getAvailableNextChars();
-
-    // A MÁGICA ACONTECE AQUI: Se o motor retornou um Set vazio,
-    // significa que a regra gramatical pede fluxo livre para o usuário.
     if (availableChars.size === 0) return true;
-
     return availableChars.has(normChar);
   }
   getAvailableNextChars(): Set<string> {
@@ -429,32 +447,25 @@ export class KeyboardComponent implements OnInit {
         }
         startIndex = index + 1;
       }
-      // Se achou predições fortes no texto base (>= 4 opções), ele assume o controle.
       if (allowed.size >= 4) return allowed;
       sequence = sequence.slice(1);
     }
     // 2. MOTOR FONOTÁTICO (Fallback de Regras do Português)
-    // Se o texto base não previu a palavra (ex: palíndromo), aplicamos regras reais da língua.
     const lastChar = normSequence.slice(-1);
     const vowels = 'aeiou';
     if (lastChar === 'q') allowed.add('u');
     else if (lastChar === 'ç') ['a', 'o', 'u'].forEach(c => allowed.add(c));
     else if (lastChar === 'm') ['a', 'e', 'i', 'o', 'u', 'p', 'b'].forEach(c => allowed.add(c));
     else if (['b', 'c', 'd', 'f', 'g', 'p', 't', 'v'].includes(lastChar)) {
-      // Consoantes de ataque podem receber Vogais, R, L, ou S (ex: psicologia, absoluto)
       let options = vowels + 'rls';
       if (lastChar === 'c') options += 'hç';
       options.split('').forEach(c => allowed.add(c));
     }
     else {
-      // Se paramos em uma Vogal ou consoante de final de sílaba (n, r, s, l, x, z)...
-      // A matemática do português permite quase qualquer letra seguir adiante.
-      // Retornar um Set VAZIO é a nossa instrução secreta para "LIBERAR TODAS AS TECLAS".
       return new Set();
     }
     return allowed;
   }
-  // Normalizador: Transforma "palíndromo" em "palindromo" para a lógica do filtro
   private normalize(str: string): string {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   }
@@ -507,6 +518,25 @@ export class KeyboardComponent implements OnInit {
     if (!this.pendingAccent) return false;
     return this.getLabel(key) === this.pendingAccent;
   }
+  // Typescript do Angular
+  getDynamicStyles() {
+    // Retorna vazio caso os temas não tenham carregado ainda, ativando as variáveis de fallback no CSS
+    const activeTheme = this.themesFromApi?.find(t => t.name === this.currentTheme);
+    if (!activeTheme) return {};
+    return {
+      '--bg': activeTheme.bg,
+      '--key-bg': activeTheme.keyBg,
+      '--key-color': activeTheme.keyColor,
+      '--key-radius': activeTheme.keyRadius,
+      '--key-action-bg': activeTheme.keyActionBg,
+      '--key-action-color': activeTheme.keyActionColor,
+      '--key-mod-bg': activeTheme.keyModBg,
+      '--key-mod-color': activeTheme.keyModColor,
+      '--key-shadow': activeTheme.keyShadow,
+      '--font-family': activeTheme.fontFamily,
+      '--key-gap': activeTheme.keyGap
+    };
+  }
   handleKey(key: KeyboardKey) {
     if (key.type === 'modifier') {
       if (key.action === 'SHIFT') this.shiftActive = !this.shiftActive;
@@ -523,10 +553,10 @@ export class KeyboardComponent implements OnInit {
           this.dynamicTypedSequence = this.dynamicTypedSequence.slice(0, -1);
         }
       } else if (key.action === 'ENTER' && this.currentLayoutName === 'dynamic') {
-        this.dynamicTypedSequence = ''; // Reset do contexto ao quebrar linha
+        this.dynamicTypedSequence = '';
       }
       this.sendAction(key.action!);
-      this.forceShowAllKeys = false; // Desativa visualização forçada após uso
+      this.forceShowAllKeys = false;
       return;
     }
     let charToSend = key.value !== undefined ? key.value : key.label;
@@ -550,18 +580,17 @@ export class KeyboardComponent implements OnInit {
       if (combinedMap && combinedMap[charToSend]) {
         charToSend = combinedMap[charToSend];
       } else if (charToSend === ' ') {
-        charToSend = this.pendingAccent; // Imprime apenas o acento
+        charToSend = this.pendingAccent;
       } else {
         this.recordDynamicCharAndSend(this.pendingAccent);
       }
       this.pendingAccent = null;
     }
     this.recordDynamicCharAndSend(charToSend);
-    this.forceShowAllKeys = false; // Desativa visualização forçada após digitar letra
+    this.forceShowAllKeys = false;
   }
   private recordDynamicCharAndSend(char: string) {
     if (this.currentLayoutName === 'dynamic') {
-      // O Espaço ou Quebra de Linha libera todas as letras limpando o contexto da palavra anterior
       if (char === ' ' || char === '\n') {
         this.dynamicTypedSequence = '';
       } else {

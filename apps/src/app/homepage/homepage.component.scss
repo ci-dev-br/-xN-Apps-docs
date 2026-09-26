@@ -24,7 +24,7 @@ header {
 mat-tab-group {
     display: flex;
     flex: auto;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .page--wrapper {

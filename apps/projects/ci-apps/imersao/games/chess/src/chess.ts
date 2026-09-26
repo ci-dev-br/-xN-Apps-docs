@@ -3,18 +3,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { CoreModule } from '@ci/core';
-import { Objeto, ThrejsComponent } from '@ci/espazio';
+import { Objeto, ThreeClickEvent, ThrejsComponent } from '@ci/espazio';
 import { ChessService, GameplayService } from '@ci/portal-api';
 import { Chess, Move } from 'chess.js';
 import { lastValueFrom } from 'rxjs';
 import { PerspectiveCamera } from 'three';
 const PIECE_VALUES: { [key: string]: number } = {
-    p: 10 * 2.1,
-    n: 30 * 2.2,
-    b: 30 * 2.3,
-    r: 50 * 2.4,
-    q: 90 * 3.5,
-    k: 900 * 2
+    p: 10 * 2.1, n: 30 * 2.2, b: 30 * 2.3, r: 50 * 2.4, q: 90 * 3.5, k: 900 * 2
 };
 @Component({
     selector: 'ci-chess-game',
@@ -31,9 +26,8 @@ const PIECE_VALUES: { [key: string]: number } = {
 })
 export class ChessGameComponent implements OnInit {
     renderMode: '3d' | '2d' = '2d';
-
-    @ViewChild('rendererContainer', { static: true }) rendererContainer!: ElementRef<HTMLDivElement>;
-    @ViewChild('th', { static: true }) th?: ThrejsComponent;
+    @ViewChild('rendererContainer', { static: false }) rendererContainer!: ElementRef<HTMLDivElement>;
+    @ViewChild('th', { static: false }) th?: ThrejsComponent;
     objetos: Objeto[] = [
         new Objeto({ glb_file: 'chess.glb' }),
     ];
@@ -41,46 +35,60 @@ export class ChessGameComponent implements OnInit {
     player: 'white' | 'black' = 'white';
     game = new Chess();
     camera = new PerspectiveCamera(75, 400 / 300, 0.1, 1000);
-    virtualGame = new Chess();
     board: any[][] = [];
     selectedSquare: string | null = null;
-    isVsIA = false; // Flag para o modo IA
-    niveis = ['easy',
-        'medium',
-        'hard',]
-    difficulty: 'easy' | 'medium' | 'hard' = 'hard';
+    isVsIA = false;
+    gameplay?: any;
+    constructor(
+        private readonly gameplays: GameplayService,
+        private chess: ChessService,
+        @Optional() private readonly er: ElementRef<any>,
+        @Optional() private readonly cr: ComponentRef<any>
+    ) { }
     ngOnInit() {
-
-        this.camera.position.z = 4;
-        this.camera.position.y = 3;
+        this.camera.position.z = 12; // Câmera recuada para ver o tabuleiro todo
+        this.camera.position.y = 10;
+        this.camera.lookAt(0, 0, 0); // Apontar para o centro do tabuleiro
         this.updateBoard();
+    }
+    toggleRenderMode() {
+        this.renderMode = this.renderMode === '2d' ? '3d' : '2d';
+        if (this.renderMode === '3d') {
+            setTimeout(() => this.updatePosition(), 100);
+        }
     }
     start() {
         this.isVsIA = false;
-        this.stage = 'play';
-        // const { clientWidth, clientHeight } = this.rendererContainer?.nativeElement;
         this.resetGame();
-        setTimeout(() => {
-            this.updatePosition();
-        }, 600)
     }
-    updatePosition() {
-        if (!this.objetos) return;
-        let objetos = this.objetos[0].gltf?.scene?.children;
-
-        objetos?.forEach(mesh => {
-            if (mesh?.name?.indexOf('Dark') > -1) {
-                // mesh.position.x = 0;
-                // mesh.position.z = 0;
-            }
-            if (mesh?.name?.indexOf('Light') > -1) {
-                // mesh.position.x = 0;
-                // mesh.position.z = 0;
-            }
-        });
-        ///this.objetos.
+    // Adicione este método na classe ChessGameComponent
+    handle3DClick(event: ThreeClickEvent) {
+        if (this.game.isGameOver()) return;
+        if (this.isVsIA && this.game.turn() === 'b') return;
+        const step = 1.714;
+        let file: number, rank: number;
+        const isBoardOrCube = event.meshName.toLowerCase().includes('board') || event.meshName.toLowerCase().includes('cube');
+        // Se o clique atingiu uma peça, usamos a raiz (centro) global dela
+        if (event.meshName && !isBoardOrCube) {
+            file = Math.round((event.objectPosition.x / step) + 3.5);
+            rank = Math.round((event.objectPosition.z / step) + 3.5);
+        } else {
+            // Se o clique foi numa casa vazia (tabuleiro), usamos o ponto exato da colisão da luz
+            file = Math.round((event.point.x / step) + 3.5);
+            rank = Math.round((event.point.z / step) + 3.5);
+        }
+        // [DEPURAÇÃO]: Abra o F12 no browser e verifique estes valores ao clicar!
+        console.log(`[🎯 Raycaster] Malha atingida: ${event.meshName}`);
+        console.log(`[♟️ Xadrez] Ponto (X: ${event.point.x.toFixed(2)}, Z: ${event.point.z.toFixed(2)}) mapeado para -> Coluna (File): ${file} | Linha (Rank): ${rank}`);
+        // Só processa se o clique cair dentro dos índices 0 a 7 da matriz 8x8
+        if (file >= 0 && file <= 7 && rank >= 0 && rank <= 7) {
+            this.onSquareClick(rank, file);
+        } else {
+            // Clique fora das bordas do tabuleiro
+            this.selectedSquare = null;
+            this.th?.setHighlight(null, null);
+        }
     }
-    gameplay?: any;
     async startVsIA() {
         this.gameplay = (await lastValueFrom(this.gameplays.createNew({})));
         this.isVsIA = true;
@@ -90,21 +98,79 @@ export class ChessGameComponent implements OnInit {
         this.stage = 'play';
         this.game.reset();
         this.updateBoard();
+        if (this.renderMode === '3d') {
+            setTimeout(() => this.updatePosition(), 600);
+        }
     }
     updateBoard() {
         this.board = this.game.board();
+        if (this.renderMode === '3d') {
+            this.updatePosition();
+        }
+    }
+    updatePosition() {
+        if (!this.objetos || !this.objetos[0]?.gltf?.scene) return;
+        let scene = this.objetos[0].gltf.scene;
+        // Estrutura para agrupar os meshes 3D livres por tipo e cor
+        const availableMeshes: any = {
+            w: { p: [], n: [], b: [], r: [], q: [], k: [] },
+            b: { p: [], n: [], b: [], r: [], q: [], k: [] }
+        };
+        // Classificar as peças 3D
+        scene.children.forEach((mesh: any) => {
+            const name = mesh.name.toLowerCase();
+            if (name.includes('board') || name.includes('camera') || name.includes('sun')) return;
+            const color = name.includes('light') ? 'w' : (name.includes('dark') ? 'b' : null);
+            if (!color) return;
+            let type = '';
+            if (name.includes('pawn')) type = 'p';
+            else if (name.includes('knight')) type = 'n';
+            else if (name.includes('bishop')) type = 'b';
+            else if (name.includes('rock') || name.includes('rook')) type = 'r';
+            else if (name.includes('queen')) type = 'q';
+            else if (name.includes('king')) type = 'k';
+            if (type) {
+                availableMeshes[color][type].push(mesh);
+                mesh.visible = false; // Esconder temporariamente até usar
+            }
+        });
+        // Distância exata deduzida dos limites min/max do seu GLB (-6.04 a 5.96)
+        const step = 1.714;
+        // Iterar pelo tabuleiro lógico (0-7 linhas/ranks, 0-7 colunas/files)
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                const piece = this.board[r][c];
+                if (piece) {
+                    // Pega um mesh compatível e posiciona na coordenada
+                    const meshToPlace = availableMeshes[piece.color][piece.type].pop();
+                    if (meshToPlace) {
+                        meshToPlace.visible = true;
+                        // Mapeando a grade 8x8 para as medidas 3D
+                        meshToPlace.position.x = (c - 3.5) * step;
+                        meshToPlace.position.z = (r - 3.5) * step;
+                        // o 'y' nós mantemos como está no arquivo (altura correta da peça)
+                    }
+                }
+            }
+        }
     }
     onSquareClick(rank: number, file: number) {
         if (this.game.isGameOver()) return;
         if (this.isVsIA && this.game.turn() === 'b') return;
         const coords = this.getCoords(rank, file);
         if (this.selectedSquare) {
+            // Tenta realizar o movimento
             this.criarMovimento(this.selectedSquare, coords);
+            // Limpa a seleção tanto na lógica (2D) quanto no 3D
             this.selectedSquare = null;
+            this.th?.setHighlight(null, null);
         } else {
             const piece = this.game.get(coords as any);
+            // Verifica se clicou numa peça e se é a vez dela
             if (piece && piece.color === this.game.turn()) {
                 this.selectedSquare = coords;
+                // Ativa o highlight visual na casa em 3D
+                this.th?.setHighlight(rank, file);
             }
         }
     }
@@ -112,7 +178,7 @@ export class ChessGameComponent implements OnInit {
         try {
             const movimento = this.game.move({ from, to, promotion: 'q' });
             if (movimento) {
-                this.updateBoard();
+                this.updateBoard(); // Isto vai atualizar o 3D também
                 if (this.game.isGameOver()) {
                     this.checkGameStatus();
                 } else if (this.isVsIA && this.game.turn() === 'b') {
@@ -120,43 +186,25 @@ export class ChessGameComponent implements OnInit {
                 }
             }
         } catch (e) {
-            console.log("Movimento inválido");
+            console.log("Movimento inválido", e);
         }
     }
-    /* private getHeuristicMove(moves: any[]): any {
-        try {
-            return moves.sort((a, b) => {
-                const aValue = a.captured ? PIECE_VALUES[a.captured] : 0;
-                const bValue = b.captured ? PIECE_VALUES[b.captured] : 0;
-                return bValue - aValue;
-            })[0];
-        } catch (error) {
-            error;
-            debugger;
-        }
-    } */
-    constructor(
-        private readonly gameplays: GameplayService,
-        private chess: ChessService,
-        @Optional() private readonly er: ElementRef<any>,
-        @Optional() private readonly cr: ComponentRef<any>
-    ) {
-        er;
-        cr
-    }
-
     async makeAIMove() {
         const possibilidades = this.game.moves({ verbose: true });
-        let moviment = undefined;
         if (possibilidades.length === 0) return;
+        let moviment = undefined;
         try {
             let reaction = await lastValueFrom(this.chess.chessMove({ body: { fen: this.game.fen() } }));
             if ('move' in reaction) moviment = reaction.move as any;
         } catch (error) {
             console.trace(error);
         }
-        if (!!moviment)
+        if (moviment) {
             this.game.move(moviment);
+        } else {
+            // Fallback se a API falhar
+            this.game.move(possibilidades[Math.floor(Math.random() * possibilidades.length)]);
+        }
         this.updateBoard();
         this.checkGameStatus();
     }
@@ -166,7 +214,6 @@ export class ChessGameComponent implements OnInit {
     }
     checkGameStatus() {
         if (this.game.isGameOver()) {
-            // Informar se ganhou e perdeu
             if (this.game.isCheckmate()) {
                 const winner = this.game.turn() === 'w' ? 'Black' : 'White';
                 alert(`Checkmate! ${winner} wins!`);
@@ -175,7 +222,6 @@ export class ChessGameComponent implements OnInit {
             } else {
                 alert('Game over!');
             }
-            // Reiniciar o jogo
             this.stage = 'menu';
         }
     }
@@ -188,14 +234,18 @@ export class ChessGameComponent implements OnInit {
         return symbols[piece.color === 'w' ? piece.type.toUpperCase() : piece.type];
     }
     async ajudaMe() {
-        let jogada = await lastValueFrom(this.chess.chessMove({ body: { fen: this.game.fen() } }));
-        if (!!jogada?.move) {
-            this.game.move(jogada.move as any);
-            this.updateBoard();
-            this.checkGameStatus();
+        try {
+            let jogada = await lastValueFrom(this.chess.chessMove({ body: { fen: this.game.fen() } }));
+            if (jogada?.move) {
+                this.game.move(jogada.move as any);
+                this.updateBoard();
+                this.checkGameStatus();
+            }
+        } catch (e) {
+            console.log("Falha ao buscar dica");
         }
     }
-    async desistir() {
+    desistir() {
         alert('Você desistiu da partida!');
         this.stage = 'menu';
     }

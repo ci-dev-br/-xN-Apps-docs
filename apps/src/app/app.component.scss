@@ -14,7 +14,7 @@
     justify-content: stretch;
     overflow: hidden;
 
-    background: var(--mat-sys-background);
+    background: var(--mat-app-background-color);
 }
 
 div {
@@ -43,10 +43,6 @@ div {
     pointer-events: none;
 }
 
-::ng-deep body {
-    /* :has(.--dev-mode) */
-    // background-color: black;
-}
 
 .loader-container {
     // Fixa na tela inteira

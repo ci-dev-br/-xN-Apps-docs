@@ -59,4 +59,5 @@ export { AgendamentoService } from './services/agendamento.service';
 export { DeployerService } from './services/deployer.service';
 export { ChessService } from './services/chess.service';
 export { GameplayService } from './services/gameplay.service';
+export { KeyboardThemesService } from './services/keyboard-themes.service';
 export { ChangelogService } from './services/changelog.service';

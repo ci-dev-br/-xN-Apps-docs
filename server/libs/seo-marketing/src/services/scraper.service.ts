@@ -48,17 +48,20 @@ export class ScraperService implements OnModuleInit {
       // Libera o boot do NestJS e joga o worker de raspagem contínua para o background (5 segundos depois)
       setTimeout(() => {
         this.startContinuousScraper().catch(e => this.logger.error('Erro fatal no worker contínuo:', e));
-      }, 1000);
+      }, 100);
       // Libera o boot do NestJS e joga o worker de raspagem contínua para o background (5 segundos depois)
       setTimeout(() => {
         this.startContinuousScraper().catch(e => this.logger.error('Erro fatal no worker contínuo:', e));
-      }, 2000);
+      }, 300);
       setTimeout(() => {
         this.startContinuousScraper().catch(e => this.logger.error('Erro fatal no worker contínuo:', e));
-      }, 3000);
+      }, 700);
       setTimeout(() => {
         this.startContinuousScraper().catch(e => this.logger.error('Erro fatal no worker contínuo:', e));
-      }, 4000);
+      }, 1200);
+      setTimeout(() => {
+        this.startContinuousScraper().catch(e => this.logger.error('Erro fatal no worker contínuo:', e));
+      }, 1600);
     } catch (error) {
       this.logger.error('Erro ao inicializar dados base no OnModuleInit', error);
     }

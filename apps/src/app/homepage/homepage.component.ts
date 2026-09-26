@@ -194,9 +194,9 @@ export class HomepageComponent implements OnInit {
         anima();
     }
     async pesquisar() {
-        this.info = await lastValueFrom(this.news!.newsControllerPesquisar({
+        /* this.info = await lastValueFrom(this.news!.newsControllerPesquisar({
             textoConsulta: this.pesquisa?.value.q || undefined,
-        }));
+        })); */
     }
     protected bg?: string;
     async mountStyle() {

@@ -7,6 +7,7 @@ export interface News {
    */
   content: string;
   id: string;
+  modifiedAt?: string | null;
   source: string;
   sourceName: string;
   title: string;
