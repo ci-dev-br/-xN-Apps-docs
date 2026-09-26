@@ -15,7 +15,8 @@
 <div class="chess-container" #rendererContainer>
     <!-- View 3D -->
     @if(renderMode === '3d'){
-    <c-threjs #th [objetos]="objetos" [camera]="camera" (objectClicked)="handle3DClick($event)"></c-threjs>
+    <c-threjs #th [objetos]="objetos" [camera]="camera" (objectClicked)="handle3DClick($event)">
+    </c-threjs>
     }
 
     <!-- View 2D -->

@@ -69,18 +69,28 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
     const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+
+    // Ignora a malha roxa do highlight para não bloquear cliques na mesma casa
     const hit = intersects.find(i => i.object !== this.highlightMesh);
 
     if (hit) {
-      // Cria um vetor para extrair a posição global absoluta da malha
       const worldPos = new Vector3();
       hit.object.getWorldPosition(worldPos);
+
+      // --- LOGS DE DEPURAÇÃO ---
+      console.log('--- NOVO CLIQUE 3D ---');
+      console.log(`1. Malha atingida: "${hit.object.name}"`);
+      console.log(`2. Ponto de impacto do rato: X=${hit.point.x.toFixed(3)}, Z=${hit.point.z.toFixed(3)}`);
+      console.log(`3. Centro global da peça (WorldPos): X=${worldPos.x.toFixed(3)}, Z=${worldPos.z.toFixed(3)}`);
+      console.log('----------------------');
 
       this.objectClicked.emit({
         meshName: hit.object.name,
         point: hit.point,
-        objectPosition: worldPos // Agora enviamos o centro exato da peça no mundo 3D
+        objectPosition: worldPos
       });
+    } else {
+      console.warn('Raycaster não intercetou nenhum objeto válido.');
     }
   }
   adicionarObjeto(objeto: Objeto) {
@@ -215,26 +225,6 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     this.camera.aspect = width / h;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, h);
-  }
-  // Escuta os cliques diretos no canvas
-  @HostListener('click', ['$event'])
-  onCanvasClick(event: MouseEvent) {
-    if (!this.camera || !this.scene) return;
-    // Normaliza as coordenadas do mouse para o Raycaster (-1 a +1)
-    const rect = this.rendererContainer.nativeElement.getBoundingClientRect();
-    this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    // Calcula as interseções (true indica para checar todos os filhos recursivamente)
-    const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-    if (intersects.length > 0) {
-      const hit = intersects[0];
-      this.objectClicked.emit({
-        meshName: hit.object.name,
-        point: hit.point,
-        objectPosition: hit.object.position.clone()
-      });
-    }
   }
   private highlightMesh?: Mesh;/*  */
 }
