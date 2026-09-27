@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '@ci/core';
-import { AssistenteComponent } from './assistente/assistente';
-import { KeyboardComponent } from './keyboard';
+// TODO: rever motivo de, import { AssistenteComponent } from './assistente/assistente';
+import { KeyboardComponent } from '@ci/components/keyboard';
 
 export const routes: Routes = [
     {

@@ -96,7 +96,7 @@ export class AppComponent implements OnInit, OnDestroy {
     })
   }
   private showInAppInstallPromotion() {
-    alert("Gostando da experiência? Tenha tudo na palma da sua mão com o nosso app.");
+    alert("Gostando da experiência? Instale o aplicativo no seu dispositivo!");
   }
   private worker() {
     if ('serviceWorker' in navigator) {

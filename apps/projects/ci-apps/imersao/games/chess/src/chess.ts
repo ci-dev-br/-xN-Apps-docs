@@ -25,11 +25,11 @@ const PIECE_VALUES: { [key: string]: number } = {
     styleUrls: ['./chess.scss']
 })
 export class ChessGameComponent implements OnInit {
-    renderMode: '3d' | '2d' = '2d';
+    renderMode: '3d' | '2d' = '3d';
     @ViewChild('rendererContainer', { static: false }) rendererContainer!: ElementRef<HTMLDivElement>;
     @ViewChild('th', { static: false }) th?: ThrejsComponent;
     objetos: Objeto[] = [
-        new Objeto({ glb_file: 'chess.glb' }),
+        new Objeto({ glb_file: 'chess_c001.glb' }),
     ];
     stage: 'menu' | 'play' | 'viewer' = 'menu';
     player: 'white' | 'black' = 'white';

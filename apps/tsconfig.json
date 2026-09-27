@@ -177,6 +177,9 @@
       "@ci/components/devtools": [
         "./projects/ci/components/src/lib/devtools/public-api"
       ],
+      "@ci/components/keyboard": [
+        "./projects/ci/components/src/lib/keyboard/public-api"
+      ],
     },
     "outDir": "./dist/out-tsc",
     "strict": true,

@@ -16,6 +16,7 @@ import { CoreModule } from '@ci/core';
     MatIconModule,
     RouterModule,
     MatTooltipModule,
+
   ],
   templateUrl: `home.html`,
   styleUrl: `home.scss`,

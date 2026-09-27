@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TEXTOBASE } from './texto_base';
+import { TEXTOBASE } from '../../../../../../../src/app/texto_base';
 import { ApiModule, KeyboardTheme, KeyboardThemesService, NewsService } from '@ci/portal-api';
 interface AndroidBridge {
   onKey(character: string): void;
@@ -97,6 +97,13 @@ const LAYOUT_SOCIAL: KeyboardKey[][] = [
     { label: '.', type: 'char' }, { label: '?', type: 'char' }
   ]
 ];
+const LAYOUT_PINPAD: KeyboardKey[][] = [
+  ['1', '2', '3'].map(k => ({ label: k, type: 'char' })),
+  ['4', '5', '6'].map(k => ({ label: k, type: 'char' })),
+  ['7', '8', '9'].map(k => ({ label: k, type: 'char' })),
+  ['BACKSPACE', '8', 'ENTER'].map(k => ({ label: k, type: 'action' })),
+];
+
 const LAYOUT_GAME: KeyboardKey[][] = [
   [
     { label: 'Esc', type: 'action', action: 'ESC' },
@@ -200,6 +207,7 @@ const LAYOUT_GAME: KeyboardKey[][] = [
             <div class="options-grid">
               <button (click)="setLayout('dynamic')" [class.selected]="currentLayoutName === 'dynamic'">⚡ Dinâmico (Inteligente)</button>
               <button (click)="setLayout('programming')" [class.selected]="currentLayoutName === 'programming'">Programação</button>
+              <button (click)="setLayout('pinpad')" [class.selected]="currentLayoutName === 'pinpad'">Pinpad</button>
               <button (click)="setLayout('text')" [class.selected]="currentLayoutName === 'text'">Texto</button>
               <button (click)="setLayout('social')" [class.selected]="currentLayoutName === 'social'">Redes Sociais</button>
               <button (click)="setLayout('game')" [class.selected]="currentLayoutName === 'game'">Jogos</button>
@@ -398,6 +406,7 @@ export class KeyboardComponent implements OnInit {
       case 'programming': this.layout = LAYOUT_PROGRAMMING; break;
       case 'text': this.layout = LAYOUT_TEXT; break;
       case 'social': this.layout = LAYOUT_SOCIAL; break;
+      case 'pinpad': this.layout = LAYOUT_PINPAD; break;
       case 'game': this.layout = LAYOUT_GAME; break;
       default:
         if (this.customLayouts[layoutName]) {

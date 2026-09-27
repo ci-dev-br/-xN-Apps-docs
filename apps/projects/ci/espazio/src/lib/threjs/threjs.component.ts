@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Input, NgZone, OnDestroy, Optional, ViewChild, Output, EventEmitter } from '@angular/core';
-import { AnimationMixer, Mesh, PerspectiveCamera, PointLight, Scene, WebGLRenderer, Clock, PCFSoftShadowMap, Raycaster, Vector2, Vector3, PlaneGeometry, MeshBasicMaterial, DoubleSide } from 'three';
+import { AnimationMixer, Mesh, PerspectiveCamera, PointLight, Scene, WebGLRenderer, Clock, Raycaster, Vector2, Vector3, PlaneGeometry, MeshBasicMaterial, DoubleSide } from 'three';
 import { CoreModule } from '@ci/core';
 import { OrbitControls } from 'three/addons';
 import { Objeto } from '../engine/objeto';
 import { Player } from '@ci/espazio';
+import { WebGLPathTracer } from 'three-gpu-pathtracer';
 export interface ThreeClickEvent {
   meshName: string;
   point: Vector3;
@@ -19,9 +20,11 @@ export interface ThreeClickEvent {
 export class ThrejsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('rendererContainer', { static: true }) rendererContainer!: ElementRef<HTMLDivElement>;
   private isDragging = false;
+  // Nova variável para o Ray Tracer
+  private pathTracer!: WebGLPathTracer;
   private pointerDownPosition = new Vector2();
   @Input() mixer?: AnimationMixer;
-  @Input() scene?: Scene;
+  @Input() scene!: Scene;
   @Input() camera?: PerspectiveCamera;
   @Input() renderer?: WebGLRenderer;
   @Input() resizeObserver?: ResizeObserver;
@@ -114,6 +117,9 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
     }
+    if (this.pathTracer) {
+      this.pathTracer.dispose();
+    }
     cancelAnimationFrame(this.frameId);
     if (this.controls) {
       this.controls.dispose();
@@ -125,53 +131,65 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
   private initThree(): void {
     this.scene = new Scene();
     const { clientWidth, clientHeight } = this.rendererContainer.nativeElement;
+
     this.renderer = new WebGLRenderer({
       antialias: true,
-      alpha: true,
-      depth: true,
-      logarithmicDepthBuffer: true,
-      premultipliedAlpha: true,
-      preserveDrawingBuffer: true,
-      stencil: true,
+      alpha: true, // O path tracer suporta fundo transparente
       powerPreference: 'high-performance',
       precision: 'highp'
     });
-    this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = PCFSoftShadowMap;
+
+    // O Path Tracer não usa o shadowMap padrão, pode remover/desativar
+    this.renderer.shadowMap.enabled = false;
     this.renderer.setSize(clientWidth, clientHeight);
+    this.renderer.setPixelRatio(window.devicePixelRatio);
     this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
+
+    // 1. Inicializar o Path Tracer
+    this.pathTracer = new WebGLPathTracer(this.renderer);
+    this.pathTracer.setScene(this.scene, this.camera!);
+
     if (this.camera) {
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
       this.controls.enableDamping = true;
       this.controls.dampingFactor = 0.05;
       this.controls.enablePan = false;
       this.controls.enableZoom = true;
+
+      // 2. Reiniciar o acúmulo de raios sempre que a câmera se mover
+      this.controls.addEventListener('change', () => {
+        this.pathTracer.updateCamera();
+      });
     }
+
+    // Luzes padrão perdem um pouco o sentido no raytracing puro sem geometria, 
+    // mas você pode mantê-las se usar MeshPhysicalMaterial configurado.
     const light = new PointLight(0xffffff, 10, 100);
     this.lights.push(light);
     light.position.set(0, 40, -10);
     this.scene.add(light);
-    // 1. Criar a malha de Highlight
+
+    // Malha de Highlight (inalterada)
     const geometry = new PlaneGeometry(1.65, 1.65);
     const material = new MeshBasicMaterial({
       color: 0x7b61ff,
       transparent: true,
       opacity: 0.6,
       side: DoubleSide,
-      depthWrite: false // Previne flickering
+      depthWrite: true
     });
     this.highlightMesh = new Mesh(geometry, material);
-    this.highlightMesh.rotation.x = -Math.PI / 2; // Deita o plano no eixo X
-    // 👇 A CORREÇÃO ESTÁ AQUI 👇
-    // A base das peças está em 1.322. Colocamos o plano em 1.33 para ficar por cima da casa!
+    this.highlightMesh.rotation.x = -Math.PI / 2;
     this.highlightMesh.position.y = 1.33;
     this.highlightMesh.visible = false;
     this.scene.add(this.highlightMesh);
+
+    // 3. Carregar Objetos e Atualizar o BVH (Árvore de colisão para o Raytracer)
     if (this.objetos) {
-      this.objetos.forEach(async obj => {
+      // Usamos Promise.all para esperar todos os GLBs carregarem
+      const loadPromises = this.objetos.map(async obj => {
         obj.scene = this.scene;
         if (!!obj.glb_file) {
-          // Assegura que o GLB seja carregado fisicamente antes de procurar animações
           if (typeof obj.loadGBLFile === 'function') {
             await obj.loadGBLFile();
           }
@@ -180,6 +198,12 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
             obj.animations = obj.gltf.animations.map(x => this.mixer!.clipAction(x));
           }
         }
+      });
+
+      Promise.all(loadPromises).then(() => {
+        // Após todas as peças (como o tabuleiro de xadrez) carregarem, atualizamos a cena no ray tracer
+        // Isso gera a estrutura BVH necessária para o ray tracing funcionar.
+        this.pathTracer.setScene(this.scene, this.camera!);
       });
     }
   }
@@ -199,13 +223,21 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     try {
       const delta = this.clock.getDelta();
       this.frameId = requestAnimationFrame(() => this.animate());
+
       this.mixer?.update(delta);
-      // O OrbitControls exige o update a cada frame quando enableDamping = true
+
+      let needsUpdate = false;
       if (this.controls) {
-        this.controls.update();
+        this.controls.update(); // Dispara o 'change' se houver movimento (damping)
       }
+
+      // Se houver animação de peças acontecendo, você precisa dizer ao path tracer para atualizar
+      // Exemplo: if (isAnimating) this.pathTracer.updateScene();
+
       if (this.scene && this.camera && this.renderer) {
-        this.renderer.render(this.scene, this.camera);
+        // 4. Substituir renderer.render por pathTracer.renderSample()
+        // Ele vai acumular luz a cada frame. Quando a câmera para, a imagem fica perfeitamente nítida.
+        this.pathTracer.renderSample();
       }
     } catch (err) {
       console.trace(err);
@@ -227,6 +259,10 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     this.camera.aspect = width / h;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, h);
+    // Atualiza as dimensões no Path Tracer
+    if (this.pathTracer) {
+      this.pathTracer.updateCamera();
+    }
   }
   private highlightMesh?: Mesh;/*  */
 }
