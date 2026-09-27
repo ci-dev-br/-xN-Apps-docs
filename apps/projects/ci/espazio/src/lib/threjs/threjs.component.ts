@@ -236,20 +236,11 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
       }
 
       if (this.scene && this.camera && this.renderer && this.pathTracer) {
-
-        // CRÍTICO: Se a peça está deslizando no tabuleiro, limpamos a memória do frame anterior.
-        // Isso impede a formação do rastro fantasma visto no vídeo.
-        if (this.isAnimatingPiece) {
-          this.pathTracer.updateCamera();
-        }
-
-        // 1. Renderiza os cálculos de luz
+        // Renderiza a amostra do Path Tracer continuamente para acumular os cálculos de luz
         this.pathTracer.renderSample();
 
-        // 2. Limpa o buffer de profundidade para desenhar a interface por cima
+        // Limpa o buffer de profundidade e renderiza a UI por cima
         this.renderer.clearDepth();
-
-        // 3. Desenha a cena de UI (o highlight da casa selecionada)
         this.renderer.render(this.uiScene, this.camera);
       }
     } catch (err) {
@@ -284,27 +275,31 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
   private isAnimatingPiece = false;
   private isRebuildingBVH = false;
 
-  // Método para ser chamado pelo seu componente de xadrez ANTES da peça começar a andar
+  // Método chamado para iniciar o movimento da peça
   public iniciarAnimacaoMovimento() {
     this.isAnimatingPiece = true;
   }
 
-  // Método para ser chamado pelo seu componente de xadrez QUANDO a peça chegar na casa final
+  // Método chamado quando a peça termina de se mover
   public finalizarAnimacaoMovimento() {
     this.isAnimatingPiece = false;
 
-    // O SEGREDO ESTÁ AQUI:
-    // Força o Three.js a calcular as novas posições de todas as peças
-    // IMEDIATAMENTE, antes do Path Tracer tentar ler a geometria.
+    // 1. Atualiza as matrizes no mundo 3D imediatamente
     this.scene.updateMatrixWorld(true);
 
-    // Agora sim, atualiza a física da luz (BVH) para a nova posição real
-    if (this.pathTracer && this.camera && !this.isRebuildingBVH) {
-      this.isRebuildingBVH = true;
-      this.pathTracer.setSceneAsync(this.scene, this.camera).then(() => {
-        this.pathTracer.updateCamera(); // Limpa a tela para começar a renderização limpa
-        this.isRebuildingBVH = false;
-      });
+    // 2. Atualiza o Path Tracer de forma síncrona ou segura para evitar travamentos de tela preta
+    if (this.pathTracer && this.camera) {
+      try {
+        // Atualiza a cena no path tracer para refletir as novas posições das peças
+        // this.scene.updateMatrixWorld(true);
+
+        // E depois sim, envia a cena atualizada para o Path Tracer:
+        this.pathTracer.setSceneAsync(this.scene, this.camera);
+        this.pathTracer.setScene(this.scene, this.camera);
+        this.pathTracer.updateCamera();
+      } catch (e) {
+        console.error("Erro ao atualizar o Path Tracer:", e);
+      }
     }
   }
 }
