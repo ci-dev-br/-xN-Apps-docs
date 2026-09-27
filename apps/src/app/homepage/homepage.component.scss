@@ -9,6 +9,14 @@
     justify-content: center;
 }
 
+:host ::ng-deep .mat-mdc-tab-body-content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    overflow: hidden;
+}
+
 .logo {
     width: 250px;
     object-fit: cover;

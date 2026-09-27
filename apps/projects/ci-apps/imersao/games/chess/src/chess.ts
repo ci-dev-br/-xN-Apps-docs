@@ -34,7 +34,7 @@ export class ChessGameComponent implements OnInit {
     stage: 'menu' | 'play' | 'viewer' = 'menu';
     player: 'white' | 'black' = 'white';
     game = new Chess();
-    camera = new PerspectiveCamera(75, 400 / 300, 0.1, 1000);
+    camera = new PerspectiveCamera(80, 400 / 300, 0.5, 1000);
     board: any[][] = [];
     selectedSquare: string | null = null;
     isVsIA = false;
@@ -46,15 +46,15 @@ export class ChessGameComponent implements OnInit {
         @Optional() private readonly cr: ComponentRef<any>
     ) { }
     ngOnInit() {
-        this.camera.position.z = 12;
-        this.camera.position.y = 10;
+        this.camera.position.z = 8;
+        this.camera.position.y = 13;
         this.camera.lookAt(0, 0, 0);
         this.updateBoard();
     }
     toggleRenderMode() {
         this.renderMode = this.renderMode === '2d' ? '3d' : '2d';
         if (this.renderMode === '3d') {
-            setTimeout(() => this.updateBoard3D(), 100);
+            setTimeout(() => this.updateBoard3D(), 0);
         }
     }
     start() {
@@ -93,7 +93,7 @@ export class ChessGameComponent implements OnInit {
         this.game.reset();
         this.updateBoard();
         if (this.renderMode === '3d') {
-            setTimeout(() => this.updateBoard3D(), 600);
+            setTimeout(() => this.updateBoard3D(), 0);
         }
     }
     updateBoard() {
@@ -196,7 +196,7 @@ export class ChessGameComponent implements OnInit {
                 if (this.game.isGameOver()) {
                     this.checkGameStatus();
                 } else if (this.isVsIA && this.game.turn() === 'b') {
-                    setTimeout(() => this.makeAIMove(), 600);
+                    setTimeout(() => this.makeAIMove(), 0);
                 }
             }
         } catch (e) {
