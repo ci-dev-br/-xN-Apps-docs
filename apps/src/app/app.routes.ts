@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from '@ci/core';
 // TODO: rever motivo de, import { AssistenteComponent } from './assistente/assistente';
 import { KeyboardComponent } from '@ci/components/keyboard';
+import { ChessGameComponent } from '@ci/apps/imersao/chess';
 
 export const routes: Routes = [
     {
@@ -23,6 +24,7 @@ export const routes: Routes = [
         loadChildren: () => import('./painel/painel.module').then(m => m.PainelModule),
     },
     { path: 'keyboard', component: KeyboardComponent },
+    { path: 'chess', component: ChessGameComponent },
     {
         path: '**', redirectTo: '/acessar', pathMatch: 'full'
     }
