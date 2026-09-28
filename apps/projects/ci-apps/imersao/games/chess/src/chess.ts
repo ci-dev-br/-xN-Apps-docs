@@ -34,7 +34,7 @@ export class ChessGameComponent implements OnInit {
     stage: 'menu' | 'play' | 'viewer' = 'menu';
     player: 'white' | 'black' = 'white';
     game = new Chess();
-    camera = new PerspectiveCamera(80, 400 / 300, 0.5, 1000);
+    camera = new PerspectiveCamera(45, 400 / 300, 0.5, 1000);
     board: any[][] = [];
     selectedSquare: string | null = null;
     isVsIA = false;
@@ -46,8 +46,8 @@ export class ChessGameComponent implements OnInit {
         @Optional() private readonly cr: ComponentRef<any>
     ) { }
     ngOnInit() {
-        this.camera.position.z = 8;
-        this.camera.position.y = 13;
+        this.camera.position.z = 18;
+        this.camera.position.y = 23;
         this.camera.lookAt(0, 0, 0);
         this.updateBoard();
     }
