@@ -121,13 +121,13 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
     this.pathTracer = new WebGLPathTracer(this.renderer);
-    // this.pathTracer.enablePathTracing = true;
-    // this.pathTracer.dynamicLowRes = true;
+    this.pathTracer.enablePathTracing = true;
+    //  this.pathTracer.dynamicLowRes = true;
     this.pathTracer.minSamples = 1;
     this.pathTracer.renderScale = 1;
     this.pathTracer.filterGlossyFactor = 0.5;
     this.pathTracer.multipleImportanceSampling = true;
-    // this.pathTracer.bounces = 5;
+    this.pathTracer.bounces = 5;
     if (this.camera) {
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
       this.controls.enableDamping = true;
@@ -204,7 +204,7 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
         // Renderiza a amostra do Path Tracer continuamente para acumular os cálculos de luz
         this.pathTracer.renderSample();
         // Limpa o buffer de profundidade e renderiza a UI por cima
-        this.renderer.clearDepth();
+        // this.renderer.clearDepth();
         this.renderer.render(this.uiScene, this.camera);
       }
     } catch (err) {
@@ -225,7 +225,7 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     if (!this.camera || !this.renderer) return;
     const h = height > 0 ? height : 1;
     this.camera.aspect = width / h;
-    this.camera.updateProjectionMatrix();
+    // this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, h);
     if (this.pathTracer) {
       this.pathTracer.updateCamera();
@@ -242,7 +242,7 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
   public finalizarAnimacaoMovimento() {
     this.isAnimatingPiece = false;
     // 1. Atualiza as matrizes no mundo 3D
-    this.scene.updateMatrixWorld(true);
+    //  this.scene.updateMatrixWorld(true);
     if (this.pathTracer && this.camera) {
       try {
         this.pathTracer.setScene(this.scene, this.camera);
