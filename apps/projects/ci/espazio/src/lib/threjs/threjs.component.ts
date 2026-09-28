@@ -121,12 +121,11 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
     this.pathTracer = new WebGLPathTracer(this.renderer);
-    this.pathTracer.fadeDuration = 0;
-    this.pathTracer.enablePathTracing = true;
-    this.pathTracer.dynamicLowRes = true;
-    this.pathTracer.minSamples = 0;
-    this.pathTracer.renderScale = 0.7;
-    //  this.pathTracer.filterGlossyFactor = 0.5;
+    // this.pathTracer.enablePathTracing = true;
+    // this.pathTracer.dynamicLowRes = true;
+    this.pathTracer.minSamples = 1;
+    this.pathTracer.renderScale = 1;
+    this.pathTracer.filterGlossyFactor = 0.5;
     this.pathTracer.multipleImportanceSampling = true;
     // this.pathTracer.bounces = 5;
     if (this.camera) {
