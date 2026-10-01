@@ -5,11 +5,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { PesquisarService } from '../pesquisar-contato/pesquisar-contato.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Conversation } from '@ci/portal-api';
-import { MessagerService } from '../mensagens.service';
-import {MatSidenavModule} from '@angular/material/sidenav';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MessagerService } from '../../../mensagens.service';
+import { PesquisarService } from '../pesquisar-contato/pesquisar-contato.service';
 @Component({
   selector: 'ci-conversas',
   imports: [

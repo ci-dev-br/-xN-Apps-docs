@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TEXTOBASE } from '../../../../../../../src/app/texto_base';
 import { ApiModule, KeyboardTheme, KeyboardThemesService, NewsService } from '@ci/portal-api';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 interface AndroidBridge {
   onKey(character: string): void;
   onAction(action: string): void;
@@ -130,190 +132,17 @@ const LAYOUT_GAME: KeyboardKey[][] = [
   imports: [
     CommonModule,
     ApiModule,
+    MatButtonModule,
+    MatIconModule,
   ],
-  template: `
-    <div class="keyboard-wrapper" [ngStyle]="getDynamicStyles()">
-      
-     <!-- Teclado Principal -->
-      <div class="keyboard-container">
-        @for (row of layout; track $index) {
-          <div class="row">
-            @for (key of row; track key.label) {
-              <button 
-                [class]="key.type"
-                [class.active]="isModifierActive(key.action)"
-                [class.pending-accent]="isAccentPending(key)"
-                [class.hidden-key]="!isKeyVisible(key) && dynamicLayoutMode === 'hidden'"
-                [class.collapsed-key]="!isKeyVisible(key) && dynamicLayoutMode === 'collapse'"
-                [style.flex]="key.flex || 1"
-                (click)="handleKey(key)">
-                {{ getLabel(key) }}
-              </button>
-            }
-          </div>
-        }
-      </div>
-      
-      <!-- Botões Inferiores -->
-      <div class="bottom-bar" style="padding-left: 10px">
-        <button class="menu-toggle-btn" (click)="auto()">
-          Auto
-        </button>
-        <button class="menu-toggle-btn" (click)="toggleMenu()">
-          ⚙️ 
-        </button>
-        
-        <!-- Botões exclusivos para o layout dinâmico -->
-        @if (currentLayoutName === 'dynamic') {
-          <button class="menu-toggle-btn secondary-btn" (click)="forceShowAllKeys = !forceShowAllKeys">
-            {{ forceShowAllKeys ? '🎯 Filtrar' : '👁️ Tudo' }}
-          </button>
-          
-          <button class="menu-toggle-btn tertiary-btn" (click)="toggleDynamicMode()">
-            {{ dynamicLayoutMode === 'hidden' ? 'Esticar' : 'Preservar Posição' }}
-          </button>
-        }
-      </div>
-      <!-- Overlay do Menu -->
-      <div class="menu-overlay" *ngIf="isMenuOpen">
-        <div class="menu-content">
-          <div class="menu-header">
-            <h3>Configurações</h3>
-            <button class="close-btn" (click)="toggleMenu()">✕</button>
-          </div>
-          
-          <div class="menu-tabs">
-            <button [class.active]="activeMenuTab === 'themes'" (click)="activeMenuTab = 'themes'">Temas</button>
-            <button [class.active]="activeMenuTab === 'layouts'" (click)="activeMenuTab = 'layouts'">Layouts</button>
-            <button [class.active]="activeMenuTab === 'custom'" (click)="activeMenuTab = 'custom'">Custom</button>
-          </div>
-          <!-- Aba Temas (AGORA DINÂMICA) -->
-          <div class="tab-content" *ngIf="activeMenuTab === 'themes'">
-            <div class="options-grid">
-              @if (themesFromApi && themesFromApi.length > 0) {
-                <!-- Renderiza os temas que vieram do Postgresql via NestJS -->
-                @for (theme of themesFromApi; track theme.name) {
-                  <button (click)="setTheme(theme.name)" [class.selected]="currentTheme === theme.name">
-                    {{ theme.displayName }}
-                  </button>
-                }
-              } @else {
-                <p style="color: #888; text-align: center; font-size: 0.9rem;">Carregando temas...</p>
-              }
-            </div>
-          </div>
-          <!-- Aba Layouts -->
-          <div class="tab-content" *ngIf="activeMenuTab === 'layouts'">
-            <div class="options-grid">
-              <button (click)="setLayout('dynamic')" [class.selected]="currentLayoutName === 'dynamic'">⚡ Dinâmico (Inteligente)</button>
-              <button (click)="setLayout('programming')" [class.selected]="currentLayoutName === 'programming'">Programação</button>
-              <button (click)="setLayout('pinpad')" [class.selected]="currentLayoutName === 'pinpad'">Pinpad</button>
-              <button (click)="setLayout('text')" [class.selected]="currentLayoutName === 'text'">Texto</button>
-              <button (click)="setLayout('social')" [class.selected]="currentLayoutName === 'social'">Redes Sociais</button>
-              <button (click)="setLayout('game')" [class.selected]="currentLayoutName === 'game'">Jogos</button>
-              
-              <div class="divider" *ngIf="customLayoutsNames.length > 0">Meus Layouts</div>
-              
-              @for (custom of customLayoutsNames; track custom) {
-                  <button (click)="setLayout(custom)" [class.selected]="currentLayoutName === custom">
-                      {{ custom }}
-                  </button>
-              }
-            </div>
-          </div>
-          <!-- Aba Criar Custom -->
-          <div class="tab-content" *ngIf="activeMenuTab === 'custom'">
-            <div class="form-group">
-                <label>Nome do Layout:</label>
-                <input type="text" #layoutName placeholder="Ex: Meu Teclado" class="input-text">
-            </div>
-            <div class="form-group">
-                <label>Teclas (Separe por espaço, quebre linha para nova linha):</label>
-                <textarea #layoutData placeholder="q w e r t y&#10;a s d f g h&#10;z x c v b n" rows="5" class="input-text"></textarea>
-                <small>Use SHIFT, ENTER, BACKSPACE, SPACE, TAB, CTRL, ESC para teclas especiais.</small>
-            </div>
-            <button class="save-btn" (click)="saveCustomLayout(layoutName.value, layoutData.value)">Salvar Layout</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `,
-  styles: [`
-    ::ng-deep body { margin: 0; background-color: black; overflow: hidden; }
-    
-    .keyboard-wrapper {
-      /* Valores padrão de fallback caso a API demore a carregar ou o tema não exista */
-      --bg: #1e1e1e;
-      --key-bg: #333;
-      --key-color: #fff;
-      --key-radius: 6px;
-      --key-action-bg: #2d4558;
-      --key-action-color: #fff;
-      --key-mod-bg: #444;
-      --key-mod-color: #fff;
-      --key-shadow: 0 4px 0 rgba(0,0,0,0.2);
-      --font-family: monospace;
-      --key-gap: 0px;
-      
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      background: var(--bg);
-      font-family: var(--font-family);
-      position: relative;
-    }
-    /* As classes fixas de tema (.theme-farm, .theme-ios, etc) foram removidas pois os estilos vêm da API via [ngStyle] */
-    .keyboard-container { 
-      display: flex; flex-direction: column; gap: var(--key-gap); padding: 10px; flex-grow: 1;
-      touch-action: manipulation; user-select: none; justify-content: stretch; align-items: stretch;
-    }
-    .row { display: flex; justify-content: center; gap: var(--key-gap); width: 100%; flex-grow: 1; }
-    button { 
-      padding: 0px; font-size: 1.1rem; border-radius: var(--key-radius); border: none; 
-      background: var(--key-bg); color: var(--key-color); box-shadow: var(--key-shadow);
-      display: flex; align-items: center; justify-content: center; cursor: pointer; 
-      transition: all 0.1s; font-family: inherit;
-    }
-    button:active { transform: translateY(2px) scale(0.95); box-shadow: none; opacity: 0.8; }
-    button.action { background: var(--key-action-bg); color: var(--key-action-color); font-weight: bold; }
-    button.modifier { background: var(--key-mod-bg); color: var(--key-mod-color); }
-    button.active { background: #007acc !important; color: white !important; box-shadow: 0 0 10px #007acc; }
-    
-    /* Modos de Ocultação do Layout Dinâmico */
-    button.hidden-key { visibility: hidden; pointer-events: none; }
-    button.collapsed-key { display: none !important; }
-    button.pending-accent {
-      background: #e6a23c !important;
-      color: #000 !important;
-      box-shadow: 0 0 8px #e6a23c;
-      transform: scale(0.95);
-    }
-    .bottom-bar { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; padding: 10px; background: rgba(0,0,0,0.3); }
-    .menu-toggle-btn { background: transparent; color: var(--key-color); border: 1px solid var(--key-color); padding: 8px 14px; border-radius: 20px; font-size: 0.85rem; flex: 0 1 auto; box-shadow: none; }
-    .secondary-btn { border-color: #007acc; color: #66b3ff; }
-    .tertiary-btn { border-color: #e6a23c; color: #e6a23c; }
-    .menu-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; z-index: 100; font-family: sans-serif; padding: 20px; color: white; justify-content: flex-end; }
-    .menu-content { background: #2a2a2a; border-radius: 12px; display: flex; flex-direction: column; max-height: 90%; overflow: hidden; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
-    .menu-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #444; }
-    .menu-header h3 { margin: 0; font-size: 1.1rem; }
-    .close-btn { background: transparent; box-shadow: none; width: 30px; height: 30px; }
-    
-    .menu-tabs { display: flex; background: #1e1e1e; }
-    .menu-tabs button { flex: 1; padding: 12px; border-radius: 0; background: transparent; box-shadow: none; color: #aaa; font-size: 0.9rem; border-bottom: 2px solid transparent; }
-    .menu-tabs button.active { color: #fff; border-bottom-color: #007acc; }
-    .tab-content { padding: 15px; overflow-y: auto; }
-    .options-grid { display: flex; flex-direction: column; gap: 0px; }
-    .options-grid button { padding: 12px; background: #333; border-radius: 8px; box-shadow: none; justify-content: flex-start; }
-    .options-grid button.selected { background: #007acc; border-left: 4px solid white; }
-    .divider { margin: 15px 0 5px 0; color: #888; font-size: 0.8rem; text-transform: uppercase; }
-    .form-group { display: flex; flex-direction: column; gap: 0px; margin-bottom: 15px; }
-    .form-group label { font-size: 0.9rem; color: #ccc; }
-    .form-group small { font-size: 0.75rem; color: #888; }
-    .input-text { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #111; color: white; font-family: monospace; box-sizing: border-box; }
-    .save-btn { background: #28a745; width: 100%; padding: 12px; margin-top: 10px; }
-  `]
+  templateUrl: 'keyboard.html',
+  styleUrls: ['keyboard.scss']
 })
 export class KeyboardComponent implements OnInit {
+  extras = [
+    { label: 'Auto', icon: 'automation', act: () => this.auto() },
+    { label: 'Run', icon: 'settings', act: () => this.toggleMenu() },
+  ];
   shiftActive = false;
   ctrlActive = false;
   pendingAccent: string | null = null;

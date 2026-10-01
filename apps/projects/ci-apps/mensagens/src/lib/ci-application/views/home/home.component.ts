@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ConversasComponent } from '../../conversas/conversas.component';
+import { ConversasComponent } from '../../views/conversas/conversas.component';
 import { RouterModule } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
 

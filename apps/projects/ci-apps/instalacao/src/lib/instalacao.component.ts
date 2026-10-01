@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
+import { DynFormModule } from '@ci/components/dyn-form';
 
 @Component({
-    selector: 'ci-Instalacao',
-    imports: [],
-    template: `
-    <p>
-      instalacao works!
-    </p>
+  selector: 'ci-Instalacao',
+  imports: [
+    DynFormModule
+  ],
+  template: `
+    <ci-dyn-form [schemaName]="" ></ci-dyn-form>
   `,
-    styles: ``
+  styles: ``
 })
 export class InstalacaoComponent {
 

@@ -1,0 +1,259 @@
+::ng-deep body {
+    margin: 0;
+    background-color: black;
+    overflow: hidden;
+}
+
+:host {
+    --bg: black;
+    z-index: #{100*100*100};
+    background: var(--bg);
+    padding: 1px;
+}
+
+.keyboard-wrapper {
+    /* Valores padrão de fallback caso a API demore a carregar ou o tema não exista */
+    --bg: #1e1e1e;
+    --key-bg: #333;
+    --key-color: #fff;
+    --key-radius: 6px;
+    --key-action-bg: #2d4558;
+    --key-action-color: #fff;
+    --key-mod-bg: #444;
+    --key-mod-color: #fff;
+    --key-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
+    --font-family: monospace;
+    --key-gap: 1px;
+
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    //  background: var(--bg);
+    font-family: var(--font-family);
+    position: relative;
+}
+
+/* As classes fixas de tema (.theme-farm, .theme-ios, etc) foram removidas pois os estilos vêm da API via [ngStyle] */
+.keyboard-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--key-gap);
+    padding: 0px;
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    touch-action: manipulation;
+    user-select: none;
+    justify-content: stretch;
+    align-items: stretch;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    gap: var(--key-gap);
+    width: 100%;
+    flex-grow: 1;
+}
+
+button {
+    border-radius: var(--key-radius);
+    border: none;
+    background: var(--key-bg);
+    color: var(--key-color);
+    box-shadow: var(--key-shadow);
+    cursor: pointer;
+    transition: all 0.1s;
+    font-family: inherit;
+}
+
+button:active {
+    transform: translateY(2px) scale(0.95);
+    box-shadow: none;
+    opacity: 0.8;
+}
+
+button.action {
+    background: var(--key-action-bg);
+    color: var(--key-action-color);
+    font-weight: bold;
+}
+
+button.modifier {
+    background: var(--key-mod-bg);
+    color: var(--key-mod-color);
+}
+
+button.active {
+    background: #007acc !important;
+    color: white !important;
+    box-shadow: 0 0 10px #007acc;
+}
+
+/* Modos de Ocultação do Layout Dinâmico */
+button.hidden-key {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+button.collapsed-key {
+    display: none !important;
+}
+
+button.pending-accent {
+    background: #e6a23c !important;
+    box-shadow: 0 0 8px #e6a23c;
+    transform: scale(0.95);
+}
+
+.bottom-bar {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0px;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.menu-toggle-btn {
+    background: transparent;
+    color: var(--key-color);
+    border: 1px solid var(--key-color);
+    padding: 0px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    flex: 0 1 auto;
+    box-shadow: none;
+}
+
+/* .secondary-btn {
+    border-color: #007acc;
+} */
+
+/* .tertiary-btn {
+    border-color: #e6a23c;
+} */
+
+.menu-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    font-family: sans-serif;
+    padding: 0px;
+    ////// color:   white;
+    justify-content: flex-end;
+}
+
+.menu-content {
+    background: #2a2a2a;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    max-height: 90%;
+    overflow: hidden;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+}
+
+.menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px;
+    border-bottom: 1px solid #444;
+}
+
+.menu-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.close-btn {
+    background: transparent;
+    box-shadow: none;
+    width: 30px;
+    height: 30px;
+}
+
+.menu-tabs {
+    display: flex;
+    background: #1e1e1e;
+}
+
+.menu-tabs button {
+    flex: 1;
+    padding: 0px;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    font-size: 0.9rem;
+    border-bottom: 2px solid transparent;
+}
+
+.menu-tabs button.active {
+    border-bottom-color: #007acc;
+}
+
+.tab-content {
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+}
+
+.options-grid button {
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: none;
+    justify-content: flex-start;
+}
+
+.options-grid button.selected {
+    border-left: 4px solid white;
+}
+
+.divider {
+    margin: 0;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    margin-bottom: 0px;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+}
+
+.form-group small {
+    font-size: 0.75rem;
+}
+
+.input-text {
+    width: 100%;
+    padding: 0px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background: #111;
+    font-family: monospace;
+    box-sizing: border-box;
+}
+
+.save-btn {
+    width: 100%;
+    padding: 0px;
+    margin-top: 0px;
+}

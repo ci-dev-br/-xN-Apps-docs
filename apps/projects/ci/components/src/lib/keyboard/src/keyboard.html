@@ -1,0 +1,112 @@
+<div class="keyboard-wrapper" [ngStyle]="getDynamicStyles()">
+
+    <!-- Teclado Principal -->
+    <div class="keyboard-container">
+        @for (row of layout; track $index) {
+        <div class="row">
+            @for (key of row; track key.label) {
+            <button [class]="key.type" [class.active]="isModifierActive(key.action)"
+                [class.pending-accent]="isAccentPending(key)"
+                [class.hidden-key]="!isKeyVisible(key) && dynamicLayoutMode === 'hidden'"
+                [class.collapsed-key]="!isKeyVisible(key) && dynamicLayoutMode === 'collapse'"
+                [style.flex]="key.flex || 1" (click)="handleKey(key)">
+                {{ getLabel(key) }}
+            </button>
+            }
+        </div>
+        }
+    </div>
+    <!-- Botões Inferiores -->
+    <div class="bottom-bar" style="padding-left: 10px">
+        @for (item of extras; track $index) {
+        <button mat-icon-button (click)="item.act()">
+            @if(item.icon){<mat-icon>{{item.icon}}</mat-icon>}
+        </button>
+        }
+        <!-- <button class="menu-toggle-btn" (click)="auto()">
+            Auto
+        </button> -->
+        <!--  <button class="menu-toggle-btn" (click)="toggleMenu()">
+            ⚙️
+        </button> -->
+        <!-- Botões exclusivos para o layout dinâmico -->
+        @if (currentLayoutName === 'dynamic') {
+        <button mat-button (click)="forceShowAllKeys = !forceShowAllKeys">
+            <mat-icon>visibility</mat-icon>
+            {{ forceShowAllKeys ? 'Filtrar' : 'Tudo' }}
+        </button>
+        <button mat-button (click)="toggleDynamicMode()">
+            {{ dynamicLayoutMode === 'hidden' ? 'Esticar' : 'Preservar Posição' }}
+        </button>
+        }
+    </div>
+    <!-- Overlay do Menu -->
+    <div class="menu-overlay" *ngIf="isMenuOpen">
+        <div class="menu-content">
+            <div class="menu-header">
+                <h3>Configurações</h3>
+                <button class="close-btn" (click)="toggleMenu()">✕</button>
+            </div>
+
+            <div class="menu-tabs">
+                <button [class.active]="activeMenuTab === 'themes'" (click)="activeMenuTab = 'themes'">Temas</button>
+                <button [class.active]="activeMenuTab === 'layouts'"
+                    (click)="activeMenuTab = 'layouts'">Layouts</button>
+                <button [class.active]="activeMenuTab === 'custom'" (click)="activeMenuTab = 'custom'">Custom</button>
+            </div>
+            <!-- Aba Temas (AGORA DINÂMICA) -->
+            <div class="tab-content" *ngIf="activeMenuTab === 'themes'">
+                <div class="options-grid">
+                    @if (themesFromApi && themesFromApi.length > 0) {
+                    <!-- Renderiza os temas que vieram do Postgresql via NestJS -->
+                    @for (theme of themesFromApi; track theme.name) {
+                    <button (click)="setTheme(theme.name)" [class.selected]="currentTheme === theme.name">
+                        {{ theme.displayName }}
+                    </button>
+                    }
+                    } @else {
+                    <p style="color: #888; text-align: center; font-size: 0.9rem;">Carregando temas...</p>
+                    }
+                </div>
+            </div>
+            <!-- Aba Layouts -->
+            <div class="tab-content" *ngIf="activeMenuTab === 'layouts'">
+                <div class="options-grid">
+                    <button (click)="setLayout('dynamic')" [class.selected]="currentLayoutName === 'dynamic'">⚡ Dinâmico
+                        (Inteligente)</button>
+                    <button (click)="setLayout('programming')"
+                        [class.selected]="currentLayoutName === 'programming'">Programação</button>
+                    <button (click)="setLayout('pinpad')"
+                        [class.selected]="currentLayoutName === 'pinpad'">Pinpad</button>
+                    <button (click)="setLayout('text')" [class.selected]="currentLayoutName === 'text'">Texto</button>
+                    <button (click)="setLayout('social')" [class.selected]="currentLayoutName === 'social'">Redes
+                        Sociais</button>
+                    <button (click)="setLayout('game')" [class.selected]="currentLayoutName === 'game'">Jogos</button>
+
+                    <div class="divider" *ngIf="customLayoutsNames.length > 0">Meus Layouts</div>
+
+                    @for (custom of customLayoutsNames; track custom) {
+                    <button (click)="setLayout(custom)" [class.selected]="currentLayoutName === custom">
+                        {{ custom }}
+                    </button>
+                    }
+                </div>
+            </div>
+            <!-- Aba Criar Custom -->
+            <div class="tab-content" *ngIf="activeMenuTab === 'custom'">
+                <div class="form-group">
+                    <label>Nome do Layout:</label>
+                    <input type="text" #layoutName placeholder="Ex: Meu Teclado" class="input-text">
+                </div>
+                <div class="form-group">
+                    <label>Teclas (Separe por espaço, quebre linha para nova linha):</label>
+                    <textarea #layoutData placeholder="q w e r t y&#10;a s d f g h&#10;z x c v b n" rows="5"
+                        class="input-text"></textarea>
+                    <small>Use SHIFT, ENTER, BACKSPACE, SPACE, TAB, CTRL, ESC para teclas especiais.</small>
+                </div>
+                <button class="save-btn" (click)="saveCustomLayout(layoutName.value, layoutData.value)">Salvar
+                    Layout</button>
+            </div>
+        </div>
+    </div>
+</div>
