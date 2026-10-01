@@ -83,7 +83,7 @@
                         Sociais</button>
                     <button (click)="setLayout('game')" [class.selected]="currentLayoutName === 'game'">Jogos</button>
 
-                    <div class="divider" *ngIf="customLayoutsNames.length > 0">Meus Layouts</div>
+                    @if(customLayoutsNames.length > 0){<div class="divider">Meus Layouts</div>}
 
                     @for (custom of customLayoutsNames; track custom) {
                     <button (click)="setLayout(custom)" [class.selected]="currentLayoutName === custom">
