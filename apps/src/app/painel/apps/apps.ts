@@ -274,6 +274,7 @@ export const CI_STATIC_APPS: IApp[] = [
     },
     {
         shortDescription: 'Compositor de música para composição musical para estúdios modulares.',
+        url: '/Composite',
         name: 'Composite-se',
         description: `Composite-se permite criar música musturando a interação de componentes digitais personalizaveis em conjunto a componentes clássicos da composição musical, implementados em linguagens modernas projetados com foco na retro-compatibilidade de dispositivos, formatos e instrumentos. Amplificando a capacidade criativa do compositor musical.`,
         type: 'mat',
