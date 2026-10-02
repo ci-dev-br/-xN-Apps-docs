@@ -29,6 +29,10 @@ export const routes: Routes = [
       { path: 'Vendas', loadChildren: () => import('@ci-apps/Vendas').then(m => m.CiApplicationModule) },
       { path: 'Icons', loadChildren: () => import('@ci-apps/Icons').then(m => m.CiApplicationModule) },
       {
+        path: 'Composite',
+        loadComponent: () => import('@ci-apps/Imersao').then(i => i.CompositorComponent)
+      },
+      {
         path: 'Imersao', data: {
           LoadIcons: {
             imersao: { url: 'icons/imersao.svg' },

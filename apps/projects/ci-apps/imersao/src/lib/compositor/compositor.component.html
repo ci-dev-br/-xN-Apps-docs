@@ -1,0 +1,36 @@
+<!-- music-composer.component.html -->
+<div class="composer-container">
+    <header>
+        <h2>{{ master.projectName }}</h2>
+        <div class="controls">
+            <label>BPM:
+                <input type="number" [(ngModel)]="master.bpm" [disabled]="isPlaying" />
+            </label>
+            <button mat-button (click)="togglePlayback()" [class.active]="isPlaying">
+                {{ isPlaying ? 'Parar' : 'Tocar' }}
+            </button>
+        </div>
+    </header>
+
+    <div class="sequencer-grid">
+        <div class="track" *ngFor="let track of master.tracks; let i = index">
+            <div class="track-info">
+                <span>{{ track.name }}</span>
+            </div>
+            <div class="steps">
+                <button *ngFor="let step of track.steps; let j = index" class="step-btn" [class.active]="step"
+                    [class.current]="isPlaying && currentStep === j" (click)="toggleStep(i, j)">
+                </button>
+            </div>
+        </div>
+    </div>
+    <footer class="export-actions">
+        <button mat-button (click)="saveMaster()">
+            <mat-icon>save</mat-icon>
+            Salvar Master (Projeto)
+        </button>
+        <button mat-button (click)="exportAudio()" [disabled]="isRecording">
+            <mat-icon>mic</mat-icon>{{ isRecording ? 'Gravando e Exportando...' : 'Exportar Áudio (.webm)' }}
+        </button>
+    </footer>
+</div>

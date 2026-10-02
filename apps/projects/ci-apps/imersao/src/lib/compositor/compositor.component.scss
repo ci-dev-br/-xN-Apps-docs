@@ -1,0 +1,76 @@
+/* music-composer.component.scss */
+.composer-container {
+    background: #1e1e1e;
+    color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: monospace;
+}
+
+.controls {
+    margin-bottom: 20px;
+}
+
+.controls button.active {
+    background: #ff4757;
+    color: white;
+}
+
+.track {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.track-info {
+    width: 120px;
+    font-size: 14px;
+}
+
+.steps {
+    display: flex;
+    gap: 4px;
+}
+
+.step-btn {
+    width: 30px;
+    height: 30px;
+    background: #333;
+    border: 1px solid #444;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.step-btn.active {
+    background: #2ed573;
+}
+
+/* Indicador visual de qual nota está tocando no momento */
+.step-btn.current {
+    border: 2px solid #fff;
+    transform: scale(1.1);
+}
+
+.export-actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+}
+
+.export-actions button {
+    padding: 10px 15px;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-master {
+    background: #3742fa;
+    color: white;
+}
+
+.btn-audio {
+    background: #ffa502;
+    color: white;
+}
