@@ -1,27 +1,80 @@
-/* music-composer.component.scss */
 .composer-container {
     padding: 20px;
     border-radius: 8px;
+    background: #1e1e1e;
+    color: #fff;
     font-family: monospace;
+    max-width: 900px;
 }
 
-.controls {
-    margin-bottom: 20px;
+.composer-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 15px;
 }
 
-.controls button.active {
+.header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+
+    h2 {
+        margin: 0;
+        color: #DEFF99;
+    }
+}
+
+.playback-btn.active {
     background: #ff4757;
+    color: white;
+}
+
+.metadata-form {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    background: #2a2a2a;
+    padding: 15px;
+    border-radius: 6px;
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        label {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        input {
+            background: #111;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 4px;
+
+            &:disabled {
+                opacity: 0.5;
+            }
+        }
+    }
 }
 
 .track {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 5px;
+    border-radius: 4px;
 }
 
 .track-info {
-    width: 120px;
-    font-size: 14px;
+    width: 130px;
+    font-size: 13px;
+    color: #ccc;
 }
 
 .steps {
@@ -30,41 +83,115 @@
 }
 
 .step-btn {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border: 1px solid #444;
+    background: #111;
     cursor: pointer;
     border-radius: 4px;
+    transition: background 0.1s;
+
+    &.active {
+        background-color: #DEFF99;
+        border-color: #a4ce4e;
+    }
+
+    &.current {
+        border: 2px solid #fff;
+        transform: scale(1.1);
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    }
 }
 
-.step-btn.active {
-    background-color: #DEFF99;
+.plugins-rack {
+    margin-top: 25px;
+    padding: 15px;
+    background: #252525;
+    border-radius: 8px;
+    border: 1px dashed #555;
+
+    h3 {
+        margin-top: 0;
+        font-size: 14px;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
 }
 
-/* Indicador visual de qual nota está tocando no momento */
-.step-btn.current {
-    border: 2px solid #fff;
-    transform: scale(1.1);
+.plugin-list {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.plugin-item {
+    background: #111;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    border: 1px solid #333;
+    transition: border-color 0.2s;
+
+    &:hover {
+        border-color: #DEFF99;
+    }
+
+    input {
+        cursor: pointer;
+    }
 }
 
 .export-actions {
     margin-top: 30px;
     display: flex;
-    gap: 15px;
+    gap: 20px;
+    border-top: 1px solid #333;
+    padding-top: 20px;
 }
 
-.export-actions button {
-    padding: 10px 15px;
-    font-weight: bold;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
+.export-block {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #2a2a2a;
+    padding: 10px;
+    border-radius: 6px;
 
-.btn-master {
-    color: white;
-}
+    select {
+        background: #111;
+        color: #fff;
+        border: 1px solid #444;
+        padding: 8px;
+        border-radius: 4px;
+        outline: none;
+    }
 
-.btn-audio {
-    color: white;
+    button {
+        color: white;
+        background: #333;
+        border: 1px solid #555;
+
+        &:hover:not([disabled]) {
+            background: #444;
+        }
+
+        &.btn-master mat-icon {
+            color: #5dade2;
+        }
+
+        &.btn-audio mat-icon {
+            color: #f5b041;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            background: #ff4757;
+            /* feedback de gravação */
+        }
+    }
 }
