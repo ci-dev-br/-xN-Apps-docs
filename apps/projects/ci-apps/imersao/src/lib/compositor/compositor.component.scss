@@ -67,7 +67,7 @@
     align-items: center;
     margin-bottom: 10px;
     background: rgba(255, 255, 255, 0.02);
-    padding: 5px;
+    padding: 0px;
     border-radius: 4px;
 }
 
@@ -79,16 +79,19 @@
 
 .steps {
     display: flex;
-    gap: 4px;
+    gap: 1px;
+    padding: 10px;
+    background: black;
 }
 
 .step-btn {
-    width: 32px;
+    width: 4px;
     height: 32px;
-    border: 1px solid #444;
-    background: #111;
+    border: 1px solid #333;
+    background: #444;
     cursor: pointer;
-    border-radius: 4px;
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, .3);
+    border-radius: 5px;
     transition: background 0.1s;
 
     &.active {

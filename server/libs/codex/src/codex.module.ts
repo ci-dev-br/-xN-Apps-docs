@@ -10,12 +10,14 @@ import { CodigoFonte } from "./models/codigo-fonte.entity";
 import { Lexico } from "./models/lexico";
 import { File } from "./models/file.entity";
 import { TerminalService } from './service/terminal.service';
+import { Action } from "./models/action.entity";
 export const CodeXEntities = [
     // Agent,
     // CodeBlock,
     // Termo,
     CodigoFonte,
     File,
+    Action,
     // Lexico,
 ];
 @Module({

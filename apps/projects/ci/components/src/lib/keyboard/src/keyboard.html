@@ -23,13 +23,6 @@
             @if(item.icon){<mat-icon>{{item.icon}}</mat-icon>}
         </button>
         }
-        <!-- <button class="menu-toggle-btn" (click)="auto()">
-            Auto
-        </button> -->
-        <!--  <button class="menu-toggle-btn" (click)="toggleMenu()">
-            ⚙️
-        </button> -->
-        <!-- Botões exclusivos para o layout dinâmico -->
         @if (currentLayoutName === 'dynamic') {
         <button mat-button (click)="forceShowAllKeys = !forceShowAllKeys">
             <mat-icon>visibility</mat-icon>

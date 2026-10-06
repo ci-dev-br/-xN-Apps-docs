@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Input, NgZone, OnDestroy, Optional, ViewChild, Output, EventEmitter } from '@angular/core';
-import { AnimationMixer, Mesh, PerspectiveCamera, PointLight, Scene, WebGLRenderer, Clock, Raycaster, Vector2, Vector3, PlaneGeometry, MeshBasicMaterial, DoubleSide } from 'three';
+import { AnimationMixer, Mesh, PerspectiveCamera, PointLight, Scene, WebGLRenderer, Clock, Raycaster, Vector2, Vector3, PlaneGeometry, MeshBasicMaterial, DoubleSide, AmbientLight } from 'three';
 import { CoreModule } from '@ci/core';
-import { OrbitControls } from 'three/addons';
+import { OrbitControls, VRButton } from 'three/addons';
 import { Objeto } from '../engine/objeto';
 import { Player } from '@ci/espazio';
 import { WebGLPathTracer } from 'three-gpu-pathtracer';
@@ -24,7 +24,7 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
   private pointerDownPosition = new Vector2();
   @Input() mixer?: AnimationMixer;
   @Input() scene!: Scene;
-  private uiScene!: Scene; // Nova cena exclusiva para elementos de UI/Highlight
+  private uiScene!: Scene;
   @Input() camera?: PerspectiveCamera;
   @Input() renderer?: WebGLRenderer;
   @Input() resizeObserver?: ResizeObserver;
@@ -37,6 +37,9 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
   private mouse = new Vector2();
   private highlightMesh?: Mesh;
   private _objetos?: Objeto[] | undefined;
+  private vrButtonElement?: HTMLElement;
+  // ESTADO DO RAY TRACING: Inicia como desligado
+  public isPathTracingEnabled: boolean = false;
   public get objetos(): Objeto[] | undefined {
     return this._objetos;
   }
@@ -67,7 +70,6 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
     this.raycaster.setFromCamera(this.mouse, this.camera);
-    // Intercepta apenas os objetos da cena principal (o highlight já não está aqui, o que evita bugs)
     const intersects = this.raycaster.intersectObjects(this.scene.children, true);
     const hit = intersects[0];
     if (hit) {
@@ -94,35 +96,40 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     this.initThree();
     this.setupResizeObserver();
     this.ngZone?.runOutsideAngular(() => {
-      this.animate();
+      this.renderer?.setAnimationLoop(() => this.animate());
     });
   }
   ngOnDestroy(): void {
     if (this.resizeObserver) this.resizeObserver.disconnect();
     if (this.pathTracer) this.pathTracer.dispose();
-    cancelAnimationFrame(this.frameId);
+    if (this.renderer) {
+      this.renderer.setAnimationLoop(null);
+      this.renderer.dispose();
+    }
+    if (this.vrButtonElement) this.vrButtonElement.remove();
     if (this.controls) this.controls.dispose();
-    if (this.renderer) this.renderer.dispose();
   }
   private initThree(): void {
     this.scene = new Scene();
-    this.uiScene = new Scene(); // Inicializa a cena de UI
+    this.uiScene = new Scene();
     const { clientWidth, clientHeight } = this.rendererContainer.nativeElement;
     this.renderer = new WebGLRenderer({
       antialias: true,
       alpha: true,
-      powerPreference: 'high-performance',
-      precision: 'highp'
+      // powerPreference: 'high-performance',
+      // precision: 'highp'
     });
-    // CRÍTICO: Impede que a renderização da uiScene apague o resultado do PathTracer
+    this.renderer.xr.enabled = true;
+    // IMPORTANTE: Como usamos autoClear = false, gerenciaremos as limpezas no animate()
     this.renderer.autoClear = false;
     this.renderer.shadowMap.enabled = false;
     this.renderer.setSize(clientWidth, clientHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
+    this.vrButtonElement = VRButton.createButton(this.renderer);
+    this.rendererContainer.nativeElement.appendChild(this.vrButtonElement);
     this.pathTracer = new WebGLPathTracer(this.renderer);
     this.pathTracer.enablePathTracing = true;
-    //  this.pathTracer.dynamicLowRes = true;
     this.pathTracer.minSamples = 1;
     this.pathTracer.renderScale = 1;
     this.pathTracer.filterGlossyFactor = 0.5;
@@ -135,21 +142,24 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
       this.controls.enablePan = false;
       this.controls.enableZoom = true;
       this.controls.addEventListener('change', () => {
-        this.pathTracer.updateCamera();
+        if (this.isPathTracingEnabled) this.pathTracer.updateCamera();
       });
     }
-    /* const light = new PointLight(0xffffff, 10, 100);
+    // LUZES PARA MODO STANDARD (Ray Tracing Desligado)
+    // Descomentei e adicionei luz ambiente para que no modo normal não fique tudo escuro
+    const light = new PointLight(0xffffff, 10, 100);
     this.lights.push(light);
     light.position.set(0, 40, -10);
-    this.scene.add(light); */
-    // Malha de Highlight adicionada à UISCENE em vez da SCENE principal
+    this.scene.add(light);
+    const ambientLight = new AmbientLight(0xffffff, 1.5);
+    this.scene.add(ambientLight);
     const geometry = new PlaneGeometry(1.65, 1.65);
     const material = new MeshBasicMaterial({
       color: 0x7b61ff,
       transparent: true,
       opacity: 0.6,
       side: DoubleSide,
-      depthTest: false // Garante que o highlight não seja escondido pelo tabuleiro renderizado
+      depthTest: false
     });
     this.highlightMesh = new Mesh(geometry, material);
     this.highlightMesh.rotation.x = -Math.PI / 2;
@@ -170,11 +180,18 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
         }
       });
       Promise.all(loadPromises).then(() => {
-        // Usa a versão síncrona uma única vez no carregamento. 
-        // Isso evita completamente o erro de Worker do Angular.
         this.pathTracer.setScene(this.scene, this.camera!);
         this.pathTracer.updateCamera();
       });
+    }
+  }
+  // MÉTODO PARA LIGAR/DESLIGAR O RAY TRACING (pode ser chamado via botão no HTML)
+  public toggleRayTracing(): void {
+    this.isPathTracingEnabled = !this.isPathTracingEnabled;
+    // Quando religamos, garantimos que a cena e a câmera estão perfeitamente sincronizadas
+    if (this.isPathTracingEnabled && this.pathTracer && this.scene && this.camera) {
+      this.pathTracer.setScene(this.scene, this.camera);
+      this.pathTracer.updateCamera();
     }
   }
   public setHighlight(rank: number | null, file: number | null) {
@@ -187,24 +204,25 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
       this.highlightMesh.position.z = (rank - 3.5) * step;
       this.highlightMesh.visible = true;
     }
-    // NENHUMA ATUALIZAÇÃO DO PATHTRACER AQUI. 
-    // O highlight se move instantaneamente sem afetar o Raytracing!
   }
   private animate(): void {
     try {
       const delta = this.clock.getDelta();
-      this.frameId = requestAnimationFrame(() => this.animate());
-      if (this.mixer) {
-        this.mixer.update(delta);
-      }
-      if (this.controls) {
-        this.controls.update();
-      }
-      if (this.scene && this.camera && this.renderer && this.pathTracer) {
-        // Renderiza a amostra do Path Tracer continuamente para acumular os cálculos de luz
-        this.pathTracer.renderSample();
-        // Limpa o buffer de profundidade e renderiza a UI por cima
-        // this.renderer.clearDepth();
+      if (this.mixer) this.mixer.update(delta);
+      if (this.controls) this.controls.update();
+      if (this.scene && this.camera && this.renderer) {
+        // Verifica se VR está ativo
+        const isVRActive = this.renderer.xr.isPresenting;
+        // Se Path Tracing habilitado e NÃO estamos no modo VR (VR não suporta o PathTracer nativamente bem)
+        if (this.isPathTracingEnabled && this.pathTracer && !isVRActive) {
+          this.pathTracer.renderSample();
+        } else {
+          // RENDERIZAÇÃO PADRÃO DO THREE.JS (Rápida/Ideal para VR e PCs mais fracos)
+          this.renderer.clear(); // Necessário pois autoClear está false
+          this.renderer.render(this.scene, this.camera);
+        }
+        // Renderiza a UI (Tabuleiro/Highlights) por cima
+        this.renderer.clearDepth();
         this.renderer.render(this.uiScene, this.camera);
       }
     } catch (err) {
@@ -225,25 +243,22 @@ export class ThrejsComponent implements AfterViewInit, OnDestroy {
     if (!this.camera || !this.renderer) return;
     const h = height > 0 ? height : 1;
     this.camera.aspect = width / h;
-    // this.camera.updateProjectionMatrix();
+    // Atualiza projeção apenas se usarmos renderizador padrão também
+    this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, h);
-    if (this.pathTracer) {
+    if (this.pathTracer && this.isPathTracingEnabled) {
       this.pathTracer.updateCamera();
     }
   }
-  // Adicione estas variáveis de controle junto às outras propriedades da classe
   private isAnimatingPiece = false;
   private isRebuildingBVH = false;
-  // Método chamado para iniciar o movimento da peça
   public iniciarAnimacaoMovimento() {
     this.isAnimatingPiece = true;
   }
-  // Método chamado quando a peça termina de se mover
   public finalizarAnimacaoMovimento() {
     this.isAnimatingPiece = false;
-    // 1. Atualiza as matrizes no mundo 3D
-    //  this.scene.updateMatrixWorld(true);
-    if (this.pathTracer && this.camera) {
+    // Atualiza o BVH/PathTracer apenas se o ray tracing estiver ligado
+    if (this.isPathTracingEnabled && this.pathTracer && this.camera) {
       try {
         this.pathTracer.setScene(this.scene, this.camera);
         this.pathTracer.updateCamera();

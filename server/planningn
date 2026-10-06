@@ -30,3 +30,11 @@ Apps: Jogo de Xadres
 
 
 ---
+
+# Keyboard | Teclado Ci Pro
+
+Componente: Keyboard
+Descrição:
+    O componente de teclado permite alternar o layout, criar layouts próprios. Com as funções de ações é possível criar fluxos autonomos a partir do teclado para controle dos dispositivos conectados ao serviço de operação;
+
+--- 

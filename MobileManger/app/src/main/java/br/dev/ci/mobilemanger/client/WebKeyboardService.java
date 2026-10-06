@@ -1,7 +1,12 @@
 package br.dev.ci.mobilemanger.client;
+import android.accessibilityservice.AccessibilityService;
+import android.accessibilityservice.GestureDescription;
 import android.annotation.SuppressLint;
+import android.graphics.Path;
 import android.inputmethodservice.InputMethodService;
+import android.os.SystemClock;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputConnection;
 import android.webkit.JavascriptInterface;
@@ -59,6 +64,26 @@ public class WebKeyboardService extends InputMethodService {
                         ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_TAB));
                         ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_TAB));
                         break;
+                    default:
+                        if(action.indexOf("X") > -1){
+                            long downTime = SystemClock.uptimeMillis();
+                            long eventTime = SystemClock.uptimeMillis() + 100;
+
+                            float x = 500f;
+                            float y = 1000f;
+
+                            MotionEvent downEvent = MotionEvent.obtain(
+                                    downTime, eventTime, MotionEvent.ACTION_DOWN, x, y, 0
+                            );
+
+                            MotionEvent upEvent = MotionEvent.obtain(
+                                    downTime, eventTime + 50, MotionEvent.ACTION_UP, x, y, 0
+                            );
+
+                            downEvent.recycle();
+                            upEvent.recycle();
+
+                        }
                 }
             }
         }
@@ -85,4 +110,6 @@ public class WebKeyboardService extends InputMethodService {
             outInsets.contentTopInsets = outInsets.visibleTopInsets;
         }
     }
+
+
 }

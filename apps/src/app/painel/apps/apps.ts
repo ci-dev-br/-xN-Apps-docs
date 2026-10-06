@@ -263,6 +263,18 @@ export const CI_STATIC_APPS: IApp[] = [
         type: 'svg'
     },
     {
+        type: 'mat',
+        icon: 'chess',
+        color: getColor(),
+        url: '/chess',
+        roles: [
+            'USER'
+        ],
+        name: 'Xadrez',
+        shortDescription: 'Jogo de Xadrez',
+        description: 'Pratique sua habilidade no Xadrez'
+    },
+    {
         shortDescription: 'Loja de Aplicativos',
         description: 'Loja de Aplicativos',
         color: getColor(),
