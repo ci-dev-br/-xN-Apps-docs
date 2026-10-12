@@ -11,32 +11,82 @@ import { WsAdapter } from '@nestjs/platform-ws';
 import { corsOptionsDelegate } from './cors-option-delegate';
 import * as cookieParser from 'cookie-parser';
 import { existsSync, readFileSync, writeFileSync, renameSync } from 'fs';
+import * as inspector from 'inspector';
+
+// Captura se o DEBUG veio explicitamente por linha de comando/ambiente do processo ANTES do .env
+const ENV_DEBUG_BEFORE_DOTENV = process.env.DEBUG;
+
+// Inicializa variáveis de ambiente
+config();
 
 // Caminho atualizado para __dirname + '/../STATUS'
 const STATUS_FILE = join(__dirname, '..', 'STATUS');
-const TEN_MINUTES_MS = 10 * 60 * 1000;
-const HEARTBEAT_INTERVAL_MS = 1 * 1000; // 10 segundos (1 ciclo)
-const ZOMBIE_TIMEOUT_MS = 3 * 1000;     // 20 segundos (2 ciclos sem sinal de vida)
+
+// Constantes de tempo da Orquestração
+const CHECK_DISTANCE_MS = 300;           // Distância de 300ms entre consultas ao STATUS
+const PORT_86_ROTATION_MS = 10 * 1000;   // Cada nó assume a porta 86 por 10 segundos (se houver outros)
+const OLD_PROCESS_PURGE_MS = 60 * 1000;  // Limpa processos inativos há mais de 1 minuto do arquivo STATUS
+const ZOMBIE_TIMEOUT_MS = 5 * 1000;      // Tolerância para considerar zombie caso trave sem morrer no SO
+
+/**
+ * Detecta se a instância atual foi iniciada em modo DEBUG:
+ * - Inspector do Node ativo (VSCode Debug / --inspect / --inspect-brk)
+ * - Argumentos --debug / --inspect na linha de comando
+ * - Variável de ambiente DEBUG passada diretamente para o processo
+ */
+const IS_DEBUG_INSTANCE = Boolean(
+  inspector.url() !== undefined ||
+  process.argv.some((arg) => arg === '--debug' || arg.startsWith('--debug=') || arg.startsWith('--inspect')) ||
+  process.execArgv.some((arg) => arg.startsWith('--inspect') || arg.startsWith('--debug')) ||
+  (ENV_DEBUG_BEFORE_DOTENV && ENV_DEBUG_BEFORE_DOTENV !== 'false' && ENV_DEBUG_BEFORE_DOTENV !== '0') ||
+  (process.env.DEBUG === 'true' || process.env.DEBUG === '1')
+);
 
 interface ProcessInfo {
   startedAt: string;
   updatedAt?: string;
   lastHeartbeat?: string;
   stoppedAt?: string;
+  lastPort86ClaimedAt?: string; // Última data/hora em que o processo assumiu a porta 86
+  nextStatusCheckAt?: string;   // Próximo horário programado em que este processo consultará o STATUS
   status: 'running' | 'online' | 'fail' | 'stopped';
   port?: number;
   previousPort?: number;
+  debug?: boolean;
 }
 
 type StatusMap = Record<string, ProcessInfo>;
 
 let memoryStatusCache: StatusMap = {};
-let heartbeatTimer: NodeJS.Timeout | null = null;
+let scheduledCheckTimer: NodeJS.Timeout | null = null;
 let globalApp: NestExpressApplication | null = null;
-let isMigratingTo86 = false;
+let isChangingPort = false;
+let isOrchestrating = false;
+let currentPort86SessionStartMs = 0; // Momento exato em que o turno atual na porta 86 começou
 
 /**
- * Lê o arquivo STATUS garantindo que nenhum outro PID registrado anteriormente seja perdido.
+ * Pausa assíncrona auxiliar.
+ */
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Verifica diretamente no Kernel do Sistema Operacional se um PID ainda existe em execução.
+ */
+function isOsPidAlive(pid: number | string): boolean {
+  const numPid = Number(pid);
+  if (!numPid || Number.isNaN(numPid)) return false;
+  if (numPid === process.pid) return true;
+
+  try {
+    process.kill(numPid, 0);
+    return true;
+  } catch (err: any) {
+    return err?.code === 'EPERM';
+  }
+}
+
+/**
+ * Lê o arquivo STATUS do disco.
  */
 function readStatus(): StatusMap {
   if (!existsSync(STATUS_FILE)) {
@@ -48,11 +98,11 @@ function readStatus(): StatusMap {
       const raw = readFileSync(STATUS_FILE, 'utf-8').trim();
       if (raw) {
         const parsed = JSON.parse(raw);
-        memoryStatusCache = { ...memoryStatusCache, ...parsed };
+        memoryStatusCache = parsed;
         return memoryStatusCache;
       }
     } catch {
-      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50);
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 15);
     }
   }
 
@@ -71,17 +121,28 @@ function writeStatusMap(statusMap: StatusMap): StatusMap {
     writeFileSync(tempFile, JSON.stringify(statusMap, null, 2), { encoding: 'utf-8' });
     renameSync(tempFile, STATUS_FILE);
   } catch {
-    writeFileSync(STATUS_FILE, JSON.stringify(statusMap, null, 2), { encoding: 'utf-8' });
+    try {
+      writeFileSync(STATUS_FILE, JSON.stringify(statusMap, null, 2), { encoding: 'utf-8' });
+    } catch {
+      // Ignora colisão momentânea de I/O
+    }
   }
 
   return statusMap;
 }
 
 /**
- * Valida se um processo está vivo (status ativo + sinal de vida dentro de 2 ciclos / 20s).
+ * Valida se um processo está realmente vivo:
+ * 1. Status 'online' ou 'running'
+ * 2. PID existe no Sistema Operacional
+ * 3. Sinal de vida dentro de ZOMBIE_TIMEOUT_MS
  */
-function isProcessTrulyAlive(info: ProcessInfo, now = Date.now()): boolean {
-  if (info.status !== 'online' && info.status !== 'running') {
+function isProcessTrulyAlive(info: ProcessInfo, now = Date.now(), pid?: string): boolean {
+  if (!info || (info.status !== 'online' && info.status !== 'running')) {
+    return false;
+  }
+
+  if (pid && !isOsPidAlive(pid)) {
     return false;
   }
 
@@ -92,16 +153,18 @@ function isProcessTrulyAlive(info: ProcessInfo, now = Date.now()): boolean {
 }
 
 /**
- * Varre o StatusMap procurando processos que estão há mais de 2 ciclos (20s)
- * sem dar sinal de vida e os atualiza para 'stopped'.
+ * 1. Marca como 'stopped' processos zombies ou que já morreram no SO.
+ * 2. Remove definitivamente do objeto STATUS processos parados/antigos há mais de 1 minuto (60s).
  */
-function cleanUpZombies(statusMap: StatusMap, now = Date.now()): void {
+function cleanUpZombiesAndPurgeOld(statusMap: StatusMap, now = Date.now()): boolean {
   const currentPid = String(process.pid);
+  let changed = false;
 
   for (const [pid, info] of Object.entries(statusMap)) {
     if (pid === currentPid) continue;
 
-    if ((info.status === 'online' || info.status === 'running') && !isProcessTrulyAlive(info, now)) {
+    // A) Detecta se o processo morreu ou virou zombie
+    if ((info.status === 'online' || info.status === 'running') && !isProcessTrulyAlive(info, now, pid)) {
       const lastSeen = info.lastHeartbeat || info.updatedAt || info.startedAt || new Date(now).toISOString();
       statusMap[pid] = {
         ...info,
@@ -109,158 +172,438 @@ function cleanUpZombies(statusMap: StatusMap, now = Date.now()): void {
         stoppedAt: lastSeen,
         updatedAt: new Date(now).toISOString(),
       };
-      console.warn(`[STATUS] Processo Zombie detectado (PID ${pid} na porta ${info.port}). Marcado como 'stopped'.`);
+      changed = true;
+      console.warn(
+        `[STATUS] Processo encerrado/inativo detectado (PID ${pid}${info.debug ? ' [DEBUG]' : ''} na porta ${info.port}). Marcado como 'stopped'.`
+      );
+    }
+
+    // B) Expurga processos inativos ('stopped' ou 'fail') com mais de 1 minuto
+    const currentInfo = statusMap[pid];
+    if (currentInfo && (currentInfo.status === 'stopped' || currentInfo.status === 'fail')) {
+      const refTimeStr = currentInfo.stoppedAt || currentInfo.updatedAt || currentInfo.lastHeartbeat || currentInfo.startedAt;
+      const refTimeMs = refTimeStr ? new Date(refTimeStr).getTime() : 0;
+
+      if (now - refTimeMs > OLD_PROCESS_PURGE_MS) {
+        delete statusMap[pid];
+        changed = true;
+      }
     }
   }
+
+  return changed;
 }
 
 /**
- * Salva ou atualiza o status do PID atual e já aproveita para limpar zombies.
+ * Calcula o próximo horário de consulta ao arquivo STATUS mantendo uma distância de 300ms
+ * em relação às consultas agendadas pelos demais processos vivos.
  */
-function savePidStatus(data: Partial<ProcessInfo>, startNewProcess = false): StatusMap {
+function calculateNextCheckTime(statusMap: StatusMap, nowMs = Date.now()): { nextIso: string; delayMs: number } {
+  const currentPid = String(process.pid);
+
+  // Coleta todos os agendamentos futuros dos outros processos vivos
+  const scheduledTimes = Object.entries(statusMap)
+    .filter(([pid, info]) => pid !== currentPid && isProcessTrulyAlive(info, nowMs, pid) && info.nextStatusCheckAt)
+    .map(([, info]) => new Date(info.nextStatusCheckAt!).getTime())
+    .filter((t) => !Number.isNaN(t) && t > nowMs)
+    .sort((a, b) => a - b);
+
+  // Começa propondo 300ms a partir de agora
+  let candidateMs = nowMs + CHECK_DISTANCE_MS;
+
+  // Se houver conflito (menos de 300ms de distância de outro agendamento), empurra em saltos de 300ms
+  for (const t of scheduledTimes) {
+    if (Math.abs(candidateMs - t) < CHECK_DISTANCE_MS) {
+      candidateMs = t + CHECK_DISTANCE_MS;
+    }
+  }
+
+  const delayMs = Math.max(50, candidateMs - nowMs);
+  return {
+    nextIso: new Date(candidateMs).toISOString(),
+    delayMs,
+  };
+}
+
+/**
+ * Salva ou atualiza o status do PID atual, limpa zombies/antigos (> 1 min)
+ * e agenda o próximo horário de consulta no STATUS (com 300ms de distância).
+ */
+function savePidStatus(data: Partial<ProcessInfo>, startNewProcess = false): { statusMap: StatusMap; nextDelayMs: number } {
   const statusMap = readStatus();
   const pid = String(process.pid);
   const nowMs = Date.now();
   const nowIso = new Date(nowMs).toISOString();
 
-  // Limpa eventuais processos zombies antes de salvar
-  cleanUpZombies(statusMap, nowMs);
+  cleanUpZombiesAndPurgeOld(statusMap, nowMs);
 
-  if (startNewProcess || !statusMap[pid]) {
+  const isStopping = data.status === 'stopped' || data.status === 'fail';
+  const { nextIso, delayMs } = isStopping
+    ? { nextIso: undefined, delayMs: CHECK_DISTANCE_MS }
+    : calculateNextCheckTime(statusMap, nowMs);
+
+  const existing = statusMap[pid];
+
+  if (startNewProcess || !existing) {
     statusMap[pid] = {
       startedAt: nowIso,
       status: 'running',
+      debug: IS_DEBUG_INSTANCE,
       ...data,
-      lastHeartbeat: nowIso,
+      lastHeartbeat: isStopping ? existing?.lastHeartbeat : nowIso,
+      nextStatusCheckAt: nextIso,
       updatedAt: nowIso,
     };
   } else {
     statusMap[pid] = {
-      ...statusMap[pid],
+      ...existing,
+      debug: IS_DEBUG_INSTANCE,
       ...data,
-      lastHeartbeat: nowIso,
+      ...(isStopping ? { nextStatusCheckAt: undefined } : { lastHeartbeat: nowIso, nextStatusCheckAt: nextIso }),
       updatedAt: nowIso,
     };
   }
 
-  return writeStatusMap(statusMap);
+  writeStatusMap(statusMap);
+  return { statusMap, nextDelayMs: delayMs };
 }
 
 /**
- * Verifica se existe alguma aplicação viva utilizando ou migrando para a porta 86.
+ * Comparador de prioridade para assumir a porta 86:
+ * 1º Instâncias DEBUG têm prioridade absoluta.
+ * 2º Entre instâncias do mesmo tipo, vence a que está HÁ MAIS TEMPO SEM ASSUMIR A PORTA 86
+ *    (menor timestamp em `lastPort86ClaimedAt`, ou `0` se nunca assumiu).
+ * 3º Desempate por antiguidade do processo (`startedAt`) e menor `PID`.
  */
-function isPort86Occupied(statusMap: StatusMap, now = Date.now()): boolean {
-  return Object.values(statusMap).some(
-    (info) => info.port === 86 && isProcessTrulyAlive(info, now)
-  );
+function compareProcessPriority(
+  [pidA, infoA]: [string, ProcessInfo],
+  [pidB, infoB]: [string, ProcessInfo]
+): number {
+  const debugA = Boolean(infoA.debug);
+  const debugB = Boolean(infoB.debug);
+
+  if (debugA !== debugB) {
+    return debugA ? -1 : 1;
+  }
+
+  const last86A = infoA.lastPort86ClaimedAt ? new Date(infoA.lastPort86ClaimedAt).getTime() : 0;
+  const last86B = infoB.lastPort86ClaimedAt ? new Date(infoB.lastPort86ClaimedAt).getTime() : 0;
+
+  if (last86A !== last86B) {
+    return last86A - last86B; // Mais antigo (ou nunca assumiu = 0) vence
+  }
+
+  const startA = new Date(infoA.startedAt).getTime();
+  const startB = new Date(infoB.startedAt).getTime();
+  if (startA !== startB) {
+    return startA - startB;
+  }
+
+  return Number(pidA) - Number(pidB);
 }
 
 /**
- * Orquestração de Eleição: Determina se ESTA instância deve assumir a porta 86.
- * Usa o arquivo STATUS como fonte de verdade para ordenar todas as instâncias vivas
- * por antiguidade (startedAt) e PID, garantindo que apenas UMA assuma a porta 86.
+ * Procura e derruba imediatamente qualquer outro processo que esteja ocupando a porta 86 no STATUS,
+ * para que a instância prioritária (especialmente DEBUG) possa assumir sem espera.
  */
-function shouldThisInstanceClaimPort86(statusMap: StatusMap, now = Date.now()): boolean {
+function forceEvictPort86Owner(statusMap: StatusMap, nowMs = Date.now()): void {
+  const currentPid = String(process.pid);
+  let changed = false;
+
+  for (const [pid, info] of Object.entries(statusMap)) {
+    if (pid === currentPid) continue;
+
+    if (info.port === 86 && (info.status === 'online' || info.status === 'running')) {
+      console.warn(`[Orquestração] Derrubando processo PID ${pid} que ocupava a porta 86 para assumir...`);
+
+      try {
+        process.kill(Number(pid), 'SIGTERM');
+      } catch {
+        // Processo já não existia ou sem permissão
+      }
+
+      statusMap[pid] = {
+        ...info,
+        status: 'stopped',
+        stoppedAt: new Date(nowMs).toISOString(),
+        updatedAt: new Date(nowMs).toISOString(),
+      };
+      changed = true;
+    }
+  }
+
+  if (changed) {
+    writeStatusMap(statusMap);
+  }
+}
+
+/**
+ * Verifica se esta instância que está na porta 86 deve abrir mão dela:
+ * - Caso 1: Esta instância NÃO é DEBUG e surgiu uma instância DEBUG viva.
+ * - Caso 2 (Rotação de 10s): Esta instância NÃO é DEBUG, existem outros nós 'online' vivos,
+ *   e o tempo de posse atual na porta 86 já atingiu 10 segundos (PORT_86_ROTATION_MS).
+ */
+function shouldRelinquishPort86(statusMap: StatusMap, nowMs = Date.now()): boolean {
   const currentPid = String(process.pid);
   const myInfo = statusMap[currentPid];
 
-  // Só candidatos que já estão 'online' em outra porta podem migrar para a 86
+  if (!myInfo || myInfo.status !== 'online' || myInfo.port !== 86) {
+    return false;
+  }
+
+  // DEBUG sempre tem prioridade e mantém a porta 86 enquanto estiver ativo
+  if (myInfo.debug) {
+    return false;
+  }
+
+  // 1. Se entrou qualquer DEBUG vivo, cede imediatamente
+  const anyDebugAlive = Object.entries(statusMap).some(
+    ([pid, info]) => pid !== currentPid && Boolean(info.debug) && isProcessTrulyAlive(info, nowMs, pid)
+  );
+  if (anyDebugAlive) {
+    return true;
+  }
+
+  // 2. Verifica se existem outros nós online para rotacionar a cada 10 segundos
+  const otherOnlineNodes = Object.entries(statusMap).filter(
+    ([pid, info]) => pid !== currentPid && info.status === 'online' && isProcessTrulyAlive(info, nowMs, pid)
+  );
+
+  if (otherOnlineNodes.length === 0) {
+    // Único nó ativo: continua na porta 86
+    return false;
+  }
+
+  const sessionStart =
+    currentPort86SessionStartMs ||
+    (myInfo.lastPort86ClaimedAt ? new Date(myInfo.lastPort86ClaimedAt).getTime() : new Date(myInfo.startedAt).getTime());
+
+  return (nowMs - sessionStart) >= PORT_86_ROTATION_MS;
+}
+
+/**
+ * Determina se ESTA instância (atualmente fora da porta 86) deve assumir a porta 86 agora.
+ */
+function shouldThisInstanceClaimPort86(statusMap: StatusMap, nowMs = Date.now()): boolean {
+  const currentPid = String(process.pid);
+  const myInfo = statusMap[currentPid];
+
   if (!myInfo || myInfo.status !== 'online' || myInfo.port === 86) {
     return false;
   }
 
-  // Se já existe alguém vivo na porta 86 (online ou running/migrando), ninguém assume
-  if (isPort86Occupied(statusMap, now)) {
+  const currentOwnerEntry = Object.entries(statusMap).find(
+    ([pid, info]) => pid !== currentPid && info.port === 86 && isProcessTrulyAlive(info, nowMs, pid)
+  );
+
+  // Regra Especial DEBUG: Se esta instância é DEBUG, ela pode assumir mesmo que a 86 esteja ocupada por um nó normal
+  // (ou se ela for a DEBUG mais prioritária e a 86 estiver livre)
+  if (myInfo.debug) {
+    if (currentOwnerEntry) {
+      const [, ownerInfo] = currentOwnerEntry;
+      // Se quem está na 86 já é outro DEBUG, respeita ele; se for nó normal, o DEBUG vai derrubar e assumir!
+      if (ownerInfo.debug) {
+        return false;
+      }
+    }
+
+    const aliveDebugCandidates = Object.entries(statusMap)
+      .filter(([pid, info]) => info.status === 'online' && Boolean(info.debug) && isProcessTrulyAlive(info, nowMs, pid))
+      .sort(compareProcessPriority);
+
+    return aliveDebugCandidates.length > 0 && aliveDebugCandidates[0][0] === currentPid;
+  }
+
+  // Regra para Nós Normais:
+  // 1. Se a porta 86 já está ocupada por alguém vivo, aguarda a rotação de 10s
+  if (currentOwnerEntry) {
     return false;
   }
 
-  // Lista todos os processos candidatos vivos e 'online'
+  // 2. Se existe qualquer instância DEBUG viva, nós normais não assumem a 86
+  const anyAliveDebugExists = Object.entries(statusMap).some(
+    ([pid, info]) => Boolean(info.debug) && isProcessTrulyAlive(info, nowMs, pid)
+  );
+  if (anyAliveDebugExists) {
+    return false;
+  }
+
+  // 3. Eleição entre nós normais: vence o nó online que está há mais tempo sem assumir a porta 86
   const aliveCandidates = Object.entries(statusMap)
-    .filter(([, info]) => info.status === 'online' && isProcessTrulyAlive(info, now))
-    .sort(([pidA, infoA], [pidB, infoB]) => {
-      const timeA = new Date(infoA.startedAt).getTime();
-      const timeB = new Date(infoB.startedAt).getTime();
-      if (timeA !== timeB) {
-        return timeA - timeB; // Prioriza a instância que iniciou primeiro (mais antiga)
-      }
-      return Number(pidA) - Number(pidB); // Desempate determinístico pelo menor PID
-    });
+    .filter(([pid, info]) => info.status === 'online' && isProcessTrulyAlive(info, nowMs, pid))
+    .sort(compareProcessPriority);
 
   if (aliveCandidates.length === 0) {
     return false;
   }
 
-  // Apenas o líder eleito (posição 0) tem permissão para reivindicar a porta 86
-  const [electedPid] = aliveCandidates[0];
-  return electedPid === currentPid;
+  return aliveCandidates[0][0] === currentPid;
 }
 
 /**
- * Realiza a migração da instância atual para a porta 86 sem derrubar o processo.
+ * Troca a porta do servidor HTTP subjacente do NestJS com micro-retry rápido.
+ */
+async function rebindServerPort(newPort: number, maxRetries = 25, retryDelayMs = 40): Promise<void> {
+  if (!globalApp) throw new Error('Aplicação NestJS ainda não inicializada.');
+
+  const httpServer: any = globalApp.getHttpServer();
+  if (!httpServer) throw new Error('HttpServer não encontrado.');
+
+  if (httpServer.listening) {
+    if (typeof httpServer.closeAllConnections === 'function') {
+      httpServer.closeAllConnections();
+    }
+    if (typeof httpServer.closeIdleConnections === 'function') {
+      httpServer.closeIdleConnections();
+    }
+    await new Promise<void>((resolve) => {
+      httpServer.close(() => resolve());
+    });
+  }
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const onError = (err: Error) => {
+          httpServer.removeListener('listening', onListening);
+          reject(err);
+        };
+        const onListening = () => {
+          httpServer.removeListener('error', onError);
+          resolve();
+        };
+
+        httpServer.once('error', onError);
+        httpServer.once('listening', onListening);
+        httpServer.listen(newPort);
+      });
+      return;
+    } catch (err: any) {
+      if (err?.code === 'EADDRINUSE' && attempt < maxRetries) {
+        await sleep(retryDelayMs);
+        continue;
+      }
+      throw err;
+    }
+  }
+}
+
+/**
+ * Libera a porta 86 (após os 10s de turno ou quando um DEBUG entra) e vai para uma porta secundária livre,
+ * registrando o timestamp final de `lastPort86ClaimedAt` para ir para o fim da fila de rotação.
+ */
+async function relinquishPort86() {
+  if (!globalApp || isChangingPort) return;
+  isChangingPort = true;
+
+  const currentPid = String(process.pid);
+  let targetPort = 0;
+
+  try {
+    const statusMap = readStatus();
+    do {
+      targetPort = Math.floor(Math.random() * (65535 - 1024 + 1)) + 1024;
+    } while (targetPort === 86 || !isPortAvailable(targetPort, statusMap));
+
+    console.log(
+      `[Orquestração] Rotacionando/Cedendo porta 86 (PID ${currentPid}) -> indo para porta secundária ${targetPort}...`
+    );
+
+    await rebindServerPort(targetPort, 5, 20);
+    currentPort86SessionStartMs = 0;
+
+    // Atualiza lastPort86ClaimedAt no momento da saída para que este nó seja considerado o mais recente a ter usado a 86
+    savePidStatus({
+      status: 'online',
+      port: targetPort,
+      previousPort: 86,
+      lastPort86ClaimedAt: new Date().toISOString(),
+    });
+
+    console.log(
+      `[Orquestração] Porta 86 liberada para o próximo nó da fila! Instância (PID ${currentPid}) online na porta ${targetPort}.`
+    );
+  } catch (err: any) {
+    console.error(`[Orquestração] Erro ao liberar a porta 86 para a porta ${targetPort}:`, err?.message);
+    savePidStatus({ status: 'fail', stoppedAt: new Date().toISOString() });
+    process.exit(1);
+  } finally {
+    isChangingPort = false;
+  }
+}
+
+/**
+ * Assume a porta 86. Caso a porta 86 esteja em uso no STATUS, localiza o processo dono e o derruba antes de assumir.
  */
 async function migrateToPort86() {
-  if (!globalApp || isMigratingTo86) return;
-  isMigratingTo86 = true;
+  if (!globalApp || isChangingPort) return;
+  isChangingPort = true;
 
   const currentPid = String(process.pid);
   const statusMap = readStatus();
   const previousPort = statusMap[currentPid]?.port;
 
   try {
-    // 1. Reserva imediatamente a porta 86 no STATUS (status: 'running', port: 86)
-    // Isso trava a porta 86 no arquivo STATUS para que outras instâncias vejam que já foi assumida.
+    // Se a porta 86 estiver ocupada no STATUS (ex: DEBUG entrando ou nó anterior travado), derruba o ocupante
+    forceEvictPort86Owner(statusMap);
+
+    const claimIso = new Date().toISOString();
+
+    // 1. Reserva a porta 86 no STATUS registrando a data em que assumiu (lastPort86ClaimedAt)
     savePidStatus({
       status: 'running',
       port: 86,
       previousPort,
+      lastPort86ClaimedAt: claimIso,
     });
 
-    // 2. Relê o STATUS para confirmar que não houve colisão de escrita no mesmo milissegundo
+    // 2. Confirma que não houve colisão com outro nó de maior prioridade no mesmo instante
     const verifyMap = readStatus();
     const conflictingPids = Object.entries(verifyMap).filter(
-      ([pid, info]) => pid !== currentPid && info.port === 86 && isProcessTrulyAlive(info)
+      ([pid, info]) => pid !== currentPid && info.port === 86 && isProcessTrulyAlive(info, Date.now(), pid)
     );
 
     if (conflictingPids.length > 0) {
-      // Se outro processo com maior prioridade também escreveu no mesmo instante, cede a vez
       const allOn86 = [
-        [currentPid, verifyMap[currentPid]] as const,
+        [currentPid, verifyMap[currentPid]] as [string, ProcessInfo],
         ...conflictingPids,
-      ].sort(([pidA, infoA], [pidB, infoB]) => {
-        const tA = new Date(infoA.startedAt).getTime();
-        const tB = new Date(infoB.startedAt).getTime();
-        return tA !== tB ? tA - tB : Number(pidA) - Number(pidB);
-      });
+      ].sort(compareProcessPriority);
 
       if (allOn86[0][0] !== currentPid) {
-        console.log(`[Orquestração] Outra instância (${allOn86[0][0]}) teve prioridade na porta 86. Mantendo porta ${previousPort}.`);
+        console.log(
+          `[Orquestração] Outra instância (${allOn86[0][0]}) teve prioridade na porta 86. Mantendo porta ${previousPort}.`
+        );
         savePidStatus({ status: 'online', port: previousPort });
-        isMigratingTo86 = false;
         return;
       }
     }
 
-    console.log(`[Orquestração] Porta 86 livre. Migrando instância (PID ${currentPid}) da porta ${previousPort} para a porta 86...`);
+    console.log(
+      `[Orquestração] Assumindo porta 86 -> ${IS_DEBUG_INSTANCE ? '[DEBUG] ' : ''}(PID ${currentPid}, vindo da porta ${previousPort})...`
+    );
 
-    // 3. Fecha o listener da porta atual e reabre na porta 86
-    const httpServer = globalApp.getHttpServer();
-    if (httpServer && httpServer.listening) {
-      await new Promise<void>((resolve) => httpServer.close(() => resolve()));
-    }
+    // 3. Faz o bind na porta 86
+    await rebindServerPort(86, 25, 40);
 
-    await globalApp.listen(86);
+    const nowMs = Date.now();
+    currentPort86SessionStartMs = nowMs;
 
     savePidStatus({
       status: 'online',
       port: 86,
+      lastPort86ClaimedAt: new Date(nowMs).toISOString(),
     });
 
-    console.log(`[Orquestração] Aplicação (PID ${currentPid}) assumiu a porta 86 com sucesso!`);
+    console.log(
+      `[Orquestração] Aplicação ${IS_DEBUG_INSTANCE ? '[DEBUG] ' : ''}(PID ${currentPid}) assumiu a porta 86 em ${new Date(nowMs).toISOString()}!`
+    );
   } catch (err: any) {
-    console.error(`[Orquestração] Falha ao migrar para a porta 86 (${err?.message}). Retornando para porta ${previousPort}...`);
+    console.error(
+      `[Orquestração] Falha ao migrar para a porta 86 (${err?.message}). Retornando para porta ${previousPort}...`
+    );
     try {
       if (previousPort && previousPort !== 86) {
-        await globalApp.listen(previousPort);
+        await rebindServerPort(previousPort, 5, 40);
         savePidStatus({ status: 'online', port: previousPort });
       }
     } catch (fallbackErr) {
@@ -269,78 +612,101 @@ async function migrateToPort86() {
       process.exit(1);
     }
   } finally {
-    isMigratingTo86 = false;
+    isChangingPort = false;
   }
 }
 
 /**
- * Inicia a "prova de vida" (heartbeat) a cada 10 segundos:
- * 1. Atualiza o lastHeartbeat do processo atual.
- * 2. Marca como 'stopped' os processos zombies (> 20s sem sinal).
- * 3. Orquestra a tomada da porta 86 caso ela esteja livre.
+ * Ciclo programado de leitura e orquestração do STATUS.
+ * Cada execução grava o `nextStatusCheckAt` no arquivo STATUS (com espaçamento de 300ms)
+ * e agenda exatamente o próximo timeout.
  */
-function startHeartbeat() {
-  if (heartbeatTimer) clearInterval(heartbeatTimer);
+async function runScheduledStatusCycle() {
+  if (scheduledCheckTimer) {
+    clearTimeout(scheduledCheckTimer);
+    scheduledCheckTimer = null;
+  }
 
-  heartbeatTimer = setInterval(async () => {
-    if (isMigratingTo86) return;
+  let nextDelayMs = CHECK_DISTANCE_MS;
 
-    // Atualiza prova de vida e limpa zombies (> 20s)
-    const updatedMap = savePidStatus({});
+  if (!isChangingPort && !isOrchestrating) {
+    isOrchestrating = true;
+    try {
+      // Atualiza heartbeat, limpa processos > 1 min e agenda o próximo horário (+300ms de distância)
+      const { statusMap, nextDelayMs: calculatedDelay } = savePidStatus({});
+      nextDelayMs = calculatedDelay;
 
-    // Verifica se a porta 86 está órfã e se esta instância foi eleita pelo STATUS para assumi-la
-    if (shouldThisInstanceClaimPort86(updatedMap)) {
-      await migrateToPort86();
+      if (globalApp) {
+        const nowMs = Date.now();
+
+        if (shouldRelinquishPort86(statusMap, nowMs)) {
+          await relinquishPort86();
+        } else if (shouldThisInstanceClaimPort86(statusMap, nowMs)) {
+          await migrateToPort86();
+        }
+      }
+    } catch (err) {
+      console.error('[STATUS] Erro no ciclo programado do STATUS:', err);
+    } finally {
+      isOrchestrating = false;
     }
-  }, HEARTBEAT_INTERVAL_MS);
+  }
 
-  heartbeatTimer.unref();
+  if (!isShuttingDown) {
+    scheduledCheckTimer = setTimeout(() => {
+      runScheduledStatusCycle();
+    }, nextDelayMs);
+    scheduledCheckTimer.unref();
+  }
 }
 
 /**
- * Verifica disponibilidade de uma porta na inicialização:
- * - Porta 86: Livre imediatamente se ninguém estiver vivo ('online'/'running' nos últimos 20s) nela.
- * - Demais portas: Livres apenas após 10 minutos de abandono.
+ * Verifica disponibilidade de uma porta na inicialização.
  */
 function isPortAvailable(port: number, statusMap: StatusMap): boolean {
   const currentPid = String(process.pid);
   const now = Date.now();
 
-  cleanUpZombies(statusMap, now);
+  cleanUpZombiesAndPurgeOld(statusMap, now);
 
-  const entriesOnPort = Object.entries(statusMap)
-    .filter(([pid, info]) => pid !== currentPid && info.port === port)
-    .map(([, info]) => info);
+  // Se uma instância DEBUG está iniciando na porta 86 e há apenas um nó comum nela,
+  // derruba o nó comum para permitir que o DEBUG assuma diretamente a 86.
+  if (port === 86 && IS_DEBUG_INSTANCE) {
+    const debugOwner = Object.entries(statusMap).find(
+      ([pid, info]) => pid !== currentPid && info.port === 86 && Boolean(info.debug) && isProcessTrulyAlive(info, now, pid)
+    );
+    if (debugOwner) {
+      return false; // Outro DEBUG já está na 86
+    }
+
+    forceEvictPort86Owner(statusMap, now);
+    return true;
+  }
+
+  if (port === 86 && !IS_DEBUG_INSTANCE) {
+    const anyAliveDebug = Object.entries(statusMap).some(
+      ([pid, info]) => pid !== currentPid && Boolean(info.debug) && isProcessTrulyAlive(info, now, pid)
+    );
+    if (anyAliveDebug) {
+      return false;
+    }
+  }
+
+  const entriesOnPort = Object.entries(statusMap).filter(
+    ([pid, info]) => pid !== currentPid && info.port === port
+  );
 
   if (entriesOnPort.length === 0) {
     return true;
   }
 
-  // Regra exclusiva da Porta 86
-  if (port === 86) {
-    const isSomeoneAliveOn86 = entriesOnPort.some((info) => isProcessTrulyAlive(info, now));
-    return !isSomeoneAliveOn86;
-  }
-
-  // Regra para as demais portas: 10 minutos de abandono
-  for (const info of entriesOnPort) {
-    if (isProcessTrulyAlive(info, now)) {
-      return false;
-    }
-
-    const lastTimeStr = info.stoppedAt || info.lastHeartbeat || info.updatedAt || info.startedAt;
-    const abandonedTime = lastTimeStr ? new Date(lastTimeStr).getTime() : 0;
-
-    if (now - abandonedTime < TEN_MINUTES_MS) {
-      return false;
-    }
-  }
-
-  return true;
+  // Porta é considerada ocupada apenas se houver um processo vivo nela
+  const isSomeoneAliveOnPort = entriesOnPort.some(([pid, info]) => isProcessTrulyAlive(info, now, pid));
+  return !isSomeoneAliveOnPort;
 }
 
 /**
- * Retorna a porta preferencial (ex: 86) se disponível, ou sorteia uma porta livre respeitando os 10 minutos.
+ * Retorna a porta preferencial (ex: 86) se disponível, ou sorteia uma porta livre.
  */
 function getNextAvailablePort(preferredPort: number): number {
   const statusMap = readStatus();
@@ -352,26 +718,22 @@ function getNextAvailablePort(preferredPort: number): number {
   let candidatePort: number;
   do {
     candidatePort = Math.floor(Math.random() * (65535 - 1024 + 1)) + 1024;
-  } while (!isPortAvailable(candidatePort, statusMap));
+  } while (candidatePort === 86 || !isPortAvailable(candidatePort, statusMap));
 
   return candidatePort;
 }
 
-// 1. Nasce o processo: registra no STATUS, limpa eventuais zombies e inicia o ciclo de prova de vida
-let STATUS = savePidStatus({ status: 'running' }, true);
-startHeartbeat();
-
 /**
- * 2. Monitora o encerramento da aplicação para parar o heartbeat e atualizar o status
+ * Monitora o encerramento da aplicação para cancelar o agendamento e atualizar o STATUS.
  */
 let isShuttingDown = false;
 function handleExit() {
   if (isShuttingDown) return;
   isShuttingDown = true;
 
-  if (heartbeatTimer) {
-    clearInterval(heartbeatTimer);
-    heartbeatTimer = null;
+  if (scheduledCheckTimer) {
+    clearTimeout(scheduledCheckTimer);
+    scheduledCheckTimer = null;
   }
 
   try {
@@ -388,16 +750,16 @@ function handleExit() {
   }
 }
 
+// 1. Nasce o processo: registra no STATUS e inicia o ciclo programado de 300ms
+let STATUS = savePidStatus({ status: 'running', debug: IS_DEBUG_INSTANCE }, true).statusMap;
+runScheduledStatusCycle();
+
 process.on('exit', () => handleExit());
 process.on('SIGINT', () => { handleExit(); process.exit(0); });
 process.on('SIGTERM', () => { handleExit(); process.exit(0); });
 process.on('SIGHUP', () => { handleExit(); process.exit(0); });
 process.on('SIGBREAK', () => { handleExit(); process.exit(0); });
 
-/***
- * Inicializa variáveis de ambiente
- ***/
-config();
 new Logger(console);
 
 process.on('unhandledRejection', (reason, promise) => {
@@ -412,21 +774,40 @@ async function startApplication(app: NestExpressApplication, port: number) {
     globalApp = app;
     app.useWebSocketAdapter(new WsAdapter(app));
 
-    // Registra a intenção de porta antes do listen para evitar que outra instância pegue a mesma porta durante o boot
     savePidStatus({ status: 'running', port });
 
     await app.listen(port, () => {
+      const nowMs = Date.now();
+      const nowIso = new Date(nowMs).toISOString();
+
+      if (port === 86) {
+        currentPort86SessionStartMs = nowMs;
+      }
+
       STATUS = savePidStatus({
         status: 'online',
         port,
-      });
-      console.log(`Non-Secure HTTP Application is Running on port ${port}`);
+        ...(port === 86 ? { lastPort86ClaimedAt: nowIso } : {}),
+      }).statusMap;
+
+      console.log(
+        `Non-Secure HTTP Application ${IS_DEBUG_INSTANCE ? '[DEBUG] ' : ''}is Running on port ${port}`
+      );
+
+      // Dispara avaliação imediata assim que fica online
+      runScheduledStatusCycle();
     });
   } catch (error: any) {
     try {
       if (error.code === 'EADDRINUSE') {
         console.trace(error);
-        console.warn('Port in use. Attempting to stop colliding services...');
+        console.warn(`Port ${port} in use. Attempting to stop colliding processes/services...`);
+
+        // Se tentou subir na 86 e deu colisão, derruba o processo registrado na 86 no STATUS
+        if (port === 86) {
+          const currentMap = readStatus();
+          forceEvictPort86Owner(currentMap);
+        }
 
         const out = spawnSync('powershell', ['Stop-Service', 'apps.ci.dev.br']);
         if (out.error) {
@@ -435,7 +816,8 @@ async function startApplication(app: NestExpressApplication, port: number) {
           console.log('Service stopped successfully. Retrying...');
         }
 
-        const newPort = getNextAvailablePort(86);
+        // Se for DEBUG, insiste na 86 após derrubar o ocupante; caso contrário busca próxima disponível
+        const newPort = IS_DEBUG_INSTANCE ? 86 : getNextAvailablePort(86);
         await startApplication(app, newPort);
       } else {
         console.trace('[Falha ao iniciar serviços]');
@@ -443,7 +825,7 @@ async function startApplication(app: NestExpressApplication, port: number) {
         STATUS = savePidStatus({
           status: 'fail',
           stoppedAt: new Date().toISOString(),
-        });
+        }).statusMap;
         process.exit(1);
       }
     } catch (innerError) {
