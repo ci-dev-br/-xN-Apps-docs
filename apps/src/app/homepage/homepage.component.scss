@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap');
+
 :host {
     background: var(--mat-app-background-color);
     color: var(--mat-app-text-color);
@@ -7,6 +9,16 @@
     flex-direction: column;
     align-items: stretch;
     justify-content: stretch;
+
+    font-family: "Newsreader", serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+
+}
+
+:host .feed ::ng-deep * {
+    line-height: 1.1em !important;
+    font-size: 1.1em;
 }
 
 :host ::ng-deep .mat-mdc-tab-body-content {
@@ -154,6 +166,9 @@ mat-form-field {
     font-size: 14px;
     margin-bottom: 48px;
     padding: 0 48px;
+
+    max-width: 600px;
+
 }
 
 .feed {
@@ -162,6 +177,8 @@ mat-form-field {
     overflow: auto;
     display: flex;
     flex-direction: column;
+
+    align-items: center;
 }
 
 .wrapper {
