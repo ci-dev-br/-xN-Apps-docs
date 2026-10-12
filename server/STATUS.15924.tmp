@@ -1,0 +1,33 @@
+{
+  "2796": {
+    "startedAt": "2026-10-12T17:54:21.003Z",
+    "status": "online",
+    "debug": true,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-12T18:16:50.645Z",
+    "nextStatusCheckAt": "2026-10-12T18:16:51.530Z",
+    "updatedAt": "2026-10-12T18:16:50.645Z",
+    "port": 86,
+    "previousPort": 4705,
+    "lastPort86ClaimedAt": "2026-10-12T18:15:11.740Z"
+  },
+  "10112": {
+    "startedAt": "2026-10-12T18:14:03.269Z",
+    "status": "running",
+    "debug": false,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-12T18:16:50.937Z",
+    "nextStatusCheckAt": "2026-10-12T18:16:51.830Z",
+    "updatedAt": "2026-10-12T18:16:50.937Z"
+  },
+  "15924": {
+    "startedAt": "2026-10-12T18:16:12.697Z",
+    "status": "stopped",
+    "debug": true,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-12T18:16:51.317Z",
+    "updatedAt": "2026-10-12T18:16:51.784Z",
+    "port": 40597,
+    "stoppedAt": "2026-10-12T18:16:51.784Z"
+  }
+}
