@@ -3,14 +3,15 @@ import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter, NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { join } from 'path';
+import { join, dirname, basename, resolve } from 'path';
 import { config } from 'dotenv';
 import * as express from 'express';
-import { spawnSync } from 'child_process';
+import { spawn, spawnSync } from 'child_process';
 import { WsAdapter } from '@nestjs/platform-ws';
 import { corsOptionsDelegate } from './cors-option-delegate';
 import * as cookieParser from 'cookie-parser';
-import { existsSync, readFileSync, writeFileSync, renameSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync, renameSync, watch, FSWatcher } from 'fs';
+import * as http from 'http';
 import * as inspector from 'inspector';
 
 // Captura se o DEBUG veio explicitamente por linha de comando/ambiente do processo ANTES do .env
@@ -21,12 +22,18 @@ config();
 
 // Caminho atualizado para __dirname + '/../STATUS'
 const STATUS_FILE = join(__dirname, '..', 'STATUS');
+const STATUS_DIR = dirname(STATUS_FILE);
+const STATUS_FILENAME = basename(STATUS_FILE);
+const PROJECT_ROOT = resolve(__dirname, '..');
 
 // Constantes de tempo da Orquestração
-const CHECK_DISTANCE_MS = 300;           // Distância de 300ms entre consultas ao STATUS
-const PORT_86_ROTATION_MS = 10 * 1000;   // Cada nó assume a porta 86 por 10 segundos (se houver outros)
+const CHECK_DISTANCE_MS = 300;           // Distância padrão de 300ms entre consultas ao STATUS
+const IMMEDIATE_MIGRATION_MS = 15;       // Intervalo imediato (15ms) cravado no handoff para migração instantânea
+const PORT_86_ROTATION_MS = 10 * 1000;   // Cada nó assume a porta 86 por 10 segundos (se houver outros prontos)
 const OLD_PROCESS_PURGE_MS = 60 * 1000;  // Limpa processos inativos há mais de 1 minuto do arquivo STATUS
 const ZOMBIE_TIMEOUT_MS = 5 * 1000;      // Tolerância para considerar zombie caso trave sem morrer no SO
+const HTTP_WARMUP_TIMEOUT_MS = 1200;     // Timeout do teste HTTP na porta da candidata antes de liberar a 86
+const HEALTH_ENDPOINT = '/__orchestration/health';
 
 /**
  * Detecta se a instância atual foi iniciada em modo DEBUG:
@@ -49,6 +56,9 @@ interface ProcessInfo {
   stoppedAt?: string;
   lastPort86ClaimedAt?: string; // Última data/hora em que o processo assumiu a porta 86
   nextStatusCheckAt?: string;   // Próximo horário programado em que este processo consultará o STATUS
+  handoffTargetPid?: string;    // PID da instância já testada via HTTP e autorizada a assumir a 86 imediatamente
+  replacedByPid?: number;       // Caso tenha sido derrubado pelo DEBUG, registra o PID da nova instância criada
+  warmedUp?: boolean;           // Indica se a instância já respondeu HTTP com sucesso na porta secundária
   status: 'running' | 'online' | 'fail' | 'stopped';
   port?: number;
   previousPort?: number;
@@ -59,15 +69,17 @@ type StatusMap = Record<string, ProcessInfo>;
 
 let memoryStatusCache: StatusMap = {};
 let scheduledCheckTimer: NodeJS.Timeout | null = null;
+let statusWatcher: FSWatcher | null = null;
 let globalApp: NestExpressApplication | null = null;
 let isChangingPort = false;
 let isOrchestrating = false;
-let currentPort86SessionStartMs = 0; // Momento exato em que o turno atual na porta 86 começou
+let isWarmAndReady = false;
+let currentPort86SessionStartMs = 0;
 
 /**
  * Pausa assíncrona auxiliar.
  */
-const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise<void>((resolvePromise) => setTimeout(resolvePromise, ms));
 
 /**
  * Verifica diretamente no Kernel do Sistema Operacional se um PID ainda existe em execução.
@@ -83,6 +95,102 @@ function isOsPidAlive(pid: number | string): boolean {
   } catch (err: any) {
     return err?.code === 'EPERM';
   }
+}
+
+/**
+ * Aciona o nascimento de uma nova instância independente fora do processo atual (`node dist/main.js`).
+ * Remove flags de DEBUG/Inspector das variáveis herdadas para que a nova instância suba como nó normal
+ * e continue viva em background mesmo quando o DEBUG atual for encerrado.
+ */
+function spawnReplacementInstance(evictedPid?: string): number | undefined {
+  try {
+    const cleanEnv: NodeJS.ProcessEnv = { ...process.env };
+    delete cleanEnv.DEBUG;
+
+    // Remove flags --inspect / --debug que o VSCode possa ter injetado no NODE_OPTIONS
+    if (cleanEnv.NODE_OPTIONS) {
+      cleanEnv.NODE_OPTIONS = cleanEnv.NODE_OPTIONS
+        .replace(/--inspect(?:-brk|-port)?(?:=\S+)?/g, '')
+        .replace(/--debug(?:-brk|-port)?(?:=\S+)?/g, '')
+        .trim();
+    }
+
+    // Garante que o comando rode a partir da raiz do projeto onde fica a pasta `dist/`
+    const workingDir = existsSync(join(process.cwd(), 'dist', 'main.js'))
+      ? process.cwd()
+      : PROJECT_ROOT;
+
+    const child = spawn('node', ['dist/main.js'], {
+      cwd: workingDir,
+      detached: true,
+      stdio: 'ignore',
+      env: cleanEnv,
+      windowsHide: true,
+    });
+
+    child.unref();
+
+    console.log(
+      `[Orquestração] Nova instância de reposição iniciada com "node dist/main.js" (Novo PID: ${child.pid})` +
+      (evictedPid ? ` para substituir o PID ${evictedPid} derrubado pelo DEBUG.` : '.')
+    );
+
+    return child.pid;
+  } catch (err: any) {
+    console.error('[Orquestração] Falha ao iniciar nova instância com "node dist/main.js":', err?.message);
+    return undefined;
+  }
+}
+
+/**
+ * Realiza uma requisição HTTP na porta da aplicação candidata para garantir que ela
+ * já aqueceu completamente e está pronta para responder requisições antes da troca da porta 86.
+ */
+function verifyCandidateHttpWarmup(port: number, expectedPid?: string): Promise<boolean> {
+  return new Promise<boolean>((resolvePromise) => {
+    if (!port || port === 86) {
+      return resolvePromise(false);
+    }
+
+    const req = http.get(
+      {
+        hostname: '127.0.0.1',
+        port,
+        path: HEALTH_ENDPOINT,
+        timeout: HTTP_WARMUP_TIMEOUT_MS,
+        headers: { Connection: 'close' },
+      },
+      (res) => {
+        let rawBody = '';
+        res.on('data', (chunk) => {
+          rawBody += chunk;
+        });
+        res.on('end', () => {
+          if (res.statusCode === 200 && rawBody) {
+            try {
+              const parsed = JSON.parse(rawBody);
+              if (expectedPid && String(parsed.pid) !== String(expectedPid)) {
+                return resolvePromise(false);
+              }
+              return resolvePromise(parsed.ready === true);
+            } catch {
+              return resolvePromise(true);
+            }
+          }
+          resolvePromise(Boolean(res.statusCode && res.statusCode > 0 && res.statusCode < 500));
+        });
+      }
+    );
+
+    req.on('timeout', () => {
+      req.destroy();
+      resolvePromise(false);
+    });
+
+    req.on('error', () => {
+      resolvePromise(false);
+    });
+  });
 }
 
 /**
@@ -163,7 +271,6 @@ function cleanUpZombiesAndPurgeOld(statusMap: StatusMap, now = Date.now()): bool
   for (const [pid, info] of Object.entries(statusMap)) {
     if (pid === currentPid) continue;
 
-    // A) Detecta se o processo morreu ou virou zombie
     if ((info.status === 'online' || info.status === 'running') && !isProcessTrulyAlive(info, now, pid)) {
       const lastSeen = info.lastHeartbeat || info.updatedAt || info.startedAt || new Date(now).toISOString();
       statusMap[pid] = {
@@ -171,6 +278,8 @@ function cleanUpZombiesAndPurgeOld(statusMap: StatusMap, now = Date.now()): bool
         status: 'stopped',
         stoppedAt: lastSeen,
         updatedAt: new Date(now).toISOString(),
+        nextStatusCheckAt: undefined,
+        handoffTargetPid: undefined,
       };
       changed = true;
       console.warn(
@@ -178,7 +287,6 @@ function cleanUpZombiesAndPurgeOld(statusMap: StatusMap, now = Date.now()): bool
       );
     }
 
-    // B) Expurga processos inativos ('stopped' ou 'fail') com mais de 1 minuto
     const currentInfo = statusMap[pid];
     if (currentInfo && (currentInfo.status === 'stopped' || currentInfo.status === 'fail')) {
       const refTimeStr = currentInfo.stoppedAt || currentInfo.updatedAt || currentInfo.lastHeartbeat || currentInfo.startedAt;
@@ -198,20 +306,41 @@ function cleanUpZombiesAndPurgeOld(statusMap: StatusMap, now = Date.now()): bool
  * Calcula o próximo horário de consulta ao arquivo STATUS mantendo uma distância de 300ms
  * em relação às consultas agendadas pelos demais processos vivos.
  */
-function calculateNextCheckTime(statusMap: StatusMap, nowMs = Date.now()): { nextIso: string; delayMs: number } {
+function calculateNextCheckTime(
+  statusMap: StatusMap,
+  nowMs = Date.now(),
+  forceImmediate = false
+): { nextIso: string; delayMs: number } {
   const currentPid = String(process.pid);
 
-  // Coleta todos os agendamentos futuros dos outros processos vivos
+  if (forceImmediate) {
+    const immediateMs = nowMs + IMMEDIATE_MIGRATION_MS;
+    return {
+      nextIso: new Date(immediateMs).toISOString(),
+      delayMs: IMMEDIATE_MIGRATION_MS,
+    };
+  }
+
+  const existingNextStr = statusMap[currentPid]?.nextStatusCheckAt;
+  if (existingNextStr) {
+    const existingNextMs = new Date(existingNextStr).getTime();
+    const diff = existingNextMs - nowMs;
+    if (diff > 0 && diff <= IMMEDIATE_MIGRATION_MS * 3 && statusMap[currentPid]?.handoffTargetPid === currentPid) {
+      return {
+        nextIso: existingNextStr,
+        delayMs: Math.max(5, diff),
+      };
+    }
+  }
+
   const scheduledTimes = Object.entries(statusMap)
     .filter(([pid, info]) => pid !== currentPid && isProcessTrulyAlive(info, nowMs, pid) && info.nextStatusCheckAt)
     .map(([, info]) => new Date(info.nextStatusCheckAt!).getTime())
     .filter((t) => !Number.isNaN(t) && t > nowMs)
     .sort((a, b) => a - b);
 
-  // Começa propondo 300ms a partir de agora
   let candidateMs = nowMs + CHECK_DISTANCE_MS;
 
-  // Se houver conflito (menos de 300ms de distância de outro agendamento), empurra em saltos de 300ms
   for (const t of scheduledTimes) {
     if (Math.abs(candidateMs - t) < CHECK_DISTANCE_MS) {
       candidateMs = t + CHECK_DISTANCE_MS;
@@ -229,7 +358,11 @@ function calculateNextCheckTime(statusMap: StatusMap, nowMs = Date.now()): { nex
  * Salva ou atualiza o status do PID atual, limpa zombies/antigos (> 1 min)
  * e agenda o próximo horário de consulta no STATUS (com 300ms de distância).
  */
-function savePidStatus(data: Partial<ProcessInfo>, startNewProcess = false): { statusMap: StatusMap; nextDelayMs: number } {
+function savePidStatus(
+  data: Partial<ProcessInfo>,
+  startNewProcess = false,
+  forceImmediateCheck = false
+): { statusMap: StatusMap; nextDelayMs: number } {
   const statusMap = readStatus();
   const pid = String(process.pid);
   const nowMs = Date.now();
@@ -240,7 +373,7 @@ function savePidStatus(data: Partial<ProcessInfo>, startNewProcess = false): { s
   const isStopping = data.status === 'stopped' || data.status === 'fail';
   const { nextIso, delayMs } = isStopping
     ? { nextIso: undefined, delayMs: CHECK_DISTANCE_MS }
-    : calculateNextCheckTime(statusMap, nowMs);
+    : calculateNextCheckTime(statusMap, nowMs, forceImmediateCheck);
 
   const existing = statusMap[pid];
 
@@ -249,6 +382,7 @@ function savePidStatus(data: Partial<ProcessInfo>, startNewProcess = false): { s
       startedAt: nowIso,
       status: 'running',
       debug: IS_DEBUG_INSTANCE,
+      warmedUp: isWarmAndReady,
       ...data,
       lastHeartbeat: isStopping ? existing?.lastHeartbeat : nowIso,
       nextStatusCheckAt: nextIso,
@@ -258,6 +392,7 @@ function savePidStatus(data: Partial<ProcessInfo>, startNewProcess = false): { s
     statusMap[pid] = {
       ...existing,
       debug: IS_DEBUG_INSTANCE,
+      warmedUp: isWarmAndReady,
       ...data,
       ...(isStopping ? { nextStatusCheckAt: undefined } : { lastHeartbeat: nowIso, nextStatusCheckAt: nextIso }),
       updatedAt: nowIso,
@@ -270,15 +405,22 @@ function savePidStatus(data: Partial<ProcessInfo>, startNewProcess = false): { s
 
 /**
  * Comparador de prioridade para assumir a porta 86:
- * 1º Instâncias DEBUG têm prioridade absoluta.
- * 2º Entre instâncias do mesmo tipo, vence a que está HÁ MAIS TEMPO SEM ASSUMIR A PORTA 86
+ * 1º Nó que recebeu o `handoffTargetPid` direto do antigo dono da 86.
+ * 2º Instâncias DEBUG têm prioridade sobre instâncias normais.
+ * 3º Entre instâncias do mesmo tipo, vence a que está HÁ MAIS TEMPO SEM ASSUMIR A PORTA 86
  *    (menor timestamp em `lastPort86ClaimedAt`, ou `0` se nunca assumiu).
- * 3º Desempate por antiguidade do processo (`startedAt`) e menor `PID`.
+ * 4º Desempate por antiguidade do processo (`startedAt`) e menor `PID`.
  */
 function compareProcessPriority(
   [pidA, infoA]: [string, ProcessInfo],
   [pidB, infoB]: [string, ProcessInfo]
 ): number {
+  const handoffA = infoA.handoffTargetPid === pidA;
+  const handoffB = infoB.handoffTargetPid === pidB;
+  if (handoffA !== handoffB) {
+    return handoffA ? -1 : 1;
+  }
+
   const debugA = Boolean(infoA.debug);
   const debugB = Boolean(infoB.debug);
 
@@ -290,7 +432,7 @@ function compareProcessPriority(
   const last86B = infoB.lastPort86ClaimedAt ? new Date(infoB.lastPort86ClaimedAt).getTime() : 0;
 
   if (last86A !== last86B) {
-    return last86A - last86B; // Mais antigo (ou nunca assumiu = 0) vence
+    return last86A - last86B;
   }
 
   const startA = new Date(infoA.startedAt).getTime();
@@ -303,10 +445,87 @@ function compareProcessPriority(
 }
 
 /**
- * Procura e derruba imediatamente qualquer outro processo que esteja ocupando a porta 86 no STATUS,
- * para que a instância prioritária (especialmente DEBUG) possa assumir sem espera.
+ * Retorna a lista ordenada de processos candidatos (online em outra porta) aptos a assumir a porta 86.
  */
-function forceEvictPort86Owner(statusMap: StatusMap, nowMs = Date.now()): void {
+function getSortedCandidatesForPort86(statusMap: StatusMap, nowMs = Date.now()): [string, ProcessInfo][] {
+  const currentPid = String(process.pid);
+  return Object.entries(statusMap)
+    .filter(
+      ([pid, info]) =>
+        pid !== currentPid &&
+        info.status === 'online' &&
+        Boolean(info.port) &&
+        info.port !== 86 &&
+        isProcessTrulyAlive(info, nowMs, pid)
+    )
+    .sort(compareProcessPriority);
+}
+
+/**
+ * Quando esta instância está na porta 86, verifica se é hora de passar o bastão para outra instância:
+ * - Motivo 1: Surgiu uma instância DEBUG viva (e esta instância atual não é DEBUG).
+ * - Motivo 2: Rotação de 10 segundos atingida (e esta instância não é DEBUG).
+ *
+ * Acessa com HTTP a porta da candidata que pretende pular para a 86 e só retorna se ela responder pronta.
+ */
+async function findWarmedUpSuccessorForPort86(
+  statusMap: StatusMap,
+  nowMs = Date.now()
+): Promise<[string, ProcessInfo] | null> {
+  const currentPid = String(process.pid);
+  const myInfo = statusMap[currentPid];
+
+  if (!myInfo || myInfo.status !== 'online' || myInfo.port !== 86) {
+    return null;
+  }
+
+  if (myInfo.debug) {
+    return null;
+  }
+
+  const candidates = getSortedCandidatesForPort86(statusMap, nowMs);
+  if (candidates.length === 0) {
+    return null;
+  }
+
+  const hasDebugCandidate = candidates.some(([, info]) => Boolean(info.debug));
+
+  const sessionStart =
+    currentPort86SessionStartMs ||
+    (myInfo.lastPort86ClaimedAt ? new Date(myInfo.lastPort86ClaimedAt).getTime() : new Date(myInfo.startedAt).getTime());
+  const rotationTimeReached = (nowMs - sessionStart) >= PORT_86_ROTATION_MS;
+
+  if (!hasDebugCandidate && !rotationTimeReached) {
+    return null;
+  }
+
+  const eligibleList = hasDebugCandidate
+    ? candidates.filter(([, info]) => Boolean(info.debug))
+    : candidates;
+
+  for (const [candPid, candInfo] of eligibleList) {
+    if (!candInfo.port) continue;
+
+    // AQUECIMENTO / PROVA HTTP: Acessa via HTTP a porta da candidata que pretende pular para a 86
+    const isHttpReady = await verifyCandidateHttpWarmup(candInfo.port, candPid);
+    if (isHttpReady) {
+      return [candPid, candInfo];
+    } else {
+      console.log(
+        `[Orquestração] Candidata PID ${candPid} (porta ${candInfo.port}) ainda está aquecendo. Mantendo porta 86 ativa neste nó...`
+      );
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Procura qualquer processo que esteja ocupando a porta 86 no STATUS, derruba-o para assumir
+ * e, se esta instância for DEBUG e tiver realmente derrubado um processo vivo,
+ * aciona o nascimento de uma nova instância externa via `node dist/main.js`.
+ */
+function evictPort86OwnerAndSpawnReplacement(statusMap: StatusMap, nowMs = Date.now()): void {
   const currentPid = String(process.pid);
   let changed = false;
 
@@ -314,12 +533,27 @@ function forceEvictPort86Owner(statusMap: StatusMap, nowMs = Date.now()): void {
     if (pid === currentPid) continue;
 
     if (info.port === 86 && (info.status === 'online' || info.status === 'running')) {
-      console.warn(`[Orquestração] Derrubando processo PID ${pid} que ocupava a porta 86 para assumir...`);
+      const wasAliveInOs = isOsPidAlive(pid);
 
-      try {
-        process.kill(Number(pid), 'SIGTERM');
-      } catch {
-        // Processo já não existia ou sem permissão
+      console.warn(
+        `[Orquestração] ${IS_DEBUG_INSTANCE ? '[DEBUG] ' : ''}Derrubando instância PID ${pid} que ocupava a porta 86 para assumir...`
+      );
+
+      let killedSuccessfully = false;
+      if (wasAliveInOs) {
+        try {
+          process.kill(Number(pid), 'SIGTERM');
+          killedSuccessfully = true;
+        } catch {
+          // Processo já encerrou
+        }
+      }
+
+      // Se estamos em DEBUG e derrubamos uma instância em execução para assumir a porta 86,
+      // acionamos o nascimento de uma nova instância em um novo processo externo com `node dist/main.js`
+      let replacementPid: number | undefined;
+      if (IS_DEBUG_INSTANCE && (wasAliveInOs || killedSuccessfully)) {
+        replacementPid = spawnReplacementInstance(pid);
       }
 
       statusMap[pid] = {
@@ -327,6 +561,9 @@ function forceEvictPort86Owner(statusMap: StatusMap, nowMs = Date.now()): void {
         status: 'stopped',
         stoppedAt: new Date(nowMs).toISOString(),
         updatedAt: new Date(nowMs).toISOString(),
+        nextStatusCheckAt: undefined,
+        handoffTargetPid: undefined,
+        ...(replacementPid ? { replacedByPid: replacementPid } : {}),
       };
       changed = true;
     }
@@ -338,57 +575,21 @@ function forceEvictPort86Owner(statusMap: StatusMap, nowMs = Date.now()): void {
 }
 
 /**
- * Verifica se esta instância que está na porta 86 deve abrir mão dela:
- * - Caso 1: Esta instância NÃO é DEBUG e surgiu uma instância DEBUG viva.
- * - Caso 2 (Rotação de 10s): Esta instância NÃO é DEBUG, existem outros nós 'online' vivos,
- *   e o tempo de posse atual na porta 86 já atingiu 10 segundos (PORT_86_ROTATION_MS).
+ * Determina se ESTA instância (atualmente aquecida em uma porta secundária) deve pular para a porta 86 agora.
  */
-function shouldRelinquishPort86(statusMap: StatusMap, nowMs = Date.now()): boolean {
+async function shouldThisInstanceClaimPort86(statusMap: StatusMap, nowMs = Date.now()): Promise<boolean> {
   const currentPid = String(process.pid);
   const myInfo = statusMap[currentPid];
 
-  if (!myInfo || myInfo.status !== 'online' || myInfo.port !== 86) {
+  if (!myInfo || myInfo.status !== 'online' || !myInfo.port || myInfo.port === 86) {
     return false;
   }
 
-  // DEBUG sempre tem prioridade e mantém a porta 86 enquanto estiver ativo
-  if (myInfo.debug) {
-    return false;
+  // Confirma que esta própria instância já está aquecida e respondendo HTTP na porta secundária
+  if (!isWarmAndReady) {
+    isWarmAndReady = await verifyCandidateHttpWarmup(myInfo.port, currentPid);
   }
-
-  // 1. Se entrou qualquer DEBUG vivo, cede imediatamente
-  const anyDebugAlive = Object.entries(statusMap).some(
-    ([pid, info]) => pid !== currentPid && Boolean(info.debug) && isProcessTrulyAlive(info, nowMs, pid)
-  );
-  if (anyDebugAlive) {
-    return true;
-  }
-
-  // 2. Verifica se existem outros nós online para rotacionar a cada 10 segundos
-  const otherOnlineNodes = Object.entries(statusMap).filter(
-    ([pid, info]) => pid !== currentPid && info.status === 'online' && isProcessTrulyAlive(info, nowMs, pid)
-  );
-
-  if (otherOnlineNodes.length === 0) {
-    // Único nó ativo: continua na porta 86
-    return false;
-  }
-
-  const sessionStart =
-    currentPort86SessionStartMs ||
-    (myInfo.lastPort86ClaimedAt ? new Date(myInfo.lastPort86ClaimedAt).getTime() : new Date(myInfo.startedAt).getTime());
-
-  return (nowMs - sessionStart) >= PORT_86_ROTATION_MS;
-}
-
-/**
- * Determina se ESTA instância (atualmente fora da porta 86) deve assumir a porta 86 agora.
- */
-function shouldThisInstanceClaimPort86(statusMap: StatusMap, nowMs = Date.now()): boolean {
-  const currentPid = String(process.pid);
-  const myInfo = statusMap[currentPid];
-
-  if (!myInfo || myInfo.status !== 'online' || myInfo.port === 86) {
+  if (!isWarmAndReady) {
     return false;
   }
 
@@ -396,14 +597,14 @@ function shouldThisInstanceClaimPort86(statusMap: StatusMap, nowMs = Date.now())
     ([pid, info]) => pid !== currentPid && info.port === 86 && isProcessTrulyAlive(info, nowMs, pid)
   );
 
-  // Regra Especial DEBUG: Se esta instância é DEBUG, ela pode assumir mesmo que a 86 esteja ocupada por um nó normal
-  // (ou se ela for a DEBUG mais prioritária e a 86 estiver livre)
+  // Regra Especial DEBUG:
+  // Quando um DEBUG entra e já aqueceu, ele assume a 86.
+  // Se o dono atual da 86 não for outro DEBUG, o DEBUG pode assumir imediatamente (via handoff ou derrubando o ocupante e criando outra instância com `node dist/main.js`).
   if (myInfo.debug) {
     if (currentOwnerEntry) {
       const [, ownerInfo] = currentOwnerEntry;
-      // Se quem está na 86 já é outro DEBUG, respeita ele; se for nó normal, o DEBUG vai derrubar e assumir!
       if (ownerInfo.debug) {
-        return false;
+        return false; // Outro DEBUG já é dono da 86
       }
     }
 
@@ -415,7 +616,7 @@ function shouldThisInstanceClaimPort86(statusMap: StatusMap, nowMs = Date.now())
   }
 
   // Regra para Nós Normais:
-  // 1. Se a porta 86 já está ocupada por alguém vivo, aguarda a rotação de 10s
+  // 1. Se já há alguém vivo na 86, aguarda o nó da 86 testar nosso HTTP e fazer o handoff
   if (currentOwnerEntry) {
     return false;
   }
@@ -433,17 +634,17 @@ function shouldThisInstanceClaimPort86(statusMap: StatusMap, nowMs = Date.now())
     .filter(([pid, info]) => info.status === 'online' && isProcessTrulyAlive(info, nowMs, pid))
     .sort(compareProcessPriority);
 
-  if (aliveCandidates.length === 0) {
+  if (aliveCandidates.length === 0 || aliveCandidates[0][0] !== currentPid) {
     return false;
   }
 
-  return aliveCandidates[0][0] === currentPid;
+  return true;
 }
 
 /**
  * Troca a porta do servidor HTTP subjacente do NestJS com micro-retry rápido.
  */
-async function rebindServerPort(newPort: number, maxRetries = 25, retryDelayMs = 40): Promise<void> {
+async function rebindServerPort(newPort: number, maxRetries = 25, retryDelayMs = 30): Promise<void> {
   if (!globalApp) throw new Error('Aplicação NestJS ainda não inicializada.');
 
   const httpServer: any = globalApp.getHttpServer();
@@ -456,21 +657,21 @@ async function rebindServerPort(newPort: number, maxRetries = 25, retryDelayMs =
     if (typeof httpServer.closeIdleConnections === 'function') {
       httpServer.closeIdleConnections();
     }
-    await new Promise<void>((resolve) => {
-      httpServer.close(() => resolve());
+    await new Promise<void>((resolvePromise) => {
+      httpServer.close(() => resolvePromise());
     });
   }
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      await new Promise<void>((resolve, reject) => {
+      await new Promise<void>((resolvePromise, rejectPromise) => {
         const onError = (err: Error) => {
           httpServer.removeListener('listening', onListening);
-          reject(err);
+          rejectPromise(err);
         };
         const onListening = () => {
           httpServer.removeListener('error', onError);
-          resolve();
+          resolvePromise();
         };
 
         httpServer.once('error', onError);
@@ -489,42 +690,72 @@ async function rebindServerPort(newPort: number, maxRetries = 25, retryDelayMs =
 }
 
 /**
- * Libera a porta 86 (após os 10s de turno ou quando um DEBUG entra) e vai para uma porta secundária livre,
- * registrando o timestamp final de `lastPort86ClaimedAt` para ir para o fim da fila de rotação.
+ * Orquestra a troca (Handoff) entre a instância atual na porta 86 e a sucessora já aquecida e testada via HTTP:
+ * 1. Libera o socket da porta 86 movendo-se para uma porta secundária livre.
+ * 2. Marca no STATUS que a sucessora (`successorPid`) tem um intervalo imediato (`nextStatusCheckAt` = agora + 15ms)
+ *    e `handoffTargetPid = successorPid` para pular para a porta 86 instantaneamente.
  */
-async function relinquishPort86() {
+async function handoffPort86ToSuccessor(successorPid: string, successorPort?: number) {
   if (!globalApp || isChangingPort) return;
   isChangingPort = true;
 
   const currentPid = String(process.pid);
-  let targetPort = 0;
+  let targetSecondaryPort = 0;
 
   try {
     const statusMap = readStatus();
     do {
-      targetPort = Math.floor(Math.random() * (65535 - 1024 + 1)) + 1024;
-    } while (targetPort === 86 || !isPortAvailable(targetPort, statusMap));
-
-    console.log(
-      `[Orquestração] Rotacionando/Cedendo porta 86 (PID ${currentPid}) -> indo para porta secundária ${targetPort}...`
+      targetSecondaryPort = Math.floor(Math.random() * (65535 - 1024 + 1)) + 1024;
+    } while (
+      targetSecondaryPort === 86 ||
+      targetSecondaryPort === successorPort ||
+      !isPortAvailable(targetSecondaryPort, statusMap)
     );
 
-    await rebindServerPort(targetPort, 5, 20);
+    console.log(
+      `[Orquestração] Sucessora PID ${successorPid} (porta ${successorPort}) aprovada no teste HTTP! ` +
+      `Liberando porta 86 (PID ${currentPid} -> porta ${targetSecondaryPort}) e agendando migração imediata...`
+    );
+
+    await rebindServerPort(targetSecondaryPort, 5, 20);
     currentPort86SessionStartMs = 0;
 
-    // Atualiza lastPort86ClaimedAt no momento da saída para que este nó seja considerado o mais recente a ter usado a 86
-    savePidStatus({
-      status: 'online',
-      port: targetPort,
-      previousPort: 86,
-      lastPort86ClaimedAt: new Date().toISOString(),
-    });
+    const freshMap = readStatus();
+    const nowMs = Date.now();
+    const nowIso = new Date(nowMs).toISOString();
+    const immediateIso = new Date(nowMs + IMMEDIATE_MIGRATION_MS).toISOString();
+    const { nextIso: myNextIso } = calculateNextCheckTime(freshMap, nowMs, false);
+
+    if (freshMap[currentPid]) {
+      freshMap[currentPid] = {
+        ...freshMap[currentPid],
+        status: 'online',
+        port: targetSecondaryPort,
+        previousPort: 86,
+        lastPort86ClaimedAt: nowIso,
+        lastHeartbeat: nowIso,
+        nextStatusCheckAt: myNextIso,
+        handoffTargetPid: undefined,
+        updatedAt: nowIso,
+      };
+    }
+
+    if (freshMap[successorPid] && isProcessTrulyAlive(freshMap[successorPid], nowMs, successorPid)) {
+      freshMap[successorPid] = {
+        ...freshMap[successorPid],
+        handoffTargetPid: successorPid,
+        nextStatusCheckAt: immediateIso,
+        updatedAt: nowIso,
+      };
+    }
+
+    writeStatusMap(freshMap);
 
     console.log(
-      `[Orquestração] Porta 86 liberada para o próximo nó da fila! Instância (PID ${currentPid}) online na porta ${targetPort}.`
+      `[Orquestração] Handoff concluído! Porta 86 livre e migração imediata agendada para PID ${successorPid}.`
     );
   } catch (err: any) {
-    console.error(`[Orquestração] Erro ao liberar a porta 86 para a porta ${targetPort}:`, err?.message);
+    console.error(`[Orquestração] Erro durante handoff da porta 86 para a porta ${targetSecondaryPort}:`, err?.message);
     savePidStatus({ status: 'fail', stoppedAt: new Date().toISOString() });
     process.exit(1);
   } finally {
@@ -533,7 +764,9 @@ async function relinquishPort86() {
 }
 
 /**
- * Assume a porta 86. Caso a porta 86 esteja em uso no STATUS, localiza o processo dono e o derruba antes de assumir.
+ * Realiza a migração imediata da instância atual (já aquecida) para a porta 86.
+ * Caso a porta 86 esteja em uso quando o DEBUG vai assumir, derruba o processo ocupante
+ * e aciona `node dist/main.js` para repor a instância derrubada.
  */
 async function migrateToPort86() {
   if (!globalApp || isChangingPort) return;
@@ -544,8 +777,8 @@ async function migrateToPort86() {
   const previousPort = statusMap[currentPid]?.port;
 
   try {
-    // Se a porta 86 estiver ocupada no STATUS (ex: DEBUG entrando ou nó anterior travado), derruba o ocupante
-    forceEvictPort86Owner(statusMap);
+    // Se a porta 86 estiver ocupada no STATUS, derruba o ocupante e (se este for DEBUG) cria uma nova instância `node dist/main.js`
+    evictPort86OwnerAndSpawnReplacement(statusMap);
 
     const claimIso = new Date().toISOString();
 
@@ -555,9 +788,10 @@ async function migrateToPort86() {
       port: 86,
       previousPort,
       lastPort86ClaimedAt: claimIso,
+      handoffTargetPid: undefined,
     });
 
-    // 2. Confirma que não houve colisão com outro nó de maior prioridade no mesmo instante
+    // 2. Confirma que não houve colisão de escrita
     const verifyMap = readStatus();
     const conflictingPids = Object.entries(verifyMap).filter(
       ([pid, info]) => pid !== currentPid && info.port === 86 && isProcessTrulyAlive(info, Date.now(), pid)
@@ -573,17 +807,17 @@ async function migrateToPort86() {
         console.log(
           `[Orquestração] Outra instância (${allOn86[0][0]}) teve prioridade na porta 86. Mantendo porta ${previousPort}.`
         );
-        savePidStatus({ status: 'online', port: previousPort });
+        savePidStatus({ status: 'online', port: previousPort, handoffTargetPid: undefined });
         return;
       }
     }
 
     console.log(
-      `[Orquestração] Assumindo porta 86 -> ${IS_DEBUG_INSTANCE ? '[DEBUG] ' : ''}(PID ${currentPid}, vindo da porta ${previousPort})...`
+      `[Orquestração] Pulando para a porta 86 (já aquecida) -> ${IS_DEBUG_INSTANCE ? '[DEBUG] ' : ''}(PID ${currentPid}, vindo da porta ${previousPort})...`
     );
 
-    // 3. Faz o bind na porta 86
-    await rebindServerPort(86, 25, 40);
+    // 3. Troca o listener do servidor HTTP da porta de aquecimento para a porta 86
+    await rebindServerPort(86, 25, 30);
 
     const nowMs = Date.now();
     currentPort86SessionStartMs = nowMs;
@@ -592,10 +826,11 @@ async function migrateToPort86() {
       status: 'online',
       port: 86,
       lastPort86ClaimedAt: new Date(nowMs).toISOString(),
+      handoffTargetPid: undefined,
     });
 
     console.log(
-      `[Orquestração] Aplicação ${IS_DEBUG_INSTANCE ? '[DEBUG] ' : ''}(PID ${currentPid}) assumiu a porta 86 em ${new Date(nowMs).toISOString()}!`
+      `[Orquestração] Aplicação ${IS_DEBUG_INSTANCE ? '[DEBUG] ' : ''}(PID ${currentPid}) assumiu a porta 86 com sucesso!`
     );
   } catch (err: any) {
     console.error(
@@ -603,8 +838,8 @@ async function migrateToPort86() {
     );
     try {
       if (previousPort && previousPort !== 86) {
-        await rebindServerPort(previousPort, 5, 40);
-        savePidStatus({ status: 'online', port: previousPort });
+        await rebindServerPort(previousPort, 5, 30);
+        savePidStatus({ status: 'online', port: previousPort, handoffTargetPid: undefined });
       }
     } catch (fallbackErr) {
       console.error('[Orquestração] Erro crítico ao retornar para porta anterior:', fallbackErr);
@@ -618,8 +853,6 @@ async function migrateToPort86() {
 
 /**
  * Ciclo programado de leitura e orquestração do STATUS.
- * Cada execução grava o `nextStatusCheckAt` no arquivo STATUS (com espaçamento de 300ms)
- * e agenda exatamente o próximo timeout.
  */
 async function runScheduledStatusCycle() {
   if (scheduledCheckTimer) {
@@ -632,17 +865,28 @@ async function runScheduledStatusCycle() {
   if (!isChangingPort && !isOrchestrating) {
     isOrchestrating = true;
     try {
-      // Atualiza heartbeat, limpa processos > 1 min e agenda o próximo horário (+300ms de distância)
       const { statusMap, nextDelayMs: calculatedDelay } = savePidStatus({});
       nextDelayMs = calculatedDelay;
 
       if (globalApp) {
         const nowMs = Date.now();
+        const currentPid = String(process.pid);
+        const myInfo = statusMap[currentPid];
 
-        if (shouldRelinquishPort86(statusMap, nowMs)) {
-          await relinquishPort86();
-        } else if (shouldThisInstanceClaimPort86(statusMap, nowMs)) {
-          await migrateToPort86();
+        if (myInfo?.port === 86) {
+          // Está na porta 86: verifica se há outra instância (DEBUG ou rotação 10s),
+          // testa a porta dela via HTTP e, se ela responder pronta, executa a troca!
+          const successor = await findWarmedUpSuccessorForPort86(statusMap, nowMs);
+          if (successor) {
+            const [successorPid, successorInfo] = successor;
+            await handoffPort86ToSuccessor(successorPid, successorInfo.port);
+          }
+        } else {
+          // Está em outra porta: verifica se deve assumir a 86 (ou derrubar o ocupante se este for DEBUG aquecido)
+          const canClaim = await shouldThisInstanceClaimPort86(statusMap, nowMs);
+          if (canClaim) {
+            await migrateToPort86();
+          }
         }
       }
     } catch (err) {
@@ -661,36 +905,67 @@ async function runScheduledStatusCycle() {
 }
 
 /**
- * Verifica disponibilidade de uma porta na inicialização.
+ * Monitora o arquivo STATUS para reagir instantaneamente quando o nó da porta 86
+ * agendar um Handoff imediato (`handoffTargetPid === meu_pid`) ou quando um DEBUG ficar online.
+ */
+function startStatusWatcher() {
+  if (statusWatcher) {
+    statusWatcher.close();
+    statusWatcher = null;
+  }
+
+  try {
+    if (existsSync(STATUS_DIR)) {
+      statusWatcher = watch(STATUS_DIR, (_eventType, filename) => {
+        if (filename !== STATUS_FILENAME || isChangingPort || isOrchestrating || !globalApp) return;
+
+        const currentPid = String(process.pid);
+        const statusMap = readStatus();
+        const myInfo = statusMap[currentPid];
+
+        if (!myInfo || myInfo.status !== 'online') return;
+
+        if (myInfo.port !== 86 && myInfo.handoffTargetPid === currentPid) {
+          if (scheduledCheckTimer) clearTimeout(scheduledCheckTimer);
+          scheduledCheckTimer = setTimeout(() => runScheduledStatusCycle(), IMMEDIATE_MIGRATION_MS);
+          return;
+        }
+
+        if (myInfo.port === 86 && !myInfo.debug) {
+          const debugJustArrived = Object.entries(statusMap).some(
+            ([pid, info]) =>
+              pid !== currentPid &&
+              Boolean(info.debug) &&
+              info.status === 'online' &&
+              info.port !== 86 &&
+              isProcessTrulyAlive(info, Date.now(), pid)
+          );
+          if (debugJustArrived) {
+            if (scheduledCheckTimer) clearTimeout(scheduledCheckTimer);
+            scheduledCheckTimer = setTimeout(() => runScheduledStatusCycle(), IMMEDIATE_MIGRATION_MS);
+          }
+        }
+      });
+      statusWatcher.unref();
+    }
+  } catch {
+    // Fallback garantido pelo ciclo programado de 300ms
+  }
+}
+
+/**
+ * Verifica se uma porta secundária está disponível.
+ * Regra: Nenhuma aplicação deve levantar inicialmente na porta 86.
  */
 function isPortAvailable(port: number, statusMap: StatusMap): boolean {
+  if (port === 86) {
+    return false;
+  }
+
   const currentPid = String(process.pid);
   const now = Date.now();
 
   cleanUpZombiesAndPurgeOld(statusMap, now);
-
-  // Se uma instância DEBUG está iniciando na porta 86 e há apenas um nó comum nela,
-  // derruba o nó comum para permitir que o DEBUG assuma diretamente a 86.
-  if (port === 86 && IS_DEBUG_INSTANCE) {
-    const debugOwner = Object.entries(statusMap).find(
-      ([pid, info]) => pid !== currentPid && info.port === 86 && Boolean(info.debug) && isProcessTrulyAlive(info, now, pid)
-    );
-    if (debugOwner) {
-      return false; // Outro DEBUG já está na 86
-    }
-
-    forceEvictPort86Owner(statusMap, now);
-    return true;
-  }
-
-  if (port === 86 && !IS_DEBUG_INSTANCE) {
-    const anyAliveDebug = Object.entries(statusMap).some(
-      ([pid, info]) => pid !== currentPid && Boolean(info.debug) && isProcessTrulyAlive(info, now, pid)
-    );
-    if (anyAliveDebug) {
-      return false;
-    }
-  }
 
   const entriesOnPort = Object.entries(statusMap).filter(
     ([pid, info]) => pid !== currentPid && info.port === port
@@ -700,18 +975,17 @@ function isPortAvailable(port: number, statusMap: StatusMap): boolean {
     return true;
   }
 
-  // Porta é considerada ocupada apenas se houver um processo vivo nela
   const isSomeoneAliveOnPort = entriesOnPort.some(([pid, info]) => isProcessTrulyAlive(info, now, pid));
   return !isSomeoneAliveOnPort;
 }
 
 /**
- * Retorna a porta preferencial (ex: 86) se disponível, ou sorteia uma porta livre.
+ * Sorteia sempre uma porta secundária livre (nunca a 86) para a aplicação levantar e aquecer primeiro.
  */
-function getNextAvailablePort(preferredPort: number): number {
+function getInitialWarmupPort(preferredPort?: number): number {
   const statusMap = readStatus();
 
-  if (isPortAvailable(preferredPort, statusMap)) {
+  if (preferredPort && preferredPort !== 86 && isPortAvailable(preferredPort, statusMap)) {
     return preferredPort;
   }
 
@@ -724,7 +998,7 @@ function getNextAvailablePort(preferredPort: number): number {
 }
 
 /**
- * Monitora o encerramento da aplicação para cancelar o agendamento e atualizar o STATUS.
+ * Monitora o encerramento da aplicação para cancelar os timers e atualizar o STATUS.
  */
 let isShuttingDown = false;
 function handleExit() {
@@ -734,6 +1008,10 @@ function handleExit() {
   if (scheduledCheckTimer) {
     clearTimeout(scheduledCheckTimer);
     scheduledCheckTimer = null;
+  }
+  if (statusWatcher) {
+    statusWatcher.close();
+    statusWatcher = null;
   }
 
   try {
@@ -750,8 +1028,9 @@ function handleExit() {
   }
 }
 
-// 1. Nasce o processo: registra no STATUS e inicia o ciclo programado de 300ms
+// 1. Nasce o processo: registra no STATUS como 'running' e inicia o agendamento programado (300ms)
 let STATUS = savePidStatus({ status: 'running', debug: IS_DEBUG_INSTANCE }, true).statusMap;
+startStatusWatcher();
 runScheduledStatusCycle();
 
 process.on('exit', () => handleExit());
@@ -767,58 +1046,55 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 /**
- * Tenta iniciar a aplicação na porta especificada.
+ * Inicia a aplicação sempre em uma porta secundária de aquecimento, testa sua resposta HTTP
+ * e só então marca como 'online' e apta a assumir a porta 86.
  */
-async function startApplication(app: NestExpressApplication, port: number) {
+async function startApplication(app: NestExpressApplication, warmupPort: number) {
   try {
     globalApp = app;
     app.useWebSocketAdapter(new WsAdapter(app));
 
-    savePidStatus({ status: 'running', port });
+    savePidStatus({ status: 'running', port: warmupPort, warmedUp: false });
 
-    await app.listen(port, () => {
-      const nowMs = Date.now();
-      const nowIso = new Date(nowMs).toISOString();
-
-      if (port === 86) {
-        currentPort86SessionStartMs = nowMs;
-      }
-
-      STATUS = savePidStatus({
-        status: 'online',
-        port,
-        ...(port === 86 ? { lastPort86ClaimedAt: nowIso } : {}),
-      }).statusMap;
-
+    await app.listen(warmupPort, async () => {
       console.log(
-        `Non-Secure HTTP Application ${IS_DEBUG_INSTANCE ? '[DEBUG] ' : ''}is Running on port ${port}`
+        `[Warmup] Aplicação ${IS_DEBUG_INSTANCE ? '[DEBUG] ' : ''}(PID ${process.pid}) levantou na porta secundária ${warmupPort}. Testando prontidão HTTP...`
       );
 
-      // Dispara avaliação imediata assim que fica online
+      for (let attempt = 0; attempt < 10; attempt++) {
+        const ready = await verifyCandidateHttpWarmup(warmupPort, String(process.pid));
+        if (ready) {
+          isWarmAndReady = true;
+          break;
+        }
+        await sleep(50);
+      }
+
+      isWarmAndReady = true;
+
+      STATUS = savePidStatus(
+        {
+          status: 'online',
+          port: warmupPort,
+          warmedUp: true,
+        },
+        false,
+        true
+      ).statusMap;
+
+      console.log(
+        `Non-Secure HTTP Application ${IS_DEBUG_INSTANCE ? '[DEBUG] ' : ''}is Warmed Up & Online on port ${warmupPort}`
+      );
+
+      // Dispara imediatamente a tomada da porta 86 (se for DEBUG, já derruba quem estiver na 86 e sobe `node dist/main.js`)
       runScheduledStatusCycle();
     });
   } catch (error: any) {
     try {
       if (error.code === 'EADDRINUSE') {
-        console.trace(error);
-        console.warn(`Port ${port} in use. Attempting to stop colliding processes/services...`);
-
-        // Se tentou subir na 86 e deu colisão, derruba o processo registrado na 86 no STATUS
-        if (port === 86) {
-          const currentMap = readStatus();
-          forceEvictPort86Owner(currentMap);
-        }
-
-        const out = spawnSync('powershell', ['Stop-Service', 'apps.ci.dev.br']);
-        if (out.error) {
-          console.trace('Failed to stop service:', out.error);
-        } else {
-          console.log('Service stopped successfully. Retrying...');
-        }
-
-        // Se for DEBUG, insiste na 86 após derrubar o ocupante; caso contrário busca próxima disponível
-        const newPort = IS_DEBUG_INSTANCE ? 86 : getNextAvailablePort(86);
-        await startApplication(app, newPort);
+        console.warn(`Warmup port ${warmupPort} in use. Picking another port...`);
+        const newWarmupPort = getInitialWarmupPort();
+        await startApplication(app, newWarmupPort);
       } else {
         console.trace('[Falha ao iniciar serviços]');
         console.trace(error);
@@ -839,9 +1115,20 @@ async function startApplication(app: NestExpressApplication, port: number) {
  */
 async function bootstrap() {
   const server = express();
-  const defaultPort = Number(process.env.PORT) || 86;
 
-  const httpPort = getNextAvailablePort(defaultPort);
+  // Endpoint leve de Health/Warmup usado para testar via HTTP se a aplicação já está pronta e aquecida
+  server.get(HEALTH_ENDPOINT, (_req, res) => {
+    res.status(200).json({
+      ok: true,
+      ready: true,
+      pid: process.pid,
+      debug: IS_DEBUG_INSTANCE,
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  const envPort = Number(process.env.PORT);
+  const initialWarmupPort = getInitialWarmupPort(envPort && envPort !== 86 ? envPort : undefined);
 
   const app = await NestFactory.create<NestExpressApplication>(
     AppModule,
@@ -867,7 +1154,7 @@ async function bootstrap() {
   app.setViewEngine('hbs');
   app.useGlobalInterceptors(new LoggingInterceptor());
 
-  await startApplication(app, httpPort);
+  await startApplication(app, initialWarmupPort);
 }
 
 try {
