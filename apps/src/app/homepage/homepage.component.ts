@@ -11,7 +11,9 @@ import {
     PendingTasks,
     PLATFORM_ID,
     Renderer2,
-    ViewChild
+    signal,
+    ViewChild,
+    WritableSignal
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { Router, RouterModule } from '@angular/router';
@@ -62,7 +64,7 @@ const TERMOS_BLOQUEADOS = [
 export class HomepageComponent implements OnInit, OnDestroy {
     pesquisa;
     stage?: 'loading' | 'loaded' = 'loading';
-    feeds?: any[] = [];
+    feeds: WritableSignal<Array<any>> = signal([]);
 
     private _feedContainer?: ElementRef<HTMLDivElement>;
     public get feedContainer(): ElementRef<HTMLDivElement> | undefined {
@@ -191,7 +193,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
                     return !TERMOS_BLOQUEADOS.some(termo => content.includes(termo));
                 });
 
-                this.feeds = [...(this.feeds || []), ...novosItens];
+                this.feeds.set([...(this.feeds() || []), ...novosItens]);
                 // Dispara a atualização imediata da view assim que o array é montado
                 this.cdr?.detectChanges();
             },
