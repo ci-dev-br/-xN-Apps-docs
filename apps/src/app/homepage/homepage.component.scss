@@ -2,11 +2,11 @@
     background: var(--mat-app-background-color);
     color: var(--mat-app-text-color);
     overflow: hidden;
-    flex: auto;
+    // flex: auto;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: stretch;
+    justify-content: stretch;
 }
 
 :host ::ng-deep .mat-mdc-tab-body-content {
@@ -42,12 +42,12 @@ mat-tab-group {
 .qra:has(.sidebar) {
     display: flex;
     flex-direction: row;
-    flex: auto;
+    // flex: auto;
     align-items: stretch;
     justify-content: stretch;
 
     .sidebar {
-        flex: 0;
+        // flex: 0;
         display: flex;
         flex-direction: column;
         align-items: stretch;
@@ -55,7 +55,7 @@ mat-tab-group {
     }
 
     .apps {
-        flex: auto;
+        // flex: auto;
     }
 }
 
@@ -157,7 +157,7 @@ mat-form-field {
 }
 
 .feed {
-    flex: auto;
+    // flex: auto;
     width: 100%;
     overflow: auto;
     display: flex;
@@ -166,7 +166,7 @@ mat-form-field {
 
 .wrapper {
     display: flex;
-    flex: auto;
+    // flex: auto;
     overflow: auto;
 
     flex-direction: column;
@@ -205,4 +205,13 @@ mat-form-field {
         text-wrap: wrap !important;
         text-justify: distribute;
     }
+}
+
+a,
+a:hover,
+a:active,
+a:visited {
+    color: var(--mat-app-text-color);
+    font-weight: bolder;
+    text-decoration: dashed;
 }

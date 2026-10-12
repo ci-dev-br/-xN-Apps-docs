@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, isDevMode, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ApiModule, KeyboardTheme, KeyboardThemesService, NewsService } from '@ci/portal-api';
+import { ApiModule, KeyboardTheme, KeyboardThemesService, NewsService, User } from '@ci/portal-api';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { LAYOUT_GAME } from './LAYOUT_GAME';
@@ -14,6 +14,7 @@ import { TEXTOBASE } from './texto_bese';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ActionsMenuComponent } from './actions-menu.component';
 import { lastValueFrom } from 'rxjs';
+import { UserAuthenticationService } from '@ci/auth';
 interface AndroidBridge {
   onKey(character: string): void;
   onAction(action: string): void;
@@ -34,6 +35,13 @@ const REFERENCE_TEXT = TEXTOBASE;
     MatButtonModule,
     MatIconModule,
     MatDialogModule,
+  ],
+  providers: [
+    {
+      provide: 'tax', multi: true, useValue: {
+        ApplicationId: ''
+      }
+    }
   ],
   templateUrl: 'keyboard.html',
   styleUrls: ['keyboard.scss']
@@ -210,16 +218,37 @@ export class KeyboardComponent implements OnInit {
     if (availableChars.size === 0) return true;
     return availableChars.has(normChar);
   }
+  private _em_andamento?: string;
+  public get EmAndamento() {
+    return this._em_andamento;
+  }
+  public set EmAndamento(value) {
+    if (this._em_andamento === value) return; // bloqueio de grafo
+    this._em_andamento = value;
+    localStorage.setItem(`${isDevMode()}•${((user: User) => {
+      return '';/* return createHash('md5').update(`${user.username!}`) */
+    })(inject(UserAuthenticationService).user.value!)}`, JSON.stringify({
+      o_data: value
+    }));
+  }
   acoesDefault: any[] = [
     {
-      title: 'Consultar conteúdo recente', act: [
-        'S', 'A:ENTER', 'W:15000', 'A:BACKSPACE', 'R:0'
+      title: 'Consultar conteúdo recente',
+      icon: 'search',
+      act: [
+        'S', 'A:ENTER', 'W:20000', 'A:BACKSPACE', 'R:0'
       ],
-    }, ...((() => {
-      const storaged = localStorage.getItem('@User(Keyboard)::custom_actions');
-      if (storaged) return JSON.parse(storaged);
-      return undefined;
-    })() || [])
+    }
+    ///// U2UgcXVpc2VyZW0gcG9kZW0gaXIgcHJhIGNhc2EuIEFicmHnZW0gc3VhcyBmYW3tbGlhcy4gRXUgdm91IGZpY2FyIGJlbS4uLi4gQUxUICsgMyA=
+    /*
+        /// implementando lógica ...
+         }, ...((() => {
+           const storaged = localStorage.getItem('@User(Keyboard)::custom_actions');
+           if (storaged) return JSON.parse(storaged);
+           return undefined;
+         })() || [])
+    
+        */
   ];
   getAvailableNextChars(): Set<string> {
     const allowed = new Set<string>();
@@ -274,13 +303,20 @@ export class KeyboardComponent implements OnInit {
     if (!name.trim() || !rawData.trim()) { alert('Preencha os dados.'); return; }
     const parsedLayout: KeyboardKey[][] = rawData.split('\n').map(row => {
       return row.trim().split(/\s+/).filter(char => char).map(char => {
-        if (char.toUpperCase() === 'SPACE') return { label: 'Space', value: ' ', type: 'char', flex: 3 };
-        if (char.toUpperCase() === 'BACKSPACE') return { label: '⌫', type: 'action', action: 'BACKSPACE', flex: 1.5 };
-        if (char.toUpperCase() === 'ENTER') return { label: '↵', type: 'action', action: 'ENTER', flex: 1.5 };
-        if (char.toUpperCase() === 'SHIFT') return { label: '⇧', type: 'modifier', action: 'SHIFT', flex: 1.5 };
-        if (char.toUpperCase() === 'TAB') return { label: 'Tab', type: 'action', action: 'TAB', flex: 1.2 };
-        if (char.toUpperCase() === 'CTRL') return { label: 'Ctrl', type: 'modifier', action: 'CTRL', flex: 1.2 };
-        if (char.toUpperCase() === 'ESC') return { label: 'Esc', type: 'action', action: 'ESC', flex: 1.5 };
+        if (char.toUpperCase() === 'SPACE')
+          return { label: 'Space', value: ' ', type: 'char', flex: 3 };
+        if (char.toUpperCase() === 'BACKSPACE')
+          return { label: '⌫', type: 'action', action: 'BACKSPACE', flex: 1.5 };
+        if (char.toUpperCase() === 'ENTER')
+          return { label: '↵', type: 'action', action: 'ENTER', flex: 1.5 };
+        if (char.toUpperCase() === 'SHIFT')
+          return { label: '⇧', type: 'modifier', action: 'SHIFT', flex: 1.5 };
+        if (char.toUpperCase() === 'TAB')
+          return { label: 'Tab', type: 'action', action: 'TAB', flex: 1.2 };
+        if (char.toUpperCase() === 'CTRL')
+          return { label: 'Ctrl', type: 'modifier', action: 'CTRL', flex: 1.2 };
+        if (char.toUpperCase() === 'ESC')
+          return { label: 'Esc', type: 'action', action: 'ESC', flex: 1.5 };
         return { label: char, type: 'char' };
       });
     });
@@ -405,3 +441,4 @@ export class KeyboardComponent implements OnInit {
     }
   }
 }
+// Se precisa explicar, então não justifica...aert

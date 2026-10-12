@@ -4,6 +4,6 @@ import { ApiTags } from "@nestjs/swagger";
 
 @ApiTags('CodeBlock')
 @Controller('CodeBlock')
-export class ActionController extends ControllerDaoBase<any,> {
+export class ActionController {
 
 }

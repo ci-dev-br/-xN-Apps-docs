@@ -27,7 +27,7 @@ export class ChessController {
      * @param payload 
      * @returns 
      */
-    @Post('ChessMove')
+    @Post('Move')
     @ApiResponse({
         type: GamePayload,
     })
@@ -37,6 +37,9 @@ export class ChessController {
     async move(
         @Body() payload: GamePayload,
     ) {
+
+
+
         payload.move = await this.chessService.getMoveByFen(payload.fen);
         return payload;
     }

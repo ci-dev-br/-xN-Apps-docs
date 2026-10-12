@@ -328,7 +328,7 @@ export class InputComponent implements OnInit {
 
       if (this.debugPitch) {
         console.log(`[Pitch Debug] Mediana detectada: ${medianHz.toFixed(2)}Hz | Amostras: ${this.pitchTracker.length}`);
-        console.log(`[Pitch Debug] Base de locutores atual:`, JSON.parse(JSON.stringify(this.knownSpeakers)));
+        /*  console.log(`[Pitch Debug] Base de locutores atual:`, JSON.parse(JSON .stringify(this.knownSpeakers))); */
       }
 
       if (this.knownSpeakers.length === 0) {

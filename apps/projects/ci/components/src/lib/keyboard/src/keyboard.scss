@@ -4,6 +4,10 @@
     overflow: hidden;
 }
 
+.active {
+    background: greenyellow;
+}
+
 :host {
     --bg: black;
     z-index: #{100*100*100};
@@ -58,7 +62,7 @@
 
 button {
     border-radius: var(--key-radius);
-    border: none;
+    border: solid 1px rgba(0, 0, 0, 0.2);
     background: var(--key-bg);
     color: var(--key-color);
     box-shadow: var(--key-shadow);

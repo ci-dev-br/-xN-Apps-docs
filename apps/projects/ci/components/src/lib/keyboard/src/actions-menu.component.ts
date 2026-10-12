@@ -3,6 +3,9 @@ import { Action } from "./Action";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
+import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 interface ActionsDialogData {
     acoes: { title: string, act?: any }[];
 }
@@ -12,28 +15,47 @@ interface ActionsDialogData {
  @if(stage==='menu'){
  @if(!!actions&& actions.length > 0){
  @for(item of actions || []; track $index){
- {{item.title}}
  <div class="linha" >
- <button mat-raised-button (click)="select(item)" >
- </button>
+    <button mat-raised-button (click)="select(item)" >
+            @if(item.icon){<mat-icon>{{item.icon}}</mat-icon>}{{item.title}} 
+    </button>
+    <button mat-button (click)="edit(item)" ><mat-icon>edit</mat-icon></button>
  </div>
  }
  }@else{
  <span>Nenhuma ação catalogada...</span>
  }
  <button mat-raised-button (click)="createNewAction()">Nova Ação</button>
- }@else if(stage === 'edit'){
- 
+ }@else if(stage === 'edit' && !!doEditing){
+    <form [formGroup]="editForm">
+        <h1>{{doEditing.title}}</h1>
+        <mat-form-field>
+            <mat-label>
+                Title
+            </mat-label>
+            <input type="text" matInput formControlName="title" >
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>
+                Ícone
+            </mat-label>
+            <input type="text" matInput formControlName="icon" >
+        </mat-form-field>
+        <button mat-button (click)="confirmar()">Confirmar</button>
+    </form>
  }`,
     styles: [`
  :host{
  padding:12px;
- }
+ } form {display: flex; flex-direction: column;}
  `],
     imports: [
         MatButtonModule,
         MatFormFieldModule,
+        MatIconModule,
         MatButtonModule,
+        MatInputModule,
+        ReactiveFormsModule,
     ],
     standalone: true,
 })
@@ -42,11 +64,15 @@ export class ActionsMenuComponent {
     actions?: any[];
     customs?: any[];
     doEditing?: any;
+    editForm: FormGroup;
     constructor(
         private readonly dialog: MatDialogRef<ActionsMenuComponent>,
         @Inject(MAT_DIALOG_DATA) data: ActionsDialogData
+        , formBuilder: FormBuilder,
     ) {
-        console.log(data)
+        this.editForm = formBuilder.group({
+            title: [], icon: [], act: []
+        })
         if (data?.acoes) this.actions = data.acoes;
     }
     async select(item: any) {
@@ -57,5 +83,19 @@ export class ActionsMenuComponent {
         localStorage.setItem('@User(Keyboard)::custom_actions', JSON
             .stringify(this.customs)
         );
+    }
+    async edit(item: any) {
+        this.stage = 'edit';
+        this.doEditing = item;
+        this.editForm.reset(item);
+    }
+    async confirmar() {
+        if (this.editForm.invalid) {
+            this.editForm.markAllAsTouched();
+            return;
+        }
+        Object.assign(this.doEditing, this.editForm.getRawValue());
+        this.stage = 'menu';
+        this.doEditing = undefined;
     }
 }

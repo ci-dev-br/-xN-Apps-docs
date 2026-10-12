@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@nestjs/axios": "^12.0.0",
+    "@nestjs/cache-manager": "^12.0.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^10.1.0",
@@ -36,6 +37,7 @@
     "@tensorflow/tfjs-node": "^4.22.0",
     "@xmldom/xmldom": "^0.9.12",
     "axios": "^1.20.0",
+    "cache-manager": "^7.2.9",
     "canvas": "^3.2.3",
     "cheerio": "^1.2.0",
     "chess.js": "^1.4.0",

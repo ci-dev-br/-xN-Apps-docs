@@ -29,7 +29,7 @@ public class WebKeyboardService extends InputMethodService {
         settings.setDomStorageEnabled(true);
 
         webView.addJavascriptInterface(new WebAppInterface(), "AndroidKeyboard");
-        webView.loadUrl("https://development.ci.dev.br/keyboard");
+        webView.loadUrl("https://apps.ci.dev.br/keyboard");
 
         return layout;
     }

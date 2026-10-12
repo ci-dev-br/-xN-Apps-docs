@@ -1,0 +1,105 @@
+{
+  "4916": {
+    "startedAt": "2026-10-12T05:19:32.510Z",
+    "status": "stopped",
+    "lastHeartbeat": "2026-10-12T05:20:30.760Z",
+    "updatedAt": "2026-10-12T05:20:30.760Z",
+    "port": 48186,
+    "previousPort": 48186,
+    "stoppedAt": "2026-10-12T05:20:30.759Z"
+  },
+  "5708": {
+    "startedAt": "2026-10-12T05:19:09.602Z",
+    "status": "stopped",
+    "lastHeartbeat": "2026-10-12T05:19:17.171Z",
+    "updatedAt": "2026-10-12T05:19:17.171Z",
+    "stoppedAt": "2026-10-12T05:19:17.171Z"
+  },
+  "8132": {
+    "startedAt": "2026-10-12T05:13:05.842Z",
+    "status": "stopped",
+    "lastHeartbeat": "2026-10-12T05:13:31.136Z",
+    "updatedAt": "2026-10-12T05:13:39.824Z",
+    "port": 9023,
+    "stoppedAt": "2026-10-12T05:13:31.136Z"
+  },
+  "9512": {
+    "startedAt": "2026-10-12T05:13:39.824Z",
+    "status": "stopped",
+    "lastHeartbeat": "2026-10-12T05:18:04.448Z",
+    "updatedAt": "2026-10-12T05:18:12.545Z",
+    "port": 86,
+    "stoppedAt": "2026-10-12T05:18:04.448Z"
+  },
+  "12476": {
+    "startedAt": "2026-10-12T05:18:12.573Z",
+    "status": "stopped",
+    "lastHeartbeat": "2026-10-12T05:18:15.633Z",
+    "updatedAt": "2026-10-12T05:18:15.633Z",
+    "stoppedAt": "2026-10-12T05:18:15.633Z"
+  },
+  "12868": {
+    "startedAt": "2026-10-12T05:18:12.545Z",
+    "status": "stopped",
+    "lastHeartbeat": "2026-10-12T05:18:17.515Z",
+    "updatedAt": "2026-10-12T05:18:17.515Z",
+    "stoppedAt": "2026-10-12T05:18:17.515Z"
+  },
+  "13200": {
+    "startedAt": "2026-10-12T05:19:32.046Z",
+    "status": "stopped",
+    "lastHeartbeat": "2026-10-12T05:20:30.369Z",
+    "updatedAt": "2026-10-12T05:20:30.369Z",
+    "port": 86,
+    "stoppedAt": "2026-10-12T05:19:41.530Z"
+  },
+  "14456": {
+    "startedAt": "2026-10-12T05:11:15.549Z",
+    "status": "stopped",
+    "lastHeartbeat": "2026-10-12T05:13:30.459Z",
+    "updatedAt": "2026-10-12T05:13:39.824Z",
+    "port": 86,
+    "previousPort": 49930,
+    "stoppedAt": "2026-10-12T05:13:30.459Z"
+  },
+  "14644": {
+    "startedAt": "2026-10-12T04:58:13.943Z",
+    "status": "stopped",
+    "lastHeartbeat": "2026-10-12T05:09:52.006Z",
+    "updatedAt": "2026-10-12T05:09:52.006Z",
+    "port": 86,
+    "previousPort": 33343,
+    "stoppedAt": "2026-10-12T05:09:52.000Z"
+  },
+  "15016": {
+    "startedAt": "2026-10-12T04:58:10.360Z",
+    "status": "stopped",
+    "lastHeartbeat": "2026-10-12T05:10:39.607Z",
+    "updatedAt": "2026-10-12T05:10:39.607Z",
+    "port": 86,
+    "stoppedAt": "2026-10-12T05:10:39.606Z"
+  },
+  "15800": {
+    "startedAt": "2026-10-12T05:10:24.546Z",
+    "status": "stopped",
+    "lastHeartbeat": "2026-10-12T05:11:29.570Z",
+    "updatedAt": "2026-10-12T05:11:29.570Z",
+    "port": 86,
+    "stoppedAt": "2026-10-12T05:11:29.570Z"
+  },
+  "17628": {
+    "startedAt": "2026-10-12T05:19:05.292Z",
+    "status": "stopped",
+    "lastHeartbeat": "2026-10-12T05:19:11.862Z",
+    "updatedAt": "2026-10-12T05:19:11.862Z",
+    "stoppedAt": "2026-10-12T05:19:11.861Z"
+  },
+  "18488": {
+    "startedAt": "2026-10-12T05:13:39.870Z",
+    "status": "stopped",
+    "lastHeartbeat": "2026-10-12T05:18:04.764Z",
+    "updatedAt": "2026-10-12T05:18:04.764Z",
+    "port": 12046,
+    "stoppedAt": "2026-10-12T05:14:18.143Z"
+  }
+}
