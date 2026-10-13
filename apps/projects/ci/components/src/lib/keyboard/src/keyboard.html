@@ -18,6 +18,7 @@
     </div>
     <!-- Botões Inferiores -->
     <div class="bottom-bar" style="padding-left: 10px">
+        @if(doAction){<button mat-icon-button (click)="stop()"><mat-icon>stop</mat-icon></button>}
         @for (item of extras; track $index) {
         <button mat-icon-button (click)="item.act()">
             @if(item.icon){<mat-icon>{{item.icon}}</mat-icon>}

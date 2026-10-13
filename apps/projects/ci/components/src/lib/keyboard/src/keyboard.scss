@@ -10,9 +10,11 @@
 
 :host {
     --bg: black;
-    z-index: #{100*100*100};
+    z-index: 100000;
     background: var(--bg);
     padding: 1px;
+    user-select: all;
+    pointer-events: all;
 }
 
 .keyboard-wrapper {

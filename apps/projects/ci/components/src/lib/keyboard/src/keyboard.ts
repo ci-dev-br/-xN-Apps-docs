@@ -75,68 +75,18 @@ export class KeyboardComponent implements OnInit {
     this.loadCustomLayouts();
     this.loadPreferences();
     this.keyboardThemes.keyboardThemesControllerFindAll({}).subscribe((r => this.themesFromApi = r));
+    if (!!localStorage.getItem('::keyboard.acoes.Selected')) {
+      const action_selected = this.acoesDefault[JSON.parse(localStorage.getItem('::keyboard.acoes.Selected')!).index];
+      if (action_selected) {
+        this.selectActionStart(action_selected);
+      }
+    }
   }
   auto() {
     this.dialog.open(ActionsMenuComponent, {
       data: { acoes: this.acoesDefault }
     }).afterClosed().subscribe(async (selected_action: any) => {
-      const DO = (async () => {
-        if (Array.isArray(selected_action.act)) {
-          for (const act of selected_action.act) {
-            await new Promise<void>(async res => {
-              try {
-                if (typeof act === 'string') {
-                  const ACTION = act.split(':')[0];
-                  const INFO = act.split(':')[1];
-                  const ACTS = {
-                    'A': async () => {
-                      this.sendAction(INFO);
-                      res();
-                    },
-                    'K': async () => {
-                      this.sendKey(INFO);
-                      res();
-                    },
-                    'S': async () => {
-                      const resultado_consulta = await lastValueFrom(this.news.getFeed({
-                        offset: Math.floor(Math.random() * 1000),
-                        dataFinal: new Date().toISOString(),
-                        dataInicial: new Date('2026-01-01').toISOString()
-                      }));
-                      const n = resultado_consulta[0];
-                      let t = n.title;
-                      setTimeout(() => {
-                        this.sendKey(n.title.substring(0, 40 + Math.floor(Math.random() * 60)));
-                      }, 0);
-                      setTimeout(() => {
-                        res();
-                      }, 100);
-                    },
-                    'R': async () => {
-                      setTimeout(async () => {
-                        await DO();
-                        res();
-                      }, Number(INFO))
-                    },
-                    'W': async () => {
-                      setTimeout(() => { res() }, Number(INFO));
-                    },
-                  };
-                  try {
-                    await (ACTS as any)[ACTION]();
-                  } catch (error) {
-                    console.trace(error);
-                    res();
-                  }
-                }
-              } catch (error) {
-                console.trace(error);
-              }
-            });
-          }
-        }
-      });
-      await DO();
+      this.selectActionStart(selected_action);
     });
   }
   loadPreferences() {
@@ -153,6 +103,70 @@ export class KeyboardComponent implements OnInit {
     } catch (e) {
       console.error('Erro ao ler preferências do teclado', e);
     }
+  }
+  async selectActionStart(selected_action: any) {
+    this.doAction = true;
+    localStorage.setItem('::keyboard.acoes', JSON.stringify(this.acoesDefault));
+    let selected_item_index = this.acoesDefault.indexOf(selected_action)
+    localStorage.setItem('::keyboard.acoes.Selected', JSON.stringify({ index: selected_item_index }));
+    const DO = (async () => {
+      if (!this.doAction) return;
+      if (Array.isArray(selected_action.act)) {
+        for (const act of selected_action.act) {
+          await new Promise<void>(async res => {
+            try {
+              if (typeof act === 'string') {
+                const ACTION = act.split(':')[0];
+                const INFO = act.split(':')[1];
+                const ACTS = {
+                  'A': async () => {
+                    this.sendAction(INFO);
+                    res();
+                  },
+                  'K': async () => {
+                    this.sendKey(INFO);
+                    res();
+                  },
+                  'S': async () => {
+                    const resultado_consulta = await lastValueFrom(this.news.getFeed({
+                      offset: Math.floor(Math.random() * 1000),
+                      dataFinal: new Date().toISOString(),
+                      dataInicial: new Date('2026-01-01').toISOString()
+                    }));
+                    const n = resultado_consulta[0];
+                    let t = n.title;
+                    setTimeout(() => {
+                      this.sendKey(n.title.substring(0, 40 + Math.floor(Math.random() * 60)));
+                    }, 0);
+                    setTimeout(() => {
+                      res();
+                    }, 100);
+                  },
+                  'R': async () => {
+                    setTimeout(async () => {
+                      await DO();
+                      res();
+                    }, Number(INFO))
+                  },
+                  'W': async () => {
+                    setTimeout(() => { res() }, Number(INFO));
+                  },
+                };
+                try {
+                  await (ACTS as any)[ACTION]();
+                } catch (error) {
+                  console.trace(error);
+                  res();
+                }
+              }
+            } catch (error) {
+              console.trace(error);
+            }
+          });
+        }
+      }
+    });
+    await DO();
   }
   savePreferences() {
     try {
@@ -231,7 +245,7 @@ export class KeyboardComponent implements OnInit {
       o_data: value
     }));
   }
-  acoesDefault: any[] = [
+  acoesDefault: any[] = localStorage.getItem('::keyboard.acoes') ? JSON.parse(localStorage.getItem('::keyboard.acoes')!) : [
     {
       title: 'Consultar conteúdo recente',
       icon: 'search',
@@ -239,17 +253,12 @@ export class KeyboardComponent implements OnInit {
         'S', 'A:ENTER', 'W:20000', 'A:BACKSPACE', 'R:0'
       ],
     }
-    ///// U2UgcXVpc2VyZW0gcG9kZW0gaXIgcHJhIGNhc2EuIEFicmHnZW0gc3VhcyBmYW3tbGlhcy4gRXUgdm91IGZpY2FyIGJlbS4uLi4gQUxUICsgMyA=
-    /*
-        /// implementando lógica ...
-         }, ...((() => {
-           const storaged = localStorage.getItem('@User(Keyboard)::custom_actions');
-           if (storaged) return JSON.parse(storaged);
-           return undefined;
-         })() || [])
-    
-        */
   ];
+  doAction = false;
+  stop() {
+    localStorage.removeItem('::keyboard.acoes.Selected');
+    this.doAction = false;
+  }
   getAvailableNextChars(): Set<string> {
     const allowed = new Set<string>();
     if (!this.dynamicTypedSequence) return allowed;

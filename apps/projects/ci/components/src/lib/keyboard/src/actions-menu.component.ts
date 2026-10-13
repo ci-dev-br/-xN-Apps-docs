@@ -6,6 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { MatTooltipModule } from "@angular/material/tooltip";
 interface ActionsDialogData {
     acoes: { title: string, act?: any }[];
 }
@@ -41,6 +42,19 @@ interface ActionsDialogData {
             </mat-label>
             <input type="text" matInput formControlName="icon" >
         </mat-form-field>
+        @if(!!doEditing?.act){
+            @for(item of doEditing!.act!; track $index){
+            <mat-form-field>
+                <mat-label>
+                    Ação
+                </mat-label>
+                <input type="text" matInput [value]="item" (change)="doEditing.act[$index] = $event.target!.value!" />
+                <button matSuffix mat-icon-button [matTooltip]="'Remover esta ação'" (click)="doEditing!.act!.splice($index,1)" ><mat-icon>remove</mat-icon></button>
+                <button matSuffix mat-icon-button [matTooltip]="'Adiciona ação antes'"  (click)="doEditing!.act!.splice($index,0,'')" ><mat-icon>add</mat-icon></button>
+            </mat-form-field>       
+            }
+        }
+        <button mat-button (click)="doEditing!.act = [...(doEditing.act||[]),'']" ><mat-icon>add</mat-icon></button>
         <button mat-button (click)="confirmar()">Confirmar</button>
     </form>
  }`,
@@ -54,6 +68,7 @@ interface ActionsDialogData {
         MatFormFieldModule,
         MatIconModule,
         MatButtonModule,
+        MatTooltipModule,
         MatInputModule,
         ReactiveFormsModule,
     ],
