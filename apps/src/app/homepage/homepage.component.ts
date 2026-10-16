@@ -33,6 +33,7 @@ import { IItemMenu } from '@ci/components/window';
 import { finalize } from 'rxjs';
 import { CI_STATIC_APPS } from '../painel/apps/apps';
 import { MatTabsModule, MatTabHeader } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 const TERMOS_BLOQUEADOS = [
     'oferta', 'sex', 'bet', ' odds', 'member', 'vip', 'cassino', 'unathorized', 'token'
@@ -55,7 +56,8 @@ const TERMOS_BLOQUEADOS = [
         MatInputModule,
         ReactiveFormsModule,
         MatTabsModule,
-        MatTabHeader
+        MatTabHeader,
+        MatTooltipModule,
     ],
     templateUrl: './homepage.component.html',
     standalone: true,
@@ -333,5 +335,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
         if (event === 'open') {
             window.open(origem.url, '_blank', '');
         }
+    }
+    async AtivarAlerta() {
+        // TODO: implementar ativar alerta.
     }
 }

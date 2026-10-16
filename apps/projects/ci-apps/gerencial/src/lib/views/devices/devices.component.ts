@@ -102,11 +102,11 @@ export interface DeviceItem {
     }
     devices?: DeviceItem[];
     async InstallLauncher() {
-        const url = '/downloads/launcher.1.0.11.apk';
+        const url = '/downloads/launcher.1.0.12.apk';
         const link = document.createElement('a');
 
         link.href = url;
-        link.setAttribute('download', 'launcher.1.0.11.apk');
+        link.setAttribute('download', 'launcher.1.0.12.apk');
 
         document.body.appendChild(link);
         link.click();

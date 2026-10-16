@@ -1,7 +1,7 @@
 :host {
     display: flex;
     flex-direction: column;
-    flex: auto;
+    flex: 1;
     overflow: auto;
     // padding: 8px;
     gap: 8px;
@@ -14,7 +14,7 @@ mat-toolbar {
     border-radius: 8px;
 
     * {
-        flex: none;
+        /// flex: none;
     }
 }
 

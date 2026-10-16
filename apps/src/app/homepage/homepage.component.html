@@ -9,17 +9,17 @@
                 @if(!!feeds()){
                 <div class="feed" #feedContainer>
                     @for(feed of feeds(); track feed.id || feed.url || $index) {
+
                     <div class="feed-item">
                         @if(feed.title){<h4 [innerHtml]="feed.title"></h4>}
                         <div [innerHtml]="feed.content" class="feed-content"></div>
                         <div style="text-align:right">Fonte: <a target="_blank"
-                                [href]="'https://' + feed?.sourceInfo?.domain">{{feed?.sourceInfo?.name}}</a>
+                                [href]="'https://' + feed?.sourceInfo?.domain">{{feed?.sourceInfo?.name}}
+                            </a>
                         </div>
                         <div class="interactions">
-                            <button mat-icon-button color="primary"
-                                (click)="interacao(feed, 'liked')"><mat-icon>thumb_up</mat-icon></button>
-                            <button mat-icon-button color="primary"
-                                (click)="interacao(feed, 'open')"><mat-icon>open_in_new</mat-icon></button>
+                            <button mat-icon-button color="primary" (click)="interacao(feed, 'open')"
+                                [matTooltip]="'Abrir na Origem'"><mat-icon>open_in_new</mat-icon></button>
                         </div>
                         <div>{{feed.categoria}}</div>
                     </div>

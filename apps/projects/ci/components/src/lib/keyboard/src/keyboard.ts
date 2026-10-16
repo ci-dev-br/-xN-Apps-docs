@@ -252,7 +252,35 @@ export class KeyboardComponent implements OnInit {
       act: [
         'S', 'A:ENTER', 'W:20000', 'A:BACKSPACE', 'R:0'
       ],
-    }
+    },
+    {
+      title: 'Tab Enter 20',
+      icon: 'search',
+      act: [
+        'A:TAB', 'A:ENTER', 'W:20000', "R:0"
+      ],
+    },
+    {
+      title: 'Tab Enter 30',
+      icon: 'search',
+      act: [
+        'A:TAB', 'A:ENTER', 'W:30000', "R:0"
+      ],
+    },
+    {
+      title: 'Tab Enter 35',
+      icon: 'search',
+      act: [
+        'A:TAB', 'A:ENTER', 'W:35000', "R:0"
+      ],
+    },
+    {
+      title: 'Tab Enter 40',
+      icon: 'search',
+      act: [
+        'A:TAB', 'A:ENTER', 'W:40000', "R:0"
+      ],
+    },
   ];
   doAction = false;
   stop() {
