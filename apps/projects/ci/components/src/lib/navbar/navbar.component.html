@@ -1,43 +1,38 @@
-@if(!!(user | async)){
+@if(!!user()){
 <mat-toolbar color="accent">
-    <!-- <div class="l">
-    </div> -->
-    @if(!!apps){ <button mat-icon-button [matMenuTriggerFor]="menuApps">
+    @if(!!_apps() && _apps()!.length > 0){ <button mat-icon-button [matMenuTriggerFor]="menuApps">
         <mat-icon>apps</mat-icon>
     </button>
     <mat-menu #menuApps>
         <h1>Principais Àpps</h1>
         <div class="menu--inner">
-            @for (app of apps; track $index) {
+            @for (app of _apps(); track $index) {
             <button mat-button routerLinkActive="side-ativo" [routerLink]="'/' + app.url"
                 (click)="appClickHandler($event, app)">
-                <!-- <div class="content"> -->
                 @if(app.icon){
                 @if(app.type === 'svg'){
                 <mat-icon [svgIcon]="app.icon"></mat-icon>
                 }
                 @else{
-                <mat-icon>{{app.icon}}</mat-icon>
+                @if(!!app?.icon){<mat-icon>{{app.icon}}</mat-icon>}
                 }
                 }
-                <!--  <div class="title"> -->{{app.name}}<!-- </div> -->
-                <!-- </div> -->
             </button>
             }
         </div>
         <a routerLink="/meus-apps/apps">Todos os Àpps</a>
-    </mat-menu>}
-    @if(!!recentes?.length){<div class="recent">
+    </mat-menu>
+    @if(!!recentes && recentes.length > 0){<div class="recent">
         @for (app of recentes; track $index) {
-        <button mat-icon-button routerLinkActive="side-ativo" [matTooltip]="app.name" [routerLink]="'/' + app.url"
+        <button mat-icon-button routerLinkActive="side-ativo" [routerLink]="'/' + app.url"
             (click)="appClickHandler($event, app)">
-            <mat-icon [svgIcon]="app.icon"></mat-icon>
+            @if(!!app?.icon){<mat-icon [svgIcon]="app.icon"></mat-icon>}
         </button>
         }
-    </div>}
+    </div>}}
     <ci-logo></ci-logo>
     <span style="flex: auto;"></span>
-    <span style="flex: auto;"></span>
+    @if(!!userMenu && !!userMenuList){
     <button mat-icon-button [matMenuTriggerFor]="deployMenu">
         <mat-icon>deployed_code</mat-icon>
     </button>
@@ -54,13 +49,13 @@
     </mat-menu>
     <button mat-icon-button [matMenuTriggerFor]="userMenu">
         <mat-icon>people</mat-icon>
-    </button>
+    </button>}
     <mat-menu #userMenu>
-        @if(!!userMenu){@for(menu_item of userMenuList; track menu_item){
-        @if(menu_item.component !== undefined){
+        @if(!!userMenu && !!userMenuList){@for(menu_item of userMenuList; track menu_item){
+        @if(!!menu_item && menu_item.component !== undefined){
         <ng-container *ngComponentOutlet="menu_item.component"></ng-container>
         }@else{
-        @if(!!menu_item.onClick){
+        @if(!!menu_item?.onClick){
         <button mat-menu-item (click)="itemMenuActionHandler(menu_item, $event)">
             <ng-container *ngTemplateOutlet="innerItemMenu"></ng-container>
         </button>

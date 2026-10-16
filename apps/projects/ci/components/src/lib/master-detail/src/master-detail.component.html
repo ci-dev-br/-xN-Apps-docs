@@ -11,14 +11,17 @@
     <span style="flex:auto"></span>
     <mat-button-toggle-group [(ngModel)]="visualizacao">
         <mat-button-toggle value="table"><mat-icon>view_list</mat-icon>Tabela</mat-button-toggle>
-        <!--   <mat-button-toggle value="list"><mat-icon>grid_view</mat-icon>Lista</mat-button-toggle> -->
+        <mat-button-toggle value="list"><mat-icon>grid_view</mat-icon>Lista</mat-button-toggle>
     </mat-button-toggle-group>
 </mat-toolbar>
+
 @if(visualizacao === 'table' && !!gridOptions){
 <ci-data-grid (select)="editar($event.value, $event.event)" (sorted)="sortHandle($event)" [options]="gridOptions"
     [source]="source">
     <div vazio style="flex: auto; text-align: center;">Nenhum item cadastrado</div>
 </ci-data-grid>
+}@else{
+Grid não configurado...
 }
 @if(visualizacao === 'list'){
 <!-- <ci-data-list (select)="editar($event[0],$event[1])" > </ci-data-list> -->

@@ -37,9 +37,9 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
     @Input()
     visualizacao?: 'table' | 'list' = 'table';
     @Input()
-    schemaName: string = undefined!;
+    schemaName?: string;
     @Input()
-    gridOptions?: any/* IDataGridOptions<T> */;
+    gridOptions?: any;
     service?: any;
     private order?: any;
     constructor(
@@ -91,23 +91,28 @@ export class MasterDetailComponent<T> implements OnInit, AfterViewInit, OnDestro
             if (queries.Editar) {
 
             }
-            // queries;
         })
     }
     async prepareSchema() {
-        if (this.schemaName && !!document?.title && !this.oTitle && this.schemaName) {
-            this.oTitle = document.title;
-            document.title = `${this.oTitle} - ${this.schemaName}`
-        }
-        await this.loadGrid();
-        if (!!this.schemaName) {
-            let serviceType = getServiceAsSchema(this.schemaName);
-            if (serviceType) {
-                this.service = this.injector?.get(serviceType);
+        try {
+            if (this.schemaName && !!document?.title && !this.oTitle && this.schemaName) {
+                this.oTitle = document.title;
+                document.title = `${this.oTitle} - ${this.schemaName}`
             }
+            await this.loadGrid();
+            if (!!this.schemaName) {
+                let serviceType = getServiceAsSchema(this.schemaName);
+                if (serviceType) {
+                    this.service = this.injector?.get(serviceType);
+                }
+            }
+            this.search();
+            this.source;
+
+        } catch (error) {
+            console.trace(error);
+            throw new Error('Erro ao preparar Schema', { cause: error });
         }
-        this.search();
-        this.source;
     }
     async search() {
         try {

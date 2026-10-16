@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, signal } from "@angular/core";
 import { UserAuthenticationService } from "@ci/auth";
 import { INavbarItemMenu } from "./i-menu-item";
 import { IItemMenu } from "@ci/components/window";
 import { MenuService } from "@ci/core";
+import { User } from "@ci/portal-api";
 
 @Component({
     selector: 'ci-navbar',
@@ -13,8 +14,16 @@ import { MenuService } from "@ci/core";
     ]
 })
 export class NavbarComponent implements OnInit {
-    @Input() apps?: any[];
-    user = this.userService.user;
+    _apps = signal<undefined | any[]>(undefined);
+    public get apps() {
+        return this._apps();
+    }
+    @Input()
+    public set apps(value: undefined | any[]) {
+        if (this._apps() === value) return;
+        this._apps.set(value);
+    }
+    user = signal<undefined | User>(this.userService.user.value);
     @Input() menuItens?: INavbarItemMenu[];
     @Input() userMenuList?: IItemMenu[];
     @Input() recentes?: any[];
@@ -25,13 +34,20 @@ export class NavbarComponent implements OnInit {
         private readonly userService: UserAuthenticationService,
         menuService?: MenuService,
     ) {
-        menuService?.userMenu.subscribe(menu => {
+        menuService?.userMenu?.subscribe(menu => {
             this.userMenuList = menu;
         })
     }
     ngOnInit(): void {
-        if (!!this.apps)
-            this.recentes = localStorage.getItem('NAV(RECENTES)')?.split(',').map(x => this.apps?.find(a => a.name === x))
+        try {
+            this.userService.user.subscribe(u => {
+                this.user.set(u);
+                if (!!this.apps)
+                    this.recentes = localStorage.getItem('NAV(RECENTES)')?.split(',').map(x => this.apps?.find(a => a?.name === x))
+            });
+        } catch (error) {
+            console.trace(error);
+        }
     }
     async sair() {
         this.userService?.sair();
@@ -58,6 +74,6 @@ export class NavbarComponent implements OnInit {
         this.recentes.reverse();
         if (this.recentes.length > 4) this.recentes.length = 4;
         this.recentes = [...this.recentes];
-        localStorage.setItem('NAV(RECENTES)', this.recentes.map((e: any) => String(e.name)).join(','))
+        localStorage.setItem('NAV(RECENTES)', this.recentes.map((e: any) => String(e?.name)).join(','))
     }
 }

@@ -47,12 +47,12 @@ const routes: Routes = [
                 path: 'devices', component: DevicesComponent,
                 data: { title: '    ', icon: 'smartphone' }
             },
-            // { path: 'settings', component: undefined },
             {
-                path: 'applications', component: MasterDetailComponent
-                /* ApplicationManagerComponent */,
+                path: 'applications', component: MasterDetailComponent,
                 data: {
-                    title: 'Apps', icon: 'apps', schema: 'Application',
+                    title: 'Apps',
+                    icon: 'apps',
+                    schema: 'Application',
                     search: {
                         all: true
                     }
