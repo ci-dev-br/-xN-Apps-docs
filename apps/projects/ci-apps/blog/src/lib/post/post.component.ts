@@ -8,7 +8,8 @@ import { lastValueFrom } from "rxjs";
     templateUrl: 'post.component.html',
     styleUrls: [
         'post.component.scss'
-    ]
+    ],
+    standalone: false,
 })
 export class PostComponent {
     private oppenedFile?: FileDto;

@@ -14,6 +14,9 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
     }
     /**
      * Validação da autorização
+     * 
+     * Este método verifica se uma autorização está ainda em validade de uso.
+     * 
      * @param request 
      * @param payload 
      * @returns 
