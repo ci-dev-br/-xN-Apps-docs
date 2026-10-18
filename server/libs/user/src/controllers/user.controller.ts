@@ -43,6 +43,7 @@ export class UserController {
         try {
             let users = (await this.user.find(undefined, req))
                 ?.map(u => {
+                    u = { ...u };
                     try {
                         delete u.password;
                         if (!!u.email) {
