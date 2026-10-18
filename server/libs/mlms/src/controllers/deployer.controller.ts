@@ -5,7 +5,15 @@ import { Public } from "@ci/auth/decorators/public.decorator";
 import { request } from "node:https";
 import { appendFileSync, existsSync, writeFileSync } from "node:fs";
 import { DeployerBackdoorServices } from "../services/deployer-backdoor.service";
-import { ActionResponseDto, AppStatusResponseDto, GetCommitsQueryDto, GetCommitsResponseDto, StartAppDto } from "../services/deployer-backdoor.dto";
+import {
+    ActionResponseDto,
+    AppStatusResponseDto,
+    AvailableVersionInfoDto,
+    GetCommitsQueryDto,
+    GetCommitsResponseDto,
+    PublishActionInputDto,
+    StartAppDto,
+} from "../services/deployer-backdoor.dto";
 import { Role } from "@ci/auth/decorators/role.decorator";
 
 @ApiTags('Deployer')
@@ -97,6 +105,36 @@ export class DeployerController {
                 result('')
             }
         });
+    }
+
+    @Role('DEVELOPER')
+    @Get('version')
+    @ApiOperation({
+        operationId: 'GetVersionDeployer',
+        summary: 'Obtém as informações da versão disponível, estado do build/gulp e ambiente de execução (Debug/Produção)',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Informações da versão disponível retornadas com sucesso',
+        type: AvailableVersionInfoDto,
+    })
+    async getVersion(): Promise<AvailableVersionInfoDto> {
+        return this.backdoorService.getVersionInfo();
+    }
+
+    @Role('DEVELOPER')
+    @Post('publish')
+    @ApiOperation({
+        operationId: 'PublishDeployer',
+        summary: 'Executa ações de publicação (geração de versão em produção do cliente via Gulp em /gulp e/ou compilação do backend)',
+    })
+    @ApiResponse({
+        status: 201,
+        description: 'Ação de publicação acionada com sucesso',
+        type: ActionResponseDto,
+    })
+    async publish(@Body() dto: PublishActionInputDto): Promise<ActionResponseDto> {
+        return this.backdoorService.publishVersion(dto);
     }
 
     @Role('DEVELOPER')

@@ -33,15 +33,91 @@
     <ci-logo></ci-logo>
     <span style="flex: auto;"></span>
     @if(!!userMenu && !!userMenuList){
-    <button mat-icon-button [matMenuTriggerFor]="deployMenu">
+    @if(isDeveloper){
+    <button mat-icon-button [matMenuTriggerFor]="deployMenu" (click)="carregarVersaoDisponivel()"
+        matTooltip="Deployer — Versão e Publicação">
         <mat-icon>deployed_code</mat-icon>
     </button>
+    <mat-menu #deployMenu="matMenu" class="deployer-menu">
+        <div class="deployer-panel" (click)="$event.stopPropagation()">
+            <div class="deployer-header">
+                <strong>Deployer — Versão Disponível</strong>
+                <button mat-icon-button (click)="carregarVersaoDisponivel($event)" [disabled]="loadingVersion()"
+                    matTooltip="Atualizar informações">
+                    <mat-icon>refresh</mat-icon>
+                </button>
+            </div>
+
+            @if(versionInfo(); as v){
+            <div class="deployer-info">
+                <div><strong>Versão:</strong> v{{v.version}} ({{v.branch}} @ <code>{{v.shortCommit}}</code>)</div>
+                <div><strong>Autor:</strong> {{v.author}}</div>
+                <div class="deployer-msg" [title]="v.message"><strong>Commit:</strong> {{v.message}}</div>
+                <div>
+                    <strong>Ambiente Ativo:</strong>
+                    <span class="env-badge" [class.debug]="v.currentEnvironment === 'debug'">
+                        {{v.currentEnvironment === 'debug' ? 'DEBUG (Auto-Swap)' : 'PRODUÇÃO (Compilado)'}} (PID {{v.currentPid}})
+                    </span>
+                </div>
+                <div class="deployer-sub">{{v.orchestrationMode}}</div>
+                <div>
+                    <strong>Cliente Prod (/gulp):</strong>
+                    {{v.clientPublishedAt ? (v.clientPublishedAt | date:'dd/MM/yyyy HH:mm:ss') : 'Pendente'}}
+                </div>
+                <div>
+                    <strong>Backend Prod (dist):</strong>
+                    {{v.serverCompiledAt ? (v.serverCompiledAt | date:'dd/MM/yyyy HH:mm:ss') : 'Compilado'}}
+                </div>
+                <div>
+                    <strong>Status Publicação:</strong>
+                    <code>{{v.publishStatus}}</code>
+                    @if(v.dirtyFilesCount > 0){
+                    <span>({{v.dirtyFilesCount}} arq. alterados)</span>
+                    }
+                </div>
+                @if(lastActionMessage()){
+                <div class="deployer-feedback">{{lastActionMessage()}}</div>
+                }
+                @if(v.publishLogs && v.publishLogs.length > 0){
+                <pre class="deployer-logs">{{v.publishLogs.slice(-4).join('\n')}}</pre>
+                }
+            </div>
+            }@else{
+            <div class="deployer-info">
+                @if(loadingVersion()){
+                <span>Carregando informações da versão...</span>
+                }@else{
+                <span>Clique em atualizar para consultar a versão disponível.</span>
+                }
+            </div>
+            }
+        </div>
+
+        <button mat-menu-item (click)="publicarVersao('gulp', $event)"
+            [disabled]="publishing() || versionInfo()?.publishStatus === 'running'">
+            <mat-icon>rocket_launch</mat-icon>
+            <span>Publicar Cliente Produção (Gulp)</span>
+        </button>
+        <button mat-menu-item (click)="publicarVersao('server-build', $event)"
+            [disabled]="publishing() || versionInfo()?.publishStatus === 'running'">
+            <mat-icon>memory</mat-icon>
+            <span>Compilar Backend Produção</span>
+        </button>
+        <button mat-menu-item (click)="publicarVersao('full-publish', $event)"
+            [disabled]="publishing() || versionInfo()?.publishStatus === 'running'">
+            <mat-icon>publish</mat-icon>
+            <span>Publicação Completa (Gulp + Backend)</span>
+        </button>
+        <button mat-menu-item (click)="publicarVersao('sync-git', $event)"
+            [disabled]="publishing() || versionInfo()?.publishStatus === 'running'">
+            <mat-icon>sync</mat-icon>
+            <span>Sincronizar Git (Pull / Push)</span>
+        </button>
+    </mat-menu>
+    }
     <button mat-icon-button [matMenuTriggerFor]="communitiesMenu">
         <mat-icon>communities</mat-icon>
     </button>
-    <mat-menu #deployMenu>
-        <!-- TODO: Deploy menu -->
-    </mat-menu>
     <mat-menu #communitiesMenu>
         <button mat-menu-item>
             Encontrar grupos

@@ -16,6 +16,9 @@ const {
     NgBuildClientProd: C101,
     NgBuildClientDev: C100,
 } = require('./ressources').CommonsCommands;
+const path = require('path');
+const fs = require('fs');
+
 // Clean old files
 function CleanOldFiles(cb) {
     cb();
@@ -23,14 +26,40 @@ function CleanOldFiles(cb) {
 
 // Build client application
 function BuildPClientApplication(cb) {
-    if (!!R734) execSync(C101, { cwd: R734 });
+    const appsDir = path.resolve(__dirname, '../apps');
+    const buildCwd = fs.existsSync(path.join(appsDir, 'angular.json'))
+        ? appsDir
+        : (R734 ? path.resolve(__dirname, R734) : appsDir);
+
+    execSync(C101, { cwd: buildCwd, stdio: 'inherit' });
+
+    try {
+        const rootDir = path.resolve(__dirname, '..');
+        const branch = execSync('git rev-parse --abbrev-ref HEAD', { cwd: rootDir }).toString().trim();
+        const commit = execSync('git rev-parse HEAD', { cwd: rootDir }).toString().trim();
+        const author = execSync('git log -1 --format=%an', { cwd: rootDir }).toString().trim();
+        const date = execSync('git log -1 --format=%ad', { cwd: rootDir }).toString().trim();
+        const message = execSync('git log -1 --format=%s', { cwd: rootDir }).toString().trim();
+        const infoPath = path.join(rootDir, 'info.json');
+        fs.writeFileSync(
+            infoPath,
+            JSON.stringify({ branch, commit, author, date, message, builtAt: new Date().toISOString() }),
+            'utf-8'
+        );
+    } catch (err) {
+        console.warn('[Gulp] Aviso ao atualizar info.json:', err.message);
+    }
     cb();
 }
 
 // Deploy Local Client Application
 function DeployLocalClient(cb) {
-    // TODO: clean old public files
-    if (!!R734 && !!R348) src(R734 + '**', { encoding: false }).pipe(dest(R348, { overwrite: true }));
+    if (!!R734 && !!R348) {
+        const distPath = path.resolve(__dirname, R734);
+        const targetPublicPath = path.resolve(__dirname, R348);
+        return src(distPath.replace(/\\/g, '/') + '/**', { encoding: false })
+            .pipe(dest(targetPublicPath, { overwrite: true }));
+    }
     cb();
 }
 

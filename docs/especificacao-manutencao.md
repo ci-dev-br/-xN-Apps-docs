@@ -506,6 +506,32 @@ Sempre que precisar criar uma nova entidade ou adicionar campos/endpoints a uma 
 
 ---
 
+### 6.5. Menu Deployer (`ROLE 'DEVELOPER'`), Build de Produção (`/gulp`) e Troca Automática Debug/Produção
+
+1. **Visibilidade Exclusiva no `NavbarComponent`**:
+   - O menu de Deployer (`#deployMenu`) em `apps/projects/ci/components/src/lib/navbar/` é renderizado exclusivamente para usuários autenticados que possuam a role `'DEVELOPER'` (`this.userService.user.value?.roles?.includes('DEVELOPER')`).
+   - Ao abrir o menu, o cliente consulta `DeployerService.getVersion()` (`GET /Deployer/version`) para exibir o estado atual da versão disponível, commit Git, timestamps dos builds e o status da orquestração entre **Debug** e **Produção**.
+
+2. **Endpoints do `DeployerController` (`@ci/mlms`)**:
+   - Localizados em `server/libs/mlms/src/controllers/deployer.controller.ts` e protegidos por `@Role('DEVELOPER')`:
+     - `GET /Deployer/version` (`operationId: 'GetVersionDeployer'`): Retorna `AvailableVersionInfoDto` contendo versão do pacote, commit/branch atual e publicado (`info.json`), timestamps (`clientDistBuiltAt`, `clientPublicBuiltAt`, `serverDistBuiltAt`), modo da instância ativa na porta `86` (`DEBUG` ou `PRODUCTION`), status de publicação em andamento e nós registrados em `server/STATUS`.
+     - `POST /Deployer/publish` (`operationId: 'PublishDeployer'`): Recebe `PublishActionInputDto` com a ação desejada:
+       - `'build-client'`: Executa `npx gulp` na pasta `/gulp` para gerar uma nova versão em produção do cliente (`ng build -c production` em `/apps`), atualizar `info.json` e publicar os artefatos estáticos em `server/public/`.
+       - `'compile-server'`: Executa `npm run build` em `/server` (o backend compilado em `server/dist/main.js` já é a versão de produção).
+       - `'full-publish'`: Compila o backend (`/server`) e gera a versão de produção do cliente via `/gulp`.
+       - `'sync-git'`: Executa `node sync.js` na raiz para sincronizar commits com os repositórios remotos.
+
+3. **Geração de Produção no `/gulp` (`gulp/gulpfile.js`)**:
+   - Na pasta `/gulp`, o comando `gulp` executa em série (`series(BuildPClientApplication, DeployLocalClient)`):
+     1. `BuildPClientApplication`: Executa `ng build -c production` dentro de `/apps` e grava os metadados da revisão Git e data de compilação em `info.json`.
+     2. `DeployLocalClient`: Copia `apps/dist/apps/browser/**` para `server/public/`.
+
+4. **Intercambialidade Automática entre Debug Mode e Produção (`server/src/main.ts`)**:
+   - O backend compilado (`server/dist/main.js`) já constitui a versão de produção.
+   - A orquestração via arquivo `server/STATUS` permite que uma instância iniciada em **Debug Mode** (`--debug` / `--inspect` / `npm run start:debug`) assuma automaticamente a porta principal (`86`) após aquecer em uma porta secundária (`3001`–`3100`), deslocando ou substituindo a instância de produção de forma transparente e sem afetar ambos os ambientes. Quando o processo de debug é encerrado, a instância de produção reassume a porta `86` automaticamente.
+
+---
+
 ## 7. Comandos de Build, Desenvolvimento e Deploy
 
 ### Backend (`/server`)
@@ -513,7 +539,7 @@ Sempre que precisar criar uma nova entidade ou adicionar campos/endpoints a uma 
 | :--- | :--- |
 | `npm run start:dev` | Inicia o servidor NestJS em modo watch (aquecendo em porta secundária e migrando para a porta `86`). |
 | `npm run start:debug` | Inicia o servidor em modo Debug + Watch com `--max-old-space-size=4098` (assume prioridade imediata na porta `86`). |
-| `npm run build` | Compila o servidor para `server/dist`. |
+| `npm run build` | Compila o servidor para `server/dist` (o código compilado já é a versão de produção). |
 | `npm run start:prod` | Executa a versão compilada (`node dist/main`). |
 | `npm run test` / `npm run test:e2e` | Executa a suíte de testes unitários / ponta a ponta com Jest. |
 
@@ -527,12 +553,13 @@ Sempre que precisar criar uma nova entidade ou adicionar campos/endpoints a uma 
 | `npm run build:apps:all` | Compila sequencialmente todas as bibliotecas `@ci-apps/*`. |
 | `npm test` | Executa os testes unitários do cliente via Karma/Jasmine. |
 
-### Raiz do Repositório (`/`)
-| Comando (na raiz) | Descrição |
-| :--- | :--- |
-| `npm run deploy` (`node deploy`) | Executa `ng build -c production` dentro de `/apps` e copia os artefatos de `apps/dist/apps/browser/` para `server/public/`. |
-| `node deploy --skip-build` | Copia os artefatos já compilados de `apps/dist/apps/browser/` para `server/public/` sem recompilar. |
-| `npm run sync` | Sincroniza branches Git com os remotes `origin` e `azure`. |
+### Automação Gulp (`/gulp`) e Raiz do Repositório (`/`)
+| Comando | Local | Descrição |
+| :--- | :--- | :--- |
+| `gulp` (ou `npx gulp`) | `/gulp` | Compila nova versão em produção do cliente (`ng build -c production` em `/apps`), atualiza `info.json` e publica em `server/public/`. |
+| `npm run deploy` (`node deploy`) | `/` | Executa `ng build -c production` dentro de `/apps` e copia os artefatos de `apps/dist/apps/browser/` para `server/public/`. |
+| `node deploy --skip-build` | `/` | Copia os artefatos já compilados de `apps/dist/apps/browser/` para `server/public/` sem recompilar. |
+| `npm run sync` | `/` | Sincroniza branches Git com os remotes `origin` e `azure`. |
 
 ---
 

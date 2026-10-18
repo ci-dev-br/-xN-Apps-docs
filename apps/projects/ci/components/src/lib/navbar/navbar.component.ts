@@ -1,9 +1,10 @@
-import { Component, Input, OnInit, signal } from "@angular/core";
+import { Component, Input, OnDestroy, OnInit, Optional, signal } from "@angular/core";
 import { UserAuthenticationService } from "@ci/auth";
 import { INavbarItemMenu } from "./i-menu-item";
 import { IItemMenu } from "@ci/components/window";
 import { MenuService } from "@ci/core";
-import { User } from "@ci/portal-api";
+import { AvailableVersionInfoDto, DeployerService, User } from "@ci/portal-api";
+import { lastValueFrom } from "rxjs";
 
 @Component({
     selector: 'ci-navbar',
@@ -13,7 +14,7 @@ import { User } from "@ci/portal-api";
         `navbar.component.scss`,
     ]
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
     _apps = signal<undefined | any[]>(undefined);
     public get apps() {
         return this._apps();
@@ -27,28 +28,99 @@ export class NavbarComponent implements OnInit {
     @Input() menuItens?: INavbarItemMenu[];
     @Input() userMenuList?: IItemMenu[];
     @Input() recentes?: any[];
-    get isDeveloper() {
-        return this.userService?.user?.value;
+
+    versionInfo = signal<AvailableVersionInfoDto | undefined>(undefined);
+    loadingVersion = signal<boolean>(false);
+    publishing = signal<boolean>(false);
+    lastActionMessage = signal<string | undefined>(undefined);
+    private pollTimer: any = null;
+
+    /**
+     * Visível exclusivamente para usuários que possuem a ROLE 'DEVELOPER'
+     */
+    get isDeveloper(): boolean {
+        const roles = this.user()?.roles;
+        return Array.isArray(roles) && roles.includes('DEVELOPER');
     }
+
     constructor(
         private readonly userService: UserAuthenticationService,
-        menuService?: MenuService,
+        @Optional() menuService?: MenuService,
+        @Optional() private readonly deployerService?: DeployerService,
     ) {
         menuService?.userMenu?.subscribe(menu => {
             this.userMenuList = menu;
-        })
+        });
     }
+
     ngOnInit(): void {
         try {
             this.userService.user.subscribe(u => {
                 this.user.set(u);
                 if (!!this.apps)
-                    this.recentes = localStorage.getItem('NAV(RECENTES)')?.split(',').map(x => this.apps?.find(a => a?.name === x))
+                    this.recentes = localStorage.getItem('NAV(RECENTES)')?.split(',').map(x => this.apps?.find(a => a?.name === x));
             });
         } catch (error) {
             console.trace(error);
         }
     }
+
+    ngOnDestroy(): void {
+        if (this.pollTimer) {
+            clearTimeout(this.pollTimer);
+            this.pollTimer = null;
+        }
+    }
+
+    async carregarVersaoDisponivel(event?: Event) {
+        if (event) {
+            event.stopPropagation();
+        }
+        if (!this.isDeveloper || !this.deployerService) return;
+
+        this.loadingVersion.set(true);
+        try {
+            const info = await lastValueFrom(this.deployerService.getVersion());
+            this.versionInfo.set(info);
+
+            if (this.pollTimer) {
+                clearTimeout(this.pollTimer);
+                this.pollTimer = null;
+            }
+            if (info?.publishStatus === 'running') {
+                this.pollTimer = setTimeout(() => this.carregarVersaoDisponivel(), 2500);
+            }
+        } catch (error) {
+            console.trace(error);
+        } finally {
+            this.loadingVersion.set(false);
+        }
+    }
+
+    async publicarVersao(
+        action: 'gulp' | 'server-build' | 'full-publish' | 'sync-git' = 'gulp',
+        event?: Event
+    ) {
+        if (event) {
+            event.stopPropagation();
+        }
+        if (!this.isDeveloper || !this.deployerService) return;
+
+        this.publishing.set(true);
+        try {
+            const res = await lastValueFrom(
+                this.deployerService.publish({ body: { action } })
+            );
+            this.lastActionMessage.set(res?.mensagem || 'Ação de publicação enviada.');
+            await this.carregarVersaoDisponivel();
+        } catch (error: any) {
+            console.trace(error);
+            this.lastActionMessage.set(error?.error?.message || error?.message || 'Erro ao acionar publicação.');
+        } finally {
+            this.publishing.set(false);
+        }
+    }
+
     async sair() {
         this.userService?.sair();
     }

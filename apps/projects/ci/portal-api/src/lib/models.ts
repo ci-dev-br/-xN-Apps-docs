@@ -157,5 +157,8 @@ export * from './models/user';
 export * from './models/user-preference';
 export * from './models/venda-produto';
 export * from './models/video-get-input';
+export * from './models/available-version-info-dto';
+export * from './models/publish-action-input-dto';
+export * from './models/version-node-status-dto';
 export * from './models/website';
 export * from './models/work-item';
