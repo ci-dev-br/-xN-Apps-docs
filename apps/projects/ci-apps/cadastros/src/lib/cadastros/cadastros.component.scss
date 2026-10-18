@@ -1,20 +1,16 @@
 :host {
-    display: contents;
-    flex: auto;
-}
-
-:host {
     flex: auto;
     display: flex;
     flex-direction: column;
     overflow: auto;
     align-items: stretch;
     justify-content: stretch;
+    color: var(--mat-sys-on-surface, var(--mat-app-text-color));
+    background: var(--mat-sys-surface, var(--mat-app-background-color));
 }
 
 mat-drawer {
     min-width: 250px;
-
 }
 
 .menu {
@@ -26,12 +22,12 @@ mat-drawer {
     }
 
     button.active-menu-item {
-        background: rgba(25, 118, 210, 0.12);
-        color: #1976d2;
+        background: var(--mat-sys-secondary-container, var(--mat-option-selected-state-layer-color));
+        color: var(--mat-sys-on-secondary-container, var(--mat-app-text-color));
         font-weight: 600;
 
         mat-icon {
-            color: #1976d2;
+            color: var(--mat-sys-primary, var(--mat-on-secondary-container, inherit));
         }
     }
 }
@@ -41,6 +37,8 @@ mat-drawer-content {
     display: flex;
     flex-direction: column;
     overflow: auto;
+    background: var(--mat-sidenav-content-background-color, var(--mat-sys-surface, var(--mat-app-background-color)));
+    color: var(--mat-sidenav-content-text-color, var(--mat-sys-on-surface, var(--mat-app-text-color)));
 }
 
 .container {
@@ -56,6 +54,7 @@ mat-drawer-content {
     flex: none;
     padding: 4px 12px;
     font-size: 12px;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    color: rgba(0, 0, 0, 0.65);
-}
+    border-top: 1px solid var(--mat-sys-outline-variant, var(--mat-sidenav-container-divider-color, var(--mat-divider-color)));
+    background: var(--mat-sys-surface-container-low, var(--mat-toolbar-container-background-color));
+    color: var(--mat-sys-on-surface-variant, var(--mat-toolbar-container-text-color, var(--mat-app-text-color)));
+}

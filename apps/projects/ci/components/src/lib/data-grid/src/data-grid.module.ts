@@ -16,6 +16,9 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { FormsModule } from "@angular/forms";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { ValueOfPipe } from "./cell-renderer/value-of.pipe";
 @NgModule({
     declarations: [
@@ -37,6 +40,9 @@ import { ValueOfPipe } from "./cell-renderer/value-of.pipe";
         MatDialogModule,
         MatCheckboxModule,
         MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        MatTooltipModule,
         ValueOfPipe,
     ],
     exports: [

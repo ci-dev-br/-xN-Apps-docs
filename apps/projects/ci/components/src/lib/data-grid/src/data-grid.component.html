@@ -7,37 +7,46 @@
                 <div class="header-cell-wrapper">
                     <px-header-cell [column]="column"></px-header-cell>
                     @if(enableColumnFilters && isFilterableColumn(column)){
-                    <div class="column-filter-box" (click)="$event.stopPropagation()">
+                    <div class="column-filter-box" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
                         @if(getColumnEnum(column); as enumOptions){
-                        <select class="column-filter-select"
-                            [ngModel]="filters[column.fieldName || ''] || ''"
-                            (ngModelChange)="onColumnFilterChange(column.fieldName, $event, true)">
-                            <option value="">Todos</option>
-                            @for (opt of enumOptions; track opt) {
-                            <option [value]="opt">{{opt}}</option>
-                            }
-                        </select>
+                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="column-filter-field">
+                            <mat-select
+                                [placeholder]="'Todos'"
+                                [ngModel]="filters[column.fieldName || ''] || ''"
+                                (ngModelChange)="onColumnFilterChange(column.fieldName, $event, true)">
+                                <mat-option value="">Todos</mat-option>
+                                @for (opt of enumOptions; track opt) {
+                                <mat-option [value]="opt">{{opt}}</mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
                         }@else if(column.type === 'boolean'){
-                        <select class="column-filter-select"
-                            [ngModel]="filters[column.fieldName || ''] ?? ''"
-                            (ngModelChange)="onColumnFilterChange(column.fieldName, $event, true)">
-                            <option value="">Todos</option>
-                            <option value="true">Sim</option>
-                            <option value="false">Não</option>
-                        </select>
+                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="column-filter-field">
+                            <mat-select
+                                [placeholder]="'Todos'"
+                                [ngModel]="filters[column.fieldName || ''] ?? ''"
+                                (ngModelChange)="onColumnFilterChange(column.fieldName, $event, true)">
+                                <mat-option value="">Todos</mat-option>
+                                <mat-option value="true">Sim</mat-option>
+                                <mat-option value="false">Não</mat-option>
+                            </mat-select>
+                        </mat-form-field>
                         }@else{
-                        <div class="column-filter-input-wrap">
-                            <input class="column-filter-input"
+                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="column-filter-field">
+                            <input matInput
                                 [type]="column.type === 'number' ? 'number' : 'text'"
                                 [placeholder]="'Filtrar ' + (column.headerName || column.fieldName) + '...'"
                                 [ngModel]="filters[column.fieldName || ''] || ''"
                                 (ngModelChange)="onColumnFilterChange(column.fieldName, $event)"
                                 (keydown.enter)="onColumnFilterChange(column.fieldName, filters[column.fieldName || ''], true)" />
                             @if(filters[column.fieldName || '']){
-                            <button type="button" class="clear-filter-btn" title="Limpar filtro"
-                                (click)="clearColumnFilter(column.fieldName, $event)">×</button>
+                            <button matSuffix mat-icon-button type="button" class="clear-filter-btn"
+                                matTooltip="Limpar filtro"
+                                (click)="clearColumnFilter(column.fieldName, $event)">
+                                <mat-icon>close</mat-icon>
+                            </button>
                             }
-                        </div>
+                        </mat-form-field>
                         }
                     </div>
                     }

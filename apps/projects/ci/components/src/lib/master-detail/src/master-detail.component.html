@@ -4,93 +4,101 @@
     <p>Selecione um cadastro no menu lateral para visualizar os registros.</p>
 </div>
 }@else{
-<mat-toolbar class="master-toolbar" [auto-scroll]="'horizontal'">
-    <div class="toolbar-title">
+<mat-toolbar class="master-toolbar">
+    <div class="toolbar-brand">
         <mat-icon class="entity-icon">{{getEntityIcon()}}</mat-icon>
-        <span>{{schemaName | nomenclatura}}</span>
-        <span class="record-badge">{{source?.length || 0}}</span>
+        <span class="entity-name">{{schemaName | nomenclatura}}</span>
+        <span class="record-badge" matTooltip="Total de registros exibidos">{{source?.length || 0}}</span>
     </div>
 
     <div class="toolbar-search">
-        <mat-icon class="search-icon">search</mat-icon>
-        <input type="text" class="global-search-input"
-            [placeholder]="'Pesquisar em ' + (schemaName | nomenclatura) + '...'"
-            [ngModel]="searchText"
-            (ngModelChange)="onSearchTextChange($event)"
-            (keydown.enter)="onSearchTextChange(searchText, true)" />
-        @if(searchText){
-        <button type="button" class="clear-search-btn" title="Limpar busca" (click)="onSearchTextChange('', true)">
-            <mat-icon>close</mat-icon>
-        </button>
-        }
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search-form-field">
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput type="text"
+                [placeholder]="'Pesquisar em ' + (schemaName | nomenclatura) + '...'"
+                [ngModel]="searchText"
+                (ngModelChange)="onSearchTextChange($event)"
+                (keydown.enter)="onSearchTextChange(searchText, true)" />
+            @if(searchText){
+            <button matSuffix mat-icon-button type="button" matTooltip="Limpar busca"
+                (click)="onSearchTextChange('', true)">
+                <mat-icon>close</mat-icon>
+            </button>
+            }
+        </mat-form-field>
     </div>
 
-    <button mat-raised-button (click)="search()" matTooltip="Atualizar lista">
-        <mat-icon>refresh</mat-icon>
-        Pesquisar
-    </button>
-    <button mat-raised-button color="primary" (click)="createNew()" matTooltip="Criar novo registro">
-        <mat-icon>add</mat-icon>
-        Cadastrar
-    </button>
+    <div class="toolbar-actions">
+        <button mat-raised-button (click)="search()" matTooltip="Atualizar lista">
+            <mat-icon>refresh</mat-icon>
+            <span class="btn-label">Pesquisar</span>
+        </button>
+        <button mat-flat-button color="primary" (click)="createNew()" matTooltip="Criar novo registro">
+            <mat-icon>add</mat-icon>
+            <span class="btn-label">Cadastrar</span>
+        </button>
 
-    <button mat-stroked-button class="filter-toggle-btn"
-        [class.active]="showColumnFilters || activeFilterCount > 0"
-        (click)="showColumnFilters = !showColumnFilters"
-        matTooltip="Exibir/ocultar filtros por campo do schema">
-        <mat-icon>filter_alt</mat-icon>
-        Filtros
-        @if(activeFilterCount > 0){
-        <span class="filter-count">{{activeFilterCount}}</span>
+        <button mat-stroked-button class="filter-toggle-btn"
+            [class.active]="showColumnFilters || activeFilterCount > 0"
+            [matBadge]="activeFilterCount > 0 ? activeFilterCount : null"
+            matBadgeOverlap="false"
+            (click)="showColumnFilters = !showColumnFilters"
+            matTooltip="Exibir/ocultar filtros por campo do schema">
+            <mat-icon>filter_alt</mat-icon>
+            <span class="btn-label">Filtros</span>
+        </button>
+
+        @if(activeFilterCount > 0 || searchText){
+        <button mat-button color="warn" (click)="clearAllFilters()" matTooltip="Limpar todos os filtros">
+            <mat-icon>filter_alt_off</mat-icon>
+            <span class="btn-label">Limpar</span>
+        </button>
         }
-    </button>
 
-    @if(activeFilterCount > 0 || searchText){
-    <button mat-button color="warn" (click)="clearAllFilters()" matTooltip="Limpar todos os filtros">
-        <mat-icon>filter_alt_off</mat-icon>
-        Limpar
-    </button>
-    }
-
-    <span style="flex:auto"></span>
-
-    <mat-button-toggle-group [(ngModel)]="visualizacao" aria-label="Modo de visualização">
-        <mat-button-toggle value="table" matTooltip="Visão em Data-Grid (Tabela)">
-            <mat-icon>table_chart</mat-icon>
-            <span>Tabela</span>
-        </mat-button-toggle>
-        <mat-button-toggle value="list" matTooltip="Visão em Lista">
-            <mat-icon>view_list</mat-icon>
-            <span>Lista</span>
-        </mat-button-toggle>
-        <mat-button-toggle value="thumbnails" matTooltip="Visão em Miniaturas">
-            <mat-icon>grid_view</mat-icon>
-            <span>Miniaturas</span>
-        </mat-button-toggle>
-    </mat-button-toggle-group>
+        <mat-button-toggle-group [(ngModel)]="visualizacao" aria-label="Modo de visualização" class="view-toggle-group">
+            <mat-button-toggle value="table" matTooltip="Visão em Data-Grid (Tabela)">
+                <mat-icon>table_chart</mat-icon>
+                <span class="toggle-label">Tabela</span>
+            </mat-button-toggle>
+            <mat-button-toggle value="list" matTooltip="Visão em Lista">
+                <mat-icon>view_list</mat-icon>
+                <span class="toggle-label">Lista</span>
+            </mat-button-toggle>
+            <mat-button-toggle value="thumbnails" matTooltip="Visão em Miniaturas">
+                <mat-icon>grid_view</mat-icon>
+                <span class="toggle-label">Miniaturas</span>
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+    </div>
 </mat-toolbar>
 
 @if(showColumnFilters && visualizacao !== 'table' && filterableFields.length > 0){
 <div class="schema-filter-bar">
     @for (field of filterableFields; track field.key) {
-    <div class="schema-filter-item">
-        <label>{{field.title}}</label>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="schema-filter-field">
+        <mat-label>{{field.title}}</mat-label>
         @if(field.enum && field.enum.length > 0){
-        <select [ngModel]="columnFilters[field.key] || ''"
+        <mat-select [ngModel]="columnFilters[field.key] || ''"
             (ngModelChange)="onSingleFilterChange(field.key, $event, true)">
-            <option value="">Todos</option>
+            <mat-option value="">Todos</mat-option>
             @for (opt of field.enum; track opt) {
-            <option [value]="opt">{{opt}}</option>
+            <mat-option [value]="opt">{{opt}}</mat-option>
             }
-        </select>
+        </mat-select>
         }@else{
-        <input [type]="field.type === 'number' ? 'number' : 'text'"
+        <input matInput [type]="field.type === 'number' ? 'number' : 'text'"
             [placeholder]="'Filtrar ' + field.title + '...'"
             [ngModel]="columnFilters[field.key] || ''"
             (ngModelChange)="onSingleFilterChange(field.key, $event)"
             (keydown.enter)="onSingleFilterChange(field.key, columnFilters[field.key], true)" />
+        @if(columnFilters[field.key]){
+        <button matSuffix mat-icon-button type="button" matTooltip="Limpar"
+            (click)="onSingleFilterChange(field.key, '', true)">
+            <mat-icon>close</mat-icon>
+        </button>
         }
-    </div>
+        }
+    </mat-form-field>
     }
 </div>
 }
@@ -126,7 +134,7 @@
     </div>
     }@else{
     @for (item of source; track $index) {
-    <div class="list-row-card" (click)="editar(item, $event)" tabindex="0">
+    <mat-card appearance="outlined" class="list-row-card" (click)="editar(item, $event)" tabindex="0">
         <div class="list-row-avatar">
             <span>{{getItemInitials(item)}}</span>
         </div>
@@ -137,15 +145,15 @@
                 <span class="list-row-subtitle">{{subtitle}}</span>
                 }
             </div>
-            <div class="list-row-fields">
+            <mat-chip-set class="list-row-fields" aria-label="Propriedades do registro">
                 @for (field of visibleFields; track field.key) {
                     @if(formatFieldValue($any(item)[field.key]); as val){
-                    <span class="field-chip">
-                        <small>{{field.title}}:</small> {{val}}
-                    </span>
+                    <mat-chip class="field-chip" [disableRipple]="true">
+                        <span class="chip-label">{{field.title}}:</span> {{val}}
+                    </mat-chip>
                     }
                 }
-            </div>
+            </mat-chip-set>
         </div>
         <div class="list-row-actions" (click)="$event.stopPropagation()">
             <button mat-icon-button matTooltip="Editar" (click)="editar(item, $event)">
@@ -157,7 +165,7 @@
             </button>
             }
         </div>
-    </div>
+    </mat-card>
     }
     }
 </div>
@@ -173,7 +181,7 @@
     }@else{
     <div class="thumbnails-grid">
         @for (item of source; track $index) {
-        <div class="thumbnail-card" (click)="editar(item, $event)" tabindex="0">
+        <mat-card appearance="outlined" class="thumbnail-card" (click)="editar(item, $event)" tabindex="0">
             <div class="thumbnail-card-header">
                 <div class="thumbnail-avatar">
                     <mat-icon>{{getEntityIcon()}}</mat-icon>
@@ -203,7 +211,7 @@
                 </div>
                 }
             </div>
-        </div>
+        </mat-card>
         }
     </div>
     }

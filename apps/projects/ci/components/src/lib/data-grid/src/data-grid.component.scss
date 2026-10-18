@@ -1,78 +1,64 @@
 :host {
-    // display: block;
     overflow: auto;
     flex: auto;
     display: flex;
     flex-direction: column;
+    color: var(--mat-sys-on-surface, var(--mat-app-text-color));
 }
 
 .grid-container {
     flex: 2;
     border-radius: 8px;
-    // margin: 6px;
-
     overflow: auto;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
+    background: var(--mat-table-background-color, var(--mat-sys-surface, var(--mat-app-background-color)));
 }
 
 .header-cell-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding: 4px 0;
+    gap: 6px;
+    padding: 6px 0;
 }
 
 .column-filter-box {
     display: flex;
     align-items: center;
     width: 100%;
-    min-width: 90px;
+    min-width: 110px;
 }
 
-.column-filter-input-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
+.column-filter-field {
     width: 100%;
-}
-
-.column-filter-input,
-.column-filter-select {
-    width: 100%;
-    height: 26px;
-    padding: 2px 20px 2px 6px;
     font-size: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.18);
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.9);
-    color: inherit;
-    outline: none;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    --mat-form-field-container-height: 32px;
+    --mat-form-field-container-vertical-padding: 4px;
 
-    &:focus {
-        border-color: #1976d2;
-        box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.15);
+    ::ng-deep .mat-mdc-text-field-wrapper {
+        padding-left: 8px;
+        padding-right: 4px;
     }
-}
 
-.clear-filter-btn {
-    position: absolute;
-    right: 4px;
-    top: 50%;
-    transform: translateY(-50%);
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    font-size: 14px;
-    line-height: 1;
-    padding: 0 3px;
-    color: rgba(0, 0, 0, 0.5);
+    ::ng-deep .mat-mdc-form-field-icon-suffix {
+        padding: 0;
+    }
 
-    &:hover {
-        color: #d32f2f;
+    .clear-filter-btn {
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+        }
     }
 }
 
@@ -82,12 +68,13 @@
             position: relative;
 
             &:hover {
-                background-color: rgba(0, 0, 11, .05);
+                background-color: var(--mat-option-hover-state-layer-color, var(--mat-sys-surface-container-high));
             }
         }
     }
 
     tr.--selected-item {
-        background-color: rgba(0, 0, 200, .15);
+        background-color: var(--mat-option-selected-state-layer-color, var(--mat-sys-secondary-container));
+        color: var(--mat-sys-on-secondary-container, var(--mat-app-text-color));
     }
 }

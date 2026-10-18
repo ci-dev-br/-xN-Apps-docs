@@ -19,10 +19,12 @@ $apps-theme-dark: mat.define-theme((color: (theme-type: dark,
 :root {
   @media (prefers-color-scheme: light) {
     @include mat.all-component-themes($apps-theme-light);
+    @include mat.system-level-colors($apps-theme-light);
   }
 
   @media (prefers-color-scheme: dark) {
     @include mat.all-component-themes($apps-theme-dark);
+    @include mat.system-level-colors($apps-theme-dark);
   }
 }
 
