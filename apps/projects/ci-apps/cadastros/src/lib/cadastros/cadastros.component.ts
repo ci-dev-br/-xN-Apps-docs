@@ -43,13 +43,25 @@ export class CadastrosComponent implements OnInit {
   isSmallScreen: BehaviorSubject<BreakpointState> = new BehaviorSubject(null as any);
   currentForm?: IDynamicForm;
   menu?: IMenuItem[];
+  activeEntity?: string;
+
+  private readonly entityIcons: Record<string, string> = {
+    Endereco: 'place',
+    Pessoa: 'person',
+    InformacaoContato: 'contact_phone',
+    DocumentoIdentificacao: 'badge',
+    TipoDocumentoIdentificacao: 'assignment_ind',
+    Category: 'category',
+    UnidadeMedida: 'straighten',
+    Pais: 'public',
+  };
+
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly cadastro: CadastroService,
     breakpointObserver: BreakpointObserver,
     public readonly menus: MenuService,
-
   ) {
     this.montarMenu();
     breakpointObserver.observe(IS_SMALL).subscribe(v => this.isSmallScreen.next(v));
@@ -62,12 +74,21 @@ export class CadastrosComponent implements OnInit {
         title: E,
         description: E,
         path: E,
-      }
+        icon: this.entityIcons[E] || 'article',
+      };
     });
+    const childEntity = this.route.firstChild?.snapshot?.params?.['EntityName'];
+    if (childEntity) {
+      this.activeEntity = childEntity;
+    } else if (this.menu.length > 0 && this.menu[0].path) {
+      await this.abrirItemMenu(this.menu[0].path);
+    }
   }
   async abrirItemMenu(path?: string) {
-    if (!!path)
-      this.router.navigate([`${path}`], { relativeTo: this.route });
+    if (!!path) {
+      this.activeEntity = path;
+      await this.router.navigate([`${path}`], { relativeTo: this.route });
+    }
   }
   abrir(form: IDynamicForm) {
     this.currentForm = form;

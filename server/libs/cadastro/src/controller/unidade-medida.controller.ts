@@ -4,18 +4,25 @@ import { UnidadeMedida } from "../model/unidade-medida.entity";
 import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
 import { FindOptionsWhere } from "typeorm";
 import { UnidadeMedidaService } from "../service/unidade-medida.service";
+import { GetByInternalIdInputDto } from "./GetByInternalIdInputDto";
 export class SyncPayloadDaoUnidadeMedida extends SyncPayloadDao<UnidadeMedida> {
     @ApiProperty({ type: UnidadeMedida })
     override data?: UnidadeMedida;
 }
 export class ObterListaUnidadeMedida {
     // override data?: UnidadeMedida;
-    @ApiProperty({})
+    @ApiProperty({ required: false, nullable: true })
     skip?: number;
-    @ApiProperty({})
+    @ApiProperty({ required: false, nullable: true })
     take?: number;
-    @ApiProperty({})
+    @ApiProperty({ required: false, nullable: true, type: UnidadeMedida })
     where?: FindOptionsWhere<UnidadeMedida>[] | FindOptionsWhere<UnidadeMedida>;
+    @ApiProperty({ required: false, nullable: true, type: UnidadeMedida })
+    filter?: Partial<UnidadeMedida>;
+    @ApiProperty({ required: false, nullable: true })
+    search?: string;
+    @ApiProperty({ required: false, nullable: true })
+    orderBy?: Record<string, 'ASC' | 'DESC'>;
 }
 export class PessoaCotrollerGetInputDto {
     @ApiProperty({ nullable: true, required: false })
@@ -53,6 +60,19 @@ export class UnidadeMedidaController extends ControllerDaoBase<UnidadeMedidaServ
             } as any
         }
     }
+    @Post('GetByInternalId')
+    @ApiResponse({
+        type: UnidadeMedida,
+    })
+    @ApiOperation({
+        operationId: 'GetByInternalIdUnidadeMedida',
+    })
+    override async GetByInternalId(
+        @Body() input: GetByInternalIdInputDto,
+        @Req() req?: any,
+    ) {
+        return await super.GetByInternalId(input, req);
+    }
     @Post('GetList')
     @ApiResponse({
         type: UnidadeMedida, isArray: true
@@ -65,5 +85,18 @@ export class UnidadeMedidaController extends ControllerDaoBase<UnidadeMedidaServ
         @Req() req?: any,
     ) {
         return super.GetList(input, req);
+    }
+    @Post('Delete')
+    @ApiResponse({
+        type: UnidadeMedida,
+    })
+    @ApiOperation({
+        operationId: 'DeleteUnidadeMedida',
+    })
+    override async Delete(
+        @Body() body: UnidadeMedida,
+        @Req() req?: any,
+    ) {
+        return await super.Delete(body, req);
     }
 }

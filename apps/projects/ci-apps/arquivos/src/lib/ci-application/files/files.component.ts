@@ -363,7 +363,7 @@ export class FilesComponent implements OnInit, OnDestroy {
     return this.viewModes.find(v => v.mode === this.viewMode) || this.viewModes[3];
   }
 
-  normalizarCaminho(caminho?: string): string {
+  normalizarCaminho(caminho?: string | null): string {
     if (!caminho || !caminho.trim()) return './';
     let limpo = caminho.trim().replace(/\\/g, '/');
     if (limpo === '.') return './';
@@ -382,7 +382,7 @@ export class FilesComponent implements OnInit, OnDestroy {
     return limpo;
   }
 
-  private resolverCaminhoFilho(parentDir: string, rawChildPath?: string, childName?: string): string {
+  private resolverCaminhoFilho(parentDir: string, rawChildPath?: string | null, childName?: string | null): string {
     if (rawChildPath && rawChildPath.trim()) {
       const limpo = rawChildPath.trim().replace(/\\/g, '/');
       if (limpo.startsWith('./') || limpo.startsWith('../') || limpo.startsWith('/') || /^[a-zA-Z]:/.test(limpo)) {
@@ -717,7 +717,7 @@ export class FilesComponent implements OnInit, OnDestroy {
       action: isDir ? 'explore' : 'open',
       fileFormat: isDir ? 'directory' : (alvo.extensao !== '-' ? alvo.extensao : ''),
       fileName: alvo.name,
-      path: alvo.caminho || alvo.info?.path,
+      path: alvo.caminho || alvo.info?.path || undefined,
     });
 
     this.compatibleApps = matches;

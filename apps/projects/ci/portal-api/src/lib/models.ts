@@ -162,3 +162,7 @@ export * from './models/publish-action-input-dto';
 export * from './models/version-node-status-dto';
 export * from './models/website';
 export * from './models/work-item';
+export * from './models/obter-lista-documento-identificacao';
+export * from './models/obter-lista-tipo-documento-identificacao';
+export * from './models/sync-payload-dao-documento-identificacao';
+export * from './models/sync-payload-dao-tipo-documento-identificacao';

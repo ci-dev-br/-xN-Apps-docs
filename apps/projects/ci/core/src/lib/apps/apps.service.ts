@@ -26,6 +26,7 @@ export interface RouteMetadata {
     roles?: string[];
     manifest?: Record<string, IAppManifestEntry>;
     files?: Array<{ format: string; label?: string; queryParam?: string }>;
+    data?: any;
     [key: string]: any;
 }
 

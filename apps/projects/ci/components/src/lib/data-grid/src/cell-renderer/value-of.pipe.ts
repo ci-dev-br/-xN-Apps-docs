@@ -20,6 +20,20 @@ export class ValueOfPipe implements PipeTransform {
                 desc && desc[1] ? desc[1] : undefined
             );
         }
+        if (value === null || value === undefined) return '';
+        if (Array.isArray(value)) {
+            if (value.length === 0) return '';
+            return value.map(item => this.formatObjectItem(item)).filter(Boolean).join(', ');
+        }
+        if (typeof value === 'object') {
+            return this.formatObjectItem(value);
+        }
         return value;
+    }
+
+    private formatObjectItem(item: any): string {
+        if (item === null || item === undefined) return '';
+        if (typeof item !== 'object') return String(item);
+        return item.nome || item.name || item.title || item.description || item.logradouro || item.address || item.numeroDocumento || item.code || item.internationalCode || item.ibgeCode || item.internalId || item.id || '';
     }
 }

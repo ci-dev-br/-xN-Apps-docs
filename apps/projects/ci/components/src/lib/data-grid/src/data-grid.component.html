@@ -1,15 +1,51 @@
 <div #gridContainer class="grid-container">
-    @if(!source || source.length === 0){
-    <ng-content select="[vazio]"></ng-content>
-    }@else{
+    @if(columns && columns.length > 0){
     <table mat-table [dataSource]="source || []" [class.--selection-mode_row]="selectionMode === 'row'">
         @for (column of columns; track $index;) {
         <ng-container [matColumnDef]="column.fieldName || ''">
-            <th mat-header-cell *matHeaderCellDef><px-header-cell [column]="column">
-                </px-header-cell></th>
+            <th mat-header-cell *matHeaderCellDef>
+                <div class="header-cell-wrapper">
+                    <px-header-cell [column]="column"></px-header-cell>
+                    @if(enableColumnFilters && isFilterableColumn(column)){
+                    <div class="column-filter-box" (click)="$event.stopPropagation()">
+                        @if(getColumnEnum(column); as enumOptions){
+                        <select class="column-filter-select"
+                            [ngModel]="filters[column.fieldName || ''] || ''"
+                            (ngModelChange)="onColumnFilterChange(column.fieldName, $event, true)">
+                            <option value="">Todos</option>
+                            @for (opt of enumOptions; track opt) {
+                            <option [value]="opt">{{opt}}</option>
+                            }
+                        </select>
+                        }@else if(column.type === 'boolean'){
+                        <select class="column-filter-select"
+                            [ngModel]="filters[column.fieldName || ''] ?? ''"
+                            (ngModelChange)="onColumnFilterChange(column.fieldName, $event, true)">
+                            <option value="">Todos</option>
+                            <option value="true">Sim</option>
+                            <option value="false">Não</option>
+                        </select>
+                        }@else{
+                        <div class="column-filter-input-wrap">
+                            <input class="column-filter-input"
+                                [type]="column.type === 'number' ? 'number' : 'text'"
+                                [placeholder]="'Filtrar ' + (column.headerName || column.fieldName) + '...'"
+                                [ngModel]="filters[column.fieldName || ''] || ''"
+                                (ngModelChange)="onColumnFilterChange(column.fieldName, $event)"
+                                (keydown.enter)="onColumnFilterChange(column.fieldName, filters[column.fieldName || ''], true)" />
+                            @if(filters[column.fieldName || '']){
+                            <button type="button" class="clear-filter-btn" title="Limpar filtro"
+                                (click)="clearColumnFilter(column.fieldName, $event)">×</button>
+                            }
+                        </div>
+                        }
+                    </div>
+                    }
+                </div>
+            </th>
             <td mat-cell *matCellDef="let element" [tabindex]="1 + $index"
                 (click)="cellSelectionHandler($event, element,column)">
-                <px-cell-renderer [data]=" element" [column]="column"></px-cell-renderer>
+                <px-cell-renderer [data]="element" [column]="column"></px-cell-renderer>
             </td>
         </ng-container>
         }
@@ -18,4 +54,7 @@
             [tabindex]="1" [class.--selected-item]="selectedItem === row"></tr>
     </table>
     }
-</div>
+    @if(!source || source.length === 0){
+    <ng-content select="[vazio]"></ng-content>
+    }
+</div>

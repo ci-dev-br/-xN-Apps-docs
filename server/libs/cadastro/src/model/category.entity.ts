@@ -7,12 +7,16 @@ import { schema } from "./schema";
 })
 export class Category extends FullAuditedEntity {
     @ApiProperty({
-        title: 'Nome'
+        title: 'Nome',
+        nullable: true,
+        required: false,
     })
     @Column({})
     name?: string;
     @ApiProperty({
-        title: 'Descrição'
+        title: 'Descrição',
+        nullable: true,
+        required: false,
     })
     @Column({ nullable: true })
     description?: string;

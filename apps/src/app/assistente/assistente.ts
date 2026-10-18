@@ -196,15 +196,17 @@ export class AssistenteComponent implements OnInit {
         if (rota.title && this.normalizarTexto(rota.title).includes(termoNormalizado)) {
             return true;
         }
-        if (rota.data) {
-            for (const key in rota.data) {
-                const valorData = rota.data[key];
+        const rotaData = rota['data'];
+        if (rotaData) {
+            for (const key in rotaData) {
+                const valorData = rotaData[key];
                 if (typeof valorData === 'string' && this.normalizarTexto(valorData).includes(termoNormalizado)) {
                     return true;
                 }
             }
-            if (rota.data.manifest && typeof rota.data.manifest === 'object') {
-                for (const [manifestKey, manifestEntry] of Object.entries<any>(rota.data.manifest)) {
+            const manifest = rotaData['manifest'];
+            if (manifest && typeof manifest === 'object') {
+                for (const [manifestKey, manifestEntry] of Object.entries<any>(manifest)) {
                     if (this.normalizarTexto(manifestKey).includes(termoNormalizado)) {
                         return true;
                     }

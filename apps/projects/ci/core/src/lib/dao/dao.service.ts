@@ -34,8 +34,11 @@ async function waitTrue(condition: () => boolean) {
  *   Mapeamento de entidade
  *   Objeto com meta informação para realizar o mapeamento do objeto
  */
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class DaoService {
+    private loadingPromise?: Promise<any>;
     constructor(
         private readonly apiConfig: ApiConfiguration,
         private readonly http: HttpClient,
@@ -46,14 +49,31 @@ export class DaoService {
     private states = new Map<any, any>();
     api_json = new BehaviorSubject<any>(undefined);
     async loadApiJson() {
-        this.api_json.next(await lastValueFrom(
+        if (this.api_json.value) return this.api_json.value;
+        if (this.loadingPromise) return this.loadingPromise;
+        this.loadingPromise = lastValueFrom(
             this.http.get(this.apiConfig.rootUrl + '/api-json')
-        ));
+        ).then(res => {
+            this.api_json.next(res);
+            return res;
+        }).catch(err => {
+            console.warn('Falha ao carregar /api-json em DaoService:', err);
+            this.loadingPromise = undefined;
+            return undefined;
+        });
+        return this.loadingPromise;
     }
-    async getSchema(name: string) {
-        await waitTrue(() => !!this.api_json.value)
-        const schema: ISchema = this.api_json.value.components.schemas[name];
-        return schema;
+    async getSchema(name: string): Promise<ISchema> {
+        if (!this.api_json.value) {
+            await this.loadApiJson();
+        }
+        const schemas = this.api_json.value?.components?.schemas || {};
+        let schema: ISchema = schemas[name];
+        if (!schema && name) {
+            const foundKey = Object.keys(schemas).find(k => k.toLowerCase() === name.toLowerCase());
+            if (foundKey) schema = schemas[foundKey];
+        }
+        return schema || { type: 'object', properties: {} };
     }
     /**
      * Prepara o objeto para ser editado por ReactiveFormsModule ou FormsModule Strategies.

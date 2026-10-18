@@ -24,7 +24,7 @@ export class InformacaoContato extends FullAuditedEntity {
     @ApiProperty({ title: 'ID do Facebook', nullable: true, required: false })
     @Column({ nullable: true })
     facebook?: string;
-    @ApiProperty({ title: 'ID do Instagram', nullable: true, required: false })
+    @ApiProperty({ title: 'ID do LinkedIn', nullable: true, required: false })
     @Column({ nullable: true })
     linkedin?: string;
     @ApiProperty({ title: 'ID do Tiktok', nullable: true, required: false })

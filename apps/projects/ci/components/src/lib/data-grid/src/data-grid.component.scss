@@ -15,8 +15,65 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    justify-content: stretch;
+    justify-content: flex-start;
+}
 
+.header-cell-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px 0;
+}
+
+.column-filter-box {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 90px;
+}
+
+.column-filter-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.column-filter-input,
+.column-filter-select {
+    width: 100%;
+    height: 26px;
+    padding: 2px 20px 2px 6px;
+    font-size: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.9);
+    color: inherit;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:focus {
+        border-color: #1976d2;
+        box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.15);
+    }
+}
+
+.clear-filter-btn {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0 3px;
+    color: rgba(0, 0, 0, 0.5);
+
+    &:hover {
+        color: #d32f2f;
+    }
 }
 
 [mat-table]::ng-deep tbody {
@@ -26,18 +83,6 @@
 
             &:hover {
                 background-color: rgba(0, 0, 11, .05);
-
-                // &::before {
-                //     content: "";
-                //     position: absolute;
-                //     left: 0;
-                //     right: 0;
-                //     top: 0;
-                //     
-                //     bottom: 0;
-                //     display: table-caption;
-                //     background-color: rgba(0, 0, 11, .05);
-                // }
             }
         }
     }
@@ -45,4 +90,4 @@
     tr.--selected-item {
         background-color: rgba(0, 0, 200, .15);
     }
-}
+}

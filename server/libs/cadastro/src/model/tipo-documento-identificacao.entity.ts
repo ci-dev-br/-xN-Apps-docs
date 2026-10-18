@@ -5,8 +5,9 @@ import { t } from "@ci/core";
 import { schema } from "./schema";
 @Entity({ schema })
 export class TipoDocumentoIdentificacao extends FullAuditedEntity {
+    @ApiProperty({ title: 'Código', required: false, nullable: true })
     @Column({ length: 7 })
     code?: string;
-    @Column({ nullable: true }) @ApiProperty({ required: false, nullable: true, description: t`Descrição` })
+    @Column({ nullable: true }) @ApiProperty({ title: 'Descrição', required: false, nullable: true, description: t`Descrição` })
     description?: string;
 }

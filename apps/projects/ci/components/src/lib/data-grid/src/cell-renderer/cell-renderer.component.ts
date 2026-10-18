@@ -38,7 +38,7 @@ export class TextCellRenderer<T> {
         if (this.data && this.column && this.column.component)
             this.componentContent = [[document.createTextNode(this.value)]];
         if (value) {
-            this.align.set('right');
+            this.align.set(value.type === 'number' ? 'right' : 'left');
         }
     }
     private _data?: any;

@@ -25,6 +25,10 @@ import { Pais } from "./model/pais.entity";
 import { PaisService } from "./service/pais.service";
 import { PaisController } from "./controller/pais.controller";
 import { CategoryController } from "./controller/category.controller";
+import { DocumentoIdentificacaoService } from "./service/documento-identificacao.service";
+import { TipoDocumentoIdentificacaoService } from "./service/tipo-documento-identificacao.service";
+import { DocumentoIdentificacaoController } from "./controller/documento-identificacao.controller";
+import { TipoDocumentoIdentificacaoController } from "./controller/tipo-documento-identificacao.controller";
 import { ManagerModule } from "@ci/manager";
 const FORM_PROVIDERS = [
     CadastroPessoaForm,
@@ -54,6 +58,8 @@ export const CadastroEntidades = [
         InformacaoContatoService,
         UnidadeMedidaService,
         PaisService,
+        DocumentoIdentificacaoService,
+        TipoDocumentoIdentificacaoService,
         ...FORM_PROVIDERS,
         {
             provide: 'FORM_PROVIDERS',
@@ -77,6 +83,8 @@ export const CadastroEntidades = [
         PessoaController,
         UnidadeMedidaController,
         PaisController,
+        DocumentoIdentificacaoController,
+        TipoDocumentoIdentificacaoController,
     ]
 })
 export class CasdastroModule { }
@@ -93,4 +101,8 @@ export {
     PessoaController,
     EnderecoService,
     EnderecoController,
+    DocumentoIdentificacaoService,
+    DocumentoIdentificacaoController,
+    TipoDocumentoIdentificacaoService,
+    TipoDocumentoIdentificacaoController,
 }

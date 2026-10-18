@@ -15,7 +15,9 @@ import { IColumnOption } from "./models/i-column-options";
  * export class ExampleComponent {
  *   constructor(private gridBuilder: GridBuilder) {}       
  */
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class GridBuilder {
     constructor(
         private readonly daoBuilder: DaoBuilder,
@@ -26,7 +28,8 @@ export class GridBuilder {
      * @returns 
      */
     async FromSchema(schemaName: string): Promise<{ columns: IColumnOption<any>[] }> {
-        const properties = await (await this.daoBuilder.getSchema(schemaName)).properties
+        const schema = await this.daoBuilder.getSchema(schemaName);
+        const properties = schema?.properties;
         let gridOptions = {
             columns: [
                 ...Object.keys(properties || {}).map(property => {
@@ -44,6 +47,7 @@ export class GridBuilder {
                         format,
                         pipe,
                         component,
+                        schemaProperty: prop,
                         hide: fieldName && [
                             'internalId',
                             'id',
@@ -66,7 +70,8 @@ export class GridBuilder {
      * @returns 
      */
     private getPipeOfFormat(format: string) {
-        const pipes = this.injector.get<any>('XNE.PIPES');
+        const pipes = this.injector.get<any>('XNE.PIPES', null);
+        if (!pipes) return undefined;
         const pipe = Object.keys(pipes).find(pipe_code => (
             format.split(':')[0] === pipe_code
         ))

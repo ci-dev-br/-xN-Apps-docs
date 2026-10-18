@@ -24,6 +24,16 @@ mat-drawer {
     >* {
         flex: auto;
     }
+
+    button.active-menu-item {
+        background: rgba(25, 118, 210, 0.12);
+        color: #1976d2;
+        font-weight: 600;
+
+        mat-icon {
+            color: #1976d2;
+        }
+    }
 }
 
 mat-drawer-content {
@@ -37,20 +47,15 @@ mat-drawer-content {
     flex: auto;
     display: flex;
     flex-direction: column;
-}
-
-
-.container {
-    flex: auto;
-    display: flex;
-    flex-direction: column;
     align-items: stretch;
-
     justify-content: stretch;
-    flex: auto;
     height: 100%;
 }
 
 .status {
     flex: none;
+    padding: 4px 12px;
+    font-size: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.65);
 }
