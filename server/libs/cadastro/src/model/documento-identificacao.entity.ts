@@ -15,19 +15,19 @@ export class DocumentoIdentificacao extends FullAuditedEntity {
     /**
      * Tipo de Documento de Identificação
      */
-    @ApiProperty({ nullable: true, required: false, type: TipoDocumentoIdentificacao })
+    @ApiProperty({ title: 'Tipo de Documento', nullable: true, required: false, type: TipoDocumentoIdentificacao })
     @ManyToMany(() => TipoDocumentoIdentificacao)
     tipo?: TipoDocumentoIdentificacao;
     /**
      * Número do Documento
      */
-    @ApiProperty({ nullable: true, required: false })
+    @ApiProperty({ title: 'Número do Documento', nullable: true, required: false })
     @Column({ nullable: false })
     numeroDocumento?: string;
     /**
      * Pessoa     
      */
-    @ApiProperty({ nullable: true, required: false, type: Pessoa })
+    @ApiProperty({ title: 'Pessoa', nullable: true, required: false, type: () => Pessoa })
     @ManyToOne(type => Pessoa, pessoa => pessoa.documentos)
     pessoa?: Pessoa;
 }

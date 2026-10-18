@@ -14,6 +14,11 @@ import { GetListInformacaoContato$Params } from '../fn/informacao-contato/get-li
 import { syncInformacaoContato } from '../fn/informacao-contato/sync-informacao-contato';
 import { SyncInformacaoContato$Params } from '../fn/informacao-contato/sync-informacao-contato';
 import { SyncPayloadDaoInformacaoContato } from '../models/sync-payload-dao-informacao-contato';
+import { InformacaoContato } from '../models/informacao-contato';
+import { GetByInternalIdInputDto } from '../models/get-by-internal-id-input-dto';
+import { RequestBuilder } from '../request-builder';
+import { filter } from 'rxjs/operators';
+import { HttpResponse } from '@angular/common/http';
 
 @Injectable()
 export class InformacaoContatoService extends BaseService {
@@ -23,6 +28,8 @@ export class InformacaoContatoService extends BaseService {
 
   /** Path part for operation `syncInformacaoContato()` */
   static readonly SyncInformacaoContatoPath = '/InformacaoContato/Sync';
+  static readonly GetByInternalIdInformacaoContatoPath = '/InformacaoContato/GetByInternalId';
+  static readonly DeleteInformacaoContatoPath = '/InformacaoContato/Delete';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -43,6 +50,15 @@ export class InformacaoContatoService extends BaseService {
   sync(params: SyncInformacaoContato$Params, context?: HttpContext): Observable<SyncPayloadDaoInformacaoContato> {
     return this.syncInformacaoContato$Response(params, context).pipe(
       map((r: StrictHttpResponse<SyncPayloadDaoInformacaoContato>): SyncPayloadDaoInformacaoContato => r.body)
+    );
+  }
+
+  getByInternalId(params: { body: GetByInternalIdInputDto }, context?: HttpContext): Observable<InformacaoContato> {
+    const rb = new RequestBuilder(this.rootUrl, InformacaoContatoService.GetByInternalIdInformacaoContatoPath, 'post');
+    if (params) rb.body(params.body, 'application/json');
+    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
+      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => (r as StrictHttpResponse<InformacaoContato>).body)
     );
   }
 
@@ -68,6 +84,15 @@ export class InformacaoContatoService extends BaseService {
   getList(params: GetListInformacaoContato$Params, context?: HttpContext): Observable<SyncPayloadDaoInformacaoContato> {
     return this.getListInformacaoContato$Response(params, context).pipe(
       map((r: StrictHttpResponse<SyncPayloadDaoInformacaoContato>): SyncPayloadDaoInformacaoContato => r.body)
+    );
+  }
+
+  delete(params: { body: InformacaoContato }, context?: HttpContext): Observable<InformacaoContato> {
+    const rb = new RequestBuilder(this.rootUrl, InformacaoContatoService.DeleteInformacaoContatoPath, 'post');
+    if (params) rb.body(params.body, 'application/json');
+    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
+      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => (r as StrictHttpResponse<InformacaoContato>).body)
     );
   }
 

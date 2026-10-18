@@ -13,6 +13,8 @@
     align-items: stretch;
     justify-content: stretch;
     overflow: hidden;
+
+    background: var(--mat-app-background-color);
 }
 
 div {
@@ -34,17 +36,13 @@ div {
     border: 3px dashed rgba(red, .5);
     position: fixed;
     inset: 1px;
-    z-index: 10000000;
+    z-index: 100;
     display: block;
     border-radius: 12px;
     user-select: none;
     pointer-events: none;
 }
 
-::ng-deep body {
-    /* :has(.--dev-mode) */
-    background-color: black;
-}
 
 .loader-container {
     // Fixa na tela inteira
@@ -84,4 +82,18 @@ div {
     50% {
         opacity: 1;
     }
+}
+
+span {
+    transition: filter ease .4s;
+}
+
+.connecting {
+    filter: blur(36px) opacity(.75);
+    pointer-events: none;
+    user-select: none;
+}
+
+::ng-deep body:has(.connecting) {
+    background-color: #000000;
 }

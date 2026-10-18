@@ -7,6 +7,7 @@ import { IItemMenu, WindowModule, WindowService } from '@ci/components/window';
 import { CoreModule, CoreService, MenuService, WsService } from '@ci/core';
 import { ApplicationService } from '@ci/portal-api';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
+import { AssistenteComponent } from './assistente/assistente';
 
 @Component({
   selector: 'ci-root',
@@ -18,6 +19,7 @@ import { BehaviorSubject, lastValueFrom } from 'rxjs';
     RouterModule,
     WindowModule,
     MatSnackBarModule,
+    AssistenteComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -26,18 +28,21 @@ export class AppComponent implements OnInit, OnDestroy {
   load = new BehaviorSubject<boolean>(true);
   isDevMode = isDevMode();
   title = 'apps';
+  status$;
   constructor(
+    protected readonly ws: WsService,
     @Optional() private readonly matIconReg?: MatIconRegistry,
     @Optional() private readonly core?: CoreService,
     // @Optional() private readonly router: Router, 
     // // TODO: mover controle ativo de rota para camapra Core Init;
     // @Optional() private readonly websocket: WsService,
-    //  // TODO: mover Web Seocket para Core Init;
+    //  // TODO: mover Web websocket para Core Init;
     @Optional() private readonly window?: WindowService,
     @Optional() private readonly snack?: MatSnackBar,
     @Optional() @Inject(USER_MENU) private readonly userMenu?: IItemMenu[],
     private readonly menuService?: MenuService,
   ) {
+    this.status$ = ws.status$;
     if (!!menuService && userMenu) menuService.userMenu.next(userMenu);
     // This variable will save the event for later use.
     // let deferredPrompt;
@@ -91,7 +96,7 @@ export class AppComponent implements OnInit, OnDestroy {
     })
   }
   private showInAppInstallPromotion() {
-    alert("Gostando da experiência? Tenha tudo na palma da sua mão com o nosso app.");
+    alert("Gostando da experiência? Instale o aplicativo no seu dispositivo!");
   }
   private worker() {
     if ('serviceWorker' in navigator) {

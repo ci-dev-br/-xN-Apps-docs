@@ -123,7 +123,8 @@ export class EventsGateway implements OnGatewayInit {
         // ping: (client, data) => this.pingHandler(client, data),
         'SMS.Send': (client, data) => this.sendSMSHandler(client, data),
         'Devices': (client, data) => this.devicesHandler(client, data),
-        'Ident': (client, data) => this.Identification(client, data)
+        'Ident': (client, data) => this.Identification(client, data),
+        'Wake': (client, data) => this.Wake(client, data),
     };
     private devicesHandler(client, data) {
         this._$devices.subscribe(devices => {
@@ -182,7 +183,6 @@ export class EventsGateway implements OnGatewayInit {
         (client as { lastTime?: number }).lastTime = Date.now();
         try {
             if (data.type in this.eventsListeners) {
-                console.log(data.type)
                 return this.eventsListeners[data.type](client, data);
             }
         } catch (error) {
@@ -449,5 +449,8 @@ export class EventsGateway implements OnGatewayInit {
     }
     private Identification(client, data) {
         // TODO: implementar auto-identificação da credencial (vincula o cliente com determinada chave de acesso, auto escalada);
+    }
+    private Wake(client: WebSocket, data: IDataMessage) {
+        client.send(JSON.stringify({ event: 'events', data: { status: 'online' } }));
     }
 }

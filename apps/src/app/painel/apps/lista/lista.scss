@@ -1,18 +1,5 @@
 @use "sass:math";
 
-:host {
-    flex: auto;
-    display: flex;
-    flex-direction: column;
-    // padding: 12px;
-
-    align-items: stretch;
-    justify-content: stretch;
-
-    flex: auto;
-    overflow: auto;
-}
-
 /**
  * Define a largura máxima a partir de estimativa de palavras por linha.
  * * @param {Number} $words - Quantidade de palavras desejada por linha.
@@ -40,49 +27,41 @@
 }
 
 .container {
-    padding: 0 24px;
+    padding: 0 12px;
 }
 
 .apps.container {
     display: flex;
     flex-direction: column;
     flex: auto;
-    justify-content: center;
-    align-items: center;
+    justify-content: stretch;
+    align-items: stretch;
     align-content: flex-start;
     gap: 12px 12px;
     overflow: auto;
 }
 
-@mixin app($size: 100px) {
+@mixin app($size: 150px) {
     .app {
         @include word-wrap-limit(7);
-        flex: 33.3333%;
+        flex: 1;
         $width: $size;
         min-width: #{$width};
-        // max-width: calc(33% - 32px);
-        // min-height: #{$width*2};
         border-radius: 14px;
         box-shadow: 0 2px 10px 3px rgba(0, 0, 0, .2);
-        // flex: auto;
         display: flex;
         flex-direction: column;
         align-items: stretch;
         justify-content: flex-start;
         cursor: pointer;
         transition: box-shadow ease .5s;
-
-        padding: 12px;
+        padding: 24px;
         margin: 0;
-
         position: relative;
-
         border: transparent;
 
         .bg {
             border-radius: 14px;
-
-            background: rgba(255, 255, 255, .05);
             border: solid 1.9999999409px;
             position: absolute;
             inset: 0;
@@ -140,15 +119,10 @@
             padding: 0;
             margin: 0;
 
-            @include app(50px);
+            @include app(30%);
             font-size: .7rem;
         }
     }
-
-    :host {
-        // padding: 0px;
-    }
-
 }
 
 @mixin card($size : 12vw) {

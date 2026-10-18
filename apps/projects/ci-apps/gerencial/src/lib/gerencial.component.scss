@@ -3,28 +3,23 @@
     flex-direction: column;
     align-items: stretch;
     justify-content: stretch;
-    flex: auto;
+    flex: 1;
     overflow: auto;
 }
 
 mat-tab-nav-panel {
-    flex: auto;
     overflow: auto;
+    flex: 1;
 
+}
+
+.wrapper {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: stretch;
 
-    ::ng-deep {
-        mat-tab-group {
-            display: contents;
-        }
-    }
+    overflow: hidden;
 
-}
-
-tab-group::ng-deep body {
-    background-position: center center;
-    background-repeat: no-repeat;
+    flex: auto;
 }

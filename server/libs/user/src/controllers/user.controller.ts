@@ -43,10 +43,11 @@ export class UserController {
         try {
             let users = (await this.user.find(undefined, req))
                 ?.map(u => {
+                    u = { ...u };
                     try {
                         delete u.password;
                         if (!!u.email) {
-                            u.email = u.email.substring(0, 3) + '***' + u.email.substring(u.email.length - 8, 3);
+                            u.email = u.email.substring(0, 3) + '••••' + u.email.substring(u.email.length - 8, 3);
                         }
                         delete u.email;
                         delete u.passwordMode;
@@ -61,4 +62,5 @@ export class UserController {
             throw error;
         }
     }
+
 }

@@ -136,7 +136,7 @@ export const CI_STATIC_APPS: IApp[] = [
         shortDescription: 'Gerencie a instalação e ativação de novos módulos e funcionalidades. Um assistente completo para configurar e implantar recursos adicionais no seu ambiente.',
         description: 'O módulo Instalação simplifica o processo de expansão e atualização do ecossistema de software. Ele atua como um gerenciador de pacotes e assistente de configuração (wizard), guiando o administrador através das etapas necessárias para ativar novas funcionalidades ou integrar serviços de terceiros. O sistema verifica automaticamente dependências, compatibilidade de versões e pré-requisitos de sistema antes de executar qualquer alteração. Além disso, mantém um histórico detalhado de todas as instalações e atualizações realizadas, facilitando a auditoria e a manutenção. Com ele, a implementação de novos recursos torna-se um processo seguro, padronizado e livre de erros manuais.',
         color: getColor(),
-        url: '/Instalacao',
+        url: '/Installation',
         name: 'Instalacao',
         roles: ['MASTER'],
         icon: 'instalacao',
@@ -263,6 +263,18 @@ export const CI_STATIC_APPS: IApp[] = [
         type: 'svg'
     },
     {
+        type: 'mat',
+        icon: 'chess',
+        color: getColor(),
+        url: '/chess',
+        roles: [
+            'USER'
+        ],
+        name: 'Xadrez',
+        shortDescription: 'Jogo de Xadrez',
+        description: 'Pratique sua habilidade no Xadrez'
+    },
+    {
         shortDescription: 'Loja de Aplicativos',
         description: 'Loja de Aplicativos',
         color: getColor(),
@@ -272,4 +284,15 @@ export const CI_STATIC_APPS: IApp[] = [
         icon: 'apps',
         type: 'mat'
     },
+    {
+        shortDescription: 'Compositor de música para composição musical para estúdios modulares.',
+        url: '/Composite',
+        name: 'Composite-se',
+        description: `Composite-se permite criar música musturando a interação de componentes digitais personalizaveis em conjunto a componentes clássicos da composição musical, implementados em linguagens modernas projetados com foco na retro-compatibilidade de dispositivos, formatos e instrumentos. Amplificando a capacidade criativa do compositor musical.`,
+        type: 'mat',
+        icon: 'music_note',
+        roles: [
+            'USER',
+        ]
+    }
 ];

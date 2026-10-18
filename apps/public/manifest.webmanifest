@@ -3,7 +3,7 @@
   "short_name": "Apps",
   "start_url": "https://development.ci.dev.br/",
   "display": "standalone",
-  "background_color": "#99DDAA",
+  "background_color": "#CECECE",
   "description": "Apps.",
   "icons": [
     {

@@ -1,8 +1,11 @@
-@if((load | async) ===true){
-<div class="loader-container">
-    <p class="loading-text">Preparando seu ambiente de trabalho...</p>
-</div>
-}@else{
-<div [class.--dev-mode]="isDevMode"></div>
-<router-outlet />
-}
+<span style="display:contents" [class.connecting]="(status$  | async) !== 'online'">
+    @if((load | async) ===true){
+    <div class="loader-container">
+        <p class="loading-text">Preparando seu ambiente de trabalho...</p>
+    </div>
+    }@else{
+    <div [class.--dev-mode]="isDevMode"></div>
+    <router-outlet />
+    }
+    <!-- <ci-assistente></ci-assistente> -->
+</span>

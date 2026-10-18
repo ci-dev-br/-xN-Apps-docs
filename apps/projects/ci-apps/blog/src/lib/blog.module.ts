@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { BlogRoutingModule } from './blog-routing.module';
 import { BlogComponent } from './blog.component';
+import { PostModule } from './post/post.module';
 
 @NgModule({
   declarations: [
@@ -10,6 +11,7 @@ import { BlogComponent } from './blog.component';
   ],
   imports: [
     CommonModule,
+    PostModule,
     BlogRoutingModule
   ],
   exports: [

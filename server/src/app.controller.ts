@@ -39,6 +39,12 @@ export class AppController {
         const host: string = this.appService.getHost(request);
         return response.send(this.getManifestApplication(host, ''));
       }
+      // 0.1 Assina convite para registro
+      if (!!request.query?.invite) {
+        const redirectUrl = 'https://apps.ci.dev.br/';
+        response.setHeader('set-cookies', String(request.query!.invite!));
+        response.redirect(redirectUrl);
+      }
       // 1. Tenta servir dinamicamente via CMS (SitePageService)
       if (this.sitePage) {
         const host: string = this.appService.getHost(request);
@@ -55,7 +61,7 @@ export class AppController {
     } catch (error) {
       console.error(error);
       if (!response.headersSent) {
-        return response.status(500).send('Erro interno');
+        return response.status(404).send('Não existe');
       }
     }
   }

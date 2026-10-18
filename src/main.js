@@ -50,6 +50,7 @@ class CiDevAppsSerices extends ServiceBase {
  */
 const service_process = spawn('node',
     [
+        '--max-old-space-size=4098',
         './node_modules/@nestjs/cli/bin/nest',
         'start',
         '--watch',
@@ -57,9 +58,7 @@ const service_process = spawn('node',
     ],
     {
         cwd: 'C:/projetos/br.dev.ci.apps/server',
-        env: {
-            NODE_OPTIONS: '--openssl-legacy-provider'
-        }
+        detached: true
     })
     .on('data', m => console.log(m))
     .on('error', m => console.log(m))
@@ -108,7 +107,7 @@ app.use(cors({
     origin: [
         // 'http://localhost:7685',
         // 'http://localhost:4293',
-        'https://apps.ci.dev.br:446',
+        'https://apps.ci.dev.br',
         // 'https://apps.ci.dev.br:7684'
     ]
 }));

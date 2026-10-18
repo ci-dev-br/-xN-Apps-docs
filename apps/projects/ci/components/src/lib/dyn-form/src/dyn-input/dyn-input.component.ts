@@ -6,7 +6,6 @@ import { getServiceAsSchema } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 
 const types: any = {
-    'Date': DynInputDateComponent
 }
 
 @Component({

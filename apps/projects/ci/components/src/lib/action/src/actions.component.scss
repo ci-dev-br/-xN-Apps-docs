@@ -4,7 +4,6 @@
         flex-direction: row;
         gap: 1px;
         font-weight: bold;
-        background: black;
         color: white;
         padding: 4px;
         gap: 2px;
@@ -27,12 +26,12 @@
                 width: unset;
                 min-width: unset;
 
-                .mat-mdc-button-touch-target{
+                .mat-mdc-button-touch-target {
                     margin: 0;
                     padding: 0;
                 }
 
-                > * {
+                >* {
                     margin: 0;
                     padding: 0;
                 }

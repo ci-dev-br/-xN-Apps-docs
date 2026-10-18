@@ -59,3 +59,6 @@
 #### Prioridade 3: Quick Wins e Preparação de Terreno
 - [ ] **Janela Externa:** Implementar a abertura de objetos a partir do `internalId`.
 - [/] **Organização App:** Entregar a criação básica de Organização vinculada a um CNPJ/CPF.
+---
+### Ajustes em Startup
+- [ ] Melhoria em controle de execução da aplicação servidora (back-end);

@@ -22,7 +22,7 @@ export class CategoryController extends ControllerDaoBase<CategoryService, Categ
         type: SyncPayloadDaoCategory
     })
     @ApiOperation({
-        operationId: 'Cynccategory'
+        operationId: 'SyncCategory'
     })
     override async Sync(
         @Body() body: SyncPayloadDaoCategory,
@@ -35,7 +35,7 @@ export class CategoryController extends ControllerDaoBase<CategoryService, Categ
         type: Category,
     })
     @ApiOperation({
-        operationId: 'CetByInternalIdcategory',
+        operationId: 'GetByInternalIdCategory',
     })
     override async GetByInternalId(
         @Body() input: GetByInternalIdInputDto,
@@ -49,12 +49,25 @@ export class CategoryController extends ControllerDaoBase<CategoryService, Categ
             SyncPayloadDaoCategory
     })
     @ApiOperation({
-        operationId: 'CetListcategory'
+        operationId: 'GetListCategory'
     })
     override async GetList(
         @Body() input: ObterListaCategory,
         @Req() req?: any,
     ) {
         return super.GetList(input, req);
+    }
+    @Post('Delete')
+    @ApiResponse({
+        type: Category
+    })
+    @ApiOperation({
+        operationId: 'DeleteCategory'
+    })
+    override async Delete(
+        @Body() body: Category,
+        @Req() req?: any,
+    ) {
+        return await super.Delete(body, req);
     }
 }

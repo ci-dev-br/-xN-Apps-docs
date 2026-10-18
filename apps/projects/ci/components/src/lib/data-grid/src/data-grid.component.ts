@@ -22,12 +22,19 @@ export class DataGridComponent<I> {
     sorted = new EventEmitter<any>();
     @Output()
     select = new EventEmitter<SelectEvent<I>>();
+    @Output()
+    filterChange = new EventEmitter<Record<string, any>>();
+    @Input()
+    enableColumnFilters: boolean = false;
+    @Input()
+    filters: Record<string, any> = {};
     @Input()
     selectionMode?: 'cell' | 'row' | 'multi-cell' | 'multi-row' | 'multi' = 'row';
     @Input()
     source?: I[];
     @ViewChild('gridContainer', { static: true })
     gridContainer?: ElementRef<HTMLElement>;
+    private filterDebounceTimer?: any;
     headerContextMenu?: IContextMenu[] = [
         {
             label: 'Editar colunas',
@@ -39,6 +46,12 @@ export class DataGridComponent<I> {
                 });
             }
             // this.handlers.getHandler(`RequestEditPivoting`, this),
+        },
+        {
+            label: 'Alternar filtros por coluna',
+            handler: () => {
+                this.enableColumnFilters = !this.enableColumnFilters;
+            }
         }
     ];
     private _selectedItem?: I | undefined;
@@ -95,6 +108,40 @@ export class DataGridComponent<I> {
         private readonly dialog: MatDialog,
     ) {
         services.grid = this;
+    }
+    getColumnEnum(column: IColumnOption<any>): string[] | undefined {
+        const enumValues = (column?.schemaProperty as any)?.enum;
+        return Array.isArray(enumValues) && enumValues.length > 0 ? enumValues : undefined;
+    }
+    isFilterableColumn(column: IColumnOption<any>): boolean {
+        if (!column?.fieldName) return false;
+        if (column.type === 'array' || column.type === 'object') return false;
+        if (column.schemaProperty?.$ref || column.schemaProperty?.items) return false;
+        return true;
+    }
+    onColumnFilterChange(fieldName: string | undefined, value: any, immediate = false) {
+        if (!fieldName) return;
+        const nextFilters = { ...(this.filters || {}) };
+        if (value === undefined || value === null || String(value).trim() === '') {
+            delete nextFilters[fieldName];
+        } else {
+            nextFilters[fieldName] = value;
+        }
+        this.filters = nextFilters;
+        if (this.filterDebounceTimer) {
+            clearTimeout(this.filterDebounceTimer);
+        }
+        if (immediate) {
+            this.filterChange.emit({ ...this.filters });
+        } else {
+            this.filterDebounceTimer = setTimeout(() => {
+                this.filterChange.emit({ ...this.filters });
+            }, 300);
+        }
+    }
+    clearColumnFilter(fieldName: string | undefined, event?: Event) {
+        event?.stopPropagation();
+        this.onColumnFilterChange(fieldName, '', true);
     }
     rowSelectionHandler(event: MouseEvent, row: I) {
         if (this.selectionMode === 'row') {

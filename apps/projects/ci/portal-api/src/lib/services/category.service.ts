@@ -17,6 +17,9 @@ import { CetListcategory$Params } from '../fn/category/cet-listcategory';
 import { cynccategory } from '../fn/category/cynccategory';
 import { Cynccategory$Params } from '../fn/category/cynccategory';
 import { SyncPayloadDaoCategory } from '../models/sync-payload-dao-category';
+import { RequestBuilder } from '../request-builder';
+import { filter } from 'rxjs/operators';
+import { HttpResponse } from '@angular/common/http';
 
 @Injectable()
 export class CategoryService extends BaseService {
@@ -26,6 +29,7 @@ export class CategoryService extends BaseService {
 
   /** Path part for operation `cynccategory()` */
   static readonly CynccategoryPath = '/Category/Sync';
+  static readonly DeleteCategoryPath = '/Category/Delete';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -47,6 +51,10 @@ export class CategoryService extends BaseService {
     return this.cynccategory$Response(params, context).pipe(
       map((r: StrictHttpResponse<SyncPayloadDaoCategory>): SyncPayloadDaoCategory => r.body)
     );
+  }
+
+  sync(params: Cynccategory$Params, context?: HttpContext): Observable<SyncPayloadDaoCategory> {
+    return this.cynccategory(params, context);
   }
 
   /** Path part for operation `cetByInternalIdcategory()` */
@@ -74,6 +82,10 @@ export class CategoryService extends BaseService {
     );
   }
 
+  getByInternalId(params: CetByInternalIdcategory$Params, context?: HttpContext): Observable<Category> {
+    return this.cetByInternalIdcategory(params, context);
+  }
+
   /** Path part for operation `cetListcategory()` */
   static readonly CetListcategoryPath = '/Category/GetList';
 
@@ -96,6 +108,19 @@ export class CategoryService extends BaseService {
   cetListcategory(params: CetListcategory$Params, context?: HttpContext): Observable<SyncPayloadDaoCategory> {
     return this.cetListcategory$Response(params, context).pipe(
       map((r: StrictHttpResponse<SyncPayloadDaoCategory>): SyncPayloadDaoCategory => r.body)
+    );
+  }
+
+  getList(params: CetListcategory$Params, context?: HttpContext): Observable<SyncPayloadDaoCategory> {
+    return this.cetListcategory(params, context);
+  }
+
+  delete(params: { body: Category }, context?: HttpContext): Observable<Category> {
+    const rb = new RequestBuilder(this.rootUrl, CategoryService.DeleteCategoryPath, 'post');
+    if (params) rb.body(params.body, 'application/json');
+    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
+      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => (r as StrictHttpResponse<Category>).body)
     );
   }
 

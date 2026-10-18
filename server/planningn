@@ -1,0 +1,40 @@
+ >>> Aplicação voltou a cair repentinamente.
+Nessa caso vamos tentar investigar com auxilio de clinic.js para tentar identificar qual parte do backend está causando a queda por mal uso de memória.
+
+O gemini nos recomendou o uso de clicic.js para gerar relatório de performance. Apensar de eu achar essa abordagem tosca, vamos tentar seguir a recomendação para ver se conseguimos identificar o problema.
+
+O ideial é identificar o motivo da causa e o ponto do código de tem esse comportamento. A abordagem sugerida é justamente de quem nção faz ideia do código que está executando. Porém, é preciso criar uma alternativa autonoma de mitigação para quando o sistem esta operando sem suporte.
+
+Essas primeiras análises com o clinic.js é para identificar se ele tem potenxial de fornecer informação relevante em tempo de execução para que o sistema consiga se recuperar de forma autônoma. A ideia é que o sistema consiga identificar o problema e tomar ações corretivas sem intervenção humana, e ao final deve notificar suporte para revisar a meditda tomada de forma autonoma.
+
+Muito provavelmente o problema é decorrente da implementação do screapper que está sem nenhum constrole sofisticado e tem muito uso de setTimeout e setInterval, que são funções que podem gerar problemas de memória se não forem bem controladas. A ideia é que o sistema consiga identificar quando está consumindo memória de forma excessiva e tomar ações corretivas, como reiniciar o processo ou liberar recursos.
+
+Não queria desativar o scrapper para continuar sua validação. Qualquer coisa ele pode ser levantado separadamente para que não atrapalhe o resto...
+
+ [OK, funciona] >> Testando estratégia com a versão run.ps1 sugeria pelo gemini para realizar o auto re run ;
+
+ > Quando abrir pasta, abrir por padrão em nova aba. Ao voltar, abre a aba anterior;
+---
+Após ajustar a camada de guarda ao serviço publico, retorno de erro esta causando problema na estratégia de acesso por usuario e senha. '
+
+
+---
+
+# Chess | Campeonato de Xadres
+
+Cards: Jogo Rápido
+Apps: Jogo de Xadres
+
+    Criação de Campeonatos;
+    Criar Agentes para Participar de Campeonatos;
+
+
+---
+
+# Keyboard | Teclado Ci Pro
+
+Componente: Keyboard
+Descrição:
+    O componente de teclado permite alternar o layout, criar layouts próprios. Com as funções de ações é possível criar fluxos autonomos a partir do teclado para controle dos dispositivos conectados ao serviço de operação;
+
+--- 

@@ -1,0 +1,33 @@
+<form [formGroup]="controlsForm" class="pitch-controls-container">
+    <h3>Controles de Pitch</h3>
+
+    <div class="control-group">
+        <label for="pitchTolerance">Pitch Tolerance ({{ controlsForm.get('pitchTolerance')?.value }})</label>
+        <input type="range" id="pitchTolerance" formControlName="pitchTolerance" min="0" max="100">
+    </div>
+
+    <div class="control-group">
+        <label for="minVolume">Min Volume ({{ controlsForm.get('minVolume')?.value }})</label>
+        <input type="range" id="minVolume" formControlName="minVolume" min="0" max="100">
+    </div>
+
+    <div class="control-group">
+        <label for="minHz">Min Hz ({{ controlsForm.get('minHz')?.value }} Hz)</label>
+        <input type="range" id="minHz" formControlName="minHz" min="20" max="500">
+    </div>
+
+    <div class="control-group">
+        <label for="maxHz">Max Hz ({{ controlsForm.get('maxHz')?.value }} Hz)</label>
+        <input type="range" id="maxHz" formControlName="maxHz" min="100" max="2000">
+    </div>
+
+    <div class="control-group">
+        <label for="minSamples">Min Samples</label>
+        <input type="number" id="minSamples" formControlName="minSamples" min="1" max="50">
+    </div>
+
+    <div class="control-group checkbox-group">
+        <input type="checkbox" id="debugPitch" formControlName="debugPitch">
+        <label for="debugPitch">Debug Pitch</label>
+    </div>
+</form>

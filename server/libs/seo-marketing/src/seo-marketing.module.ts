@@ -7,22 +7,42 @@ import { SeoPage } from './models/seo-page.entity';
 import { SeoBackLink } from './models/seo-back-link.entity';
 import { SeoCampanha } from './models/seo-campanha.entity';
 import { SearchService } from './services/search.service';
+import { Category } from './models/category.entity';
+import { News } from './models/news.entity';
+import { ScraperService } from './services/scraper.service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { HttpModule } from '@nestjs/axios';
+import { Source } from './models/source.entity';
+import { CategoryEvent } from './models/category-event.entity';
+import { DiscoveryService } from './services/discovery.service';
+import { NewsController } from './controller/news.controller';
 export const SeoMarketingEntities = [
   SeoKeyWord,
   SeoPage,
   SeoBackLink,
   SeoCampanha,
+  Category,
+  News,
+  Source,
+  CategoryEvent,
 ];
 @Module({
   imports: [
+    HttpModule,
+    ScheduleModule.forRoot(),
     CoreModule,
     TypeOrmModule.forFeature([
       ...SeoMarketingEntities
-    ])
+    ]),
   ],
   providers: [
     SeoMarketingService,
     SearchService,
+    ScraperService,
+    DiscoveryService,
+  ],
+  controllers: [
+    NewsController,
   ],
   exports: [SeoMarketingService],
 })

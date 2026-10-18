@@ -1,5 +1,6 @@
 import { isPlatformBrowser } from "@angular/common";
 import { Inject, Injectable, Optional, PLATFORM_ID, SimpleChange, SimpleChanges } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 
 /**
@@ -11,16 +12,23 @@ export class WsService {
     globalPing?: number = 0;
     pingMedium?: number = 0;
     ping?: number = 0;
-    status: 'connecting' | 'online' = 'connecting';
+    get status(): 'connecting' | 'online' | 'closed' {
+        return this.status$.value;
+    }
+    set status(value: 'connecting' | 'online' | 'closed') {
+        console.log(value)
+        this.status$.next(value);
+    }
+    public status$: BehaviorSubject<'connecting' | 'online' | 'closed'> = new BehaviorSubject<'connecting' | 'online' | 'closed'>('connecting');
     private isBrowser: boolean = isPlatformBrowser(this.platformId);
     private retryWait = 100;
     private _grant_connection = false;
-    private _subject?: WebSocketSubject<any>;
+    private websocket_subject?: WebSocketSubject<any>;
     get subject() {
-        if (!this._subject) {
+        if (!this.websocket_subject) {
             this.init();
         }
-        return this._subject;
+        return this.websocket_subject;
     }
     constructor(
         @Optional() @Inject(PLATFORM_ID) private platformId: Object
@@ -37,29 +45,34 @@ export class WsService {
      */
     async init() {
         if (!this.isBrowser) return;
-        if (this._subject) {
-            this._subject.complete();
+        if (this.websocket_subject) {
+            this.websocket_subject.complete();
         }
-        let gateway_api = 'wss://apps.ci.dev.br' /* location.origin.replace('http', 'ws').replace(':4200', ':86'); */
-        this._subject = webSocket(gateway_api);
-        this._subject.subscribe(message => {
+        let gateway_api = 'wss://apps.ci.dev.br'
+        this.websocket_subject = webSocket(gateway_api);
+        this.status = 'connecting';
+        this.websocket_subject.subscribe(message => {
             this.status = 'online';
             this.retryWait = 100;
             this.ReceiveDataHandler(message)
         }, erros => {
+            this.status = 'connecting';
             if (erros instanceof CloseEvent || (erros instanceof Event && erros.type === 'error')) {
-                if (this._subject) this._subject?.complete();
-                this._subject = undefined;
-                this.status = 'connecting';
+                if (this.websocket_subject) this.websocket_subject?.complete();
+                this.websocket_subject = undefined;
                 setTimeout(() => {
                     this.init();
                 }, this.retryWait);
                 this.retryWait = this.retryWait + 500;
             }
         }, () => {
-            console.info('{{ canal encerrado }}');
+            this.status = 'connecting';
         });
-        /*  this.Emit({ event: 'events', data: { type: 'ping', momento: (new Date().getTime()) } }); */
+        this.Emit({
+            event: 'events', data: {
+                type: 'Wake', momento: (new Date().getTime())
+            }
+        });
     }
     listeners = new Map<string, Array<any>>();
     /**
@@ -199,12 +212,48 @@ export class WsService {
         });
     }
     /**
+     * Remove propriedades internas (`_`, `:`) e referências cíclicas antes de serializar no WebSocket.
+     */
+    private sanitizePayload(value: any, visited = new WeakSet<object>()): any {
+        if (value === null || value === undefined || typeof value !== 'object') {
+            return value;
+        }
+        if (value instanceof Date) {
+            return value.toISOString();
+        }
+        if (typeof value.subscribe === 'function') {
+            return undefined;
+        }
+        if (visited.has(value)) {
+            return undefined;
+        }
+        visited.add(value);
+        if (Array.isArray(value)) {
+            return value
+                .filter(item => !item || typeof item.subscribe !== 'function')
+                .map(item => this.sanitizePayload(item, visited));
+        }
+        const clean: Record<string, any> = {};
+        for (const key of Object.keys(value)) {
+            if (key.startsWith('::') || key === '__confirmation_subject' || key === '__pre' || key === '__binding_form' || key === '__readed' || key === 'toJSON' || key === 'toString' || key === '__constructor__') {
+                continue;
+            }
+            const propVal = value[key];
+            if (typeof propVal === 'function' || (propVal && typeof propVal.subscribe === 'function')) {
+                continue;
+            }
+            clean[key] = this.sanitizePayload(propVal, visited);
+        }
+        return clean;
+    }
+
+    /**
      * Emite mensagem para o websocket auto-assinada pela aplicação cliente
      * @param payload 
      */
     Emit(payload: any) {
-        const { toJSON, toString, __constructor__, ...INNER_CONTENT_DATA } = payload;
-        const PAYLOAD_TO_SEND = { ...INNER_CONTENT_DATA, };
+        const { toJSON, toString, __constructor__, ...INNER_CONTENT_DATA } = payload || {};
+        const PAYLOAD_TO_SEND = this.sanitizePayload({ ...INNER_CONTENT_DATA }) || {};
         if (!PAYLOAD_TO_SEND.data) PAYLOAD_TO_SEND.data = {};
         PAYLOAD_TO_SEND.data.client = this.__clientAutoIdentification;
         PAYLOAD_TO_SEND.data.momento = Date.now();
@@ -217,15 +266,16 @@ export class WsService {
      * durante modificação. Recebendo retorno dos clientes que estão consumindo os eventos da 
      * aplicação.
      */
-    async Attention(objectRef: any) {
+    async Propagar(objectRef: any) {
         if (objectRef && !!objectRef.internalId) {
             this._attentionDatas.set(objectRef.internalId, objectRef);
+            const cleanRef = this.sanitizePayload(objectRef);
             this.Emit({
                 event: 'Attention',
                 data: {
                     now: new Date(),
                     objectRef: {
-                        ...objectRef,
+                        ...cleanRef,
                         internalId: objectRef.internalId,
                         id: objectRef.id,
                     }

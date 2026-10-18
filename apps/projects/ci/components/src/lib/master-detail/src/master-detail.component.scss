@@ -5,24 +5,401 @@
     justify-content: stretch;
     align-items: stretch;
     flex: auto;
+    gap: 8px;
+    padding: 8px;
+    color: var(--mat-sys-on-surface, var(--mat-app-text-color));
+    background: var(--mat-sys-surface, var(--mat-app-background-color));
+}
 
-    >img {
+.empty-schema-state {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--mat-sys-on-surface-variant, var(--mat-table-header-headline-color));
+
+    img {
         width: 80px;
-        align-self: center;
-        justify-self: center;
+        opacity: 0.75;
+    }
+}
+
+mat-toolbar.master-toolbar {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    height: auto;
+    min-height: 56px;
+    padding: 8px 12px;
+    gap: 8px 12px;
+    overflow: visible;
+    border: 1px solid var(--mat-sys-outline-variant, var(--mat-divider-color));
+    border-radius: 10px;
+    background: var(--mat-toolbar-container-background-color, var(--mat-sys-surface-container));
+    color: var(--mat-toolbar-container-text-color, var(--mat-sys-on-surface));
+    box-sizing: border-box;
+}
+
+.toolbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    flex: 0 0 auto;
+    min-width: 0;
+
+    .entity-icon {
+        color: var(--mat-sys-primary, var(--mat-standard-button-toggle-selected-state-text-color));
+        flex-shrink: 0;
+    }
+
+    .entity-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .record-badge {
+        font-size: 12px;
+        line-height: 1.4;
+        background: var(--mat-sys-primary-container, var(--mat-standard-button-toggle-selected-state-background-color));
+        color: var(--mat-sys-on-primary-container, var(--mat-standard-button-toggle-selected-state-text-color));
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+}
+
+.toolbar-search {
+    flex: 1 1 220px;
+    min-width: 180px;
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+
+    .search-form-field {
+        width: 100%;
+        font-size: 13px;
+        --mat-form-field-container-height: 38px;
+        --mat-form-field-container-vertical-padding: 6px;
+    }
+}
+
+.toolbar-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex: 0 1 auto;
+
+    button {
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+
+    .view-toggle-group {
+        --mat-standard-button-toggle-height: 36px;
+        flex-shrink: 0;
+
+        mat-button-toggle {
+            ::ng-deep .mat-button-toggle-label-content {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 0 10px;
+                line-height: 36px;
+            }
+        }
+    }
+}
+
+.filter-toggle-btn.active {
+    border-color: var(--mat-sys-primary, var(--mdc-outlined-text-field-focus-outline-color));
+    background: var(--mat-sys-secondary-container, var(--mat-option-selected-state-layer-color));
+    color: var(--mat-sys-on-secondary-container, var(--mat-app-text-color));
+}
+
+/* Responsividade para telas médias e pequenas */
+@media (max-width: 960px) {
+    .toolbar-actions {
+        .view-toggle-group .toggle-label {
+            display: none;
+        }
+    }
+}
+
+@media (max-width: 680px) {
+    mat-toolbar.master-toolbar {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .toolbar-search {
+        order: 3;
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .toolbar-actions {
+        flex: 1 1 auto;
+        justify-content: flex-end;
+
+        .btn-label {
+            display: none;
+        }
+
+        button {
+            min-width: 40px;
+            padding: 0 10px;
+
+            mat-icon {
+                margin: 0;
+            }
+        }
+    }
+}
+
+.schema-filter-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--mat-sys-outline-variant, var(--mat-divider-color));
+    background: var(--mat-sys-surface-container-low, var(--mat-toolbar-container-background-color));
+
+    .schema-filter-field {
+        width: 100%;
+        font-size: 13px;
+        --mat-form-field-container-height: 38px;
+        --mat-form-field-container-vertical-padding: 6px;
     }
 }
 
 ci-data-grid {
     flex: auto;
+    min-height: 0;
 }
 
-mat-toolbar {
-    border: solid 1px #dedede;
-    box-shadow: 0 0 6px rgba(0, 0, 0, .44);
-    border-radius: 8px;
+.content,
+.empty-view-message {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 32px;
+    color: var(--mat-sys-on-surface-variant, var(--mat-table-header-headline-color));
 
-    * {
+    mat-icon {
+        font-size: 40px;
+        width: 40px;
+        height: 40px;
+        opacity: 0.6;
+    }
+}
+
+/* Visão em Lista */
+.list-view-container {
+    flex: auto;
+    min-height: 0;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 4px 2px;
+}
+
+mat-card.list-row-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+        border-color: var(--mat-sys-primary, var(--mdc-outlined-text-field-focus-outline-color));
+        background: var(--mat-sys-surface-container, var(--mat-option-hover-state-layer-color));
+    }
+}
+
+.list-row-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--mat-sys-primary-container, var(--mat-standard-button-toggle-selected-state-background-color));
+    color: var(--mat-sys-on-primary-container, var(--mat-standard-button-toggle-selected-state-text-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex: none;
+}
+
+.list-row-main {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.list-row-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    .list-row-title {
+        font-size: 15px;
+        color: var(--mat-sys-on-surface, var(--mat-table-row-item-label-text-color, var(--mat-app-text-color)));
+    }
+
+    .list-row-subtitle {
+        font-size: 12px;
+        color: var(--mat-sys-on-surface-variant, var(--mat-table-header-headline-color));
+    }
+}
+
+.list-row-fields {
+    .chip-label {
+        font-weight: 600;
+        color: var(--mat-sys-on-surface-variant, var(--mat-table-header-headline-color));
+        margin-right: 4px;
+    }
+}
+
+.list-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: none;
+}
+
+/* Visão em Miniaturas */
+.thumbnails-view-container {
+    flex: auto;
+    min-height: 0;
+    overflow: auto;
+    padding: 4px 2px;
+}
+
+.thumbnails-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+}
+
+mat-card.thumbnail-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+
+    &:hover {
+        border-color: var(--mat-sys-primary, var(--mdc-outlined-text-field-focus-outline-color));
+        background: var(--mat-sys-surface-container, var(--mat-option-hover-state-layer-color));
+        transform: translateY(-2px);
+    }
+}
+
+.thumbnail-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--mat-sys-outline-variant, var(--mat-table-row-item-outline-color, var(--mat-divider-color)));
+    background: var(--mat-sys-surface-container, var(--mat-toolbar-container-background-color));
+
+    .thumbnail-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 8px;
+        background: var(--mat-sys-primary-container, var(--mat-standard-button-toggle-selected-state-background-color));
+        color: var(--mat-sys-on-primary-container, var(--mat-standard-button-toggle-selected-state-text-color));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+    }
+
+    .thumbnail-titles {
+        flex: auto;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+
+        .thumbnail-title {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--mat-sys-on-surface, var(--mat-table-row-item-label-text-color, var(--mat-app-text-color)));
+        }
+
+        .thumbnail-entity-tag {
+            font-size: 11px;
+            color: var(--mat-sys-on-surface-variant, var(--mat-table-header-headline-color));
+        }
+    }
+
+    .thumbnail-actions {
+        display: flex;
+        align-items: center;
         flex: none;
     }
 }
+
+.thumbnail-card-body {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    .thumbnail-field-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 8px;
+        font-size: 12px;
+        border-bottom: 1px dashed var(--mat-sys-outline-variant, var(--mat-table-row-item-outline-color, var(--mat-divider-color)));
+        padding-bottom: 4px;
+
+        &:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .thumbnail-field-label {
+            font-weight: 600;
+            color: var(--mat-sys-on-surface-variant, var(--mat-table-header-headline-color));
+            flex: none;
+        }
+
+        .thumbnail-field-value {
+            color: var(--mat-sys-on-surface, var(--mat-table-row-item-label-text-color, var(--mat-app-text-color)));
+            text-align: right;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 65%;
+        }
+    }
+}

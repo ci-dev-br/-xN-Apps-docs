@@ -1,10 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
+import { Endereco } from './endereco';
 export interface ObterListaEndereco {
-  relations: {
-};
-  skip: number;
-  take: number;
-  where: {
-};
+  skip?: number | null;
+  take?: number | null;
+  where?: Partial<Endereco> | null;
+  filter?: Partial<Endereco> | null;
+  search?: string | null;
+  orderBy?: Record<string, 'ASC' | 'DESC'> | null;
+  relations?: any;
 }

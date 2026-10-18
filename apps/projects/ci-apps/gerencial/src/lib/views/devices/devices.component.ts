@@ -11,6 +11,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { isPlatformBrowser } from "@angular/common";
 import { MatMenuModule } from "@angular/material/menu";
+import { KeyboardComponent } from "@ci/components/keyboard";
 
 export interface DeviceItem {
     device?: Device;
@@ -32,6 +33,7 @@ export interface DeviceItem {
         MatInputModule,
         MatTooltipModule,
         MatMenuModule,
+        KeyboardComponent,
     ]
 }) export class DevicesComponent implements OnInit {
     isBrowser: boolean;
@@ -100,11 +102,11 @@ export interface DeviceItem {
     }
     devices?: DeviceItem[];
     async InstallLauncher() {
-        const url = '/downloads/launcher.1.0.2.apk';
+        const url = '/downloads/launcher.1.0.12.apk';
         const link = document.createElement('a');
 
         link.href = url;
-        link.setAttribute('download', 'launcher.1.0.2.apk');
+        link.setAttribute('download', 'launcher.1.0.12.apk');
 
         document.body.appendChild(link);
         link.click();

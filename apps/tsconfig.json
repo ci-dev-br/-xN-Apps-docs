@@ -153,6 +153,9 @@
       "@ci/components/aio": [
         "./projects/ci/components/src/lib/aio/public-api"
       ],
+      "@ci/components/settings": [
+        "./projects/ci/components/src/lib/settings/public-api"
+      ],
       "@ci/components/master-detail": [
         "./projects/ci/components/src/lib/master-detail/public-api"
       ],
@@ -173,6 +176,9 @@
       ],
       "@ci/components/devtools": [
         "./projects/ci/components/src/lib/devtools/public-api"
+      ],
+      "@ci/components/keyboard": [
+        "./projects/ci/components/src/lib/keyboard/public-api"
       ],
     },
     "outDir": "./dist/out-tsc",

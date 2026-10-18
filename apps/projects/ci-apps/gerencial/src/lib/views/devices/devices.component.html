@@ -41,11 +41,11 @@
             [class.offline]="item.status===-1">
         </div>
         <div class="sims">
-
             @if(item?.device?.phones) {@for(phone of item?.device?.phones; track phone){
             <mat-icon>sim_card</mat-icon>
             }}
         </div>
+        <ci-keyboard></ci-keyboard>
     </div>
     }
 </div>

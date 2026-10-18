@@ -70,9 +70,8 @@ export interface ISchemaProperty {
      * 
      */
     items?: { [key: string]: string };
-    /* {
-        '$ref'?: string
-    }; */
+    $ref?: string;
+    enum?: any[];
 }
 export interface ISchema {
     /**
@@ -88,9 +87,12 @@ export interface ISchema {
      */
     required?: string[];
 }
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class DaoBuilder /* Service */ {
     api_json = new BehaviorSubject<any>(undefined);
+    private loadingPromise?: Promise<any>;
     constructor(
         private readonly http: HttpClient,
         private readonly apiConfig: ApiConfiguration,
@@ -99,30 +101,64 @@ export class DaoBuilder /* Service */ {
         this.loadApiJson();
     }
     async loadApiJson() {
-        this.api_json.next(await lastValueFrom(
+        if (this.api_json.value) return this.api_json.value;
+        if (this.loadingPromise) return this.loadingPromise;
+        this.loadingPromise = lastValueFrom(
             this.http.get(this.apiConfig.rootUrl + '/api-json')
-        ));
+        ).then(res => {
+            this.api_json.next(res);
+            return res;
+        }).catch(err => {
+            console.warn('Falha ao carregar /api-json em DaoBuilder:', err);
+            this.loadingPromise = undefined;
+            return undefined;
+        });
+        return this.loadingPromise;
     }
-    async getForm(name: string) {
+    async getForm(name: string, fallbackData?: any, extraProperties?: { [key: string]: ISchemaProperty }) {
         const schema: ISchema = (await this.getSchema(name));
-        const fields: any = {}
-        if (schema?.properties) {
-            Object.keys(schema?.properties).map(key => {
-                fields[key] = [, []];
+        const fields: any = {};
+        const mergedProps = {
+            ...(extraProperties || {}),
+            ...(schema?.properties || {}),
+        };
+        Object.keys(mergedProps).forEach(key => {
+            fields[key] = [fallbackData?.[key] ?? null, []];
+        });
+        if (fallbackData && typeof fallbackData === 'object') {
+            Object.keys(fallbackData).forEach(key => {
+                if (
+                    !key.startsWith('_') &&
+                    !key.startsWith(':') &&
+                    key !== 'toJSON' &&
+                    key !== 'toString' &&
+                    !(key in fields)
+                ) {
+                    fields[key] = [fallbackData[key], []];
+                }
             });
         }
         return this.formBuilder.group({
             ...fields
         });
     }
-    async getSchema(name: string) {
-        await waitTrue(() => !!this.api_json.value)
-        const schema: ISchema = this.api_json.value.components.schemas[name];
-        return schema;
+    async getSchema(name: string): Promise<ISchema> {
+        if (!this.api_json.value) {
+            await this.loadApiJson();
+        }
+        const schemas = this.api_json.value?.components?.schemas || {};
+        let schema: ISchema = schemas[name];
+        if (!schema && name) {
+            const foundKey = Object.keys(schemas).find(k => k.toLowerCase() === name.toLowerCase());
+            if (foundKey) schema = schemas[foundKey];
+        }
+        return schema || { type: 'object', properties: {} };
     }
 
     async listSchemas() {
-        await waitTrue(() => !!this.api_json.value)
-        return Object.keys(this.api_json.value.components.schemas);
+        if (!this.api_json.value) {
+            await this.loadApiJson();
+        }
+        return Object.keys(this.api_json.value?.components?.schemas || {});
     }
 }

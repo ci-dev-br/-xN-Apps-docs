@@ -1,3 +1,3 @@
 export interface IAmSchematization {
-    schemaName: string;
+    schemaName?: string;
 }

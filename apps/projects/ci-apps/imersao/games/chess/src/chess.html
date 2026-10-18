@@ -1,26 +1,27 @@
 @if(stage==='menu'){
 <div class="menu">
-    <button mat-raised-button (click)="start()">
+    <button mat-raised-button color="primary" (click)="start()">
         Nova Partida!
     </button>
-    <!-- <button mat-button>
-        Procurar oponente...
-    </button> -->
     <button mat-raised-button color="accent" (click)="startVsIA()">
         Jogar vs IA
     </button>
-    <!--  <button mat-button>
-        Agendar partida
-    </button> -->
-    <!-- <button mat-button>
-        Notificar-me quando outro jogador estiver procurando por oponente
-    </button> -->
+    <button mat-button>
+        Procurar oponente...
+    </button>
 </div>
 }
 @else if(stage==='play'){
 <div class="chess-container" #rendererContainer>
-    @if(renderMode === '3d'){<c-threjs #th [objetos]="objetos" [camera]="camera"></c-threjs>}
-    @if(renderMode === '2d'){<div class="board">
+    <!-- View 3D -->
+    @if(renderMode === '3d'){
+    <c-threjs #th [objetos]="objetos" [camera]="camera" (objectClicked)="handle3DClick($event)">
+    </c-threjs>
+    }
+
+    <!-- View 2D -->
+    @if(renderMode === '2d'){
+    <div class="board">
         <div *ngFor="let row of board; let i = index" class="row">
             <div *ngFor="let cell of row; let j = index" class="square" [ngClass]="(i + j) % 2 === 0 ? 'light' : 'dark'"
                 [class.selected]="selectedSquare === getCoords(i, j)" (click)="onSquareClick(i, j)">
@@ -29,8 +30,11 @@
                 </span>
             </div>
         </div>
-    </div>}
+    </div>
+    }
+
     <span *ngIf="isVsIA && game.turn() === 'b'">(IA pensando...)</span>
+
     <div class="row legeng">
         <div class="status">
             Vez do jogador: {{ game.turn() === 'w' ? 'Brancas' : 'Pretas' }}
@@ -40,6 +44,9 @@
             <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #optionsMenu>
+            <button mat-menu-item (click)="toggleRenderMode()">
+                Mudar para Visão {{ renderMode === '3d' ? '2D' : '3D' }}
+            </button>
             <button mat-menu-item (click)="ajudaMe()">
                 Ajuda
             </button>

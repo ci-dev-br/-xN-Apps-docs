@@ -156,10 +156,19 @@ export class UserService {
                     'photo'
                 ]
             })
-            if (user.photo) {
+            if (user?.photo?.originalFile) {
                 user.photo.originalFile = user.photo.originalFile.toString('base64') as any
             }
             return user;
+        } catch (error) { console.trace(error); }
+    }
+    async findByIdLight(userId: string) {
+        try {
+            if (!userId) return undefined;
+            return await this.userRepo.findOne({
+                where: { id: userId },
+                relations: ['tenants']
+            });
         } catch (error) { console.trace(error); }
     }
     /**

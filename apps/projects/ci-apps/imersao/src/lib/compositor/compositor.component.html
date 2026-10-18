@@ -1,0 +1,79 @@
+<div class="composer-container">
+    <header class="composer-header">
+        <div class="header-main">
+            <h2>{{ master.projectName || 'Nova Composição' }}</h2>
+            <button mat-button class="playback-btn" (click)="togglePlayback()" [class.active]="isPlaying">
+                <mat-icon>{{ isPlaying ? 'stop' : 'play_arrow' }}</mat-icon>
+                {{ isPlaying ? 'Parar' : 'Tocar' }}
+            </button>
+        </div>
+        <!-- Seção de Metadados -->
+        <div class="metadata-form">
+            <div class="input-group">
+                <label>Nome da Música:</label>
+                <input type="text" [(ngModel)]="master.projectName" [disabled]="isPlaying" />
+            </div>
+            <div class="input-group">
+                <label>Autor(a):</label>
+                <input type="text" [(ngModel)]="master.author" [disabled]="isPlaying" />
+            </div>
+            <div class="input-group">
+                <label>Gênero:</label>
+                <input type="text" [(ngModel)]="master.genre" [disabled]="isPlaying" />
+            </div>
+            <div class="input-group">
+                <label>BPM:</label>
+                <input type="number" [(ngModel)]="master.bpm" [disabled]="isPlaying" style="width: 80px;" />
+            </div>
+        </div>
+    </header>
+
+    <div class="sequencer-grid">
+        <div class="track" *ngFor="let track of master.tracks; let i = index">
+            <div class="track-info">
+                <span>{{ track.name }}</span>
+            </div>
+            <div class="steps">
+                <button *ngFor="let step of track.steps; let j = index" class="step-btn" [class.active]="step"
+                    [class.current]="isPlaying && currentStep === j" (click)="toggleStep(i, j)">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção: Rack de Plugins -->
+    <div class="plugins-rack">
+        <h3>Rack de Efeitos e Plugins</h3>
+        <div class="plugin-list">
+            <label class="plugin-item" *ngFor="let p of availablePlugins">
+                <input type="checkbox" [checked]="p.enabled" (change)="togglePlugin(p)" [disabled]="isPlaying">
+                {{ p.name }}
+            </label>
+        </div>
+    </div>
+
+    <!-- Menus de Exportação Dinâmicos -->
+    <footer class="export-actions">
+        <div class="export-block">
+            <select [(ngModel)]="selectedMasterFormat">
+                <option value="json">Padrão (.json)</option>
+                <option value="b64">CI Project (.ciproj)</option>
+                <option value="txt">Info Texto (.txt)</option>
+            </select>
+            <button mat-button class="btn-master" (click)="exportMaster()">
+                <mat-icon>save</mat-icon> Salvar Master
+            </button>
+        </div>
+
+        <div class="export-block">
+            <select [(ngModel)]="selectedAudioFormat" [disabled]="isRecording">
+                <option value="audio/webm">WebM Audio</option>
+                <option value="audio/ogg; codecs=opus">Ogg Opus Audio</option>
+            </select>
+            <button mat-button class="btn-audio" (click)="exportAudio()" [disabled]="isRecording">
+                <mat-icon>mic</mat-icon>
+                {{ isRecording ? 'Gravando Loop...' : 'Exportar Áudio' }}
+            </button>
+        </div>
+    </footer>
+</div>

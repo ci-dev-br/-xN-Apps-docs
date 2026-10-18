@@ -11,6 +11,7 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { ActionResponseDto } from '../models/action-response-dto';
 import { AppStatusResponseDto } from '../models/app-status-response-dto';
+import { AvailableVersionInfoDto } from '../models/available-version-info-dto';
 import { deployerControllerExecuteCommit } from '../fn/deployer/deployer-controller-execute-commit';
 import { DeployerControllerExecuteCommit$Params } from '../fn/deployer/deployer-controller-execute-commit';
 import { deployerControllerGetAppStatus } from '../fn/deployer/deployer-controller-get-app-status';
@@ -24,11 +25,53 @@ import { DeployerControllerStartApp$Params } from '../fn/deployer/deployer-contr
 import { deployerControllerStopApp } from '../fn/deployer/deployer-controller-stop-app';
 import { DeployerControllerStopApp$Params } from '../fn/deployer/deployer-controller-stop-app';
 import { GetCommitsResponseDto } from '../models/get-commits-response-dto';
+import { getVersionDeployer } from '../fn/deployer/get-version-deployer';
+import { GetVersionDeployer$Params } from '../fn/deployer/get-version-deployer';
+import { publishDeployer } from '../fn/deployer/publish-deployer';
+import { PublishDeployer$Params } from '../fn/deployer/publish-deployer';
 
 @Injectable()
 export class DeployerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
+  }
+
+  /** Path part for operation `getVersionDeployer()` */
+  static readonly GetVersionDeployerPath = '/Deployer/version';
+
+  /**
+   * Obtém as informações da versão disponível, estado do build/gulp e ambiente de execução (Debug/Produção).
+   */
+  getVersionDeployer$Response(params?: GetVersionDeployer$Params, context?: HttpContext): Observable<StrictHttpResponse<AvailableVersionInfoDto>> {
+    return getVersionDeployer(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtém as informações da versão disponível, estado do build/gulp e ambiente de execução (Debug/Produção).
+   */
+  getVersion(params?: GetVersionDeployer$Params, context?: HttpContext): Observable<AvailableVersionInfoDto> {
+    return this.getVersionDeployer$Response(params, context).pipe(
+      map((r: StrictHttpResponse<AvailableVersionInfoDto>): AvailableVersionInfoDto => r.body)
+    );
+  }
+
+  /** Path part for operation `publishDeployer()` */
+  static readonly PublishDeployerPath = '/Deployer/publish';
+
+  /**
+   * Executa ações de publicação (geração de versão em produção do cliente via Gulp em /gulp e/ou compilação do backend).
+   */
+  publishDeployer$Response(params: PublishDeployer$Params, context?: HttpContext): Observable<StrictHttpResponse<ActionResponseDto>> {
+    return publishDeployer(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Executa ações de publicação (geração de versão em produção do cliente via Gulp em /gulp e/ou compilação do backend).
+   */
+  publish(params: PublishDeployer$Params, context?: HttpContext): Observable<ActionResponseDto> {
+    return this.publishDeployer$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ActionResponseDto>): ActionResponseDto => r.body)
+    );
   }
 
   /** Path part for operation `deployerControllerReport()` */
@@ -222,3 +265,4 @@ export class DeployerService extends BaseService {
   }
 
 }
+

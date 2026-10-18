@@ -4,10 +4,16 @@ import { Pessoa } from "../cadastro.module";
 
 export class ObterListaPessoa {
     // override data?: Pessoa;
-    @ApiProperty({})
+    @ApiProperty({ required: false, nullable: true })
     skip?: number;
-    @ApiProperty({})
+    @ApiProperty({ required: false, nullable: true })
     take?: number;
-    @ApiProperty({})
+    @ApiProperty({ required: false, nullable: true, type: Pessoa })
     where?: FindOptionsWhere<Pessoa>[] | FindOptionsWhere<Pessoa>;
+    @ApiProperty({ required: false, nullable: true, type: Pessoa })
+    filter?: Partial<Pessoa>;
+    @ApiProperty({ required: false, nullable: true })
+    search?: string;
+    @ApiProperty({ required: false, nullable: true })
+    orderBy?: Record<string, 'ASC' | 'DESC'>;
 }

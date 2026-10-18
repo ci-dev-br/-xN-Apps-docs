@@ -13,5 +13,4 @@ export * from './lib/input/input.module';
 export * from './lib/icon/icon.module';
 export * from './lib/navbar/navbar.module';
 export * from './lib/pesquisar/pesquisar.module';
-export * from './lib/settings/settings.component';
 export * from './lib/status-bar/status-bar';

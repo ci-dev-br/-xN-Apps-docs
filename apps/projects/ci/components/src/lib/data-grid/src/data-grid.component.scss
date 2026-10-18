@@ -1,22 +1,65 @@
 :host {
-    // display: block;
     overflow: auto;
     flex: auto;
     display: flex;
     flex-direction: column;
+    color: var(--mat-sys-on-surface, var(--mat-app-text-color));
 }
 
 .grid-container {
     flex: 2;
     border-radius: 8px;
-    // margin: 6px;
-
     overflow: auto;
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    justify-content: stretch;
+    justify-content: flex-start;
+    background: var(--mat-table-background-color, var(--mat-sys-surface, var(--mat-app-background-color)));
+}
 
+.header-cell-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 6px 0;
+}
+
+.column-filter-box {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 110px;
+}
+
+.column-filter-field {
+    width: 100%;
+    font-size: 12px;
+    --mat-form-field-container-height: 32px;
+    --mat-form-field-container-vertical-padding: 4px;
+
+    ::ng-deep .mat-mdc-text-field-wrapper {
+        padding-left: 8px;
+        padding-right: 4px;
+    }
+
+    ::ng-deep .mat-mdc-form-field-icon-suffix {
+        padding: 0;
+    }
+
+    .clear-filter-btn {
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+        }
+    }
 }
 
 [mat-table]::ng-deep tbody {
@@ -25,24 +68,13 @@
             position: relative;
 
             &:hover {
-                background-color: rgba(0, 0, 11, .05);
-
-                // &::before {
-                //     content: "";
-                //     position: absolute;
-                //     left: 0;
-                //     right: 0;
-                //     top: 0;
-                //     
-                //     bottom: 0;
-                //     display: table-caption;
-                //     background-color: rgba(0, 0, 11, .05);
-                // }
+                background-color: var(--mat-option-hover-state-layer-color, var(--mat-sys-surface-container-high));
             }
         }
     }
 
     tr.--selected-item {
-        background-color: rgba(0, 0, 200, .15);
+        background-color: var(--mat-option-selected-state-layer-color, var(--mat-sys-secondary-container));
+        color: var(--mat-sys-on-secondary-container, var(--mat-app-text-color));
     }
-}
+}

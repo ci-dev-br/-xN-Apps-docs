@@ -5,6 +5,7 @@ import { ControllerDaoBase } from "@ci/manager";
 import { PaisService } from "../service/pais.service";
 import { SyncPayloadDaoPais } from "../dto/sync-payload-dao-pais";
 import { ObterListaPais } from "../dto/obter-lista-pais";
+import { GetByInternalIdInputDto } from "./GetByInternalIdInputDto";
 @ApiTags('Pais')
 @Controller('Pais')
 export class PaisController extends ControllerDaoBase<PaisService, Pais> {
@@ -35,6 +36,19 @@ export class PaisController extends ControllerDaoBase<PaisService, Pais> {
             } as any
         }
     }
+    @Post('GetByInternalId')
+    @ApiResponse({
+        type: Pais,
+    })
+    @ApiOperation({
+        operationId: 'GetByInternalIdPais',
+    })
+    override async GetByInternalId(
+        @Body() input: GetByInternalIdInputDto,
+        @Req() req?: any,
+    ) {
+        return await super.GetByInternalId(input, req);
+    }
     @Post('GetList')
     @ApiResponse({
         type: Pais, isArray: true
@@ -47,5 +61,18 @@ export class PaisController extends ControllerDaoBase<PaisService, Pais> {
         @Req() req?: any,
     ) {
         return super.GetList(input, req);
+    }
+    @Post('Delete')
+    @ApiResponse({
+        type: Pais,
+    })
+    @ApiOperation({
+        operationId: 'DeletePais',
+    })
+    override async Delete(
+        @Body() body: Pais,
+        @Req() req?: any,
+    ) {
+        return await super.Delete(body, req);
     }
 }

@@ -4,15 +4,17 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
 import { ActionsService } from "@ci/components/action";
 import { IItemMenu } from "@ci/components/window";
-import { CORE_ENV, DaoBuilder, DaoService, IAmSchematization, IChangeable, ICoreEnvironment, IHaveSync, ISchemaPreset } from "@ci/core";
+import { CORE_ENV, DaoBuilder, DaoService, IAmSchematization, IChangeable, ICoreEnvironment, IHaveSync, ISchemaPreset, ISchemaProperty } from "@ci/core";
 import { FormsService, getServiceAsSchema } from "@ci/portal-api";
-import { lastValueFrom } from "rxjs";
+import { lastValueFrom, Subscription } from "rxjs";
 /**
  * Interface genérica para construção do editor de dados.
  */
 export interface IDataEditar {
     data: any;
     schemaName: string;
+    schemaProperties?: { [key: string]: ISchemaProperty };
+    service?: any;
 }
 /**
  * Componente de Edição de Dados 
@@ -31,8 +33,9 @@ export class EditarDetailComponent implements OnInit, OnDestroy, IAmSchematizati
     schemaName: string = undefined!;
     service?: any;
     preset?: ISchemaPreset<any, any>;
+    private confirmationSub?: Subscription;
     actions: IItemMenu[] = [{
-        label: 'Remover Aplicação',
+        label: 'Remover Registro',
         icon: 'delete',
         onClick: async () => {
             if (!!this.service && !!this.editor_data) await lastValueFrom(this.service.delete({ body: this.editor_data.data }));
@@ -52,6 +55,7 @@ export class EditarDetailComponent implements OnInit, OnDestroy, IAmSchematizati
         @Optional() public readonly acts?: ActionsService,
     ) {
         if (editor_data && 'schemaName' in editor_data && editor_data.schemaName) this.schemaName = editor_data.schemaName;
+        if (editor_data?.service) this.service = editor_data.service;
         acts?.setActions(this.actions);
     }
     /**
@@ -59,14 +63,12 @@ export class EditarDetailComponent implements OnInit, OnDestroy, IAmSchematizati
      */
     ngOnInit() {
         this.loadFormFromDaoBuilder();
-        // this.route?.params.subscribe(params => {
-        //     params;
-        // })
     }
     /**
      * Quando o componente for desmontado, livre a memória
      */
     ngOnDestroy(): void {
+        this.confirmationSub?.unsubscribe();
     }
     /**
      * Carregar serviços do Objeto em Evidência
@@ -74,11 +76,17 @@ export class EditarDetailComponent implements OnInit, OnDestroy, IAmSchematizati
     private async loadService() {
         if (this.schemaName) {
             this.preset = this.config?.servicesCommons?.find(s => s.schemaName === this.schemaName);
-            if (!!this.preset?.service)
-                this.service = this.injector?.get(this.preset.service);
-            if (!this.preset) {
+            if (!!this.preset?.service) {
+                this.service = this.injector?.get(this.preset.service, null) || this.editor_data?.service;
+            }
+            if (!this.preset && !this.service) {
                 const service_by_schema = getServiceAsSchema(this.schemaName);
-                if (service_by_schema) this.service = this.injector?.get(service_by_schema);
+                if (service_by_schema) {
+                    this.service = this.injector?.get(service_by_schema, null);
+                }
+            }
+            if (!this.service && this.editor_data?.service) {
+                this.service = this.editor_data.service;
             }
         }
     }
@@ -87,32 +95,64 @@ export class EditarDetailComponent implements OnInit, OnDestroy, IAmSchematizati
      */
     private async loadFormFromDaoBuilder() {
         if (this.schemaName) {
-            await this.loadService();
-            const dao = this.dao;
+            const dao = this.dao || this.injector?.get(DaoService, null);
+            const daoBuilder = this.daoBuilder || this.injector?.get(DaoBuilder, null);
             const _data = this.editor_data?.data;
-            this.form = await this.daoBuilder?.getForm(this.schemaName);
-            const form = this.form;
-            await this.dao?.prepareToEdit(this.editor_data?.data, { schemaName: this.schemaName });
-            if (this.form) this.dao?.bindDataForm(this.editor_data?.data, this.form);
-            this.dao?.confirmation(this.editor_data?.data)?.subscribe(async data => {
+
+            await this.loadService();
+            await dao?.prepareToEdit(_data, { schemaName: this.schemaName });
+
+            this.confirmationSub?.unsubscribe();
+            this.confirmationSub = dao?.confirmation(_data)?.subscribe(async data => {
                 try {
-                    if (this.editor_data?.data && data) {
-                        if (!!(this.preset)?.sync) {
-                            Object.assign(this.editor_data?.data,
-                                await this.preset.sync(this.service, this.editor_data?.data)
-                            );
-                        } else if (this.service && this.service.sync) {
-                            let payload_dao = await lastValueFrom((this.service as IHaveSync<any>).sync({ body: { data: this.editor_data?.data } }))
-                            payload_dao = payload_dao;
+                    if (this.editor_data?.data) {
+                        if (!this.service) {
+                            await this.loadService();
                         }
-                        delete (_data as IChangeable).__pre;
-                        await dao?.prepareToEdit(_data);
-                        if (form) dao?.bindDataForm(_data, form);
+                        // Garante que todos os valores atuais do FormGroup sejam sincronizados para o objeto antes do envio
+                        if (this.form) {
+                            const rawFormValues = this.form.getRawValue();
+                            if (rawFormValues && typeof rawFormValues === 'object') {
+                                Object.keys(rawFormValues).forEach(k => {
+                                    if (rawFormValues[k] !== undefined) {
+                                        this.editor_data!.data[k] = rawFormValues[k];
+                                    }
+                                });
+                            }
+                        }
+
+                        if (!!(this.preset)?.sync && this.service) {
+                            const cleanData = dao ? dao.sanitizeDeep(this.editor_data.data) : this.editor_data.data;
+                            const synced = await this.preset.sync(this.service, cleanData);
+                            const unpacked = (synced && typeof synced === 'object' && 'data' in synced && (synced as any).data)
+                                ? (synced as any).data
+                                : synced;
+                            if (unpacked && typeof unpacked === 'object') {
+                                Object.assign(this.editor_data.data, unpacked);
+                            }
+                        } else if (this.service && this.service.sync) {
+                            const cleanData = dao ? dao.sanitizeDeep(this.editor_data.data) : this.editor_data.data;
+                            const payload_dao: any = await lastValueFrom((this.service as IHaveSync<any>).sync({ body: { data: cleanData } }));
+                            const unpacked = (payload_dao && typeof payload_dao === 'object' && 'data' in payload_dao && payload_dao.data)
+                                ? payload_dao.data
+                                : payload_dao;
+                            if (unpacked && typeof unpacked === 'object') {
+                                Object.assign(this.editor_data.data, unpacked);
+                            }
+                        }
+                        delete (this.editor_data.data as IChangeable).__pre;
+                        await dao?.prepareToEdit(this.editor_data.data, { schemaName: this.schemaName });
+                        if (this.form) dao?.bindDataForm(this.editor_data.data, this.form);
                     }
                 } catch (error) {
                     console.trace(error);
                 }
             });
+
+            this.form = await daoBuilder?.getForm(this.schemaName, _data, this.editor_data?.schemaProperties);
+            if (this.form) {
+                dao?.bindDataForm(_data, this.form);
+            }
         }
     }
 }

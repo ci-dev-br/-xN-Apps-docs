@@ -3,7 +3,8 @@
         auto-scroll="vertical">
         <div class="menu">
             <ng-container *ngFor="let item of menu">
-                <button mat-menu-item (click)="abrirItemMenu(item.path ||'')">
+                <button mat-menu-item [class.active-menu-item]="activeEntity === item.path"
+                    (click)="abrirItemMenu(item.path ||'')">
                     <mat-icon>{{item.icon || 'article'}}</mat-icon>{{item.title | nomenclatura}}
                 </button>
             </ng-container>
@@ -13,7 +14,11 @@
         <div class="container">
             <router-outlet></router-outlet>
             <nav class="status">
-                Barra inferior
+                @if(activeEntity){
+                <span>Entidade ativa: <strong>{{activeEntity | nomenclatura}}</strong></span>
+                }@else{
+                <span>Cadastros</span>
+                }
             </nav>
         </div>
     </mat-drawer-content>

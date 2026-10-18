@@ -9,7 +9,6 @@ $cell-height: 60px; // Altura fixa para visual consistente
 
 .calendar-container {
     font-family: 'Roboto', 'Helvetica', sans-serif; // Fonte padrão Angular
-    background: white;
     border: 1px solid $border-color;
     border-radius: 8px;
     overflow: hidden;
@@ -42,7 +41,6 @@ $cell-height: 60px; // Altura fixa para visual consistente
         gap: 8px;
 
         button {
-            background: transparent;
             border: 1px solid $border-color;
             border-radius: 4px;
             padding: 6px 12px;

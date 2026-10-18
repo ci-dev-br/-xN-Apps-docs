@@ -14,6 +14,10 @@ import { GetListUnidadeMedida$Params } from '../fn/unidade-medida/get-list-unida
 import { syncUnidadeMedida } from '../fn/unidade-medida/sync-unidade-medida';
 import { SyncUnidadeMedida$Params } from '../fn/unidade-medida/sync-unidade-medida';
 import { UnidadeMedida } from '../models/unidade-medida';
+import { GetByInternalIdInputDto } from '../models/get-by-internal-id-input-dto';
+import { RequestBuilder } from '../request-builder';
+import { filter } from 'rxjs/operators';
+import { HttpResponse } from '@angular/common/http';
 
 @Injectable()
 export class UnidadeMedidaService extends BaseService {
@@ -23,6 +27,8 @@ export class UnidadeMedidaService extends BaseService {
 
   /** Path part for operation `syncUnidadeMedida()` */
   static readonly SyncUnidadeMedidaPath = '/UnidadeMedida/Sync';
+  static readonly GetByInternalIdUnidadeMedidaPath = '/UnidadeMedida/GetByInternalId';
+  static readonly DeleteUnidadeMedidaPath = '/UnidadeMedida/Delete';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -43,6 +49,15 @@ export class UnidadeMedidaService extends BaseService {
   sync(params: SyncUnidadeMedida$Params, context?: HttpContext): Observable<UnidadeMedida> {
     return this.syncUnidadeMedida$Response(params, context).pipe(
       map((r: StrictHttpResponse<UnidadeMedida>): UnidadeMedida => r.body)
+    );
+  }
+
+  getByInternalId(params: { body: GetByInternalIdInputDto }, context?: HttpContext): Observable<UnidadeMedida> {
+    const rb = new RequestBuilder(this.rootUrl, UnidadeMedidaService.GetByInternalIdUnidadeMedidaPath, 'post');
+    if (params) rb.body(params.body, 'application/json');
+    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
+      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => (r as StrictHttpResponse<UnidadeMedida>).body)
     );
   }
 
@@ -68,6 +83,15 @@ export class UnidadeMedidaService extends BaseService {
   getList(params: GetListUnidadeMedida$Params, context?: HttpContext): Observable<Array<UnidadeMedida>> {
     return this.getListUnidadeMedida$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<UnidadeMedida>>): Array<UnidadeMedida> => r.body)
+    );
+  }
+
+  delete(params: { body: UnidadeMedida }, context?: HttpContext): Observable<UnidadeMedida> {
+    const rb = new RequestBuilder(this.rootUrl, UnidadeMedidaService.DeleteUnidadeMedidaPath, 'post');
+    if (params) rb.body(params.body, 'application/json');
+    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
+      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => (r as StrictHttpResponse<UnidadeMedida>).body)
     );
   }
 

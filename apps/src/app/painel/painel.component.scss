@@ -106,16 +106,16 @@ mat-drawer {
 .side-ativo {
     position: relative;
 
-   //  &::before {
-   //      content: " ";
-   //      position: absolute;
-   //      left: 0;
-   //      top: 10px;
-   //      bottom: 10px;
-   //      width: 4px;
-   //      border-radius: 0px;
-   //      // background-color: var(--mdc-protected-button-label-text-color);
-   //  }
+    //  &::before {
+    //      content: " ";
+    //      position: absolute;
+    //      left: 0;
+    //      top: 10px;
+    //      bottom: 10px;
+    //      width: 4px;
+    //      border-radius: 0px;
+    //      // background-color: var(--mdc-protected-button-label-text-color);
+    //  }
 }
 
 mat-drawer {
@@ -206,7 +206,7 @@ button.app {
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    overflow: hidden;
+    // overflow: hidden;
     gap: 24px;
 
     ::ng-deep * {
@@ -221,13 +221,13 @@ button.app {
         min-height: unset;
         max-height: unset;
         // box-shadow: 1px 3px 4px -1px black;
-        padding: 8px;
+        // padding: 8px;
     }
 }
 
 ::ng-deep {
     .mat-mdc-menu-panel:has(.menu--inner) {
-        max-width: 70vw;
+        max-width: 90vw;
         // background-color: transparent;
         position: relative;
         margin: 0;
@@ -237,10 +237,28 @@ button.app {
         // inset: 0;
         //content: " ";
         background: rgba(#000, .3);
-        backdrop-filter: blur(48px);
+        backdrop-filter: blur(18px);
         border: solid 1px #444;
-        box-shadow: 1px 3px 6px -1px rgba(#000, .33);
-        // }
+        box-shadow: 1px 3px 6px -1px rgba(#000, .5);
+
+        transition: box-shadow ease 1s;
+        box-shadow: inset 7px -12px 32px rgba(60, 113, 228, 0.3),
+            inset 1px 3px 3px rgba(255, 255, 255, 0.3),
+            inset 0px 0px 2px rgb(255, 255, 255, .4),
+            inset 7px -48px 264px rgb(0, 0, 0, .4),
+            inset -120px -12px 220px rgba(255, 0, 170, 0.3),
+            inset 120px 0px 260px rgb(255, 238, 0, 0.3),
+            inset 3px -24px 0px rgba(244, 248, 255, 0.4),
+            2px 3px 5px rgba(0, 0, 0, .3) !important;
+
+        .mdc-button__label {
+            /*  display: contents !important; */
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: stretch;
+            width: 100%;
+        }
     }
 }
 
@@ -276,6 +294,7 @@ button.app {
     overflow: hidden;
     background-color: var(--mdc-protected-button-label-text-color);
 }
-ci-navbar{
+
+ci-navbar {
     z-index: 500;
 }

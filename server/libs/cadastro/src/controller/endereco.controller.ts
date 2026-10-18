@@ -5,6 +5,7 @@ import { ControllerDaoBase } from "@ci/manager";
 import { EnderecoService } from "../service/endereco.service";
 import { SyncPayloadDaoEndereco } from "../dto/sync-payload-dao-endereco";
 import { ObterListaEndereco } from "../dto/obter-lista-endereco";
+import { GetByInternalIdInputDto } from "./GetByInternalIdInputDto";
 @ApiTags('Endereco')
 @Controller('Endereco')
 export class EnderecoController extends ControllerDaoBase<EnderecoService, Endereco> {
@@ -27,6 +28,19 @@ export class EnderecoController extends ControllerDaoBase<EnderecoService, Ender
     ) {
         return await super.Sync(body, req)
     }
+    @Post('GetByInternalId')
+    @ApiResponse({
+        type: Endereco,
+    })
+    @ApiOperation({
+        operationId: 'GetByInternalIdEndereco',
+    })
+    override async GetByInternalId(
+        @Body() input: GetByInternalIdInputDto,
+        @Req() req?: any,
+    ) {
+        return await super.GetByInternalId(input, req);
+    }
     @Post('Get')
     @ApiResponse({
         type:
@@ -41,5 +55,18 @@ export class EnderecoController extends ControllerDaoBase<EnderecoService, Ender
         @Req() req?: any,
     ) {
         return super.GetList(input, req);
+    }
+    @Post('Delete')
+    @ApiResponse({
+        type: Endereco,
+    })
+    @ApiOperation({
+        operationId: 'DeleteEndereco',
+    })
+    override async Delete(
+        @Body() body: Endereco,
+        @Req() req?: any,
+    ) {
+        return await super.Delete(body, req);
     }
 }

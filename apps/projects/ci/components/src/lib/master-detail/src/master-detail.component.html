@@ -1,26 +1,220 @@
 @if(!schemaName){
-<img src="not_found.svg" />
+<div class="empty-schema-state">
+    <img src="not_found.svg" alt="Selecione uma entidade" />
+    <p>Selecione um cadastro no menu lateral para visualizar os registros.</p>
+</div>
 }@else{
-<mat-toolbar [auto-scroll]="'horizontal'">
-    <button mat-raised-button (click)="search()">
-        Pesquisar
-    </button>
-    <button mat-raised-button (click)="createNew()">
-        Cadastrar
-    </button>
-    <span style="flex:auto"></span>
-    <mat-button-toggle-group [(ngModel)]="visualizacao">
-        <mat-button-toggle value="table"><mat-icon>view_list</mat-icon>Tabela</mat-button-toggle>
-        <!--   <mat-button-toggle value="list"><mat-icon>grid_view</mat-icon>Lista</mat-button-toggle> -->
-    </mat-button-toggle-group>
+<mat-toolbar class="master-toolbar">
+    <div class="toolbar-brand">
+        <mat-icon class="entity-icon">{{getEntityIcon()}}</mat-icon>
+        <span class="entity-name">{{schemaName | nomenclatura}}</span>
+        <span class="record-badge" matTooltip="Total de registros exibidos">{{source?.length || 0}}</span>
+    </div>
+
+    <div class="toolbar-search">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search-form-field">
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput type="text"
+                [placeholder]="'Pesquisar em ' + (schemaName | nomenclatura) + '...'"
+                [ngModel]="searchText"
+                (ngModelChange)="onSearchTextChange($event)"
+                (keydown.enter)="onSearchTextChange(searchText, true)" />
+            @if(searchText){
+            <button matSuffix mat-icon-button type="button" matTooltip="Limpar busca"
+                (click)="onSearchTextChange('', true)">
+                <mat-icon>close</mat-icon>
+            </button>
+            }
+        </mat-form-field>
+    </div>
+
+    <div class="toolbar-actions">
+        <button mat-raised-button (click)="search()" matTooltip="Atualizar lista">
+            <mat-icon>refresh</mat-icon>
+            <span class="btn-label">Pesquisar</span>
+        </button>
+        <button mat-flat-button color="primary" (click)="createNew()" matTooltip="Criar novo registro">
+            <mat-icon>add</mat-icon>
+            <span class="btn-label">Cadastrar</span>
+        </button>
+
+        <button mat-stroked-button class="filter-toggle-btn"
+            [class.active]="showColumnFilters || activeFilterCount > 0"
+            [matBadge]="activeFilterCount > 0 ? activeFilterCount : null"
+            matBadgeOverlap="false"
+            (click)="showColumnFilters = !showColumnFilters"
+            matTooltip="Exibir/ocultar filtros por campo do schema">
+            <mat-icon>filter_alt</mat-icon>
+            <span class="btn-label">Filtros</span>
+        </button>
+
+        @if(activeFilterCount > 0 || searchText){
+        <button mat-button color="warn" (click)="clearAllFilters()" matTooltip="Limpar todos os filtros">
+            <mat-icon>filter_alt_off</mat-icon>
+            <span class="btn-label">Limpar</span>
+        </button>
+        }
+
+        <mat-button-toggle-group [(ngModel)]="visualizacao" aria-label="Modo de visualização" class="view-toggle-group">
+            <mat-button-toggle value="table" matTooltip="Visão em Data-Grid (Tabela)">
+                <mat-icon>table_chart</mat-icon>
+                <span class="toggle-label">Tabela</span>
+            </mat-button-toggle>
+            <mat-button-toggle value="list" matTooltip="Visão em Lista">
+                <mat-icon>view_list</mat-icon>
+                <span class="toggle-label">Lista</span>
+            </mat-button-toggle>
+            <mat-button-toggle value="thumbnails" matTooltip="Visão em Miniaturas">
+                <mat-icon>grid_view</mat-icon>
+                <span class="toggle-label">Miniaturas</span>
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+    </div>
 </mat-toolbar>
-@if(visualizacao === 'table' && !!gridOptions){
-<ci-data-grid (select)="editar($event.value, $event.event)" (sorted)="sortHandle($event)" [options]="gridOptions"
-    [source]="source">
-    <div vazio style="flex: auto; text-align: center;">Nenhum item cadastrado</div>
-</ci-data-grid>
+
+@if(showColumnFilters && visualizacao !== 'table' && filterableFields.length > 0){
+<div class="schema-filter-bar">
+    @for (field of filterableFields; track field.key) {
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="schema-filter-field">
+        <mat-label>{{field.title}}</mat-label>
+        @if(field.enum && field.enum.length > 0){
+        <mat-select [ngModel]="columnFilters[field.key] || ''"
+            (ngModelChange)="onSingleFilterChange(field.key, $event, true)">
+            <mat-option value="">Todos</mat-option>
+            @for (opt of field.enum; track opt) {
+            <mat-option [value]="opt">{{opt}}</mat-option>
+            }
+        </mat-select>
+        }@else{
+        <input matInput [type]="field.type === 'number' ? 'number' : 'text'"
+            [placeholder]="'Filtrar ' + field.title + '...'"
+            [ngModel]="columnFilters[field.key] || ''"
+            (ngModelChange)="onSingleFilterChange(field.key, $event)"
+            (keydown.enter)="onSingleFilterChange(field.key, columnFilters[field.key], true)" />
+        @if(columnFilters[field.key]){
+        <button matSuffix mat-icon-button type="button" matTooltip="Limpar"
+            (click)="onSingleFilterChange(field.key, '', true)">
+            <mat-icon>close</mat-icon>
+        </button>
+        }
+        }
+    </mat-form-field>
+    }
+</div>
 }
+
+@if(visualizacao === 'table'){
+    @if(!!gridOptions){
+    <ci-data-grid
+        [options]="gridOptions"
+        [source]="source"
+        [enableColumnFilters]="showColumnFilters"
+        [filters]="columnFilters"
+        (filterChange)="onFilterChange($event)"
+        (select)="editar($any($event)?.value, $any($event)?.event)"
+        (sorted)="sortHandle($event)">
+        <div vazio class="empty-view-message">
+            <mat-icon>inbox</mat-icon>
+            <span>Nenhum registro encontrado para {{schemaName | nomenclatura}}</span>
+        </div>
+    </ci-data-grid>
+    }@else{
+    <div class="content">
+        Carregando esquema da grade...
+    </div>
+    }
+}
+
 @if(visualizacao === 'list'){
-<!-- <ci-data-list (select)="editar($event[0],$event[1])" > </ci-data-list> -->
+<div class="list-view-container">
+    @if(!source || source.length === 0){
+    <div class="empty-view-message">
+        <mat-icon>inbox</mat-icon>
+        <span>Nenhum registro encontrado para {{schemaName | nomenclatura}}</span>
+    </div>
+    }@else{
+    @for (item of source; track $index) {
+    <mat-card appearance="outlined" class="list-row-card" (click)="editar(item, $event)" tabindex="0">
+        <div class="list-row-avatar">
+            <span>{{getItemInitials(item)}}</span>
+        </div>
+        <div class="list-row-main">
+            <div class="list-row-header">
+                <strong class="list-row-title">{{getItemTitle(item)}}</strong>
+                @if(getItemSubtitle(item); as subtitle){
+                <span class="list-row-subtitle">{{subtitle}}</span>
+                }
+            </div>
+            <mat-chip-set class="list-row-fields" aria-label="Propriedades do registro">
+                @for (field of visibleFields; track field.key) {
+                    @if(formatFieldValue($any(item)[field.key]); as val){
+                    <mat-chip class="field-chip" [disableRipple]="true">
+                        <span class="chip-label">{{field.title}}:</span> {{val}}
+                    </mat-chip>
+                    }
+                }
+            </mat-chip-set>
+        </div>
+        <div class="list-row-actions" (click)="$event.stopPropagation()">
+            <button mat-icon-button matTooltip="Editar" (click)="editar(item, $event)">
+                <mat-icon>edit</mat-icon>
+            </button>
+            @if(service?.delete){
+            <button mat-icon-button color="warn" matTooltip="Excluir" (click)="excluir(item, $event)">
+                <mat-icon>delete_outline</mat-icon>
+            </button>
+            }
+        </div>
+    </mat-card>
+    }
+    }
+</div>
 }
+
+@if(visualizacao === 'thumbnails'){
+<div class="thumbnails-view-container">
+    @if(!source || source.length === 0){
+    <div class="empty-view-message">
+        <mat-icon>inbox</mat-icon>
+        <span>Nenhum registro encontrado para {{schemaName | nomenclatura}}</span>
+    </div>
+    }@else{
+    <div class="thumbnails-grid">
+        @for (item of source; track $index) {
+        <mat-card appearance="outlined" class="thumbnail-card" (click)="editar(item, $event)" tabindex="0">
+            <div class="thumbnail-card-header">
+                <div class="thumbnail-avatar">
+                    <mat-icon>{{getEntityIcon()}}</mat-icon>
+                </div>
+                <div class="thumbnail-titles">
+                    <h4 class="thumbnail-title" [title]="getItemTitle(item)">{{getItemTitle(item)}}</h4>
+                    <span class="thumbnail-entity-tag">{{schemaName | nomenclatura}}</span>
+                </div>
+                <div class="thumbnail-actions" (click)="$event.stopPropagation()">
+                    <button mat-icon-button matTooltip="Editar" (click)="editar(item, $event)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    @if(service?.delete){
+                    <button mat-icon-button color="warn" matTooltip="Excluir" (click)="excluir(item, $event)">
+                        <mat-icon>delete_outline</mat-icon>
+                    </button>
+                    }
+                </div>
+            </div>
+            <div class="thumbnail-card-body">
+                @for (field of visibleFields; track field.key) {
+                <div class="thumbnail-field-row">
+                    <span class="thumbnail-field-label">{{field.title}}</span>
+                    <span class="thumbnail-field-value" [title]="formatFieldValue($any(item)[field.key])">
+                        {{formatFieldValue($any(item)[field.key]) || '—'}}
+                    </span>
+                </div>
+                }
+            </div>
+        </mat-card>
+        }
+    </div>
+    }
+</div>
 }
+}

@@ -9,16 +9,18 @@
 }@else {
 <div class="lock-screen">
     <h1>{{time | date:'HH:MM:ss'}}</h1>
+    <!--  <iframe src="https://ci.dev.br/"
+        style="scale: 0.3; width: 1024px; height: 768px; overflow: hidden; border-radius: 12px;"></iframe> -->
     <div style="flex:auto"></div>
-
     <!--  TODO:  acontecimentos -->
     <!--  não bloqueado -->
     <div class="bar-apps">
         @for (item of barApps; track $index) {
-        <button mat-icon-button [matTooltip]="item.name">
+        <button mat-icon-button [matTooltip]="item.name" (click)="item.onClick()">
             <mat-icon>{{item.icon}}</mat-icon>
         </button>
         }
+        <button (click)="InstallLauncher()">UPDATE</button>
     </div>
 </div>
 }

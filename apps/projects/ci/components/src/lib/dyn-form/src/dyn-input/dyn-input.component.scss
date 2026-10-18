@@ -1,18 +1,9 @@
 :host {
-    display: contents;
+    display: block;
+    width: 100%;
+    min-width: 0;
 }
 
-/* 
 mat-form-field {
-    flex: auto;
-} */
-
-mat-form-field {
-    flex: 1;
-
-    &,
-    & ::ng-deep * {
-        min-width: unset !important;
-        // width: unset;
-    }
+    width: 100%;
 }

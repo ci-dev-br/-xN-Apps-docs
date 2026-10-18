@@ -9,7 +9,7 @@ import { CardSetting, ImplCard } from "./card";
 import { moveItemInArray } from "@angular/cdk/drag-drop";
 import { WindowService } from "../window/src/window.service";
 import { CardFinderComponent } from "../card-finder/card-finder.component";
-import { SettingsComponent } from "@ci/components";
+import { SettingsComponent } from "@ci/components/settings";
 import { ActivatedRoute } from "@angular/router";
 /**
  * Componente de Visualização de Prancheta para construção de Dashboards
@@ -87,6 +87,7 @@ export class BoardComponent implements OnInit {
     }
     synchronizing?: boolean;
     prancheta?: Prancheta;
+    classes?: string[];
     async loadBoard() {
         if (!this.pranchetas) return;
         this.prancheta = await lastValueFrom(
@@ -103,6 +104,11 @@ export class BoardComponent implements OnInit {
             if (!!this.default) {
                 this.pranchetas.pranchetaControllerGet({ body: { defaultGlobalCode: this.default } });
             }
+        }
+        if (this.prancheta?.layout.layoutOrientation === 'Flex1.0') {
+            this.classes = ['--flex-1-0'];
+        } else {
+            this.classes;
         }
     }
 

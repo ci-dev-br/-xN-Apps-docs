@@ -11,14 +11,14 @@ export class UserCredentialService {
     async credenciar(
         userId: string,
     ) {
-        const operables = this.userRepo.find({
+        const operables = await this.userRepo.find({
             where: {
                 userIdentification: userId,
                 operable: true,
                 refreshToken: null
             }
         });
-        if (!operables) {
+        if (!operables || operables.length === 0) {
             this.userRepo.create({
                 createdAt: new Date(),
                 modifiedAt: new Date(),

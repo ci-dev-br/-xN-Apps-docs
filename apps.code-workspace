@@ -12,6 +12,9 @@
 		},
 		{
 			"path": "server/libs"
+		},
+		{
+			"path": "../../Users/paulo/informacao-app-br/client"
 		}
 	],
 	"settings": {

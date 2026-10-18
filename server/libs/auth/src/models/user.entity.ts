@@ -151,4 +151,8 @@ export class User {
         type: UserPreference,
     })
     preferences?: UserPreference[];
+
+    // Armazena o vetor de 128 dimensões gerado pelo face-api.js
+    @Column({ type: 'jsonb', nullable: true })
+    faceDescriptor?: number[];
 }

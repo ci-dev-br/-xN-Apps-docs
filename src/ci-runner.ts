@@ -5,12 +5,13 @@ import { spawn, spawnSync } from "node:child_process";
 export class CiRunner extends RunnerX {
     constructor() {
         super();
-        this.addTask({
-            command: 'node node_modules/@nestjs/cli/bin/nest.js start --watch --debug',
+        this.services();
+        /* this.addTask({
+            command: 'powershell run.ps1',
             cwd: join(__dirname, '..', 'server'),
             name: 'Apps',
             type: 'nest'
-        });
+        }); */
         this.addEventLitener('message', message => {
             if (message.indexOf('[Domain Service iniciado]') > -1) {
                 if (process.env.PUBLIC_GATEWAY_API)
@@ -20,8 +21,9 @@ export class CiRunner extends RunnerX {
                         const p = join(__dirname, '..', 'apps');
                         console.log(p);
                         const s = spawn('npm run apil', {
-                            cwd: p,
-                            // env: process.env,/*  detached: true, */
+                            cwd: 'c:/projetos/br.dev.ci.apps/apps/',
+                            shell: true,
+                            stdio: 'inherit'
                         });
                         s.on('error', (error) => {
                             console.trace(error);
@@ -79,5 +81,15 @@ export class CiRunner extends RunnerX {
             name: 'Git Status',
             type: 'git'
         });
+    }
+    async services() {
+        setTimeout(() => {
+            console.log('[Start AutoRun Apps Ci Dev Br]');
+            spawn('powershell.exe', ['-ExecutionPolicy', 'Bypass', '-File', 'run.ps1'], {
+                cwd: 'C:\\projetos\\br.dev.ci.apps\\server\\',
+                env: process.env,
+                stdio: 'inherit',
+            });
+        },)
     }
 }

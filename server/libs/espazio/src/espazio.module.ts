@@ -12,11 +12,17 @@ import { PlayerService } from "./services/player.service";
 import { GameplayController } from "./controllers/gameplay.controller";
 import { EventsGateway } from "@ci/core/events/events.gateway";
 import { EzGamePlaySnap } from "./model/ez-game-play-snap.entity";
+import { KeyboardThemesController } from "./controllers/keyboard.controller";
+import { KeyboardThemesService } from "./services/keyboard.service";
+import { KeyboardTheme } from "./model/keyboard-theme.entity";
+import { EzGamePalayType } from "./model/ez-game-play-type.entity";
 export const Entities = [
     EzWorld,
     EzPlayer,
     EzGamePlay,
     EzGamePlaySnap,
+    KeyboardTheme,
+    EzGamePalayType,
 ];
 /**
  * # Espazio module
@@ -32,12 +38,14 @@ export const Entities = [
     controllers: [
         ChessController,
         GameplayController,
+        KeyboardThemesController,
     ],
     providers: [
         EventsGateway,
         ChessService,
         GamePlayService,
         PlayerService,
+        KeyboardThemesService,
     ]
 })
 export class EspazioModule { }

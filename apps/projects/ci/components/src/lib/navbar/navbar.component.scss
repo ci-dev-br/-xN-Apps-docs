@@ -1,3 +1,9 @@
+:host {
+    flex: 0;
+    // background: var(--mat-app-background-color);
+    color: var(--mat-app-text-color);
+}
+
 nav {
     display: flex;
     flex-direction: row;
@@ -8,6 +14,7 @@ nav {
     padding: 12px;
 
     z-index: 5000;
+
 
     ul,
     li {
@@ -22,22 +29,24 @@ nav {
     }
 }
 
-:host ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+/* :host ::ng-deep .mat-mdc-form-field-subscript-wrapper {
     display: none;
-}
+} */
 
 mat-toolbar {
     flex-wrap: wrap;
     height: unset !important;
     max-height: unset !important;
     padding: 12px 12px;
+
+
 }
+
 
 mat-form-field {
     min-width: 150px;
     flex: 1;
 }
-
 
 .apps {
     display: flex;
@@ -50,71 +59,131 @@ mat-form-field {
     flex: auto;
     position: relative;
     overflow: hidden;
+    color: white;
 
-    >button {
-        position: absolute;
-        left: 0;
-        top: 0;
-        right: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        transition: all ease-in-out 2s !important;
-    }
 }
 
-button.app {
-    display: flex;
-    flex-direction: column;
-    font-size: 8px;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    height: unset;
-    min-height: unset;
-    max-height: unset;
-    gap: 0px;
-    border-radius: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    &:hover {
-        overflow: unset;
-        z-index: 12;
-    }
+h1 {
+    color: white;
+    font-size: 1.2em;
+    padding: 0.1em;
+    margin: 0;
 }
-
-
 
 .menu--inner {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    max-height: 40vh;
     flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    overflow: hidden;
-    gap: 24px;
-    z-index: 500;
+    gap: 6px;
 
-    ::ng-deep * {
-        font-size: medium !important;
-    }
+}
 
-    ::ng-deep button {
-        width: 85px;
-        min-width: unset;
-        max-width: unset;
-        height: 85px;
-        min-height: unset;
-        max-height: unset;
-        // box-shadow: 1px 3px 4px -1px black;
-        padding: 8px;
-    }
+ci-logo {
+    filter: drop-shadow(0px 1.76px 6px rgba(255, 255, 255, .9));
+    min-width: 125px;
 }
 
 .recent {
     display: flex;
     flex-direction: row;
     gap: 2px;
+    background: rgba(255, 255, 255, .1);
+    padding: 8px 12px;
+    margin: -8px 0;
+    margin-right: 32px;
+    border-radius: 18px;
+    transition: box-shadow ease 1s;
+    box-shadow: inset 7px -12px 32px rgba(60, 113, 228, 0.318),
+        inset 1px 3px 3px rgba(255, 255, 255, 0.219),
+        inset 0px 0px 2px rgb(255, 255, 255),
+        inset 7px -48px 64px rgb(0, 0, 0),
+        inset -120px -12px 120px rgba(255, 0, 170, 0.712),
+        inset 120px 0px 60px rgb(255, 238, 0),
+        inset 3px -24px 0px rgba(244, 248, 255, 0.6),
+        2px 3px 5px rgba(0, 0, 0, .7);
+
+
+    &:hover {
+        box-shadow: inset 7px -12px 32px rgba(60, 113, 228, 0.318),
+            inset 1px 3px 3px rgba(255, 255, 255, 0.219),
+            inset 0px 0px 2px rgb(255, 255, 255),
+            inset 7px -48px 64px rgb(0, 0, 0),
+            inset 120px -12px 120px rgba(255, 0, 170, 0.712),
+            inset -120px 0px 60px rgb(255, 238, 0),
+            inset 3px -24px 0px rgba(244, 248, 255, 0.6),
+            2px 3px 5px rgba(0, 0, 0, .7);
+    }
+
+    button {
+        mix-blend-mode: lighten;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.deployer-panel {
+    padding: 8px 14px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.deployer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.deployer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.deployer-msg {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.deployer-sub {
+    font-size: 11px;
+    opacity: 0.8;
+}
+
+.env-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 11px;
+    background: rgba(46, 125, 50, 0.2);
+
+    &.debug {
+        background: rgba(245, 124, 0, 0.25);
+    }
+}
+
+.deployer-feedback {
+    margin-top: 4px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    background: rgba(33, 150, 243, 0.15);
+    font-size: 11px;
+}
+
+.deployer-logs {
+    margin: 4px 0 0;
+    padding: 6px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.25);
+    font-size: 10px;
+    max-height: 90px;
+    overflow: auto;
+    white-space: pre-wrap;
 }

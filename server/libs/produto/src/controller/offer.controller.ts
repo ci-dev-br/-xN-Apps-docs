@@ -5,7 +5,12 @@ import { ApiTags } from "@nestjs/swagger";
 export class OfferController {
     constructor() { }
     async Get() {
+
     }
     async Sync() {
+
+    }
+    async criarOferta() {
+
     }
 }

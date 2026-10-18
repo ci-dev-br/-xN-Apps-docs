@@ -14,6 +14,11 @@ import { GetListEndereco$Params } from '../fn/endereco/get-list-endereco';
 import { syncEndereco } from '../fn/endereco/sync-endereco';
 import { SyncEndereco$Params } from '../fn/endereco/sync-endereco';
 import { SyncPayloadDaoEndereco } from '../models/sync-payload-dao-endereco';
+import { Endereco } from '../models/endereco';
+import { GetByInternalIdInputDto } from '../models/get-by-internal-id-input-dto';
+import { RequestBuilder } from '../request-builder';
+import { filter } from 'rxjs/operators';
+import { HttpResponse } from '@angular/common/http';
 
 @Injectable()
 export class EnderecoService extends BaseService {
@@ -23,6 +28,8 @@ export class EnderecoService extends BaseService {
 
   /** Path part for operation `syncEndereco()` */
   static readonly SyncEnderecoPath = '/Endereco/Sync';
+  static readonly GetByInternalIdEnderecoPath = '/Endereco/GetByInternalId';
+  static readonly DeleteEnderecoPath = '/Endereco/Delete';
 
   /**
    * Syncronize data with node api
@@ -47,6 +54,15 @@ export class EnderecoService extends BaseService {
   sync(params: SyncEndereco$Params, context?: HttpContext): Observable<SyncPayloadDaoEndereco> {
     return this.syncEndereco$Response(params, context).pipe(
       map((r: StrictHttpResponse<SyncPayloadDaoEndereco>): SyncPayloadDaoEndereco => r.body)
+    );
+  }
+
+  getByInternalId(params: { body: GetByInternalIdInputDto }, context?: HttpContext): Observable<Endereco> {
+    const rb = new RequestBuilder(this.rootUrl, EnderecoService.GetByInternalIdEnderecoPath, 'post');
+    if (params) rb.body(params.body, 'application/json');
+    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
+      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => (r as StrictHttpResponse<Endereco>).body)
     );
   }
 
@@ -76,6 +92,15 @@ export class EnderecoService extends BaseService {
   getList(params: GetListEndereco$Params, context?: HttpContext): Observable<SyncPayloadDaoEndereco> {
     return this.getListEndereco$Response(params, context).pipe(
       map((r: StrictHttpResponse<SyncPayloadDaoEndereco>): SyncPayloadDaoEndereco => r.body)
+    );
+  }
+
+  delete(params: { body: Endereco }, context?: HttpContext): Observable<Endereco> {
+    const rb = new RequestBuilder(this.rootUrl, EnderecoService.DeleteEnderecoPath, 'post');
+    if (params) rb.body(params.body, 'application/json');
+    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
+      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => (r as StrictHttpResponse<Endereco>).body)
     );
   }
 

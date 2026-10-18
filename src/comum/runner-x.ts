@@ -1,8 +1,8 @@
 import { IncomingMessage } from 'http';
-import { get as https_get, } from 'https';
-import { get as http_get } from 'http';
 import { CloudflareIntegration } from '../integration/cloudflare.integration';
-import { ChildProcessWithoutNullStreams, Serializable, spawn } from 'node:child_process';
+import { ChildProcessWithoutNullStreams, execSync, Serializable, spawn } from 'node:child_process';
+import { join } from 'node:path';
+import { readFileSync, writeFileSync } from 'node:fs';
 export interface RunnerTask {
     name: string;
     type: string;
@@ -19,13 +19,17 @@ export abstract class RunnerX {
     errorCodeListners = {
         530: ((...arg) => this.cloudFlareTunnelInactiveHandler()),
         200: ((...arg) => console.log('[Online]')),
-        default: ((...arg) => console.trace('[O que fazer?]', arg)),
+        default: ((...arg) => {
+            console.trace('[O que fazer?]');
+            console.trace(arg);
+        }),
     }
     constructor() {
         console.log('[ci.dev.br] Iniciando serviços...');
     }
     protected async adicionarVerificacaoRota(url: string, replayTimeout = (1000 * 60 * 10)) {
-        console.log(`[ verificando rota ]`);
+        // TODO: Desativeado temporariamente, pois está gerando erro de timeout na execução do runner... (?)
+        /* console.log(`[ verificando rota ]`);
         try {
             if (url.indexOf('https://') === 0)
                 https_get(url,
@@ -40,7 +44,7 @@ export abstract class RunnerX {
             console.trace('[Falha na verificação de Rotas de Acesso]', error);
             console.trace(error);
         }
-        setTimeout(() => this.adicionarVerificacaoRota(url, replayTimeout), replayTimeout);
+        setTimeout(() => this.adicionarVerificacaoRota(url, replayTimeout), replayTimeout); */
     }
     private async incomingMessageHandler(res: IncomingMessage) {
         try {
@@ -79,8 +83,22 @@ export abstract class RunnerX {
         console.trace('[Falha ao executar tarefa]', error);
     }
     protected defaultHandler(error: any, eventName: string, task: RunnerTask) {
-        console.log(`[Retorno ${eventName}]`, error);
-        console.trace(error);
+        if (!eventName) {
+            eventName = 'unknow';
+            setTimeout(() => {
+                // 1. Realiza o Git Add, Git Pull e Git Push
+                execSync('git add .', { cwd: join(__dirname, '..') });
+                execSync('git commit -m "Automated commit"', { cwd: join(__dirname, '..') });
+                execSync('git pull --all', { cwd: join(__dirname, '..') });
+                execSync('git push --all', { cwd: join(__dirname, '..') });
+                const main = readFileSync(join(__dirname, '..', 'server', 'src', 'main.ts'), { encoding: 'utf-8' });
+                writeFileSync(join(__dirname, '..', 'server', 'src', 'main.ts'), main, { encoding: 'utf-8' });
+            }, 1);
+        }
+        if (error) {
+            console.log(`[Retorno ${eventName}]`, error);
+            console.trace(error);
+        }
     }
     private taskDataHandler(message: any, task: RunnerTask) {
         console.log('[task]', (message.toString() || message));

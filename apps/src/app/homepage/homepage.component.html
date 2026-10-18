@@ -1,59 +1,31 @@
-<ci-navbar></ci-navbar>
-<div class="page--wrapper">
-    @if(userService && !!(userService.user | async)){
-    <div #sidebarElement class="sidebar" [class.--inactive]="!sidebar"
-        (click)="sidebar=!sidebar;$event.preventDefault()" [style.top]="sidebarTop + 'px' "
-        [style.left]="sidebarLeft + 'px'">
-        <div class="row">
-            <button mat-raised-button (click)="newPost()">
-                Texto
-            </button>
-            <button mat-raised-button (click)="newCitation()">
-                Citação
-            </button>
-            <button mat-raised-button (click)="newPhoto()">
-                Foto
-            </button>
-            <button mat-raised-button (click)="newVideo()">
-                Vídeo
-            </button>
-        </div>
-        <span style="flex:auto"></span>
-        <div class="row">
-            <button mat-icon-button color="primary" routerLink="/meus-apps"><mat-icon>apps</mat-icon></button>
-            <button mat-icon-button (click)="openSidebarSettings()"><mat-icon>settings</mat-icon></button>
-        </div>
-        <mat-icon class="icon">draw</mat-icon>
-    </div>
-    <div class="wrapper">
-        <div>
-            <p>
-                Nada por perto até o momento,
-            </p>
-            <p>
-                seja o publicar algo por perto!
-            </p>
-        </div>
-        <div class="apps">
-            @for (item of apps; track $index) {
-            <mat-card (click)="appClickHandler($event, item)">
-                {{item.name}}
-            </mat-card>
-            }
-        </div>
-    </div>
-    }@else {
-    <header class="container">
-        <figure>
-            <img class="logo" src="logo-colorida.svg"
-                alt-label="Logo 'apps.ci.dev.br' escrita em manuscrito e colida degradê em minúsculo">
-        </figure>
+<ci-navbar [apps]="apps"></ci-navbar>
+@if(userService && !!(userService.user | async)){
+<!-- Informações do Usuário -->
+}
+<mat-tab-group>
+    <mat-tab label="Noticiário Diário">
+        <div class="page--wrapper">
+            <div class="wrapper">
+                @if(!!feeds()){
+                <div class="feed" #feedContainer>
+                    @for(feed of feeds(); track feed.id || feed.url || $index) {
 
-        <mat-form-field>
-            <mat-label>Pesquisar ...</mat-label>
-            <input type="text" matInput placeholder="Pesquisar...">
-        </mat-form-field>
-    </header>
-    }
-</div>
-<x-footer />
+                    <div class="feed-item">
+                        @if(feed.title){<h4 [innerHtml]="feed.title"></h4>}
+                        <div [innerHtml]="feed.content" class="feed-content"></div>
+                        <div style="text-align:right">Fonte: <a target="_blank"
+                                [href]="'https://' + feed?.sourceInfo?.domain">{{feed?.sourceInfo?.name}}
+                            </a>
+                        </div>
+                        <div class="interactions">
+                            <button mat-icon-button color="primary" (click)="interacao(feed, 'open')"
+                                [matTooltip]="'Abrir na Origem'"><mat-icon>open_in_new</mat-icon></button>
+                        </div>
+                        <div>{{feed.categoria}}</div>
+                    </div>
+                    }
+                </div>}
+            </div>
+        </div>
+    </mat-tab>
+</mat-tab-group>

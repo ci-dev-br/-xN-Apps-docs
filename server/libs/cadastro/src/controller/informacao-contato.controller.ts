@@ -5,6 +5,7 @@ import { InformacaoContato } from "../model/informacao-contato.entity";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { SyncPayloadDaoInformacaoContato } from "../dto/sync-payload-dao-informacao-contato";
 import { ObterListaInformacaoContato } from "../dto/obter-lista-informacao-contato";
+import { GetByInternalIdInputDto } from "./GetByInternalIdInputDto";
 /**
  * InformacaoContato Controller
  * 
@@ -13,6 +14,11 @@ import { ObterListaInformacaoContato } from "../dto/obter-lista-informacao-conta
 @ApiTags('InformacaoContato')
 @Controller('InformacaoContato')
 export class InformacaoContatoController extends ControllerDaoBase<InformacaoContatoService, InformacaoContato> {
+    constructor(
+        service: InformacaoContatoService
+    ) {
+        super(service);
+    }
     @Post('Sync')
     @ApiResponse({
         type:
@@ -25,7 +31,20 @@ export class InformacaoContatoController extends ControllerDaoBase<InformacaoCon
         @Body() body: SyncPayloadDaoInformacaoContato,
         @Req() req?: any,
     ) {
-        return await super.Sync(body,req)
+        return await super.Sync(body, req)
+    }
+    @Post('GetByInternalId')
+    @ApiResponse({
+        type: InformacaoContato,
+    })
+    @ApiOperation({
+        operationId: 'GetByInternalIdInformacaoContato',
+    })
+    override async GetByInternalId(
+        @Body() input: GetByInternalIdInputDto,
+        @Req() req?: any,
+    ) {
+        return await super.GetByInternalId(input, req);
     }
     @Post('GetList')
     @ApiResponse({
@@ -39,6 +58,19 @@ export class InformacaoContatoController extends ControllerDaoBase<InformacaoCon
         @Body() input: ObterListaInformacaoContato,
         @Req() req?: any,
     ) {
-        return super.GetList(input,req);
+        return super.GetList(input, req);
+    }
+    @Post('Delete')
+    @ApiResponse({
+        type: InformacaoContato,
+    })
+    @ApiOperation({
+        operationId: 'DeleteInformacaoContato',
+    })
+    override async Delete(
+        @Body() body: InformacaoContato,
+        @Req() req?: any,
+    ) {
+        return await super.Delete(body, req);
     }
 }
