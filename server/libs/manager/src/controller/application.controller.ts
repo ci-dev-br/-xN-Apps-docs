@@ -7,7 +7,6 @@ import { GetInputDtos } from "../dto/input-dto";
 import { Role } from "@ci/auth/decorators/role.decorator";
 import { SyncPayloadDao } from "@ci/core";
 
-@Role('MASTER')
 @ApiTags('Application')
 @Controller('Application')
 export class ApplicationController {
@@ -36,6 +35,8 @@ export class ApplicationController {
             console.trace(error);
         }
     }
+
+    @Role('MASTER')
     @Post('Sync')
     @ApiResponse({
         type: Application, description: 'Sincronizar Objeto de Aplicação'
@@ -56,6 +57,8 @@ export class ApplicationController {
             throw error;
         }
     }
+
+    @Role('MASTER')
     @Post('Delete')
     @ApiResponse({
         type: Application, description: 'Excluir Cadastro de Aplicação'
