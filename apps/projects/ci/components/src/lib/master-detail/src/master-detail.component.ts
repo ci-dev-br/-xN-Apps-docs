@@ -399,9 +399,27 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
 
     async editar(data?: T, event?: Event) {
         if (!data) return;
+        const effectiveSchemaProperties: { [key: string]: ISchemaProperty } = {
+            ...(this.schemaProperties || {}),
+        };
+        for (const f of this.visibleFields) {
+            if (!effectiveSchemaProperties[f.key]) {
+                effectiveSchemaProperties[f.key] = f.prop || {
+                    title: f.title,
+                    type: f.type,
+                    format: f.format,
+                    enum: f.enum,
+                };
+            }
+        }
         const result: number | any = await this.window?.open(
             EditarDetailComponent,
-            { schemaName: this.schemaName, data },
+            {
+                schemaName: this.schemaName,
+                data,
+                schemaProperties: effectiveSchemaProperties,
+                service: this.service,
+            },
             this.schemaName,
             event
         );

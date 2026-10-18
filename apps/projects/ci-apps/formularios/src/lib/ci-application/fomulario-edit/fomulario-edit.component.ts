@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'
 import { CoreModule, DaoService, IChangeable } from '@ci/core';
 import { Forms, FormsService, Pergunta } from '@ci/portal-api';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, Subscription } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -54,6 +54,7 @@ export class FormularioEditComponent {
     title: [, [Validators.required]],
     description: [, [Validators.required]],
   });
+  private confirmationSub?: Subscription;
   constructor(
     @Optional() private readonly formsService?: FormsService,
     @Optional() private readonly route?: ActivatedRoute,
@@ -62,27 +63,33 @@ export class FormularioEditComponent {
     @Optional() private readonly snap?: MatSnackBar,
   ) {
     this.route?.params.subscribe(params => {
+      if (!params['FormId']) return;
       this.formsService?.getByInternalId({ body: { internalId: params['FormId'] } }).subscribe(form_data => {
         this.formulario = form_data;
-        this.daos?.prepareToEdit(this.formulario);
+        this.daos?.prepareToEdit(this.formulario, { schemaName: 'Forms' });
         if (this.formGroup) this.daos?.bindDataForm(this.formulario, this.formGroup);
-        this.daos?.confirmation(this.formulario)?.subscribe(data => this.confirmationHandler(data))
+        this.confirmationSub?.unsubscribe();
+        this.confirmationSub = this.daos?.confirmation(this.formulario)?.subscribe(data => this.confirmationHandler(data));
       });
-    }
-    );
+    });
   }
   private async confirmationHandler(data: any) {
     try {
       if (this.formsService && this.daos && this.formulario && data) {
-        let _data: any = Object.assign(this.formulario,
-          await lastValueFrom(this.formsService.sync({ body: { data: data } }))
-        );
+        const cleanPayload = this.daos.sanitizeDeep({
+          ...data,
+          internalId: this.formulario.internalId,
+        });
+        const synced = await lastValueFrom(this.formsService.sync({ body: { data: cleanPayload } }));
+        let _data: any = Object.assign(this.formulario, synced);
         delete (_data as IChangeable).__pre;
-        this.daos.prepareToEdit(_data);
+        await this.daos.prepareToEdit(_data, { schemaName: 'Forms' });
         if (this.formGroup) this.daos.bindDataForm(_data, this.formGroup);
+        this.snap?.open('Ajuste aplicado', 'Fechar', { duration: 3000 });
       }
     } catch (error) {
       console.trace(error);
+      this.snap?.open('Falha ao aplicar ajuste...', 'Fechar', { duration: 4000 });
     }
   }
   get changes() {
@@ -98,17 +105,10 @@ export class FormularioEditComponent {
     }
   }
   async confirm() {
-    // o front end pode determinar anteriormente se determinado fluxo é ilegal?
-    /* if (this.formGroup.invalid) {
-      this.formGroup.markAllAsTouched();
-      this.snap.open('Alguns campos precisam ser corrigidos...')
-      return;
-    } */
     try {
-      await this.daos?.confirmChanges(this.formulario)
-      this.snap?.open('Ajuste aplicado');
+      await this.daos?.confirmChanges(this.formulario);
     } catch (error) {
-      this.snap?.open('Falha...');
+      this.snap?.open('Falha...', 'Fechar', { duration: 4000 });
     }
   }
   async adicionarPergunta() {

@@ -1,20 +1,16 @@
 :host {
-    display: contents;
+    display: block;
+    width: 100%;
 }
 
-form {
-    // display: contents;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 0 6px;
-    // padding: 6px;
-    // justify-content: stretch;
-    // align-items: stretch;
-    // overflow: auto;
+form.ci-dyn-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px 16px;
+    width: 100%;
+    box-sizing: border-box;
 
     mat-form-field {
-        min-width: initial;
-        width: initial;
+        width: 100%;
     }
 }

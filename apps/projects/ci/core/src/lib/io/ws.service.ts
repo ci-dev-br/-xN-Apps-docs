@@ -212,12 +212,48 @@ export class WsService {
         });
     }
     /**
+     * Remove propriedades internas (`_`, `:`) e referências cíclicas antes de serializar no WebSocket.
+     */
+    private sanitizePayload(value: any, visited = new WeakSet<object>()): any {
+        if (value === null || value === undefined || typeof value !== 'object') {
+            return value;
+        }
+        if (value instanceof Date) {
+            return value.toISOString();
+        }
+        if (typeof value.subscribe === 'function') {
+            return undefined;
+        }
+        if (visited.has(value)) {
+            return undefined;
+        }
+        visited.add(value);
+        if (Array.isArray(value)) {
+            return value
+                .filter(item => !item || typeof item.subscribe !== 'function')
+                .map(item => this.sanitizePayload(item, visited));
+        }
+        const clean: Record<string, any> = {};
+        for (const key of Object.keys(value)) {
+            if (key.startsWith('::') || key === '__confirmation_subject' || key === '__pre' || key === '__binding_form' || key === '__readed' || key === 'toJSON' || key === 'toString' || key === '__constructor__') {
+                continue;
+            }
+            const propVal = value[key];
+            if (typeof propVal === 'function' || (propVal && typeof propVal.subscribe === 'function')) {
+                continue;
+            }
+            clean[key] = this.sanitizePayload(propVal, visited);
+        }
+        return clean;
+    }
+
+    /**
      * Emite mensagem para o websocket auto-assinada pela aplicação cliente
      * @param payload 
      */
     Emit(payload: any) {
-        const { toJSON, toString, __constructor__, ...INNER_CONTENT_DATA } = payload;
-        const PAYLOAD_TO_SEND = { ...INNER_CONTENT_DATA, };
+        const { toJSON, toString, __constructor__, ...INNER_CONTENT_DATA } = payload || {};
+        const PAYLOAD_TO_SEND = this.sanitizePayload({ ...INNER_CONTENT_DATA }) || {};
         if (!PAYLOAD_TO_SEND.data) PAYLOAD_TO_SEND.data = {};
         PAYLOAD_TO_SEND.data.client = this.__clientAutoIdentification;
         PAYLOAD_TO_SEND.data.momento = Date.now();
@@ -233,12 +269,13 @@ export class WsService {
     async Propagar(objectRef: any) {
         if (objectRef && !!objectRef.internalId) {
             this._attentionDatas.set(objectRef.internalId, objectRef);
+            const cleanRef = this.sanitizePayload(objectRef);
             this.Emit({
                 event: 'Attention',
                 data: {
                     now: new Date(),
                     objectRef: {
-                        ...objectRef,
+                        ...cleanRef,
                         internalId: objectRef.internalId,
                         id: objectRef.id,
                     }

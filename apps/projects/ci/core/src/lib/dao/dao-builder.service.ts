@@ -115,12 +115,27 @@ export class DaoBuilder /* Service */ {
         });
         return this.loadingPromise;
     }
-    async getForm(name: string) {
+    async getForm(name: string, fallbackData?: any, extraProperties?: { [key: string]: ISchemaProperty }) {
         const schema: ISchema = (await this.getSchema(name));
-        const fields: any = {}
-        if (schema?.properties) {
-            Object.keys(schema?.properties).map(key => {
-                fields[key] = [, []];
+        const fields: any = {};
+        const mergedProps = {
+            ...(extraProperties || {}),
+            ...(schema?.properties || {}),
+        };
+        Object.keys(mergedProps).forEach(key => {
+            fields[key] = [fallbackData?.[key] ?? null, []];
+        });
+        if (fallbackData && typeof fallbackData === 'object') {
+            Object.keys(fallbackData).forEach(key => {
+                if (
+                    !key.startsWith('_') &&
+                    !key.startsWith(':') &&
+                    key !== 'toJSON' &&
+                    key !== 'toString' &&
+                    !(key in fields)
+                ) {
+                    fields[key] = [fallbackData[key], []];
+                }
             });
         }
         return this.formBuilder.group({

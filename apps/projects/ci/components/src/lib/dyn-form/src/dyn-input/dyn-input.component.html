@@ -3,13 +3,10 @@
     <ng-container *ngComponentOutlet="inputComponent"></ng-container>
     }
     @else{
-    <!-- 
-                Defafault Input Implementation
-            -->
     @if(type === 'html'){
     HTML CONTENT
     }@else {
-    <mat-form-field>
+    <mat-form-field appearance="outline" class="ci-dyn-form-field">
         <mat-label>{{label || placeholder || ''}}</mat-label>
         @if(!!service){
         <input matInput type="text" [placeholder]="placeholder || label || ''" [formControlName]="fieldName || ''"
@@ -21,19 +18,14 @@
         </mat-autocomplete>
         }@else{
         <ng-container *ngTemplateOutlet="inputContent"></ng-container>
-        <!-- <input matInput type="text" autocomplete="off" [placeholder]="placeholder || label || ''"
-            [formControlName]="fieldName || ''"> -->
         }
-        @if(!!schemaName){<button mat-icon-button matSuffix>
+        @if(!!schemaName){<button mat-icon-button matSuffix type="button">
             <mat-icon>
                 search
             </mat-icon>
         </button>}
         <ng-template #inputContent>
-            @if(type==='text'){
-            <input matInput type="text" autocomplete="off" [placeholder]="placeholder || label || ''"
-                [formControlName]="fieldName || ''">
-            }@else if(type==='number'){
+            @if(type==='number'){
             <input matInput [currencyMask]="{ prefix: '', thousands: '.', decimal: ',' }" style="text-align: right;"
                 type="text" autocomplete="off" [placeholder]="placeholder || label || ''"
                 [formControlName]="fieldName || ''">

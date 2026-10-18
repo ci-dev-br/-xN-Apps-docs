@@ -49,31 +49,49 @@ export class WindowComponent implements OnInit, OnDestroy {
   ];
   @Input()
   component?: Type<any>;
-  injector = Injector.create([
-    { provide: MatDialogRef<WindowComponent>, useValue: this.ref },
-    { provide: MAT_DIALOG_DATA, useValue: (this.data as any)?.data || null },
-    { provide: 'ACTIONS', useValue: this.acts }
-  ]);
+  injector!: Injector;
 
   constructor(
+    private readonly parentInjector: Injector,
     @Optional() private daos?: DaoService,
     @Optional() private readonly ref?: MatDialogRef<WindowComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) protected data?: IWindowData,
     @Optional() public readonly actions?: ActionsService,
-  ) { }
+  ) {
+    this.injector = Injector.create({
+      providers: [
+        { provide: MatDialogRef, useValue: this.ref },
+        { provide: MAT_DIALOG_DATA, useValue: (this.data as any)?.data || null },
+        { provide: 'ACTIONS', useValue: this.acts },
+        ...(this.daos ? [{ provide: DaoService, useValue: this.daos }] : []),
+      ],
+      parent: this.parentInjector,
+    });
+    if (!this.component && (this.data as any)?.component) {
+      this.component = (this.data as any).component;
+    }
+  }
   ngOnInit(): void {
     this.showing = true;
   }
   ngOnDestroy(): void {
     this.showing = false;
   }
-  get changed() {
-    if (!(this.data as any)?.data) return false;
-    return this.daos?.haveChanges(!!(this.data as any)?.data?.schemaName ? (this.data as any)?.data.data : (this.data as any)?.data)
+  private get targetEntity(): any {
+    if (!(this.data as any)?.data) return undefined;
+    return !!(this.data as any)?.data?.schemaName
+      ? (this.data as any)?.data?.data
+      : (this.data as any)?.data;
   }
-  confirm() {
-    this.confirmOutput.emit((this.data as any)?.data.data);
-    this.daos?.confirmChanges((this.data as any)?.data.data)
+  get changed() {
+    const target = this.targetEntity;
+    if (!target) return false;
+    return this.daos?.haveChanges(target);
+  }
+  async confirm() {
+    const target = this.targetEntity;
+    this.confirmOutput.emit(target);
+    await this.daos?.confirmChanges(target);
   }
   close() {
     this.showing = false;

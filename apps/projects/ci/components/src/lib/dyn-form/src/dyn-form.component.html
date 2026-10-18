@@ -1,9 +1,17 @@
 @if(!!source && source.fields && formGroup){
-<form [formGroup]="formGroup ">
-    @for (field of source.fields; track $index) {
-    @if(!(!formGroup.controls[field?.property||''].value && !!field.readonly)){
-    <ci-dyn-input [label]="field.label" [hint]="field.description" [formGroup]="formGroup" [description]="field?.description" [fieldName]="field?.property"
-        [type]="field.type || 'text'" [isArray]="field.isArray" [schemaName]="field?.schemaName!"></ci-dyn-input>
+<form [formGroup]="formGroup" class="ci-dyn-form-grid">
+    @for (field of source.fields; track field.property || $index) {
+    @if(!(!formGroup.get(field?.property || '')?.value && !!field.readonly)){
+    <ci-dyn-input
+        [label]="(field.label && field.label !== field.property) ? field.label : ((field.property || '') | nomenclatura)"
+        [hint]="field.description"
+        [formGroup]="formGroup"
+        [description]="field?.description"
+        [fieldName]="field?.property"
+        [type]="field.type || 'text'"
+        [isArray]="field.isArray"
+        [schemaName]="field?.schemaName!">
+    </ci-dyn-input>
     }
     }
 </form>
