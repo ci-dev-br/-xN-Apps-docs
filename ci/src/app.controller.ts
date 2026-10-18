@@ -6,7 +6,6 @@ export class AppController {
   @Render('index')
   root() {
     return {
-      message: 'Hello world!',
     };
   }
 
@@ -56,14 +55,14 @@ export class AppController {
   getTermsPage() {
     const today = new Date();
     // Formata data ex: "26 de Novembro de 2025"
-    const formattedDate = today.toLocaleDateString('pt-BR', { 
-      day: 'numeric', month: 'long', year: 'numeric' 
+    const formattedDate = today.toLocaleDateString('pt-BR', {
+      day: 'numeric', month: 'long', year: 'numeric'
     });
 
-    return { 
+    return {
       year: today.getFullYear(),
       updatedAt: formattedDate,
-      title: 'Termos de Serviço' 
+      title: 'Termos de Serviço'
     };
   }
 }
