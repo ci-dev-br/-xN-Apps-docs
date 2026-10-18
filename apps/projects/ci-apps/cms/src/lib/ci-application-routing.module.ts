@@ -10,9 +10,19 @@ const routes: Routes = [
       {
         path: '',
         component: BoardComponent, data: {
-          title: 'CMS',
+          appName: 'CMS',
+          title: 'CMS — Gestor de Conteúdo',
           icon: 'dashboard',
-          DefaultBoard: 'CMS'
+          DefaultBoard: 'CMS',
+          queryParam: 'file',
+          manifest: {
+            'event:open:*.html,*.md,*.scss,*.css': {
+              component: BoardComponent,
+              label: 'Abrir no CMS (Gestor de Conteúdo)',
+              icon: 'web',
+              queryParam: 'file',
+            },
+          }
         }
       },
       ...models.map(c => {

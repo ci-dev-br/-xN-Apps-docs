@@ -32,13 +32,15 @@ export class AuthService {
         let chave_acesso: Credential = null;
         if ('try' in r && r.try && typeof r.try === 'string') {
             permission = JSON.parse(atob(r.try)).permission;
-            old_authorization = (await this.jwtService.decode(req.headers['authorization']?.replace('Bearer', '').trim())) as any;
-            userId = old_authorization?.id;
+            const rawAuthHeader = req?.headers?.['authorization']?.replace('Bearer', '').trim();
+            old_authorization = rawAuthHeader ? (this.jwtService.decode(rawAuthHeader) as any) : null;
+            userId = old_authorization?.id || userId;
             // TODO: verificar validade da chave de acesso 
             try {
                 const chave_acesso_token = old_authorization?.chaveAcesso;
-                chave_acesso = await this.credencial.obterChaveAcessoPorId(chave_acesso_token);
-                chave_acesso;
+                if (chave_acesso_token) {
+                    chave_acesso = await this.credencial.obterChaveAcessoPorId(chave_acesso_token);
+                }
                 if (chave_acesso) {
                     if (userId !== chave_acesso?.identifiedUser) {
                         userId = chave_acesso?.identifiedUser;
@@ -63,17 +65,25 @@ export class AuthService {
                 throw new UnauthorizedException('Acesso negado [1].', error);
             }
         }
-        const user = await this.userService.findById(userId);
-        this.userCredentialService.credenciar(user.id);
+        const user = await this.userService.findByIdLight(userId);
         if (user) {
-            const chaveAcesso = (await this.credencial.solicitarCredencial({
-                ip: ip,
-                identificacao_inicial: chave_acesso?.identifiedUser,  //  old_authorization.id
-                headers: req.headers
-            }));
-            chaveAcesso.alive = true; // Chave ativa permite autenticar na aplicação
-            chaveAcesso.valid = false; // Chave válida permite gerar nova chave
-            await this.credencial.atualizar(chaveAcesso);
+            await this.userCredentialService.credenciar(user.id);
+            let chaveAcesso = chave_acesso;
+            if (chaveAcesso) {
+                if (!chaveAcesso.alive) {
+                    chaveAcesso.alive = true; // Chave ativa permite autenticar na aplicação
+                    await this.credencial.atualizar(chaveAcesso);
+                }
+            } else {
+                chaveAcesso = await this.credencial.solicitarCredencial({
+                    ip: ip,
+                    identificacao_inicial: user.id,
+                    headers: req?.headers
+                });
+                chaveAcesso.alive = true; // Chave ativa permite autenticar na aplicação
+                chaveAcesso.valid = false; // Chave válida permite gerar nova chave
+                await this.credencial.atualizar(chaveAcesso);
+            }
             return {
                 authorization: await this.jwtService.signAsync({
                     id: user?.id,
@@ -82,7 +92,7 @@ export class AuthService {
                     chaveAcesso: chaveAcesso.id,
                     confiance
                 })
-            }
+            };
         } else {
             throw new UnauthorizedException('Acesso Nagado.');
         }

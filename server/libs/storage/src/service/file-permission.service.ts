@@ -1,16 +1,25 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FilePermission } from "../models/file-permission.entity";
-import { Equal, IsNull, Or, Repository } from "typeorm";
-import { join } from "path";
+import { Equal, IsNull, Repository } from "typeorm";
+import { isAbsolute, join, resolve } from "path";
 
 @Injectable()
 export class FilePermissionService {
     constructor(
         @InjectRepository(FilePermission)
         private readonly filePermissionRepo: Repository<FilePermission>,
-
     ) { }
+
+    private resolveTargetPath(targetPath: string): string {
+        const baseDir = join(__dirname, '..');
+        const cleaned = (targetPath || './').trim();
+        const resolved = isAbsolute(cleaned)
+            ? resolve(cleaned)
+            : resolve(baseDir, cleaned);
+        return resolved.replace(/\\/g, '/').replace(/\/+$/, '').toLowerCase();
+    }
+
     async grant(file: string, request: any) {
         try {
             if (!!this.filePermissionRepo && request) {
@@ -25,20 +34,24 @@ export class FilePermissionService {
                     }
                     ]
                 });
-                if (!!permissions) {
-                    let file_path = file.indexOf('.') === 0 ? join(__dirname, '..', file) : file;
+                if (!!permissions && file) {
+                    const file_path = this.resolveTargetPath(file);
                     for (const permission of permissions) {
-                        let permission_path = permission.path.indexOf('.') === 0 ? join(__dirname, '..', permission.path) : permission.path;
-                        if (permission.type === 'GRANT' && file_path.indexOf(permission_path) === 0) {
+                        if (!permission?.path) continue;
+                        const permission_path = this.resolveTargetPath(permission.path);
+                        if (
+                            permission.type === 'GRANT' &&
+                            (file_path === permission_path || file_path.startsWith(permission_path + '/'))
+                        ) {
                             return true;
                         }
                     }
-
                 }
             }
             return false;
         } catch (error) {
-            console.trace(error)
+            console.trace(error);
+            return false;
         }
     }
-} 
+}

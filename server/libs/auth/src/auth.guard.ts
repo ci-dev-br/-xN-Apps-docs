@@ -50,9 +50,9 @@ export class AuthGuard implements CanActivate {
         if (!chave_acesso_local || (!chave_acesso_local.alive)) {
           if (!by_pass) throw new UnauthorizedException('Acesso revogado, favor autenticar novamente.');
         }
-        request['user'] = await this.userService.findById(payload.id);
+        request['user'] = await this.userService.findByIdLight(payload.id);
         if (!!role) {
-          if (!payload || !payload.roles.includes(role)) if (!by_pass) throw new UnauthorizedException('Acesso negado. Não corresponde ao nível de acesso necessário.');
+          if (!payload || !payload.roles?.includes(role)) if (!by_pass) throw new UnauthorizedException('Acesso negado. Não corresponde ao nível de acesso necessário.');
         }
       } catch (err) {
        /*  if (!by_pass) */ throw new UnauthorizedException('Falha na autenticação. Token inválido ou expirado.');

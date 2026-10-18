@@ -1,13 +1,13 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Inject, Injectable, Injector, Optional } from "@angular/core";
 import { Observable, throwError } from "rxjs";
-import { catchError, switchMap, timeout, delay, filter, take } from "rxjs/operators";
+import { catchError, switchMap, timeout, finalize, shareReplay } from "rxjs/operators";
 import { StorageService } from "../storage/storage.service";
 import { AuthService } from "@ci/portal-api";
 import { CORE_ENV, ICoreEnvironment } from "../provider";
 import { Router } from "@angular/router";
 import { Message } from "../services/message";
-import { WsService } from "./ws.service";
+
 // import { AuthService } from "@ci/portal-api";
 /**
  *  Interceptador de requisições HTTP para adicionar o token de autorização e tratar erros.
@@ -18,7 +18,7 @@ import { WsService } from "./ws.service";
 1. **Adição de Token de Autorização:** Antes de cada requisição, verifica se existe um token de autorização (bearer token) armazenado localmente. Se sim, adiciona este token ao cabeçalho `Authorization` da requisição. Isso garante que as requisições autenticadas sejam enviadas com as credenciais necessárias.
 
 2. **Tratamento de Erros de Rede e API:**
-   - **Timeout:** Aplica um timeout de 1 segundo para cada requisição. Se a requisição não for concluída dentro desse tempo, um `HttpErrorResponse` com status 0 (Interceptor Timeout) é gerado.
+   - **Timeout:** Aplica um timeout para cada requisição. Se a requisição não for concluída dentro desse tempo, um `HttpErrorResponse` com status 0 (Interceptor Timeout) é gerado.
    - **Erros de Conexão (status 0 ou 404):** Se a requisição falhar com status 0 (geralmente indicando problemas de rede ou timeout) ou 404 (recurso não encontrado), o interceptador tenta alternar para um gateway de API alternativo, se configurado. Ele mantém uma lista de `alternativeApiGateways` e tenta a próxima URL na lista. Isso visa melhorar a resiliência da aplicação em caso de falhas de um servidor de API. Um contador `_pipocate` é usado para evitar loops infinitos de tentativas.
    - **Acesso Negado (mensagem específica):** Se a mensagem de erro indicar "Acesso negado. Não corresponde ao nível de acesso necessário.", o usuário é redirecionado para a página `/meus-apps`.
    - **Erro de Autorização (status 401):** Se a requisição retornar um status 401 (Não Autorizado) e houver um `refreshToken` disponível, o interceptador tenta renovar o token de acesso usando o `AuthService`. Se a renovação for bem-sucedida, o novo token é armazenado, e a requisição original é repetida com o novo token. Se a renovação falhar, o erro é propagado.
@@ -27,7 +27,8 @@ import { WsService } from "./ws.service";
  */
 @Injectable()
 export class AuthorizationHttpInterceptor implements HttpInterceptor {
-    private _refreshing?: boolean;
+    private _refreshing = false;
+    private _refreshInFlight$?: Observable<{ authorization?: string }>;
     private _pipocate: number = 0;
     private _efail?: string | number | undefined;
     public get efail(): string | number | undefined {
@@ -47,10 +48,10 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         @Optional() private readonly storage: StorageService,
         @Optional() private readonly auth: AuthService,
         @Optional() private readonly message: Message,
-        private readonly injector: Injector, // <-- Adicionado Injector para evitar Circular Dependency
+        private readonly injector: Injector,
         @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
     ) {
-        let efail = localStorage.getItem('e-fail');
+        let efail = typeof localStorage !== 'undefined' ? localStorage.getItem('e-fail') : null;
         if (!!efail) {
             try {
                 this.efail = JSON.parse(efail);
@@ -59,100 +60,81 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             }
         }
     }
+
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        /* const { method, url } = request;
-        if (this.config && this.config.alternativeApiGateways && this.config.rootApi) {
-            if (!!this._efail && typeof this.efail === 'string') {
-                request = request.clone({
-                    url: url.replace(/((http|ws)[s]{0,1}:\/\/[\w.]{0,}[:]{0,1}[\d]{0,5})/g, this.efail)
-                })
-            }
-        }
-        return this._eTry(request, next) as any */
-        // Proteção: não intercepta URLs que são intrinsecamente do WebSocket (handshake etc)
-        const isWebSocketProtocol = request.url.startsWith('ws://') || request.url.startsWith('wss://');
-
-        // Pega o serviço sob demanda pelo Injector (Evita CircularDependency caso WsService use HttpClient no futuro)
-        const wsService = this.injector.get(WsService, null);
-
-        // Se for protocolo WS, se o serviço WsService não estiver injetado, 
-        // ou se já estiver 'online', prossegue imediatamente.
-        if (isWebSocketProtocol || !wsService || wsService.status === 'online') {
-            return this._executeRequest(request, next);
-        }
-
-        // Aguarda o status do WebSocket ficar 'online' antes de seguir com o pipeline
-        return wsService.status$.pipe(
-            filter(status => status === 'online'),
-            take(1), // Interrompe o listener assim que ficar online
-            switchMap(() => this._executeRequest(request, next))
-        );
+        return this._executeRequest(request, next);
     }
 
     /**
-     * Lógica original isolada para ser acionada após a liberação do status
+     * Executa a requisição HTTP aplicando gateway alternativo quando configurado.
      */
     private _executeRequest(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        const { method, url } = request;
+        const { url } = request;
         if (this.config && this.config.alternativeApiGateways && this.config.rootApi) {
             if (!!this._efail && typeof this.efail === 'string') {
                 request = request.clone({
                     url: url.replace(/((http|ws)[s]{0,1}:\/\/[\w.]{0,}[:]{0,1}[\d]{0,5})/g, this.efail)
-                })
+                });
             }
         }
         return this._eTry(request, next) as any;
     }
 
-    private _eTry(request: HttpRequest<any>, next: HttpHandler) {
+    private _eTry(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(this.addBearerToken(request))
             .pipe(timeout({
                 each: 15000,
-                with: () => { throw new HttpErrorResponse({ status: 0, statusText: 'Interceptor Timeout' }) }
+                with: () => { throw new HttpErrorResponse({ status: 0, statusText: 'Interceptor Timeout' }); }
             }))
             .pipe(catchError((error) => {
                 if (error) {
                     if (error?.error?.error?.options?.message?.indexOf('expirou') > -1) {
-                        this.storage.clean();
-                        this.router.navigate(['/']);
-                        return throwError(error);
+                        this.storage?.clean();
+                        this.router?.navigate(['/']);
+                        return throwError(() => error);
                     }
                     if (error?.error?.message?.indexOf('Acesso negado. Não corresponde ao nível de acesso necessário.') > -1) {
                         setTimeout(() => {
-                            this.router.navigate(['/']);
+                            this.router?.navigate(['/']);
                         });
-                        return throwError(undefined);
+                        return throwError(() => undefined);
                     }
                     if (error instanceof HttpErrorResponse && (error.status === 0 || error.status === 404)) {
-                        if (this.config && Array.isArray(this.config.alternativeApiGateways)) {
-
-                            let gateways_list = (this.config.alternativeApiGateways
-                                .filter(url => url.indexOf('http') === 0)
-                            );
-                            this.efail = gateways_list['string' === typeof this.efail ? gateways_list.indexOf(this.efail) + 1 : 0];
-                            if (this._pipocate++ < 100) {
-                                return this.intercept(request, next);
-                            } else {
-                                setTimeout(() => {
-                                    this._pipocate = 0;
-                                }, 1000);
+                        const isAuthEndpoint = request.url.includes('/auth/Acessar') || request.url.includes('/auth/Refresh');
+                        if (!isAuthEndpoint && this.config && Array.isArray(this.config.alternativeApiGateways)) {
+                            const gateways_list = this.config.alternativeApiGateways
+                                .filter(url => url.indexOf('http') === 0);
+                            if (gateways_list.length > 0) {
+                                this.efail = gateways_list['string' === typeof this.efail ? gateways_list.indexOf(this.efail) + 1 : 0];
+                                if (this._pipocate++ < gateways_list.length) {
+                                    return this._executeRequest(request, next);
+                                } else {
+                                    setTimeout(() => {
+                                        this._pipocate = 0;
+                                    }, 1000);
+                                }
                             }
                         }
-                    } else if (error instanceof HttpErrorResponse /* && this.token.hasRefreshToken() */) {
+                    } else if (error instanceof HttpErrorResponse) {
                         return this.handlerUnauthorizedError(error, next, request);
                     }
                 }
-                return throwError(error);
-            }))/* .pipe(tap((e) => {
-                //   console.info('[[tap]]', e);
-            })); */
+                return throwError(() => error);
+            }));
     }
-    private addBearerToken(request: HttpRequest<any>) {
-        let bearer = undefined;
-        if (request.url.indexOf('https://apps.ci.dev.br') === 0) {
-            let user_storage: any = null;
-            if (user_storage = this.storage.restore('apps.ci.dev.br.store.User')) {
-                if (user_storage?.authentication?.bearer) bearer = user_storage.authentication.bearer;
+
+    private addBearerToken(request: HttpRequest<any>): HttpRequest<any> {
+        let bearer: string | undefined = undefined;
+        const isApiRequest =
+            request.url.startsWith('https://apps.ci.dev.br') ||
+            (!!this.config?.rootApi && request.url.startsWith(this.config.rootApi)) ||
+            (Array.isArray(this.config?.alternativeApiGateways) && this.config!.alternativeApiGateways.some(gw => request.url.startsWith(gw))) ||
+            request.url.startsWith('/');
+
+        if (isApiRequest && this.storage) {
+            const user_storage: any = this.storage.restore('apps.ci.dev.br.store.User');
+            if (user_storage?.authentication?.bearer) {
+                bearer = user_storage.authentication.bearer;
             }
         }
         return bearer ? request.clone({
@@ -162,57 +144,57 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             })
         }) : request;
     }
+
     /**
-     * 
-     * @param error if caused by uncathch status code and error directive 
-     * @param next 
-     * @param request 
-     * @returns 
+     * Trata erros 401/408 realizando um único Refresh compartilhado para todas as requisições simultâneas.
      */
     private handlerUnauthorizedError(
         error: HttpErrorResponse,
         next: HttpHandler,
         request: HttpRequest<any>
-    ) {
-        this._refreshing = true;
-        if (error?.status === 408) {
-            let user: { authentication: { bearer: string, refreshToken: string } } = this.storage.restore('apps.ci.dev.br.store.User');
-            if (!!user?.authentication)
-                return this.auth.refresh({
-                    body: {
-                        refreshToken: user.authentication?.refreshToken
-                    }
-                })
-                    .pipe(delay(3000))
-                    .pipe(switchMap((token: { authorization: string }) => {
-                        user.authentication.bearer = token.authorization;
-                        this.storage.store('apps.ci.dev.br.store.User', user);
-                        setTimeout(() => { this._refreshing = false; });
-                        return next.handle(this.addBearerToken(request));
-                    }), catchError(error => {
-                        return throwError(error);
-                    }));
-        }
-        if (error?.status === 401) {
-            let user: { authentication: { bearer: string, refreshToken: string } } =
-                this.storage.restore('apps.ci.dev.br.store.User');
-            if (!!user?.authentication)
-                return this.auth.refresh({
-                    body: {
-                        refreshToken: user.authentication?.refreshToken
-                    }
-                })
-                    .pipe(delay(5000))
-                    .pipe(switchMap((token: { authorization: string }) => {
-                        user.authentication.bearer = token.authorization;
-                        this.storage.store('apps.ci.dev.br.store.User', user);
-                        setTimeout(() => { this._refreshing = false; });
-                        return next.handle(this.addBearerToken(request));
-                    }), catchError(error => {
-                        return throwError(error);
-                    }));
+    ): Observable<HttpEvent<any>> {
+        // Evita loop infinito se a própria rota de Refresh ou Acessar retornar 401/408
+        if (request.url.includes('/auth/Refresh') || request.url.includes('/auth/Acessar')) {
+            return throwError(() => error);
         }
 
-        return throwError(error);
+        if (error?.status === 401 || error?.status === 408) {
+            const user: { authentication?: { bearer?: string, refreshToken?: string } } =
+                this.storage?.restore('apps.ci.dev.br.store.User');
+
+            if (user?.authentication?.refreshToken && this.auth) {
+                if (!this._refreshInFlight$) {
+                    this._refreshing = true;
+                    this._refreshInFlight$ = this.auth.refresh({
+                        body: {
+                            refreshToken: user.authentication.refreshToken
+                        }
+                    }).pipe(
+                        switchMap(async (token: { authorization?: string }) => {
+                            if (token?.authorization) {
+                                const latestUser = this.storage?.restore('apps.ci.dev.br.store.User') || user;
+                                if (latestUser?.authentication) {
+                                    latestUser.authentication.bearer = token.authorization;
+                                    this.storage?.store('apps.ci.dev.br.store.User', latestUser);
+                                }
+                            }
+                            return token;
+                        }),
+                        finalize(() => {
+                            this._refreshing = false;
+                            this._refreshInFlight$ = undefined;
+                        }),
+                        shareReplay(1)
+                    );
+                }
+
+                return this._refreshInFlight$.pipe(
+                    switchMap(() => next.handle(this.addBearerToken(request))),
+                    catchError(refreshErr => throwError(() => refreshErr))
+                );
+            }
+        }
+
+        return throwError(() => error);
     }
 }

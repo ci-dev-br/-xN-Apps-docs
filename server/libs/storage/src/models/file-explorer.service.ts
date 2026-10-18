@@ -1,8 +1,8 @@
 import { Injectable, Optional } from "@nestjs/common";
 import { FilePermissionService } from "../service/file-permission.service";
-import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { FileDto } from "../controller/dto/file-dto";
-import { join } from 'path';
+import { isAbsolute, join } from 'path';
 import { GitService } from "../service/git.service";
 
 @Injectable()
@@ -12,16 +12,45 @@ export class FileExplorerService {
         @Optional() private readonly filePermissions: FilePermissionService,
     ) { }
 
-    async readDirectory(input: FileDto, request: Request, maxDepth: number = 3) {
+    /**
+     * Resolve o caminho solicitado mantendo o prefixo relativo ('./' ou '../')
+     * e permitindo resolver pastas da raiz do workspace (ex: './apps' -> '../apps')
+     * caso não existam no cwd ('/server') mas existam no diretório pai ('..').
+     */
+    private resolveExistingPath(rawPath?: string): string {
+        if (!rawPath || !rawPath.trim()) return './';
+        let normalized = rawPath.trim().replace(/\\/g, '/');
+        if (!isAbsolute(normalized) && !normalized.startsWith('./') && !normalized.startsWith('../') && !normalized.startsWith('/')) {
+            normalized = `./${normalized}`;
+        }
+        if (!existsSync(normalized) && normalized.startsWith('./')) {
+            const parentCandidate = `../${normalized.substring(2)}`;
+            if (existsSync(parentCandidate)) {
+                return parentCandidate;
+            }
+        }
+        return normalized;
+    }
+
+    private formatChildPath(dirPath: string, childName: string): string {
+        const joined = join(dirPath, childName).replace(/\\/g, '/');
+        if (!isAbsolute(joined) && !joined.startsWith('./') && !joined.startsWith('../') && !joined.startsWith('/')) {
+            return `./${joined}`;
+        }
+        return joined;
+    }
+
+    async readDirectory(input: FileDto, request: Request, maxDepth: number = 2) {
         try {
+            const targetPath = this.resolveExistingPath(input?.path);
             if (this.filePermissions) {
-                if (!(await this.filePermissions.grant(input.path, request))) {
+                if (!(await this.filePermissions.grant(targetPath, request))) {
                     return null;
                 }
             }
 
             // Inicia a leitura no nível 1
-            return this.getDirectoryContents(input.path, 1, maxDepth);
+            return this.getDirectoryContents(targetPath, 1, maxDepth);
         } catch (error) {
             console.trace(error);
             return null;
@@ -36,16 +65,22 @@ export class FileExplorerService {
             return [];
         }
 
-        const items = readdirSync(dirPath, { withFileTypes: true });
+        let items: any[] = [];
+        try {
+            items = readdirSync(dirPath, { withFileTypes: true });
+        } catch {
+            return [];
+        }
 
         return items
             .filter(f => !f.name.startsWith('.') && !f.name.startsWith('$'))
             .map(dirent => {
                 const isDirectory = dirent.isDirectory();
-                const itemPath = join(dirPath, dirent.name);
+                const itemPath = this.formatChildPath(dirPath, dirent.name);
 
                 return {
                     ...dirent,
+                    name: dirent.name,
                     path: itemPath,
                     isCharacterDevice: dirent.isCharacterDevice(),
                     isFile: dirent.isFile(),
@@ -63,25 +98,27 @@ export class FileExplorerService {
 
     async readFile(input: FileDto, request: Request) {
         try {
+            const targetPath = this.resolveExistingPath(input?.path);
             if (!!this.filePermissions) {
-                if (await this.filePermissions.grant(input.path, request)) {
+                if (await this.filePermissions.grant(targetPath, request)) {
 
                 } else {
                     throw new Error('Negado por Política de Acesso.')
                 }
             }
             if (!input.data) {
-                let readed = readFileSync(input.path, {
+                let readed = readFileSync(targetPath, {
                     encoding: input.encoding as any || 'utf-8'
                 });
                 input.data = readed.toString();
             } else if (typeof input.data === 'string') {
                 // TODO: implementar controle de versão em cima das alterações realizadas via API.
                 console.log('writing file... ');
-                writeFileSync(input.path,
+                writeFileSync(targetPath,
                     input.data, { encoding: 'utf-8' }
                 )
             }
+            input.path = targetPath;
             input.gitStatus = await this.gitService.status(input, request);
             return input;
         } catch (error) {

@@ -53,7 +53,7 @@ export const AuthEntities = [
                 secret: process.env.MASTER_PASSWORD_AUTHORYTHY || jwtConstants.secret,
                 global: true, // <~ será que isso é necessário?
                 signOptions: {
-                    expiresIn: '60s'
+                    expiresIn: '15m'
                 }
             }),
         }),

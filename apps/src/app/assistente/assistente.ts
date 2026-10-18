@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector, createNgModule } from '@angular/core';
 import { AssistenteService } from './assistente.service';
-import { CoreModule } from '@ci/core';
+import { Apps, CoreModule, RouteMetadata } from '@ci/core';
 import { Subscription } from 'rxjs';
 import { VoiceRecognitionService } from './recog.service';
 import { Router, ROUTES, Routes } from '@angular/router';
@@ -23,6 +23,7 @@ export class AssistenteComponent implements OnInit {
         protected readonly recog: VoiceRecognitionService,
         private router: Router,
         private injector: Injector,
+        private appsService: Apps,
     ) { }
 
     ngOnInit(): void {
@@ -161,8 +162,7 @@ export class AssistenteComponent implements OnInit {
         this.voiceService.stop();
         try {
             await this.falar('Carregando todas rotas');
-            const rotasDisponiveis = await this.achatarRotas(this.router.config);
-            console.log(rotasDisponiveis);
+            const rotasDisponiveis = await this.appsService.getRoutesMetadata();
             await this.falar('Analisando as rotas disponíveis');
             let rotaEncontrada: string | null = null;
 
@@ -188,15 +188,32 @@ export class AssistenteComponent implements OnInit {
         }, 100);
     }
 
-    private async rotaCorrespondeAoTermo(rota: { fullPath: string, data: any }, termoBusca: string) {
-        if (rota.fullPath && this.normalizarTexto(rota.fullPath).includes(termoBusca)) {
+    private async rotaCorrespondeAoTermo(rota: RouteMetadata, termoBusca: string) {
+        const termoNormalizado = this.normalizarTexto(termoBusca);
+        if (rota.fullPath && this.normalizarTexto(rota.fullPath).includes(termoNormalizado)) {
+            return true;
+        }
+        if (rota.title && this.normalizarTexto(rota.title).includes(termoNormalizado)) {
             return true;
         }
         if (rota.data) {
             for (const key in rota.data) {
                 const valorData = rota.data[key];
-                if (typeof valorData === 'string' && this.normalizarTexto(valorData).includes(termoBusca)) {
+                if (typeof valorData === 'string' && this.normalizarTexto(valorData).includes(termoNormalizado)) {
                     return true;
+                }
+            }
+            if (rota.data.manifest && typeof rota.data.manifest === 'object') {
+                for (const [manifestKey, manifestEntry] of Object.entries<any>(rota.data.manifest)) {
+                    if (this.normalizarTexto(manifestKey).includes(termoNormalizado)) {
+                        return true;
+                    }
+                    if (manifestEntry?.label && this.normalizarTexto(manifestEntry.label).includes(termoNormalizado)) {
+                        return true;
+                    }
+                    if (manifestEntry?.description && this.normalizarTexto(manifestEntry.description).includes(termoNormalizado)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -204,51 +221,8 @@ export class AssistenteComponent implements OnInit {
     }
 
     cached: any;
-    private async achatarRotas(rotas: Routes, parentPath: string = ''): Promise<Array<{ fullPath: string, data: any }>> {
-        let rotasPlanas: Array<{ fullPath: string, data: any }> = [];
-        for (const rota of rotas) {
-            if (rota.path === '**') continue;
-
-            const pathAtual = rota.path ? rota.path : '';
-            const fullPath = parentPath
-                ? (pathAtual ? `${parentPath}/${pathAtual}` : parentPath)
-                : pathAtual;
-
-            rotasPlanas.push({ fullPath, data: rota.data });
-
-            if (rota.children && rota.children.length > 0) {
-                const childrenPlanas = await this.achatarRotas(rota.children, fullPath);
-                rotasPlanas = rotasPlanas.concat(childrenPlanas);
-            }
-
-            if (rota.loadChildren) {
-                try {
-                    let loaded: any = await rota.loadChildren();
-                    if (loaded && loaded.default) {
-                        loaded = loaded.default;
-                    }
-                    let rotasLazy: Routes = [];
-                    if (Array.isArray(loaded)) {
-                        rotasLazy = loaded;
-                    } else if (typeof loaded === 'function') {
-                        try {
-                            const moduleRef = createNgModule(loaded, this.injector);
-                            const rotasDoModulo = moduleRef.injector.get(ROUTES, []);
-                            rotasLazy = rotasDoModulo.reduce((acc, val) => acc.concat(val), []);
-                        } catch (e) {
-                            console.warn(`Não foi possível extrair rotas do módulo em: ${fullPath}`, e);
-                        }
-                    }
-                    if (rotasLazy && rotasLazy.length > 0) {
-                        const lazyPlanas = await this.achatarRotas(rotasLazy, fullPath);
-                        rotasPlanas = rotasPlanas.concat(lazyPlanas);
-                    }
-                } catch (error) {
-                    console.error(`Falha ao carregar a rota lazy: ${fullPath}`, error);
-                }
-            }
-        }
-        return rotasPlanas;
+    private async achatarRotas(rotas: Routes, parentPath: string = ''): Promise<Array<RouteMetadata>> {
+        return await this.appsService.ExtractRecursivelyMetedataApplicationRouters(rotas, parentPath);
     }
 
     private normalizarTexto(texto: string): string {

@@ -427,7 +427,9 @@ A manutenção de telas CRUD em `@ci-apps/*` é fortemente acelerada pelo uso do
 ### 5.5. Recursos PWA, SSR e Servir Estáticos no Backend
 - **Service Worker**: Configurado em `apps/ngsw-config.json` e registrado em `apps/src/app/app.config.ts` (`provideServiceWorker('ngsw-worker.js', { enabled: true, registrationStrategy: 'registerWhenStable:30000' })`).
 - **Web App Manifest**: `apps/public/manifest.webmanifest` no cliente e geração dinâmica multi-domínio em `server/src/app.controller.ts` (`getManifestApplication`).
-- **Entrega Híbrida pelo Backend (`AppController`)**:
+- **Entrega Híbrida pelo Backend (`AppController`) e Regra de Ouro de Rotas HTTP**:
+  > **IMPORTANTE — Regra Arquitetural de Endpoints**: **Todas as rotas `@Get` são reservadas ao cliente** (roteamento SPA Angular, manifesto PWA e páginas do CMS). Ao criar ou manter qualquer Controller de API no backend (`/server`), **utilize exclusivamente `@Post`** para todos os endpoints de API (mesmo para consultas como `GetList`, `GetByInternalId`, `version`, etc.).
+
   Quando uma requisição `GET` chega ao `/server`:
   1. Se for `manifest.webmanifest`, retorna o manifesto customizado para o host atual.
   2. Se o módulo CMS (`SitePageService`) estiver ativo e houver página cadastrada para aquele `host` e `path`, renderiza o conteúdo dinâmico do CMS.
@@ -453,7 +455,8 @@ Sempre que precisar criar uma nova entidade ou adicionar campos/endpoints a uma 
 4. **Controller (`server/libs/<modulo>/src/controller/<entidade>.controller.ts`)**:
    - Adicione `@ApiTags('<Entidade>')` e `@Controller('<Entidade>')`.
    - Estenda `ControllerDaoBase<<Entidade>Service, <Entidade>>`.
-   - Implemente os métodos `Sync`, `GetByInternalId`, `GetList` e `Delete` com `@ApiOperation({ operationId: '<Metodo><Entidade>' })` e `@ApiResponse({ type: ... })`.
+   - **Nunca utilize `@Get` em endpoints de API** (todas as rotas `@Get` pertencem ao roteador SPA do cliente). Utilize sempre `@Post(...)`.
+   - Implemente os métodos `Sync`, `GetByInternalId`, `GetList` e `Delete` com `@Post(...)`, `@ApiOperation({ operationId: '<Metodo><Entidade>' })` e `@ApiResponse({ type: ... })`.
 5. **Registro no Módulo NestJS (`server/libs/<modulo>/src/<modulo>.module.ts`)**:
    - Inclua a entidade no array exportado `<Modulo>Entities` (e no `TypeOrmModule.forFeature(...)`).
    - Inclua o Service em `providers` e o Controller em `controllers`.
@@ -510,16 +513,16 @@ Sempre que precisar criar uma nova entidade ou adicionar campos/endpoints a uma 
 
 1. **Visibilidade Exclusiva no `NavbarComponent`**:
    - O menu de Deployer (`#deployMenu`) em `apps/projects/ci/components/src/lib/navbar/` é renderizado exclusivamente para usuários autenticados que possuam a role `'DEVELOPER'` (`this.userService.user.value?.roles?.includes('DEVELOPER')`).
-   - Ao abrir o menu, o cliente consulta `DeployerService.getVersion()` (`GET /Deployer/version`) para exibir o estado atual da versão disponível, commit Git, timestamps dos builds e o status da orquestração entre **Debug** e **Produção**.
+   - Ao abrir o menu, o cliente consulta `DeployerService.getVersion()` (`POST /Deployer/version`) para exibir o estado atual da versão disponível, commit Git, timestamps dos builds e o status da orquestração entre **Debug** e **Produção**.
 
 2. **Endpoints do `DeployerController` (`@ci/mlms`)**:
-   - Localizados em `server/libs/mlms/src/controllers/deployer.controller.ts` e protegidos por `@Role('DEVELOPER')`:
-     - `GET /Deployer/version` (`operationId: 'GetVersionDeployer'`): Retorna `AvailableVersionInfoDto` contendo versão do pacote, commit/branch atual e publicado (`info.json`), timestamps (`clientDistBuiltAt`, `clientPublicBuiltAt`, `serverDistBuiltAt`), modo da instância ativa na porta `86` (`DEBUG` ou `PRODUCTION`), status de publicação em andamento e nós registrados em `server/STATUS`.
+   - Localizados em `server/libs/mlms/src/controllers/deployer.controller.ts` e protegidos por `@Role('DEVELOPER')` (ambos utilizando `@Post`, pois rotas `@Get` são reservadas ao cliente):
+     - `POST /Deployer/version` (`operationId: 'GetVersionDeployer'`): Retorna `AvailableVersionInfoDto` contendo versão do pacote, commit/branch atual e publicado (`info.json`), timestamps (`clientDistAt`, `clientPublishedAt`, `serverCompiledAt`), modo da instância ativa na porta `86` (`debug` ou `production`), status de publicação em andamento e nós registrados em `server/STATUS`.
      - `POST /Deployer/publish` (`operationId: 'PublishDeployer'`): Recebe `PublishActionInputDto` com a ação desejada:
-       - `'build-client'`: Executa `npx gulp` na pasta `/gulp` para gerar uma nova versão em produção do cliente (`ng build -c production` em `/apps`), atualizar `info.json` e publicar os artefatos estáticos em `server/public/`.
-       - `'compile-server'`: Executa `npm run build` em `/server` (o backend compilado em `server/dist/main.js` já é a versão de produção).
-       - `'full-publish'`: Compila o backend (`/server`) e gera a versão de produção do cliente via `/gulp`.
-       - `'sync-git'`: Executa `node sync.js` na raiz para sincronizar commits com os repositórios remotos.
+       - `'gulp'`: Executa `gulp` na pasta `/gulp` para gerar uma nova versão em produção do cliente (`ng build -c production` em `/apps`), atualizar `info.json` e publicar os artefatos estáticos em `server/public/`.
+       - `'server-build'`: Executa `npm run build` em `/server` (o backend compilado em `server/dist/main.js` já é a versão de produção).
+       - `'full-publish'`: Compila o cliente via `/gulp` e o backend (`/server`).
+       - `'sync-git'`: Executa `npm run sync` na raiz para sincronizar commits com os repositórios remotos.
 
 3. **Geração de Produção no `/gulp` (`gulp/gulpfile.js`)**:
    - Na pasta `/gulp`, o comando `gulp` executa em série (`series(BuildPClientApplication, DeployLocalClient)`):
@@ -529,6 +532,77 @@ Sempre que precisar criar uma nova entidade ou adicionar campos/endpoints a uma 
 4. **Intercambialidade Automática entre Debug Mode e Produção (`server/src/main.ts`)**:
    - O backend compilado (`server/dist/main.js`) já constitui a versão de produção.
    - A orquestração via arquivo `server/STATUS` permite que uma instância iniciada em **Debug Mode** (`--debug` / `--inspect` / `npm run start:debug`) assuma automaticamente a porta principal (`86`) após aquecer em uma porta secundária (`3001`–`3100`), deslocando ou substituindo a instância de produção de forma transparente e sem afetar ambos os ambientes. Quando o processo de debug é encerrado, a instância de produção reassume a porta `86` automaticamente.
+
+---
+
+### 6.6. Explorador de Arquivos (`@ci-apps/Arquivos`) e Integração com `@ci/components/data-grid`
+
+Localizado em `apps/projects/ci-apps/arquivos/src/lib/ci-application/files/`, o [`FilesComponent`](file:///c:/projetos/br.dev.ci.apps/apps/projects/ci-apps/arquivos/src/lib/ci-application/files/files.component.ts) provê navegação completa de diretórios e múltiplos modos de visualização:
+
+1. **Recursos de Navegação**:
+   - **Múltiplas Abas (`tabs`)**: Permite abrir, alternar e fechar múltiplas abas de diretórios simultaneamente.
+   - **Pilha de Histórico Real**: Botões de Voltar (`Alt+Left`), Avançar (`Alt+Right`), menu suspenso de histórico da sessão e Subir Nível (`Backspace` / `Alt+Up`).
+   - **Barra de Endereço Híbrida**: Alterna entre *Breadcrumb* interativo (segmentos clicáveis) e edição manual com autocomplete do histórico.
+   - **Painel Lateral (`showSidebar`)**: Contém atalhos de Acesso Rápido do workspace, pastas Favoritas fixadas (`localStorage`) e árvore expansível de subpastas.
+   - **Painel de Detalhes e Pré-visualização (`showDetailsPane`)**: Exibe metadados do item selecionado, conteúdo de arquivos via `FileExplorerService.readFile` e integração direta com o editor `/Codex`.
+
+2. **Modos de Visão (`ArquivoViewMode`)**:
+   - `grid` (**Grade de Dados**): Utiliza `<ci-data-grid>` de `@ci/components/data-grid` com colunas `name`, `tipo`, `extensao`, `itensCount`, `atributos` e `caminho`, suportando ordenação pelas colunas, seleção de linha, menu de contexto para edição de colunas e duplo clique para abertura.
+   - `extra-large`: Miniaturas extra grandes (`112px`).
+   - `large`: Miniaturas grandes (`84px`).
+   - `medium`: Miniaturas médias (`60px`).
+   - `small`: Miniaturas pequenas (`32px`) em grade horizontal.
+   - `list`: Lista compacta multi-coluna (`20px`).
+   - `tiles`: Blocos/cards lado a lado (`48px`) com tipo e contagem de subitens.
+   - `content`: Linhas de conteúdo detalhado com caminho completo, atributos e ações rápidas.
+
+---
+
+### 6.7. Interações Desacopladas entre Aplicativos via Metadados de Rota (`data.manifest`) e Preferências do Usuário (`Apps`)
+
+Os aplicativos (`@ci-apps/*`) **não devem possuir acoplamento direto (hardcoded)** entre si para abrir formatos de arquivo ou disparar intenções. Toda relação de capacidade entre aplicativos é declarada nos módulos de roteamento (`ci-application-routing.module.ts`) e resolvida dinamicamente pelo serviço [`Apps`](file:///c:/projetos/br.dev.ci.apps/apps/projects/ci/core/src/lib/apps/apps.service.ts) (`@ci/core`), compartilhando a extração recursiva de rotas lazy-loaded também utilizada pelo [`AssistenteComponent`](file:///c:/projetos/br.dev.ci.apps/apps/src/app/assistente/assistente.ts).
+
+1. **Declaração de Metadados nas Rotas (`data.manifest` e `data.files`)**:
+   Em `ci-application-routing.module.ts` de qualquer aplicativo `@ci-apps/*`, declare a propriedade `data.manifest` mapeando padrões de eventos (`event:<acao>:<padrao>`) para `IAppManifestEntry`:
+   ```typescript
+   {
+       path: 'editor',
+       component: CodeEditorComponent,
+       title: 'Codex Editor',
+       data: {
+           title: 'Codex — Editor de Código',
+           icon: 'code',
+           manifest: {
+               'event:open:*.ts': {
+                   component: CodeEditorComponent,
+                   label: 'Codex (TypeScript)',
+                   icon: 'code',
+                   queryParamMap: { path: 'path', file: 'file' },
+                   priority: 20,
+               },
+               'event:open:*': {
+                   component: CodeEditorComponent,
+                   label: 'Codex (Qualquer Arquivo)',
+                   icon: 'integration_instructions',
+                   queryParamMap: { path: 'path', file: 'file' },
+                   priority: 1,
+               },
+           },
+       },
+   }
+   ```
+   Também é suportado o formato declarativo `data.files: [{ format: 'svg', label: '...', icon: '...' }]`.
+
+2. **Descoberta Dinâmica e Múltiplos Aplicativos para a Mesma Função**:
+   - O serviço [`Apps`](file:///c:/projetos/br.dev.ci.apps/apps/projects/ci/core/src/lib/apps/apps.service.ts) inspeciona recursivamente `this.router.config` (resolvendo `loadChildren` via `createNgModule(loaded, this.injector)` e token `ROUTES`, com cache em memória).
+   - Múltiplos aplicativos podem declarar suporte ao mesmo formato (por exemplo: `.ts` pode ser aberto por `@ci-apps/Codex` e `@ci-apps/DevTools`; `.svg` por `@ci-apps/Icons` e `@ci-apps/Codex`; `.html`/`.md`/`.scss` por `@ci-apps/Codex` e `@ci-apps/cms`; `.glb`/`.obj` por `@ci-apps/Threejs`).
+   - `appsService.findCompatibleApps({ action: 'open', type_data: 'file', fileName, path })` retorna todos os aplicativos compatíveis ordenados por:
+     1. **Preferência do usuário** para aquela extensão/ação;
+     2. **Especificidade do padrão** (extensão exata antes de wildcard `*`) e `priority`.
+
+3. **Escolha e Persistência do Aplicativo Preferido pelo Usuário**:
+   - `appsService.setPreferredApp(extensionOrKey, fullPath)` persiste a escolha do usuário em `localStorage` (`CI.PreferredAppsByFormat`).
+   - `appsService.RequireOpen(intention)` abre automaticamente o arquivo ou diretório utilizando o aplicativo preferido do usuário (ou o mais específico disponível).
 
 ---
 

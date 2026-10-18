@@ -1,56 +1,726 @@
-<mat-tab-group>
-    <mat-tab [label]="endereco || 'Arquivos'">
-        <mat-toolbar>
-            <button mat-icon-button (click)="back()" matTooltip="Clique para voltar, pressione e veja o histórico">
-                <mat-icon>arrow_back</mat-icon>
+<!-- Barra de Abas de Exploração -->
+<div class="explorer-tabs-bar">
+    <div class="tabs-scroll">
+        @for (tab of tabs; track tab.id; let idx = $index) {
+        <div class="explorer-tab" [class.active]="idx === activeTabIndex" (click)="selecionarAba(idx)"
+            [matTooltip]="tab.path">
+            <mat-icon class="tab-icon" svgIcon="i8-folder"></mat-icon>
+            <span class="tab-title">{{ tab.title }}</span>
+            @if (tabs.length > 1) {
+            <button mat-icon-button class="tab-close" (click)="fecharAba(idx, $event)" matTooltip="Fechar aba">
+                <mat-icon>close</mat-icon>
             </button>
-            <mat-menu #histMenu>
-                <button>
+            }
+        </div>
+        }
+        <button mat-icon-button class="new-tab-btn" (click)="novaAba( undefined, $event)"
+            matTooltip="Nova aba neste diretório">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
 
+    @if (dialogRef) {
+    <div class="dialog-header-actions">
+        <button mat-button (click)="dialogRef.close()">Cancelar</button>
+        <button mat-flat-button color="primary" [disabled]="!selectedFile || selectedFile.isDirectory"
+            (click)="abrir(selectedFile)">
+            <mat-icon>check</mat-icon>
+            Selecionar Arquivo
+        </button>
+    </div>
+    }
+</div>
+
+<!-- Toolbar Principal de Navegação -->
+<mat-toolbar class="explorer-toolbar">
+    <div class="nav-buttons">
+        <button mat-icon-button (click)="alternarSidebar()"
+            [matTooltip]="showSidebar ? 'Ocultar painel de navegação' : 'Exibir painel de navegação'">
+            <mat-icon>{{ showSidebar ? 'menu_open' : 'menu' }}</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="back()" [disabled]="!canGoBack"
+            matTooltip="Voltar (Alt + Seta Esquerda)">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="forward()" [disabled]="!canGoForward"
+            matTooltip="Avançar (Alt + Seta Direita)">
+            <mat-icon>arrow_forward</mat-icon>
+        </button>
+
+        <button mat-icon-button [matMenuTriggerFor]="histMenu" matTooltip="Histórico de navegação">
+            <mat-icon>history</mat-icon>
+        </button>
+        <mat-menu #histMenu="matMenu" class="history-menu">
+            <div class="menu-section-title">Histórico da Sessão</div>
+            @if (navegacao.length === 0) {
+            <button mat-menu-item disabled>Nenhum histórico recente</button>
+            } @else {
+            @for (navPath of navegacao; track $index; let idx = $index) {
+            <button mat-menu-item (click)="irParaIndiceHistorico(idx)">
+                <mat-icon>{{ idx === indiceNavegacao ? 'radio_button_checked' : 'folder_open' }}</mat-icon>
+                <span>{{ navPath }}</span>
+            </button>
+            }
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="limparHistorico()">
+                <mat-icon>delete_sweep</mat-icon>
+                <span>Limpar histórico</span>
+            </button>
+            }
+        </mat-menu>
+
+        <button mat-icon-button (click)="voltar()" matTooltip="Subir um nível (Backspace / Alt + Seta Cima)">
+            <mat-icon>arrow_upward</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="recarregar()" [disabled]="isLoading" matTooltip="Atualizar diretório (F5)">
+            <mat-icon>refresh</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="alternarFavorito(endereco)"
+            [matTooltip]="isFavoritoAtual ? 'Remover pasta dos favoritos' : 'Fixar pasta nos favoritos'">
+            <mat-icon [class.favorited-star]="isFavoritoAtual">
+                {{ isFavoritoAtual ? 'star' : 'star_border' }}
+            </mat-icon>
+        </button>
+    </div>
+
+    <!-- Barra de Endereço Híbrida: Breadcrumb Interativo + Input de Caminho -->
+    <div class="address-bar-container">
+        @if (!editandoEndereco) {
+        <div class="breadcrumb-bar" (click)="ativarEdicaoEndereco()">
+            <mat-icon class="breadcrumb-root-icon" svgIcon="i8-folder"></mat-icon>
+            <div class="breadcrumb-segments" (click)="$event.stopPropagation()">
+                @for (seg of breadcrumbs; track seg.path; let last = $last) {
+                <button type="button" class="breadcrumb-segment" [class.active]="last" (click)="ir(seg.path)"
+                    [matTooltip]="'Ir para ' + seg.path">
+                    {{ seg.name }}
                 </button>
-            </mat-menu>
-            <button mat-icon-button (click)="forward()" matTooltip="Clique para avançar, precione e veja o histórico">
-                <mat-icon>arrow_forward</mat-icon>
+                @if (!last) {
+                <mat-icon class="breadcrumb-sep">chevron_right</mat-icon>
+                }
+                }
+            </div>
+            <span class="breadcrumb-spacer" (click)="ativarEdicaoEndereco()"
+                matTooltip="Clique para digitar o caminho manualmente"></span>
+            <button mat-icon-button class="address-action-btn"
+                (click)="$event.stopPropagation(); copiarCaminho()" matTooltip="Copiar endereço atual">
+                <mat-icon>content_copy</mat-icon>
             </button>
-            <button mat-icon-button (click)="voltar()">
-                <mat-icon>arrow_upward</mat-icon>
-            </button>
-            <button mat-icon-button>
+            <button mat-icon-button class="address-action-btn"
+                (click)="$event.stopPropagation(); ativarEdicaoEndereco()" matTooltip="Editar endereço manualmente">
                 <mat-icon>edit</mat-icon>
             </button>
-            <mat-form-field appearance="outline">
-                <input type="text" matInput class="navegacao" #urlInput [(ngModel)]="endereco"
-                    (keydown.enter)="ir(urlInput.value)" [matAutocomplete]="historicoAuto" />
-                <mat-autocomplete #historicoAuto="matAutocomplete">
-                    @if(historico){@for (hist of historico; track hist) {<mat-option
-                        [value]="hist">{{hist}}</mat-option>}}
-                </mat-autocomplete>
-                <button mat-icon-button matSuffix>
-                    <mat-icon>arrow_forward</mat-icon>
+        </div>
+        } @else {
+        <mat-form-field appearance="outline" class="address-input-field" subscriptSizing="dynamic">
+            <mat-icon matPrefix>folder_open</mat-icon>
+            <input type="text" matInput class="navegacao" #urlInput [(ngModel)]="enderecoInput"
+                placeholder="Digite o caminho do diretório..." (keydown.enter)="confirmarEnderecoInput()"
+                (keydown.escape)="editandoEndereco = false" [matAutocomplete]="historicoAuto" />
+            <mat-autocomplete #historicoAuto="matAutocomplete"
+                (optionSelected)="enderecoInput = $event.option.value; confirmarEnderecoInput()">
+                @for (hist of historico; track hist) {
+                <mat-option [value]="hist">
+                    <mat-icon>history</mat-icon>
+                    <span>{{ hist }}</span>
+                </mat-option>
+                }
+            </mat-autocomplete>
+            <button mat-icon-button matSuffix (click)="confirmarEnderecoInput()" matTooltip="Ir para endereço">
+                <mat-icon>arrow_forward</mat-icon>
+            </button>
+            <button mat-icon-button matSuffix (click)="editandoEndereco = false" matTooltip="Cancelar edição">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-form-field>
+        }
+    </div>
+
+    <!-- Campo de Busca e Filtro Instantâneo -->
+    <mat-form-field appearance="outline" class="search-input-field" subscriptSizing="dynamic">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput type="text" class="navegacao" [(ngModel)]="filtrar"
+            placeholder="Filtrar em {{ obterTituloPasta(endereco) }}..." />
+        @if (filtrar) {
+        <button mat-icon-button matSuffix (click)="filtrar = ''" matTooltip="Limpar filtro">
+            <mat-icon>close</mat-icon>
+        </button>
+        }
+    </mat-form-field>
+</mat-toolbar>
+
+<!-- Sub-barra de Filtros, Ordenação e Modos de Visão -->
+<div class="explorer-subbar">
+    <!-- Filtro por Tipo -->
+    <div class="subbar-group">
+        <mat-button-toggle-group [value]="filterType" (change)="definirFiltroTipo($event.value)"
+            hideSingleSelectionIndicator="true" class="compact-toggle-group">
+            <mat-button-toggle value="all" matTooltip="Exibir pastas e arquivos">
+                Todos ({{ files.length }})
+            </mat-button-toggle>
+            <mat-button-toggle value="folders" matTooltip="Exibir apenas pastas">
+                <mat-icon>folder</mat-icon>
+                Pastas
+            </mat-button-toggle>
+            <mat-button-toggle value="files" matTooltip="Exibir apenas arquivos">
+                <mat-icon>description</mat-icon>
+                Arquivos
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+    </div>
+
+    <!-- Ordenação e Agrupamento -->
+    <div class="subbar-group">
+        <button mat-stroked-button [matMenuTriggerFor]="sortMenu" class="subbar-btn"
+            matTooltip="Critério de ordenação">
+            <mat-icon>sort</mat-icon>
+            <span>Ordenar: {{ sortBy === 'name' ? 'Nome' : sortBy === 'tipo' ? 'Tipo' : sortBy === 'extensao' ? 'Extensão' : sortBy === 'itensCount' ? 'Subitens' : 'Caminho' }}</span>
+        </button>
+        <mat-menu #sortMenu="matMenu">
+            <button mat-menu-item (click)="definirOrdenacao('name')">
+                <mat-icon>{{ sortBy === 'name' ? 'check' : 'sort_by_alpha' }}</mat-icon>
+                <span>Nome</span>
+            </button>
+            <button mat-menu-item (click)="definirOrdenacao('tipo')">
+                <mat-icon>{{ sortBy === 'tipo' ? 'check' : 'category' }}</mat-icon>
+                <span>Tipo</span>
+            </button>
+            <button mat-menu-item (click)="definirOrdenacao('extensao')">
+                <mat-icon>{{ sortBy === 'extensao' ? 'check' : 'extension' }}</mat-icon>
+                <span>Extensão</span>
+            </button>
+            <button mat-menu-item (click)="definirOrdenacao('itensCount')">
+                <mat-icon>{{ sortBy === 'itensCount' ? 'check' : 'format_list_numbered' }}</mat-icon>
+                <span>Quantidade de Subitens</span>
+            </button>
+            <button mat-menu-item (click)="definirOrdenacao('caminho')">
+                <mat-icon>{{ sortBy === 'caminho' ? 'check' : 'route' }}</mat-icon>
+                <span>Caminho</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="foldersFirst = !foldersFirst; atualizarListaExibida()">
+                <mat-icon>{{ foldersFirst ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
+                <span>Pastas sempre no topo</span>
+            </button>
+        </mat-menu>
+
+        <button mat-icon-button (click)="alternarDirecaoOrdenacao()"
+            [matTooltip]="sortDirection === 'ASC' ? 'Ordem Crescente (A-Z)' : 'Ordem Decrescente (Z-A)'">
+            <mat-icon>{{ sortDirection === 'ASC' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+        </button>
+
+        @if (viewMode !== 'grid') {
+        <button mat-icon-button (click)="alternarAgrupamento()"
+            [class.active-toggle-btn]="groupByType"
+            [matTooltip]="groupByType ? 'Agrupado entre Pastas e Arquivos (clique para unificar)' : 'Lista unificada (clique para agrupar Pastas e Arquivos)'">
+            <mat-icon>{{ groupByType ? 'workspaces' : 'view_stream' }}</mat-icon>
+        </button>
+        }
+
+        @if (selectedFile && !dialogRef && compatibleApps.length > 0) {
+        <button mat-stroked-button [matMenuTriggerFor]="openWithMenu" class="subbar-btn open-with-trigger"
+            matTooltip="Escolher aplicativo para abrir ou definir padrão para este formato">
+            <mat-icon>{{ preferredApp?.icon || 'open_in_new' }}</mat-icon>
+            <span>Abrir com: {{ preferredApp?.appName || 'Escolher...' }}</span>
+            <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+        }
+    </div>
+
+    <!-- Menu Global "Abrir com..." baseado nos metadados de rotas (data.manifest / data.files) -->
+    <mat-menu #openWithMenu="matMenu" class="open-with-menu">
+        <div class="menu-section-title">
+            Aplicativos para {{ selectedFile?.isDirectory ? 'Diretório' : (selectedFile?.extensao || 'este arquivo') }}
+        </div>
+        @for (app of compatibleApps; track app.id) {
+        <div class="open-with-menu-row" (click)="$event.stopPropagation()">
+            <button mat-menu-item class="open-with-main-btn" (click)="abrirComAplicativo(app, selectedFile)">
+                <mat-icon>{{ app.icon }}</mat-icon>
+                <div class="open-with-labels">
+                    <span class="app-title">
+                        {{ app.title }}
+                        @if (app.isPreferred) {
+                        <span class="preferred-pill">Preferido</span>
+                        }
+                    </span>
+                    <small class="app-sub">{{ app.label }} ({{ app.fullPath }})</small>
+                </div>
+            </button>
+            <button mat-icon-button class="prefer-star-btn"
+                (click)="definirAppPreferido(app, selectedFile, $event)"
+                [matTooltip]="app.isPreferred ? 'Remover como padrão para ' + (selectedFile?.extensao || 'formato') : 'Definir como aplicativo preferido para ' + (selectedFile?.extensao || 'formato')">
+                <mat-icon [class.favorited-star]="app.isPreferred">
+                    {{ app.isPreferred ? 'star' : 'star_border' }}
+                </mat-icon>
+            </button>
+        </div>
+        }
+    </mat-menu>
+
+    <span class="subbar-spacer"></span>
+
+    <!-- Seletor de Modos de Visão -->
+    <div class="subbar-group view-switcher-group">
+        <mat-button-toggle-group [(ngModel)]="viewMode" hideSingleSelectionIndicator="true"
+            class="compact-toggle-group">
+            @for (vm of viewModes; track vm.mode) {
+            <mat-button-toggle [value]="vm.mode" [matTooltip]="vm.label">
+                <mat-icon>{{ vm.icon }}</mat-icon>
+                <span class="vm-label">{{ vm.shortLabel }}</span>
+            </mat-button-toggle>
+            }
+        </mat-button-toggle-group>
+
+        <button mat-icon-button [matMenuTriggerFor]="viewMenu" matTooltip="Mais opções de visualização">
+            <mat-icon>tune</mat-icon>
+        </button>
+        <mat-menu #viewMenu="matMenu">
+            <div class="menu-section-title">Modo de Exibição</div>
+            @for (vm of viewModes; track vm.mode) {
+            <button mat-menu-item (click)="viewMode = vm.mode">
+                <mat-icon>{{ vm.icon }}</mat-icon>
+                <span>{{ vm.label }}</span>
+                @if (viewMode === vm.mode) {
+                <mat-icon class="menu-check">done</mat-icon>
+                }
+            </button>
+            }
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="alternarPainelDetalhes()">
+                <mat-icon>{{ showDetailsPane ? 'visibility_off' : 'dock_to_left' }}</mat-icon>
+                <span>{{ showDetailsPane ? 'Ocultar painel de detalhes' : 'Exibir painel de detalhes' }}</span>
+            </button>
+        </mat-menu>
+
+        <button mat-icon-button (click)="alternarPainelDetalhes()" [class.active-toggle-btn]="showDetailsPane"
+            matTooltip="Alternar painel de detalhes e pré-visualização">
+            <mat-icon>info</mat-icon>
+        </button>
+    </div>
+</div>
+
+@if (isLoading) {
+<mat-progress-bar mode="indeterminate" class="explorer-loader"></mat-progress-bar>
+}
+
+<!-- Área Principal de Trabalho (Sidebar + Viewport Central + Painel de Detalhes) -->
+<div class="explorer-workspace">
+    <!-- Painel Lateral de Acesso Rápido, Favoritos e Árvore -->
+    @if (showSidebar) {
+    <aside class="explorer-sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-heading">
+                <mat-icon>bolt</mat-icon>
+                <span>Acesso Rápido</span>
+            </div>
+            @for (loc of quickLocations; track loc.path) {
+            <button type="button" class="sidebar-item"
+                [class.active]="normalizarCaminho(endereco) === normalizarCaminho(loc.path)"
+                (click)="ir(loc.path)" [matTooltip]="loc.path">
+                <mat-icon>{{ loc.icon }}</mat-icon>
+                <span class="sidebar-item-label">{{ loc.label }}</span>
+            </button>
+            }
+        </div>
+
+        @if (favoritos.length > 0) {
+        <mat-divider></mat-divider>
+        <div class="sidebar-section">
+            <div class="sidebar-heading">
+                <mat-icon>star</mat-icon>
+                <span>Favoritos</span>
+            </div>
+            @for (fav of favoritos; track fav.path) {
+            <div class="sidebar-item-row"
+                [class.active]="normalizarCaminho(endereco) === normalizarCaminho(fav.path)">
+                <button type="button" class="sidebar-item" (click)="ir(fav.path)" [matTooltip]="fav.path">
+                    <mat-icon class="favorited-star">star</mat-icon>
+                    <span class="sidebar-item-label">{{ fav.label }}</span>
                 </button>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-icon matPrefix>search</mat-icon>
-                <input matInput type="text" class="navegacao" [(ngModel)]="filtrar" />
-            </mat-form-field>
-        </mat-toolbar>
-        <div class="scoller">
-            <h4>Pastas</h4>
-            <div class="folders">
-                @if(isLoading){
-                Trabalhando nisso...
-                }@else{@for (file of filteredFiles || files; track $index) {
-                <div [tabIndex]="$index + 1" class="folder" (click)="abrir(file)">
-                    <div class="folder-wrapper">
-                        @if(file.iconType=== 'svg' && !!file.icon){<mat-icon [svgIcon]="file.icon"></mat-icon>}
-                        @else{ <mat-icon>{{file.icon}}</mat-icon> }
-                        <div class="title">
-                            {{file.name}}
+                <button mat-icon-button class="unpin-btn" (click)="alternarFavorito(fav.path, fav.label, $event)"
+                    matTooltip="Remover dos favoritos">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            }
+        </div>
+        }
+
+        <mat-divider></mat-divider>
+        <div class="sidebar-section tree-section">
+            <div class="sidebar-heading">
+                <mat-icon>account_tree</mat-icon>
+                <span>Pastas em {{ obterTituloPasta(endereco) }}</span>
+            </div>
+            @if (foldersList.length === 0) {
+            <div class="sidebar-empty">Nenhuma subpasta neste nível</div>
+            } @else {
+            @for (folder of foldersList; track folder.caminho) {
+            <div class="tree-node">
+                <div class="tree-node-row">
+                    @if (getSubfolders(folder).length > 0) {
+                    <button mat-icon-button class="tree-expand-btn"
+                        (click)="toggleTreeFolder(folder.caminho, $event)">
+                        <mat-icon>
+                            {{ isTreeExpanded(folder.caminho) ? 'expand_more' : 'chevron_right' }}
+                        </mat-icon>
+                    </button>
+                    } @else {
+                    <span class="tree-expand-placeholder"></span>
+                    }
+                    <button type="button" class="sidebar-item tree-item" (click)="abrir(folder, $event)"
+                        [matTooltip]="folder.caminho || folder.name">
+                        <mat-icon svgIcon="i8-folder"></mat-icon>
+                        <span class="sidebar-item-label">{{ folder.name }}</span>
+                    </button>
+                </div>
+
+                @if (isTreeExpanded(folder.caminho)) {
+                <div class="tree-children">
+                    @for (sub of getSubfolders(folder); track sub.path) {
+                    <button type="button" class="sidebar-item tree-child-item"
+                        (click)="sub.path && ir(sub.path)" [matTooltip]="sub.path || sub.name || ''">
+                        <mat-icon svgIcon="i8-folder"></mat-icon>
+                        <span class="sidebar-item-label">{{ sub.name }}</span>
+                    </button>
+                    }
+                </div>
+                }
+            </div>
+            }
+            }
+        </div>
+    </aside>
+    }
+
+    <!-- Área Central de Exibição dos Arquivos -->
+    <main class="explorer-content" (click)="selecionar(undefined)">
+        @if (errorMessage) {
+        <div class="explorer-error-banner" (click)="$event.stopPropagation()">
+            <mat-icon>error_outline</mat-icon>
+            <div class="error-text">
+                <strong>Erro na navegação</strong>
+                <span>{{ errorMessage }}</span>
+            </div>
+            <button mat-stroked-button (click)="recarregar()">Tentar novamente</button>
+            <button mat-flat-button color="primary" (click)="ir('./')">Ir para Raiz (./)</button>
+        </div>
+        }
+
+        <!-- MODO 1: VISÃO EM GRADE DE DADOS (@ci/components/data-grid) -->
+        @if (viewMode === 'grid') {
+        <div class="grid-view-wrapper" (click)="$event.stopPropagation()">
+            <ci-data-grid class="files-data-grid" [options]="gridOptions" [source]="displayedFiles"
+                [selectedItem]="selectedFile" (select)="onGridSelect($event)" (sorted)="onGridSort($event)">
+                <div vazio class="empty-state">
+                    <mat-icon>folder_off</mat-icon>
+                    <p>Nenhum arquivo ou pasta encontrado para exibição na grade.</p>
+                </div>
+            </ci-data-grid>
+        </div>
+        } @else {
+        <!-- DEMAIS MODOS DE VISÃO (Miniaturas Extra Grandes, Grandes, Médias, Pequenas, Lista, Blocos e Conteúdo) -->
+        <div class="scoller" [attr.data-view-mode]="viewMode">
+            @if (!isLoading && displayedFiles.length === 0) {
+            <div class="empty-state">
+                <mat-icon>folder_off</mat-icon>
+                <p>Nenhum item encontrado em <code>{{ endereco }}</code>.</p>
+                @if (filtrar || filterType !== 'all') {
+                <button mat-stroked-button (click)="filtrar = ''; definirFiltroTipo('all')">
+                    Limpar filtros ativos
+                </button>
+                }
+            </div>
+            } @else {
+            <!-- Template reutilizável para renderizar um item conforme o viewMode atual -->
+            <ng-template #fileItemTemplate let-file="file" let-idx="idx">
+                <div [tabIndex]="idx + 1" class="explorer-item" [class.folder]="file.isDirectory"
+                    [class.file]="!file.isDirectory" [class.selected]="selectedFile === file"
+                    [class.view-extra-large]="viewMode === 'extra-large'"
+                    [class.view-large]="viewMode === 'large'" [class.view-medium]="viewMode === 'medium'"
+                    [class.view-small]="viewMode === 'small'" [class.view-list]="viewMode === 'list'"
+                    [class.view-tiles]="viewMode === 'tiles'" [class.view-content]="viewMode === 'content'"
+                    (click)="clicarItem(file, $event)" (dblclick)="abrir(file, $event)"
+                    (keydown.enter)="abrir(file, $event)"
+                    [matTooltip]="(file.name || '') + ' — ' + (file.tipo || '') + ' (' + (file.caminho || '') + ')'">
+
+                    <div class="item-icon-wrapper">
+                        @if (file.iconType === 'svg' && !!file.icon) {
+                        <mat-icon [svgIcon]="file.icon"></mat-icon>
+                        } @else {
+                        <mat-icon>{{ file.icon }}</mat-icon>
+                        }
+                        @if (!file.isDirectory && file.extensao && file.extensao !== '-' && (viewMode === 'extra-large' || viewMode === 'large')) {
+                        <span class="ext-badge">{{ file.extensao }}</span>
+                        }
+                    </div>
+
+                    <div class="item-info">
+                        <div class="title">{{ file.name }}</div>
+
+                        @if (viewMode === 'tiles') {
+                        <div class="item-meta">{{ file.tipo }}</div>
+                        <div class="item-submeta">
+                            {{ file.isDirectory ? file.itensCount : file.extensao }}
                         </div>
+                        }
+
+                        @if (viewMode === 'content') {
+                        <div class="content-details-row">
+                            <span class="content-badge">{{ file.tipo }}</span>
+                            <span class="content-path">{{ file.caminho }}</span>
+                            @if (file.isDirectory) {
+                            <span class="content-count">{{ file.itensCount }}</span>
+                            }
+                            <span class="content-attr">{{ file.atributos }}</span>
+                        </div>
+                        }
+
+                        @if (viewMode === 'list') {
+                        <span class="list-badge">
+                            {{ file.isDirectory ? file.itensCount : file.extensao }}
+                        </span>
+                        }
+                    </div>
+
+                    <div class="item-actions" (click)="$event.stopPropagation()">
+                        <button mat-icon-button class="quick-open-btn" (click)="abrir(file, $event)"
+                            [matTooltip]="file.isDirectory ? 'Abrir pasta' : 'Abrir com aplicativo preferido'">
+                            <mat-icon>{{ file.isDirectory ? 'folder_open' : 'open_in_new' }}</mat-icon>
+                        </button>
+                        @if (viewMode === 'content') {
+                        @if (file.isDirectory) {
+                        <button mat-icon-button (click)="alternarFavorito(file.caminho, file.name, $event)"
+                            matTooltip="Fixar/Desafixar nos favoritos">
+                            <mat-icon>star_border</mat-icon>
+                        </button>
+                        } @else {
+                        <button mat-icon-button [matMenuTriggerFor]="openWithMenu"
+                            (click)="selecionar(file, $event)"
+                            matTooltip="Abrir com... / Escolher aplicativo preferido">
+                            <mat-icon>apps</mat-icon>
+                        </button>
+                        }
+                        <button mat-icon-button (click)="copiarCaminho(file, $event)"
+                            matTooltip="Copiar caminho">
+                            <mat-icon>content_copy</mat-icon>
+                        </button>
+                        }
                     </div>
                 </div>
-                }}
+            </ng-template>
+
+            @if (groupByType && filterType === 'all') {
+            <!-- Seção Agrupada: Pastas -->
+            @if (foldersList.length > 0) {
+            <section class="explorer-group">
+                <div class="group-header">
+                    <mat-icon>folder</mat-icon>
+                    <h4>Pastas ({{ foldersList.length }})</h4>
+                </div>
+                <div class="items-container" [ngClass]="'mode-' + viewMode">
+                    @for (file of foldersList; track file.caminho || $index; let idx = $index) {
+                    <ng-container *ngTemplateOutlet="fileItemTemplate; context: { file: file, idx: idx }">
+                    </ng-container>
+                    }
+                </div>
+            </section>
+            }
+
+            <!-- Seção Agrupada: Arquivos -->
+            @if (filesList.length > 0) {
+            <section class="explorer-group">
+                <div class="group-header">
+                    <mat-icon>description</mat-icon>
+                    <h4>Arquivos ({{ filesList.length }})</h4>
+                </div>
+                <div class="items-container" [ngClass]="'mode-' + viewMode">
+                    @for (file of filesList; track file.caminho || $index; let idx = $index) {
+                    <ng-container
+                        *ngTemplateOutlet="fileItemTemplate; context: { file: file, idx: foldersList.length + idx }">
+                    </ng-container>
+                    }
+                </div>
+            </section>
+            }
+            } @else {
+            <!-- Visão Unificada -->
+            <div class="items-container" [ngClass]="'mode-' + viewMode">
+                @for (file of displayedFiles; track file.caminho || $index; let idx = $index) {
+                <ng-container *ngTemplateOutlet="fileItemTemplate; context: { file: file, idx: idx }">
+                </ng-container>
+                }
             </div>
+            }
+            }
         </div>
-    </mat-tab>
-</mat-tab-group>
+        }
+    </main>
+
+    <!-- Painel Direito de Detalhes e Pré-visualização -->
+    @if (showDetailsPane) {
+    <aside class="explorer-details-pane" (click)="$event.stopPropagation()">
+        <div class="details-header">
+            <strong>Detalhes & Interações</strong>
+            <button mat-icon-button (click)="showDetailsPane = false" matTooltip="Fechar painel">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+
+        @if (selectedFile; as sel) {
+        <div class="details-body">
+            <div class="details-hero">
+                @if (sel.iconType === 'svg' && !!sel.icon) {
+                <mat-icon class="hero-icon" [svgIcon]="sel.icon"></mat-icon>
+                } @else {
+                <mat-icon class="hero-icon">{{ sel.icon }}</mat-icon>
+                }
+                <div class="hero-title">{{ sel.name }}</div>
+                <span class="hero-badge">{{ sel.tipo }}</span>
+            </div>
+
+            <div class="details-props">
+                <div class="prop-row">
+                    <span class="prop-label">Caminho:</span>
+                    <code class="prop-val">{{ sel.caminho }}</code>
+                </div>
+                <div class="prop-row">
+                    <span class="prop-label">Atributos:</span>
+                    <span class="prop-val">{{ sel.atributos }}</span>
+                </div>
+                @if (sel.isDirectory) {
+                <div class="prop-row">
+                    <span class="prop-label">Conteúdo:</span>
+                    <span class="prop-val">{{ sel.itensCount }}</span>
+                </div>
+                } @else {
+                <div class="prop-row">
+                    <span class="prop-label">Extensão:</span>
+                    <span class="prop-val">{{ sel.extensao }}</span>
+                </div>
+                }
+            </div>
+
+            <!-- Lista de Aplicativos Compatíveis descobertos via Metadados de Rota (data.manifest) -->
+            @if (!dialogRef && compatibleApps.length > 0) {
+            <div class="compatible-apps-section">
+                <div class="compatible-apps-header">
+                    <mat-icon>apps</mat-icon>
+                    <span>Abrir com ({{ compatibleApps.length }} {{ compatibleApps.length === 1 ? 'app compatível' : 'apps compatíveis' }})</span>
+                </div>
+                <div class="compatible-apps-list">
+                    @for (app of compatibleApps; track app.id) {
+                    <div class="compatible-app-card" [class.preferred]="app.isPreferred">
+                        <button type="button" class="compatible-app-open"
+                            (click)="abrirComAplicativo(app, sel, $event)"
+                            [matTooltip]="'Abrir em ' + app.fullPath">
+                            <mat-icon>{{ app.icon }}</mat-icon>
+                            <div class="compatible-app-text">
+                                <span class="compatible-app-name">
+                                    {{ app.title }}
+                                    @if (app.isPreferred) {
+                                    <span class="preferred-pill">Padrão</span>
+                                    }
+                                </span>
+                                <small class="compatible-app-desc">{{ app.label }}</small>
+                            </div>
+                        </button>
+                        <button mat-icon-button class="compatible-app-star"
+                            (click)="definirAppPreferido(app, sel, $event)"
+                            [matTooltip]="app.isPreferred ? 'Remover preferência padrão' : 'Definir como meu aplicativo preferido para ' + (sel.isDirectory ? 'pastas' : sel.extensao)">
+                            <mat-icon [class.favorited-star]="app.isPreferred">
+                                {{ app.isPreferred ? 'star' : 'star_border' }}
+                            </mat-icon>
+                        </button>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+
+            <div class="details-actions">
+                @if (sel.isDirectory) {
+                <button mat-flat-button color="primary" (click)="abrir(sel)">
+                    <mat-icon>folder_open</mat-icon>
+                    Entrar na Pasta
+                </button>
+                <button mat-stroked-button (click)="novaAba(sel.caminho)">
+                    <mat-icon>tab</mat-icon>
+                    Abrir em Nova Aba
+                </button>
+                } @else if (dialogRef) {
+                <button mat-flat-button color="primary" (click)="abrir(sel)">
+                    <mat-icon>check</mat-icon>
+                    Selecionar Arquivo
+                </button>
+                } @else if (preferredApp) {
+                <button mat-flat-button color="primary" (click)="abrirComAplicativo(preferredApp, sel)">
+                    <mat-icon>{{ preferredApp.icon }}</mat-icon>
+                    Abrir em {{ preferredApp.appName }}
+                </button>
+                }
+                <button mat-stroked-button (click)="copiarCaminho(sel)">
+                    <mat-icon>content_copy</mat-icon>
+                    Copiar Caminho
+                </button>
+            </div>
+
+            @if (!sel.isDirectory) {
+            <div class="preview-section">
+                <div class="preview-title">Pré-visualização Rápida</div>
+                @if (previewLoading) {
+                <div class="preview-loading">Carregando conteúdo do arquivo...</div>
+                } @else if (previewContent !== undefined) {
+                <pre class="preview-code">{{ previewContent }}</pre>
+                }
+            </div>
+            }
+        </div>
+        } @else {
+        <div class="details-empty">
+            <mat-icon>touch_app</mat-icon>
+            <p>Selecione uma pasta ou arquivo para ver os aplicativos compatíveis, definir seu aplicativo preferido ou pré-visualizar seu conteúdo.</p>
+        </div>
+        }
+    </aside>
+    }
+</div>
+
+<!-- Barra de Status Inferior -->
+<footer class="explorer-statusbar">
+    <div class="status-left">
+        <span><strong>{{ displayedFiles.length }}</strong> itens exibidos</span>
+        <span class="status-sep">•</span>
+        <span>{{ foldersList.length }} pastas</span>
+        <span class="status-sep">•</span>
+        <span>{{ filesList.length }} arquivos</span>
+        @if (filtrar) {
+        <span class="status-sep">•</span>
+        <span class="status-filter-active">Filtro: "{{ filtrar }}"</span>
+        }
+    </div>
+
+    <div class="status-right">
+        @if (selectedFile; as sel) {
+        <span class="selected-summary">
+            Selecionado: <strong>{{ sel.name }}</strong> ({{ sel.tipo }})
+        </span>
+        @if (!sel.isDirectory && !dialogRef && preferredApp) {
+        <button mat-button class="status-open-btn" (click)="abrirComAplicativo(preferredApp, sel)">
+            Abrir com {{ preferredApp.appName }}
+        </button>
+        } @else {
+        <button mat-button class="status-open-btn" (click)="abrir(sel)">
+            {{ sel.isDirectory ? 'Abrir Pasta' : (dialogRef ? 'Selecionar' : 'Abrir') }}
+        </button>
+        }
+        }
+        <span class="status-view-badge">
+            <mat-icon>{{ currentViewInfo.icon }}</mat-icon>
+            {{ currentViewInfo.label }}
+        </span>
+    </div>
+</footer>

@@ -1,1 +1,1 @@
-{"branch": "2026.pre-junho", "commit": "093643e97d6e015c3647110ea1e566a42b4f39f6", "author": "pLinho", "date": "Thu Jun 11 00:37:04 2026 -0300", "message": "feat-ui-Adiciona-bot-o-de-tela-cheia-ao-editor-e-melhorias-no-componente-de-input"}
+{"branch":"development","commit":"d77aa25b54511e90e6ff0fcd0cec9e3239d4d94b","author":"pLinho","date":"Sun Oct 18 00:47:42 2026 -0300","message":"feat(deployer): Implementa menu Deployer na navbar para controle de versão e publicação","builtAt":"2026-10-18T03:58:05.404Z"}

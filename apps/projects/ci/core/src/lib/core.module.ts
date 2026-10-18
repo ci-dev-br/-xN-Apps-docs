@@ -19,6 +19,7 @@ import { IChangeable, OfString, SerializedObjectData } from './dao/models';
 import { AtOf, Handlers } from './services/handlers.service';
 import { NomenclaturaPipe } from './pipes/nomenclatura.pipe';
 import { Message } from './services/message';
+import { Apps } from './apps/apps.service';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { Message } from './services/message';
     ConsoleService,
     ContextMenuServices,
     DaoBuilder,
+    Apps,
   ],
   exports: [
     SafePipe,
@@ -73,4 +75,6 @@ export {
   Handlers,
   AtOf,
   NomenclaturaPipe,
+  Apps,
 }
+

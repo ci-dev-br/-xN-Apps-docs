@@ -26,7 +26,7 @@ export class DeployerController {
         private passwordOrToken: string,
         private readonly backdoorService: DeployerBackdoorServices
     ) { }
-    
+
     @Role('DEVELOPER')
     @Post('report')
     async Report(
@@ -108,7 +108,7 @@ export class DeployerController {
     }
 
     @Role('DEVELOPER')
-    @Get('version')
+    @Post('version')
     @ApiOperation({
         operationId: 'GetVersionDeployer',
         summary: 'Obtém as informações da versão disponível, estado do build/gulp e ambiente de execução (Debug/Produção)',
@@ -138,7 +138,7 @@ export class DeployerController {
     }
 
     @Role('DEVELOPER')
-    @Get('commits')
+    @Post('commits')
     @ApiOperation({ summary: 'Obtém a árvore de commits do repositório' })
     @ApiResponse({ status: 200, description: 'Commits retornados com sucesso', type: GetCommitsResponseDto })
     async getCommits(@Query() query: GetCommitsQueryDto) {
@@ -170,7 +170,7 @@ export class DeployerController {
     }
 
     @Role('DEVELOPER')
-    @Get('app/status')
+    @Post('app/status')
     @ApiOperation({ summary: 'Verifica o status e os últimos logs do processo' })
     @ApiResponse({ status: 200, description: 'Status e stream de logs', type: AppStatusResponseDto })
     async getAppStatus() {

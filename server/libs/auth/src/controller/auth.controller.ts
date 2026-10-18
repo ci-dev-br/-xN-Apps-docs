@@ -105,9 +105,6 @@ export class AuthController {
           if (!authenticated_user) {
             throw new UnauthorizedException('Acesso negado. Usuário não identificado ou senha incorreta.');
           }
-          chave.valid = true;
-          chave.alive = false;
-          await this.credencialService.atualizar(chave);
           const permission_uuid = randomUUID();
           const refresh_token = await this.jwtService.signAsync(
             {
@@ -123,7 +120,8 @@ export class AuthController {
           );
           // authenticated_user.refreshToken = refresh_token;
           const refreshTokenArg2 = await this.userService.updateRefreshToken(authenticated_user.id, permission_uuid);
-          chave = await this.credencialService.obterChaveAcesso(payload.chaveAcesso);
+          chave.valid = true;
+          chave.alive = true;
           chave.refreshToken = refreshTokenArg2;
           await this.credencialService.atualizar(chave);
           const { /* photo, */ ...user_payload } = authenticated_user;
@@ -140,6 +138,8 @@ export class AuthController {
             user: authenticated_user,
             bearer: await this.jwtService.signAsync({
               id: user_payload.id,
+              roles: user_payload.roles,
+              permission: permission_uuid,
               chaveAcesso: chave.id,
               tenants: user_payload.tenants,
             }),
