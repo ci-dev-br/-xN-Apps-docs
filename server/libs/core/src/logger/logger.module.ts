@@ -3,22 +3,25 @@ import { LoggerController } from "./logger.controller";
 import { LoggerService } from "./logger.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Log } from "./log.entity";
+
 export const entities = [Log];
+
 /**
- * Logger Modules
+ * Módulo de Logger e Gerenciamento de Logs
  */
 @Module({
     imports: [
         TypeOrmModule.forFeature(entities),
     ],
     exports: [
-
+        LoggerService,
+        TypeOrmModule,
     ],
     providers: [
         LoggerService,
     ],
     controllers: [
-        LoggerController
+        LoggerController,
     ],
 })
 export class LoggerModule { }

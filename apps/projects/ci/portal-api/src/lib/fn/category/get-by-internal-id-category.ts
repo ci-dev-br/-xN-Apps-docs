@@ -6,15 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { ObterListaCategory } from '../../models/obter-lista-category';
-import { SyncPayloadDaoCategory } from '../../models/sync-payload-dao-category';
+import { Category } from '../../models/category';
+import { GetByInternalIdInputDto } from '../../models/get-by-internal-id-input-dto';
 
-export interface CetListcategory$Params {
-      body: ObterListaCategory
+export interface GetByInternalIdCategory$Params {
+      body: GetByInternalIdInputDto
 }
 
-export function cetListcategory(http: HttpClient, rootUrl: string, params: CetListcategory$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoCategory>> {
-  const rb = new RequestBuilder(rootUrl, cetListcategory.PATH, 'post');
+export function getByInternalIdCategory(http: HttpClient, rootUrl: string, params: GetByInternalIdCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<Category>> {
+  const rb = new RequestBuilder(rootUrl, getByInternalIdCategory.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -24,9 +24,9 @@ export function cetListcategory(http: HttpClient, rootUrl: string, params: CetLi
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SyncPayloadDaoCategory>;
+      return r as StrictHttpResponse<Category>;
     })
   );
 }
 
-cetListcategory.PATH = '/Category/GetList';
+getByInternalIdCategory.PATH = '/Category/GetByInternalId';

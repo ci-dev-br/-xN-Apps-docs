@@ -33,8 +33,12 @@
 </div>
 <nav mat-tab-nav-bar [tabPanel]="tabPanel">
     @if(abas){
-    @for (aba of abas; track aba) {
-    <a mat-tab-link [routerLink]="'./' + aba.path">
+    @for (aba of abas; track aba.path) {
+    <a mat-tab-link 
+       [routerLink]="aba.path ? [aba.path] : ['./']"
+       [routerLinkActiveOptions]="{ exact: aba.path === '' }"
+       routerLinkActive #rla="routerLinkActive"
+       [active]="rla.isActive">
         @if(aba.icon){<mat-icon>
             {{aba.icon}}
         </mat-icon>}

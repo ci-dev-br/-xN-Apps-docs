@@ -79,3 +79,19 @@ mat-toolbar {
 .a {
   flex: auto;
 }
+
+body.codex-fullscreen-active {
+  ci-navbar,
+  mat-toolbar,
+  .mat-toolbar {
+    display: none !important;
+  }
+
+  mat-drawer-container {
+    z-index: 99999 !important;
+  }
+
+  .cdk-overlay-container {
+    z-index: 100000 !important;
+  }
+}

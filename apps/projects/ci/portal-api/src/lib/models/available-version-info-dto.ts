@@ -16,12 +16,12 @@ export interface AvailableVersionInfoDto {
   /**
    * Data/hora do último build na pasta apps/dist/apps/browser
    */
-  clientDistAt?: string | null;
+  clientDistAt?: string;
 
   /**
    * Data/hora da última versão do cliente gerada em produção (server/public via gulp)
    */
-  clientPublishedAt?: string | null;
+  clientPublishedAt?: string;
 
   /**
    * Hash completo do commit disponível
@@ -66,7 +66,7 @@ export interface AvailableVersionInfoDto {
   /**
    * Término da última publicação
    */
-  publishFinishedAt?: string | null;
+  publishFinishedAt?: string;
 
   /**
    * Últimos logs da publicação
@@ -76,7 +76,7 @@ export interface AvailableVersionInfoDto {
   /**
    * Início da última publicação
    */
-  publishStartedAt?: string | null;
+  publishStartedAt?: string;
 
   /**
    * Status da rotina de publicação (idle | running | success | error)
@@ -86,7 +86,7 @@ export interface AvailableVersionInfoDto {
   /**
    * Data/hora da última compilação do backend em produção (server/dist/main.js)
    */
-  serverCompiledAt?: string | null;
+  serverCompiledAt?: string;
 
   /**
    * Hash curto do commit disponível

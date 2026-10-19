@@ -1,11 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
-import { Pessoa } from './pessoa';
+import { Pessoa } from '../models/pessoa';
 export interface ObterListaPessoa {
+  filter?: Pessoa | null;
+  orderBy?: {
+} | null;
+  search?: string | null;
   skip?: number | null;
   take?: number | null;
-  where?: Partial<Pessoa> | null;
-  filter?: Partial<Pessoa> | null;
-  search?: string | null;
-  orderBy?: Record<string, 'ASC' | 'DESC'> | null;
+  where?: Pessoa | null;
 }

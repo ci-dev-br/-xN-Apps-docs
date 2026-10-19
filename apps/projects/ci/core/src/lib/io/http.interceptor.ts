@@ -7,6 +7,7 @@ import { AuthService } from "@ci/portal-api";
 import { CORE_ENV, ICoreEnvironment } from "../provider";
 import { Router } from "@angular/router";
 import { Message } from "../services/message";
+import { ConsoleService } from "../services/console.service";
 
 // import { AuthService } from "@ci/portal-api";
 /**
@@ -49,6 +50,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         @Optional() private readonly auth: AuthService,
         @Optional() private readonly message: Message,
         private readonly injector: Injector,
+        @Optional() private readonly consoleService?: ConsoleService,
         @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
     ) {
         let efail = typeof localStorage !== 'undefined' ? localStorage.getItem('e-fail') : null;
@@ -88,6 +90,23 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             }))
             .pipe(catchError((error) => {
                 if (error) {
+                    if (!request.url.includes('/Logger')) {
+                        const isServerError = error?.status >= 500 || error?.status === 0;
+                        if (isServerError) {
+                            this.consoleService?.error(
+                                `[HTTP Error ${error?.status || 0}] ${request.method} ${request.url}`,
+                                {
+                                    url: request.url,
+                                    method: request.method,
+                                    status: error?.status,
+                                    statusText: error?.statusText,
+                                    error: error?.error || error?.message,
+                                },
+                                true,
+                                error?.status >= 500,
+                            );
+                        }
+                    }
                     if (error?.error?.error?.options?.message?.indexOf('expirou') > -1) {
                         this.storage?.clean();
                         this.router?.navigate(['/']);

@@ -52,10 +52,10 @@ mat-toolbar.master-toolbar {
     flex: 0 0 auto;
     min-width: 0;
 
-    .entity-icon {
+    /* .entity-icon {
         color: var(--mat-sys-primary, var(--mat-standard-button-toggle-selected-state-text-color));
         flex-shrink: 0;
-    }
+    } */
 
     .entity-name {
         white-space: nowrap;
@@ -91,25 +91,25 @@ mat-toolbar.master-toolbar {
 }
 
 .toolbar-actions {
-    display: flex;
+    /*  display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-end;
     gap: 8px;
-    flex: 0 1 auto;
+    flex: 0 1 auto; */
 
-    button {
+    /*  button {
         display: inline-flex;
         align-items: center;
         white-space: nowrap;
-    }
+    } */
 
-    .view-toggle-group {
+    /*  .view-toggle-group {
         --mat-standard-button-toggle-height: 36px;
-        flex-shrink: 0;
+        flex-shrink: 0; */
 
-        mat-button-toggle {
+    /* mat-button-toggle {
             ::ng-deep .mat-button-toggle-label-content {
                 display: inline-flex;
                 align-items: center;
@@ -117,8 +117,8 @@ mat-toolbar.master-toolbar {
                 padding: 0 10px;
                 line-height: 36px;
             }
-        }
-    }
+        } */
+    /* } */
 }
 
 .filter-toggle-btn.active {
@@ -402,4 +402,4 @@ mat-card.thumbnail-card {
             max-width: 65%;
         }
     }
-}
+}

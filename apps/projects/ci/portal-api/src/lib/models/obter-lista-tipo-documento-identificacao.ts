@@ -1,11 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
-import { TipoDocumentoIdentificacao } from './tipo-documento-identificacao';
+import { TipoDocumentoIdentificacao } from '../models/tipo-documento-identificacao';
 export interface ObterListaTipoDocumentoIdentificacao {
+  filter?: TipoDocumentoIdentificacao | null;
+  orderBy?: {
+} | null;
+  search?: string | null;
   skip?: number | null;
   take?: number | null;
-  where?: Partial<TipoDocumentoIdentificacao> | null;
-  filter?: Partial<TipoDocumentoIdentificacao> | null;
-  search?: string | null;
-  orderBy?: Record<string, 'ASC' | 'DESC'> | null;
+  where?: TipoDocumentoIdentificacao | null;
 }

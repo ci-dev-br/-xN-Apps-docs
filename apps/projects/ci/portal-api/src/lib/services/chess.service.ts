@@ -20,7 +20,7 @@ export class ChessService extends BaseService {
   }
 
   /** Path part for operation `chessMove()` */
-  static readonly ChessMovePath = '/Chess/ChessMove';
+  static readonly ChessMovePath = '/Chess/Move';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

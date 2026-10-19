@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+import { Pessoa } from '../models/pessoa';
 import { TipoDocumentoIdentificacao } from '../models/tipo-documento-identificacao';
 export interface DocumentoIdentificacao {
   createdAt?: Date | null;
@@ -11,8 +12,7 @@ export interface DocumentoIdentificacao {
   lastModifiedBy?: {
 } | null;
   numeroDocumento?: string | null;
-  pessoa?: {
-} | null;
+  pessoa?: Pessoa | null;
   tenants?: Array<string> | null;
   tipo?: TipoDocumentoIdentificacao | null;
 }

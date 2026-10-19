@@ -1,0 +1,114 @@
+<div class="floating-manager-container">
+    <!-- Janelas Flutuantes Ativas -->
+    @for (win of windows; track win.id) {
+        @if (!win.isMinimized) {
+        <div 
+            class="floating-window"
+            [class.maximized]="win.isMaximized"
+            [class.is-dirty]="win.isDirty"
+            [style.left.px]="win.x"
+            [style.top.px]="win.y"
+            [style.width.px]="win.width"
+            [style.height.px]="win.height"
+            [style.z-index]="win.zIndex"
+            (mousedown)="bringToFront(win)">
+            
+            <!-- Barra de Título (Arraste e Controles) -->
+            <div class="window-header" (mousedown)="startDrag(win, $event)">
+                <div class="window-title-group" [matTooltip]="win.filePath">
+                    <mat-icon class="window-type-icon">code</mat-icon>
+                    <span class="window-title">{{ win.title }}</span>
+                    @if (win.isDirty) {
+                        <span class="dirty-indicator" matTooltip="Modificações não salvas">●</span>
+                    }
+                    @if (win.lineNumber) {
+                        <span class="line-badge">Ln {{ win.lineNumber }}</span>
+                    }
+                </div>
+
+                <div class="window-actions">
+                    <button 
+                        type="button" 
+                        class="win-btn win-btn-save" 
+                        [class.active]="win.isDirty" 
+                        (click)="save(win, $event)" 
+                        [matTooltip]="win.isDirty ? 'Salvar alterações (Ctrl+S)' : 'Arquivo sem alterações'">
+                        <mat-icon>{{ win.isSaving ? 'sync' : 'save' }}</mat-icon>
+                    </button>
+
+                    <button 
+                        type="button" 
+                        class="win-btn" 
+                        (click)="toggleMinimize(win, $event)" 
+                        matTooltip="Minimizar para barra inferior">
+                        <mat-icon>remove</mat-icon>
+                    </button>
+
+                    <button 
+                        type="button" 
+                        class="win-btn" 
+                        (click)="toggleMaximize(win, $event)" 
+                        [matTooltip]="win.isMaximized ? 'Restaurar tamanho' : 'Maximizar'">
+                        <mat-icon>{{ win.isMaximized ? 'filter_none' : 'crop_square' }}</mat-icon>
+                    </button>
+
+                    <button 
+                        type="button" 
+                        class="win-btn win-btn-close" 
+                        (click)="closeWindow(win.id, $event)" 
+                        matTooltip="Fechar janela">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Corpo da Janela com o Editor Monaco -->
+            <div class="window-body">
+                <nu-monaco-editor
+                    [(ngModel)]="win.content"
+                    [options]="editorOptions"
+                    [model]="win.model"
+                    (event)="onEditorEvent(win, $event)"
+                    (ngModelChange)="onCodeChange(win, $event)"
+                    height="100%">
+                </nu-monaco-editor>
+            </div>
+
+            <!-- Alça de Redimensionamento Canto Inferior Direito -->
+            @if (!win.isMaximized) {
+                <div class="resize-handle" (mousedown)="startResize(win, $event)" matTooltip="Redimensionar">
+                    <svg viewBox="0 0 6 6" width="6" height="6">
+                        <path d="M6 6H0L6 0V6Z" fill="currentColor"/>
+                    </svg>
+                </div>
+            }
+        </div>
+        }
+    }
+
+    <!-- Barra Dock Inferior (Janelas abertas e minimizadas) -->
+    @if (windows.length > 0) {
+    <div class="floating-dock-bar">
+        <span class="dock-label">Janelas de Código:</span>
+        <div class="dock-items">
+            @for (win of windows; track win.id) {
+            <div 
+                class="dock-pill" 
+                [class.minimized]="win.isMinimized" 
+                [class.active]="!win.isMinimized" 
+                (click)="restoreFromDock(win)"
+                [matTooltip]="win.filePath">
+                <mat-icon class="pill-icon">code</mat-icon>
+                <span class="pill-title">{{ win.title }}</span>
+                @if (win.isDirty) {
+                    <span class="pill-dirty">●</span>
+                }
+                <button type="button" class="pill-close" (click)="closeWindow(win.id, $event)" matTooltip="Fechar">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            }
+        </div>
+    </div>
+    }
+</div>

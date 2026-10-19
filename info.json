@@ -1,1 +1,1 @@
-{"branch":"development","commit":"223c524e891f43415b5a326c11aa3fecc2c16d78","author":"pLinho","date":"Sun Oct 18 13:30:13 2026 -0300","message":"feat(data-forms): Aprimora gerenciamento de dados, formulários dinâmicos e sincronização","builtAt":"2026-10-18T17:56:21.936Z"}
+{"branch":"development","commit":"f3877f08237118336adfa6c23f837d8687143b65","author":"pLinho","date":"Sun Oct 18 15:28:24 2026 -0300","message":"feat(auth): Aplica controle de acesso baseado em papel à PessoaController","builtAt":"2026-10-19T04:02:26.517Z"}

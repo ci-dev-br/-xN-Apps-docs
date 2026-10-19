@@ -13,7 +13,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { TenantEntities, TenantModule } from '@ci/tenant/tenant.module';
 import { UsersModule } from '@ci/user/users.module';
 import { StorageEntities, StorageModule } from '@ci/storage/storage.module';
-import { CoreEntities, CoreModule } from '@ci/core/core.module';
+import { CoreEntities, CoreModule, LoggerModule } from '@ci/core';
 import { ProlaboreEntities } from '@ci/prolabore/prolabore.module';
 import { CadastroEntidades, CasdastroModule } from '@ci/cadastro/cadastro.module';
 import { PaymentEntities, PaymentModule } from '@ci/payment/payment.module';
@@ -117,6 +117,8 @@ const _modules_name = {
   DyM: DyMModule,
   Espazio: EspazioModule,
   Tasking: TaskingModule,
+  Logger: LoggerModule,
+  Core: CoreModule,
 }
 /**
  * « end

@@ -1,4 +1,4 @@
-@if(!!paths){@for(path of paths;track path){
+@if(!!paths){@for(path of paths;track path.path){
 <ng-container *ngTemplateOutlet="item;context: {path:path}"></ng-container>
 }}
 <ng-template #item let-path="path">
@@ -13,13 +13,13 @@
                     <ng-container *ngTemplateOutlet="itemMenu;context: {item:item}"></ng-container>
                 </mat-menu>
                 }@else{ <!-- : isFile -->
-                <button mat-menu-item>{{item.name}}</button>
+                <button mat-menu-item (click)="openItem(item, path)">{{item.name}}</button>
                 }
                 }
             </ng-template>
             <ng-template #itemMenu let-item="item">
-                @for (child of item.list; track $index) {
-                <button mat-menu-item>{{child.name}}</button>
+                @for (child of item.list || []; track $index) {
+                <button mat-menu-item (click)="openItem(child, item)">{{child.name}}</button>
                 }
             </ng-template>
         </mat-menu>

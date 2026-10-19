@@ -6,15 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Category } from '../../models/category';
 import { GetByInternalIdInputDto } from '../../models/get-by-internal-id-input-dto';
+import { TipoDocumentoIdentificacao } from '../../models/tipo-documento-identificacao';
 
-export interface CetByInternalIdcategory$Params {
+export interface GetByInternalIdTipoDocumentoIdentificacao$Params {
       body: GetByInternalIdInputDto
 }
 
-export function cetByInternalIdcategory(http: HttpClient, rootUrl: string, params: CetByInternalIdcategory$Params, context?: HttpContext): Observable<StrictHttpResponse<Category>> {
-  const rb = new RequestBuilder(rootUrl, cetByInternalIdcategory.PATH, 'post');
+export function getByInternalIdTipoDocumentoIdentificacao(http: HttpClient, rootUrl: string, params: GetByInternalIdTipoDocumentoIdentificacao$Params, context?: HttpContext): Observable<StrictHttpResponse<TipoDocumentoIdentificacao>> {
+  const rb = new RequestBuilder(rootUrl, getByInternalIdTipoDocumentoIdentificacao.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -24,9 +24,9 @@ export function cetByInternalIdcategory(http: HttpClient, rootUrl: string, param
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Category>;
+      return r as StrictHttpResponse<TipoDocumentoIdentificacao>;
     })
   );
 }
 
-cetByInternalIdcategory.PATH = '/Category/GetByInternalId';
+getByInternalIdTipoDocumentoIdentificacao.PATH = '/TipoDocumentoIdentificacao/GetByInternalId';

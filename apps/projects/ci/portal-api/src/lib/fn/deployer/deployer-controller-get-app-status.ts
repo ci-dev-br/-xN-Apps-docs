@@ -12,7 +12,7 @@ export interface DeployerControllerGetAppStatus$Params {
 }
 
 export function deployerControllerGetAppStatus(http: HttpClient, rootUrl: string, params?: DeployerControllerGetAppStatus$Params, context?: HttpContext): Observable<StrictHttpResponse<AppStatusResponseDto>> {
-  const rb = new RequestBuilder(rootUrl, deployerControllerGetAppStatus.PATH, 'get');
+  const rb = new RequestBuilder(rootUrl, deployerControllerGetAppStatus.PATH, 'post');
   if (params) {
   }
 

@@ -5,11 +5,11 @@ export interface Category {
   createdBy?: {
 } | null;
   deleted?: boolean | null;
-  description: string;
+  description?: string | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
   lastModifiedBy?: {
 } | null;
-  name: string;
+  name?: string | null;
   tenants?: Array<string> | null;
 }

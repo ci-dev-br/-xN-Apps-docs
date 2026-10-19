@@ -28,4 +28,4 @@ export function chessMove(http: HttpClient, rootUrl: string, params: ChessMove$P
   );
 }
 
-chessMove.PATH = '/Chess/ChessMove';
+chessMove.PATH = '/Chess/Move';

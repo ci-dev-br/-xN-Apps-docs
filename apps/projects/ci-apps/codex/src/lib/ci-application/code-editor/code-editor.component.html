@@ -1,44 +1,387 @@
-<div class="container" [class.fullscreen]="fullscreen">
+<div #editorContainer class="container" [class.fullscreen]="fullscreen">
     @if(!carregando){
-    <div style="display:flex; flex-direction: row;">
-        <button mat-icon-button (click)="fullscreen = !fullscreen">
-            <mat-icon>fullscreen</mat-icon>
+    <div class="editor-toolbar">
+        <button mat-icon-button (click)="toggleFullscreen()" [matTooltip]="fullscreen ? 'Sair da Tela Cheia (Esc / F11)' : 'Tela Cheia (F11)'">
+            <mat-icon>{{ fullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
         </button>
-        <!-- TODO: adicionar visão de uml -->
-        <button mat-icon-button>
-            <mat-icon>diagram</mat-icon>
-        </button>
-        <span style="flex:auto"></span>
 
-        <!-- <button mat-button>
-        Voltar ultima versão
-    </button> -->
+        <div class="view-mode-group">
+            <button mat-icon-button (click)="setViewMode('editor')" [class.active-mode]="viewMode === 'editor'" matTooltip="Apenas Editor Monaco (Alt+1)">
+                <mat-icon>code</mat-icon>
+            </button>
+            <button mat-icon-button (click)="setViewMode('split')" [class.active-mode]="viewMode === 'split'" matTooltip="Visão Dividida Ajustável: Editor + UML (Alt+2)">
+                <mat-icon>vertical_split</mat-icon>
+            </button>
+            <button mat-icon-button (click)="setViewMode('uml-canvas')" [class.active-mode]="viewMode === 'uml-canvas'" matTooltip="Diagrama UML em Tela Cheia (Canvas com Janelas Flutuantes) (Alt+3)">
+                <mat-icon>account_tree</mat-icon>
+            </button>
+        </div>
+
+        <button mat-icon-button (click)="toggleDocs()" [matTooltip]="mostrarDocs ? 'Ocultar Documentação de Módulos (Alt+D)' : 'Documentação de Módulos Instalados (Alt+D)'">
+            <mat-icon [class.active-icon]="mostrarDocs">menu_book</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="goToDefinition()" matTooltip="Ir para a Definição (F12 / Ctrl+Click)">
+            <mat-icon>call_made</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="peekDefinition()" matTooltip="Espiar Definição (Alt+F12)">
+            <mat-icon>visibility</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="findReferences()" matTooltip="Localizar Referências (Shift+F12)">
+            <mat-icon>find_in_page</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="formatDocument()" matTooltip="Formatar Código (Alt+Shift+F)">
+            <mat-icon>format_align_left</mat-icon>
+        </button>
+
+        <span class="toolbar-spacer"></span>
+
+        <div class="save-actions">
+            <div class="commit-input-wrapper">
+                <mat-icon class="commit-icon">commit</mat-icon>
+                <input 
+                    type="text" 
+                    class="commit-input" 
+                    [(ngModel)]="commitDescription" 
+                    placeholder="Descrição da alteração (Commit)..." 
+                    (keydown.enter)="confirmar()" />
+            </div>
+
+            <button 
+                mat-button 
+                class="save-btn" 
+                [class.is-dirty]="isDirty" 
+                (click)="confirmar()" 
+                [matTooltip]="isDirty ? 'Salvar alterações (Ctrl+S)' : 'Arquivo sem alterações'">
+                <mat-icon>save</mat-icon>
+                <span>Salvar</span>
+            </button>
+        </div>
     </div>
+
     <ci-breadcrumb [oppenedFile]="oppenedFile"></ci-breadcrumb>
-    <div class="wrapper">
-        <!-- inner here -->
-        <ng-container *ngTemplateOutlet="inner"></ng-container>
+
+    <div class="editor-main-area" [class.uml-canvas-mode]="viewMode === 'uml-canvas'">
+        <!-- Painel Monaco Principal (exibido em 'editor' e 'split') -->
+        @if (viewMode !== 'uml-canvas') {
+        <div class="monaco-panel" [style.flex]="viewMode === 'split' ? '1 1 0' : '1 1 auto'">
+            <nu-monaco-editor 
+                [(ngModel)]="value" 
+                [options]="editorOptions" 
+                [model]="editorModel"
+                (event)="onEditorEvent($event)"
+                height="100%">
+            </nu-monaco-editor>
+        </div>
+        }
+
+        <!-- Divisor Redimensionável (Splitter) quando em visualização dividida -->
+        @if (viewMode === 'split') {
+        <div class="editor-splitter" (mousedown)="onSplitterMouseDown($event)" matTooltip="Arraste para ajustar proporção entre editor e diagrama">
+            <div class="splitter-grip"></div>
+        </div>
+        }
+
+        <!-- Painel UML (Lateral ajustável em 'split' ou Tela Cheia Total em 'uml-canvas') -->
+        @if (viewMode === 'split' || viewMode === 'uml-canvas') {
+        <div class="uml-side-panel" [class.full-canvas]="viewMode === 'uml-canvas'" [style.width]="viewMode === 'split' ? (umlPanelWidth + 'px') : '100%'">
+            @if (viewMode === 'split') {
+            <div class="uml-panel-header">
+                <span class="uml-panel-title">
+                    <mat-icon>account_tree</mat-icon>
+                    Diagrama UML
+                </span>
+                <div class="uml-header-actions">
+                    <button mat-icon-button class="uml-header-btn" (click)="setViewMode('uml-canvas')" matTooltip="Expandir Diagrama para Tela Cheia (Canvas)">
+                        <mat-icon>open_in_full</mat-icon>
+                    </button>
+                    <button mat-icon-button class="uml-close-btn" (click)="setViewMode('editor')" matTooltip="Fechar diagrama">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+            </div>
+            } @else {
+            <div class="uml-canvas-header-bar">
+                <div class="canvas-badge">
+                    <mat-icon>account_tree</mat-icon>
+                    <span>Modo UML Canvas (Tela Cheia)</span>
+                    <span class="hint">Clique em classes ou objetos para editar o código em janelas flutuantes</span>
+                </div>
+                <div class="canvas-actions">
+                    <button type="button" class="btn-canvas-action" [class.active-action]="isFolderNavOpen" (click)="toggleFolderNav()" matTooltip="Navegar entre pastas do projeto e carregar arquivos">
+                        <mat-icon>folder_open</mat-icon>
+                        <span>Pastas do Projeto</span>
+                    </button>
+
+                    <button type="button" class="btn-canvas-action" (click)="mapCurrentFolderOverview()" [disabled]="isMappingFolder" matTooltip="Mapear recursivamente todos os arquivos TypeScript desta pasta e subpastas em um único diagrama geral">
+                        <mat-icon>{{ isMappingFolder ? 'sync' : 'schema' }}</mat-icon>
+                        <span>{{ isMappingFolder ? 'Mapeando Subpastas...' : 'Mapear Pasta e Subpastas' }}</span>
+                    </button>
+
+                    @if (isFolderOverviewActive) {
+                    <button type="button" class="btn-canvas-action btn-restore" (click)="restoreSingleFileView()" matTooltip="Voltar para a visualização do arquivo original">
+                        <mat-icon>undo</mat-icon>
+                        <span>Restaurar Arquivo</span>
+                    </button>
+                    }
+
+                    <div class="header-divider"></div>
+
+                    <button type="button" class="btn-canvas-action" (click)="setViewMode('split')" matTooltip="Voltar para visão dividida">
+                        <mat-icon>vertical_split</mat-icon> Dividir
+                    </button>
+                    <button type="button" class="btn-canvas-action" (click)="setViewMode('editor')" matTooltip="Voltar para apenas editor">
+                        <mat-icon>code</mat-icon> Editor
+                    </button>
+                </div>
+            </div>
+            }
+
+            <!-- Drawer / Painel Lateral de Navegação de Pastas no UML Tela Cheia -->
+            @if (viewMode === 'uml-canvas' && isFolderNavOpen) {
+            <div class="uml-folder-drawer">
+                <div class="folder-drawer-header">
+                    <div class="drawer-title">
+                        <mat-icon>snippet_folder</mat-icon>
+                        <span>Explorador de Pastas do Projeto</span>
+                    </div>
+                    <button type="button" class="drawer-close-btn" (click)="isFolderNavOpen = false">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+
+                <div class="folder-path-bar">
+                    <button type="button" class="path-nav-btn" (click)="navigateToParentDirectory()" [disabled]="!currentDirectory" matTooltip="Subir nível de pasta">
+                        <mat-icon>arrow_upward</mat-icon>
+                    </button>
+                    <span class="path-text" [matTooltip]="currentDirectory">{{ currentDirectory || 'Raiz do Workspace' }}</span>
+                </div>
+
+                <div class="folder-search-box">
+                    <mat-icon>search</mat-icon>
+                    <input type="text" [(ngModel)]="folderSearchTerm" placeholder="Filtrar arquivos na pasta..." />
+                </div>
+
+                <div class="folder-item-list">
+                    @if (isLoadingDirectory) {
+                        <div class="folder-loading">
+                            <mat-icon class="spin-icon">sync</mat-icon>
+                            <span>Lendo diretório...</span>
+                        </div>
+                    } @else if (filteredDirectoryItems.length === 0) {
+                        <div class="folder-empty">
+                            <span>Nenhum item encontrado nesta pasta.</span>
+                        </div>
+                    } @else {
+                        @for (item of filteredDirectoryItems; track item.path) {
+                            <div class="folder-item" [class.is-dir]="item.isDirectory" (click)="onDirectoryItemClick(item)">
+                                <mat-icon class="item-icon">{{ item.isDirectory ? 'folder' : (item.name?.endsWith('.ts') ? 'integration_instructions' : 'description') }}</mat-icon>
+                                <span class="item-name" [matTooltip]="item.path || ''">{{ item.name }}</span>
+                                @if (item.isFile) {
+                                    <button type="button" class="btn-floating-open" (click)="openInFloatingWindowFromNav(item, $event)" matTooltip="Abrir este arquivo em Janela Flutuante com Monaco Editor">
+                                        <mat-icon>open_in_new</mat-icon>
+                                    </button>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+
+                <div class="folder-drawer-footer">
+                    <button type="button" class="btn-map-all" (click)="mapCurrentFolderOverview()" [disabled]="isMappingFolder" matTooltip="Mapear recursivamente todos os arquivos TypeScript (.ts) desta pasta e subpastas">
+                        <mat-icon>{{ isMappingFolder ? 'sync' : 'schema' }}</mat-icon>
+                        <span>{{ isMappingFolder ? 'Mapeando Subpastas...' : 'Mapear Pasta e Subpastas em UML' }}</span>
+                    </button>
+                </div>
+            </div>
+            }
+
+            <div class="uml-panel-body">
+                <uml-viewer
+                    [javascriptCode]="value"
+                    [filePath]="oppenedFile?.path || undefined"
+                    [activeLine]="cursorLine"
+                    (nodeSelect)="onUmlNodeSelect($event)"
+                    (codeChange)="onUmlCodeChange($event)">
+                </uml-viewer>
+            </div>
+        </div>
+        }
+
+        <!-- Gerenciador de Janelas Flutuantes com Monaco Editor -->
+        <floating-editor-manager
+            [windows]="floatingWindows"
+            (windowClose)="closeFloatingWindow($event)"
+            (windowSave)="saveFloatingWindow($event)"
+            (windowCodeChange)="onFloatingWindowCodeChange($event)"
+            (windowFocus)="bringWindowToFront($event)">
+        </floating-editor-manager>
+
+        @if(mostrarDocs){
+        <div class="docs-side-panel">
+            <div class="docs-panel-header">
+                <span class="docs-panel-title">
+                    <mat-icon>menu_book</mat-icon>
+                    Módulos Instalados & Recursos
+                </span>
+                <button mat-icon-button class="docs-close-btn" (click)="toggleDocs()" matTooltip="Fechar documentação">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+
+            <div class="docs-panel-content">
+                <div class="docs-search-wrapper">
+                    <mat-icon class="search-icon">search</mat-icon>
+                    <input 
+                        type="text" 
+                        class="docs-search-input" 
+                        [(ngModel)]="docSearchTerm" 
+                        (input)="filtrarSimbolosDoc()" 
+                        placeholder="Filtrar símbolos, classes, métodos..." />
+                </div>
+
+                @if(carregandoDocs){
+                <div class="docs-loading">
+                    <mat-icon class="spin-icon">sync</mat-icon>
+                    <span>Carregando documentação...</span>
+                </div>
+                }@else{
+                <!-- Lista horizontal de pacotes disponíveis -->
+                <div class="packages-chips-container">
+                    <span class="packages-chips-title">MÓDULOS:</span>
+                    <div class="packages-chips-scroll">
+                        @for(pkg of installedPackages; track pkg.name){
+                        <button 
+                            type="button" 
+                            class="package-chip" 
+                            [class.active]="selectedPackageDoc?.name === pkg.name" 
+                            [class.used-in-file]="pkg.isUsedInFile"
+                            (click)="selecionarPacote(pkg.name)">
+                            <span class="pkg-chip-name">{{ pkg.name }}</span>
+                            @if(pkg.version){
+                            <span class="pkg-chip-version">{{ pkg.version }}</span>
+                            }
+                        </button>
+                        }
+                    </div>
+                </div>
+
+                <!-- Detalhes do pacote selecionado -->
+                @if(selectedPackageDoc){
+                <div class="package-details-card">
+                    <div class="pkg-header">
+                        <div class="pkg-title-area">
+                            <span class="pkg-full-name">{{ selectedPackageDoc.name }}</span>
+                            <span class="pkg-badge-ver">{{ selectedPackageDoc.version }}</span>
+                            @if(selectedPackageDoc.license){
+                            <span class="pkg-badge-lic">{{ selectedPackageDoc.license }}</span>
+                            }
+                        </div>
+                        @if(selectedPackageDoc.homepage){
+                        <a [href]="selectedPackageDoc.homepage" target="_blank" rel="noopener noreferrer" class="pkg-link-btn" matTooltip="Abrir documentação oficial / repositório">
+                            <mat-icon>open_in_new</mat-icon>
+                        </a>
+                        }
+                    </div>
+
+                    @if(selectedPackageDoc.description){
+                    <p class="pkg-desc">{{ selectedPackageDoc.description }}</p>
+                    }
+                </div>
+
+                <!-- Lista de recursos/símbolos exportados -->
+                <div class="symbols-list-wrapper">
+                    <div class="symbols-list-header">
+                        <span>Recursos Exportados ({{ filteredSymbols.length }})</span>
+                    </div>
+
+                    <div class="symbols-list">
+                        @for(sym of filteredSymbols; track sym.name){
+                        <div class="symbol-item">
+                            <div class="symbol-item-header">
+                                <span class="symbol-kind-badge" [attr.data-kind]="sym.kind">{{ sym.kind }}</span>
+                                <span class="symbol-name">{{ sym.name }}</span>
+                                <span class="symbol-spacer"></span>
+                                @if(sym.dtsPath){
+                                <button mat-icon-button class="symbol-nav-btn" (click)="abrirDeclaracaoSimbolo(sym)" matTooltip="Ir para a declaração (.d.ts)">
+                                    <mat-icon>code</mat-icon>
+                                </button>
+                                }
+                            </div>
+                            @if(sym.signature){
+                            <pre class="symbol-signature"><code>{{ sym.signature }}</code></pre>
+                            }
+                            @if(sym.documentation){
+                            <div class="symbol-doc-text">{{ sym.documentation }}</div>
+                            }
+                        </div>
+                        }
+
+                        @if(filteredSymbols.length === 0){
+                        <div class="empty-symbols">
+                            <span>Nenhum recurso encontrado para o filtro aplicado.</span>
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+                }
+            </div>
+        </div>
+        }
+    </div>
+
+    <div class="status">
+        <div class="status-group">
+            <span class="status-item branch" matTooltip="Branch / Ambiente">
+                <mat-icon class="status-icon">fork_right</mat-icon> develop
+            </span>
+
+            @if(isDirty){
+            <span class="status-item dirty" (click)="confirmar()" matTooltip="Alterações pendentes - Clique ou Ctrl+S para salvar">
+                ● Não salvo
+            </span>
+            }
+
+            <span class="status-item errors" [class.has-errors]="errorCount > 0" (click)="goToNextError()" matTooltip="Erros TypeScript (F8 para o próximo)">
+                <mat-icon class="status-icon error-icon">error</mat-icon> {{ errorCount }}
+            </span>
+
+            <span class="status-item warnings" [class.has-warnings]="warningCount > 0" (click)="goToNextError()" matTooltip="Avisos TypeScript">
+                <mat-icon class="status-icon warning-icon">warning</mat-icon> {{ warningCount }}
+            </span>
+        </div>
+
+        <span class="status-spacer"></span>
+
+        <div class="status-group">
+            @if(fullscreen){
+            <span class="status-item fullscreen-badge" (click)="toggleFullscreen()" matTooltip="Clique para sair da tela cheia (Esc)">
+                <mat-icon class="status-icon">fullscreen_exit</mat-icon> Tela Cheia
+            </span>
+            }
+
+            <span class="status-item position" matTooltip="Posição do Cursor">
+                Ln {{ cursorLine }}, Col {{ cursorColumn }}
+            </span>
+
+            <span class="status-item lang" matTooltip="Linguagem do Editor">
+                {{ language || 'plaintext' }}
+            </span>
+
+            <span class="status-item encoding" matTooltip="Codificação">
+                UTF-8
+            </span>
+        </div>
     </div>
 
     }@else{
     <div class="loading">
-        Carregando arquivo...
+        <mat-icon class="spin-icon">sync</mat-icon>
+        <span>Carregando arquivo e dependências...</span>
     </div>
     }
-    <div class="status">
-        <button>develop</button><!-- todo: controle de versão -->
-    </div>
-    <ng-template #inner>
-        <nu-monaco-editor [(ngModel)]="value" [options]="editorOptions" height="calc(100vh - 154px)"></nu-monaco-editor>
-    </ng-template>
-    <div class="flutuante">
-        <uml-viewer [javascriptCode]="value"></uml-viewer>
-    </div>
 </div>
-
-<mat-form-field>
-    <input #desc matInput placeholder="Descrição das modificações" />
-    <button matSuffix mat-button [disabled]="!desc.value" (click)="confirmar()">
-        Confirmar
-    </button>
-</mat-form-field>

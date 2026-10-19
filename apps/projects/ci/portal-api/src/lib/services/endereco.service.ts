@@ -9,16 +9,16 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deleteEndereco } from '../fn/endereco/delete-endereco';
+import { DeleteEndereco$Params } from '../fn/endereco/delete-endereco';
+import { Endereco } from '../models/endereco';
+import { getByInternalIdEndereco } from '../fn/endereco/get-by-internal-id-endereco';
+import { GetByInternalIdEndereco$Params } from '../fn/endereco/get-by-internal-id-endereco';
 import { getListEndereco } from '../fn/endereco/get-list-endereco';
 import { GetListEndereco$Params } from '../fn/endereco/get-list-endereco';
 import { syncEndereco } from '../fn/endereco/sync-endereco';
 import { SyncEndereco$Params } from '../fn/endereco/sync-endereco';
 import { SyncPayloadDaoEndereco } from '../models/sync-payload-dao-endereco';
-import { Endereco } from '../models/endereco';
-import { GetByInternalIdInputDto } from '../models/get-by-internal-id-input-dto';
-import { RequestBuilder } from '../request-builder';
-import { filter } from 'rxjs/operators';
-import { HttpResponse } from '@angular/common/http';
 
 @Injectable()
 export class EnderecoService extends BaseService {
@@ -28,8 +28,6 @@ export class EnderecoService extends BaseService {
 
   /** Path part for operation `syncEndereco()` */
   static readonly SyncEnderecoPath = '/Endereco/Sync';
-  static readonly GetByInternalIdEnderecoPath = '/Endereco/GetByInternalId';
-  static readonly DeleteEnderecoPath = '/Endereco/Delete';
 
   /**
    * Syncronize data with node api
@@ -57,12 +55,28 @@ export class EnderecoService extends BaseService {
     );
   }
 
-  getByInternalId(params: { body: GetByInternalIdInputDto }, context?: HttpContext): Observable<Endereco> {
-    const rb = new RequestBuilder(this.rootUrl, EnderecoService.GetByInternalIdEnderecoPath, 'post');
-    if (params) rb.body(params.body, 'application/json');
-    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
-      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-      map((r: HttpResponse<any>) => (r as StrictHttpResponse<Endereco>).body)
+  /** Path part for operation `getByInternalIdEndereco()` */
+  static readonly GetByInternalIdEnderecoPath = '/Endereco/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdEndereco()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdEndereco$Response(params: GetByInternalIdEndereco$Params, context?: HttpContext): Observable<StrictHttpResponse<Endereco>> {
+    return getByInternalIdEndereco(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdEndereco$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdEndereco$Params, context?: HttpContext): Observable<Endereco> {
+    return this.getByInternalIdEndereco$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Endereco>): Endereco => r.body)
     );
   }
 
@@ -95,12 +109,28 @@ export class EnderecoService extends BaseService {
     );
   }
 
-  delete(params: { body: Endereco }, context?: HttpContext): Observable<Endereco> {
-    const rb = new RequestBuilder(this.rootUrl, EnderecoService.DeleteEnderecoPath, 'post');
-    if (params) rb.body(params.body, 'application/json');
-    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
-      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-      map((r: HttpResponse<any>) => (r as StrictHttpResponse<Endereco>).body)
+  /** Path part for operation `deleteEndereco()` */
+  static readonly DeleteEnderecoPath = '/Endereco/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteEndereco()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteEndereco$Response(params: DeleteEndereco$Params, context?: HttpContext): Observable<StrictHttpResponse<Endereco>> {
+    return deleteEndereco(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteEndereco$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteEndereco$Params, context?: HttpContext): Observable<Endereco> {
+    return this.deleteEndereco$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Endereco>): Endereco => r.body)
     );
   }
 

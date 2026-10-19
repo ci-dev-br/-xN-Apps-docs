@@ -1,11 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
-import { Pais } from './pais';
+import { Pais } from '../models/pais';
 export interface ObterListaPais {
+  filter?: Pais | null;
+  orderBy?: {
+} | null;
+  search?: string | null;
   skip?: number | null;
   take?: number | null;
-  where?: Partial<Pais> | null;
-  filter?: Partial<Pais> | null;
-  search?: string | null;
-  orderBy?: Record<string, 'ASC' | 'DESC'> | null;
+  where?: Pais | null;
 }
