@@ -97,8 +97,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   atualizarConversasSilencioso() {
     this.messagerService.listarConversas().subscribe({
       next: (res) => {
-        this.conversas = res || [];
-        this.aplicarFiltroConversas();
+        const novasConversas = res || [];
+        const mudou = novasConversas.length !== this.conversas.length ||
+          novasConversas.some((c, i) => c.lastMessageAt !== this.conversas[i]?.lastMessageAt || c.unreadCount !== this.conversas[i]?.unreadCount);
+        if (mudou) {
+          this.conversas = novasConversas;
+          this.aplicarFiltroConversas();
+        }
       }
     });
   }
@@ -146,12 +151,20 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   carregarMensagensSilencioso(conversationId: string) {
+    if (this.enviando) return;
     this.messagerService.listarMensagens(conversationId).subscribe({
       next: (res) => {
+        const novasMensagens = res || [];
         const countAnterior = this.mensagens.length;
-        this.mensagens = res || [];
-        if (this.mensagens.length > countAnterior) {
-          this.scrollToBottom();
+        const ultimaAnterior = countAnterior > 0 ? this.mensagens[countAnterior - 1]?.id : null;
+        const ultimaNova = novasMensagens.length > 0 ? novasMensagens[novasMensagens.length - 1]?.id : null;
+
+        // Só atualiza o array de mensagens se o número de mensagens ou o último item mudou
+        if (novasMensagens.length !== countAnterior || ultimaNova !== ultimaAnterior) {
+          this.mensagens = novasMensagens;
+          if (novasMensagens.length > countAnterior) {
+            this.scrollToBottom();
+          }
         }
       }
     });
@@ -224,8 +237,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   // --- ENVIO ---
   onEnterPressionado(event: Event) {
     const keyboardEvent = event as KeyboardEvent;
-    if (!keyboardEvent.shiftKey) {
-      event.preventDefault();
+
+    // No celular, não envia ao teclar Enter (permite quebras de linha e previne envio acidental pelo teclado virtual)
+    if (this.isSmallScreen) {
+      return;
+    }
+
+    // No desktop, envia somente se a tecla for explicitamente Enter sem Shift e fora de composição IME
+    if (keyboardEvent.key === 'Enter' && !keyboardEvent.shiftKey && !keyboardEvent.isComposing) {
+      keyboardEvent.preventDefault();
       this.enviarMensagem();
     }
   }

@@ -83,13 +83,21 @@ export class EncryptedMessagerService extends BaseService {
     return undefined;
   }
 
+  private conversationKeyCache = new Map<string, string>();
+  private decryptedTextCache = new Map<string, string>();
+
   /**
    * Deriva a chave simétrica de cifragem (AES-256) no cliente exclusiva para a conversa.
    * O servidor / banco de dados nunca armazena o texto plano nem esta chave.
    */
   public deriveConversationKey(conversationId: string): string {
+    if (this.conversationKeyCache.has(conversationId)) {
+      return this.conversationKeyCache.get(conversationId)!;
+    }
     const clientSecret = 'CI_CLIENT_E2E_ACCESS_KEY_2026';
-    return CryptoJS.SHA256(`ci_chat_${conversationId}_${clientSecret}`).toString();
+    const key = CryptoJS.SHA256(`ci_chat_${conversationId}_${clientSecret}`).toString();
+    this.conversationKeyCache.set(conversationId, key);
+    return key;
   }
 
   /**
@@ -102,7 +110,7 @@ export class EncryptedMessagerService extends BaseService {
   }
 
   /**
-   * Descriptografa a mensagem recebida no cliente com suporte a candidatos de chaves (compatibilidade)
+   * Descriptografa a mensagem recebida no cliente com suporte a candidatos de chaves e cache O(1)
    */
   public decryptText(ciphertext?: string, conversationId?: string, senderId?: string): string {
     if (!ciphertext || !conversationId) return '';
@@ -114,16 +122,29 @@ export class EncryptedMessagerService extends BaseService {
       return trimmed;
     }
 
+    // Cache hit: se esta cifra já foi descriptografada antes, retorna instantaneamente sem gastar CPU
+    const cacheKey = `${conversationId}:${trimmed}`;
+    if (this.decryptedTextCache.has(cacheKey)) {
+      return this.decryptedTextCache.get(cacheKey)!;
+    }
+
+    // 1. Tenta prioritariamente a chave primária da conversa (99.9% dos casos)
+    const primaryKey = this.deriveConversationKey(conversationId);
+    try {
+      const bytes = CryptoJS.AES.decrypt(trimmed, primaryKey);
+      const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+      if (decrypted && decrypted.length > 0) {
+        this.decryptedTextCache.set(cacheKey, decrypted);
+        return decrypted;
+      }
+    } catch {}
+
+    // 2. Chaves candidatas para compatibilidade com versões anteriores
     const currentUserId = this.getCurrentUserId();
     const candidateKeys: string[] = [
-      // 1. Chave simétrica padrão de ponta a ponta derivada da aplicação cliente e da conversa
-      this.deriveConversationKey(conversationId),
       CryptoJS.SHA256(`ci_msg_${conversationId}_CI_CLIENT_E2E_ACCESS_KEY_2026`).toString(),
-      // 2. Chave baseada no remetente (compatibilidade com mensagens anteriores)
       ...(senderId ? [CryptoJS.SHA256(`ci_msg_${conversationId}_${senderId}`).toString()] : []),
-      // 3. Chave baseada no usuário logado
       ...(currentUserId ? [CryptoJS.SHA256(`ci_msg_${conversationId}_${currentUserId}`).toString()] : []),
-      // 4. Chaves legadas com tokens padrão
       CryptoJS.SHA256(`ci_msg_${conversationId}_CI_SECRET_CLIENT_KEY_DEFAULT`).toString(),
       CryptoJS.SHA256(`ci_msg_${conversationId}_DEFAULT_SALT_CI_APPS_2026`).toString(),
     ];
@@ -133,6 +154,7 @@ export class EncryptedMessagerService extends BaseService {
         const bytes = CryptoJS.AES.decrypt(trimmed, key);
         const decrypted = bytes.toString(CryptoJS.enc.Utf8);
         if (decrypted && decrypted.length > 0) {
+          this.decryptedTextCache.set(cacheKey, decrypted);
           return decrypted;
         }
       } catch {
@@ -140,6 +162,7 @@ export class EncryptedMessagerService extends BaseService {
       }
     }
 
+    this.decryptedTextCache.set(cacheKey, '[Mensagem protegida]');
     return '[Mensagem protegida]';
   }
 
