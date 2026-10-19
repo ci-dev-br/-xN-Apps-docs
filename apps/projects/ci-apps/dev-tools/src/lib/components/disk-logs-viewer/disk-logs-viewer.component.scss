@@ -1,0 +1,323 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.disk-logs-container {
+    display: flex;
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+    gap: 16px;
+    overflow: hidden;
+}
+
+/* Painel Esquerdo */
+.files-sidebar {
+    width: 320px;
+    flex: none;
+    background: rgba(20, 25, 34, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.sidebar-top {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(15, 20, 28, 0.7);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    .search-box {
+        display: flex;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        padding: 4px 10px;
+
+        mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            color: #64748b;
+            margin-right: 6px;
+        }
+
+        input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #f8fafc;
+            font-size: 12.5px;
+        }
+    }
+}
+
+.type-filter-chips {
+    display: flex;
+    gap: 6px;
+
+    .f-chip {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 4px;
+        color: #94a3b8;
+        font-size: 11px;
+        padding: 4px 6px;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.15s;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        &.active {
+            background: #0ea5e9;
+            color: #fff;
+            border-color: #0ea5e9;
+            font-weight: 600;
+
+            &.chip-trace {
+                background: #ef4444;
+                border-color: #ef4444;
+            }
+
+            &.chip-log {
+                background: #0ea5e9;
+                border-color: #0ea5e9;
+            }
+
+            &.chip-info {
+                background: #10b981;
+                border-color: #10b981;
+            }
+        }
+    }
+}
+
+.files-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.empty-files {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+    color: #64748b;
+    gap: 8px;
+    font-size: 12px;
+
+    mat-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+    }
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    &.selected {
+        background: rgba(14, 165, 233, 0.15);
+        border-left: 3px solid #0ea5e9;
+    }
+
+    .file-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+
+        &.icon-trace {
+            color: #f87171;
+        }
+
+        &.icon-log {
+            color: #38bdf8;
+        }
+
+        &.icon-info {
+            color: #34d399;
+        }
+    }
+
+    .file-info {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 0;
+
+        .file-name {
+            font-size: 12.5px;
+            color: #f1f5f9;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: monospace;
+        }
+
+        .file-meta {
+            display: flex;
+            gap: 6px;
+            font-size: 11px;
+            color: #64748b;
+        }
+    }
+}
+
+/* Painel Direito */
+.file-content-pane {
+    flex: 1;
+    min-width: 0;
+    background: rgba(20, 25, 34, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.content-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: rgba(15, 20, 28, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    .selected-file-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .header-icon {
+            font-size: 28px;
+            width: 28px;
+            height: 28px;
+
+            &.icon-trace {
+                color: #ef4444;
+            }
+
+            &.icon-log {
+                color: #0ea5e9;
+            }
+        }
+
+        h4 {
+            margin: 0;
+            font-size: 14px;
+            color: #f8fafc;
+            font-family: monospace;
+        }
+
+        span {
+            font-size: 11.5px;
+            color: #64748b;
+        }
+    }
+
+    .content-actions {
+        display: flex;
+        gap: 8px;
+    }
+}
+
+.content-body {
+    flex: 1;
+    overflow: auto;
+    padding: 16px;
+    background: #090d14;
+}
+
+.log-text-box {
+    margin: 0;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #e2e8f0;
+    white-space: pre;
+
+    code {
+        color: inherit;
+        background: transparent;
+    }
+}
+
+.no-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    color: #64748b;
+    text-align: center;
+    padding: 40px;
+
+    mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        color: #475569;
+        margin-bottom: 12px;
+    }
+
+    h3 {
+        margin: 0 0 6px 0;
+        color: #94a3b8;
+    }
+
+    p {
+        margin: 0;
+        font-size: 13px;
+        max-width: 360px;
+    }
+}
+
+.loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 40px;
+    color: #94a3b8;
+    font-size: 13px;
+
+    .spin {
+        animation: spin 1s linear infinite;
+    }
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}

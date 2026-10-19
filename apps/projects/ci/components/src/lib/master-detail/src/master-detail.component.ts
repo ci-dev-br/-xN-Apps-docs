@@ -416,7 +416,12 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
                 };
             }
         }
-        const result: number | any = await this.window?.open(
+        const windowService = this.window || this.injector?.get(WindowService, null);
+        if (!windowService) {
+            console.warn('WindowService não encontrado no injetor para abrir edição do schema:', this.schemaName);
+            return;
+        }
+        const result: number | any = await windowService.open(
             EditarDetailComponent,
             {
                 schemaName: this.schemaName,

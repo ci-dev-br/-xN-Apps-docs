@@ -1,0 +1,89 @@
+<div class="env-container">
+    <!-- Card Principal: Status da Versão e Build -->
+    <div class="env-hero-card">
+        <div class="hero-header">
+            <div class="badge-status healthy">
+                <span class="pulse-dot"></span>
+                <span>SISTEMA OPERACIONAL</span>
+            </div>
+            <span class="env-mode-tag">Modo: {{ healthInfo.environment | uppercase }}</span>
+        </div>
+
+        <div class="hero-grid">
+            <div class="hero-item">
+                <span class="hero-label">Branch Ativa</span>
+                <span class="hero-value branch-val">
+                    <mat-icon>alt_route</mat-icon>
+                    {{ healthInfo.branch }}
+                </span>
+            </div>
+
+            <div class="hero-item">
+                <span class="hero-label">Commit SHA</span>
+                <span class="hero-value sha-val" (click)="copyCommitSha()" matTooltip="Clique para copiar SHA">
+                    <mat-icon>commit</mat-icon>
+                    {{ healthInfo.commit.substring(0, 8) }}
+                </span>
+            </div>
+
+            <div class="hero-item">
+                <span class="hero-label">Autor do Commit</span>
+                <span class="hero-value author-val">
+                    <mat-icon>person</mat-icon>
+                    {{ healthInfo.author }}
+                </span>
+            </div>
+
+            <div class="hero-item">
+                <span class="hero-label">Data de Compilação</span>
+                <span class="hero-value time-val">
+                    <mat-icon>schedule</mat-icon>
+                    {{ healthInfo.builtAt | date: 'dd/MM/yyyy HH:mm:ss' }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção de Capacidades do Sistema -->
+    <div class="section-card">
+        <div class="section-title">
+            <mat-icon>verified</mat-icon>
+            <h4>Capacidades & Serviços do Ambiente de Desenvolvimento</h4>
+        </div>
+
+        <div class="capabilities-grid">
+            @for (cap of systemCapabilities; track cap.name) {
+                <div class="cap-card">
+                    <div class="cap-header">
+                        <mat-icon class="cap-icon">{{ cap.icon }}</mat-icon>
+                        <span class="cap-status">{{ cap.status }}</span>
+                    </div>
+                    <span class="cap-name">{{ cap.name }}</span>
+                    <span class="cap-desc">{{ cap.desc }}</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Módulos de Ferramentas Registrados -->
+    <div class="section-card">
+        <div class="section-title">
+            <mat-icon>widgets</mat-icon>
+            <h4>Módulos DevTools Disponíveis</h4>
+        </div>
+
+        <div class="modules-grid">
+            @for (mod of modules; track mod.id) {
+                <div class="mod-card">
+                    <div class="mod-top">
+                        <mat-icon class="mod-icon">{{ mod.icon }}</mat-icon>
+                        <span class="mod-version">v{{ mod.version }}</span>
+                    </div>
+                    <span class="mod-name">{{ mod.name }}</span>
+                    <span class="mod-category">{{ mod.category }}</span>
+                    <p class="mod-desc">{{ mod.description }}</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

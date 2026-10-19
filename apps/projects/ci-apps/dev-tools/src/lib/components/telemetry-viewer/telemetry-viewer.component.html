@@ -1,0 +1,157 @@
+<div class="telemetry-container">
+    <!-- Header e Controles -->
+    <div class="telemetry-header-bar">
+        <div class="title-group">
+            <mat-icon class="icon-pulse">speed</mat-icon>
+            <div>
+                <h3>Telemetria do Servidor e Consumo de Recursos</h3>
+                <p>Métricas de processo Node.js em tempo real: Heap Memory, RSS e tempo de CPU.</p>
+            </div>
+        </div>
+
+        <div class="actions-group">
+            <button
+                mat-stroked-button
+                [class.btn-active]="isPolling"
+                (click)="togglePolling()"
+            >
+                <mat-icon>{{ isPolling ? 'pause' : 'play_arrow' }}</mat-icon>
+                <span>{{ isPolling ? 'Pausar Monitoramento' : 'Retomar Monitoramento' }}</span>
+            </button>
+
+            <button mat-flat-button color="primary" (click)="fetchData()">
+                <mat-icon>refresh</mat-icon>
+                <span>Atualizar Agora</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Alerta de Sobrecarga -->
+    @if (summary.isStressed) {
+        <div class="stress-alert-banner">
+            <mat-icon>warning</mat-icon>
+            <div class="alert-content">
+                <strong>Atenção: Sobrecarga Operacional Detectada</strong>
+                <span>O consumo de recursos do servidor excedeu o limite recomendado (>= 85%).</span>
+            </div>
+        </div>
+    }
+
+    <!-- Cards de Métricas Principais -->
+    <div class="metrics-grid">
+        <!-- Card 1: Memória Heap -->
+        <div class="metric-card">
+            <div class="card-top">
+                <span class="card-label">Heap Memory Alocada</span>
+                <span class="badge-percent" [class.badge-warn]="summary.currentHeapPercent >= 80">
+                    {{ summary.currentHeapPercent }}%
+                </span>
+            </div>
+            <div class="card-main-stat">
+                <span class="big-number">{{ summary.heapUsedFormatted }}</span>
+                <span class="total-denom">de {{ summary.heapTotalFormatted }}</span>
+            </div>
+            <mat-progress-bar
+                mode="determinate"
+                [value]="summary.currentHeapPercent"
+                [color]="getProgressBarColor(summary.currentHeapPercent)"
+            ></mat-progress-bar>
+            <div class="card-footer-info">
+                <span>RSS Total: {{ summary.rssFormatted }}</span>
+                <span>Heap livre: {{ (summary.latest?.heapTotalMb || 0) - (summary.latest?.heapUsedMb || 0) }} MB</span>
+            </div>
+        </div>
+
+        <!-- Card 2: CPU Load -->
+        <div class="metric-card">
+            <div class="card-top">
+                <span class="card-label">Carga Estimada de CPU</span>
+                <span class="badge-percent" [class.badge-warn]="summary.currentCpuPercent >= 80">
+                    {{ summary.currentCpuPercent }}%
+                </span>
+            </div>
+            <div class="card-main-stat">
+                <span class="big-number">{{ summary.currentCpuPercent }}%</span>
+                <span class="total-denom">User / System CPU</span>
+            </div>
+            <mat-progress-bar
+                mode="determinate"
+                [value]="summary.currentCpuPercent"
+                [color]="getProgressBarColor(summary.currentCpuPercent)"
+            ></mat-progress-bar>
+            <div class="card-footer-info">
+                <span>Tempo User: {{ summary.latest?.cpuUserMs || 0 }} ms</span>
+                <span>Tempo System: {{ summary.latest?.cpuSystemMs || 0 }} ms</span>
+            </div>
+        </div>
+
+        <!-- Card 3: Resident Set Size (RSS) -->
+        <div class="metric-card">
+            <div class="card-top">
+                <span class="card-label">Memória Física RSS</span>
+                <mat-icon class="card-icon">memory</mat-icon>
+            </div>
+            <div class="card-main-stat">
+                <span class="big-number">{{ summary.rssFormatted }}</span>
+                <span class="total-denom">Espaço residente</span>
+            </div>
+            <div class="stat-pills">
+                <span class="stat-pill">External: {{ summary.latest?.externalMb || 0 }} MB</span>
+                <span class="stat-pill">GC Saudável</span>
+            </div>
+            <div class="card-footer-info">
+                <span>Última leitura: {{ summary.latest?.timestamp | date: 'HH:mm:ss' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Leituras Recentes -->
+    <div class="history-table-card">
+        <div class="table-header-title">
+            <mat-icon>timeline</mat-icon>
+            <h4>Histórico de Amostras de Telemetria (Últimas Leituras)</h4>
+        </div>
+
+        <div class="history-table-wrapper">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Momento</th>
+                        <th>CPU User (ms)</th>
+                        <th>CPU System (ms)</th>
+                        <th>Heap Usado</th>
+                        <th>Heap Total</th>
+                        <th>Uso do Heap</th>
+                        <th>RSS Total</th>
+                        <th>External</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (item of summary.history.slice().reverse(); track item.timestamp) {
+                        <tr>
+                            <td>{{ item.timestamp | date: 'HH:mm:ss' }}</td>
+                            <td>{{ item.cpuUserMs }} ms</td>
+                            <td>{{ item.cpuSystemMs }} ms</td>
+                            <td class="bold-cell">{{ item.heapUsedMb }} MB</td>
+                            <td>{{ item.heapTotalMb }} MB</td>
+                            <td>
+                                <div class="table-bar-cell">
+                                    <div class="mini-bar">
+                                        <div
+                                            class="mini-bar-fill"
+                                            [style.width.%]="item.heapPercentage"
+                                            [class.bar-warn]="item.heapPercentage >= 80"
+                                        ></div>
+                                    </div>
+                                    <span>{{ item.heapPercentage }}%</span>
+                                </div>
+                            </td>
+                            <td>{{ item.rssMb }} MB</td>
+                            <td>{{ item.externalMb }} MB</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

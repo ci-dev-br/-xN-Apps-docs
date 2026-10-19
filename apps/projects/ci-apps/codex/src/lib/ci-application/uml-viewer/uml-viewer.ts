@@ -73,6 +73,32 @@ export interface UmlClassInfo {
     jsdoc?: UmlJsDocInfo;
 }
 
+export const BLUEPRINT_GLASS_THEME_VARIABLES = {
+    darkMode: true,
+    background: '#0a192f',
+    primaryColor: 'rgba(13, 37, 68, 0.85)',
+    primaryBorderColor: '#00d2ff',
+    primaryTextColor: '#e0f2fe',
+    secondaryColor: 'rgba(15, 23, 42, 0.85)',
+    secondaryBorderColor: '#38bdf8',
+    secondaryTextColor: '#bae6fd',
+    tertiaryColor: 'rgba(8, 28, 53, 0.9)',
+    tertiaryBorderColor: '#0284c7',
+    tertiaryTextColor: '#e0f2fe',
+    noteBkgColor: 'rgba(10, 42, 77, 0.95)',
+    noteBorderColor: '#00d2ff',
+    noteTextColor: '#e0f2fe',
+    lineColor: '#38bdf8',
+    textColor: '#e0f2fe',
+    mainBkg: 'rgba(13, 37, 68, 0.85)',
+    edgeLabelBackground: 'rgba(10, 25, 47, 0.95)',
+    clusterBkg: 'rgba(10, 25, 47, 0.65)',
+    clusterBorder: '#0284c7',
+    classText: '#e0f2fe',
+    fontFamily: '"JetBrains Mono", Consolas, "Liberation Mono", Menlo, Courier, monospace',
+    fontSize: '13px'
+};
+
 @Component({
     selector: 'uml-viewer',
     standalone: true,
@@ -112,6 +138,15 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
 
     // Modo diagrama geral (com dependências locais e tsconfig)
     public showGeneralDiagram = true;
+
+    // Estado de exportação PDF com decomposição
+    public isExportingPdf = false;
+
+    // Estruturas cacheadas para geração de sub-diagramas desmembrados e notas
+    public lastParsedClassBlocks = new Map<string, string>();
+    public lastParsedRelationships: { source: string, target: string, raw: string }[] = [];
+    public lastParsedNotes = new Map<string, string>();
+    public lastParsedModuleNotes: string[] = [];
 
     // Estado do construtor e edição visual de código
     public isNewClassModalOpen = false;
@@ -183,7 +218,8 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
     ) {
         mermaid.initialize({
             startOnLoad: false,
-            theme: 'default',
+            theme: 'base',
+            themeVariables: BLUEPRINT_GLASS_THEME_VARIABLES,
             securityLevel: 'loose',
             useMaxWidth: false
         } as MermaidConfig & { useMaxWidth?: boolean });
@@ -845,13 +881,23 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
     }
 
     // --- Enquadramento e Exportação de Diagramas (SVG, PNG e PDF) ---
-    public getFramedSvgElement(): { svgElement: SVGElement, width: number, height: number } | null {
-        const svg = this.mermaidContainerRef?.nativeElement?.querySelector('svg');
+    public getFramedSvgElement(targetSvg?: SVGElement): { svgElement: SVGElement, width: number, height: number } | null {
+        const svg = targetSvg || this.mermaidContainerRef?.nativeElement?.querySelector('svg');
         if (!svg) return null;
 
-        const liveZoomGroup = svg.querySelector('.mermaid-vector-root') as SVGGraphicsElement;
         let bbox = { x: 0, y: 0, width: this.diagramNaturalWidth || 800, height: this.diagramNaturalHeight || 600 };
 
+        // 1. Tenta obter bbox do viewBox do SVG (válido para SVGs em tela e fora da tela)
+        const vb = svg.getAttribute('viewBox');
+        if (vb) {
+            const parts = vb.split(/\s+/).map(Number);
+            if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
+                bbox = { x: parts[0], y: parts[1], width: parts[2], height: parts[3] };
+            }
+        }
+
+        // 2. Se estiver anexado ao DOM, obtém dimensões vetoriais computadas
+        const liveZoomGroup = svg.querySelector('.mermaid-vector-root') as SVGGraphicsElement;
         if (liveZoomGroup && typeof liveZoomGroup.getBBox === 'function') {
             try {
                 const b = liveZoomGroup.getBBox();
@@ -859,9 +905,16 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                     bbox = { x: b.x, y: b.y, width: b.width, height: b.height };
                 }
             } catch { }
+        } else if (typeof (svg as any).getBBox === 'function') {
+            try {
+                const b = (svg as any).getBBox();
+                if (b && b.width > 0 && b.height > 0) {
+                    bbox = { x: b.x, y: b.y, width: b.width, height: b.height };
+                }
+            } catch { }
         }
 
-        const padding = 36;
+        const padding = 40;
         const x = Math.floor(bbox.x - padding);
         const y = Math.floor(bbox.y - padding);
         const width = Math.ceil(bbox.width + padding * 2);
@@ -876,103 +929,115 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
         clone.setAttribute('viewBox', `${x} ${y} ${width} ${height}`);
         clone.setAttribute('width', `${width}`);
         clone.setAttribute('height', `${height}`);
-        clone.style.width = `${width}px`;
-        clone.style.height = `${height}px`;
+        clone.style.width = '100%';
+        clone.style.height = 'auto';
         clone.style.overflow = 'visible';
 
         clone.querySelectorAll('.uml-node-selected, .uml-node-active').forEach(el => {
             el.classList.remove('uml-node-selected', 'uml-node-active');
         });
 
-        // Adiciona fundo uniforme escuro para compatibilidade em qualquer visualizador
+        // Injeta padrão Blueprint Glass vetorial no <defs>
+        let defs = clone.querySelector('defs');
+        if (!defs) {
+            defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            clone.insertBefore(defs, clone.firstChild);
+        }
+
+        const patternId = `blueprint-grid-${Math.random().toString(36).slice(2, 8)}`;
+        const pattern = document.createElementNS('http://www.w3.org/2000/svg', 'pattern');
+        pattern.setAttribute('id', patternId);
+        pattern.setAttribute('width', '60');
+        pattern.setAttribute('height', '60');
+        pattern.setAttribute('patternUnits', 'userSpaceOnUse');
+        pattern.innerHTML = `
+            <rect width="60" height="60" fill="#0a192f" />
+            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(0, 210, 255, 0.12)" stroke-width="1" />
+            <path d="M 15 0 L 15 60 M 30 0 L 30 60 M 45 0 L 45 60 M 0 15 L 60 15 M 0 30 L 60 30 M 0 45 L 60 45" fill="none" stroke="rgba(0, 210, 255, 0.04)" stroke-width="0.5" />
+        `;
+        defs.appendChild(pattern);
+
+        // Fundo com a grade blueprint glass
         const bgRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         bgRect.setAttribute('x', `${x}`);
         bgRect.setAttribute('y', `${y}`);
         bgRect.setAttribute('width', `${width}`);
         bgRect.setAttribute('height', `${height}`);
-        bgRect.setAttribute('fill', '#1e1e1e');
-        clone.insertBefore(bgRect, clone.firstChild);
+        bgRect.setAttribute('fill', `url(#${patternId})`);
+        bgRect.setAttribute('stroke', 'rgba(0, 210, 255, 0.35)');
+        bgRect.setAttribute('stroke-width', '1.5');
+        clone.insertBefore(bgRect, defs.nextSibling);
 
         return { svgElement: clone, width, height };
     }
 
-    public exportSvg(): void {
-        const framed = this.getFramedSvgElement();
-        if (!framed) return;
-
-        const svgData = new XMLSerializer().serializeToString(framed.svgElement);
-        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-        const svgUrl = URL.createObjectURL(svgBlob);
-
-        const baseName = (this.filePath ? this.filePath.split('/').pop()?.replace(/\.ts$/, '') : 'diagrama');
-        const fileName = `${baseName}.uml.svg`;
-
-        const downloadLink = document.createElement('a');
-        downloadLink.href = svgUrl;
-        downloadLink.download = fileName;
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-        URL.revokeObjectURL(svgUrl);
+    public getFramedSvgElementFromString(svgStr: string): { svgElement: SVGElement, width: number, height: number } | null {
+        try {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(svgStr, 'image/svg+xml');
+            const svgEl = doc.querySelector('svg');
+            if (!svgEl) return null;
+            return this.getFramedSvgElement(svgEl);
+        } catch {
+            return null;
+        }
     }
 
-    public exportPng(): void {
-        const framed = this.getFramedSvgElement();
-        if (!framed) return;
+    public sanitizeMermaidNote(text: string, maxLen: number = 140): string {
+        if (!text) return '';
+        let clean = text
+            .replace(/"/g, "'")
+            .replace(/\r?\n/g, '<br>')
+            .replace(/<br>\s*<br>/g, '<br>')
+            .trim();
+        if (clean.length > maxLen) {
+            clean = clean.slice(0, maxLen - 3) + '...';
+        }
+        return clean;
+    }
 
-        const svgData = new XMLSerializer().serializeToString(framed.svgElement);
-        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-        const svgUrl = URL.createObjectURL(svgBlob);
+    public generateSubDiagramSyntax(clusterClassNames: Set<string>): string {
+        let classBlocks = '';
+        let relationships = '';
+        const referencedStubs = new Set<string>();
 
-        const img = new Image();
-        img.onload = () => {
-            const scaleFactor = 2; // Alta resolução (2x)
-            const canvas = document.createElement('canvas');
-            canvas.width = framed.width * scaleFactor;
-            canvas.height = framed.height * scaleFactor;
-
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-                ctx.fillStyle = '#1e1e1e';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                canvas.toBlob((blob) => {
-                    if (!blob) return;
-                    const pngUrl = URL.createObjectURL(blob);
-                    const baseName = (this.filePath ? this.filePath.split('/').pop()?.replace(/\.ts$/, '') : 'diagrama');
-                    const fileName = `${baseName}.uml.png`;
-
-                    const link = document.createElement('a');
-                    link.href = pngUrl;
-                    link.download = fileName;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(pngUrl);
-                    URL.revokeObjectURL(svgUrl);
-                }, 'image/png');
-            } else {
-                URL.revokeObjectURL(svgUrl);
+        for (const className of clusterClassNames) {
+            const block = this.lastParsedClassBlocks.get(className);
+            if (block) {
+                classBlocks += block;
             }
-        };
-        img.onerror = () => {
-            URL.revokeObjectURL(svgUrl);
-            console.error('Falha ao renderizar SVG para imagem PNG.');
-        };
-        img.src = svgUrl;
+            const note = this.lastParsedNotes.get(className);
+            if (note) {
+                relationships += `  note for ${className} "Ideia/Conceito:<br>${this.sanitizeMermaidNote(note, 120)}"\n`;
+            }
+        }
+
+        for (const rel of this.lastParsedRelationships) {
+            const srcIn = clusterClassNames.has(rel.source);
+            const tgtIn = clusterClassNames.has(rel.target);
+
+            if (srcIn && tgtIn) {
+                relationships += `  ${rel.raw}\n`;
+            } else if (srcIn && !tgtIn && this.classesByName.has(rel.target)) {
+                referencedStubs.add(rel.target);
+                relationships += `  ${rel.raw}\n`;
+            } else if (tgtIn && !srcIn && this.classesByName.has(rel.source)) {
+                referencedStubs.add(rel.source);
+                relationships += `  ${rel.raw}\n`;
+            }
+        }
+
+        for (const stub of referencedStubs) {
+            const stubInfo = this.classesByName.get(stub);
+            const kindStereotype = stubInfo?.kind === 'interface' ? '    <<Interface Externa>>\n' : '    <<Referência Externa>>\n';
+            classBlocks += `  class ${stub} {\n${kindStereotype}  }\n`;
+        }
+
+        const mermaidConfig = `%%{init: {"useMaxWidth": false, "theme": "base", "themeVariables": ${JSON.stringify(BLUEPRINT_GLASS_THEME_VARIABLES)}}}%%`;
+        return `${mermaidConfig}\nclassDiagram\n${classBlocks}\n${relationships}`;
     }
 
-    public exportPdf(): void {
-        const framed = this.getFramedSvgElement();
-        const svgHtml = framed ? new XMLSerializer().serializeToString(framed.svgElement) : '';
-        const code = this.javascriptCode || '';
-        const baseName = (this.filePath ? this.filePath.split('/').pop() : 'arquivo.ts');
-        const fullPath = this.filePath || 'Arquivo Local';
-        const dateStr = new Date().toLocaleString('pt-BR');
-
-        // Compilação de documentação JSDoc e tabela de símbolos
-        const classesList = Array.from(this.classesByName.values());
+    public generateEntitiesDocumentationHtml(classesList: UmlClassInfo[]): string {
         let symbolsDocHtml = '';
 
         for (const c of classesList) {
@@ -980,7 +1045,7 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
             const desc = jsdoc?.description ? `<p class="entity-desc">${this.escapeHtml(jsdoc.description)}</p>` : '';
             let tagsHtml = '';
             if (jsdoc?.tags && jsdoc.tags.length > 0) {
-                tagsHtml = `<div class="entity-tags">` + jsdoc.tags.map(t => 
+                tagsHtml = `<div class="entity-tags">` + jsdoc.tags.map(t =>
                     `<span class="tag-badge ${t.tag === 'deprecated' ? 'tag-deprecated' : ''}">@${this.escapeHtml(t.tag)} ${this.escapeHtml(t.name || '')} ${this.escapeHtml(t.text || '')}</span>`
                 ).join(' ') + `</div>`;
             }
@@ -1030,12 +1095,159 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
             `;
         }
 
-        const codeLines = code.split('\n');
-        const codeLinesHtml = codeLines.map((line, idx) => 
-            `<tr><td class="line-num">${idx + 1}</td><td class="line-code">${this.escapeHtml(line) || '&nbsp;'}</td></tr>`
-        ).join('');
+        return symbolsDocHtml;
+    }
 
-        const htmlContent = `
+    public exportSvg(): void {
+        const framed = this.getFramedSvgElement();
+        if (!framed) return;
+
+        const svgData = new XMLSerializer().serializeToString(framed.svgElement);
+        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const svgUrl = URL.createObjectURL(svgBlob);
+
+        const baseName = (this.filePath ? this.filePath.split('/').pop()?.replace(/\.ts$/, '') : 'diagrama');
+        const fileName = `${baseName}.uml.svg`;
+
+        const downloadLink = document.createElement('a');
+        downloadLink.href = svgUrl;
+        downloadLink.download = fileName;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(svgUrl);
+    }
+
+    public exportPng(): void {
+        const framed = this.getFramedSvgElement();
+        if (!framed) return;
+
+        const svgData = new XMLSerializer().serializeToString(framed.svgElement);
+        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const svgUrl = URL.createObjectURL(svgBlob);
+
+        const img = new Image();
+        img.onload = () => {
+            const scaleFactor = 2; // Alta resolução (2x)
+            const canvas = document.createElement('canvas');
+            canvas.width = framed.width * scaleFactor;
+            canvas.height = framed.height * scaleFactor;
+
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                ctx.fillStyle = '#0a192f';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                canvas.toBlob((blob) => {
+                    if (!blob) return;
+                    const pngUrl = URL.createObjectURL(blob);
+                    const baseName = (this.filePath ? this.filePath.split('/').pop()?.replace(/\.ts$/, '') : 'diagrama');
+                    const fileName = `${baseName}.uml.png`;
+
+                    const link = document.createElement('a');
+                    link.href = pngUrl;
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(pngUrl);
+                    URL.revokeObjectURL(svgUrl);
+                }, 'image/png');
+            } else {
+                URL.revokeObjectURL(svgUrl);
+            }
+        };
+        img.onerror = () => {
+            URL.revokeObjectURL(svgUrl);
+            console.error('Falha ao renderizar SVG para imagem PNG.');
+        };
+        img.src = svgUrl;
+    }
+
+    public async exportPdf(): Promise<void> {
+        this.isExportingPdf = true;
+        this.cdr.markForCheck();
+
+        try {
+            const framed = this.getFramedSvgElement();
+            const svgHtml = framed ? new XMLSerializer().serializeToString(framed.svgElement) : '';
+            const code = this.javascriptCode || '';
+            const baseName = (this.filePath ? this.filePath.split('/').pop() : 'arquivo.ts');
+            const fullPath = this.filePath || 'Arquivo Local';
+            const dateStr = new Date().toLocaleString('pt-BR');
+
+            const classesList = Array.from(this.classesByName.values());
+            const totalEntities = classesList.length;
+
+            // Desmembramento de diagramas se houver mais de 4 classes
+            let decomposedPagesHtml = '';
+            const shouldDecompose = totalEntities > 4;
+
+            if (shouldDecompose) {
+                const clusterSize = 3;
+                const clusters: UmlClassInfo[][] = [];
+                for (let i = 0; i < classesList.length; i += clusterSize) {
+                    clusters.push(classesList.slice(i, i + clusterSize));
+                }
+
+                for (let idx = 0; idx < clusters.length; idx++) {
+                    const cluster = clusters[idx];
+                    const clusterClassNames = new Set(cluster.map(c => c.name));
+                    const subSyntax = this.generateSubDiagramSyntax(clusterClassNames);
+
+                    try {
+                        const subId = `mermaid_sub_pdf_${idx}_${Date.now()}`;
+                        const { svg: subSvg } = await mermaid.render(subId, subSyntax);
+                        const subFramed = this.getFramedSvgElementFromString(subSvg);
+
+                        if (subFramed) {
+                            const subSvgHtml = new XMLSerializer().serializeToString(subFramed.svgElement);
+                            const clusterNamesStr = cluster.map(c => c.name).join(', ');
+                            const clusterDocsHtml = this.generateEntitiesDocumentationHtml(cluster);
+
+                            decomposedPagesHtml += `
+                            <div class="page-break"></div>
+                            <div class="sub-diagram-header">
+                                <span class="sub-diagram-badge">Sub-Diagrama [${idx + 1} de ${clusters.length}]</span>
+                                <h2 class="sub-diagram-title">Módulo: ${this.escapeHtml(clusterNamesStr)}</h2>
+                                <p class="sub-diagram-desc">Detalhamento vetorial em alta resolução das entidades deste cluster e suas conexões imediatas.</p>
+                            </div>
+                            <div class="diagram-container">
+                                ${subSvgHtml}
+                            </div>
+                            <h3 class="section-subtitle">Especificação Técnica do Cluster</h3>
+                            ${clusterDocsHtml}
+                            `;
+                        }
+                    } catch (subErr) {
+                        console.warn(`Falha ao renderizar subdiagrama ${idx + 1}:`, subErr);
+                    }
+                }
+            }
+
+            // Documentação global quando não desmembrado
+            const globalDocsHtml = shouldDecompose ? '' : this.generateEntitiesDocumentationHtml(classesList);
+
+            // Comentários e ideias de arquitetura extraídos
+            let architectureNotesHtml = '';
+            if (this.lastParsedModuleNotes.length > 0) {
+                architectureNotesHtml = `
+                <div class="architecture-notes-box">
+                    <h3 class="notes-box-title">Diretrizes & Ideias de Arquitetura Extraídas</h3>
+                    <ul class="notes-list">
+                        ${this.lastParsedModuleNotes.map(n => `<li>${this.escapeHtml(n)}</li>`).join('')}
+                    </ul>
+                </div>
+                `;
+            }
+
+            const codeLines = code.split('\n');
+            const codeLinesHtml = codeLines.map((line, idx) =>
+                `<tr><td class="line-num">${idx + 1}</td><td class="line-code">${this.escapeHtml(line) || '&nbsp;'}</td></tr>`
+            ).join('');
+
+            const htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -1049,55 +1261,114 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
         * { box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: #222222;
+            color: #1e293b;
             background: #ffffff;
             margin: 0;
             padding: 16px;
-            font-size: 11pt;
+            font-size: 10.5pt;
             line-height: 1.4;
         }
         .report-header {
-            border-bottom: 2px solid #007acc;
+            border-bottom: 2px solid #00d2ff;
             padding-bottom: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
         .report-header h1 {
             margin: 0 0 6px 0;
-            color: #007acc;
+            color: #0369a1;
             font-size: 18pt;
+            font-weight: 700;
         }
         .report-meta {
             font-size: 9pt;
-            color: #666666;
+            color: #64748b;
             display: flex;
             gap: 16px;
             flex-wrap: wrap;
         }
-        .report-meta strong { color: #333333; }
+        .report-meta strong { color: #0f172a; }
         
         .section-title {
-            color: #1e1e1e;
-            font-size: 14pt;
-            border-bottom: 1px solid #e0e0e0;
+            color: #0f172a;
+            font-size: 13.5pt;
+            border-bottom: 1px solid #cbd5e1;
             padding-bottom: 4px;
-            margin: 24px 0 12px 0;
+            margin: 20px 0 12px 0;
+            break-after: avoid;
+        }
+        .section-subtitle {
+            color: #334155;
+            font-size: 11pt;
+            margin: 16px 0 8px 0;
+            font-weight: 600;
             break-after: avoid;
         }
         
+        /* Contêiner do Diagrama Blueprint Glass */
         .diagram-container {
             width: 100%;
             text-align: center;
-            background: #1e1e1e;
+            background: #0a192f;
+            border: 1px solid rgba(0, 210, 255, 0.4);
             border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 24px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+            padding: 10px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
             page-break-inside: avoid;
         }
         .diagram-container svg {
             max-width: 100%;
             height: auto;
-            max-height: 230mm;
+            max-height: 190mm;
+        }
+        
+        .sub-diagram-header {
+            margin-bottom: 10px;
+            border-bottom: 1px solid #00d2ff;
+            padding-bottom: 6px;
+            break-after: avoid;
+        }
+        .sub-diagram-badge {
+            font-size: 8pt;
+            font-weight: 700;
+            color: #0284c7;
+            background: #e0f2fe;
+            padding: 2px 8px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .sub-diagram-title {
+            font-size: 13pt;
+            margin: 6px 0 2px 0;
+            color: #0f172a;
+            font-weight: 700;
+        }
+        .sub-diagram-desc {
+            font-size: 9pt;
+            color: #64748b;
+            margin: 0;
+        }
+        
+        .architecture-notes-box {
+            background: #f0fdf4;
+            border-left: 4px solid #00d2ff;
+            padding: 10px 14px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            page-break-inside: avoid;
+        }
+        .notes-box-title {
+            margin: 0 0 6px 0;
+            font-size: 10.5pt;
+            color: #0369a1;
+            font-weight: 600;
+        }
+        .notes-list {
+            margin: 0;
+            padding-left: 18px;
+            color: #334155;
+            font-size: 9.5pt;
         }
         
         .page-break {
@@ -1106,113 +1377,114 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
         }
         
         .entity-card {
-            border: 1px solid #dddddd;
+            border: 1px solid #cbd5e1;
             border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 16px;
-            background: #fafafa;
+            padding: 10px;
+            margin-bottom: 14px;
+            background: #f8fafc;
             page-break-inside: avoid;
         }
         .entity-header {
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .entity-kind-badge {
-            font-size: 8pt;
+            font-size: 7.5pt;
             text-transform: uppercase;
             font-weight: bold;
             padding: 2px 6px;
             border-radius: 3px;
-            background: #e1f0fa;
-            color: #007acc;
+            background: #e0f2fe;
+            color: #0284c7;
         }
         .entity-kind-badge.interface {
-            background: #e8f5e9;
-            color: #2e7d32;
+            background: #ecfdf5;
+            color: #059669;
         }
         .entity-title {
             margin: 0;
-            font-size: 12pt;
-            color: #222222;
+            font-size: 11pt;
+            color: #0f172a;
         }
         .imported-badge {
-            font-size: 8pt;
-            color: #888888;
-            border: 1px solid #cccccc;
+            font-size: 7.5pt;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
             padding: 1px 5px;
             border-radius: 3px;
         }
         .entity-desc {
-            margin: 4px 0 8px 0;
-            font-size: 10pt;
-            color: #444444;
+            margin: 4px 0 6px 0;
+            font-size: 9.5pt;
+            color: #334155;
             font-style: italic;
         }
         .entity-tags {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: flex;
-            gap: 6px;
+            gap: 5px;
             flex-wrap: wrap;
         }
         .tag-badge {
-            font-size: 8pt;
-            background: #eee;
-            padding: 2px 6px;
+            font-size: 7.5pt;
+            background: #e2e8f0;
+            padding: 1px 5px;
             border-radius: 3px;
-            color: #555;
+            color: #475569;
         }
         .tag-deprecated {
-            background: #ffebee;
-            color: #c62828;
+            background: #fee2e2;
+            color: #dc2626;
             font-weight: bold;
         }
         
         .members-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 9pt;
-            margin-top: 8px;
+            font-size: 8.5pt;
+            margin-top: 6px;
         }
         .members-table th, .members-table td {
-            border: 1px solid #e0e0e0;
-            padding: 4px 8px;
+            border: 1px solid #cbd5e1;
+            padding: 3px 6px;
             text-align: left;
         }
         .members-table th {
-            background: #eeeeee;
+            background: #f1f5f9;
             font-weight: 600;
+            color: #334155;
         }
-        .vis-public { color: #2e7d32; font-weight: bold; }
-        .vis-private { color: #c62828; }
-        .vis-protected { color: #ef6c00; }
+        .vis-public { color: #16a34a; font-weight: bold; }
+        .vis-private { color: #dc2626; }
+        .vis-protected { color: #ea580c; }
         
         .code-table {
             width: 100%;
             border-collapse: collapse;
-            font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-            font-size: 8.5pt;
+            font-family: Consolas, "JetBrains Mono", monospace;
+            font-size: 8pt;
             line-height: 1.35;
-            background: #fafafa;
-            border: 1px solid #e0e0e0;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
         }
         .code-table td {
             padding: 1px 6px;
             vertical-align: top;
         }
         .line-num {
-            width: 45px;
+            width: 40px;
             text-align: right;
-            color: #999999;
+            color: #94a3b8;
             user-select: none;
-            border-right: 1px solid #e0e0e0;
-            background: #f0f0f0;
+            border-right: 1px solid #cbd5e1;
+            background: #f1f5f9;
         }
         .line-code {
             white-space: pre-wrap;
             word-break: break-all;
-            color: #24292e;
+            color: #0f172a;
         }
     </style>
 </head>
@@ -1223,22 +1495,27 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
             <span><strong>Caminho:</strong> ${this.escapeHtml(fullPath)}</span>
             <span><strong>Gerado em:</strong> ${dateStr}</span>
             <span><strong>Entidades:</strong> ${classesList.length}</span>
+            <span><strong>Modo:</strong> ${shouldDecompose ? 'Decomposição Modular em Múltiplos Diagramas' : 'Visão Única Integrada'}</span>
         </div>
     </div>
 
-    <h2 class="section-title">1. Diagrama de Classes UML</h2>
+    ${architectureNotesHtml}
+
+    <h2 class="section-title">1. Visão Geral da Arquitetura (Blueprint Glass)</h2>
     <div class="diagram-container">
         ${svgHtml}
     </div>
 
-    ${symbolsDocHtml ? `
+    ${decomposedPagesHtml}
+
+    ${globalDocsHtml ? `
     <div class="page-break"></div>
-    <h2 class="section-title">2. Metadados e Documentação JSDoc</h2>
-    ${symbolsDocHtml}
+    <h2 class="section-title">2. Metadados e Documentação Técnica JSDoc</h2>
+    ${globalDocsHtml}
     ` : ''}
 
     <div class="page-break"></div>
-    <h2 class="section-title">3. Código-Fonte Compilado</h2>
+    <h2 class="section-title">${shouldDecompose ? '3' : '3'}. Código-Fonte Compilado</h2>
     <table class="code-table">
         <tbody>
             ${codeLinesHtml}
@@ -1246,17 +1523,21 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
     </table>
 </body>
 </html>
-        `;
+            `;
 
-        const printWin = window.open('', '_blank', 'width=1100,height=850');
-        if (printWin) {
-            printWin.document.open();
-            printWin.document.write(htmlContent);
-            printWin.document.close();
-            setTimeout(() => {
-                printWin.focus();
-                printWin.print();
-            }, 450);
+            const printWin = window.open('', '_blank', 'width=1100,height=850');
+            if (printWin) {
+                printWin.document.open();
+                printWin.document.write(htmlContent);
+                printWin.document.close();
+                setTimeout(() => {
+                    printWin.focus();
+                    printWin.print();
+                }, 450);
+            }
+        } finally {
+            this.isExportingPdf = false;
+            this.cdr.markForCheck();
         }
     }
 
@@ -1625,6 +1906,56 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
 
             this.classesByName.clear();
             this.packagesBySource.clear();
+            this.lastParsedClassBlocks.clear();
+            this.lastParsedRelationships = [];
+            this.lastParsedNotes.clear();
+            this.lastParsedModuleNotes = [];
+
+            // 1. Extração de comentários de arquitetura e ideias do arquivo/módulo
+            const rawComments = (ast as any).comments || [];
+            const architectureIdeas: string[] = [];
+
+            for (const comment of rawComments) {
+                const startLine = comment.loc?.start?.line || 0;
+                const rawValue = comment.value || '';
+                const lower = rawValue.toLowerCase();
+
+                const isKeywordMatch =
+                    lower.includes('ideia') ||
+                    lower.includes('conceito') ||
+                    lower.includes('arquitetura') ||
+                    lower.includes('architecture') ||
+                    lower.includes('módulo') ||
+                    lower.includes('modulo') ||
+                    lower.includes('visão') ||
+                    lower.includes('visao') ||
+                    lower.includes('design') ||
+                    lower.includes('propósito') ||
+                    lower.includes('proposito') ||
+                    lower.includes('responsabilidade') ||
+                    lower.includes('diretriz') ||
+                    lower.includes('arquivo:');
+
+                if (isKeywordMatch || startLine <= 25) {
+                    const cleaned = rawValue
+                        .split('\n')
+                        .map((l: string) => l.replace(/^\s*\*?\s?/, '').replace(/^\s*\/\/\s?/, '').trim())
+                        .filter((l: string) => l.length > 0 && !l.startsWith('@') && !l.startsWith('===') && !l.startsWith('---') && !l.startsWith('eslint') && !l.startsWith('tslint'))
+                        .join(' ');
+
+                    if (cleaned.length > 12 && !architectureIdeas.includes(cleaned)) {
+                        architectureIdeas.push(cleaned);
+                    }
+                }
+            }
+
+            this.lastParsedModuleNotes = architectureIdeas;
+
+            let moduleNoteBlock = '';
+            if (architectureIdeas.length > 0) {
+                const ideas = architectureIdeas.slice(0, 3).map(i => `• ${this.sanitizeMermaidNote(i, 110)}`).join('<br>');
+                moduleNoteBlock = `  note "ARQUITETURA & DIRETRIZES DO MÓDULO:<br>${ideas}"\n`;
+            }
 
             let classBlocks = '';
             let relationships = '';
@@ -1790,19 +2121,34 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                         classBlock += `    <<Abstract>>\n`;
                     }
 
-                    if (classJsDoc) {
-                        if (classJsDoc.description) {
-                            const cleanDesc = classJsDoc.description.replace(/"/g, "'").replace(/\r?\n/g, ' ').slice(0, 110);
-                            relationships += `  note for ${className} "JSDoc: ${cleanDesc}"\n`;
+                    // Extrai ideias da classe (JSDoc ou comentários precedentes) e anexa nota no diagrama
+                    let classCommentsText = '';
+                    if (classJsDoc?.description) {
+                        classCommentsText = classJsDoc.description;
+                    } else if (classComments && classComments.length > 0) {
+                        const lines = classComments
+                            .map((c: any) => (c.value || '').replace(/^\s*\*?\s?/, '').replace(/^\s*\/\/\s?/, '').trim())
+                            .filter((t: string) => t.length > 0 && !t.startsWith('@') && !t.startsWith('eslint'));
+                        if (lines.length > 0) {
+                            classCommentsText = lines.join(' ');
                         }
-                        if (classJsDoc.tags.some(t => t.tag === 'deprecated')) {
-                            classBlock += `    <<Deprecated>>\n`;
-                        }
+                    }
+
+                    if (classCommentsText) {
+                        const cleanDesc = this.sanitizeMermaidNote(classCommentsText, 130);
+                        relationships += `  note for ${className} "Ideia/Conceito:<br>${cleanDesc}"\n`;
+                        this.lastParsedNotes.set(className, cleanDesc);
+                    }
+
+                    if (classJsDoc?.tags.some(t => t.tag === 'deprecated')) {
+                        classBlock += `    <<Deprecated>>\n`;
                     }
 
                     if (isClass && classNode.superClass && classNode.superClass.type === 'Identifier') {
                         const superName = classNode.superClass.name;
-                        relationships += `  ${superName} <|-- ${className}\n`;
+                        const relLine = `${superName} <|-- ${className}`;
+                        relationships += `  ${relLine}\n`;
+                        this.lastParsedRelationships.push({ source: className, target: superName, raw: relLine });
                         classConnections.add(superName);
                     }
 
@@ -1810,7 +2156,9 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                         for (const ext of classNode.extends) {
                             if (ext.expression && ext.expression.type === 'Identifier') {
                                 const superName = ext.expression.name;
-                                relationships += `  ${superName} <|-- ${className}\n`;
+                                const relLine = `${superName} <|-- ${className}`;
+                                relationships += `  ${relLine}\n`;
+                                this.lastParsedRelationships.push({ source: className, target: superName, raw: relLine });
                                 classConnections.add(superName);
                             }
                         }
@@ -1820,7 +2168,9 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                         for (const impl of classNode.implements) {
                             if (impl.type === 'TSExpressionWithTypeArguments' && impl.expression.type === 'Identifier') {
                                 const interfaceName = impl.expression.name;
-                                relationships += `  ${interfaceName} <|.. ${className}\n`;
+                                const relLine = `${interfaceName} <|.. ${className}`;
+                                relationships += `  ${relLine}\n`;
+                                this.lastParsedRelationships.push({ source: className, target: interfaceName, raw: relLine });
                                 classConnections.add(interfaceName);
                             }
                         }
@@ -1864,7 +2214,9 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                             if (typeStr && /^[A-Z]/.test(typeStr) && !['String', 'Number', 'Boolean', 'Any', 'Void'].includes(typeStr)) {
                                 const cleanType = typeStr.replace(/\[\]/g, '').replace(/~.*~/g, '');
                                 if (cleanType && cleanType !== className) {
-                                    relationships += `  ${className} --> ${cleanType} : ${propName}\n`;
+                                    const relLine = `${className} --> ${cleanType} : ${propName}`;
+                                    relationships += `  ${relLine}\n`;
+                                    this.lastParsedRelationships.push({ source: className, target: cleanType, raw: relLine });
                                     classConnections.add(cleanType);
                                 }
                             }
@@ -1900,7 +2252,9 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                                 if (isConstructor && pType && /^[A-Z]/.test(pType)) {
                                     const cleanType = pType.replace(/\[\]/g, '').replace(/~.*~/g, '');
                                     if (cleanType && cleanType !== className) {
-                                        relationships += `  ${className} ..> ${cleanType} : injects\n`;
+                                        const relLine = `${className} ..> ${cleanType} : injects`;
+                                        relationships += `  ${relLine}\n`;
+                                        this.lastParsedRelationships.push({ source: className, target: cleanType, raw: relLine });
                                         classConnections.add(cleanType);
                                     }
                                 }
@@ -1934,6 +2288,7 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                     classBlocks += classBlock;
 
                     this.classesByName.set(className, classInfo);
+                    this.lastParsedClassBlocks.set(className, classBlock);
 
                     const identifiersInClass = new Set<string>();
                     findIdentifiers(classNode, identifiersInClass);
@@ -1943,7 +2298,9 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                             if (identifiersInClass.has(importName)) {
                                 usedImports.set(importName, meta.source);
                                 if (!classConnections.has(importName)) {
-                                    relationships += `  ${className} ..> ${importName} : use\n`;
+                                    const relLine = `${className} ..> ${importName} : use`;
+                                    relationships += `  ${relLine}\n`;
+                                    this.lastParsedRelationships.push({ source: className, target: importName, raw: relLine });
                                     classConnections.add(importName);
                                 }
                             }
@@ -2101,6 +2458,7 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
 
                                     depBlock += `    }\n`;
                                     externalParsedClasses.set(depClassName, { block: depBlock, info: depClassInfo });
+                                    this.lastParsedClassBlocks.set(depClassName, depBlock);
                                 }
                             }
                         }
@@ -2123,7 +2481,9 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                             importBlocks += parsedExt.block;
                             this.classesByName.set(className, parsedExt.info);
                         } else {
-                            importBlocks += `    class ${className} {\n  }\n`;
+                            const stubBlock = `    class ${className} {\n  }\n`;
+                            importBlocks += stubBlock;
+                            this.lastParsedClassBlocks.set(className, stubBlock);
 
                             const importMeta = fileImports.get(className);
                             this.classesByName.set(className, {
@@ -2145,9 +2505,9 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                 }
             });
 
-            const mermaidConfig = `%%{init: {"useMaxWidth": false, "theme": "default"}}%%`;
+            const mermaidConfig = `%%{init: {"useMaxWidth": false, "theme": "base", "themeVariables": ${JSON.stringify(BLUEPRINT_GLASS_THEME_VARIABLES)}}}%%`;
 
-            return `${mermaidConfig}\nclassDiagram\n${classBlocks}\n${importBlocks}\n${relationships}`;
+            return `${mermaidConfig}\nclassDiagram\n${moduleNoteBlock}${classBlocks}\n${importBlocks}\n${relationships}`;
         } catch (error: any) {
             if (error?.message?.includes('Nenhuma classe ou interface')) {
                 throw error;

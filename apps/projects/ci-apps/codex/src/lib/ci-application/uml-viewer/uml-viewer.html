@@ -38,9 +38,9 @@
                 <mat-icon>image</mat-icon>
                 <span class="btn-label">PNG</span>
             </button>
-            <button type="button" class="uml-btn" (click)="exportPdf()" matTooltip="Exportar Relatório PDF Compilado (Código + Diagrama + JSDocs)">
-                <mat-icon>picture_as_pdf</mat-icon>
-                <span class="btn-label">PDF</span>
+            <button type="button" class="uml-btn" [disabled]="isExportingPdf" (click)="exportPdf()" matTooltip="Exportar Relatório PDF Compilado (Código + Diagrama + JSDocs)">
+                <mat-icon>{{ isExportingPdf ? 'hourglass_top' : 'picture_as_pdf' }}</mat-icon>
+                <span class="btn-label">{{ isExportingPdf ? 'Gerando...' : 'PDF' }}</span>
             </button>
         </div>
 

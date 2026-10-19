@@ -17,6 +17,7 @@ import { MatBadgeModule } from "@angular/material/badge";
 import { FormsModule } from "@angular/forms";
 import { DataGridModule } from "@ci/components/data-grid";
 import { EditarDetailModule } from "@ci/components/editar-detail";
+import { WindowModule } from "@ci/components/window";
 
 @NgModule({
     declarations: [
@@ -40,9 +41,11 @@ import { EditarDetailModule } from "@ci/components/editar-detail";
         FormsModule,
         DataGridModule,
         EditarDetailModule,
+        WindowModule,
     ],
     exports: [
         MasterDetailComponent,
+        WindowModule,
     ]
 })
 export class MasterDetailModule { }

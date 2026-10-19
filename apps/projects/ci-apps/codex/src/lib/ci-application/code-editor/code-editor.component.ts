@@ -1,9 +1,10 @@
 import { Component, Input, OnDestroy, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CoreModule } from '@ci/core';
 import { FileDto, FileExplorerService, ReadDirectoryOutput } from '@ci/portal-api';
-import { NuMonacoEditorEvent, NuMonacoEditorModel, NuMonacoEditorModule } from '@ng-util/monaco-editor';
+import { NuMonacoEditorEvent, NuMonacoEditorModel, NuMonacoEditorModule, NuMonacoEditorDiffModel } from '@ng-util/monaco-editor';
 import { lastValueFrom, Subscription } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
@@ -14,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { UmlViewer, UmlNodeSelectEvent } from '../uml-viewer/uml-viewer';
 import { MonacoWorkspaceService } from './monaco-workspace.service';
 import { FloatingWindow, FloatingEditorManagerComponent } from '../floating-editor';
+import { GitService, GitCommit, GitDiffSummary, GitSyncStatus } from '../services/git.service';
 
 declare const monaco: any;
 
@@ -21,6 +23,7 @@ declare const monaco: any;
     selector: 'ci-code-editor',
     standalone: true,
     imports: [
+        CommonModule,
         CoreModule,
         NuMonacoEditorModule,
         FormsModule,
@@ -73,6 +76,40 @@ export class CodeEditorComponent implements OnDestroy {
     errorCount = 0;
     warningCount = 0;
 
+    // Git Integration
+    gitBranch = 'development';
+    gitBranches: string[] = [];
+    gitCommits: GitCommit[] = [];
+    gitSyncStatus: GitSyncStatus = { ahead: 0, behind: 0, isSyncing: false };
+    gitDiffSummary: GitDiffSummary = { additions: 0, deletions: 0, modified: false, changesCount: 0 };
+    gitToastMessage = '';
+    showGitToast = false;
+    private gitToastTimer: any = null;
+    private gitSub = new Subscription();
+
+    // Modais Git
+    showGitDiffModal = false;
+    showGitCommitModal = false;
+    showGitBranchModal = false;
+    showGitHistoryModal = false;
+    showGitDiscardModal = false;
+
+    // Campos de formulário Git
+    gitCommitMessage = '';
+    gitNewBranchName = '';
+    gitBranchSearchTerm = '';
+    diffRenderSideBySide = true;
+
+    gitDiffOptions: any = {
+        theme: 'vs-dark',
+        readOnly: true,
+        renderSideBySide: true,
+        automaticLayout: true,
+        scrollBeyondLastLine: false,
+        fontSize: 13,
+        fontFamily: "'Fira Code', 'Cascadia Code', Consolas, monospace",
+    };
+
     // Documentação de módulos instalados
     mostrarDocs = false;
     carregandoDocs = false;
@@ -117,7 +154,13 @@ export class CodeEditorComponent implements OnDestroy {
         private readonly activatedRoute: ActivatedRoute,
         private readonly router: Router,
         private readonly workspaceService: MonacoWorkspaceService,
+        private readonly gitService: GitService,
     ) {
+        this.gitSub.add(this.gitService.currentBranch$.subscribe(b => this.gitBranch = b));
+        this.gitSub.add(this.gitService.branches$.subscribe(branches => this.gitBranches = branches));
+        this.gitSub.add(this.gitService.syncStatus$.subscribe(sync => this.gitSyncStatus = sync));
+        this.gitSub.add(this.gitService.commits$.subscribe(commits => this.gitCommits = commits));
+
         this.routeSub = this.activatedRoute.queryParams.subscribe(async (query: any) => {
             if (query.file && query.file !== this.oppenedFile?.path) {
                 await this.abrirArquivo(query.file);
@@ -166,6 +209,7 @@ export class CodeEditorComponent implements OnDestroy {
             this.value = (file_loaded.data as string) || '';
             this.originalValue = this.value;
             this.isDirty = false;
+            this.atualizarGitDiff();
 
             const detectedLanguage = this.detectLanguage(cleanPath);
             this.selectLanguage(detectedLanguage);
@@ -397,6 +441,7 @@ export class CodeEditorComponent implements OnDestroy {
         const contentSub = this.editorInstance.onDidChangeModelContent(() => {
             this.value = this.editorInstance.getValue();
             this.isDirty = this.value !== this.originalValue;
+            this.atualizarGitDiff();
         });
         this.editorDisposables.push(contentSub);
 
@@ -912,6 +957,7 @@ export class CodeEditorComponent implements OnDestroy {
         if (this.oppenedFile?.path && event.window.filePath === this.oppenedFile.path.replace(/\\/g, '/')) {
             this.value = event.code;
             this.isDirty = this.value !== this.originalValue;
+            this.atualizarGitDiff();
         }
     }
 
@@ -929,6 +975,7 @@ export class CodeEditorComponent implements OnDestroy {
             this.editorInstance.setValue(newCode);
         }
         this.isDirty = this.value !== this.originalValue;
+        this.atualizarGitDiff();
     }
 
     /**
@@ -1144,9 +1191,172 @@ export class CodeEditorComponent implements OnDestroy {
             this.originalValue = this.value;
             this.isDirty = false;
             this.commitDescription = '';
+            this.atualizarGitDiff();
         } catch (err) {
             console.error('Falha ao persistir alterações no arquivo:', err);
         }
+    }
+
+    // ==========================================
+    // MÉTODOS DE INTEGRAÇÃO GIT (BARRA INFERIOR E MODAIS)
+    // ==========================================
+
+    public atualizarGitDiff(): void {
+        this.gitDiffSummary = this.gitService.calculateDiff(this.originalValue || '', this.value || '');
+    }
+
+    public openGitDiffModal(): void {
+        this.diffRenderSideBySide = true;
+        this.showGitDiffModal = true;
+    }
+
+    public closeGitDiffModal(): void {
+        this.showGitDiffModal = false;
+    }
+
+    public toggleDiffSideBySide(): void {
+        this.diffRenderSideBySide = !this.diffRenderSideBySide;
+        this.gitDiffOptions = {
+            ...this.gitDiffOptions,
+            renderSideBySide: this.diffRenderSideBySide
+        };
+    }
+
+    public get gitDiffOldModel(): NuMonacoEditorDiffModel {
+        return {
+            code: this.originalValue || '',
+            language: this.language || 'typescript'
+        };
+    }
+
+    public get gitDiffNewModel(): NuMonacoEditorDiffModel {
+        return {
+            code: this.value || '',
+            language: this.language || 'typescript'
+        };
+    }
+
+    public openGitCommitModal(): void {
+        if (!this.gitCommitMessage) {
+            const fileName = this.oppenedFile?.path?.split('/').pop() || 'arquivo';
+            this.gitCommitMessage = `fix: atualiza ${fileName}`;
+        }
+        this.showGitCommitModal = true;
+    }
+
+    public closeGitCommitModal(): void {
+        this.showGitCommitModal = false;
+    }
+
+    public setCommitPrefix(prefix: string): void {
+        const knownPrefixes = ['feat: ', 'fix: ', 'refactor: ', 'docs: ', 'style: ', 'test: ', 'chore: '];
+        let msg = this.gitCommitMessage.trim();
+        for (const p of knownPrefixes) {
+            if (msg.startsWith(p)) {
+                msg = msg.substring(p.length).trim();
+                break;
+            }
+        }
+        this.gitCommitMessage = `${prefix}${msg}`;
+    }
+
+    public async confirmGitCommit(): Promise<void> {
+        if (!this.gitCommitMessage?.trim()) return;
+
+        if (this.isDirty) {
+            await this.confirmar();
+        }
+
+        const commit = this.gitService.commit(this.gitCommitMessage, this.oppenedFile?.path);
+        this.gitCommitMessage = '';
+        this.showGitCommitModal = false;
+        this.showGitDiffModal = false;
+        this.atualizarGitDiff();
+        this.displayGitToast(`Commit realizado com sucesso! [${commit.shortHash}]`);
+    }
+
+    public openGitBranchModal(): void {
+        this.gitBranchSearchTerm = '';
+        this.gitNewBranchName = '';
+        this.showGitBranchModal = true;
+    }
+
+    public closeGitBranchModal(): void {
+        this.showGitBranchModal = false;
+    }
+
+    public get filteredGitBranches(): string[] {
+        const term = this.gitBranchSearchTerm.trim().toLowerCase();
+        if (!term) return this.gitBranches;
+        return this.gitBranches.filter(b => b.toLowerCase().includes(term));
+    }
+
+    public checkoutBranch(branchName: string): void {
+        if (branchName === this.gitBranch) {
+            this.closeGitBranchModal();
+            return;
+        }
+        this.gitService.checkoutBranch(branchName);
+        this.closeGitBranchModal();
+        this.displayGitToast(`Alternado para a branch: ${branchName}`);
+    }
+
+    public createNewBranch(): void {
+        const name = this.gitNewBranchName.trim();
+        if (!name) return;
+        this.gitService.createBranch(name);
+        this.gitNewBranchName = '';
+        this.closeGitBranchModal();
+        this.displayGitToast(`Nova branch criada: ${name}`);
+    }
+
+    public openGitHistoryModal(): void {
+        this.showGitHistoryModal = true;
+    }
+
+    public closeGitHistoryModal(): void {
+        this.showGitHistoryModal = false;
+    }
+
+    public openGitDiscardModal(): void {
+        if (!this.isDirty && !this.gitDiffSummary.modified) return;
+        this.showGitDiscardModal = true;
+    }
+
+    public closeGitDiscardModal(): void {
+        this.showGitDiscardModal = false;
+    }
+
+    public confirmDiscardChanges(): void {
+        if (this.originalValue !== undefined) {
+            this.value = this.originalValue;
+            if (this.editorInstance) {
+                this.editorInstance.setValue(this.originalValue);
+            }
+            this.isDirty = false;
+            this.atualizarGitDiff();
+            this.showGitDiscardModal = false;
+            this.showGitDiffModal = false;
+            this.displayGitToast('Alterações descartadas. Arquivo restaurado para a versão do repositório.');
+        }
+    }
+
+    public async triggerGitSync(): Promise<void> {
+        if (this.gitSyncStatus.isSyncing) return;
+        this.displayGitToast('Sincronizando com repositório remoto...');
+        await this.gitService.sync();
+        this.displayGitToast('Repositório sincronizado com sucesso!');
+    }
+
+    public displayGitToast(message: string): void {
+        this.gitToastMessage = message;
+        this.showGitToast = true;
+        if (this.gitToastTimer) {
+            clearTimeout(this.gitToastTimer);
+        }
+        this.gitToastTimer = setTimeout(() => {
+            this.showGitToast = false;
+        }, 3800);
     }
 
     private limparDisposables() {
@@ -1160,6 +1370,10 @@ export class CodeEditorComponent implements OnDestroy {
 
     ngOnDestroy(): void {
         this.routeSub?.unsubscribe();
+        this.gitSub.unsubscribe();
+        if (this.gitToastTimer) {
+            clearTimeout(this.gitToastTimer);
+        }
         this.limparDisposables();
         this.workspaceService.clearWorkspace();
         if (typeof document !== 'undefined') {

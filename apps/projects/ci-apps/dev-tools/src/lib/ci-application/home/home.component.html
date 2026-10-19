@@ -1,0 +1,160 @@
+<div class="devtools-wrapper">
+    <!-- Barra Superior Principal do DevTools -->
+    <header class="devtools-topbar">
+        <div class="topbar-left">
+            <div class="brand">
+                <div class="brand-icon-box">
+                    <mat-icon>terminal</mat-icon>
+                </div>
+                <div class="brand-text">
+                    <h2>DevTools</h2>
+                    <span>Central de Instrumentação & Logs de Erros</span>
+                </div>
+            </div>
+            <span class="version-tag">v2.1</span>
+        </div>
+
+        <!-- KPI Badges em tempo real -->
+        <div class="topbar-kpis">
+            <div class="kpi-pill kpi-error" [class.has-issues]="stats.errors > 0" (click)="switchTab('logs')">
+                <mat-icon>error</mat-icon>
+                <div class="kpi-content">
+                    <span class="kpi-val">{{ stats.errors }}</span>
+                    <span class="kpi-label">Erros</span>
+                </div>
+            </div>
+
+            <div class="kpi-pill kpi-fix" [class.has-issues]="stats.toFix > 0" (click)="switchTab('logs')">
+                <mat-icon>build_circle</mat-icon>
+                <div class="kpi-content">
+                    <span class="kpi-val">{{ stats.toFix }}</span>
+                    <span class="kpi-label">A Corrigir</span>
+                </div>
+            </div>
+
+            <div class="kpi-pill kpi-cpu" (click)="switchTab('telemetry')">
+                <mat-icon>speed</mat-icon>
+                <div class="kpi-content">
+                    <span class="kpi-val">{{ telemetrySummary?.currentCpuPercent || 0 }}%</span>
+                    <span class="kpi-label">CPU</span>
+                </div>
+            </div>
+
+            <div class="kpi-pill kpi-mem" (click)="switchTab('telemetry')">
+                <mat-icon>memory</mat-icon>
+                <div class="kpi-content">
+                    <span class="kpi-val">{{ telemetrySummary?.heapUsedFormatted || '0 MB' }}</span>
+                    <span class="kpi-label">Heap</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ações do Topbar -->
+        <div class="topbar-actions">
+            <button
+                mat-icon-button
+                [class.btn-auto-active]="autoRefresh"
+                (click)="toggleAutoRefresh()"
+                [matTooltip]="autoRefresh ? 'Atualização automática ativa' : 'Atualização automática pausada'"
+            >
+                <mat-icon>{{ autoRefresh ? 'sync' : 'sync_disabled' }}</mat-icon>
+            </button>
+
+            <button mat-stroked-button class="btn-refresh" (click)="refreshAll()">
+                <mat-icon>refresh</mat-icon>
+                <span>Recarregar</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Barra de Navegação de Ferramentas / Módulos -->
+    <nav class="devtools-nav">
+        <button
+            type="button"
+            class="nav-tab"
+            [class.active]="activeTab === 'logs'"
+            (click)="switchTab('logs')"
+        >
+            <mat-icon>bug_report</mat-icon>
+            <span>Logs de Erros</span>
+            @if (stats.errors > 0) {
+                <span class="tab-badge error-badge">{{ stats.errors }}</span>
+            }
+        </button>
+
+        <button
+            type="button"
+            class="nav-tab"
+            [class.active]="activeTab === 'telemetry'"
+            (click)="switchTab('telemetry')"
+        >
+            <mat-icon>speed</mat-icon>
+            <span>Telemetria & Recursos</span>
+            <span class="tab-badge cpu-badge">{{ telemetrySummary?.currentCpuPercent || 0 }}%</span>
+        </button>
+
+        <button
+            type="button"
+            class="nav-tab"
+            [class.active]="activeTab === 'disk-logs'"
+            (click)="switchTab('disk-logs')"
+        >
+            <mat-icon>folder_open</mat-icon>
+            <span>Logs em Disco (server/logs)</span>
+        </button>
+
+        <button
+            type="button"
+            class="nav-tab"
+            [class.active]="activeTab === 'environment'"
+            (click)="switchTab('environment')"
+        >
+            <mat-icon>settings_suggest</mat-icon>
+            <span>Ambiente & Módulos</span>
+        </button>
+
+        <button
+            type="button"
+            class="nav-tab"
+            [class.active]="activeTab === 'simulator'"
+            (click)="switchTab('simulator')"
+        >
+            <mat-icon>science</mat-icon>
+            <span>Simulador de Logs</span>
+        </button>
+    </nav>
+
+    <!-- Conteúdo Principal do Módulo Ativo -->
+    <main class="devtools-content">
+        @switch (activeTab) {
+            @case ('logs') {
+                <ci-log-viewer></ci-log-viewer>
+            }
+            @case ('telemetry') {
+                <ci-telemetry-viewer></ci-telemetry-viewer>
+            }
+            @case ('disk-logs') {
+                <ci-disk-logs-viewer></ci-disk-logs-viewer>
+            }
+            @case ('environment') {
+                <ci-environment-viewer></ci-environment-viewer>
+            }
+            @case ('simulator') {
+                <ci-log-simulator (logSimulated)="refreshAll(); switchTab('logs')"></ci-log-simulator>
+            }
+        }
+    </main>
+
+    <!-- Rodapé de Status do DevTools -->
+    <footer class="devtools-statusbar">
+        <div class="status-left">
+            <span class="status-indicator"></span>
+            <span>DevTools Engine Conectado</span>
+            <span class="separator">•</span>
+            <span>Módulo Ativo: <strong>{{ activeTab | uppercase }}</strong></span>
+        </div>
+        <div class="status-right">
+            <span>Última Sincronização: {{ lastUpdated | date: 'HH:mm:ss' }}</span>
+        </div>
+    </footer>
+</div>

@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { FindOptionsWhere } from "typeorm";
-import { Endereco } from "../cadastro.module";
+import { Endereco } from "../model/endereco.entity";
 
 export class ObterListaEndereco {
     // override data?: Endereco;
@@ -8,9 +8,9 @@ export class ObterListaEndereco {
     skip?: number;
     @ApiProperty({ required: false, nullable: true })
     take?: number;
-    @ApiProperty({ required: false, nullable: true, type: Endereco })
+    @ApiProperty({ required: false, nullable: true, type: () => Endereco })
     where?: FindOptionsWhere<Endereco>[] | FindOptionsWhere<Endereco>;
-    @ApiProperty({ required: false, nullable: true, type: Endereco })
+    @ApiProperty({ required: false, nullable: true, type: () => Endereco })
     filter?: Partial<Endereco>;
     @ApiProperty({ required: false, nullable: true })
     search?: string;

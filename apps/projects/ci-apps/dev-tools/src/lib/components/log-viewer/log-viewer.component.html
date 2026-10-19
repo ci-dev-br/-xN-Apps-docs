@@ -1,0 +1,379 @@
+<div class="log-viewer-container">
+    <!-- Barra de Filtros e Busca -->
+    <div class="filters-card">
+        <div class="search-row">
+            <div class="search-box">
+                <mat-icon class="search-icon">search</mat-icon>
+                <input
+                    type="text"
+                    [(ngModel)]="search"
+                    (ngModelChange)="onSearchChange($event)"
+                    placeholder="Buscar por mensagem de erro, stack trace, aplicação ou ID..."
+                />
+                @if (search) {
+                    <button mat-icon-button (click)="search = ''; onSearchChange('')">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                }
+            </div>
+
+            <div class="filter-dropdowns">
+                <!-- Origem -->
+                <select class="custom-select" [(ngModel)]="selectedOrigem" (change)="loadLogs()">
+                    @for (origem of origens; track origem.value) {
+                        <option [value]="origem.value">{{ origem.label }}</option>
+                    }
+                </select>
+
+                <!-- Status -->
+                <select class="custom-select" [(ngModel)]="selectedStatus" (change)="loadLogs()">
+                    @for (st of logStatuses; track st.value) {
+                        <option [value]="st.value">{{ st.label }}</option>
+                    }
+                </select>
+
+                <!-- Checkboxes rápidos -->
+                <label class="checkbox-pill" [class.active]="filterDeveCorrigir">
+                    <input type="checkbox" [(ngModel)]="filterDeveCorrigir" (change)="loadLogs()" />
+                    <mat-icon>build_circle</mat-icon>
+                    <span>A Corrigir</span>
+                </label>
+
+                <label class="checkbox-pill" [class.active]="filterAlerta">
+                    <input type="checkbox" [(ngModel)]="filterAlerta" (change)="loadLogs()" />
+                    <mat-icon>notifications_active</mat-icon>
+                    <span>Com Alerta</span>
+                </label>
+
+                <button mat-stroked-button class="btn-action" (click)="loadLogs()" matTooltip="Recarregar Logs">
+                    <mat-icon [class.spin]="isLoading">refresh</mat-icon>
+                    <span>Atualizar</span>
+                </button>
+
+                <button mat-stroked-button class="btn-action" (click)="exportCurrentLogs()" matTooltip="Exportar JSON">
+                    <mat-icon>file_download</mat-icon>
+                    <span>Exportar</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chips de Nível -->
+        <div class="level-chips-row">
+            <span class="chips-label">Severidade:</span>
+            <div class="chips-group">
+                @for (lvl of logLevels; track lvl.value) {
+                    <button
+                        type="button"
+                        class="level-chip"
+                        [class.active]="selectedLevel === lvl.value"
+                        [class.chip-error]="lvl.value === 'error' || lvl.value === 'fatal'"
+                        [class.chip-warn]="lvl.value === 'warn'"
+                        [class.chip-info]="lvl.value === 'info'"
+                        (click)="setLevelFilter(lvl.value)"
+                    >
+                        {{ lvl.label }}
+                    </button>
+                }
+            </div>
+
+            <div class="results-count">
+                <span>{{ totalLogs }} log(s) encontrado(s)</span>
+                @if (loggerService.isUsingMockFallback()) {
+                    <span class="mock-badge" matTooltip="Modo de demonstração / fallback offline">DEMO MODE</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela e Painel de Detalhes -->
+    <div class="content-split" [class.with-detail]="!!selectedLog">
+        <!-- Lista de Logs -->
+        <div class="logs-list-wrapper">
+            @if (logs.length === 0 && !isLoading) {
+                <div class="empty-state">
+                    <mat-icon>check_circle_outline</mat-icon>
+                    <h3>Nenhum registro de log encontrado</h3>
+                    <p>Não há erros ou mensagens que correspondam aos filtros aplicados.</p>
+                </div>
+            } @else {
+                <div class="logs-table">
+                    <div class="logs-header-row">
+                        <div class="col col-level">Nível</div>
+                        <div class="col col-message">Mensagem & Contexto</div>
+                        <div class="col col-app">Aplicação</div>
+                        <div class="col col-status">Status</div>
+                        <div class="col col-flags">Ações & Flags</div>
+                        <div class="col col-time">Momento</div>
+                        <div class="col col-actions"></div>
+                    </div>
+
+                    @for (log of logs; track log.internalId) {
+                        <div
+                            class="logs-row"
+                            [class.selected]="selectedLog?.internalId === log.internalId"
+                            [class.row-critical]="log.level === 'fatal' || (log.level === 'error' && log.deveCorrigir)"
+                            (click)="selectLogForDetail(log)"
+                        >
+                            <!-- Nível -->
+                            <div class="col col-level">
+                                <span class="level-badge" [ngClass]="getSeverityClass(log.level)">
+                                    <mat-icon class="lvl-icon">
+                                        @if (log.level === 'error' || log.level === 'fatal') { error }
+                                        @else if (log.level === 'warn') { warning }
+                                        @else if (log.level === 'info') { info }
+                                        @else { terminal }
+                                    </mat-icon>
+                                    {{ log.level | uppercase }}
+                                </span>
+                            </div>
+
+                            <!-- Mensagem -->
+                            <div class="col col-message">
+                                <div class="message-text" [title]="log.message">
+                                    {{ log.message }}
+                                </div>
+                                <div class="message-subinfo">
+                                    <span class="sub-id">ID: {{ log.internalId }}</span>
+                                    @if (log.metadata?.url) {
+                                        <span class="sub-url">{{ log.metadata?.method }} {{ log.metadata?.url }}</span>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Aplicação & Origem -->
+                            <div class="col col-app">
+                                <span class="app-chip">{{ log.application || 'ci-apps' }}</span>
+                                <span class="origem-chip">{{ log.origem || 'SERVER' }}</span>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="col col-status">
+                                <button
+                                    mat-button
+                                    class="status-btn"
+                                    [ngClass]="getStatusBadgeClass(log.status)"
+                                    [matMenuTriggerFor]="statusMenu"
+                                    (click)="$event.stopPropagation()"
+                                >
+                                    <span>{{ log.status || 'NOVO' }}</span>
+                                    <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
+                                </button>
+                                <mat-menu #statusMenu="matMenu">
+                                    @for (st of logStatuses; track st.value) {
+                                        @if (st.value !== 'ALL') {
+                                            <button mat-menu-item (click)="changeStatus(log, $any(st.value))">
+                                                <span>{{ st.label }}</span>
+                                            </button>
+                                        }
+                                    }
+                                </mat-menu>
+                            </div>
+
+                            <!-- Flags -->
+                            <div class="col col-flags">
+                                <button
+                                    type="button"
+                                    class="flag-pill"
+                                    [class.flag-active]="log.deveCorrigir"
+                                    (click)="toggleDeveCorrigir(log, $event)"
+                                    [matTooltip]="log.deveCorrigir ? 'Marcado para correção obrigatória' : 'Marcar para correção'"
+                                >
+                                    <mat-icon>build</mat-icon>
+                                    <span>Corrigir</span>
+                                </button>
+
+                                @if (log.alertaDisparado) {
+                                    <span class="alert-pill alert-fired" matTooltip="Alerta foi disparado para este erro">
+                                        <mat-icon>notifications_active</mat-icon>
+                                    </span>
+                                } @else {
+                                    <button
+                                        type="button"
+                                        class="alert-pill"
+                                        (click)="triggerManualAlert(log, $event)"
+                                        matTooltip="Disparar alerta manual para este log"
+                                    >
+                                        <mat-icon>notification_add</mat-icon>
+                                    </button>
+                                }
+                            </div>
+
+                            <!-- Data/Hora -->
+                            <div class="col col-time">
+                                <span class="time-main">{{ log.cratedAt | date: 'dd/MM/yyyy HH:mm:ss' }}</span>
+                            </div>
+
+                            <!-- Ações -->
+                            <div class="col col-actions">
+                                <button
+                                    mat-icon-button
+                                    class="btn-inspect"
+                                    (click)="selectLogForDetail(log); $event.stopPropagation()"
+                                    matTooltip="Inspecionar detalhes completos"
+                                >
+                                    <mat-icon>open_in_new</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Painel Lateral de Inspeção de Log -->
+        @if (selectedLog) {
+            <aside class="detail-sidebar">
+                <div class="sidebar-header">
+                    <div class="header-title">
+                        <span class="level-badge" [ngClass]="getSeverityClass(selectedLog.level)">
+                            {{ selectedLog.level | uppercase }}
+                        </span>
+                        <h3>Detalhes do Log</h3>
+                    </div>
+                    <button mat-icon-button (click)="closeDetail()">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+
+                <div class="sidebar-body">
+                    <!-- Mensagem do Erro -->
+                    <section class="detail-section">
+                        <h4>Mensagem de Erro</h4>
+                        <div class="code-box error-message-box">
+                            {{ selectedLog.message }}
+                        </div>
+                    </section>
+
+                    <!-- Identificação e Status -->
+                    <section class="detail-section">
+                        <h4>Identificação & Controle</h4>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="label">ID Interno:</span>
+                                <span class="value code-val">{{ selectedLog.internalId }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Aplicação:</span>
+                                <span class="value">{{ selectedLog.application || '-' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Origem:</span>
+                                <span class="value">{{ selectedLog.origem || '-' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Status:</span>
+                                <span class="value status-badge" [ngClass]="getStatusBadgeClass(selectedLog.status)">
+                                    {{ selectedLog.status }}
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Deve Corrigir:</span>
+                                <span class="value">{{ selectedLog.deveCorrigir ? 'SIM (Obrigatório)' : 'NÃO' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Alerta Disparado:</span>
+                                <span class="value">{{ selectedLog.alertaDisparado ? 'SIM' : 'NÃO' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Data de Registro:</span>
+                                <span class="value">{{ selectedLog.cratedAt | date: 'dd/MM/yyyy HH:mm:ss' }}</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Ações Rápidas -->
+                    <section class="detail-section actions-section">
+                        <h4>Ações do Desenvolvedor</h4>
+                        <div class="action-buttons-row">
+                            <button
+                                mat-stroked-button
+                                [color]="selectedLog.deveCorrigir ? 'warn' : 'primary'"
+                                (click)="toggleDeveCorrigir(selectedLog)"
+                            >
+                                <mat-icon>build</mat-icon>
+                                <span>{{ selectedLog.deveCorrigir ? 'Desmarcar Correção' : 'Marcar para Correção' }}</span>
+                            </button>
+
+                            <button
+                                mat-stroked-button
+                                color="accent"
+                                (click)="triggerManualAlert(selectedLog)"
+                                [disabled]="selectedLog.alertaDisparado"
+                            >
+                                <mat-icon>notifications_active</mat-icon>
+                                <span>{{ selectedLog.alertaDisparado ? 'Alerta Já Disparado' : 'Disparar Alerta' }}</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- Detalhes de Alerta -->
+                    @if (selectedLog.alertDetails) {
+                        <section class="detail-section">
+                            <h4>Detalhes do Alerta</h4>
+                            <pre class="json-code-box">{{ selectedLog.alertDetails | json }}</pre>
+                        </section>
+                    }
+
+                    <!-- Metadados da Requisição -->
+                    @if (selectedLog.metadata) {
+                        <section class="detail-section">
+                            <h4>Metadados da Requisição / Contexto</h4>
+                            <div class="info-grid">
+                                @if (selectedLog.metadata?.url) {
+                                    <div class="info-item full">
+                                        <span class="label">Rota / URL:</span>
+                                        <span class="value code-val">{{ selectedLog.metadata?.method }} {{ selectedLog.metadata?.url }}</span>
+                                    </div>
+                                }
+                                @if (selectedLog.metadata?.statusCode) {
+                                    <div class="info-item">
+                                        <span class="label">Status HTTP:</span>
+                                        <span class="value">{{ selectedLog.metadata?.statusCode }}</span>
+                                    </div>
+                                }
+                                @if (selectedLog.metadata?.ip) {
+                                    <div class="info-item">
+                                        <span class="label">Endereço IP:</span>
+                                        <span class="value">{{ selectedLog.metadata?.ip }}</span>
+                                    </div>
+                                }
+                                @if (selectedLog.metadata?.userAgent) {
+                                    <div class="info-item full">
+                                        <span class="label">User-Agent:</span>
+                                        <span class="value ua-val">{{ selectedLog.metadata?.userAgent }}</span>
+                                    </div>
+                                }
+                            </div>
+                        </section>
+                    }
+
+                    <!-- Credenciais do Usuário -->
+                    @if (selectedLog.userCredentials || selectedLog.userId) {
+                        <section class="detail-section">
+                            <h4>Credenciais do Usuário Registradas</h4>
+                            <pre class="json-code-box">{{ (selectedLog.userCredentials || { id: selectedLog.userId, email: selectedLog.userEmail, roles: selectedLog.userRoles }) | json }}</pre>
+                        </section>
+                    }
+
+                    <!-- Payload do Log / Stack Trace -->
+                    @if (selectedLog.log) {
+                        <section class="detail-section">
+                            <div class="section-header-row">
+                                <h4>Payload & Stack Trace</h4>
+                                <button
+                                    mat-button
+                                    class="btn-copy"
+                                    (click)="copyLogPayload(selectedLog)"
+                                >
+                                    <mat-icon>content_copy</mat-icon>
+                                    <span>Copiar</span>
+                                </button>
+                            </div>
+                            <pre class="json-code-box stack-trace">{{ selectedLog.log?.stack || (selectedLog.log | json) }}</pre>
+                        </section>
+                    }
+                </div>
+            </aside>
+        }
+    </div>
+</div>

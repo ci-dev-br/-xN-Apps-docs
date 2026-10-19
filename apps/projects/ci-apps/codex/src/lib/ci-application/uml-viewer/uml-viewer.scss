@@ -22,9 +22,17 @@
     width: 100%;
     height: 100%;
     min-height: 250px;
-    background: #ffffff;
+    background-color: #0a192f;
+    background-image: 
+        linear-gradient(rgba(0, 210, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 210, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(rgba(0, 210, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 210, 255, 0.025) 1px, transparent 1px);
+    background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px;
+    background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
     border-radius: 6px;
-    border: 1px solid #333333;
+    border: 1px solid rgba(0, 210, 255, 0.3);
+    box-shadow: inset 0 0 30px rgba(0, 210, 255, 0.05);
     overflow: hidden;
     cursor: grab;
     position: relative;
@@ -43,13 +51,13 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    background: rgba(30, 30, 30, 0.88);
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(10, 25, 47, 0.88);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 210, 255, 0.3);
     border-radius: 6px;
     padding: 3px 6px;
     z-index: 20;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 210, 255, 0.15);
 
     .btn-divider {
         width: 1px;
@@ -389,47 +397,121 @@
     }
 
     ::ng-deep {
-        p {
-            border-radius: 8px;
+        /* Fundo e bordas dos cartões de classes: Blueprint Glass */
+        g.classGroup rect {
+            fill: rgba(13, 37, 68, 0.88) !important;
+            stroke: #00d2ff !important;
+            stroke-width: 1.5px !important;
+            rx: 6px;
+            ry: 6px;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
         }
 
-        rect {
-            border-radius: 8px;
-            transition: stroke 0.2s ease, stroke-width 0.2s ease, fill 0.2s ease;
+        /* Títulos e textos técnicos monoespaçados */
+        g.classGroup text {
+            font-family: 'JetBrains Mono', 'Fira Code', Consolas, 'Liberation Mono', monospace !important;
+            fill: #e0f2fe !important;
         }
 
+        g.classGroup .title, g.classGroup .classTitle {
+            font-weight: 700 !important;
+            fill: #38bdf8 !important;
+            letter-spacing: 0.5px;
+        }
+
+        /* Linhas e vetores de relacionamento */
+        .relation, path.relation {
+            stroke: #38bdf8 !important;
+            stroke-width: 1.5px !important;
+        }
+
+        marker path, marker polygon {
+            fill: #00d2ff !important;
+            stroke: #00d2ff !important;
+        }
+
+        /* Labels e cápsulas de relacionamento */
+        .edgeLabel rect, .edgeLabel span {
+            background-color: rgba(7, 16, 29, 0.92) !important;
+            fill: rgba(7, 16, 29, 0.92) !important;
+            color: #bae6fd !important;
+            border: 1px solid rgba(0, 210, 255, 0.35) !important;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', Consolas, monospace !important;
+            font-size: 11px !important;
+        }
+
+        /* Clusters e Namespaces de Pacotes */
+        .cluster rect {
+            fill: rgba(8, 22, 42, 0.65) !important;
+            stroke: rgba(2, 132, 199, 0.65) !important;
+            stroke-dasharray: 4 2 !important;
+            stroke-width: 1.5px !important;
+            rx: 8px;
+            ry: 8px;
+        }
+
+        .cluster text {
+            fill: #38bdf8 !important;
+            font-weight: 700 !important;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', Consolas, monospace !important;
+        }
+
+        /* Notas de Arquitetura e Ideias (Callouts do Diagrama) */
+        g.note rect, .node.note rect {
+            fill: rgba(10, 42, 77, 0.94) !important;
+            stroke: #00d2ff !important;
+            stroke-width: 1.5px !important;
+            stroke-dasharray: 4 2;
+            rx: 6px;
+            ry: 6px;
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+        }
+
+        g.note text, .node.note text {
+            fill: #e0f2fe !important;
+            font-family: 'JetBrains Mono', Consolas, monospace !important;
+            font-size: 11.5px !important;
+            font-weight: 500;
+        }
+
+        /* Interações dos nós vetoriais */
         g.uml-node-interactive {
             cursor: pointer;
-            transition: filter 0.2s ease;
+            transition: filter 0.2s ease, transform 0.2s ease;
 
             &:hover {
-                filter: drop-shadow(0 0 6px rgba(79, 193, 255, 0.7));
+                filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.8));
 
                 rect {
-                    stroke: #4fc1ff !important;
-                    stroke-width: 2px !important;
+                    stroke: #00e5ff !important;
+                    stroke-width: 2.2px !important;
+                    fill: rgba(18, 50, 90, 0.95) !important;
                 }
             }
 
             &.uml-node-selected {
-                filter: drop-shadow(0 0 8px rgba(14, 99, 156, 0.9));
+                filter: drop-shadow(0 0 14px rgba(0, 210, 255, 0.95));
 
                 rect {
-                    stroke: #0e639c !important;
+                    stroke: #00e5ff !important;
                     stroke-width: 2.5px !important;
-                    fill: #e3f2fd !important;
+                    fill: rgba(20, 65, 115, 0.98) !important;
                 }
 
                 text {
-                    font-weight: 600;
+                    font-weight: 700;
                 }
             }
 
             &.uml-node-active {
-                filter: drop-shadow(0 0 8px rgba(255, 152, 0, 0.9));
+                filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.95));
 
                 rect {
-                    stroke: #ff9800 !important;
+                    stroke: #fbbf24 !important;
                     stroke-width: 2.5px !important;
                 }
             }
@@ -440,10 +522,10 @@
             transition: filter 0.2s ease;
 
             &:hover {
-                filter: drop-shadow(0 0 5px rgba(79, 193, 255, 0.5));
+                filter: drop-shadow(0 0 8px rgba(0, 210, 255, 0.6));
 
                 rect {
-                    stroke: #4fc1ff !important;
+                    stroke: #00d2ff !important;
                     stroke-dasharray: 4 2;
                 }
             }

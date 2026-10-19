@@ -1,0 +1,128 @@
+<div class="disk-logs-container">
+    <!-- Painel Esquerdo: Lista de Arquivos -->
+    <div class="files-sidebar">
+        <div class="sidebar-top">
+            <div class="search-box">
+                <mat-icon>search</mat-icon>
+                <input
+                    type="text"
+                    [(ngModel)]="searchFile"
+                    (ngModelChange)="applyFilter()"
+                    placeholder="Filtrar arquivos de log..."
+                />
+            </div>
+
+            <div class="type-filter-chips">
+                <button
+                    type="button"
+                    class="f-chip"
+                    [class.active]="filterType === 'ALL'"
+                    (click)="filterType = 'ALL'; applyFilter()"
+                >
+                    Todos
+                </button>
+                <button
+                    type="button"
+                    class="f-chip chip-trace"
+                    [class.active]="filterType === 'trace'"
+                    (click)="filterType = 'trace'; applyFilter()"
+                >
+                    Traces
+                </button>
+                <button
+                    type="button"
+                    class="f-chip chip-log"
+                    [class.active]="filterType === 'log'"
+                    (click)="filterType = 'log'; applyFilter()"
+                >
+                    Logs
+                </button>
+                <button
+                    type="button"
+                    class="f-chip chip-info"
+                    [class.active]="filterType === 'info'"
+                    (click)="filterType = 'info'; applyFilter()"
+                >
+                    Info
+                </button>
+            </div>
+        </div>
+
+        <div class="files-list">
+            @if (filteredFiles.length === 0 && !isLoadingList) {
+                <div class="empty-files">
+                    <mat-icon>folder_off</mat-icon>
+                    <span>Nenhum arquivo de log encontrado.</span>
+                </div>
+            } @else {
+                @for (file of filteredFiles; track file.path) {
+                    <div
+                        class="file-item"
+                        [class.selected]="selectedFile?.path === file.path"
+                        (click)="selectFile(file)"
+                    >
+                        <mat-icon class="file-icon" [ngClass]="'icon-' + file.type">
+                            @if (file.type === 'trace') { pest_control }
+                            @else if (file.type === 'info') { info }
+                            @else { description }
+                        </mat-icon>
+                        <div class="file-info">
+                            <span class="file-name" [title]="file.name">{{ file.name }}</span>
+                            <div class="file-meta">
+                                <span>{{ file.sizeFormatted }}</span>
+                                <span>•</span>
+                                <span>{{ file.mtime | date: 'dd/MM HH:mm' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <!-- Painel Direito: Conteúdo do Arquivo -->
+    <div class="file-content-pane">
+        @if (selectedFile) {
+            <div class="content-header">
+                <div class="selected-file-info">
+                    <mat-icon class="header-icon" [ngClass]="'icon-' + selectedFile.type">
+                        @if (selectedFile.type === 'trace') { bug_report }
+                        @else { text_snippet }
+                    </mat-icon>
+                    <div>
+                        <h4>{{ selectedFile.name }}</h4>
+                        <span>Caminho: {{ selectedFile.path }} | Tamanho: {{ selectedFile.sizeFormatted }}</span>
+                    </div>
+                </div>
+
+                <div class="content-actions">
+                    <button mat-stroked-button (click)="copyContent()" [disabled]="!fileContent">
+                        <mat-icon>content_copy</mat-icon>
+                        <span>Copiar Texto</span>
+                    </button>
+                    <button mat-flat-button color="primary" (click)="downloadFile()" [disabled]="!fileContent">
+                        <mat-icon>download</mat-icon>
+                        <span>Baixar Log</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="content-body">
+                @if (isLoadingContent) {
+                    <div class="loading-state">
+                        <mat-icon class="spin">sync</mat-icon>
+                        <span>Carregando conteúdo do arquivo de log...</span>
+                    </div>
+                } @else {
+                    <pre class="log-text-box"><code>{{ fileContent || '(Arquivo vazio ou sem dados registrados)' }}</code></pre>
+                }
+            </div>
+        } @else {
+            <div class="no-selection">
+                <mat-icon>touch_app</mat-icon>
+                <h3>Selecione um arquivo de log</h3>
+                <p>Escolha um arquivo na lista à esquerda para visualizar seu conteúdo e rastreamento de erros.</p>
+            </div>
+        }
+    </div>
+</div>

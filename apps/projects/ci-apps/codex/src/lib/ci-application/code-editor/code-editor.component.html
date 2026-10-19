@@ -336,9 +336,60 @@
 
     <div class="status">
         <div class="status-group">
-            <span class="status-item branch" matTooltip="Branch / Ambiente">
-                <mat-icon class="status-icon">fork_right</mat-icon> develop
-            </span>
+            <!-- Branch atual & Seletor de Branch -->
+            <button type="button" class="status-item git-branch" (click)="openGitBranchModal()" matTooltip="Branch Git ativa (clique para alternar ou criar branch)">
+                <mat-icon class="status-icon">fork_right</mat-icon>
+                <span class="branch-name">{{ gitBranch }}</span>
+            </button>
+
+            <!-- Sincronização com remoto (ahead / behind / sync) -->
+            <button type="button" class="status-item git-sync" [class.is-syncing]="gitSyncStatus.isSyncing" (click)="triggerGitSync()" matTooltip="Sincronizar com remoto (Pull / Push)">
+                <mat-icon class="status-icon" [class.spin-icon]="gitSyncStatus.isSyncing">sync</mat-icon>
+                @if(gitSyncStatus.ahead > 0 || gitSyncStatus.behind > 0){
+                <span class="sync-count">{{ gitSyncStatus.ahead }}↑ {{ gitSyncStatus.behind }}↓</span>
+                }@else{
+                <span class="sync-label">Sincronizado</span>
+                }
+            </button>
+
+            <!-- Status do Arquivo & Métricas de Linhas (+ / -) -->
+            <div class="status-item git-file-status" [class.modified]="isDirty || gitDiffSummary.modified" matTooltip="Status do arquivo atual em relação ao Git HEAD">
+                @if(isDirty || gitDiffSummary.modified){
+                <span class="git-badge modified">M</span>
+                @if(gitDiffSummary.additions > 0){
+                <span class="diff-additions">+{{ gitDiffSummary.additions }}</span>
+                }
+                @if(gitDiffSummary.deletions > 0){
+                <span class="diff-deletions">-{{ gitDiffSummary.deletions }}</span>
+                }
+                }@else{
+                <span class="git-badge clean">✓</span>
+                <span class="diff-clean-label">Limpo</span>
+                }
+            </div>
+
+            <!-- Ações rápidas Git -->
+            <div class="git-quick-actions">
+                <button type="button" class="status-item git-action-btn" (click)="openGitDiffModal()" matTooltip="Visualizar Diff comparativo com HEAD">
+                    <mat-icon class="status-icon">difference</mat-icon> Diff
+                </button>
+
+                <button type="button" class="status-item git-action-btn" [disabled]="!isDirty && !gitDiffSummary.modified" (click)="openGitCommitModal()" matTooltip="Efetuar Commit das alterações do arquivo">
+                    <mat-icon class="status-icon">done_all</mat-icon> Commit
+                </button>
+
+                @if(isDirty || gitDiffSummary.modified){
+                <button type="button" class="status-item git-action-btn discard-btn" (click)="openGitDiscardModal()" matTooltip="Descartar alterações locais do arquivo">
+                    <mat-icon class="status-icon">undo</mat-icon> Descartar
+                </button>
+                }
+
+                <button type="button" class="status-item git-action-btn" (click)="openGitHistoryModal()" matTooltip="Histórico de Commits (Git Log)">
+                    <mat-icon class="status-icon">history</mat-icon> Histórico
+                </button>
+            </div>
+
+            <span class="status-separator"></span>
 
             @if(isDirty){
             <span class="status-item dirty" (click)="confirmar()" matTooltip="Alterações pendentes - Clique ou Ctrl+S para salvar">
@@ -377,6 +428,258 @@
             </span>
         </div>
     </div>
+
+    <!-- Modais e Diálogos Git -->
+    @if(showGitDiffModal){
+    <div class="git-modal-backdrop" (click)="closeGitDiffModal()">
+        <div class="git-modal-card git-diff-dialog" (click)="$event.stopPropagation()">
+            <div class="git-modal-header">
+                <div class="git-modal-title">
+                    <mat-icon class="title-icon">difference</mat-icon>
+                    <span class="modal-title-text">Comparação de Alterações (Diff com HEAD)</span>
+                    <span class="file-path-badge">{{ oppenedFile?.path }}</span>
+                </div>
+                <div class="header-actions">
+                    <button type="button" class="view-mode-toggle" (click)="toggleDiffSideBySide()" [matTooltip]="diffRenderSideBySide ? 'Alternar para visão em linha' : 'Alternar para visão lado a lado'">
+                        <mat-icon>{{ diffRenderSideBySide ? 'view_stream' : 'view_column' }}</mat-icon>
+                        <span>{{ diffRenderSideBySide ? 'Lado a Lado' : 'Em Linha' }}</span>
+                    </button>
+                    <button type="button" class="close-btn" (click)="closeGitDiffModal()">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <div class="git-diff-body">
+                <div class="diff-metrics-bar">
+                    <span class="metric-item adds">+{{ gitDiffSummary.additions }} adições</span>
+                    <span class="metric-item dels">-{{ gitDiffSummary.deletions }} remoções</span>
+                    <span class="diff-spacer"></span>
+                    <span class="diff-legend-head">HEAD (Original)</span>
+                    <mat-icon class="arrow-diff">arrow_forward</mat-icon>
+                    <span class="diff-legend-work">Working Tree (Modificado)</span>
+                </div>
+                <div class="diff-editor-container">
+                    <nu-monaco-diff-editor
+                        [old]="gitDiffOldModel"
+                        [new]="gitDiffNewModel"
+                        [options]="gitDiffOptions">
+                    </nu-monaco-diff-editor>
+                </div>
+            </div>
+
+            <div class="git-modal-footer">
+                @if(isDirty || gitDiffSummary.modified){
+                <button type="button" class="git-btn danger" (click)="openGitDiscardModal()">
+                    <mat-icon>undo</mat-icon> Descartar Alterações
+                </button>
+                }
+                <span class="footer-spacer"></span>
+                <button type="button" class="git-btn secondary" (click)="closeGitDiffModal()">Fechar</button>
+                <button type="button" class="git-btn primary" (click)="openGitCommitModal()" [disabled]="!isDirty && !gitDiffSummary.modified">
+                    <mat-icon>done_all</mat-icon> Prosseguir para Commit
+                </button>
+            </div>
+        </div>
+    </div>
+    }
+
+    @if(showGitCommitModal){
+    <div class="git-modal-backdrop" (click)="closeGitCommitModal()">
+        <div class="git-modal-card git-commit-dialog" (click)="$event.stopPropagation()">
+            <div class="git-modal-header">
+                <div class="git-modal-title">
+                    <mat-icon class="title-icon">done_all</mat-icon>
+                    <span class="modal-title-text">Efetuar Commit</span>
+                </div>
+                <button type="button" class="close-btn" (click)="closeGitCommitModal()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+
+            <div class="git-modal-body">
+                <div class="commit-info-banner">
+                    <div class="banner-row">
+                        <span class="banner-label">Branch de destino:</span>
+                        <span class="branch-tag"><mat-icon>fork_right</mat-icon> {{ gitBranch }}</span>
+                    </div>
+                    <div class="banner-row">
+                        <span class="banner-label">Arquivo:</span>
+                        <span class="file-tag">{{ oppenedFile?.path }}</span>
+                        @if(gitDiffSummary.modified){
+                        <span class="diff-badge">+{{ gitDiffSummary.additions }} / -{{ gitDiffSummary.deletions }}</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="commit-prefixes">
+                    <span class="prefix-title">Prefixos Semânticos:</span>
+                    <button type="button" class="prefix-chip" (click)="setCommitPrefix('feat: ')">feat</button>
+                    <button type="button" class="prefix-chip" (click)="setCommitPrefix('fix: ')">fix</button>
+                    <button type="button" class="prefix-chip" (click)="setCommitPrefix('refactor: ')">refactor</button>
+                    <button type="button" class="prefix-chip" (click)="setCommitPrefix('docs: ')">docs</button>
+                    <button type="button" class="prefix-chip" (click)="setCommitPrefix('chore: ')">chore</button>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="commitMessageInput">Mensagem de Commit:</label>
+                    <textarea 
+                        id="commitMessageInput"
+                        class="commit-textarea" 
+                        [(ngModel)]="gitCommitMessage" 
+                        rows="3" 
+                        placeholder="Descreva detalhadamente as alterações realizadas...">
+                    </textarea>
+                </div>
+            </div>
+
+            <div class="git-modal-footer">
+                <button type="button" class="git-btn secondary" (click)="closeGitCommitModal()">Cancelar</button>
+                <button type="button" class="git-btn primary" [disabled]="!gitCommitMessage.trim()" (click)="confirmGitCommit()">
+                    <mat-icon>check</mat-icon> Confirmar Commit
+                </button>
+            </div>
+        </div>
+    </div>
+    }
+
+    @if(showGitBranchModal){
+    <div class="git-modal-backdrop" (click)="closeGitBranchModal()">
+        <div class="git-modal-card git-branches-dialog" (click)="$event.stopPropagation()">
+            <div class="git-modal-header">
+                <div class="git-modal-title">
+                    <mat-icon class="title-icon">fork_right</mat-icon>
+                    <span class="modal-title-text">Gerenciar Branches</span>
+                </div>
+                <button type="button" class="close-btn" (click)="closeGitBranchModal()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+
+            <div class="git-modal-body">
+                <div class="create-branch-box">
+                    <input 
+                        type="text" 
+                        class="git-input" 
+                        [(ngModel)]="gitNewBranchName" 
+                        placeholder="Nome da nova branch (ex: feature/nova-tela)"
+                        (keydown.enter)="createNewBranch()" />
+                    <button type="button" class="git-btn primary" [disabled]="!gitNewBranchName.trim()" (click)="createNewBranch()">
+                        <mat-icon>add</mat-icon> Criar Branch
+                    </button>
+                </div>
+
+                <div class="branch-filter-box">
+                    <mat-icon class="search-icon">search</mat-icon>
+                    <input 
+                        type="text" 
+                        class="git-filter-input" 
+                        [(ngModel)]="gitBranchSearchTerm" 
+                        placeholder="Filtrar branches existentes..." />
+                </div>
+
+                <div class="branches-list">
+                    @for(branch of filteredGitBranches; track branch){
+                    <div class="branch-item" [class.active]="branch === gitBranch" (click)="checkoutBranch(branch)">
+                        <mat-icon class="branch-icon">{{ branch === gitBranch ? 'check_circle' : 'fork_right' }}</mat-icon>
+                        <span class="branch-name-text">{{ branch }}</span>
+                        @if(branch === gitBranch){
+                        <span class="current-badge">Ativa</span>
+                        }@else{
+                        <span class="checkout-action">Alternar</span>
+                        }
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <div class="git-modal-footer">
+                <button type="button" class="git-btn secondary" (click)="closeGitBranchModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+    }
+
+    @if(showGitHistoryModal){
+    <div class="git-modal-backdrop" (click)="closeGitHistoryModal()">
+        <div class="git-modal-card git-history-dialog" (click)="$event.stopPropagation()">
+            <div class="git-modal-header">
+                <div class="git-modal-title">
+                    <mat-icon class="title-icon">history</mat-icon>
+                    <span class="modal-title-text">Histórico de Commits (Git Log)</span>
+                    <span class="current-branch-pill">{{ gitBranch }}</span>
+                </div>
+                <button type="button" class="close-btn" (click)="closeGitHistoryModal()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+
+            <div class="git-modal-body history-body">
+                <div class="timeline-container">
+                    @for(commit of gitCommits; track commit.hash){
+                    <div class="commit-item">
+                        <div class="commit-meta">
+                            <span class="commit-hash" matTooltip="Hash do commit">{{ commit.shortHash }}</span>
+                            <span class="commit-branch">{{ commit.branch }}</span>
+                            <span class="commit-date">{{ commit.date | date:'dd/MM/yyyy HH:mm' }}</span>
+                        </div>
+                        <div class="commit-message-row">
+                            <span class="commit-text">{{ commit.message }}</span>
+                        </div>
+                        <div class="commit-author-row">
+                            <mat-icon class="author-icon">person</mat-icon>
+                            <span class="commit-author">{{ commit.author }}</span>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <div class="git-modal-footer">
+                <button type="button" class="git-btn secondary" (click)="closeGitHistoryModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+    }
+
+    @if(showGitDiscardModal){
+    <div class="git-modal-backdrop" (click)="closeGitDiscardModal()">
+        <div class="git-modal-card git-discard-dialog" (click)="$event.stopPropagation()">
+            <div class="git-modal-header">
+                <div class="git-modal-title">
+                    <mat-icon class="title-icon danger">warning</mat-icon>
+                    <span class="modal-title-text">Descartar Alterações Locais</span>
+                </div>
+                <button type="button" class="close-btn" (click)="closeGitDiscardModal()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+
+            <div class="git-modal-body">
+                <p class="discard-warning">
+                    Tem certeza de que deseja descartar todas as alterações não salvas/comitadas no arquivo <strong>{{ oppenedFile?.path }}</strong>?
+                </p>
+                <p class="discard-subtext">
+                    O conteúdo atual do editor será revertido para a última versão sincronizada do repositório (HEAD). Esta ação não pode ser desfeita.
+                </p>
+            </div>
+
+            <div class="git-modal-footer">
+                <button type="button" class="git-btn secondary" (click)="closeGitDiscardModal()">Cancelar</button>
+                <button type="button" class="git-btn danger" (click)="confirmDiscardChanges()">
+                    <mat-icon>delete_forever</mat-icon> Sim, Descartar
+                </button>
+            </div>
+        </div>
+    </div>
+    }
+
+    @if(showGitToast){
+    <div class="git-toast-notification">
+        <mat-icon class="toast-icon">info</mat-icon>
+        <span class="toast-message">{{ gitToastMessage }}</span>
+    </div>
+    }
 
     }@else{
     <div class="loading">

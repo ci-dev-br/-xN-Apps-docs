@@ -1,1 +1,1 @@
-{"branch":"development","commit":"f3877f08237118336adfa6c23f837d8687143b65","author":"pLinho","date":"Sun Oct 18 15:28:24 2026 -0300","message":"feat(auth): Aplica controle de acesso baseado em papel à PessoaController","builtAt":"2026-10-19T04:02:26.517Z"}
+{"branch":"development","commit":"3dade42492db06a7d1db9d0449d4f6d486c4f140","author":"pLinho","date":"Mon Oct 19 01:16:43 2026 -0300","message":"``` refactor: Padroniza API do Portal, aprimora Codex e atualiza componentes UI","builtAt":"2026-10-19T04:28:49.897Z"}

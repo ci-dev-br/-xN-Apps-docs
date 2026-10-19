@@ -15,6 +15,9 @@
       "@ci-apps/DevTools": [
         "./projects/ci-apps/dev-tools/src/public-api"
       ],
+      "@ci-apps/dev-tools": [
+        "./projects/ci-apps/dev-tools/src/public-api"
+      ],
       "@ci-apps/Dynamic": [
         "./projects/ci-apps/dynamic/src/public-api"
       ],
