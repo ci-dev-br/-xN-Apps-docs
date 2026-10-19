@@ -14,11 +14,15 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatDialogModule } from "@angular/material/dialog";
 import { GruposModalComponent } from "../grupos-modal/grupos-modal.component";
 
+import { MatBadgeModule } from "@angular/material/badge";
+import { CommonModule } from "@angular/common";
+
 @NgModule({
     declarations: [
         NavbarComponent,
     ],
     imports: [
+        CommonModule,
         CoreModule,
         IconModule,
         LogoComponent,
@@ -31,6 +35,7 @@ import { GruposModalComponent } from "../grupos-modal/grupos-modal.component";
         RouterModule,
         MatTooltipModule,
         MatDialogModule,
+        MatBadgeModule,
         GruposModalComponent,
     ],
     exports: [

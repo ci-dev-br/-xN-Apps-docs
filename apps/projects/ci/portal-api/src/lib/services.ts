@@ -64,3 +64,5 @@ export { GameplayService } from './services/gameplay.service';
 export { KeyboardThemesService } from './services/keyboard-themes.service';
 export { ChangelogService } from './services/changelog.service';
 export { GroupService, GroupItem, GroupMemberRequestItem, CriarGrupoPayload, GroupTopicItem, GroupTopicMessageItem, GroupSharedAssetItem } from './services/group.service';
+export { InternalNotificationService, InternalNotification, NotificationResponse } from './services/internal-notification.service';
+export { EncryptedMessagerService, DecryptedMessage, ConversationItem, AvailableUserItem } from './services/encrypted-messager.service';

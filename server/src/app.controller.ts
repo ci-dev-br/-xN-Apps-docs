@@ -30,7 +30,8 @@ export class AppController {
     const reqPath = (request.path || '').toLowerCase();
     const isApiRoute = [
       '/tenant', '/news', '/auth', '/users', '/system', '/logger', '/device',
-      '/message', '/storage', '/fiscal', '/financeiro', '/organizacao', '/produto',
+      '/message', '/messager', '/directmessage', '/conversation', '/notification',
+      '/storage', '/fiscal', '/financeiro', '/organizacao', '/produto',
       '/payment', '/cms', '/projetos', '/codex', '/notificacao', '/inpi', '/crm',
       '/dym', '/espazio', '/tasking', '/forms', '/api', '/__orchestration'
     ].some(prefix => reqPath === prefix || reqPath.startsWith(prefix + '/'));

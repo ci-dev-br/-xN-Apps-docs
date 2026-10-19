@@ -3,8 +3,9 @@ import { formatUserPhotoUrl, UserAuthenticationService } from "@ci/auth";
 import { INavbarItemMenu } from "./i-menu-item";
 import { IItemMenu } from "@ci/components/window";
 import { MenuService } from "@ci/core";
-import { AvailableVersionInfoDto, DeployerService, User } from "@ci/portal-api";
+import { AvailableVersionInfoDto, DeployerService, User, InternalNotificationService, InternalNotification } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
+import { Router } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { GruposModalComponent } from "../grupos-modal/grupos-modal.component";
 
@@ -67,10 +68,70 @@ export class NavbarComponent implements OnInit, OnDestroy {
         @Optional() menuService?: MenuService,
         @Optional() private readonly deployerService?: DeployerService,
         @Optional() private readonly dialog?: MatDialog,
+        @Optional() public readonly notificationService?: InternalNotificationService,
+        @Optional() private readonly router?: Router,
     ) {
         menuService?.userMenu?.subscribe(menu => {
             this.userMenuList = menu;
         });
+    }
+
+    get unreadCount$() {
+        return this.notificationService?.unreadCount$;
+    }
+
+    get notifications$() {
+        return this.notificationService?.notifications$;
+    }
+
+    get pushStatus$() {
+        return this.notificationService?.pushPermissionStatus;
+    }
+
+    async solicitarPermissaoPush(event?: Event) {
+        event?.stopPropagation();
+        await this.notificationService?.solicitarPermissaoPush();
+    }
+
+    marcarNotificacaoComoLida(notificacao: InternalNotification, event?: Event) {
+        event?.stopPropagation();
+        this.notificationService?.marcarComoLida(notificacao).subscribe();
+    }
+
+    marcarTodasNotificacoesComoLidas(event?: Event) {
+        event?.stopPropagation();
+        this.notificationService?.marcarTodasComoLidas().subscribe();
+    }
+
+    testarNotificacao(event?: Event) {
+        event?.stopPropagation();
+        this.notificationService?.enviarNotificacaoTeste().subscribe({
+            next: () => {
+                this.notificationService?.carregarNotificacoes();
+            }
+        });
+    }
+
+    abrirAcaoNotificacao(notificacao: InternalNotification, event?: Event) {
+        event?.stopPropagation();
+        this.marcarNotificacaoComoLida(notificacao);
+        if (notificacao.actionUrl) {
+            if (notificacao.actionUrl.startsWith('http')) {
+                window.open(notificacao.actionUrl, '_blank');
+            } else {
+                this.router?.navigateByUrl(notificacao.actionUrl);
+            }
+        }
+    }
+
+    getNotificationIcon(type?: string): string {
+        switch (type) {
+            case 'MENSAGEM': return 'chat';
+            case 'GRUPO': return 'groups';
+            case 'SISTEMA': return 'terminal';
+            case 'AVISO': return 'warning';
+            default: return 'notifications';
+        }
     }
 
     /**
