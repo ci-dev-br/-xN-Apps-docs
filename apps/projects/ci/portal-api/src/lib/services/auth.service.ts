@@ -154,4 +154,36 @@ export class AuthService extends BaseService {
     );
   }
 
+  /**
+   * Obtém os dispositivos vinculados ao usuário logado
+   */
+  dispositivos(context?: HttpContext): Observable<ConnectedDevice[]> {
+    return this.http.post<ConnectedDevice[]>(`${this.rootUrl}/auth/Dispositivos`, {}, { context });
+  }
+
+  /**
+   * Desconecta um dispositivo vinculado pelo seu id (chaveAcesso)
+   */
+  desconectarDispositivo(chaveAcesso: string, context?: HttpContext): Observable<{ success: boolean; isCurrent?: boolean }> {
+    return this.http.post<{ success: boolean; isCurrent?: boolean }>(`${this.rootUrl}/auth/DesconectarDispositivo`, { chaveAcesso }, { context });
+  }
+
+  /**
+   * Desconecta todos os outros dispositivos vinculados
+   */
+  desconectarOutrosDispositivos(context?: HttpContext): Observable<{ success: boolean }> {
+    return this.http.post<{ success: boolean }>(`${this.rootUrl}/auth/DesconectarOutrosDispositivos`, {}, { context });
+  }
+
+}
+
+export interface ConnectedDevice {
+  id: string;
+  ip?: string;
+  browser?: string;
+  os?: string;
+  deviceType?: 'mobile' | 'tablet' | 'desktop';
+  createdAt?: string | Date;
+  isCurrent?: boolean;
+  isOnline?: boolean;
 }

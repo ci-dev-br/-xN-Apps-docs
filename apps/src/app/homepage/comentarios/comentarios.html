@@ -1,0 +1,118 @@
+<div class="comments-section">
+    <div class="comments-header">
+        <div class="header-left">
+            <mat-icon>chat_bubble_outline</mat-icon>
+            <strong>Comentários</strong>
+            <span class="count-pill">{{ comments.length }}</span>
+        </div>
+    </div>
+
+    <!-- Caixa de Envio de Comentário para Quem Está Logado -->
+    @if(isLoggedIn) {
+        <div class="comment-input-box">
+            <div class="user-avatar-mini">
+                <span class="avatar-initials">{{ getAuthorInitials(currentUser) }}</span>
+            </div>
+            <div class="input-form">
+                <mat-form-field appearance="outline" class="comment-field">
+                    <mat-label>Participe da conversa...</mat-label>
+                    <textarea matInput [(ngModel)]="newCommentText" rows="2" placeholder="Deixe sua opinião sobre esta notícia..." [disabled]="sending" (keydown.enter)="onEnterPressed($event)"></textarea>
+                    <mat-hint>Pressione Ctrl+Enter para enviar</mat-hint>
+                </mat-form-field>
+                <div class="input-actions">
+                    <button mat-flat-button color="primary" [disabled]="!newCommentText.trim() || sending" (click)="enviarComentario()">
+                        @if(!sending) {
+                            <mat-icon>send</mat-icon>
+                        }
+                        <span>{{ sending ? 'Enviando...' : 'Comentar' }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    } @else {
+        <div class="login-prompt-banner">
+            <mat-icon>lock_outline</mat-icon>
+            <span>Deseja participar da discussão? <a routerLink="/acessar">Entre na sua conta</a> para comentar e seguir outros leitores.</span>
+        </div>
+    }
+
+    <!-- Lista de Comentários -->
+    <div class="comments-list">
+        @if(loading) {
+            <div class="loading-state">
+                <small>Carregando comentários...</small>
+            </div>
+        }
+
+        @for(c of comments; track c.id) {
+            <div class="comment-card">
+                <div class="comment-avatar-wrapper">
+                    @if(getAuthorPhoto(c.user); as photo) {
+                        <img [src]="photo" alt="Foto do autor" class="author-avatar-img">
+                    } @else {
+                        <div class="author-avatar-placeholder">
+                            {{ getAuthorInitials(c.user) }}
+                        </div>
+                    }
+                </div>
+
+                <div class="comment-body">
+                    <div class="comment-meta-header">
+                        <div class="author-identity">
+                            <span class="author-name">
+                                {{ c.user?.surname || c.user?.fullName || c.user?.username || 'Anônimo' }}
+                            </span>
+                            @if(c.user?.username) {
+                                <span class="author-handle">&#64;{{ c.user?.username }}</span>
+                            }
+
+                            <!-- Vínculo Social (Seguidor / Conhecido / Você) -->
+                            @if(c.socialStatus?.tipo === 'SELF') {
+                                <span class="badge badge-self">Você</span>
+                            } @else if(c.socialStatus?.tipo === 'CONHECIDO') {
+                                <span class="badge badge-conhecido" title="Vocês se seguem mutuamente!">
+                                    <mat-icon>handshake</mat-icon>
+                                    Conhecido
+                                </span>
+                            } @else if(c.socialStatus?.tipo === 'SEGUINDO') {
+                                <span class="badge badge-seguindo">Seguindo</span>
+                            } @else if(c.socialStatus?.tipo === 'SEGUIDOR') {
+                                <span class="badge badge-seguidor">Segue você</span>
+                            }
+                        </div>
+
+                        <div class="meta-right">
+                            <span class="comment-time">{{ c.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+
+                            <!-- Ação de Seguir / Conhecer o Autor -->
+                            @if(c.socialStatus?.tipo !== 'SELF' && c.user?.id) {
+                                @if(c.socialStatus?.isFollowing) {
+                                    <button mat-button class="btn-follow-toggle following" [matTooltip]="'Deixar de seguir ' + (c.user?.surname || c.user?.username)" (click)="alternarSeguir(c.user, $event)">
+                                        <mat-icon>check</mat-icon>
+                                        <span>Seguindo</span>
+                                    </button>
+                                } @else {
+                                    <button mat-stroked-button color="primary" class="btn-follow-toggle follow" [matTooltip]="'Seguir ' + (c.user?.surname || c.user?.username)" (click)="alternarSeguir(c.user, $event)">
+                                        <mat-icon>person_add</mat-icon>
+                                        <span>{{ c.socialStatus?.isFollower ? 'Seguir de volta' : 'Seguir' }}</span>
+                                    </button>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="comment-text">
+                        {{ c.content }}
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if(!loading && comments.length === 0) {
+            <div class="empty-comments">
+                <mat-icon>chat</mat-icon>
+                <span>Nenhum comentário ainda. Seja o primeiro a opinar!</span>
+            </div>
+        }
+    </div>
+</div>

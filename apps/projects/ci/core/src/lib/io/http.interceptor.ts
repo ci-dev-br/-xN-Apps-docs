@@ -142,6 +142,28 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             }));
     }
 
+    private getSecondaryTokens(activeBearer?: string): string[] {
+        if (typeof localStorage === 'undefined') return [];
+        try {
+            const raw = localStorage.getItem('CI_ACCOUNTS');
+            if (!raw) return [];
+            let parsed: any;
+            try {
+                parsed = JSON.parse(decodeURIComponent(escape(atob(raw))));
+            } catch {
+                parsed = JSON.parse(atob(raw));
+            }
+            if (Array.isArray(parsed)) {
+                return parsed
+                    .map(a => a?.authentication?.bearer)
+                    .filter((t): t is string => !!t && t !== activeBearer);
+            }
+        } catch {
+            return [];
+        }
+        return [];
+    }
+
     private addBearerToken(request: HttpRequest<any>): HttpRequest<any> {
         let bearer: string | undefined = undefined;
         const isApiRequest =
@@ -156,12 +178,22 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                 bearer = user_storage.authentication.bearer;
             }
         }
-        return bearer ? request.clone({
-            headers: new HttpHeaders({
-                timeout: '10000',
-                'Authorization': `Bearer ${bearer}`
-            })
-        }) : request;
+
+        if (!bearer) return request;
+
+        const secondaryTokens = this.getSecondaryTokens(bearer);
+        const headersConfig: { [key: string]: string } = {
+            timeout: '10000',
+            'Authorization': `Bearer ${bearer}`
+        };
+
+        if (secondaryTokens.length > 0) {
+            headersConfig['x-additional-tokens'] = secondaryTokens.join(',');
+        }
+
+        return request.clone({
+            headers: new HttpHeaders(headersConfig)
+        });
     }
 
     /**
@@ -178,22 +210,27 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         }
 
         if (error?.status === 401 || error?.status === 408) {
-            const user: { authentication?: { bearer?: string, refreshToken?: string } } =
+            const user: { authentication?: { bearer?: string, refreshToken?: string, chaveAcesso?: string }, chaveAcesso?: string } =
                 this.storage?.restore('apps.ci.dev.br.store.User');
 
+            const chaveAcesso = user?.authentication?.chaveAcesso || user?.chaveAcesso;
             if (user?.authentication?.refreshToken && this.auth) {
                 if (!this._refreshInFlight$) {
                     this._refreshing = true;
                     this._refreshInFlight$ = this.auth.refresh({
                         body: {
-                            refreshToken: user.authentication.refreshToken
-                        }
+                            refreshToken: user.authentication.refreshToken,
+                            chaveAcesso
+                        } as any
                     }).pipe(
-                        switchMap(async (token: { authorization?: string }) => {
+                        switchMap(async (token: { authorization?: string, chaveAcesso?: string }) => {
                             if (token?.authorization) {
                                 const latestUser = this.storage?.restore('apps.ci.dev.br.store.User') || user;
                                 if (latestUser?.authentication) {
                                     latestUser.authentication.bearer = token.authorization;
+                                    if (token.chaveAcesso) {
+                                        latestUser.authentication.chaveAcesso = token.chaveAcesso;
+                                    }
                                     this.storage?.store('apps.ci.dev.br.store.User', latestUser);
                                 }
                             }
@@ -209,7 +246,13 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
 
                 return this._refreshInFlight$.pipe(
                     switchMap(() => next.handle(this.addBearerToken(request))),
-                    catchError(refreshErr => throwError(() => refreshErr))
+                    catchError(refreshErr => {
+                        if (refreshErr?.status === 401 || refreshErr?.status === 403) {
+                            this.storage?.clean();
+                            this.router?.navigate(['/']);
+                        }
+                        return throwError(() => refreshErr);
+                    })
                 );
             }
         }

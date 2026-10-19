@@ -33,6 +33,12 @@
       "@ci-apps/Grencial": [
         "./projects/ci-apps/grencial/src/public-api"
       ],
+      "@ci-apps/grupos": [
+        "./projects/ci-apps/grupos/src/public-api"
+      ],
+      "@ci-apps/Grupos": [
+        "./projects/ci-apps/grupos/src/public-api"
+      ],
       "@ci-apps/Icons": [
         "./projects/ci-apps/icons/src/public-api"
       ],

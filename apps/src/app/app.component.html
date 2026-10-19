@@ -1,10 +1,19 @@
-<span style="display:contents" [class.connecting]="(status$  | async) !== 'online'">
-    @if((load | async) ===true){
+<span style="display:contents">
+    @if((load | async) === true){
     <div class="loader-container">
         <p class="loading-text">Preparando seu ambiente de trabalho...</p>
     </div>
     }@else{
     <div [class.--dev-mode]="isDevMode"></div>
+    @if((status$ | async) !== 'online'){
+    <div class="connection-loading-bar" aria-label="Conectando..."></div>
+    <div class="connection-feedback-badge">
+        <span class="loading-spinner-dot"></span>
+        <span class="loading-text-feedback">
+            {{ (status$ | async) === 'closed' ? 'Reconectando...' : 'Carregando conexão...' }}
+        </span>
+    </div>
+    }
     <router-outlet />
     }
     <!-- <ci-assistente></ci-assistente> -->

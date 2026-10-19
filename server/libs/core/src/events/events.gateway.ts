@@ -181,6 +181,10 @@ export class EventsGateway implements OnGatewayInit {
     onEvent(@ConnectedSocket() client: WebSocket, @MessageBody() data: IDataMessage) {
         if (!this.sing(data)) return;
         (client as { lastTime?: number }).lastTime = Date.now();
+        if ((data as any)?.chaveAcesso) {
+            (client as any).chaveAcesso = (data as any).chaveAcesso;
+            BusService.registerChaveAcesso((data as any).chaveAcesso, client);
+        }
         try {
             if (data.type in this.eventsListeners) {
                 return this.eventsListeners[data.type](client, data);
@@ -325,6 +329,10 @@ export class EventsGateway implements OnGatewayInit {
                 }
             }
             ws.addEventListener('close', (ev) => {
+                if ((ws as any).chaveAcesso) {
+                    BusService.unregisterChaveAcesso((ws as any).chaveAcesso);
+                    this.broadcastDeviceStatus((ws as any).chaveAcesso, false);
+                }
                 if ('mac' in ws && typeof ws.mac === 'string') {
                     this._$devices.next([...(this._$devices.value || []).filter(d => d.mac !== ws.mac)]);
                 }
@@ -447,10 +455,51 @@ export class EventsGateway implements OnGatewayInit {
             (Math.random() ** Math.random()).toString(36)
         return user_chat_context;
     }
-    private Identification(client, data) {
-        // TODO: implementar auto-identificação da credencial (vincula o cliente com determinada chave de acesso, auto escalada);
+    private Identification(client: WebSocket, data: any) {
+        const chaveAcesso = data?.chaveAcesso;
+        if (chaveAcesso) {
+            (client as any).chaveAcesso = chaveAcesso;
+            BusService.registerChaveAcesso(chaveAcesso, client);
+            this.broadcastDeviceStatus(chaveAcesso, true);
+            try {
+                client.send(JSON.stringify({
+                    event: 'events',
+                    data: {
+                        type: 'Ident.Response',
+                        status: 'identified',
+                        chaveAcesso
+                    }
+                }));
+            } catch (err) {
+                console.trace(err);
+            }
+        }
     }
+
+    public broadcastDeviceStatus(chaveAcesso: string, isOnline: boolean) {
+        const payload = JSON.stringify({
+            event: 'DeviceStatus',
+            data: {
+                chaveAcesso,
+                isOnline,
+                timestamp: Date.now()
+            }
+        });
+        if (this.server?.clients) {
+            this.server.clients.forEach((c: any) => {
+                if (c.readyState === 1) { // 1 = OPEN
+                    try { c.send(payload); } catch {}
+                }
+            });
+        }
+    }
+
     private Wake(client: WebSocket, data: IDataMessage) {
+        if ((data as any)?.chaveAcesso) {
+            (client as any).chaveAcesso = (data as any).chaveAcesso;
+            BusService.registerChaveAcesso((data as any).chaveAcesso, client);
+            this.broadcastDeviceStatus((data as any).chaveAcesso, true);
+        }
         client.send(JSON.stringify({ event: 'events', data: { status: 'online' } }));
     }
 }

@@ -46,16 +46,51 @@ export class AuthGuard implements CanActivate {
         // console.log('ROLE', role)
         // console.log('PAYLOAD', payload)
         request['chaveAcesso'] = payload.chaveAcesso;
+        if (!payload.chaveAcesso) {
+          if (!by_pass) throw new UnauthorizedException('Chave de acesso ausente ou inválida.');
+        }
         let chave_acesso_local = await this.credencial.obterChaveAcessoPorId(payload.chaveAcesso);
-        if (!chave_acesso_local || (!chave_acesso_local.alive)) {
+        if (!chave_acesso_local || !chave_acesso_local.alive || !chave_acesso_local.valid) {
           if (!by_pass) throw new UnauthorizedException('Acesso revogado, favor autenticar novamente.');
         }
         request['user'] = await this.userService.findByIdLight(payload.id);
+
+        // Suporte a múltiplas contas conectadas simultaneamente: combina permissões e papéis
+        const additionalTokensHeader = request.headers['x-additional-tokens'] as string | undefined;
+        const combinedRoles = new Set<string>(Array.isArray(payload.roles) ? payload.roles : []);
+
+        if (additionalTokensHeader) {
+          const additionalTokens = additionalTokensHeader.split(',').map(t => t.trim()).filter(Boolean);
+          for (const addToken of additionalTokens) {
+            try {
+              const addPayload = await this.jwtService.verifyAsync(addToken, {
+                secret: process.env.MASTER_PASSWORD_AUTHORYTHY || jwtConstants.secret,
+              });
+              if (addPayload?.roles && Array.isArray(addPayload.roles)) {
+                for (const r of addPayload.roles) {
+                  combinedRoles.add(r);
+                }
+              }
+            } catch {
+              // Token adicional expirado ou inválido não bloqueia a requisição principal
+            }
+          }
+        }
+
+        const allRoles = Array.from(combinedRoles);
+        request['combinedRoles'] = allRoles;
+        if (request['user']) {
+          request['user']['roles'] = allRoles;
+        }
+
         if (!!role) {
-          if (!payload || !payload.roles?.includes(role)) if (!by_pass) throw new UnauthorizedException('Acesso negado. Não corresponde ao nível de acesso necessário.');
+          if (!combinedRoles.has(role)) {
+            if (!by_pass) throw new UnauthorizedException('Acesso negado. Não corresponde ao nível de acesso necessário.');
+          }
         }
       } catch (err) {
-       /*  if (!by_pass) */ throw new UnauthorizedException('Falha na autenticação. Token inválido ou expirado.');
+        if (err instanceof UnauthorizedException) throw err;
+        throw new UnauthorizedException('Falha na autenticação. Token inválido ou expirado.');
       }
     }
     return true;

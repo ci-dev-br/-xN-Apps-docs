@@ -58,6 +58,46 @@ export class BusService {
         })
     }
 
+    private static activeChaves = new Map<string, WebSocket>();
+
+    static registerChaveAcesso(chaveAcesso: string, ws: WebSocket) {
+        if (!chaveAcesso || !ws) return;
+        this.activeChaves.set(chaveAcesso, ws);
+    }
+
+    static unregisterChaveAcesso(chaveAcesso: string) {
+        if (!chaveAcesso) return;
+        this.activeChaves.delete(chaveAcesso);
+    }
+
+    static isChaveAcessoOnline(chaveAcesso: string): boolean {
+        if (!chaveAcesso) return false;
+        const ws = this.activeChaves.get(chaveAcesso);
+        return !!ws && (ws as any).readyState === 1; // 1 = OPEN
+    }
+
+    static disconnectChaveAcesso(chaveAcesso: string) {
+        if (!chaveAcesso) return;
+        const ws = this.activeChaves.get(chaveAcesso);
+        if (ws) {
+            try {
+                if ((ws as any).readyState === 1) {
+                    ws.send(JSON.stringify({
+                        event: 'SessionRevoked',
+                        data: {
+                            chaveAcesso,
+                            message: 'Sua sessão foi encerrada neste dispositivo.'
+                        }
+                    }));
+                    ws.close();
+                }
+            } catch (err) {
+                console.trace(err);
+            }
+            this.activeChaves.delete(chaveAcesso);
+        }
+    }
+
     async addEventListner(name: string, hanlder: () => void) {
         //c this.events.
     }

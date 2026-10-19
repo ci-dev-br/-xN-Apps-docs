@@ -94,7 +94,10 @@ export class UserService {
     }
     async existsUserByIdentification(identification: string, fator: string) {
         return await this.userRepo.createQueryBuilder('user')
-            .where(`encode(sha512(concat(user.username,:fator::varchar)::bytea), 'hex') = :assinatura::varchar`)
+            .where(`encode(sha512(concat(user.username,:fator::varchar)::bytea), 'hex') = :assinatura::varchar
+                 or (user.email is not null and encode(sha512(concat(user.email,:fator::varchar)::bytea), 'hex') = :assinatura::varchar)
+                 or (user.email is not null and encode(sha512(concat(lower(user.email),:fator::varchar)::bytea), 'hex') = :assinatura::varchar)
+                 or (user.username is not null and encode(sha512(concat(lower(user.username),:fator::varchar)::bytea), 'hex') = :assinatura::varchar)`)
             .setParameters(
                 {
                     assinatura: identification, fator: fator
@@ -155,9 +158,15 @@ export class UserService {
                     'tenants',
                     'photo'
                 ]
-            })
+            });
             if (user?.photo?.originalFile) {
-                user.photo.originalFile = user.photo.originalFile.toString('base64') as any
+                if (Buffer.isBuffer(user.photo.originalFile)) {
+                    user.photo.originalFile = user.photo.originalFile.toString('base64') as any;
+                }
+            }
+            if (user) {
+                delete user.password;
+                delete user.refreshToken;
             }
             return user;
         } catch (error) { console.trace(error); }
@@ -189,12 +198,23 @@ export class UserService {
             let data_ref = !!data.id ? await this.userRepo.findOne({
                 where: { id: data.id },
                 relations: { photo: true }
-            }) : await this.userRepo.create(data);
+            }) : undefined;
+            if (!data_ref) {
+                data_ref = await this.userRepo.create(data);
+            }
             if ('photo' in changes) {
-                changes.photo = await this.photos.Sync(changes.photo)
+                if (changes.photo) {
+                    if (!changes.photo.internalId && data_ref?.photo?.internalId) {
+                        changes.photo.internalId = data_ref.photo.internalId;
+                    }
+                    changes.photo = await this.photos.Sync(changes.photo);
+                } else {
+                    changes.photo = null;
+                }
             }
             Object.assign(data_ref, changes);
-            return await this.userRepo.save(data_ref, { transaction: true, reload: true });
+            await this.userRepo.save(data_ref, { transaction: true });
+            return await this.findById(data_ref.id);
         } catch (error) { console.trace(error); }
     }
     async find(

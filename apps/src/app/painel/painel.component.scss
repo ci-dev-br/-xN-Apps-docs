@@ -280,7 +280,9 @@ button.app {
     flex: auto;
     align-items: stretch;
     justify-content: stretch;
-
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
     background-color: var(--mdc-protected-button-label-text-color);
 }
 
@@ -291,7 +293,9 @@ button.app {
     flex: auto;
     align-items: stretch;
     justify-content: stretch;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
     background-color: var(--mdc-protected-button-label-text-color);
 }
 

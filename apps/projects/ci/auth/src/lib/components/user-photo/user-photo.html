@@ -1,1 +1,7 @@
-@if(!!profileImage){<img [src]="profileImage" alt="" class="user-profile-image">}
+@if(!!profileImage && !hasError){
+    <img [src]="profileImage" alt="Foto de perfil" class="user-profile-image" (error)="onImageError()">
+}@else{
+    <div class="user-profile-fallback">
+        <mat-icon>person</mat-icon>
+    </div>
+}

@@ -14,4 +14,5 @@ export * from './logger/logger.controller';
 export * from './logger/logger.module';
 export * from './logger/dto/log.dto';
 export * from './events/events.gateway';
+export * from './events/bus.service';
 export * from './data-io/response';

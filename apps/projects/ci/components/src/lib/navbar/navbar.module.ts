@@ -11,6 +11,8 @@ import { IconModule } from "../icon/icon.module";
 import { LogoComponent } from "../logo/logo.component";
 import { NavbarComponent } from "./navbar.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatDialogModule } from "@angular/material/dialog";
+import { GruposModalComponent } from "../grupos-modal/grupos-modal.component";
 
 @NgModule({
     declarations: [
@@ -28,6 +30,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
         MatMenuModule,
         RouterModule,
         MatTooltipModule,
+        MatDialogModule,
+        GruposModalComponent,
     ],
     exports: [
         NavbarComponent,

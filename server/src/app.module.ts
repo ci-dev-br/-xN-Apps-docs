@@ -11,7 +11,7 @@ import { PranchetaEntities, PranchetaModule } from '@ci/prancheta/prancheta.modu
 import { IconEntities, IconsModule } from '@ci/icons/icons.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { TenantEntities, TenantModule } from '@ci/tenant/tenant.module';
-import { UsersModule } from '@ci/user/users.module';
+import { UsersModule, UserEntities } from '@ci/user/users.module';
 import { StorageEntities, StorageModule } from '@ci/storage/storage.module';
 import { CoreEntities, CoreModule, LoggerModule } from '@ci/core';
 import { ProlaboreEntities } from '@ci/prolabore/prolabore.module';
@@ -85,6 +85,7 @@ const _entities_name = {
   DyM: DyMEntities,
   Espazio: EspazioEntities,
   Tasking: TaskingEntities,
+  Users: UserEntities,
 }
 const _modules_name = {
   System: SystemModule,

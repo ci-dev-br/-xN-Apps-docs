@@ -1,5 +1,5 @@
-import { Controller, Get, Optional, Req, Res } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Controller, Get, Next, Optional, Req, Res } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
 import { resolve, extname } from 'path';
 import * as fs from 'fs/promises';
 import { constants } from 'fs';
@@ -26,14 +26,19 @@ export class AppController {
 
   @Get(['/', '/*\w'])
   @Public()
-  async handleAllRequests(@Req() request: Request, @Res() response: Response) {
-    // Nota: Removi o setTimeout para evitar crash de headers enviados em requisições lentas.
-    // console.log('URL > ' + request.url);
-    // console.log(request.originalUrl)
-    // console.log(request.baseUrl)
-    // console.log(...Object.keys(request.headers).map((p) => {
-    //   return `${p} > ${request.headers[p]};`;
-    // }))
+  async handleAllRequests(@Req() request: Request, @Res() response: Response, @Next() next: NextFunction) {
+    const reqPath = (request.path || '').toLowerCase();
+    const isApiRoute = [
+      '/tenant', '/news', '/auth', '/users', '/system', '/logger', '/device',
+      '/message', '/storage', '/fiscal', '/financeiro', '/organizacao', '/produto',
+      '/payment', '/cms', '/projetos', '/codex', '/notificacao', '/inpi', '/crm',
+      '/dym', '/espazio', '/tasking', '/forms', '/api', '/__orchestration'
+    ].some(prefix => reqPath === prefix || reqPath.startsWith(prefix + '/'));
+
+    if (isApiRoute) {
+      return next();
+    }
+
     try {
       if (request.url.indexOf('manifest.webmanifest') > -1) {
         const host: string = this.appService.getHost(request);
@@ -56,7 +61,7 @@ export class AppController {
         }
       }
       // 2. Se não achou no CMS, serve arquivos estáticos com cache
-      return this.serveStaticWithCache(request, response);
+      return this.serveStaticWithCache(request, response, next);
 
     } catch (error) {
       console.error(error);
@@ -69,7 +74,7 @@ export class AppController {
   /**
    * Lida com arquivos do disco, cache em memória e headers do Cloudflare
    */
-  private async serveStaticWithCache(request: Request, response: Response) {
+  private async serveStaticWithCache(request: Request, response: Response, next?: NextFunction) {
     let reqPath = request.path === '/' || !request.path.includes('.')
       ? '/index.csr.html'
       : request.path;
@@ -81,6 +86,10 @@ export class AppController {
       // Verifica de forma assíncrona se o arquivo existe (não bloqueia a thread como existsSync)
       await fs.access(absolutePath, constants.R_OK);
     } catch {
+      // Se for uma requisição que espera JSON e o arquivo estático não existe, repassa ao pipeline
+      if (next && (request.headers.accept?.includes('application/json') || request.xhr)) {
+        return next();
+      }
       // Se der erro (não existe), fazemos o fallback para o index
       absolutePath = resolve('public/index.csr.html');
       isIndex = true;

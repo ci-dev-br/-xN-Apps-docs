@@ -120,16 +120,29 @@
         </button>
     </mat-menu>
     }
-    <button mat-icon-button [matMenuTriggerFor]="communitiesMenu">
-        <mat-icon>communities</mat-icon>
+    <button mat-icon-button [matMenuTriggerFor]="communitiesMenu" matTooltip="Grupos e Comunidades">
+        <mat-icon>groups</mat-icon>
     </button>
     <mat-menu #communitiesMenu>
-        <button mat-menu-item>
-            Encontrar grupos
+        <button mat-menu-item (click)="abrirGrupos(0)">
+            <mat-icon>search</mat-icon>
+            <span>Encontrar grupos</span>
+        </button>
+        <button mat-menu-item (click)="abrirGrupos(1)">
+            <mat-icon>group_add</mat-icon>
+            <span>Criar novo grupo</span>
+        </button>
+        <button mat-menu-item (click)="abrirGrupos(2)">
+            <mat-icon>diversity_3</mat-icon>
+            <span>Meus grupos</span>
         </button>
     </mat-menu>
-    <button mat-icon-button [matMenuTriggerFor]="userMenu">
-        <mat-icon>people</mat-icon>
+    <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-btn" [matTooltip]="user()?.surname || user()?.fullName || user()?.username || 'Usuário'">
+        @if(userPhotoUrl){
+            <img [src]="userPhotoUrl" class="navbar-user-photo" alt="Foto do usuário" (error)="onPhotoError()" />
+        }@else{
+            <mat-icon>people</mat-icon>
+        }
     </button>}
     <mat-menu #userMenu>
         @if(!!userMenu && !!userMenuList){@for(menu_item of userMenuList; track menu_item){

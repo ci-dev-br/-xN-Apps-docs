@@ -17,84 +17,88 @@ export class AuthService {
         refreshToken?: string,
         req?: Request,
         ip?: string,
+        chaveAcessoParam?: string,
     ) {
-        let confiance: string = 'r';
-        const r: { try?: string } = await this.jwtService.verifyAsync(refreshToken);
-        let old_authorization: {
-            id: string,
-            roles: string[],
-            exp: number,
-            iat: number,
-            chaveAcesso?: string;
-            confiance: string,
-        };
-        let permission = null;
-        let chave_acesso: Credential = null;
-        if ('try' in r && r.try && typeof r.try === 'string') {
-            permission = JSON.parse(atob(r.try)).permission;
-            const rawAuthHeader = req?.headers?.['authorization']?.replace('Bearer', '').trim();
-            old_authorization = rawAuthHeader ? (this.jwtService.decode(rawAuthHeader) as any) : null;
-            userId = old_authorization?.id || userId;
-            // TODO: verificar validade da chave de acesso 
+        if (!refreshToken) {
+            throw new UnauthorizedException('Refresh token não fornecido.');
+        }
+
+        let r: any;
+        try {
+            r = await this.jwtService.verifyAsync(refreshToken);
+        } catch (error) {
+            console.trace(error);
+            throw new UnauthorizedException('Refresh token expirado ou inválido.');
+        }
+
+        let permission: string = r?.permission;
+        let chaveAcessoId: string = chaveAcessoParam || r?.chaveAcesso;
+        let tokenUserId: string = r?.userId || r?.id;
+
+        if (!permission && r?.try && typeof r.try === 'string') {
             try {
-                const chave_acesso_token = old_authorization?.chaveAcesso;
-                if (chave_acesso_token) {
-                    chave_acesso = await this.credencial.obterChaveAcessoPorId(chave_acesso_token);
-                }
-                if (chave_acesso) {
-                    if (userId !== chave_acesso?.identifiedUser) {
-                        userId = chave_acesso?.identifiedUser;
-                        confiance += 'v';
-                    } else {
-                        confiance += 'o';
-                    }
-                    if (chave_acesso?.valid === false) {
-                        // confiance += 'x';
-                        // throw new UnauthorizedException('A sua sessão expirou. Por favor, identifique-se novamente // para continuar.');
-                    }
-                    if (!chave_acesso?.refreshToken) {
-                        confiance += 'e';
-                        if (confiance.indexOf('o') === -1) {
-                            throw new UnauthorizedException('Por favor, identifique-se novamente.');
-                        }
-                    }
-                }
-            } catch (error) {
-                console.trace(error);
-                confiance += 'e';
-                throw new UnauthorizedException('Acesso negado [1].', error);
-            }
+                const parsedTry = JSON.parse(atob(r.try));
+                permission = parsedTry?.permission || permission;
+                chaveAcessoId = parsedTry?.chaveAcesso || chaveAcessoId;
+                tokenUserId = parsedTry?.userId || tokenUserId;
+            } catch {}
         }
+
+        // Tenta também resgatar chaveAcesso do header Authorization expirado (Bearer token)
+        const rawAuthHeader = (req as any)?.headers?.['authorization']?.replace(/^Bearer\s+/i, '').trim();
+        if (rawAuthHeader) {
+            try {
+                const old_authorization: any = this.jwtService.decode(rawAuthHeader);
+                if (!chaveAcessoId && old_authorization?.chaveAcesso) {
+                    chaveAcessoId = old_authorization.chaveAcesso;
+                }
+                if (!tokenUserId && old_authorization?.id) {
+                    tokenUserId = old_authorization.id;
+                }
+            } catch {}
+        }
+
+        if (!chaveAcessoId && (req as any)?.body?.chaveAcesso) {
+            chaveAcessoId = (req as any).body.chaveAcesso;
+        }
+
+        if (!chaveAcessoId) {
+            throw new UnauthorizedException('Chave de acesso não identificada para este refresh token.');
+        }
+
+        // 💡 O refresh token DEVE usar a chave de acesso para verificar se ainda é válido:
+        const chave_acesso = await this.credencial.obterChaveAcessoPorId(chaveAcessoId);
+        if (!chave_acesso) {
+            throw new UnauthorizedException('Chave de acesso inexistente.');
+        }
+
+        if (chave_acesso.valid === false) {
+            throw new UnauthorizedException('A chave de acesso deste dispositivo foi revogada ou expirou.');
+        }
+
+        userId = tokenUserId || chave_acesso.identifiedUser || userId;
+        if (chave_acesso.identifiedUser && userId && chave_acesso.identifiedUser !== userId) {
+            throw new UnauthorizedException('A chave de acesso não pertence a este usuário.');
+        }
+
+        userId = chave_acesso.identifiedUser || userId;
         const user = await this.userService.findByIdLight(userId);
-        if (user) {
-            await this.userCredentialService.credenciar(user.id);
-            let chaveAcesso = chave_acesso;
-            if (chaveAcesso) {
-                if (!chaveAcesso.alive) {
-                    chaveAcesso.alive = true; // Chave ativa permite autenticar na aplicação
-                    await this.credencial.atualizar(chaveAcesso);
-                }
-            } else {
-                chaveAcesso = await this.credencial.solicitarCredencial({
-                    ip: ip,
-                    identificacao_inicial: user.id,
-                    headers: req?.headers
-                });
-                chaveAcesso.alive = true; // Chave ativa permite autenticar na aplicação
-                chaveAcesso.valid = false; // Chave válida permite gerar nova chave
-                await this.credencial.atualizar(chaveAcesso);
-            }
-            return {
-                authorization: await this.jwtService.signAsync({
-                    id: user?.id,
-                    roles: user?.roles,
-                    permission: permission,
-                    chaveAcesso: chaveAcesso.id,
-                    confiance
-                })
-            };
-        } else {
-            throw new UnauthorizedException('Acesso Nagado.');
+        if (!user) {
+            throw new UnauthorizedException('Usuário não localizado.');
         }
+
+        // Mantém a chave de acesso do dispositivo ativa
+        chave_acesso.alive = true;
+        await this.credencial.atualizar(chave_acesso);
+
+        return {
+            authorization: await this.jwtService.signAsync({
+                id: user.id,
+                roles: user.roles,
+                permission: permission,
+                chaveAcesso: chave_acesso.id,
+            }),
+            chaveAcesso: chave_acesso.id,
+        };
     }
 }

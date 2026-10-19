@@ -3,6 +3,8 @@ import { Inject, Injectable, Optional, PLATFORM_ID, SimpleChange, SimpleChanges 
 import { BehaviorSubject } from "rxjs";
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 
+import { StorageService } from "../storage/storage.service";
+
 /**
  * Serviço de comunicação via WebSocket com o gateway
  */
@@ -20,6 +22,11 @@ export class WsService {
         this.status$.next(value);
     }
     public status$: BehaviorSubject<'connecting' | 'online' | 'closed'> = new BehaviorSubject<'connecting' | 'online' | 'closed'>('connecting');
+    public deviceStatus$: BehaviorSubject<{ chaveAcesso: string; isOnline: boolean; timestamp?: number } | null> =
+        new BehaviorSubject<{ chaveAcesso: string; isOnline: boolean; timestamp?: number } | null>(null);
+    public sessionRevoked$: BehaviorSubject<{ chaveAcesso: string; message?: string } | null> =
+        new BehaviorSubject<{ chaveAcesso: string; message?: string } | null>(null);
+
     private isBrowser: boolean = isPlatformBrowser(this.platformId);
     private retryWait = 100;
     private _grant_connection = false;
@@ -31,7 +38,8 @@ export class WsService {
         return this.websocket_subject;
     }
     constructor(
-        @Optional() @Inject(PLATFORM_ID) private platformId: Object
+        @Optional() @Inject(PLATFORM_ID) private platformId: Object,
+        @Optional() private readonly storage?: StorageService,
     ) {
         setTimeout(() => this.init());
     }
@@ -39,6 +47,77 @@ export class WsService {
         this._grant_connection =
             true;
     }
+
+    private extractChaveAcessoFromToken(token?: string | null): string | undefined {
+        if (!token || typeof token !== 'string') return undefined;
+        const clean = token.replace(/^Bearer\s+/i, '').trim();
+        const parts = clean.split('.');
+        if (parts.length === 3) {
+            try {
+                const base64Url = parts[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(
+                    atob(base64)
+                        .split('')
+                        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                        .join('')
+                );
+                const payload = JSON.parse(jsonPayload);
+                if (payload?.chaveAcesso) return payload.chaveAcesso;
+            } catch {
+                try {
+                    const payload = JSON.parse(atob(parts[1]));
+                    if (payload?.chaveAcesso) return payload.chaveAcesso;
+                } catch {}
+            }
+        }
+        return undefined;
+    }
+
+    public getStoredChaveAcesso(): string | undefined {
+        if (!this.isBrowser || typeof localStorage === 'undefined') return undefined;
+        try {
+            if (this.storage) {
+                const userStore: any = this.storage.restore('apps.ci.dev.br.store.User');
+                const bearer = userStore?.authentication?.bearer || userStore?.bearer;
+                const chave = this.extractChaveAcessoFromToken(bearer);
+                if (chave) return chave;
+                if (userStore?.authentication?.chaveAcesso) return userStore.authentication.chaveAcesso;
+                if (userStore?.chaveAcesso) return userStore.chaveAcesso;
+            }
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (!key) continue;
+                const val = localStorage.getItem(key);
+                if (!val) continue;
+                try {
+                    const decoded = atob(val);
+                    if (decoded.includes('bearer') || decoded.includes('chaveAcesso')) {
+                        const parsed = JSON.parse(decoded);
+                        const bearer = parsed?.authentication?.bearer || parsed?.bearer;
+                        const chave = this.extractChaveAcessoFromToken(bearer) || parsed?.authentication?.chaveAcesso || parsed?.chaveAcesso;
+                        if (chave) return chave;
+                    }
+                } catch {}
+            }
+        } catch {}
+        return undefined;
+    }
+
+    public identifySession(chaveAcesso?: string) {
+        const chave = chaveAcesso || this.getStoredChaveAcesso();
+        if (chave) {
+            this.Emit({
+                event: 'events',
+                data: {
+                    type: 'Identification',
+                    chaveAcesso: chave,
+                    momento: Date.now()
+                }
+            });
+        }
+    }
+
     /**
      *  Inicia o canal WebSocket de comunicação com o gateway
      * @returns 
@@ -48,29 +127,55 @@ export class WsService {
         if (this.websocket_subject) {
             this.websocket_subject.complete();
         }
-        let gateway_api = 'wss://apps.ci.dev.br'
-        this.websocket_subject = webSocket(gateway_api);
+        let gateway_api = 'wss://apps.ci.dev.br';
+
         this.status = 'connecting';
-        this.websocket_subject.subscribe(message => {
-            this.status = 'online';
-            this.retryWait = 100;
-            this.ReceiveDataHandler(message)
-        }, erros => {
-            this.status = 'connecting';
-            if (erros instanceof CloseEvent || (erros instanceof Event && erros.type === 'error')) {
-                if (this.websocket_subject) this.websocket_subject?.complete();
-                this.websocket_subject = undefined;
-                setTimeout(() => {
-                    this.init();
-                }, this.retryWait);
-                this.retryWait = this.retryWait + 500;
+        this.websocket_subject = webSocket({
+            url: gateway_api,
+            openObserver: {
+                next: () => {
+                    console.log(`[WsService] Conexão WebSocket estabelecida com ${gateway_api}`);
+                    this.status = 'online';
+                    this.retryWait = 100;
+                    const chaveAcesso = this.getStoredChaveAcesso();
+                    this.Emit({
+                        event: 'events',
+                        data: {
+                            type: 'Wake',
+                            momento: Date.now(),
+                            chaveAcesso
+                        }
+                    });
+                }
+            },
+            closeObserver: {
+                next: () => {
+                    console.warn(`[WsService] Conexão WebSocket com ${gateway_api} encerrada.`);
+                    this.status = 'closed';
+                }
             }
-        }, () => {
-            this.status = 'connecting';
         });
-        this.Emit({
-            event: 'events', data: {
-                type: 'Wake', momento: (new Date().getTime())
+
+        this.websocket_subject.subscribe({
+            next: (message) => {
+                this.status = 'online';
+                this.retryWait = 100;
+                this.ReceiveDataHandler(message);
+            },
+            error: (erros) => {
+                console.error(`[WsService] Erro na conexão WebSocket (${gateway_api}):`, erros);
+                this.status = 'connecting';
+                if (erros instanceof CloseEvent || (erros instanceof Event && erros.type === 'error')) {
+                    if (this.websocket_subject) this.websocket_subject?.complete();
+                    this.websocket_subject = undefined;
+                    setTimeout(() => {
+                        this.init();
+                    }, this.retryWait);
+                    this.retryWait = Math.min(this.retryWait + 500, 10000);
+                }
+            },
+            complete: () => {
+                this.status = 'closed';
             }
         });
     }
@@ -148,7 +253,13 @@ export class WsService {
                     }
                     this._updating.delete(o_DATA);
                 }
-            })
+            });
+        }
+        if (data.event === 'DeviceStatus' && data.data) {
+            this.deviceStatus$.next(data.data);
+        }
+        if (data.event === 'SessionRevoked' && data.data) {
+            this.sessionRevoked$.next(data.data);
         }
         if (data.event && typeof data.data === 'object') {
             this.emit(data.event,

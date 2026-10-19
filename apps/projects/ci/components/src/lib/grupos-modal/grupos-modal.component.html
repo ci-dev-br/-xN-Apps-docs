@@ -1,0 +1,375 @@
+<div class="grupos-modal-container">
+  <!-- Cabeçalho do Diálogo -->
+  <header class="dialog-header">
+    <div class="header-title">
+      <mat-icon class="title-icon">groups</mat-icon>
+      <div>
+        <h2>Grupos e Comunidades</h2>
+        <span class="subtitle">Conecte-se com pessoas, participe de discussões ou crie seu próprio grupo.</span>
+      </div>
+    </div>
+    <button mat-icon-button (click)="fechar()" class="btn-close" matTooltip="Fechar">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <!-- Abas do Modal -->
+  <mat-tab-group [(selectedIndex)]="selectedTab" (selectedIndexChange)="onTabChange($event)" animationDuration="200ms" class="grupos-tabs">
+    <!-- ABA 1: ENCONTRAR GRUPOS -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">search</mat-icon>
+        <span>Encontrar Grupos</span>
+      </ng-template>
+
+      <div class="tab-content">
+        <!-- Barra de Busca e Ação Rápida -->
+        <div class="search-bar-row">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-icon matPrefix>search</mat-icon>
+            <mat-label>Buscar grupos por título ou tema...</mat-label>
+            <input matInput [(ngModel)]="termoBusca" (keyup.enter)="onBuscar()" placeholder="Ex: Tecnologia, Negócios, Saúde..." />
+            @if(termoBusca) {
+              <button matSuffix mat-icon-button (click)="termoBusca = ''; onBuscar()" matTooltip="Limpar busca">
+                <mat-icon>clear</mat-icon>
+              </button>
+            }
+          </mat-form-field>
+          <button mat-stroked-button color="primary" class="btn-new-group-shortcut" (click)="selectedTab = 1">
+            <mat-icon>add</mat-icon>
+            <span>Criar Grupo</span>
+          </button>
+        </div>
+
+        @if(loading) {
+          <div class="loading-state">
+            <mat-spinner diameter="36"></mat-spinner>
+            <span>Buscando grupos disponíveis...</span>
+          </div>
+        } @else if(grupos.length === 0) {
+          <div class="empty-state">
+            <mat-icon>group_off</mat-icon>
+            <p>Nenhum grupo encontrado com este termo.</p>
+            <button mat-flat-button color="primary" (click)="selectedTab = 1">
+              <mat-icon>add</mat-icon>
+              <span>Seja o primeiro a criar um grupo!</span>
+            </button>
+          </div>
+        } @else {
+          <!-- Grade de Grupos -->
+          <div class="groups-grid">
+            @for(g of grupos; track g.id) {
+              <div class="group-card">
+                <!-- Foto de Capa do Grupo -->
+                <div class="card-cover" [style.background-image]="g.coverUrl ? 'url(' + g.coverUrl + ')' : null">
+                  @if(!g.coverUrl) {
+                    <div class="default-cover-pattern">
+                      <mat-icon>diversity_3</mat-icon>
+                    </div>
+                  }
+                  @if(g.requiresApproval) {
+                    <span class="approval-badge" matTooltip="Entrada sujeita a aprovação do administrador">
+                      <mat-icon>shield</mat-icon>
+                      Privado
+                    </span>
+                  } @else {
+                    <span class="public-badge" matTooltip="Qualquer usuário pode ingressar livremente">
+                      <mat-icon>public</mat-icon>
+                      Público
+                    </span>
+                  }
+                </div>
+
+                <!-- Conteúdo do Card -->
+                <div class="card-body">
+                  <!-- Avatar Sobreposto -->
+                  <div class="group-avatar-wrapper">
+                    @if(g.avatarUrl) {
+                      <img [src]="g.avatarUrl" alt="Avatar do grupo" class="group-avatar-img">
+                    } @else {
+                      <div class="group-avatar-placeholder">
+                        {{ getGroupInitials(g.name) }}
+                      </div>
+                    }
+                  </div>
+
+                  <div class="card-main-info">
+                    <h3 class="group-name" [title]="g.name">{{ g.name }}</h3>
+                    <p class="group-desc">{{ g.descriptions || 'Comunidade aberta para trocas de ideias e colaborações.' }}</p>
+                  </div>
+
+                  <div class="group-meta-row">
+                    <div class="members-count">
+                      <mat-icon>group</mat-icon>
+                      <span>{{ g.membersCount || 0 }} {{ (g.membersCount === 1) ? 'membro' : 'membros' }}</span>
+                    </div>
+
+                    @if(g.admin) {
+                      <div class="admin-info" [matTooltip]="'Administrado por ' + (g.admin.surname || g.admin.username)">
+                        <span class="admin-label">Admin:</span>
+                        <span class="admin-name">{{ g.admin.surname || g.admin.username }}</span>
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Ação de Participar / Status -->
+                  <div class="card-actions">
+                    @if(g.userStatus === 'ADMIN') {
+                      <span class="status-badge admin-badge">
+                        <mat-icon>verified_user</mat-icon>
+                        Você administra
+                      </span>
+                      <button mat-stroked-button color="primary" class="btn-enter" (click)="abrirPaginaDoGrupo(g, $event)" matTooltip="Acessar página do grupo">
+                        <mat-icon>login</mat-icon>
+                        <span>Entrar</span>
+                      </button>
+                    } @else if(g.userStatus === 'MEMBER') {
+                      <span class="status-badge member-badge">
+                        <mat-icon>check_circle</mat-icon>
+                        Membro
+                      </span>
+                      <button mat-stroked-button color="primary" class="btn-enter" (click)="abrirPaginaDoGrupo(g, $event)" matTooltip="Acessar página do grupo">
+                        <mat-icon>login</mat-icon>
+                        <span>Entrar</span>
+                      </button>
+                      <button mat-button color="warn" class="btn-leave" (click)="sairDoGrupo(g, $event)" matTooltip="Deixar grupo">
+                        Sair
+                      </button>
+                    } @else if(g.userStatus === 'PENDING') {
+                      <span class="status-badge pending-badge">
+                        <mat-icon>hourglass_top</mat-icon>
+                        Aguardando aprovação
+                      </span>
+                      <button mat-button class="btn-cancel" (click)="sairDoGrupo(g, $event)" matTooltip="Cancelar solicitação">
+                        Cancelar
+                      </button>
+                    } @else {
+                      <button mat-flat-button color="primary" class="btn-join" (click)="solicitarParticipacao(g, $event)">
+                        <mat-icon>{{ g.requiresApproval ? 'person_add' : 'group_add' }}</mat-icon>
+                        <span>{{ g.requiresApproval ? 'Solicitar Entrada' : 'Participar' }}</span>
+                      </button>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </mat-tab>
+
+    <!-- ABA 2: CRIAR NOVO GRUPO -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">group_add</mat-icon>
+        <span>Criar Novo Grupo</span>
+      </ng-template>
+
+      <div class="tab-content create-tab">
+        <form [formGroup]="formCriar" (ngSubmit)="criarGrupo()" class="create-form">
+          <div class="form-grid">
+            <!-- Título do Grupo -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Título / Nome do Grupo *</mat-label>
+              <input matInput formControlName="name" placeholder="Ex: Desenvolvedores Full-Stack Brasil" />
+              <mat-hint>Escolha um título claro e atrativo</mat-hint>
+            </mat-form-field>
+
+            <!-- Descrição -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Descrição do Grupo</mat-label>
+              <textarea matInput formControlName="descriptions" rows="3" placeholder="Explique os objetivos, tópicos e regras do grupo..."></textarea>
+            </mat-form-field>
+
+            <!-- URL da Imagem/Avatar do Grupo -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Imagem / Ícone do Grupo (URL)</mat-label>
+              <input matInput formControlName="avatarUrl" placeholder="https://exemplo.com/avatar.png" />
+              <mat-hint>Recomendado formato quadrado ou circular</mat-hint>
+            </mat-form-field>
+
+            <!-- URL da Foto de Capa -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Foto de Capa do Grupo (URL)</mat-label>
+              <input matInput formControlName="coverUrl" placeholder="https://exemplo.com/capa.jpg" />
+              <mat-hint>Banner superior do grupo</mat-hint>
+            </mat-form-field>
+
+            <!-- Prévia do Card em Tempo Real -->
+            @if(formCriar.get('name')?.value) {
+              <div class="preview-box">
+                <span class="preview-title">Prévia do Card:</span>
+                <div class="preview-card">
+                  <div class="preview-cover" [style.background-image]="formCriar.get('coverUrl')?.value ? 'url(' + formCriar.get('coverUrl')?.value + ')' : null"></div>
+                  <div class="preview-content">
+                    <div class="preview-avatar">
+                      @if(formCriar.get('avatarUrl')?.value) {
+                        <img [src]="formCriar.get('avatarUrl')?.value" alt="Preview avatar">
+                      } @else {
+                        <span>{{ getGroupInitials(formCriar.get('name')?.value) }}</span>
+                      }
+                    </div>
+                    <strong>{{ formCriar.get('name')?.value }}</strong>
+                    <small>{{ formCriar.get('descriptions')?.value || 'Sem descrição' }}</small>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Aprovação de Novos Membros -->
+            <div class="approval-toggle-box">
+              <mat-slide-toggle formControlName="requiresApproval" color="primary">
+                Exigir aprovação do administrador para novos participantes
+              </mat-slide-toggle>
+              <small class="toggle-hint">
+                Se ativado, interessados precisam enviar solicitação e você decidirá quem entra.
+              </small>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button mat-button type="button" (click)="selectedTab = 0">Cancelar</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="formCriar.invalid || creating">
+              @if(creating) {
+                <span>Criando Grupo...</span>
+              } @else {
+                <mat-icon>check</mat-icon>
+                <span>Criar Grupo</span>
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </mat-tab>
+
+    <!-- ABA 3: MEUS GRUPOS & ADMINISTRAÇÃO -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">diversity_3</mat-icon>
+        <span>Meus Grupos</span>
+        @if(meusGrupos.length > 0) {
+          <span class="tab-count-badge">{{ meusGrupos.length }}</span>
+        }
+      </ng-template>
+
+      <div class="tab-content">
+        @if(!isLoggedIn) {
+          <div class="empty-state">
+            <mat-icon>lock</mat-icon>
+            <p>Faça login para visualizar seus grupos e gerenciar solicitações.</p>
+          </div>
+        } @else if(loadingMeus) {
+          <div class="loading-state">
+            <mat-spinner diameter="36"></mat-spinner>
+            <span>Carregando seus grupos...</span>
+          </div>
+        } @else if(meusGrupos.length === 0) {
+          <div class="empty-state">
+            <mat-icon>group_work</mat-icon>
+            <p>Você ainda não participa nem administra nenhum grupo.</p>
+            <button mat-stroked-button color="primary" (click)="selectedTab = 0">
+              <mat-icon>search</mat-icon>
+              <span>Explorar Grupos</span>
+            </button>
+          </div>
+        } @else {
+          <div class="my-groups-list">
+            @for(g of meusGrupos; track g.id) {
+              <div class="my-group-row" [class.managing]="grupoGerenciandoId === g.id">
+                <div class="my-group-info">
+                  <div class="mini-avatar">
+                    @if(g.avatarUrl) {
+                      <img [src]="g.avatarUrl" alt="Avatar">
+                    } @else {
+                      <span>{{ getGroupInitials(g.name) }}</span>
+                    }
+                  </div>
+                  <div class="details">
+                    <div class="title-line">
+                      <strong>{{ g.name }}</strong>
+                      @if(g.userStatus === 'ADMIN') {
+                        <span class="role-badge admin">Administrador</span>
+                      } @else {
+                        <span class="role-badge member">Membro</span>
+                      }
+                    </div>
+                    <small>{{ g.membersCount || 0 }} membros • Criado em {{ g.createdAt | date:'dd/MM/yyyy' }}</small>
+                  </div>
+                </div>
+
+                <div class="my-group-actions">
+                  <button mat-stroked-button color="primary" class="btn-open-group" (click)="abrirPaginaDoGrupo(g, $event)" matTooltip="Acessar página do grupo">
+                    <mat-icon>open_in_new</mat-icon>
+                    <span>Abrir</span>
+                  </button>
+                  @if(g.userStatus === 'ADMIN') {
+                    <button mat-stroked-button color="primary" class="btn-manage-requests" (click)="alternarGerenciarSolicitacoes(g)">
+                      <mat-icon>how_to_reg</mat-icon>
+                      <span>Solicitações</span>
+                      @if(g.pendingCount && g.pendingCount > 0) {
+                        <span class="requests-pill">{{ g.pendingCount }}</span>
+                      }
+                    </button>
+                  } @else {
+                    <button mat-button color="warn" (click)="sairDoGrupo(g, $event)">Sair</button>
+                  }
+                </div>
+
+                <!-- Painel de Gerenciamento de Solicitações do Administrador -->
+                @if(grupoGerenciandoId === g.id) {
+                  <div class="management-panel">
+                    <div class="panel-header">
+                      <mat-icon>pending_actions</mat-icon>
+                      <strong>Solicitações de Entrada Pendentes ({{ g.name }})</strong>
+                    </div>
+
+                    @if(loadingSolicitacoes[g.id]) {
+                      <div class="panel-loading">
+                        <small>Buscando solicitações...</small>
+                      </div>
+                    } @else if(!solicitacoesPorGrupo[g.id] || solicitacoesPorGrupo[g.id].length === 0) {
+                      <div class="panel-empty">
+                        <mat-icon>done_all</mat-icon>
+                        <span>Nenhuma solicitação pendente no momento.</span>
+                      </div>
+                    } @else {
+                      <div class="requests-list">
+                        @for(reqItem of solicitacoesPorGrupo[g.id]; track reqItem.id) {
+                          <div class="request-item">
+                            <div class="requester-info">
+                              <div class="requester-photo">
+                                @if(getAdminPhoto(reqItem.user); as p) {
+                                  <img [src]="p" alt="Foto">
+                                } @else {
+                                  <span>{{ getGroupInitials(reqItem.user?.surname || reqItem.user?.username) }}</span>
+                                }
+                              </div>
+                              <div class="requester-text">
+                                <strong>{{ reqItem.user?.surname || reqItem.user?.fullName || reqItem.user?.username }}</strong>
+                                <small>Solicitou em {{ reqItem.requestedAt | date:'dd/MM/yyyy HH:mm' }}</small>
+                              </div>
+                            </div>
+                            <div class="requester-actions">
+                              <button mat-flat-button color="primary" (click)="responderSolicitacao(g, reqItem, true)" matTooltip="Aprovar entrada">
+                                <mat-icon>check</mat-icon>
+                                <span>Aprovar</span>
+                              </button>
+                              <button mat-button color="warn" (click)="responderSolicitacao(g, reqItem, false)" matTooltip="Recusar">
+                                <mat-icon>close</mat-icon>
+                                <span>Recusar</span>
+                              </button>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

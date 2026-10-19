@@ -41,6 +41,7 @@ export const routes: Routes = [
         loadChildren: () => import('@ci-apps/Imersao').then(m => m.CiApplicationModule)
       },
       { path: 'Formularios', loadChildren: () => import('@ci-apps/Formularios').then(m => m.CiApplicationModule) },
+      { path: 'Grupos', loadChildren: () => import('@ci-apps/grupos').then(m => m.CiApplicationModule) },
       { path: 'Infra', loadChildren: () => import('@ci-apps/Infra').then(m => m.CiApplicationModule) },
     ]
   }];

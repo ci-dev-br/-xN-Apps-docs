@@ -1,0 +1,226 @@
+<div class="grupos-page-wrapper">
+  <!-- Top Banner / Hero -->
+  <header class="app-hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <mat-icon>diversity_3</mat-icon>
+        <span>Comunidades & Colaboração Corporativa</span>
+      </div>
+      <h1>Grupos de Trabalho e Comunidades</h1>
+      <p class="hero-sub">
+        Explore grupos temáticos, participe de discussões abertas e compartilhe ativos corporativos (noticiários, cadastros e formulários) isolados e integrados através do modelo multi-tenant.
+      </p>
+    </div>
+  </header>
+
+  <!-- Container Principal -->
+  <div class="main-container">
+    <!-- Abas: Explorar / Meus Grupos -->
+    <mat-tab-group [(selectedIndex)]="selectedTab" (selectedIndexChange)="onTabChange($event)" class="custom-tabs">
+      <!-- ABA 1: TODAS AS COMUNIDADES -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">search</mat-icon>
+          <span>Explorar Comunidades</span>
+        </ng-template>
+
+        <div class="tab-pane">
+          <!-- Filtro de Busca -->
+          <div class="filter-bar">
+            <mat-form-field appearance="outline" class="search-field">
+              <mat-icon matPrefix>search</mat-icon>
+              <mat-label>Buscar grupos por título ou tema...</mat-label>
+              <input matInput [(ngModel)]="termoBusca" (keyup.enter)="onBuscar()" placeholder="Ex: Engenharia, Projetos, Notícias..." />
+              @if (termoBusca) {
+                <button matSuffix mat-icon-button (click)="termoBusca = ''; onBuscar()" matTooltip="Limpar busca">
+                  <mat-icon>clear</mat-icon>
+                </button>
+              }
+            </mat-form-field>
+          </div>
+
+          <!-- Loading State -->
+          @if (loading) {
+            <div class="loading-box">
+              <mat-spinner diameter="40"></mat-spinner>
+              <span>Carregando comunidades...</span>
+            </div>
+          } @else if (grupos.length === 0) {
+            <div class="empty-box">
+              <mat-icon>group_off</mat-icon>
+              <h3>Nenhuma comunidade encontrada</h3>
+              <p>Não encontramos grupos com o termo pesquisado.</p>
+            </div>
+          } @else {
+            <!-- Grid de Grupos -->
+            <div class="groups-grid">
+              @for (g of grupos; track g.id) {
+                <mat-card class="group-card" (click)="acessarGrupo(g)">
+                  <!-- Capa do Grupo -->
+                  <div class="card-cover" [style.background-image]="g.coverUrl ? 'url(' + g.coverUrl + ')' : null">
+                    @if (!g.coverUrl) {
+                      <div class="cover-fallback">
+                        <mat-icon>groups</mat-icon>
+                      </div>
+                    }
+                    <div class="cover-overlay">
+                      @if (g.requiresApproval) {
+                        <span class="badge privacy-badge private"><mat-icon>lock</mat-icon> Privado</span>
+                      } @else {
+                        <span class="badge privacy-badge public"><mat-icon>public</mat-icon> Público</span>
+                      }
+
+                      @if (g.userStatus === 'ADMIN') {
+                        <span class="badge role-badge admin"><mat-icon>verified</mat-icon> Você administra</span>
+                      } @else if (g.userStatus === 'MEMBER') {
+                        <span class="badge role-badge member"><mat-icon>check_circle</mat-icon> Membro</span>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Conteúdo do Card -->
+                  <mat-card-content class="card-content">
+                    <div class="avatar-row">
+                      <div class="avatar-holder">
+                        @if (g.avatarUrl) {
+                          <img [src]="g.avatarUrl" alt="Avatar" />
+                        } @else {
+                          <span>{{ getGroupInitials(g.name) }}</span>
+                        }
+                      </div>
+                      <div class="members-pill">
+                        <mat-icon>people</mat-icon>
+                        <span>{{ g.membersCount || 0 }}</span>
+                      </div>
+                    </div>
+
+                    <h3 class="card-title">{{ g.name }}</h3>
+                    <p class="card-desc">{{ g.descriptions || 'Comunidade colaborativa de compartilhamento e debates.' }}</p>
+
+                    @if (g.admin) {
+                      <div class="card-admin">
+                        <mat-icon>person</mat-icon>
+                        <span>Admin: <strong>{{ g.admin.surname || g.admin.username }}</strong></span>
+                      </div>
+                    }
+                  </mat-card-content>
+
+                  <mat-divider></mat-divider>
+
+                  <mat-card-actions class="card-footer" (click)="$event.stopPropagation()">
+                    @if (g.userStatus === 'ADMIN' || g.userStatus === 'MEMBER') {
+                      <button mat-flat-button color="primary" class="full-btn" (click)="acessarGrupo(g)">
+                        <mat-icon>login</mat-icon>
+                        <span>Acessar Grupo</span>
+                      </button>
+                    } @else if (g.userStatus === 'PENDING') {
+                      <button mat-stroked-button disabled class="full-btn">
+                        <mat-icon>hourglass_top</mat-icon>
+                        <span>Aguardando Aprovação</span>
+                      </button>
+                    } @else {
+                      <button mat-stroked-button color="primary" class="full-btn" (click)="solicitarParticipacao(g, $event)">
+                        <mat-icon>{{ g.requiresApproval ? 'person_add' : 'group_add' }}</mat-icon>
+                        <span>{{ g.requiresApproval ? 'Solicitar Entrada' : 'Participar' }}</span>
+                      </button>
+                    }
+                  </mat-card-actions>
+                </mat-card>
+              }
+            </div>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- ABA 2: MEUS GRUPOS -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">diversity_3</mat-icon>
+          <span>Meus Grupos</span>
+          @if (meusGrupos.length > 0) {
+            <span class="count-badge">{{ meusGrupos.length }}</span>
+          }
+        </ng-template>
+
+        <div class="tab-pane">
+          @if (!isLoggedIn) {
+            <div class="empty-box">
+              <mat-icon>lock</mat-icon>
+              <h3>Acesso restrito</h3>
+              <p>Conecte-se para ver seus grupos e comunidades das quais participa.</p>
+            </div>
+          } @else if (loadingMeus) {
+            <div class="loading-box">
+              <mat-spinner diameter="40"></mat-spinner>
+              <span>Carregando seus grupos...</span>
+            </div>
+          } @else if (meusGrupos.length === 0) {
+            <div class="empty-box">
+              <mat-icon>group_work</mat-icon>
+              <h3>Você ainda não possui grupos</h3>
+              <p>Explore as comunidades existentes ou participe de discussões para se conectar.</p>
+              <button mat-stroked-button color="primary" (click)="selectedTab = 0">
+                <mat-icon>search</mat-icon>
+                <span>Explorar Comunidades</span>
+              </button>
+            </div>
+          } @else {
+            <div class="groups-grid">
+              @for (g of meusGrupos; track g.id) {
+                <mat-card class="group-card my-card" (click)="acessarGrupo(g)">
+                  <div class="card-cover" [style.background-image]="g.coverUrl ? 'url(' + g.coverUrl + ')' : null">
+                    @if (!g.coverUrl) {
+                      <div class="cover-fallback">
+                        <mat-icon>groups</mat-icon>
+                      </div>
+                    }
+                    <div class="cover-overlay">
+                      @if (g.userStatus === 'ADMIN') {
+                        <span class="badge role-badge admin"><mat-icon>shield</mat-icon> Administrador</span>
+                      } @else {
+                        <span class="badge role-badge member"><mat-icon>check_circle</mat-icon> Membro</span>
+                      }
+                    </div>
+                  </div>
+
+                  <mat-card-content class="card-content">
+                    <div class="avatar-row">
+                      <div class="avatar-holder">
+                        @if (g.avatarUrl) {
+                          <img [src]="g.avatarUrl" alt="Avatar" />
+                        } @else {
+                          <span>{{ getGroupInitials(g.name) }}</span>
+                        }
+                      </div>
+                      <div class="members-pill">
+                        <mat-icon>people</mat-icon>
+                        <span>{{ g.membersCount || 0 }} membros</span>
+                      </div>
+                    </div>
+
+                    <h3 class="card-title">{{ g.name }}</h3>
+                    <p class="card-desc">{{ g.descriptions || 'Comunidade corporativa.' }}</p>
+
+                    <div class="tenant-tag" matTooltip="Identificador do Tenant vinculado para compartilhamento de dados">
+                      <mat-icon>hub</mat-icon>
+                      <span>Tenant ID: <code>{{ g.tenantId }}</code></span>
+                    </div>
+                  </mat-card-content>
+
+                  <mat-divider></mat-divider>
+
+                  <mat-card-actions class="card-footer" (click)="$event.stopPropagation()">
+                    <button mat-flat-button color="primary" class="full-btn" (click)="acessarGrupo(g)">
+                      <mat-icon>arrow_forward</mat-icon>
+                      <span>Abrir Comunidade</span>
+                    </button>
+                  </mat-card-actions>
+                </mat-card>
+              }
+            </div>
+          }
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>
