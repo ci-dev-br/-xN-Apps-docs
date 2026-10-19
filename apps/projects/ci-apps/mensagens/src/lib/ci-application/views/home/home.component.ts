@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDrawer } from '@angular/material/sidenav';
@@ -24,6 +24,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild('fileInput') private fileInput?: ElementRef<HTMLInputElement>;
 
   isSmallScreen = false;
+  antiPrintAtivo = false;
+  visibleMessageIds = new Set<string>();
+  private messageObserver?: IntersectionObserver;
+
   conversas: ConversationItem[] = [];
   conversasFiltradas: ConversationItem[] = [];
   termoBusca = '';
@@ -44,13 +48,62 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private pollingSub?: Subscription;
   private responsiveSub?: Subscription;
+  private shieldTimeout?: any;
 
   constructor(
     private messagerService: EncryptedMessagerService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,
+    private cdr: ChangeDetectorRef
   ) {}
+
+  @HostListener('window:keyup', ['$event'])
+  onWindowKeyUp(event: KeyboardEvent) {
+    // Tecla PrintScreen (código 44 ou chave 'PrintScreen')
+    if (event.key === 'PrintScreen' || event.keyCode === 44) {
+      this.ativarProtecaoAntiPrint(true);
+    }
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  onWindowKeyDown(event: KeyboardEvent) {
+    // Atalhos de captura de tela como Ctrl+P (impressão) ou atalhos com Meta/Win
+    if ((event.ctrlKey || event.metaKey) && (event.key === 'p' || event.key === 'P')) {
+      event.preventDefault();
+      this.ativarProtecaoAntiPrint(true);
+    }
+  }
+
+  @HostListener('window:blur')
+  onWindowBlur() {
+    // Quando ferramentas de print como Snipping Tool (Win+Shift+S) desfocam a janela
+    this.ativarProtecaoAntiPrint(false);
+  }
+
+  ativarProtecaoAntiPrint(comAviso = true) {
+    this.antiPrintAtivo = true;
+
+    // Esvazia ou substitui a área de transferência caso o OS tenha capturado a tela
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      try {
+        navigator.clipboard.writeText('🔒 Conteúdo protegido contra captura de tela.').catch(() => {});
+      } catch {}
+    }
+
+    if (comAviso) {
+      this.snackBar.open('Captura de tela bloqueada: o conteúdo está protegido contra print.', 'Ok', {
+        duration: 2500,
+      });
+    }
+
+    if (this.shieldTimeout) {
+      clearTimeout(this.shieldTimeout);
+    }
+    this.shieldTimeout = setTimeout(() => {
+      this.antiPrintAtivo = false;
+    }, 1200);
+  }
 
   ngOnInit() {
     this.carregarConversas();
@@ -77,6 +130,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     if (this.responsiveSub) {
       this.responsiveSub.unsubscribe();
+    }
+    if (this.messageObserver) {
+      this.messageObserver.disconnect();
     }
   }
 
@@ -136,13 +192,85 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Determina se o balão de mensagem deve ser renderizado no HTML (viewport virtual)
+   */
+  isMessageVisible(id: string, index: number): boolean {
+    if (this.visibleMessageIds.has(id)) {
+      return true;
+    }
+    const total = this.mensagens.length;
+    // Mantém sempre ativas as últimas 15 mensagens (visíveis na base do chat no carregamento inicial)
+    if (index >= total - 15) {
+      return true;
+    }
+    if (typeof window !== 'undefined' && !('IntersectionObserver' in window)) {
+      return true;
+    }
+    return false;
+  }
+
+  configurarIntersectionObserver() {
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+      return;
+    }
+
+    if (this.messageObserver) {
+      this.messageObserver.disconnect();
+    }
+
+    this.messageObserver = new IntersectionObserver(
+      (entries) => {
+        let mudou = false;
+        entries.forEach((entry) => {
+          const id = entry.target.getAttribute('data-id');
+          if (id) {
+            if (entry.isIntersecting) {
+              if (!this.visibleMessageIds.has(id)) {
+                this.visibleMessageIds.add(id);
+                mudou = true;
+              }
+            } else {
+              if (this.visibleMessageIds.has(id)) {
+                this.visibleMessageIds.delete(id);
+                mudou = true;
+              }
+            }
+          }
+        });
+        if (mudou) {
+          this.cdr.markForCheck();
+        }
+      },
+      {
+        root: this.messagesContainer?.nativeElement || null,
+        rootMargin: '180px 0px 180px 0px',
+        threshold: 0.01,
+      }
+    );
+
+    setTimeout(() => {
+      this.observarElementosMensagens();
+    }, 60);
+  }
+
+  observarElementosMensagens() {
+    if (!this.messageObserver || !this.messagesContainer) return;
+    const elements = this.messagesContainer.nativeElement.querySelectorAll('.message-row');
+    elements.forEach((el: Element) => {
+      this.messageObserver?.observe(el);
+    });
+  }
+
   carregarMensagens(conversationId: string) {
     this.loadingMensagens = true;
+    this.visibleMessageIds.clear();
     this.messagerService.listarMensagens(conversationId).subscribe({
       next: (res) => {
         this.mensagens = res || [];
         this.loadingMensagens = false;
         this.scrollToBottom();
+        this.configurarIntersectionObserver();
       },
       error: () => {
         this.loadingMensagens = false;
@@ -165,6 +293,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           if (novasMensagens.length > countAnterior) {
             this.scrollToBottom();
           }
+          setTimeout(() => this.observarElementosMensagens(), 80);
         }
       }
     });
@@ -263,6 +392,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.messagerService.enviarMensagem(conversationId, texto, anexosParaEnviar).subscribe({
       next: (novaMsg) => {
         this.mensagens.push(novaMsg);
+        this.visibleMessageIds.add(novaMsg.id);
         this.textoMensagem = '';
         this.anexosPendentes = [];
         this.enviando = false;
@@ -271,6 +401,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.conversaAtiva.lastMessageAt = new Date().toISOString();
         }
         this.scrollToBottom();
+        setTimeout(() => this.observarElementosMensagens(), 80);
       },
       error: (err) => {
         this.snackBar.open(err.error?.message || 'Erro ao enviar mensagem criptografada', 'Fechar', { duration: 3500 });

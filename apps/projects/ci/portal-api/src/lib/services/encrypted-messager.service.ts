@@ -7,6 +7,13 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { UserAuthenticationService } from '@ci/auth';
 
+export type SecurePhase = 'p0' | 'p1' | 'p2';
+
+export interface SecureChar {
+  char: string;
+  phase: SecurePhase;
+}
+
 export interface DecryptedMessage {
   id: string;
   conversationId: string;
@@ -15,6 +22,7 @@ export interface DecryptedMessage {
   senderPhoto?: string;
   recipientId: string;
   content: string; // Conteúdo descriptografado para exibição
+  secureChars?: SecureChar[]; // Caracteres em multiplexação temporal anti-print
   rawEncryptedContent: string; // Cifra persistida no banco
   attachments?: Array<{
     name: string;
@@ -193,6 +201,34 @@ export class EncryptedMessagerService extends BaseService {
   }
 
   /**
+   * Converte texto em sequência de caracteres com alternância de três em três
+   * e distribuição pseudo-aleatória ultrarrápida para multiplexação temporal anti-print.
+   */
+  public toSecureChars(text: string): SecureChar[] {
+    if (!text) return [];
+    const result: SecureChar[] = [];
+    const phases: SecurePhase[] = ['p0', 'p1', 'p2'];
+    let visibleIndex = 0;
+
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (ch === ' ' || ch === '\t' || ch === '\n') {
+        result.push({ char: ch, phase: 'p0' });
+      } else {
+        // Agrupa de três em três com permutação pseudo-aleatória dispersa
+        const group = Math.floor(visibleIndex / 3);
+        const posInGroup = visibleIndex % 3;
+        // Permutação pseudo-aleatória balanceada por trio
+        const perm = (group * 7 + 1) % 3;
+        const phase = phases[(posInGroup + perm) % 3];
+        result.push({ char: ch, phase });
+        visibleIndex++;
+      }
+    }
+    return result;
+  }
+
+  /**
    * Busca mensagens da conversa e executa a descriptografia em tempo real no cliente
    */
   listarMensagens(conversationId: string): Observable<DecryptedMessage[]> {
@@ -210,6 +246,7 @@ export class EncryptedMessagerService extends BaseService {
             senderPhoto: m.senderPhoto,
             recipientId: m.recipientId,
             content: decrypted,
+            secureChars: this.toSecureChars(decrypted),
             rawEncryptedContent: m.encryptedContent,
             attachments: m.attachments || [],
             read: m.read,
@@ -237,20 +274,24 @@ export class EncryptedMessagerService extends BaseService {
       encryptedContent,
       attachments,
     }).pipe(
-      map((m) => ({
-        id: m.internalId || m.id,
-        conversationId: m.conversationId,
-        senderId: m.senderId,
-        senderName: m.senderName,
-        senderPhoto: m.senderPhoto,
-        recipientId: m.recipientId,
-        content: plainText || textToEncrypt,
-        rawEncryptedContent: encryptedContent,
-        attachments: m.attachments || attachments,
-        read: m.read,
-        createdAt: m.createdAt,
-        isMyMessage: true,
-      }))
+      map((m) => {
+        const finalText = plainText || textToEncrypt;
+        return {
+          id: m.internalId || m.id,
+          conversationId: m.conversationId,
+          senderId: m.senderId,
+          senderName: m.senderName,
+          senderPhoto: m.senderPhoto,
+          recipientId: m.recipientId,
+          content: finalText,
+          secureChars: this.toSecureChars(finalText),
+          rawEncryptedContent: encryptedContent,
+          attachments: m.attachments || attachments,
+          read: m.read,
+          createdAt: m.createdAt,
+          isMyMessage: true,
+        };
+      })
     );
   }
 

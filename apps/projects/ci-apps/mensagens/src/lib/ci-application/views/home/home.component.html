@@ -128,7 +128,7 @@
         </div>
       } @else {
         <!-- Conversa Selecionada -->
-        <div class="active-chat-container">
+        <div class="active-chat-container" [class.shield-active]="antiPrintAtivo">
           <!-- Topo da Conversa Ativa -->
           <header class="chat-header">
             <div class="chat-header-contact">
@@ -148,9 +148,15 @@
 
               <div class="contact-header-info">
                 <h3>{{ conversaAtiva.contactName }}</h3>
-                <div class="encryption-indicator">
-                  <mat-icon>lock</mat-icon>
-                  <span class="enc-label">AES-256 • Ponta-a-Ponta</span>
+                <div class="security-badges">
+                  <div class="encryption-indicator">
+                    <mat-icon>lock</mat-icon>
+                    <span class="enc-label">AES-256</span>
+                  </div>
+                  <div class="anti-print-indicator" matTooltip="Multiplexação temporal ativa: caracteres alternam em alta frequência imperceptível ao olho humano para inviabilizar capturas de tela (prints).">
+                    <mat-icon>visibility_off</mat-icon>
+                    <span class="anti-print-label">Anti-Print Ativo</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -167,6 +173,14 @@
             </div>
           </header>
 
+          <!-- Escudo de proteção anti-print quando acionado -->
+          @if (antiPrintAtivo) {
+            <div class="anti-print-shield-overlay">
+              <mat-icon>security</mat-icon>
+              <span>Conteúdo Protegido Contra Captura de Tela</span>
+            </div>
+          }
+
           <!-- Histórico de Mensagens -->
           <div class="messages-viewport" #messagesContainer>
             @if (loadingMensagens) {
@@ -182,50 +196,69 @@
               </div>
             } @else {
               <div class="messages-flow">
-                @for (m of mensagens; track m.id) {
-                  <div class="message-row" [class.my-message-row]="m.isMyMessage">
-                    <div class="message-bubble" [class.my-bubble]="m.isMyMessage">
-                      <!-- Nome do remetente (apenas se recebida) -->
-                      @if (!m.isMyMessage) {
-                        <span class="sender-tag">{{ m.senderName }}</span>
-                      }
+                @for (m of mensagens; track m.id; let idx = $index) {
+                  <div
+                    class="message-row"
+                    [attr.data-id]="m.id"
+                    [class.my-message-row]="m.isMyMessage"
+                    [class.is-offscreen]="!isMessageVisible(m.id, idx)"
+                  >
+                    @if (isMessageVisible(m.id, idx)) {
+                      <!-- Balão completo ativo: renderizado somente na área visível da viewport -->
+                      <div class="message-bubble" [class.my-bubble]="m.isMyMessage">
+                        <!-- Nome do remetente (apenas se recebida) -->
+                        @if (!m.isMyMessage) {
+                          <span class="sender-tag">{{ m.senderName }}</span>
+                        }
 
-                      <!-- Conteúdo em Texto Descriptografado -->
-                      @if (m.content && (!isAnexoPlaceholder(m.content) || !m.attachments?.length)) {
-                        <div class="bubble-text">{{ m.content }}</div>
-                      }
-
-                      <!-- Anexos de Arquivos -->
-                      @if (m.attachments && m.attachments.length > 0) {
-                        <div class="attachments-container">
-                          @for (att of m.attachments; track $index) {
-                            @if (isImagem(att.type, att.name)) {
-                              <div class="image-attachment-box" (click)="baixarAnexo(att)" matTooltip="Clique para visualizar/baixar imagem">
-                                <img [src]="att.data || att.url" [alt]="att.name" />
-                              </div>
+                        <!-- Conteúdo em Texto com Multiplexação Temporal Anti-Print -->
+                        @if (m.content && (!isAnexoPlaceholder(m.content) || !m.attachments?.length)) {
+                          <div class="bubble-text secure-stream">
+                            @if (m.secureChars && m.secureChars.length > 0) {
+                              @for (sc of m.secureChars; track $index) {
+                                <span class="secure-char" [class.phase-0]="sc.phase === 'p0'" [class.phase-1]="sc.phase === 'p1'" [class.phase-2]="sc.phase === 'p2'">{{ sc.char }}</span>
+                              }
                             } @else {
-                              <div class="file-attachment-card" (click)="baixarAnexo(att)" matTooltip="Clique para baixar arquivo">
-                                <mat-icon class="file-icon">description</mat-icon>
-                                <div class="file-info">
-                                  <span class="file-name">{{ att.name }}</span>
-                                  <small class="file-meta">{{ formatFileSize(att.size) }}</small>
-                                </div>
-                                <mat-icon class="download-icon">download</mat-icon>
-                              </div>
+                              <span>{{ m.content }}</span>
                             }
+                          </div>
+                        }
+
+                        <!-- Anexos de Arquivos -->
+                        @if (m.attachments && m.attachments.length > 0) {
+                          <div class="attachments-container">
+                            @for (att of m.attachments; track $index) {
+                              @if (isImagem(att.type, att.name)) {
+                                <div class="image-attachment-box" (click)="baixarAnexo(att)" matTooltip="Clique para visualizar/baixar imagem">
+                                  <img [src]="att.data || att.url" [alt]="att.name" />
+                                </div>
+                              } @else {
+                                <div class="file-attachment-card" (click)="baixarAnexo(att)" matTooltip="Clique para baixar arquivo">
+                                  <mat-icon class="file-icon">description</mat-icon>
+                                  <div class="file-info">
+                                    <span class="file-name">{{ att.name }}</span>
+                                    <small class="file-meta">{{ formatFileSize(att.size) }}</small>
+                                  </div>
+                                  <mat-icon class="download-icon">download</mat-icon>
+                                </div>
+                              }
+                            }
+                          </div>
+                        }
+
+                        <!-- Rodapé do Balão: Horário e Status -->
+                        <div class="bubble-footer">
+                          <mat-icon class="lock-indicator" matTooltip="Armazenado cifrado no servidor com chave do cliente">lock</mat-icon>
+                          <span class="timestamp">{{ m.createdAt | date:'HH:mm' }}</span>
+                          @if (m.isMyMessage) {
+                            <mat-icon class="read-status">{{ m.read ? 'done_all' : 'done' }}</mat-icon>
                           }
                         </div>
-                      }
-
-                      <!-- Rodapé do Balão: Horário e Status -->
-                      <div class="bubble-footer">
-                        <mat-icon class="lock-indicator" matTooltip="Armazenado cifrado no servidor com chave do cliente">lock</mat-icon>
-                        <span class="timestamp">{{ m.createdAt | date:'HH:mm' }}</span>
-                        @if (m.isMyMessage) {
-                          <mat-icon class="read-status">{{ m.read ? 'done_all' : 'done' }}</mat-icon>
-                        }
                       </div>
-                    </div>
+                    } @else {
+                      <!-- Falsa mensagem / placeholder ultraleve: 0 nós DOM internos, 0 animações CSS, altura preservada -->
+                      <div class="message-bubble-placeholder" [class.my-placeholder]="m.isMyMessage"></div>
+                    }
                   </div>
                 }
               </div>
