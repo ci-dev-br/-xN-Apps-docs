@@ -70,6 +70,17 @@ export class ToggleUserActivationDto {
     active?: boolean;
 }
 
+export class ToggleGlobalAppDto {
+    @ApiProperty({ required: false, description: 'Chave da aplicação' })
+    appKey?: string;
+
+    @ApiProperty({ required: false, description: 'ID da aplicação' })
+    applicationId?: string;
+
+    @ApiProperty({ required: false, description: 'Status ativo global da aplicação' })
+    active?: boolean;
+}
+
 export class GetStoreDto {
     @ApiProperty({ required: false, description: 'Termo de busca por nome ou descrição' })
     search?: string;

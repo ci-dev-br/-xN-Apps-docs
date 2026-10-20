@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Application } from "../model/application.entity";
 import { ClientVersionCatalog } from "../model/client-version-catalog.entity";
 import { Repository } from "typeorm";
-import { CatalogAppDto, ReconcileCatalogDto, ToggleUserActivationDto } from "../dto/catalog-app.dto";
+import { CatalogAppDto, ReconcileCatalogDto, ToggleUserActivationDto, ToggleGlobalAppDto } from "../dto/catalog-app.dto";
 import { User } from "@ci/auth/models/user.entity";
 
 @Injectable()
@@ -353,13 +353,37 @@ export class ApplicationService {
     }
 
     /**
+     * Verifica se o usuário é colaborador da aplicação com base no seu e-mail.
+     */
+    isCollaborator(app: Application, user?: User): boolean {
+        if (!user || !user.email || !app.collaborators || app.collaborators.length === 0) {
+            return false;
+        }
+        const userEmail = user.email.toLowerCase().trim();
+        return app.collaborators.some(collab => {
+            const c = collab.toLowerCase();
+            return c.includes(`<${userEmail}>`) || c.includes(userEmail);
+        });
+    }
+
+    /**
      * Obtém as aplicações disponíveis na Loja para o usuário,
-     * incluindo o status de ativação na conta (isActivated).
+     * incluindo o status de ativação na conta (isActivated),
+     * permissão de ativação (canActivate) e controles globais para MASTER+DEVELOPER.
      */
     async getStore(user?: User, search?: string, categoria?: string) {
+        const isMaster = user?.roles?.includes('MASTER');
+        const isDeveloper = user?.roles?.includes('DEVELOPER');
+        const isGoodness = user?.roles?.includes('GOODNESS');
+
         const query = this.repo.createQueryBuilder('app')
-            .leftJoinAndSelect('app.domain', 'domain')
-            .where('(app.isActive = true OR app.isActive IS NULL)');
+            .leftJoinAndSelect('app.domain', 'domain');
+
+        // Usuários comuns só vêem aplicações ativas globalmente;
+        // Colaboradores e GOODNESS vêem tudo para poderem ativar ou gerenciar globalmente
+        if (!isGoodness && !isMaster) {
+            query.where('(app.isActive = true OR app.isActive IS NULL)');
+        }
 
         if (search && search.trim()) {
             query.andWhere('(LOWER(app.name) LIKE LOWER(:search) OR LOWER(app.description) LIKE LOWER(:search) OR LOWER(app.appKey) LIKE LOWER(:search))', { search: `%${search.trim()}%` });
@@ -385,15 +409,43 @@ export class ApplicationService {
 
         return apps.map(app => {
             const isActivated = userAppIds.has(app.id!);
+            const isCollab = this.isCollaborator(app, user);
+            const canToggleGlobal = Boolean(isMaster && isDeveloper && isCollab);
+
+            let canActivate = false;
+            let roleRestricted = false;
+
+            if (isGoodness) {
+                // ROLE GOODNESS permite ativar todas as applications independente
+                canActivate = true;
+            } else if (isCollab) {
+                // Para os colaboradores, sempre deve ficar disponível para ativação
+                canActivate = true;
+            } else if (app.isActive === false) {
+                canActivate = false;
+            } else if (app.roles && app.roles.length > 0) {
+                // Aplicações que exigem ROLE específica não podem ficar disponíveis para ativação sem o papel
+                const hasRole = app.roles.some(r => user?.roles?.includes(r));
+                canActivate = hasRole;
+                roleRestricted = !hasRole;
+            } else {
+                canActivate = true;
+            }
+
             return {
                 ...app,
-                isActivated
+                isActivated,
+                isCollaborator: isCollab,
+                canToggleGlobal,
+                canActivate,
+                roleRestricted
             };
         });
     }
 
     /**
      * Alterna ou define a ativação de uma aplicação para a conta do usuário.
+     * Respeita papéis específicos, permissão especial de GOODNESS e privilégio de colaboradores.
      */
     async toggleUserActivation(dto: ToggleUserActivationDto, user: User) {
         if (!user || !user.id) {
@@ -415,6 +467,23 @@ export class ApplicationService {
         const isCurrentlyActive = (app.users || []).some(u => u.id === user.id);
         const shouldBeActive = dto.active !== undefined ? dto.active : !isCurrentlyActive;
 
+        if (shouldBeActive) {
+            const isGoodness = user.roles?.includes('GOODNESS');
+            const isCollab = this.isCollaborator(app, user);
+
+            if (!isGoodness && !isCollab) {
+                if (app.isActive === false) {
+                    throw new ForbiddenException('Esta aplicação está temporariamente desativada globalmente.');
+                }
+                if (app.roles && app.roles.length > 0) {
+                    const hasRole = app.roles.some(r => user.roles?.includes(r));
+                    if (!hasRole) {
+                        throw new ForbiddenException(`Esta aplicação exige papel específico (${app.roles.join(', ')}) para ativação.`);
+                    }
+                }
+            }
+        }
+
         if (shouldBeActive && !isCurrentlyActive) {
             await this.repo.createQueryBuilder()
                 .relation(Application, 'users')
@@ -433,6 +502,49 @@ export class ApplicationService {
             applicationId: app.id,
             isActivated: shouldBeActive,
             firstActivation: shouldBeActive && !isCurrentlyActive
+        };
+    }
+
+    /**
+     * Usuários MASTER + DEVELOPER que pertençam aos colaboradores da aplicação
+     * podem desativar ou ativar seus aplicativos globalmente para que outros usuários ativem.
+     */
+    async toggleGlobalStatus(dto: ToggleGlobalAppDto, user: User) {
+        if (!user || !user.id) {
+            throw new ForbiddenException('Usuário não autenticado.');
+        }
+
+        const isMaster = user.roles?.includes('MASTER');
+        const isDeveloper = user.roles?.includes('DEVELOPER');
+        if (!isMaster || !isDeveloper) {
+            throw new ForbiddenException('Apenas usuários com papéis MASTER e DEVELOPER podem gerenciar o status global de aplicações.');
+        }
+
+        const app = await this.repo.findOne({
+            where: [
+                ...(dto.applicationId ? [{ id: dto.applicationId }] : []),
+                ...(dto.appKey ? [{ appKey: dto.appKey }, { routePath: `/${dto.appKey}` }] : [])
+            ]
+        });
+
+        if (!app) {
+            throw new NotFoundException('Aplicação não encontrada.');
+        }
+
+        if (!this.isCollaborator(app, user)) {
+            throw new ForbiddenException('Apenas colaboradores cadastrados desta aplicação podem ativar/desativar seu status global.');
+        }
+
+        const targetGlobalActive = dto.active !== undefined ? dto.active : !app.isActive;
+        app.isActive = targetGlobalActive;
+        app.lastSeenAt = new Date();
+        await this.repo.save(app);
+
+        return {
+            success: true,
+            appKey: app.appKey,
+            applicationId: app.id,
+            isActive: app.isActive
         };
     }
 

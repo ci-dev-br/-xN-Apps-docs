@@ -36,6 +36,9 @@ export class ApplicationCatalogService {
     private readonly _currentApp$ = new BehaviorSubject<string | null>(null);
     public readonly currentApp$: Observable<string | null> = this._currentApp$.asObservable();
 
+    private readonly _activatedApps$ = new BehaviorSubject<Set<string>>(new Set<string>());
+    public readonly activatedApps$: Observable<Set<string>> = this._activatedApps$.asObservable();
+
     private readonly catalogedInSession = new Set<string>();
 
     constructor(
@@ -310,6 +313,53 @@ export class ApplicationCatalogService {
         const url = `${rootApi}/Application/MyActivations`;
         if (!this.http) return of([]);
         return this.http.post<string[]>(url, {});
+    }
+
+    /**
+     * Alternar status global de uma aplicação (Ativar/Desativar na plataforma).
+     * Requer que o usuário seja MASTER + DEVELOPER e conste nos colaboradores da aplicação.
+     */
+    public toggleGlobalStatus(appKeyOrId: string, active?: boolean): Observable<any> {
+        const rootApi = this.config?.rootApi || 'https://apps.ci.dev.br';
+        const url = `${rootApi}/Application/ToggleGlobalStatus`;
+        if (!this.http) return of(null);
+
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(appKeyOrId);
+        const payload = isUuid ? { applicationId: appKeyOrId, active } : { appKey: appKeyOrId, active };
+        return this.http.post(url, payload);
+    }
+
+    /**
+     * Atualiza o cache e o observable de aplicações ativadas para o usuário.
+     */
+    public refreshMyActivations(): Observable<string[]> {
+        return new Observable(observer => {
+            this.getMyActivations().subscribe({
+                next: (keys) => {
+                    const set = new Set<string>(keys || []);
+                    this._activatedApps$.next(set);
+                    if (typeof localStorage !== 'undefined') {
+                        try {
+                            localStorage.setItem('ci_my_activated_apps', JSON.stringify(keys));
+                        } catch {}
+                    }
+                    observer.next(keys);
+                    observer.complete();
+                },
+                error: (err) => {
+                    if (typeof localStorage !== 'undefined') {
+                        try {
+                            const cached = localStorage.getItem('ci_my_activated_apps');
+                            if (cached) {
+                                const parsed = JSON.parse(cached);
+                                this._activatedApps$.next(new Set<string>(parsed));
+                            }
+                        } catch {}
+                    }
+                    observer.error(err);
+                }
+            });
+        });
     }
 
     /**
