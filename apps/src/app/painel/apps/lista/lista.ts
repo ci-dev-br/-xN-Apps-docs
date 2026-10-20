@@ -1,4 +1,6 @@
 import { MatIconModule } from "@angular/material/icon";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { AdicionarAppDialogComponent } from "./adicionar-app-dialog/adicionar-app-dialog.component";
 import { CI_STATIC_APPS, IApp } from "../apps";
 import { Component, ElementRef, HostListener, ViewChild, Optional } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';

@@ -3,8 +3,14 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Application } from "../model/application.entity";
 import { ClientVersionCatalog } from "../model/client-version-catalog.entity";
 import { Repository } from "typeorm";
-import { CatalogAppDto, ReconcileCatalogDto, ToggleUserActivationDto, ToggleGlobalAppDto } from "../dto/catalog-app.dto";
+import { CatalogAppDto, ReconcileCatalogDto, ToggleUserActivationDto, ToggleGlobalAppDto, InstallGitModuleDto } from "../dto/catalog-app.dto";
 import { User } from "@ci/auth/models/user.entity";
+import * as fs from 'fs';
+import * as path from 'path';
+import { exec, spawn } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
 
 @Injectable()
 export class ApplicationService {
@@ -559,6 +565,173 @@ export class ApplicationService {
             .getMany();
 
         return apps.map(a => a.appKey || a.routePath?.replace(/^\//, '')).filter(Boolean) as string[];
+    }
+
+    /**
+     * Adiciona e instala uma aplicação/lib NestJS a partir de um repositório Git isolado.
+     * Restrito a usuários com ROLE DEVELOPER.
+     * Clona em pasta isolada com git próprio (sem merge no projeto principal)
+     * e compila em processo paralelo.
+     */
+    async installGitModule(dto: InstallGitModuleDto, user: User) {
+        if (!user || !user.id) {
+            throw new ForbiddenException('Usuário não autenticado.');
+        }
+
+        const isDeveloper = user.roles?.includes('DEVELOPER');
+        const isMaster = user.roles?.includes('MASTER');
+        const isGoodness = user.roles?.includes('GOODNESS');
+
+        if (!isDeveloper && !isMaster && !isGoodness) {
+            throw new ForbiddenException('Apenas usuários com ROLE DEVELOPER podem adicionar aplicações via repositório Git.');
+        }
+
+        if (!dto.gitUrl || !dto.moduleName || !dto.appKey) {
+            throw new BadRequestException('Endereço Git (gitUrl), nome do módulo (moduleName) e appKey são obrigatórios.');
+        }
+
+        const appKey = dto.appKey.trim();
+        const safeFolderName = appKey.toLowerCase().replace(/[^a-z0-9_-]/g, '-');
+        const baseExternalDir = path.resolve(process.cwd(), 'external-modules');
+        const targetDir = path.join(baseExternalDir, safeFolderName);
+
+        // Garante que o diretório base existe
+        if (!fs.existsSync(baseExternalDir)) {
+            fs.mkdirSync(baseExternalDir, { recursive: true });
+        }
+
+        const branch = dto.branch || 'main';
+
+        try {
+            if (!fs.existsSync(targetDir)) {
+                // Clona em pasta isolada com git próprio (sem mesclar no projeto principal)
+                await execAsync(`git clone -b ${branch} --depth 1 "${dto.gitUrl}" "${targetDir}"`);
+            } else {
+                // Atualiza repositório isolado existente
+                try {
+                    await execAsync(`git -C "${targetDir}" pull`);
+                } catch {
+                    // Se falhar o pull, mantém a versão local existente
+                }
+            }
+        } catch (gitErr: any) {
+            throw new BadRequestException(`Falha ao clonar repositório Git: ${gitErr?.message || gitErr}`);
+        }
+
+        // Compilação paralela assíncrona em background (sem bloquear a plataforma principal)
+        const compileParallel = () => {
+            const hasPackageJson = fs.existsSync(path.join(targetDir, 'package.json'));
+            if (hasPackageJson) {
+                const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+                const installProc = spawn(npmCmd, ['install', '--prefer-offline', '--no-audit'], {
+                    cwd: targetDir,
+                    stdio: 'ignore',
+                    detached: true,
+                    shell: true
+                });
+
+                installProc.on('close', (code) => {
+                    if (code === 0) {
+                        const buildProc = spawn(npmCmd, ['run', 'build'], {
+                            cwd: targetDir,
+                            stdio: 'ignore',
+                            detached: true,
+                            shell: true
+                        });
+                        buildProc.unref();
+                    }
+                });
+                installProc.unref();
+            }
+        };
+
+        try {
+            compileParallel();
+        } catch (compileErr) {
+            console.warn('[ApplicationService] Falha ao disparar compilação paralela:', compileErr);
+        }
+
+        // Registra ou atualiza no catálogo de aplicações
+        const routePath = dto.routePath || `/${appKey}`;
+        let app = await this.repo.findOne({
+            where: [
+                { appKey },
+                { routePath }
+            ],
+            relations: ['users']
+        });
+
+        const now = new Date();
+        const collaboratorTag = user.email ? `${user.username || 'dev'} <${user.email}>` : (user.username || user.id);
+
+        if (!app) {
+            app = this.repo.create({
+                appKey,
+                name: dto.name || appKey,
+                routePath,
+                icon: dto.icon || 'developer_board',
+                categoria: 'Desenvolvedor',
+                description: dto.description || `Módulo NestJS "${dto.moduleName}" instalado via Git isolado.`,
+                roles: ['DEVELOPER'],
+                isActive: true,
+                isCatalogLocked: false,
+                collaborators: [collaboratorTag],
+                contextPolicies: {
+                    isExternalModule: true,
+                    moduleName: dto.moduleName,
+                    gitUrl: dto.gitUrl,
+                    branch,
+                    targetDir,
+                    configurations: dto.configurations || {},
+                    installedBy: user.id,
+                    installedAt: now
+                },
+                firstSeenAt: now,
+                lastSeenAt: now
+            });
+            app = await this.repo.save(app);
+        } else {
+            app.lastSeenAt = now;
+            app.isActive = true;
+            if (dto.name) app.name = dto.name;
+            if (dto.description) app.description = dto.description;
+            if (dto.icon) app.icon = dto.icon;
+            app.contextPolicies = {
+                ...(app.contextPolicies || {}),
+                isExternalModule: true,
+                moduleName: dto.moduleName,
+                gitUrl: dto.gitUrl,
+                branch,
+                targetDir,
+                configurations: dto.configurations || {},
+                updatedBy: user.id,
+                updatedAt: now
+            };
+            if (!app.collaborators || !app.collaborators.includes(collaboratorTag)) {
+                app.collaborators = [...(app.collaborators || []), collaboratorTag];
+            }
+            app = await this.repo.save(app);
+        }
+
+        // Ativa automaticamente a aplicação para este desenvolvedor
+        const isAlreadyActiveForUser = (app.users || []).some(u => u.id === user.id);
+        if (!isAlreadyActiveForUser) {
+            await this.repo.createQueryBuilder()
+                .relation(Application, 'users')
+                .of(app)
+                .add(user);
+        }
+
+        return {
+            success: true,
+            appKey: app.appKey,
+            applicationId: app.id,
+            name: app.name,
+            routePath: app.routePath,
+            targetDir,
+            isActivated: true,
+            message: `Módulo NestJS "${dto.moduleName}" clonado em pasta isolada e compilação paralela iniciada.`
+        };
     }
 
     async delete(applicationId: string) {

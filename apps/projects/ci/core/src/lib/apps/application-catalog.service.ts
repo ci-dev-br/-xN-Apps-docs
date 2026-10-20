@@ -363,6 +363,26 @@ export class ApplicationCatalogService {
     }
 
     /**
+     * Adiciona e instala uma aplicação via repositório Git isolado (ROLE DEVELOPER).
+     */
+    public installGitModule(payload: {
+        gitUrl: string;
+        moduleName: string;
+        appKey: string;
+        name?: string;
+        routePath?: string;
+        branch?: string;
+        configurations?: Record<string, any>;
+        icon?: string;
+        description?: string;
+    }): Observable<any> {
+        const rootApi = this.config?.rootApi || 'https://apps.ci.dev.br';
+        const url = `${rootApi}/Application/InstallGitModule`;
+        if (!this.http) return of(null);
+        return this.http.post(url, payload);
+    }
+
+    /**
      * Abre o modal com a mini documentação da aplicação.
      */
     public showDocumentation(doc: IAppDocumentation) {

@@ -81,6 +81,35 @@ export class ToggleGlobalAppDto {
     active?: boolean;
 }
 
+export class InstallGitModuleDto {
+    @ApiProperty({ description: 'URL do repositório Git da aplicação' })
+    gitUrl: string;
+
+    @ApiProperty({ description: 'Nome da classe do módulo NestJS (ex: MeuModuloCustomizadoModule)' })
+    moduleName: string;
+
+    @ApiProperty({ description: 'Identificador único da aplicação' })
+    appKey: string;
+
+    @ApiProperty({ required: false, description: 'Nome de exibição da aplicação' })
+    name?: string;
+
+    @ApiProperty({ required: false, description: 'Rota da aplicação no cliente (ex: /MinhaApp)' })
+    routePath?: string;
+
+    @ApiProperty({ required: false, default: 'main', description: 'Branch do repositório' })
+    branch?: string;
+
+    @ApiProperty({ required: false, description: 'Configurações e parâmetros do módulo em formato chave-valor' })
+    configurations?: Record<string, any>;
+
+    @ApiProperty({ required: false, description: 'Ícone da aplicação' })
+    icon?: string;
+
+    @ApiProperty({ required: false, description: 'Descrição da aplicação' })
+    description?: string;
+}
+
 export class GetStoreDto {
     @ApiProperty({ required: false, description: 'Termo de busca por nome ou descrição' })
     search?: string;

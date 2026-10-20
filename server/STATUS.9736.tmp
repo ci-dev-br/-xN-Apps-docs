@@ -1,0 +1,66 @@
+{
+  "1228": {
+    "startedAt": "2026-10-20T02:21:48.306Z",
+    "status": "running",
+    "debug": false,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T02:33:31.737Z",
+    "nextStatusCheckAt": "2026-10-20T02:33:32.037Z",
+    "updatedAt": "2026-10-20T02:33:31.737Z"
+  },
+  "9736": {
+    "startedAt": "2026-10-20T02:33:11.269Z",
+    "status": "online",
+    "debug": true,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T02:33:34.334Z",
+    "nextStatusCheckAt": "2026-10-20T02:33:34.634Z",
+    "updatedAt": "2026-10-20T02:33:34.334Z",
+    "port": 86,
+    "previousPort": 65446,
+    "lastPort86ClaimedAt": "2026-10-20T02:33:18.394Z"
+  },
+  "15776": {
+    "startedAt": "2026-10-20T02:22:38.577Z",
+    "status": "stopped",
+    "debug": false,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T02:32:52.764Z",
+    "updatedAt": "2026-10-20T02:32:53.549Z",
+    "port": 86,
+    "previousPort": 51347,
+    "lastPort86ClaimedAt": "2026-10-20T02:32:36.793Z",
+    "stoppedAt": "2026-10-20T02:32:53.549Z",
+    "replacedByPid": 16424
+  },
+  "16424": {
+    "startedAt": "2026-10-20T02:33:02.900Z",
+    "status": "stopped",
+    "debug": false,
+    "warmedUp": false,
+    "lastHeartbeat": "2026-10-20T02:33:03.377Z",
+    "updatedAt": "2026-10-20T02:33:03.660Z",
+    "stoppedAt": "2026-10-20T02:33:03.377Z"
+  },
+  "18152": {
+    "startedAt": "2026-10-20T02:32:45.924Z",
+    "status": "stopped",
+    "debug": true,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T02:33:03.361Z",
+    "updatedAt": "2026-10-20T02:33:03.660Z",
+    "port": 86,
+    "previousPort": 28474,
+    "lastPort86ClaimedAt": "2026-10-20T02:32:53.596Z",
+    "stoppedAt": "2026-10-20T02:33:03.361Z"
+  },
+  "18184": {
+    "startedAt": "2026-10-20T02:11:38.701Z",
+    "status": "stopped",
+    "debug": true,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T02:32:36.078Z",
+    "updatedAt": "2026-10-20T02:32:36.332Z",
+    "stoppedAt": "2026-10-20T02:32:36.078Z"
+  }
+}
