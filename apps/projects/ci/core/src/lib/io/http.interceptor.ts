@@ -233,7 +233,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                             chaveAcesso
                         } as any
                     }).pipe(
-                        switchMap(async (token: { authorization?: string, chaveAcesso?: string }) => {
+                        switchMap(async (token: { authorization?: string, chaveAcesso?: string | null }) => {
                             if (token?.authorization) {
                                 const latestUser = this.storage?.restore('apps.ci.dev.br.store.User') || user;
                                 if (latestUser?.authentication) {

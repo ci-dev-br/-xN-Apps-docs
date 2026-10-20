@@ -21,7 +21,35 @@ import { NewsVote$Params } from '../fn/news/news-vote';
 import { newsVoteStats } from '../fn/news/news-vote-stats';
 import { NewsVoteStats$Params } from '../fn/news/news-vote-stats';
 
-@Injectable()
+export interface NewsVoteStats {
+  newsId: string;
+  upVotes: number;
+  downVotes: number;
+  userVote: 'UP' | 'DOWN' | null;
+}
+
+export interface NewsCommentItem {
+  id: string;
+  content: string;
+  createdAt: string | Date;
+  user?: {
+    id?: string;
+    username?: string;
+    fullName?: string;
+    surname?: string;
+    photo?: any;
+  } | null;
+  socialStatus?: {
+    tipo?: 'SELF' | 'CONHECIDO' | 'SEGUINDO' | 'SEGUIDOR' | 'NENHUM';
+    isFollowing?: boolean;
+    isFollower?: boolean;
+    isConhecido?: boolean;
+  };
+}
+
+@Injectable({
+  providedIn: 'root'
+})
 export class NewsService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
@@ -46,8 +74,8 @@ export class NewsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getFeed(params: GetFeed$Params, context?: HttpContext): Observable<Array<News>> {
-    return this.getFeed$Response(params, context).pipe(
+  getFeed(params?: GetFeed$Params, context?: HttpContext): Observable<Array<News>> {
+    return this.getFeed$Response(params || {}, context).pipe(
       map((r: StrictHttpResponse<Array<News>>): Array<News> => r.body)
     );
   }
@@ -77,6 +105,13 @@ export class NewsService extends BaseService {
     );
   }
 
+  /**
+   * Envia voto UP ou DOWN para a notícia informada.
+   */
+  vote(newsId: string, vote: 'UP' | 'DOWN', context?: HttpContext): Observable<NewsVoteStats> {
+    return this.http.post<NewsVoteStats>(`${this.rootUrl}/News/Vote`, { newsId, vote }, { context });
+  }
+
   /** Path part for operation `newsVoteStats()` */
   static readonly NewsVoteStatsPath = '/News/VoteStats/{newsId}';
 
@@ -102,6 +137,13 @@ export class NewsService extends BaseService {
     );
   }
 
+  /**
+   * Obtém as estatísticas de votos da notícia.
+   */
+  getVoteStats(newsId: string, context?: HttpContext): Observable<NewsVoteStats> {
+    return this.http.get<NewsVoteStats>(`${this.rootUrl}/News/VoteStats/${newsId}`, { context });
+  }
+
   /** Path part for operation `newsComment()` */
   static readonly NewsCommentPath = '/News/Comment';
 
@@ -121,10 +163,22 @@ export class NewsService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  newsComment(params: NewsComment$Params, context?: HttpContext): Observable<void> {
-    return this.newsComment$Response(params, context).pipe(
+  newsComment(params: NewsComment$Params, context?: HttpContext): Observable<void>;
+  newsComment(newsId: string, content: string, context?: HttpContext): Observable<NewsCommentItem>;
+  newsComment(arg1: any, arg2?: any, arg3?: any): Observable<any> {
+    if (typeof arg1 === 'string') {
+      return this.comment(arg1, arg2, arg3);
+    }
+    return this.newsComment$Response(arg1, arg2).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
+  }
+
+  /**
+   * Publica um comentário na notícia.
+   */
+  comment(newsId: string, content: string, context?: HttpContext): Observable<NewsCommentItem> {
+    return this.http.post<NewsCommentItem>(`${this.rootUrl}/News/Comment`, { newsId, content }, { context });
   }
 
   /** Path part for operation `newsGetComments()` */
@@ -152,4 +206,31 @@ export class NewsService extends BaseService {
     );
   }
 
+  /**
+   * Carrega a lista de comentários de uma notícia com o status de vínculo social.
+   */
+  getComments(newsId: string, context?: HttpContext): Observable<Array<NewsCommentItem>> {
+    return this.http.get<Array<NewsCommentItem>>(`${this.rootUrl}/News/Comments/${newsId}`, { context });
+  }
+
+  /**
+   * Segue um usuário. Se recíproco, ambos se tornam "conhecidos".
+   */
+  followUser(userId: string, context?: HttpContext): Observable<any> {
+    return this.http.post<any>(`${this.rootUrl}/Social/Follow/${userId}`, {}, { context });
+  }
+
+  /**
+   * Deixa de seguir um usuário.
+   */
+  unfollowUser(userId: string, context?: HttpContext): Observable<{ success: boolean }> {
+    return this.http.post<{ success: boolean }>(`${this.rootUrl}/Social/Unfollow/${userId}`, {}, { context });
+  }
+
+  /**
+   * Obtém o status do vínculo social entre o usuário logado e outro usuário.
+   */
+  getSocialStatus(userId: string, context?: HttpContext): Observable<{ isFollowing: boolean; isFollower: boolean; isConhecido: boolean; tipo: string }> {
+    return this.http.get<any>(`${this.rootUrl}/Social/Status/${userId}`, { context });
+  }
 }

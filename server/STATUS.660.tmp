@@ -1,0 +1,30 @@
+{
+  "660": {
+    "startedAt": "2026-10-20T16:19:53.773Z",
+    "status": "stopped",
+    "debug": false,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T16:21:06.049Z",
+    "updatedAt": "2026-10-20T16:21:06.049Z",
+    "stoppedAt": "2026-10-20T16:20:23.473Z",
+    "nextStatusCheckAt": "2026-10-20T16:21:06.858Z"
+  },
+  "1228": {
+    "startedAt": "2026-10-20T16:17:08.245Z",
+    "status": "running",
+    "debug": false,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T16:21:06.013Z",
+    "nextStatusCheckAt": "2026-10-20T16:21:06.558Z",
+    "updatedAt": "2026-10-20T16:21:06.013Z"
+  },
+  "10868": {
+    "startedAt": "2026-10-20T16:20:39.733Z",
+    "status": "running",
+    "debug": false,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T16:21:05.958Z",
+    "nextStatusCheckAt": "2026-10-20T16:21:06.258Z",
+    "updatedAt": "2026-10-20T16:21:05.958Z"
+  }
+}
