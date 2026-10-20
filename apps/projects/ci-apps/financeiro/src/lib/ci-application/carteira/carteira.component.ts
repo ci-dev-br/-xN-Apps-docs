@@ -78,14 +78,14 @@ export class CarteiraComponent implements OnInit, OnDestroy {
     carregarDadosCarteira(): void {
         this.loading = true;
         this.sub = this.carteiraService.obterMinhaCarteira().subscribe({
-            next: (res) => {
+            next: (res: any) => {
                 this.carteira = res.carteira;
                 this.transacoes = res.transacoesRecentes || [];
                 this.aplicarFiltro(this.filtroTipo);
                 this.loading = false;
                 this.cdr.markForCheck();
             },
-            error: (err) => {
+            error: (err: any) => {
                 this.loading = false;
                 this.snackBar.open('Erro ao carregar dados da carteira.', 'Fechar', { duration: 3500 });
                 this.cdr.markForCheck();
