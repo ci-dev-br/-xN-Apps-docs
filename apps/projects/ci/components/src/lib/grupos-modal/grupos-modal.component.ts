@@ -111,11 +111,11 @@ export class GruposModalComponent implements OnInit {
   carregarGrupos() {
     this.loading = true;
     this.groupService.listarGrupos(this.termoBusca).subscribe({
-      next: (res) => {
+      next: (res: GroupItem[]) => {
         this.grupos = res;
         this.loading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao listar grupos:', err);
         this.loading = false;
       }
@@ -125,11 +125,11 @@ export class GruposModalComponent implements OnInit {
   carregarMeusGrupos() {
     this.loadingMeus = true;
     this.groupService.meusGrupos().subscribe({
-      next: (res) => {
+      next: (res: GroupItem[]) => {
         this.meusGrupos = res;
         this.loadingMeus = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao carregar meus grupos:', err);
         this.loadingMeus = false;
       }
@@ -158,7 +158,7 @@ export class GruposModalComponent implements OnInit {
       avatarUrl: val.avatarUrl,
       requiresApproval: val.requiresApproval,
     }).subscribe({
-      next: (novo) => {
+      next: (novo: GroupItem) => {
         this.creating = false;
         this.snackBar.open(`Grupo "${novo.name}" criado com sucesso! Você é o administrador.`, 'Ok', { duration: 4000 });
         this.formCriar.reset({ requiresApproval: true });
@@ -166,7 +166,7 @@ export class GruposModalComponent implements OnInit {
         this.carregarGrupos();
         this.carregarMeusGrupos();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao criar grupo:', err);
         this.creating = false;
         this.snackBar.open('Não foi possível criar o grupo. Verifique os dados.', 'Fechar', { duration: 3500 });
@@ -182,7 +182,7 @@ export class GruposModalComponent implements OnInit {
     }
 
     this.groupService.solicitarParticipacao(grupo.id).subscribe({
-      next: (res) => {
+      next: (res: { status: 'APPROVED' | 'PENDING'; message: string }) => {
         grupo.userStatus = res.status === 'APPROVED' ? 'MEMBER' : 'PENDING';
         if (res.status === 'APPROVED') {
           grupo.membersCount = (grupo.membersCount || 0) + 1;
@@ -190,7 +190,7 @@ export class GruposModalComponent implements OnInit {
         this.snackBar.open(res.message, 'Ok', { duration: 4000 });
         this.carregarMeusGrupos();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao solicitar participação:', err);
         this.snackBar.open('Não foi possível solicitar participação.', 'Fechar', { duration: 3000 });
       }
@@ -203,13 +203,13 @@ export class GruposModalComponent implements OnInit {
     if (!confirmed) return;
 
     this.groupService.sairDoGrupo(grupo.id).subscribe({
-      next: (res) => {
+      next: (res: { message: string }) => {
         grupo.userStatus = 'NONE';
         if (grupo.membersCount > 0) grupo.membersCount--;
         this.snackBar.open(res.message, 'Ok', { duration: 3000 });
         this.carregarMeusGrupos();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao sair do grupo:', err);
         this.snackBar.open(err?.error?.message || 'Erro ao sair do grupo.', 'Fechar', { duration: 3000 });
       }
@@ -226,11 +226,11 @@ export class GruposModalComponent implements OnInit {
     this.loadingSolicitacoes[grupo.id] = true;
 
     this.groupService.listarSolicitacoes(grupo.id).subscribe({
-      next: (reqs) => {
+      next: (reqs: GroupMemberRequestItem[]) => {
         this.solicitacoesPorGrupo[grupo.id] = reqs;
         this.loadingSolicitacoes[grupo.id] = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao listar solicitações:', err);
         this.loadingSolicitacoes[grupo.id] = false;
       }
@@ -239,7 +239,7 @@ export class GruposModalComponent implements OnInit {
 
   responderSolicitacao(grupo: GroupItem, reqItem: GroupMemberRequestItem, aprovar: boolean) {
     this.groupService.responderSolicitacao(grupo.id, reqItem.id, aprovar).subscribe({
-      next: (res) => {
+      next: (res: { message: string }) => {
         this.snackBar.open(res.message, 'Ok', { duration: 3000 });
         if (this.solicitacoesPorGrupo[grupo.id]) {
           this.solicitacoesPorGrupo[grupo.id] = this.solicitacoesPorGrupo[grupo.id].filter(r => r.id !== reqItem.id);
@@ -251,7 +251,7 @@ export class GruposModalComponent implements OnInit {
           grupo.pendingCount--;
         }
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao responder solicitação:', err);
         this.snackBar.open('Erro ao responder solicitação.', 'Fechar', { duration: 3000 });
       }

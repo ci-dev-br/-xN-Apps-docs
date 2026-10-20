@@ -185,7 +185,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
                 if (!!this.apps)
                     this.recentes = localStorage.getItem('NAV(RECENTES)')?.split(',').map(x => this.apps?.find(a => a?.name === x));
             });
-            this.notifSub = this.notificationService?.notifications$.subscribe(notifs => {
+            this.notifSub = this.notificationService?.notifications$.subscribe((notifs: InternalNotification[]) => {
                 this.latestNotification.set(notifs && notifs.length > 0 ? notifs[0] : undefined);
             });
         } catch (error) {

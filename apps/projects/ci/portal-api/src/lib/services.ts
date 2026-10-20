@@ -71,3 +71,6 @@ export { ChessService } from './services/chess.service';
 export { GameplayService } from './services/gameplay.service';
 export { KeyboardThemesService } from './services/keyboard-themes.service';
 export { ChangelogService } from './services/changelog.service';
+export { InternalNotificationService, InternalNotification, NotificationDisplayMode, NotificationResponse } from './services/internal-notification.service';
+export { EncryptedMessagerService, DecryptedMessage, ConversationItem, SecureChar, SecurePhase } from './services/encrypted-messager.service';
+export { GroupService, GroupItem, GroupMemberRequestItem, CriarGrupoPayload } from './services/group.service';
