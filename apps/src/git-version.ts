@@ -3,9 +3,9 @@
  * Do not modify manually.
  */
 export const GIT_VERSION = {
-  hash: "66f7404eec4663e50fa21399fa7e198ba87b4aa3",
-  shortHash: "66f7404e",
+  hash: "7a0a6b4b828fee08410c8458a96a8fbe5963c1b2",
+  shortHash: "7a0a6b4b",
   branch: "development",
   collaborators: ["pLinho <paulorettamozo@gmail.com>","Paulo Rettamozo <5777052+pLinho@users.noreply.github.com>","Plhx <eu@plhx.com.br>","plhx <plhx@plhx.com.br>","Plhx <paulorettamozo@live.com>"] as string[],
-  timestamp: "2026-10-20T05:00:36.041Z"
+  timestamp: "2026-10-20T05:05:30.809Z"
 };
