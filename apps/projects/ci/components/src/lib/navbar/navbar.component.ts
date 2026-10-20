@@ -3,7 +3,7 @@ import { formatUserPhotoUrl, UserAuthenticationService } from "@ci/auth";
 import { INavbarItemMenu } from "./i-menu-item";
 import { IItemMenu } from "@ci/components/window";
 import { MenuService } from "@ci/core";
-import { AvailableVersionInfoDto, DeployerService, User, InternalNotificationService, InternalNotification } from "@ci/portal-api";
+import { AvailableVersionInfoDto, DeployerService, User, InternalNotificationService, InternalNotification, NotificationDisplayMode } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
@@ -37,6 +37,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     publishing = signal<boolean>(false);
     lastActionMessage = signal<string | undefined>(undefined);
     photoError = signal<boolean>(false);
+    latestNotification = signal<InternalNotification | undefined>(undefined);
+    private notifSub: any = null;
     private pollTimer: any = null;
 
     /**
@@ -74,6 +76,34 @@ export class NavbarComponent implements OnInit, OnDestroy {
         menuService?.userMenu?.subscribe(menu => {
             this.userMenuList = menu;
         });
+    }
+
+    get displayMode$() {
+        return this.notificationService?.displayMode$;
+    }
+
+    get displayMode(): NotificationDisplayMode {
+        return this.notificationService?.displayMode || 'menu';
+    }
+
+    setDisplayMode(mode: NotificationDisplayMode) {
+        this.notificationService?.setDisplayMode(mode);
+    }
+
+    get isSidebarOpen$() {
+        return this.notificationService?.isSidebarOpen$;
+    }
+
+    toggleSidebar(open?: boolean) {
+        this.notificationService?.toggleSidebar(open);
+    }
+
+    get isStatusbarExpanded$() {
+        return this.notificationService?.isStatusbarExpanded$;
+    }
+
+    toggleStatusbar(open?: boolean) {
+        this.notificationService?.toggleStatusbar(open);
     }
 
     get unreadCount$() {
@@ -155,12 +185,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
                 if (!!this.apps)
                     this.recentes = localStorage.getItem('NAV(RECENTES)')?.split(',').map(x => this.apps?.find(a => a?.name === x));
             });
+            this.notifSub = this.notificationService?.notifications$.subscribe(notifs => {
+                this.latestNotification.set(notifs && notifs.length > 0 ? notifs[0] : undefined);
+            });
         } catch (error) {
             console.trace(error);
         }
     }
 
     ngOnDestroy(): void {
+        if (this.notifSub) {
+            this.notifSub.unsubscribe();
+            this.notifSub = null;
+        }
         if (this.pollTimer) {
             clearTimeout(this.pollTimer);
             this.pollTimer = null;

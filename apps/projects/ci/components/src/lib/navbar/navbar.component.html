@@ -139,79 +139,27 @@
     </mat-menu>
 
     <!-- Caixa de Notificações Internas & Web Push -->
-    <button mat-icon-button [matMenuTriggerFor]="notificationsMenu" class="notif-btn" matTooltip="Notificações">
-        <mat-icon [matBadge]="unreadCount$ | async" [matBadgeHidden]="!(unreadCount$ | async) || (unreadCount$ | async) === 0" matBadgeColor="warn" matBadgeSize="small">
-            notifications
-        </mat-icon>
-    </button>
+    @if((displayMode$ | async) === 'sidebar') {
+        <button mat-icon-button (click)="toggleSidebar()" class="notif-btn" matTooltip="Notificações (Aba Lateral)">
+            <mat-icon [matBadge]="unreadCount$ | async" [matBadgeHidden]="!(unreadCount$ | async) || (unreadCount$ | async) === 0" matBadgeColor="warn" matBadgeSize="small">
+                notifications
+            </mat-icon>
+        </button>
+    } @else if((displayMode$ | async) === 'statusbar') {
+        <button mat-icon-button (click)="toggleStatusbar()" class="notif-btn" matTooltip="Notificações (Statusbar)">
+            <mat-icon [matBadge]="unreadCount$ | async" [matBadgeHidden]="!(unreadCount$ | async) || (unreadCount$ | async) === 0" matBadgeColor="warn" matBadgeSize="small">
+                notifications
+            </mat-icon>
+        </button>
+    } @else {
+        <button mat-icon-button [matMenuTriggerFor]="notificationsMenu" class="notif-btn" matTooltip="Notificações">
+            <mat-icon [matBadge]="unreadCount$ | async" [matBadgeHidden]="!(unreadCount$ | async) || (unreadCount$ | async) === 0" matBadgeColor="warn" matBadgeSize="small">
+                notifications
+            </mat-icon>
+        </button>
+    }
     <mat-menu #notificationsMenu="matMenu" class="notifications-menu-panel" xPosition="before">
-        <div class="notifications-box" (click)="$event.stopPropagation()">
-            <div class="notif-header">
-                <div class="notif-title-row">
-                    <mat-icon color="primary">notifications_active</mat-icon>
-                    <strong>Notificações</strong>
-                    @if((unreadCount$ | async); as unread) {
-                        @if(unread > 0) {
-                            <span class="unread-pill">{{ unread }} novas</span>
-                        }
-                    }
-                </div>
-                <div class="notif-header-actions">
-                    <button mat-icon-button (click)="marcarTodasNotificacoesComoLidas($event)" matTooltip="Marcar todas como lidas">
-                        <mat-icon>done_all</mat-icon>
-                    </button>
-                    <button mat-icon-button (click)="testarNotificacao($event)" matTooltip="Enviar Notificação de Teste">
-                        <mat-icon>add_alert</mat-icon>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Banner de Ativação de Push Notification -->
-            @if((pushStatus$ | async) !== 'granted') {
-                <div class="push-opt-in-banner">
-                    <mat-icon>cell_tower</mat-icon>
-                    <div class="push-text">
-                        <span>Receba avisos no seu dispositivo</span>
-                        <small>Notificações push do navegador</small>
-                    </div>
-                    <button mat-flat-button color="primary" class="btn-enable-push" (click)="solicitarPermissaoPush($event)">
-                        Ativar
-                    </button>
-                </div>
-            }
-
-            <!-- Lista de Notificações -->
-            <div class="notif-items-list">
-                @if((notifications$ | async); as notifs) {
-                    @if(notifs.length === 0) {
-                        <div class="notif-empty">
-                            <mat-icon>notifications_none</mat-icon>
-                            <span>Nenhuma notificação por enquanto</span>
-                        </div>
-                    } @else {
-                        @for(n of notifs; track n.id) {
-                            <div class="notif-item-row" [class.unread]="!n.read" (click)="abrirAcaoNotificacao(n, $event)">
-                                <div class="notif-icon-col">
-                                    <div class="notif-type-circle" [ngClass]="n.type ? n.type.toLowerCase() : 'info'">
-                                        <mat-icon>{{ getNotificationIcon(n.type) }}</mat-icon>
-                                    </div>
-                                </div>
-                                <div class="notif-content-col">
-                                    <div class="notif-item-title">{{ n.title }}</div>
-                                    <div class="notif-item-message">{{ n.message }}</div>
-                                    <div class="notif-item-time">{{ n.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
-                                </div>
-                                @if(!n.read) {
-                                    <button mat-icon-button class="btn-mark-read" (click)="marcarNotificacaoComoLida(n, $event)" matTooltip="Marcar como lida">
-                                        <mat-icon>check</mat-icon>
-                                    </button>
-                                }
-                            </div>
-                        }
-                    }
-                }
-            </div>
-        </div>
+        <ng-container *ngTemplateOutlet="notificationsListContent"></ng-container>
     </mat-menu>
 
     <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-btn" [matTooltip]="user()?.surname || user()?.fullName || user()?.username || 'Usuário'">
