@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface TipoDocumentoIdentificacao {
+  code?: string | null;
   createdAt?: Date | null;
   createdBy?: {
 } | null;

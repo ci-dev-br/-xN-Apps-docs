@@ -8,12 +8,12 @@ import { RequestBuilder } from '../../request-builder';
 
 import { SyncPayloadDaoCategory } from '../../models/sync-payload-dao-category';
 
-export interface Cynccategory$Params {
+export interface SyncCategory$Params {
       body: SyncPayloadDaoCategory
 }
 
-export function cynccategory(http: HttpClient, rootUrl: string, params: Cynccategory$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoCategory>> {
-  const rb = new RequestBuilder(rootUrl, cynccategory.PATH, 'post');
+export function syncCategory(http: HttpClient, rootUrl: string, params: SyncCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoCategory>> {
+  const rb = new RequestBuilder(rootUrl, syncCategory.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -28,4 +28,4 @@ export function cynccategory(http: HttpClient, rootUrl: string, params: Cynccate
   );
 }
 
-cynccategory.PATH = '/Category/Sync';
+syncCategory.PATH = '/Category/Sync';

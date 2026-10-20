@@ -8,16 +8,13 @@
     <div class="toolbar-brand">
         <mat-icon class="entity-icon">{{getEntityIcon()}}</mat-icon>
         <span class="entity-name">{{schemaName | nomenclatura}}</span>
-        <span class="record-badge" matTooltip="Total de registros exibidos">{{source?.length || 0}}</span>
+        <span class="record-badge" matTooltip="Total de registros exibidos">{{(source!.length) || 0}}</span>
     </div>
-
     <div class="toolbar-search">
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search-form-field">
             <mat-icon matPrefix>search</mat-icon>
-            <input matInput type="text"
-                [placeholder]="'Pesquisar em ' + (schemaName | nomenclatura) + '...'"
-                [ngModel]="searchText"
-                (ngModelChange)="onSearchTextChange($event)"
+            <input matInput type="text" [placeholder]="'Pesquisar em ' + (schemaName | nomenclatura) + '...'"
+                [ngModel]="searchText" (ngModelChange)="onSearchTextChange($event)"
                 (keydown.enter)="onSearchTextChange(searchText, true)" />
             @if(searchText){
             <button matSuffix mat-icon-button type="button" matTooltip="Limpar busca"
@@ -27,34 +24,14 @@
             }
         </mat-form-field>
     </div>
-
     <div class="toolbar-actions">
-        <button mat-raised-button (click)="search()" matTooltip="Atualizar lista">
-            <mat-icon>refresh</mat-icon>
-            <span class="btn-label">Pesquisar</span>
-        </button>
-        <button mat-flat-button color="primary" (click)="createNew()" matTooltip="Criar novo registro">
-            <mat-icon>add</mat-icon>
-            <span class="btn-label">Cadastrar</span>
-        </button>
-
-        <button mat-stroked-button class="filter-toggle-btn"
-            [class.active]="showColumnFilters || activeFilterCount > 0"
-            [matBadge]="activeFilterCount > 0 ? activeFilterCount : null"
-            matBadgeOverlap="false"
-            (click)="showColumnFilters = !showColumnFilters"
-            matTooltip="Exibir/ocultar filtros por campo do schema">
-            <mat-icon>filter_alt</mat-icon>
-            <span class="btn-label">Filtros</span>
-        </button>
-
+        <ng-container *ngTemplateOutlet="acoesTempl"></ng-container>
         @if(activeFilterCount > 0 || searchText){
         <button mat-button color="warn" (click)="clearAllFilters()" matTooltip="Limpar todos os filtros">
             <mat-icon>filter_alt_off</mat-icon>
             <span class="btn-label">Limpar</span>
         </button>
         }
-
         <mat-button-toggle-group [(ngModel)]="visualizacao" aria-label="Modo de visualização" class="view-toggle-group">
             <mat-button-toggle value="table" matTooltip="Visão em Data-Grid (Tabela)">
                 <mat-icon>table_chart</mat-icon>
@@ -87,8 +64,7 @@
         </mat-select>
         }@else{
         <input matInput [type]="field.type === 'number' ? 'number' : 'text'"
-            [placeholder]="'Filtrar ' + field.title + '...'"
-            [ngModel]="columnFilters[field.key] || ''"
+            [placeholder]="'Filtrar ' + field.title + '...'" [ngModel]="columnFilters[field.key] || ''"
             (ngModelChange)="onSingleFilterChange(field.key, $event)"
             (keydown.enter)="onSingleFilterChange(field.key, columnFilters[field.key], true)" />
         @if(columnFilters[field.key]){
@@ -104,27 +80,21 @@
 }
 
 @if(visualizacao === 'table'){
-    @if(!!gridOptions){
-    <ci-data-grid
-        [options]="gridOptions"
-        [source]="source"
-        [enableColumnFilters]="showColumnFilters"
-        [filters]="columnFilters"
-        (filterChange)="onFilterChange($event)"
-        (select)="editar($any($event)?.value, $any($event)?.event)"
-        (sorted)="sortHandle($event)">
-        <div vazio class="empty-view-message">
-            <mat-icon>inbox</mat-icon>
-            <span>Nenhum registro encontrado para {{schemaName | nomenclatura}}</span>
-        </div>
-    </ci-data-grid>
-    }@else{
-    <div class="content">
-        Carregando esquema da grade...
+@if(!!gridOptions){
+<ci-data-grid [options]="gridOptions" [source]="source" [enableColumnFilters]="showColumnFilters"
+    [filters]="columnFilters" (filterChange)="onFilterChange($event)"
+    (select)="editar($any($event)?.value, $any($event)?.event)" (sorted)="sortHandle($event)">
+    <div vazio class="empty-view-message">
+        <mat-icon>inbox</mat-icon>
+        <span>Nenhum registro encontrado para {{schemaName | nomenclatura}}</span>
     </div>
-    }
+</ci-data-grid>
+}@else{
+<div class="content">
+    Carregando esquema da grade...
+</div>
 }
-
+}
 @if(visualizacao === 'list'){
 <div class="list-view-container">
     @if(!source || source.length === 0){
@@ -147,11 +117,11 @@
             </div>
             <mat-chip-set class="list-row-fields" aria-label="Propriedades do registro">
                 @for (field of visibleFields; track field.key) {
-                    @if(formatFieldValue($any(item)[field.key]); as val){
-                    <mat-chip class="field-chip" [disableRipple]="true">
-                        <span class="chip-label">{{field.title}}:</span> {{val}}
-                    </mat-chip>
-                    }
+                @if(formatFieldValue($any(item)[field.key]); as val){
+                <mat-chip class="field-chip" [disableRipple]="true">
+                    <span class="chip-label">{{field.title}}:</span> {{val}}
+                </mat-chip>
+                }
                 }
             </mat-chip-set>
         </div>
@@ -215,6 +185,28 @@
         }
     </div>
     }
-</div>
-}
-}
+</div>}}
+<ng-template #acoesTempl let-typeDef="typeDef">
+    @if(!!acoes){
+    @for(a of acoes; track $index){
+    @if('raised'===(typeDef||a.type)){<button mat-raised-button
+        (click)="a.onClick !== undefined ? a.onClick($event) : undefined"
+        [matTooltip]="a.tooltip||undefined!"><ng-container *ngTemplateOutlet="inner"></ng-container></button>}
+    @else if('flat'===(typeDef||a.type)){<button mat-raised-button
+        (click)="a.onClick !== undefined ? a.onClick($event) : undefined"
+        [matTooltip]="a.tooltip||undefined!"><ng-container *ngTemplateOutlet="inner"></ng-container></button>}
+    @else if('stroked'===(typeDef||a.type)){<button mat-stroked-button
+        (click)="a.onClick !== undefined ? a.onClick($event) : undefined!" [matTooltip]="a.tooltip || undefined!"
+        [class.active]="a.active !== undefined ? a.active() : undefined"><ng-container
+            *ngTemplateOutlet="inner"></ng-container></button>}
+    @else if('icon'===(typeDef||a.type)){<button mat-icon-button
+        (click)="a.onClick !== undefined ? a.onClick($event) : undefined!" [matTooltip]="a.tooltip || undefined!"
+        [class.active]="a.active !== undefined ? a.active() : undefined"><ng-container
+            *ngTemplateOutlet="inner"></ng-container></button>}
+    @else{<button mat-button (click)="a.onClick !== undefined ? a.onClick($event) : undefined"
+        matTooltip="Atualizar lista"><ng-container *ngTemplateOutlet="inner"></ng-container></button>}
+    <ng-template #inner>
+        @if(a.icon){<mat-icon>{{a.icon}}</mat-icon>}
+        @if(a.label && !((typeDef||a.type)==='icon')){<span class="btn-label">{{a.label}}</span>}
+    </ng-template> }}
+</ng-template>

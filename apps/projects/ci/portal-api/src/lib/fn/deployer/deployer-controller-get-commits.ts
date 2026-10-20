@@ -32,7 +32,7 @@ export interface DeployerControllerGetCommits$Params {
 }
 
 export function deployerControllerGetCommits(http: HttpClient, rootUrl: string, params?: DeployerControllerGetCommits$Params, context?: HttpContext): Observable<StrictHttpResponse<GetCommitsResponseDto>> {
-  const rb = new RequestBuilder(rootUrl, deployerControllerGetCommits.PATH, 'get');
+  const rb = new RequestBuilder(rootUrl, deployerControllerGetCommits.PATH, 'post');
   if (params) {
     rb.query('limit', params.limit, {});
     rb.query('skip', params.skip, {});

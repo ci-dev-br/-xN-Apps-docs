@@ -1,0 +1,411 @@
+<div class="grupo-page">
+  <!-- Top Navigation & Return -->
+  <div class="top-nav-bar">
+    <button mat-button (click)="voltar()" class="btn-back">
+      <mat-icon>arrow_back</mat-icon>
+      <span>Todas as Comunidades</span>
+    </button>
+  </div>
+
+  @if (loadingGrupo) {
+    <div class="page-loading">
+      <mat-spinner diameter="44"></mat-spinner>
+      <span>Carregando dados da comunidade...</span>
+    </div>
+  } @else if (!grupo) {
+    <div class="page-error">
+      <mat-icon>error_outline</mat-icon>
+      <h2>Comunidade não encontrada</h2>
+      <p>O grupo solicitado pode ter sido descontinuado ou você não possui permissão para acessá-lo.</p>
+      <button mat-stroked-button color="primary" (click)="voltar()">Voltar para Grupos</button>
+    </div>
+  } @else {
+    <!-- Hero / Header do Grupo -->
+    <div class="group-hero">
+      <div class="hero-cover" [style.background-image]="grupo.coverUrl ? 'url(' + grupo.coverUrl + ')' : null">
+        @if (!grupo.coverUrl) {
+          <div class="cover-gradient">
+            <mat-icon>groups</mat-icon>
+          </div>
+        }
+      </div>
+
+      <div class="hero-body">
+        <div class="avatar-and-actions">
+          <div class="group-avatar-large">
+            @if (grupo.avatarUrl) {
+              <img [src]="grupo.avatarUrl" alt="Avatar do grupo" />
+            } @else {
+              <span>{{ getGroupInitials(grupo.name) }}</span>
+            }
+          </div>
+
+          <div class="hero-actions">
+            @if (grupo.userStatus === 'ADMIN') {
+              <span class="status-pill admin"><mat-icon>verified</mat-icon> Você é Administrador</span>
+            } @else if (grupo.userStatus === 'MEMBER') {
+              <span class="status-pill member"><mat-icon>check_circle</mat-icon> Você é Membro</span>
+              <button mat-stroked-button color="warn" (click)="sairDoGrupo()">Sair do Grupo</button>
+            }
+
+            <button mat-flat-button color="primary" (click)="abrirDialogNovoTopico()" class="action-btn">
+              <mat-icon>add_comment</mat-icon>
+              <span>Novo Tópico</span>
+            </button>
+
+            <button mat-stroked-button color="primary" (click)="abrirDialogCompartilharAtivo()" class="action-btn">
+              <mat-icon>share</mat-icon>
+              <span>Compartilhar Ativo</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="group-header-text">
+          <div class="title-row">
+            <h1>{{ grupo.name }}</h1>
+            @if (grupo.requiresApproval) {
+              <span class="badge privacy-badge"><mat-icon>lock</mat-icon> Comunidade Privada</span>
+            } @else {
+              <span class="badge privacy-badge public"><mat-icon>public</mat-icon> Comunidade Pública</span>
+            }
+          </div>
+
+          <p class="group-description">{{ grupo.descriptions || 'Comunidade colaborativa corporativa.' }}</p>
+
+          <!-- Metadados e Tenant ID Card -->
+          <div class="group-meta-chips">
+            <div class="meta-item">
+              <mat-icon>group</mat-icon>
+              <span>{{ grupo.membersCount || 0 }} membros</span>
+            </div>
+
+            @if (grupo.admin) {
+              <div class="meta-item">
+                <mat-icon>shield_person</mat-icon>
+                <span>Administrador: <strong>{{ grupo.admin.surname || grupo.admin.username }}</strong></span>
+              </div>
+            }
+
+            <div class="meta-item tenant-box" (click)="copiarTenantId()" matTooltip="Clique para copiar o Tenant ID">
+              <mat-icon color="primary">hub</mat-icon>
+              <span>Tenant ID: <code>{{ grupo.tenantId }}</code></span>
+              <mat-icon class="copy-icon">content_copy</mat-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navegação de Abas da Comunidade -->
+    <div class="community-content">
+      <mat-tab-group [(selectedIndex)]="selectedTab" animationDuration="200ms" class="community-tabs">
+        <!-- ABA 1: TÓPICOS DE CONVERSA -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">forum</mat-icon>
+            <span>Tópicos de Discussão</span>
+            @if (topicos.length > 0) {
+              <span class="badge-tab-count">{{ topicos.length }}</span>
+            }
+          </ng-template>
+
+          <div class="tab-container">
+            <div class="tab-header-row">
+              <div class="section-intro">
+                <h2>Fórum e Discussões da Comunidade</h2>
+                <p>Inicie diálogos, tire dúvidas ou colabore com os demais participantes.</p>
+              </div>
+              <button mat-flat-button color="primary" (click)="abrirDialogNovoTopico()">
+                <mat-icon>add</mat-icon>
+                <span>Criar Novo Tópico</span>
+              </button>
+            </div>
+
+            @if (loadingTopicos) {
+              <div class="tab-loading">
+                <mat-spinner diameter="36"></mat-spinner>
+                <span>Buscando tópicos de conversa...</span>
+              </div>
+            } @else if (topicos.length === 0) {
+              <div class="tab-empty">
+                <mat-icon>chat_bubble_outline</mat-icon>
+                <h3>Nenhum tópico aberto ainda</h3>
+                <p>Seja o primeiro a iniciar uma conversa nesta comunidade!</p>
+                <button mat-flat-button color="primary" (click)="abrirDialogNovoTopico()">
+                  <mat-icon>add_comment</mat-icon>
+                  <span>Iniciar Primeira Discussão</span>
+                </button>
+              </div>
+            } @else {
+              <div class="topics-list">
+                @for (t of topicos; track t.id) {
+                  <div class="topic-card" [class.expanded]="topicoExpandidoId === t.id">
+                    <div class="topic-header" (click)="alternarTopico(t)">
+                      <div class="topic-author-avatar">
+                        @if (t.authorPhoto) {
+                          <img [src]="t.authorPhoto" alt="Avatar" />
+                        } @else {
+                          <span>{{ getGroupInitials(t.authorName || 'Autor') }}</span>
+                        }
+                      </div>
+
+                      <div class="topic-main">
+                        <div class="topic-title-row">
+                          <h3 class="topic-title">{{ t.title }}</h3>
+                          <div class="topic-replies-pill">
+                            <mat-icon>reply</mat-icon>
+                            <span>{{ t.repliesCount || 0 }} {{ (t.repliesCount === 1) ? 'resposta' : 'respostas' }}</span>
+                          </div>
+                        </div>
+
+                        <p class="topic-preview-content">{{ t.content }}</p>
+
+                        <div class="topic-meta">
+                          <span>Iniciado por <strong>{{ t.authorName || 'Membro' }}</strong></span>
+                          <span>•</span>
+                          <span>{{ t.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                        </div>
+                      </div>
+
+                      <button mat-icon-button class="btn-expand" matTooltip="Expandir discussão">
+                        <mat-icon>{{ topicoExpandidoId === t.id ? 'expand_less' : 'expand_more' }}</mat-icon>
+                      </button>
+                    </div>
+
+                    <!-- Thread de Mensagens e Respostas -->
+                    @if (topicoExpandidoId === t.id) {
+                      <div class="topic-thread">
+                        <mat-divider></mat-divider>
+
+                        <div class="messages-container">
+                          <h4>Respostas</h4>
+
+                          @if (loadingMensagens[t.id]) {
+                            <div class="messages-loading">
+                              <mat-spinner diameter="24"></mat-spinner>
+                              <small>Carregando respostas...</small>
+                            </div>
+                          } @else if (!mensagensPorTopico[t.id] || mensagensPorTopico[t.id].length === 0) {
+                            <div class="messages-empty">
+                              <small>Nenhuma resposta enviada ainda. Envie a primeira mensagem abaixo!</small>
+                            </div>
+                          } @else {
+                            <div class="messages-stream">
+                              @for (m of mensagensPorTopico[t.id]; track m.id) {
+                                <div class="message-bubble" [class.my-message]="m.authorId === currentUserId">
+                                  <div class="msg-author-header">
+                                    <div class="msg-avatar">
+                                      @if (m.authorPhoto) {
+                                        <img [src]="m.authorPhoto" alt="Avatar" />
+                                      } @else {
+                                        <span>{{ getGroupInitials(m.authorName || 'User') }}</span>
+                                      }
+                                    </div>
+                                    <strong>{{ m.authorName || 'Participante' }}</strong>
+                                    <small>{{ m.createdAt | date:'dd/MM/yyyy HH:mm' }}</small>
+                                  </div>
+                                  <div class="msg-content">{{ m.content }}</div>
+                                </div>
+                              }
+                            </div>
+                          }
+
+                          <!-- Caixa de Resposta Rápida -->
+                          <div class="reply-box">
+                            <mat-form-field appearance="outline" class="reply-input">
+                              <mat-label>Escreva sua resposta...</mat-label>
+                              <textarea matInput rows="2" [(ngModel)]="respostaTexto[t.id]" (keydown.control.enter)="enviarResposta(t)" placeholder="Digite seu comentário (Ctrl+Enter para enviar)..."></textarea>
+                            </mat-form-field>
+                            <button mat-flat-button color="primary" class="btn-reply" [disabled]="!respostaTexto[t.id] || enviandoResposta[t.id]" (click)="enviarResposta(t)">
+                              <mat-icon>send</mat-icon>
+                              <span>Responder</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </mat-tab>
+
+        <!-- ABA 2: ATIVOS COMPARTILHADOS (VIA TENANT ID) -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">folder_shared</mat-icon>
+            <span>Ativos Compartilhados</span>
+            @if (ativos.length > 0) {
+              <span class="badge-tab-count">{{ ativos.length }}</span>
+            }
+          </ng-template>
+
+          <div class="tab-container">
+            <!-- Header Informativo sobre FullAuditedEntities e Tenant ID -->
+            <div class="tenant-isolation-banner">
+              <mat-icon>security</mat-icon>
+              <div>
+                <strong>Compartilhamento Corporativo via Tenant ID (<code>{{ grupo.tenantId }}</code>)</strong>
+                <p>
+                  Recursos corporativos como <strong>Noticiários Diários</strong>, <strong>Formulários</strong> e <strong>Cadastros</strong> vinculados a este Tenant tornam-se acessíveis e auditáveis exclusivamente pelos membros que possuem acesso a esta comunidade.
+                </p>
+              </div>
+            </div>
+
+            <div class="tab-header-row">
+              <!-- Filtro por Tipo de Ativo -->
+              <div class="type-filter-chips">
+                <button mat-stroked-button [class.active-filter]="filtroTipoAtivo === 'TODOS'" (click)="filtroTipoAtivo = 'TODOS'">Todos ({{ ativos.length }})</button>
+                <button mat-stroked-button [class.active-filter]="filtroTipoAtivo === 'NOTICIA'" (click)="filtroTipoAtivo = 'NOTICIA'">
+                  <mat-icon>newspaper</mat-icon> Notícias
+                </button>
+                <button mat-stroked-button [class.active-filter]="filtroTipoAtivo === 'FORMULARIO'" (click)="filtroTipoAtivo = 'FORMULARIO'">
+                  <mat-icon>assignment</mat-icon> Formulários
+                </button>
+                <button mat-stroked-button [class.active-filter]="filtroTipoAtivo === 'CADASTRO'" (click)="filtroTipoAtivo = 'CADASTRO'">
+                  <mat-icon>contacts</mat-icon> Cadastros
+                </button>
+                <button mat-stroked-button [class.active-filter]="filtroTipoAtivo === 'DOCUMENTO'" (click)="filtroTipoAtivo = 'DOCUMENTO'">
+                  <mat-icon>description</mat-icon> Documentos
+                </button>
+              </div>
+
+              <button mat-flat-button color="primary" (click)="abrirDialogCompartilharAtivo()">
+                <mat-icon>share</mat-icon>
+                <span>Compartilhar Novo Ativo</span>
+              </button>
+            </div>
+
+            @if (loadingAtivos) {
+              <div class="tab-loading">
+                <mat-spinner diameter="36"></mat-spinner>
+                <span>Carregando ativos compartilhados via Tenant...</span>
+              </div>
+            } @else if (ativosFiltrados.length === 0) {
+              <div class="tab-empty">
+                <mat-icon>inventory_2</mat-icon>
+                <h3>Nenhum ativo compartilhado encontrado</h3>
+                <p>Compartilhe um noticiário diário, formulário corporativo ou registro cadastral com este grupo.</p>
+                <button mat-flat-button color="primary" (click)="abrirDialogCompartilharAtivo()">
+                  <mat-icon>add_to_photos</mat-icon>
+                  <span>Compartilhar Ativo Agora</span>
+                </button>
+              </div>
+            } @else {
+              <div class="assets-grid">
+                @for (a of ativosFiltrados; track a.id) {
+                  <mat-card class="asset-card">
+                    <mat-card-header class="asset-card-header">
+                      <div class="asset-type-icon" [ngClass]="a.tipoAtivo.toLowerCase()">
+                        @switch (a.tipoAtivo) {
+                          @case ('NOTICIA') { <mat-icon>newspaper</mat-icon> }
+                          @case ('FORMULARIO') { <mat-icon>assignment</mat-icon> }
+                          @case ('CADASTRO') { <mat-icon>contacts</mat-icon> }
+                          @case ('DOCUMENTO') { <mat-icon>description</mat-icon> }
+                          @default { <mat-icon>widgets</mat-icon> }
+                        }
+                      </div>
+                      <div class="asset-header-text">
+                        <span class="asset-badge">{{ a.tipoAtivo }}</span>
+                        <mat-card-title class="asset-title">{{ a.titulo }}</mat-card-title>
+                      </div>
+                    </mat-card-header>
+
+                    <mat-card-content class="asset-card-content">
+                      <p class="asset-desc">{{ a.descricao || 'Ativo compartilhado com a comunidade.' }}</p>
+
+                      <div class="asset-audit-info">
+                        <div class="sharer-info">
+                          <mat-icon>person</mat-icon>
+                          <span>Compartilhado por <strong>{{ a.compartilhadoPorNome || 'Membro' }}</strong></span>
+                        </div>
+                        <div class="date-info">
+                          <mat-icon>schedule</mat-icon>
+                          <span>{{ a.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                        </div>
+                        <div class="tenant-ref">
+                          <mat-icon>hub</mat-icon>
+                          <span>Tenant: <code>{{ a.tenantId }}</code></span>
+                        </div>
+                      </div>
+                    </mat-card-content>
+
+                    <mat-divider></mat-divider>
+
+                    <mat-card-actions class="asset-card-actions">
+                      <button mat-flat-button color="primary" class="btn-open-asset" (click)="abrirLinkAtivo(a)">
+                        <mat-icon>open_in_new</mat-icon>
+                        <span>Acessar Recurso</span>
+                      </button>
+                    </mat-card-actions>
+                  </mat-card>
+                }
+              </div>
+            }
+          </div>
+        </mat-tab>
+
+        <!-- ABA 3: MODERAÇÃO & SOLICITAÇÕES (ADMIN) -->
+        @if (grupo.userStatus === 'ADMIN') {
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="tab-icon">how_to_reg</mat-icon>
+              <span>Moderação & Solicitações</span>
+              @if (solicitacoes.length > 0) {
+                <span class="badge-tab-count warn">{{ solicitacoes.length }}</span>
+              }
+            </ng-template>
+
+            <div class="tab-container">
+              <div class="section-intro">
+                <h2>Gerenciamento de Participantes</h2>
+                <p>Aprove ou recuse solicitações de usuários que desejam ingressar nesta comunidade e acessar seus Tenants.</p>
+              </div>
+
+              @if (loadingSolicitacoes) {
+                <div class="tab-loading">
+                  <mat-spinner diameter="36"></mat-spinner>
+                  <span>Buscando solicitações...</span>
+                </div>
+              } @else if (solicitacoes.length === 0) {
+                <div class="tab-empty">
+                  <mat-icon>verified</mat-icon>
+                  <h3>Nenhuma solicitação pendente</h3>
+                  <p>Todos os pedidos de entrada já foram processados.</p>
+                </div>
+              } @else {
+                <div class="requests-list-view">
+                  @for (reqItem of solicitacoes; track reqItem.id) {
+                    <div class="request-card">
+                      <div class="requester-profile">
+                        <div class="avatar-circle">
+                          <span>{{ getGroupInitials(reqItem.user?.surname || reqItem.user?.username) }}</span>
+                        </div>
+                        <div class="requester-meta">
+                          <strong>{{ reqItem.user?.surname || reqItem.user?.fullName || reqItem.user?.username }}</strong>
+                          <small>Solicitou entrada em {{ reqItem.requestedAt | date:'dd/MM/yyyy HH:mm' }}</small>
+                        </div>
+                      </div>
+
+                      <div class="request-actions">
+                        <button mat-flat-button color="primary" (click)="responderSolicitacao(reqItem, true)">
+                          <mat-icon>check</mat-icon>
+                          <span>Aprovar</span>
+                        </button>
+                        <button mat-button color="warn" (click)="responderSolicitacao(reqItem, false)">
+                          <mat-icon>close</mat-icon>
+                          <span>Recusar</span>
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </mat-tab>
+        }
+      </mat-tab-group>
+    </div>
+  }
+</div>

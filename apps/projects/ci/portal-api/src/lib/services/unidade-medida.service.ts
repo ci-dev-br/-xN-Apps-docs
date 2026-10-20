@@ -9,15 +9,15 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deleteUnidadeMedida } from '../fn/unidade-medida/delete-unidade-medida';
+import { DeleteUnidadeMedida$Params } from '../fn/unidade-medida/delete-unidade-medida';
+import { getByInternalIdUnidadeMedida } from '../fn/unidade-medida/get-by-internal-id-unidade-medida';
+import { GetByInternalIdUnidadeMedida$Params } from '../fn/unidade-medida/get-by-internal-id-unidade-medida';
 import { getListUnidadeMedida } from '../fn/unidade-medida/get-list-unidade-medida';
 import { GetListUnidadeMedida$Params } from '../fn/unidade-medida/get-list-unidade-medida';
 import { syncUnidadeMedida } from '../fn/unidade-medida/sync-unidade-medida';
 import { SyncUnidadeMedida$Params } from '../fn/unidade-medida/sync-unidade-medida';
 import { UnidadeMedida } from '../models/unidade-medida';
-import { GetByInternalIdInputDto } from '../models/get-by-internal-id-input-dto';
-import { RequestBuilder } from '../request-builder';
-import { filter } from 'rxjs/operators';
-import { HttpResponse } from '@angular/common/http';
 
 @Injectable()
 export class UnidadeMedidaService extends BaseService {
@@ -27,8 +27,6 @@ export class UnidadeMedidaService extends BaseService {
 
   /** Path part for operation `syncUnidadeMedida()` */
   static readonly SyncUnidadeMedidaPath = '/UnidadeMedida/Sync';
-  static readonly GetByInternalIdUnidadeMedidaPath = '/UnidadeMedida/GetByInternalId';
-  static readonly DeleteUnidadeMedidaPath = '/UnidadeMedida/Delete';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -52,12 +50,28 @@ export class UnidadeMedidaService extends BaseService {
     );
   }
 
-  getByInternalId(params: { body: GetByInternalIdInputDto }, context?: HttpContext): Observable<UnidadeMedida> {
-    const rb = new RequestBuilder(this.rootUrl, UnidadeMedidaService.GetByInternalIdUnidadeMedidaPath, 'post');
-    if (params) rb.body(params.body, 'application/json');
-    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
-      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-      map((r: HttpResponse<any>) => (r as StrictHttpResponse<UnidadeMedida>).body)
+  /** Path part for operation `getByInternalIdUnidadeMedida()` */
+  static readonly GetByInternalIdUnidadeMedidaPath = '/UnidadeMedida/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdUnidadeMedida()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdUnidadeMedida$Response(params: GetByInternalIdUnidadeMedida$Params, context?: HttpContext): Observable<StrictHttpResponse<UnidadeMedida>> {
+    return getByInternalIdUnidadeMedida(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdUnidadeMedida$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdUnidadeMedida$Params, context?: HttpContext): Observable<UnidadeMedida> {
+    return this.getByInternalIdUnidadeMedida$Response(params, context).pipe(
+      map((r: StrictHttpResponse<UnidadeMedida>): UnidadeMedida => r.body)
     );
   }
 
@@ -86,12 +100,28 @@ export class UnidadeMedidaService extends BaseService {
     );
   }
 
-  delete(params: { body: UnidadeMedida }, context?: HttpContext): Observable<UnidadeMedida> {
-    const rb = new RequestBuilder(this.rootUrl, UnidadeMedidaService.DeleteUnidadeMedidaPath, 'post');
-    if (params) rb.body(params.body, 'application/json');
-    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
-      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-      map((r: HttpResponse<any>) => (r as StrictHttpResponse<UnidadeMedida>).body)
+  /** Path part for operation `deleteUnidadeMedida()` */
+  static readonly DeleteUnidadeMedidaPath = '/UnidadeMedida/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteUnidadeMedida()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteUnidadeMedida$Response(params: DeleteUnidadeMedida$Params, context?: HttpContext): Observable<StrictHttpResponse<UnidadeMedida>> {
+    return deleteUnidadeMedida(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteUnidadeMedida$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteUnidadeMedida$Params, context?: HttpContext): Observable<UnidadeMedida> {
+    return this.deleteUnidadeMedida$Response(params, context).pipe(
+      map((r: StrictHttpResponse<UnidadeMedida>): UnidadeMedida => r.body)
     );
   }
 

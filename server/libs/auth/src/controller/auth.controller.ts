@@ -10,6 +10,7 @@ import { randomUUID } from 'crypto';
 import { AuthService } from '../service/auth.service';
 import { Request, Response } from 'express';
 import { TwoFactorAuthenticationService } from '../service/two-factors.service';
+import { BusService } from '@ci/core';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -108,34 +109,28 @@ export class AuthController {
           const permission_uuid = randomUUID();
           const refresh_token = await this.jwtService.signAsync(
             {
+              userId: authenticated_user.id,
+              chaveAcesso: chave.id,
+              permission: permission_uuid,
               try: btoa(JSON.stringify({
-                permission: permission_uuid
+                permission: permission_uuid,
+                chaveAcesso: chave.id,
+                userId: authenticated_user.id
               }, null, 2))
             },
             {
-              // TODO: obter chave para criptografia do jwt para o usuário,
-              //secret: jwtConstants.secret,
               expiresIn: '90d',
             },
           );
-          // authenticated_user.refreshToken = refresh_token;
           const refreshTokenArg2 = await this.userService.updateRefreshToken(authenticated_user.id, permission_uuid);
           chave.valid = true;
           chave.alive = true;
           chave.refreshToken = refreshTokenArg2;
           await this.credencialService.atualizar(chave);
           const { /* photo, */ ...user_payload } = authenticated_user;
-          // Set the refresh token in an HttpOnly cookie
-          // TODO: Ajustar a implemetação do refresh token para utilização de cookies HttpOnly, para maior segurança.
-          /*  res.cookie('refresh_token', refresh_token, {
-            httpOnly: true,
-            path: '/',
-            secure: true, // process.env.NODE_ENV === 'production', // true in production (HTTPS)
-            sameSite: 'none', // or 'none' if backend and frontend are on different domains
-            maxAge: 90 * 24 * 60 * 60 * 1000, // 90 days in milliseconds
-          }); */
           res.json({
             user: authenticated_user,
+            chaveAcesso: chave.id,
             bearer: await this.jwtService.signAsync({
               id: user_payload.id,
               roles: user_payload.roles,
@@ -149,18 +144,11 @@ export class AuthController {
       } else if (payload?.chaveAcesso) {
         let chave = await this.credencialService.obterChaveAcesso(payload.chaveAcesso);
         const identified_user = await this.userService.existsUserByIdentification(payload.identificacao, chave.id);
-        // if(!identified_user) throw ('')
-        // O que fazer quando o usuário não é identificado?
         if (identified_user) {
-          await this.credencialService.eliminarChaves(identified_user.id);
-          //const two_factory_autentication = await this.twoFactorAuthenticationService.requestTwoFactorAuthentication(identified_user);
-          //if (!two_factory_autentication) {
-          //  return {
-          //    chaveAcesso: chave.id,
-          //    stage: 'Authorization Code'
-          //  }
-          //}
+          // A chave é vinculada ao usuário identificado sem revogar outros dispositivos
           chave.identifiedUser = identified_user.id;
+          chave.valid = true;
+          chave.alive = true;
           chave = await this.credencialService.atualizar(chave);
           res.json(new AcessoPayload({ ...chave, id: undefined }, identified_user.passwordMode));
         } else {
@@ -183,6 +171,71 @@ export class AuthController {
       } as any);
     }
   }
+  @Post('Dispositivos')
+  @ApiOperation({ operationId: 'GetDispositivosAuth' })
+  async getDispositivos(@Req() req: any) {
+    try {
+      const userId = req.user?.id;
+      const currentChaveAcesso = req.chaveAcesso;
+      if (!userId) {
+        throw new UnauthorizedException('Usuário não autenticado.');
+      }
+      const lista = await this.credencialService.obterDispositivosVinculados(userId);
+      return lista.map(item => ({
+        ...item,
+        isCurrent: item.id === currentChaveAcesso,
+        isOnline: BusService.isChaveAcessoOnline(item.id) || item.id === currentChaveAcesso,
+      }));
+    } catch (error) {
+      console.trace(error);
+      return [];
+    }
+  }
+
+  @Post('DesconectarDispositivo')
+  @ApiOperation({ operationId: 'DesconectarDispositivoAuth' })
+  async desconectarDispositivo(@Req() req: any, @Body() body: { chaveAcesso: string }) {
+    try {
+      const userId = req.user?.id;
+      const currentChaveAcesso = req.chaveAcesso;
+      const targetChaveAcesso = body?.chaveAcesso;
+      if (!userId || !targetChaveAcesso) {
+        throw new UnauthorizedException('Requisição inválida.');
+      }
+      const success = await this.credencialService.desconectarDispositivo(userId, targetChaveAcesso);
+      if (success) {
+        BusService.disconnectChaveAcesso(targetChaveAcesso);
+      }
+      return {
+        success,
+        isCurrent: targetChaveAcesso === currentChaveAcesso,
+      };
+    } catch (error) {
+      console.trace(error);
+      return { success: false, error: (error as any)?.message };
+    }
+  }
+
+  @Post('DesconectarOutrosDispositivos')
+  @ApiOperation({ operationId: 'DesconectarOutrosDispositivosAuth' })
+  async desconectarOutrosDispositivos(@Req() req: any) {
+    try {
+      const userId = req.user?.id;
+      const currentChaveAcesso = req.chaveAcesso;
+      if (!userId || !currentChaveAcesso) {
+        throw new UnauthorizedException('Usuário não autenticado.');
+      }
+      const result = await this.credencialService.desconectarOutrosDispositivos(userId, currentChaveAcesso);
+      if (result.success && result.disconnectedIds?.length) {
+        result.disconnectedIds.forEach(id => BusService.disconnectChaveAcesso(id));
+      }
+      return { success: result.success };
+    } catch (error) {
+      console.trace(error);
+      return { success: false, error: (error as any)?.message };
+    }
+  }
+
   @Post('Logout')
   @ApiOperation({ operationId: 'LogoutAuth' })
   async logout(@Req() req) {
@@ -209,7 +262,7 @@ export class AuthController {
     try {
       console.info(req.cookies['refresh_token']);
       res.json((await this.authService.refreshToken(
-        null, payload?.refreshToken, req as any, ip
+        null, payload?.refreshToken, req as any, ip, payload?.chaveAcesso
       )));
     } catch (error) {
       console.trace(error);

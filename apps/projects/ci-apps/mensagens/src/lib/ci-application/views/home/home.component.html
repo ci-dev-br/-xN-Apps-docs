@@ -1,11 +1,316 @@
-<mat-sidenav-container>
-    <mat-sidenav mode="side" opened>
-        <ci-conversas>
-        </ci-conversas>
-    </mat-sidenav>
-    <mat-sidenav-content>
-        <div class="view">
-            <router-outlet></router-outlet>
+<mat-drawer-container class="chat-drawer-container">
+  <!-- BARRA LATERAL (LISTA DE CONVERSAS DENTRO DO MAT-DRAWER) -->
+  <mat-drawer
+    #drawer
+    class="chat-drawer"
+    [mode]="isSmallScreen ? 'over' : 'side'"
+    [opened]="!isSmallScreen || !conversaAtiva"
+    position="start"
+  >
+    <aside class="chat-sidebar">
+      <!-- Cabeçalho da Barra Lateral -->
+      <header class="sidebar-header">
+        <div class="header-brand">
+          <mat-icon color="primary">forum</mat-icon>
+          <div class="brand-text">
+            <h2>Mensagens</h2>
+            <span class="security-badge" matTooltip="As mensagens são criptografadas com chave exclusiva do cliente antes de serem salvas no banco.">
+              <mat-icon>lock</mat-icon> Criptografia Ponta-a-Ponta
+            </span>
+          </div>
         </div>
-    </mat-sidenav-content>
-</mat-sidenav-container>
+
+        <div class="header-actions">
+          <button mat-flat-button color="primary" class="btn-new-chat" (click)="abrirNovaConversaDialog()" matTooltip="Iniciar nova conversa com usuário">
+            <mat-icon>chat</mat-icon>
+            <span class="btn-new-text">Nova</span>
+          </button>
+          @if (isSmallScreen && conversaAtiva) {
+            <button mat-icon-button (click)="drawer.close()" matTooltip="Voltar para a conversa" class="btn-close-drawer">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </div>
+      </header>
+
+      <!-- Campo de Busca de Conversas -->
+      <div class="sidebar-search">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-icon matPrefix>search</mat-icon>
+          <mat-label>Buscar conversas...</mat-label>
+          <input matInput [(ngModel)]="termoBusca" (input)="aplicarFiltroConversas()" placeholder="Nome ou mensagem..." />
+          @if (termoBusca) {
+            <button matSuffix mat-icon-button (click)="termoBusca = ''; aplicarFiltroConversas()">
+              <mat-icon>clear</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+      </div>
+
+      <!-- Lista de Conversas -->
+      <div class="conversations-list">
+        @if (loadingConversas) {
+          <div class="sidebar-loading">
+            <mat-spinner diameter="32"></mat-spinner>
+            <span>Carregando conversas...</span>
+          </div>
+        } @else if (conversasFiltradas.length === 0) {
+          <div class="sidebar-empty">
+            <mat-icon>chat_bubble_outline</mat-icon>
+            <p>Nenhuma conversa encontrada.</p>
+            <button mat-stroked-button color="primary" (click)="abrirNovaConversaDialog()">
+              <mat-icon>add</mat-icon>
+              <span>Iniciar Conversa</span>
+            </button>
+          </div>
+        } @else {
+          @for (c of conversasFiltradas; track c.id) {
+            <div class="conversation-item" [class.active]="conversaAtiva?.id === c.id" (click)="selecionarConversa(c)">
+              <div class="contact-avatar">
+                @if (c.contactPhoto) {
+                  <img [src]="c.contactPhoto" alt="Avatar" />
+                } @else {
+                  <span>{{ getInitials(c.contactName) }}</span>
+                }
+              </div>
+
+              <div class="conversation-details">
+                <div class="details-top">
+                  <strong class="contact-name">{{ c.contactName }}</strong>
+                  <span class="message-time">{{ c.lastMessageAt | date:'HH:mm' }}</span>
+                </div>
+
+                <div class="details-bottom">
+                  <span class="last-message" [class.unread-text]="c.unreadCount > 0">
+                    <mat-icon class="inline-lock-icon">lock</mat-icon>
+                    {{ c.lastMessage || 'Conversa iniciada' }}
+                  </span>
+                  @if (c.unreadCount > 0) {
+                    <span class="unread-badge">{{ c.unreadCount }}</span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </aside>
+  </mat-drawer>
+
+  <!-- ÁREA PRINCIPAL DE CHAT DENTRO DO MAT-DRAWER-CONTENT -->
+  <mat-drawer-content class="chat-drawer-content">
+    <main class="chat-main">
+      @if (!conversaAtiva) {
+        <!-- Empty State quando nenhuma conversa foi selecionada -->
+        <div class="no-conversation-selected">
+          <div class="safe-box-illustration">
+            <mat-icon class="giant-lock-icon">enhanced_encryption</mat-icon>
+            <h2>Mensagens Seguras & Criptografadas</h2>
+            <p>
+              Suas mensagens e arquivos anexos são criptografados no cliente utilizando <strong>AES-256</strong> com derivação de chave de acesso exclusiva antes de serem armazenados no banco de dados.
+            </p>
+            <p class="privacy-note">
+              🔒 O servidor apenas armazena o texto cifrado, garantindo que ninguém além de você e do destinatário possa ler as conversas.
+            </p>
+            <div class="empty-actions">
+              <button mat-flat-button color="primary" class="btn-start" (click)="abrirNovaConversaDialog()">
+                <mat-icon>chat</mat-icon>
+                <span>Iniciar Conversa</span>
+              </button>
+              @if (isSmallScreen) {
+                <button mat-stroked-button color="primary" class="btn-view-list" (click)="voltarParaLista()">
+                  <mat-icon>menu</mat-icon>
+                  <span>Minhas Conversas</span>
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      } @else {
+        <!-- Conversa Selecionada -->
+        <div class="active-chat-container" [class.shield-active]="antiPrintAtivo">
+          <!-- Topo da Conversa Ativa -->
+          <header class="chat-header">
+            <div class="chat-header-contact">
+              @if (isSmallScreen) {
+                <button mat-icon-button (click)="voltarParaLista()" matTooltip="Voltar para a lista de conversas" class="btn-back-to-list">
+                  <mat-icon>arrow_back</mat-icon>
+                </button>
+              }
+
+              <div class="contact-avatar-header">
+                @if (conversaAtiva.contactPhoto) {
+                  <img [src]="conversaAtiva.contactPhoto" alt="Avatar" />
+                } @else {
+                  <span>{{ getInitials(conversaAtiva.contactName) }}</span>
+                }
+              </div>
+
+              <div class="contact-header-info">
+                <h3>{{ conversaAtiva.contactName }}</h3>
+                <div class="security-badges">
+                  <div class="encryption-indicator">
+                    <mat-icon>lock</mat-icon>
+                    <span class="enc-label">AES-256</span>
+                  </div>
+                  <div class="anti-print-indicator" matTooltip="Multiplexação temporal ativa: caracteres alternam em alta frequência imperceptível ao olho humano para inviabilizar capturas de tela (prints).">
+                    <mat-icon>visibility_off</mat-icon>
+                    <span class="anti-print-label">Anti-Print Ativo</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="chat-header-actions">
+              @if (!isSmallScreen) {
+                <button mat-icon-button (click)="drawer.toggle()" matTooltip="Alternar menu de conversas">
+                  <mat-icon>menu_open</mat-icon>
+                </button>
+              }
+              <button mat-icon-button (click)="carregarMensagens(conversaAtiva.id)" matTooltip="Atualizar mensagens">
+                <mat-icon>refresh</mat-icon>
+              </button>
+            </div>
+          </header>
+
+          <!-- Escudo de proteção anti-print quando acionado -->
+          @if (antiPrintAtivo) {
+            <div class="anti-print-shield-overlay">
+              <mat-icon>security</mat-icon>
+              <span>Conteúdo Protegido Contra Captura de Tela</span>
+            </div>
+          }
+
+          <!-- Histórico de Mensagens -->
+          <div class="messages-viewport" #messagesContainer>
+            @if (loadingMensagens) {
+              <div class="messages-loading">
+                <mat-spinner diameter="36"></mat-spinner>
+                <span>Descriptografando mensagens...</span>
+              </div>
+            } @else if (mensagens.length === 0) {
+              <div class="messages-empty">
+                <mat-icon>lock_open</mat-icon>
+                <h4>Início da conversa com {{ conversaAtiva.contactName }}</h4>
+                <p>Envie sua primeira mensagem ou compartilhe um arquivo de forma protegida.</p>
+              </div>
+            } @else {
+              <div class="messages-flow">
+                @for (m of mensagens; track m.id; let idx = $index) {
+                  <div
+                    class="message-row"
+                    [attr.data-id]="m.id"
+                    [class.my-message-row]="m.isMyMessage"
+                    [class.is-offscreen]="!isMessageVisible(m.id, idx)"
+                  >
+                    @if (isMessageVisible(m.id, idx)) {
+                      <!-- Balão completo ativo: renderizado somente na área visível da viewport -->
+                      <div class="message-bubble" [class.my-bubble]="m.isMyMessage">
+                        <!-- Nome do remetente (apenas se recebida) -->
+                        @if (!m.isMyMessage) {
+                          <span class="sender-tag">{{ m.senderName }}</span>
+                        }
+
+                        <!-- Conteúdo em Texto com Multiplexação Temporal Anti-Print -->
+                        @if (m.content && (!isAnexoPlaceholder(m.content) || !m.attachments?.length)) {
+                          <div class="bubble-text secure-stream">
+                            @if (m.secureChars && m.secureChars.length > 0) {
+                              @for (sc of m.secureChars; track $index) {
+                                <span class="secure-char" [class.phase-0]="sc.phase === 'p0'" [class.phase-1]="sc.phase === 'p1'" [class.phase-2]="sc.phase === 'p2'">{{ sc.char }}</span>
+                              }
+                            } @else {
+                              <span>{{ m.content }}</span>
+                            }
+                          </div>
+                        }
+
+                        <!-- Anexos de Arquivos -->
+                        @if (m.attachments && m.attachments.length > 0) {
+                          <div class="attachments-container">
+                            @for (att of m.attachments; track $index) {
+                              @if (isImagem(att.type, att.name)) {
+                                <div class="image-attachment-box" (click)="baixarAnexo(att)" matTooltip="Clique para visualizar/baixar imagem">
+                                  <img [src]="att.data || att.url" [alt]="att.name" />
+                                </div>
+                              } @else {
+                                <div class="file-attachment-card" (click)="baixarAnexo(att)" matTooltip="Clique para baixar arquivo">
+                                  <mat-icon class="file-icon">description</mat-icon>
+                                  <div class="file-info">
+                                    <span class="file-name">{{ att.name }}</span>
+                                    <small class="file-meta">{{ formatFileSize(att.size) }}</small>
+                                  </div>
+                                  <mat-icon class="download-icon">download</mat-icon>
+                                </div>
+                              }
+                            }
+                          </div>
+                        }
+
+                        <!-- Rodapé do Balão: Horário e Status -->
+                        <div class="bubble-footer">
+                          <mat-icon class="lock-indicator" matTooltip="Armazenado cifrado no servidor com chave do cliente">lock</mat-icon>
+                          <span class="timestamp">{{ m.createdAt | date:'HH:mm' }}</span>
+                          @if (m.isMyMessage) {
+                            <mat-icon class="read-status">{{ m.read ? 'done_all' : 'done' }}</mat-icon>
+                          }
+                        </div>
+                      </div>
+                    } @else {
+                      <!-- Falsa mensagem / placeholder ultraleve: 0 nós DOM internos, 0 animações CSS, altura preservada -->
+                      <div class="message-bubble-placeholder" [class.my-placeholder]="m.isMyMessage"></div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Barra Inferior de Entrada e Anexos -->
+          <footer class="chat-footer">
+            <!-- Pré-visualização de Anexos Pendentes -->
+            @if (anexosPendentes.length > 0) {
+              <div class="pending-attachments-bar">
+                <span class="pending-label">Anexos prontos para envio seguro:</span>
+                <div class="chips-row">
+                  @for (p of anexosPendentes; track $index) {
+                    <div class="attachment-chip">
+                      <mat-icon>attach_file</mat-icon>
+                      <span class="chip-name">{{ p.name }} ({{ formatFileSize(p.size) }})</span>
+                      <button mat-icon-button (click)="removerAnexoPendente($index)" class="btn-remove-chip">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <div class="input-row">
+              <!-- Seletor de Arquivos Invisível -->
+              <input type="file" #fileInput (change)="onArquivosSelecionados($event)" multiple style="display: none;" />
+
+              <!-- Botão de Anexo -->
+              <button mat-icon-button color="primary" class="btn-attach" (click)="abrirSeletorArquivos()" matTooltip="Anexar arquivos ou imagens">
+                <mat-icon>attach_file</mat-icon>
+              </button>
+
+              <!-- Campo de Texto da Mensagem -->
+              <mat-form-field appearance="outline" class="message-input-field">
+                <textarea matInput rows="1" [(ngModel)]="textoMensagem" (keydown)="onEnterPressionado($event)" placeholder="Digite uma mensagem protegida por criptografia (Enter para enviar)..."></textarea>
+              </mat-form-field>
+
+              <!-- Botão de Enviar -->
+              <button mat-flat-button color="primary" class="btn-send" [disabled]="(!textoMensagem.trim() && anexosPendentes.length === 0) || enviando" (click)="enviarMensagem()" matTooltip="Enviar mensagem cifrada">
+                @if (enviando) {
+                  <mat-spinner diameter="20"></mat-spinner>
+                } @else {
+                  <mat-icon>send</mat-icon>
+                }
+              </button>
+            </div>
+          </footer>
+        </div>
+      }
+    </main>
+  </mat-drawer-content>
+</mat-drawer-container>

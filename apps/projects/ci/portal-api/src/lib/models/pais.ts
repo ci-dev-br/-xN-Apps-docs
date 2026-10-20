@@ -5,13 +5,13 @@ export interface Pais {
   createdBy?: {
 } | null;
   deleted?: boolean | null;
-  ibgeCode: string;
+  ibgeCode?: string | null;
   internalId?: string | null;
-  internationaName: string;
+  internationaName?: string | null;
   lastModifiedAt?: Date | null;
   lastModifiedBy?: {
 } | null;
-  nome: string;
-  referenciasExternas: Array<string>;
+  nome?: string | null;
+  referenciasExternas?: Array<string> | null;
   tenants?: Array<string> | null;
 }

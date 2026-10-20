@@ -1,19 +1,24 @@
 /* tslint:disable */
 /* eslint-disable */
-import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
-import { RequestBuilder } from '../request-builder';
 
-import { TipoDocumentoIdentificacao } from '../models/tipo-documento-identificacao';
-import { GetByInternalIdInputDto } from '../models/get-by-internal-id-input-dto';
-import { ObterListaTipoDocumentoIdentificacao } from '../models/obter-lista-tipo-documento-identificacao';
+import { deleteTipoDocumentoIdentificacao } from '../fn/tipo-documento-identificacao/delete-tipo-documento-identificacao';
+import { DeleteTipoDocumentoIdentificacao$Params } from '../fn/tipo-documento-identificacao/delete-tipo-documento-identificacao';
+import { getByInternalIdTipoDocumentoIdentificacao } from '../fn/tipo-documento-identificacao/get-by-internal-id-tipo-documento-identificacao';
+import { GetByInternalIdTipoDocumentoIdentificacao$Params } from '../fn/tipo-documento-identificacao/get-by-internal-id-tipo-documento-identificacao';
+import { getListTipoDocumentoIdentificacao } from '../fn/tipo-documento-identificacao/get-list-tipo-documento-identificacao';
+import { GetListTipoDocumentoIdentificacao$Params } from '../fn/tipo-documento-identificacao/get-list-tipo-documento-identificacao';
 import { SyncPayloadDaoTipoDocumentoIdentificacao } from '../models/sync-payload-dao-tipo-documento-identificacao';
+import { syncTipoDocumentoIdentificacao } from '../fn/tipo-documento-identificacao/sync-tipo-documento-identificacao';
+import { SyncTipoDocumentoIdentificacao$Params } from '../fn/tipo-documento-identificacao/sync-tipo-documento-identificacao';
+import { TipoDocumentoIdentificacao } from '../models/tipo-documento-identificacao';
 
 @Injectable()
 export class TipoDocumentoIdentificacaoService extends BaseService {
@@ -21,44 +26,104 @@ export class TipoDocumentoIdentificacaoService extends BaseService {
     super(config, http);
   }
 
+  /** Path part for operation `syncTipoDocumentoIdentificacao()` */
   static readonly SyncTipoDocumentoIdentificacaoPath = '/TipoDocumentoIdentificacao/Sync';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `syncTipoDocumentoIdentificacao()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  syncTipoDocumentoIdentificacao$Response(params: SyncTipoDocumentoIdentificacao$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoTipoDocumentoIdentificacao>> {
+    return syncTipoDocumentoIdentificacao(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `syncTipoDocumentoIdentificacao$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  sync(params: SyncTipoDocumentoIdentificacao$Params, context?: HttpContext): Observable<SyncPayloadDaoTipoDocumentoIdentificacao> {
+    return this.syncTipoDocumentoIdentificacao$Response(params, context).pipe(
+      map((r: StrictHttpResponse<SyncPayloadDaoTipoDocumentoIdentificacao>): SyncPayloadDaoTipoDocumentoIdentificacao => r.body)
+    );
+  }
+
+  /** Path part for operation `getByInternalIdTipoDocumentoIdentificacao()` */
   static readonly GetByInternalIdTipoDocumentoIdentificacaoPath = '/TipoDocumentoIdentificacao/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdTipoDocumentoIdentificacao()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdTipoDocumentoIdentificacao$Response(params: GetByInternalIdTipoDocumentoIdentificacao$Params, context?: HttpContext): Observable<StrictHttpResponse<TipoDocumentoIdentificacao>> {
+    return getByInternalIdTipoDocumentoIdentificacao(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdTipoDocumentoIdentificacao$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdTipoDocumentoIdentificacao$Params, context?: HttpContext): Observable<TipoDocumentoIdentificacao> {
+    return this.getByInternalIdTipoDocumentoIdentificacao$Response(params, context).pipe(
+      map((r: StrictHttpResponse<TipoDocumentoIdentificacao>): TipoDocumentoIdentificacao => r.body)
+    );
+  }
+
+  /** Path part for operation `getListTipoDocumentoIdentificacao()` */
   static readonly GetListTipoDocumentoIdentificacaoPath = '/TipoDocumentoIdentificacao/GetList';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getListTipoDocumentoIdentificacao()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getListTipoDocumentoIdentificacao$Response(params: GetListTipoDocumentoIdentificacao$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoTipoDocumentoIdentificacao>> {
+    return getListTipoDocumentoIdentificacao(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getListTipoDocumentoIdentificacao$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getList(params: GetListTipoDocumentoIdentificacao$Params, context?: HttpContext): Observable<SyncPayloadDaoTipoDocumentoIdentificacao> {
+    return this.getListTipoDocumentoIdentificacao$Response(params, context).pipe(
+      map((r: StrictHttpResponse<SyncPayloadDaoTipoDocumentoIdentificacao>): SyncPayloadDaoTipoDocumentoIdentificacao => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteTipoDocumentoIdentificacao()` */
   static readonly DeleteTipoDocumentoIdentificacaoPath = '/TipoDocumentoIdentificacao/Delete';
 
-  sync(params: { body: SyncPayloadDaoTipoDocumentoIdentificacao }, context?: HttpContext): Observable<SyncPayloadDaoTipoDocumentoIdentificacao> {
-    const rb = new RequestBuilder(this.rootUrl, TipoDocumentoIdentificacaoService.SyncTipoDocumentoIdentificacaoPath, 'post');
-    if (params) rb.body(params.body, 'application/json');
-    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
-      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-      map((r: HttpResponse<any>) => (r as StrictHttpResponse<SyncPayloadDaoTipoDocumentoIdentificacao>).body)
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteTipoDocumentoIdentificacao()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteTipoDocumentoIdentificacao$Response(params: DeleteTipoDocumentoIdentificacao$Params, context?: HttpContext): Observable<StrictHttpResponse<TipoDocumentoIdentificacao>> {
+    return deleteTipoDocumentoIdentificacao(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteTipoDocumentoIdentificacao$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteTipoDocumentoIdentificacao$Params, context?: HttpContext): Observable<TipoDocumentoIdentificacao> {
+    return this.deleteTipoDocumentoIdentificacao$Response(params, context).pipe(
+      map((r: StrictHttpResponse<TipoDocumentoIdentificacao>): TipoDocumentoIdentificacao => r.body)
     );
   }
 
-  getByInternalId(params: { body: GetByInternalIdInputDto }, context?: HttpContext): Observable<TipoDocumentoIdentificacao> {
-    const rb = new RequestBuilder(this.rootUrl, TipoDocumentoIdentificacaoService.GetByInternalIdTipoDocumentoIdentificacaoPath, 'post');
-    if (params) rb.body(params.body, 'application/json');
-    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
-      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-      map((r: HttpResponse<any>) => (r as StrictHttpResponse<TipoDocumentoIdentificacao>).body)
-    );
-  }
-
-  getList(params: { body: ObterListaTipoDocumentoIdentificacao }, context?: HttpContext): Observable<SyncPayloadDaoTipoDocumentoIdentificacao> {
-    const rb = new RequestBuilder(this.rootUrl, TipoDocumentoIdentificacaoService.GetListTipoDocumentoIdentificacaoPath, 'post');
-    if (params) rb.body(params.body, 'application/json');
-    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
-      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-      map((r: HttpResponse<any>) => (r as StrictHttpResponse<SyncPayloadDaoTipoDocumentoIdentificacao>).body)
-    );
-  }
-
-  delete(params: { body: TipoDocumentoIdentificacao }, context?: HttpContext): Observable<TipoDocumentoIdentificacao> {
-    const rb = new RequestBuilder(this.rootUrl, TipoDocumentoIdentificacaoService.DeleteTipoDocumentoIdentificacaoPath, 'post');
-    if (params) rb.body(params.body, 'application/json');
-    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
-      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-      map((r: HttpResponse<any>) => (r as StrictHttpResponse<TipoDocumentoIdentificacao>).body)
-    );
-  }
 }

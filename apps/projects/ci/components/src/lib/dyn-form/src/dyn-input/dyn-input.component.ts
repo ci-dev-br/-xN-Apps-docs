@@ -35,12 +35,20 @@ export class DynInputComponent implements IAmSchematization {
         if (!!this._schemaName) {
             let serviceType = getServiceAsSchema(this._schemaName);
             if (serviceType) {
-                this.service = this.injector.get(serviceType);
+                this.service = this.injector.get(serviceType, null);
                 if (this.fieldName) this.formGroup?.get(this.fieldName)?.valueChanges.subscribe(async v => {
                     if (typeof v === 'string') {
-                        if (this.service && this.service.getList)
-                            this.list = await this.daos?.read(await lastValueFrom(this.service.getList()), this.schemaName);
-                        this.list;
+                        if (this.service && this.service.getList) {
+                            try {
+                                const raw = await lastValueFrom(this.service.getList({ body: {} }));
+                                this.list = await this.daos?.read(raw, this.schemaName);
+                            } catch {
+                                try {
+                                    const raw = await lastValueFrom(this.service.getList());
+                                    this.list = await this.daos?.read(raw, this.schemaName);
+                                } catch {}
+                            }
+                        }
                     } else {
                         /* TODO: revisar desvio */v;
                     }

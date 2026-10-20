@@ -1,113 +1,476 @@
-<div class="row">
-    <div class="col">
-        @if(form){<ng-container [formGroup]="form">
-            <mat-card>
-                <mat-card-content>
-                    <div class="row">
-                        <div class="user-profile">
-                            @if(profileImage){<img [src]="profileImage" alt="" class="user-profile-image"
-                                (click)="takeAPhoto() ">}
-                            <div class="wrap">
-                                <button mat-icon-button
-                                    [matMenuTriggerFor]="userPhotoOptions"><mat-icon>photo_camera</mat-icon></button>
+<!-- Input oculto para upload de arquivo de foto -->
+<input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" style="display: none;" />
+
+<div class="profile-container">
+
+    <!-- Card de Cabeçalho do Perfil -->
+    <mat-card class="profile-header-card">
+        <mat-card-content>
+            <div class="header-content">
+                <!-- Avatar do Usuário -->
+                <div class="avatar-wrapper">
+                    <div class="avatar-circle" [class.has-image]="!!profileImage">
+                        @if (profileImage) {
+                            <img [src]="profileImage" alt="Foto de Perfil" class="avatar-img" />
+                        } @else {
+                            <div class="avatar-initials">
+                                <span>{{ getUserInitials() }}</span>
                             </div>
-                            <mat-menu #userPhotoOptions>
-                                <button mat-menu-item (click)="uploadPhoto()">Arquivo local</button>
-                                <button mat-menu-item (click)="takeAPhoto()">Tirar foto</button>
-                            </mat-menu>
-                        </div>
-                        <div class="content">
-                            <ci-input mode="content-editable" fieldName="fullName" label="Nome Completo"
-                                el="h1"></ci-input>
-                            <ci-input mode="content-editable" fieldName="surname" label="Sobrenome" el="h2"></ci-input>
-                            <ci-input mode="content-editable" fieldName="username" label="Nome de usuário"
-                                el="sub"></ci-input>
-                        </div>
+                        }
+
+                        <button mat-mini-fab color="primary" class="camera-btn" [matMenuTriggerFor]="photoMenu"
+                            matTooltip="Alterar foto de perfil">
+                            <mat-icon>photo_camera</mat-icon>
+                        </button>
                     </div>
-                </mat-card-content>
-            </mat-card>
-            <mat-card>
-                <mat-card-content>
-                    <div class="row">
-                        <div class="content">
-                            <ci-input mode="content-editable" fieldName="email" label="E-mail"></ci-input>
-                        </div>
-                    </div>
-                </mat-card-content>
-            </mat-card>
-            <mat-card>
-                <mat-card-content>
-                    <div class="row">
-                        <div class="content">
-                            <button mat-raised-button [disabled]="!form.touched || !!(form.invalid)"
-                                (click)="saveProfile()">
-                                {{ form.touched ? 'Confirmar alterações' : 'Nenhuma alteração pendente de confirmação'
-                                }}
+
+                    <mat-menu #photoMenu="matMenu">
+                        <button mat-menu-item (click)="triggerUpload()">
+                            <mat-icon>upload_file</mat-icon>
+                            <span>Escolher arquivo local</span>
+                        </button>
+                        <button mat-menu-item (click)="startCamera()">
+                            <mat-icon>videocam</mat-icon>
+                            <span>Tirar foto com a câmera</span>
+                        </button>
+                        @if (profileImage) {
+                            <mat-divider></mat-divider>
+                            <button mat-menu-item (click)="removePhoto()">
+                                <mat-icon color="warn">delete</mat-icon>
+                                <span>Remover foto</span>
                             </button>
-                        </div>
-                    </div>
-                </mat-card-content>
-            </mat-card>
-        </ng-container>}
-    </div>
-    <div class="col">
-        <mat-card>
-            <mat-card-content>
-                <h5>Assinaturas</h5>
-                <div class="assinaturas">
-                    @if(!!user && !!user.roles){@for(role of user.roles;track role){<div class="info">
-                        <mat-icon [svgIcon]="role"></mat-icon>
-                    </div>}}
+                        }
+                    </mat-menu>
                 </div>
-            </mat-card-content>
-        </mat-card>
-        @if(!!resumes){@for(resume of resumes; track $index){
-        <mat-card>
-            @if(resume.title){<mat-card-title>{{resume.title}}</mat-card-title>}
-            <mat-card-content>
-            </mat-card-content>
-        </mat-card>
-        }}
-        <mat-card>
-            <mat-card-content>
-                <h1>Assinatura Hyppes</h1>
-                <button mat-raised-button style="width: 100%; margin-bottom: 10px;">
-                    Assinar plano "Publicador" (R$ 1,99/mês)
-                </button>
-                <button mat-raised-button style="width: 100%; margin-bottom: 10px;">
-                    Assinar plano "Leitor Assíduo" (R$ 0,10/mês)
-                </button>
-                <button mat-raised-button style="width: 100%; margin-bottom: 10px;">
-                    Assinar plano "Passe Livre" (R$ 0,01/mês pagamento anual R$ 0,12)
-                </button>
-            </mat-card-content>
-        </mat-card>
-    </div>
+
+                <!-- Detalhes Rápidos -->
+                <div class="user-meta">
+                    <div class="name-row">
+                        <h1 class="user-display-name">
+                            {{ form.get('fullName')?.value || user?.fullName || 'Usuário Sem Nome' }}
+                        </h1>
+                        @if (form.get('surname')?.value) {
+                            <span class="surname-tag">({{ form.get('surname')?.value }})</span>
+                        }
+                    </div>
+
+                    <div class="handle-row">
+                        <span class="user-handle">&#64;{{ form.get('username')?.value || user?.username || 'usuario' }}</span>
+
+                        @if (form.get('emailVerificado')?.value) {
+                            <span class="badge verified" matTooltip="E-mail verificado com sucesso">
+                                <mat-icon>verified</mat-icon> Verificado
+                            </span>
+                        } @else {
+                            <span class="badge unverified" matTooltip="Confirmação de e-mail pendente">
+                                <mat-icon>pending</mat-icon> Não verificado
+                            </span>
+                        }
+
+                        @if (user?.roles && user?.roles?.length) {
+                            @for (role of user?.roles; track role) {
+                                <span class="role-badge">{{ role }}</span>
+                            }
+                        }
+                    </div>
+
+                    <p class="user-email-preview">
+                        <mat-icon>email</mat-icon> {{ form.get('email')?.value || user?.email || 'Nenhum e-mail cadastrado' }}
+                    </p>
+                </div>
+
+                <!-- Ação Rápida de Salvar -->
+                <div class="header-actions">
+                    <button mat-flat-button color="primary" class="save-profile-btn"
+                        [disabled]="(!form.dirty && !form.touched) || form.invalid || isSaving"
+                        (click)="saveProfile()">
+                        @if (isSaving) {
+                            <mat-icon class="spinning">sync</mat-icon>
+                            <span>Salvando...</span>
+                        } @else {
+                            <mat-icon>save</mat-icon>
+                            <span>{{ form.dirty ? 'Salvar Alterações' : 'Dados Atualizados' }}</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Alertas de Feedback -->
+    @if (feedbackMessage) {
+        <div class="feedback-banner" [ngClass]="feedbackMessage.type">
+            <mat-icon>
+                {{ feedbackMessage.type === 'success' ? 'check_circle' : feedbackMessage.type === 'error' ? 'error' : 'info' }}
+            </mat-icon>
+            <span>{{ feedbackMessage.text }}</span>
+            <button mat-icon-button (click)="feedbackMessage = undefined">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+    }
+
+    <!-- Navegação por Abas Principais -->
+    <mat-tab-group animationDuration="200ms" class="profile-tabs">
+
+        <!-- ABA 1: Informações Cadastrais -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">person</mat-icon>
+                <span>Cadastro & Perfil</span>
+            </ng-template>
+
+            <div class="tab-body" [formGroup]="form">
+                <div class="form-grid">
+
+                    <!-- Card: Dados Pessoais -->
+                    <mat-card class="section-card">
+                        <mat-card-header>
+                            <mat-icon mat-card-avatar color="primary">badge</mat-icon>
+                            <mat-card-title>Dados Pessoais</mat-card-title>
+                            <mat-card-subtitle>Informações principais de identificação</mat-card-subtitle>
+                        </mat-card-header>
+                        <mat-card-content class="card-inputs">
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>Nome Completo</mat-label>
+                                <input matInput formControlName="fullName" placeholder="Ex: Maria da Silva" />
+                                <mat-icon matPrefix>person</mat-icon>
+                                @if (form.get('fullName')?.hasError('required')) {
+                                    <mat-error>O nome completo é obrigatório</mat-error>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>Sobrenome / Como gostaria de ser chamado</mat-label>
+                                <input matInput formControlName="surname" placeholder="Ex: Silva" />
+                                <mat-icon matPrefix>badge</mat-icon>
+                                <mat-hint>Nome informal de tratamento ou exibição</mat-hint>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>Nome de Usuário (Login)</mat-label>
+                                <input matInput formControlName="username" placeholder="Ex: mariasilva" />
+                                <mat-icon matPrefix>alternate_email</mat-icon>
+                                @if (form.get('username')?.hasError('required')) {
+                                    <mat-error>Nome de usuário é obrigatório</mat-error>
+                                }
+                                @if (form.get('username')?.hasError('minlength')) {
+                                    <mat-error>Deve ter pelo menos 3 caracteres</mat-error>
+                                }
+                            </mat-form-field>
+                        </mat-card-content>
+                    </mat-card>
+
+                    <!-- Card: Contato & Comunicação -->
+                    <mat-card class="section-card">
+                        <mat-card-header>
+                            <mat-icon mat-card-avatar color="primary">contact_phone</mat-icon>
+                            <mat-card-title>Contato & Comunicação</mat-card-title>
+                            <mat-card-subtitle>Canais para envio de notificações e alertas</mat-card-subtitle>
+                        </mat-card-header>
+                        <mat-card-content class="card-inputs">
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>Endereço de E-mail</mat-label>
+                                <input matInput type="email" formControlName="email" placeholder="nome@exemplo.com" />
+                                <mat-icon matPrefix>mail</mat-icon>
+                                @if (form.get('email')?.hasError('required')) {
+                                    <mat-error>E-mail é obrigatório</mat-error>
+                                }
+                                @if (form.get('email')?.hasError('email')) {
+                                    <mat-error>Formato de e-mail inválido</mat-error>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>Telefone / WhatsApp</mat-label>
+                                <input matInput type="tel" formControlName="phone" placeholder="(00) 00000-0000" />
+                                <mat-icon matPrefix>phone</mat-icon>
+                                <mat-hint>Número para contato e autenticação segura</mat-hint>
+                            </mat-form-field>
+                        </mat-card-content>
+                    </mat-card>
+
+                    <!-- Card: Segurança & Dados da Conta -->
+                    <mat-card class="section-card full-width">
+                        <mat-card-header>
+                            <mat-icon mat-card-avatar color="primary">admin_panel_settings</mat-icon>
+                            <mat-card-title>Informações da Conta & Sistema</mat-card-title>
+                            <mat-card-subtitle>Metadados de auditoria e credenciais da conta</mat-card-subtitle>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="account-meta-grid">
+                                <div class="meta-item">
+                                    <span class="meta-label">ID da Conta (UUID)</span>
+                                    <div class="meta-value-row">
+                                        <code class="uuid-code">{{ user?.id || 'Não identificado' }}</code>
+                                        @if (user?.id) {
+                                            <button mat-icon-button (click)="copyIdToClipboard()" matTooltip="Copiar ID">
+                                                <mat-icon>content_copy</mat-icon>
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="meta-item">
+                                    <span class="meta-label">Status do E-mail</span>
+                                    <div class="meta-value-row">
+                                        @if (user?.emailVerificado) {
+                                            <span class="badge verified"><mat-icon>check_circle</mat-icon> Verificado</span>
+                                        } @else {
+                                            <span class="badge unverified"><mat-icon>warning</mat-icon> Confirmação pendente</span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="meta-item">
+                                    <span class="meta-label">Data de Cadastro</span>
+                                    <span class="meta-text">
+                                        {{ (user?.createdAt | date:'dd/MM/yyyy HH:mm') || 'Informação indisponível' }}
+                                    </span>
+                                </div>
+
+                                <div class="meta-item">
+                                    <span class="meta-label">Última Atualização</span>
+                                    <span class="meta-text">
+                                        {{ (user?.updatedAt | date:'dd/MM/yyyy HH:mm') || 'Sem histórico recente' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                        <mat-card-actions class="card-footer-actions">
+                            <button mat-flat-button color="primary" [disabled]="!form.dirty || form.invalid || isSaving"
+                                (click)="saveProfile()">
+                                @if (isSaving) {
+                                    <mat-icon class="spinning">sync</mat-icon>
+                                    <span>Salvando dados...</span>
+                                } @else {
+                                    <mat-icon>check</mat-icon>
+                                    <span>Confirmar Alterações</span>
+                                }
+                            </button>
+                        </mat-card-actions>
+                    </mat-card>
+
+                </div>
+            </div>
+        </mat-tab>
+
+        <!-- ABA 2: Assinaturas e Planos -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">card_membership</mat-icon>
+                <span>Assinaturas</span>
+            </ng-template>
+
+            <div class="tab-body">
+                <!-- Seção 1: Assinaturas Ativas do Usuário -->
+                <div class="section-title-wrap">
+                    <h2>Minhas Assinaturas Ativas</h2>
+                    <p>Permissões, licenças e níveis de serviço vinculados ao seu cadastro</p>
+                </div>
+
+                <div class="subscriptions-grid">
+                    @for (sub of activeSubscriptions; track sub.id) {
+                        <mat-card class="subscription-card active">
+                            <div class="card-status-strip" [style.background]="sub.badgeColor"></div>
+                            <mat-card-header>
+                                <mat-icon mat-card-avatar [style.color]="sub.badgeColor">verified</mat-icon>
+                                <mat-card-title>{{ sub.name }}</mat-card-title>
+                                <mat-card-subtitle>{{ sub.tag }} • {{ sub.price }} ({{ sub.recurrence }})</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <p class="sub-desc">{{ sub.description }}</p>
+                                <div class="features-list">
+                                    <span class="features-heading">Recursos inclusos:</span>
+                                    <ul>
+                                        @for (f of sub.features; track f) {
+                                            <li>
+                                                <mat-icon class="check-icon">check</mat-icon>
+                                                <span>{{ f }}</span>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </mat-card-content>
+                            <mat-card-actions>
+                                <button mat-stroked-button color="primary" disabled>
+                                    <mat-icon>check_circle</mat-icon>
+                                    <span>Plano Atual Ativo</span>
+                                </button>
+                            </mat-card-actions>
+                        </mat-card>
+                    }
+                </div>
+
+                <mat-divider style="margin: 32px 0;"></mat-divider>
+
+                <!-- Seção 2: Planos Disponíveis na Plataforma & Hyppes -->
+                <div class="section-title-wrap">
+                    <h2>Planos Disponíveis (Hyppes & Ecossistema)</h2>
+                    <p>Faça upgrade do seu plano e libere recursos adicionais de publicação e consumo de conteúdo</p>
+                </div>
+
+                <div class="subscriptions-grid">
+                    @for (plan of availablePlans; track plan.id) {
+                        <mat-card class="subscription-card available">
+                            <div class="card-status-strip" [style.background]="plan.badgeColor"></div>
+                            <mat-card-header>
+                                <mat-icon mat-card-avatar [style.color]="plan.badgeColor">stars</mat-icon>
+                                <mat-card-title>{{ plan.name }}</mat-card-title>
+                                <mat-card-subtitle>{{ plan.tag }}</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="price-box">
+                                    <span class="price-value">{{ plan.price }}</span>
+                                    <span class="price-recurrence">/ {{ plan.recurrence }}</span>
+                                </div>
+                                <p class="sub-desc">{{ plan.description }}</p>
+                                <div class="features-list">
+                                    <span class="features-heading">Vantagens deste plano:</span>
+                                    <ul>
+                                        @for (f of plan.features; track f) {
+                                            <li>
+                                                <mat-icon class="check-icon">check</mat-icon>
+                                                <span>{{ f }}</span>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </mat-card-content>
+                            <mat-card-actions>
+                                <button mat-flat-button color="primary" class="w-full" (click)="subscribePlan(plan)">
+                                    <mat-icon>shopping_cart</mat-icon>
+                                    <span>Assinar este plano</span>
+                                </button>
+                            </mat-card-actions>
+                        </mat-card>
+                    }
+                </div>
+            </div>
+        </mat-tab>
+
+        <!-- ABA 3: Aplicativos Disponíveis -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">apps</mat-icon>
+                <span>Aplicativos Disponíveis ({{ filteredApps.length }})</span>
+            </ng-template>
+
+            <div class="tab-body">
+                <!-- Barra de Busca e Filtros -->
+                <div class="apps-toolbar">
+                    <mat-form-field appearance="outline" class="apps-search-field">
+                        <mat-label>Pesquisar aplicativos liberados...</mat-label>
+                        <input matInput [(ngModel)]="appSearchTerm" (ngModelChange)="onSearchChange()"
+                            placeholder="Digite o nome, descrição ou categoria..." />
+                        <mat-icon matPrefix>search</mat-icon>
+                        @if (appSearchTerm) {
+                            <button matSuffix mat-icon-button (click)="appSearchTerm = ''; onSearchChange()">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        }
+                    </mat-form-field>
+
+                    <!-- Filtro por Categoria -->
+                    <div class="category-chips">
+                        @for (cat of appCategories; track cat) {
+                            <button mat-stroked-button class="chip-btn"
+                                [class.active]="selectedAppCategory === cat"
+                                (click)="onCategoryChange(cat)">
+                                {{ cat }}
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                @if (loadingApps) {
+                    <mat-progress-bar mode="indeterminate" class="apps-progress"></mat-progress-bar>
+                }
+
+                <!-- Grid de Aplicativos -->
+                @if (filteredApps.length > 0) {
+                    <div class="apps-grid">
+                        @for (app of filteredApps; track app.name) {
+                            <mat-card class="app-card">
+                                <mat-card-header>
+                                    <div mat-card-avatar class="app-icon-avatar" [style.background]="app.color">
+                                        <mat-icon>{{ app.icon }}</mat-icon>
+                                    </div>
+                                    <mat-card-title>{{ app.name }}</mat-card-title>
+                                    <mat-card-subtitle>
+                                        <span class="app-cat-badge">{{ app.categoria }}</span>
+                                    </mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <p class="app-description">{{ app.shortDescription }}</p>
+                                </mat-card-content>
+                                <mat-card-actions class="app-actions">
+                                    <a mat-flat-button color="primary" [routerLink]="app.url" class="open-app-btn">
+                                        <mat-icon>launch</mat-icon>
+                                        <span>Abrir App</span>
+                                    </a>
+                                </mat-card-actions>
+                            </mat-card>
+                        }
+                    </div>
+                } @else {
+                    <div class="empty-apps-state">
+                        <mat-icon class="empty-icon">search_off</mat-icon>
+                        <h3>Nenhum aplicativo encontrado</h3>
+                        <p>Nenhum aplicativo corresponde aos filtros selecionados ou às permissões da sua conta.</p>
+                        <button mat-stroked-button color="primary" (click)="appSearchTerm = ''; selectedAppCategory = 'Todos'; filterApps()">
+                            Limpar filtros
+                        </button>
+                    </div>
+                }
+            </div>
+        </mat-tab>
+
+    </mat-tab-group>
+
 </div>
-@if(isCameraActive){<div class="camera-container">
-    <h2>Foto de Perfil</h2>
-    <div class="video-wrapper" [hidden]="!isCameraActive">
-        <video #videoElement autoplay playsinline></video>
+
+<!-- Modal / Overlay de Captura de Foto pela Webcam -->
+@if (isCameraActive) {
+    <div class="camera-backdrop">
+        <div class="camera-modal">
+            <div class="camera-modal-header">
+                <h3>Capturar Foto de Perfil</h3>
+                <button mat-icon-button (click)="stopCamera()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+
+            <div class="camera-modal-body">
+                <div class="camera-viewport-circle">
+                    <video #videoElement autoplay playsinline [hidden]="!!capturedImage"></video>
+                    @if (capturedImage) {
+                        <img [src]="capturedImage" alt="Foto capturada" class="captured-preview" />
+                    }
+                </div>
+                <canvas #canvasElement style="display: none;"></canvas>
+            </div>
+
+            <div class="camera-modal-actions">
+                @if (!capturedImage) {
+                    <button mat-stroked-button (click)="stopCamera()">
+                        Cancelar
+                    </button>
+                    <button mat-flat-button color="primary" (click)="capturePhoto()">
+                        <mat-icon>camera</mat-icon>
+                        <span>Tirar Foto</span>
+                    </button>
+                } @else {
+                    <button mat-stroked-button (click)="retakePhoto()">
+                        <mat-icon>refresh</mat-icon>
+                        <span>Tirar Outra</span>
+                    </button>
+                    <button mat-flat-button color="primary" (click)="confirmCapturedPhoto()">
+                        <mat-icon>check</mat-icon>
+                        <span>Usar Esta Foto</span>
+                    </button>
+                }
+            </div>
+        </div>
     </div>
-    <div class="image-wrapper" *ngIf="capturedImage">
-        <img [src]="capturedImage" alt="Foto de Perfil Capturada" />
-    </div>
-    <canvas #canvasElement style="display: none;"></canvas>
-    <div class="controls">
-        @if(!isCameraActive && !capturedImage){<button mat-raised-button (click)="startCamera()">
-            Ligar Câmera
-        </button>}
-        @if(isCameraActive){<button mat-raised-button (click)="capturePhoto()">
-            Tirar Foto
-        </button>}
-        @if(isCameraActive){<button mat-raised-button (click)="stopCamera()">
-            Cancelar
-        </button>}
-        @if(capturedImage){<button mat-raised-button (click)="retakePhoto()">
-            Tirar Outra Foto
-        </button>}
-        @if(capturedImage){<button mat-raised-button class="save-btn" (click)="saveProfile()">
-            Salvar Perfil
-        </button>}
-    </div>
-</div>}
+}

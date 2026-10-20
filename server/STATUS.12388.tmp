@@ -1,0 +1,30 @@
+{
+  "1228": {
+    "startedAt": "2026-10-20T00:32:19.791Z",
+    "status": "running",
+    "debug": false,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T01:17:33.366Z",
+    "nextStatusCheckAt": "2026-10-20T01:17:33.941Z",
+    "updatedAt": "2026-10-20T01:17:33.366Z"
+  },
+  "12388": {
+    "startedAt": "2026-10-20T00:34:20.048Z",
+    "status": "running",
+    "debug": true,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T01:17:33.842Z",
+    "nextStatusCheckAt": "2026-10-20T01:17:34.241Z",
+    "updatedAt": "2026-10-20T01:17:33.842Z"
+  },
+  "15500": {
+    "startedAt": "2026-10-20T00:58:19.301Z",
+    "status": "online",
+    "debug": false,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T01:17:32.211Z",
+    "nextStatusCheckAt": "2026-10-20T01:17:33.041Z",
+    "updatedAt": "2026-10-20T01:17:32.211Z",
+    "port": 26614
+  }
+}

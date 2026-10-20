@@ -32,8 +32,10 @@ import { Publicar } from './publicar/publicar.component';
 import { IItemMenu } from '@ci/components/window';
 import { finalize } from 'rxjs';
 import { CI_STATIC_APPS } from '../painel/apps/apps';
-import { MatTabsModule, MatTabHeader } from '@angular/material/tabs';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { ComentariosComponent } from './comentarios/comentarios';
 
 const TERMOS_BLOQUEADOS = [
     'oferta', 'sex', 'bet', ' odds', 'member', 'vip', 'cassino', 'unathorized', 'token'
@@ -56,8 +58,9 @@ const TERMOS_BLOQUEADOS = [
         MatInputModule,
         ReactiveFormsModule,
         MatTabsModule,
-        MatTabHeader,
         MatTooltipModule,
+        MatSnackBarModule,
+        ComentariosComponent,
     ],
     templateUrl: './homepage.component.html',
     standalone: true,
@@ -67,6 +70,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
     pesquisa;
     stage?: 'loading' | 'loaded' = 'loading';
     feeds: WritableSignal<Array<any>> = signal([]);
+    highlightedFeed = signal<any | undefined>(undefined);
+    showCommentsPane = signal<boolean>(true);
 
     private _feedContainer?: ElementRef<HTMLDivElement>;
     public get feedContainer(): ElementRef<HTMLDivElement> | undefined {
@@ -95,6 +100,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
                     }
                 });
             });
+            this.setupScrollFocusDetection();
         }
     }
 
@@ -113,6 +119,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     sidebarTop = 25;
     sidebarLeft = 25;
 
+    isLoggedIn = false;
     private removeMouseMoveListener?: () => void;
     private animacaoTimer?: any;
 
@@ -122,6 +129,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
         @Optional() private el?: ElementRef<Element>,
         @Optional() private readonly router?: Router,
         @Optional() private readonly dialog?: MatDialog,
+        @Optional() private readonly snackBar?: MatSnackBar,
         @Optional() @Inject(USER_MENU) userMenu?: IItemMenu[],
         @Optional() formBuilder?: FormBuilder,
         @Optional() private readonly userAuthenticationInstanceService?: UserAuthenticationService,
@@ -131,6 +139,10 @@ export class HomepageComponent implements OnInit, OnDestroy {
         private readonly cdr?: ChangeDetectorRef,
         @Inject(PLATFORM_ID) private readonly platformId?: Object
     ) {
+        this.userService?.user.subscribe(user => {
+            this.isLoggedIn = !!user && !!user.id;
+            this.cdr?.markForCheck();
+        });
         this.userAuthenticationInstanceService?.user.subscribe(user => {
             if (!!user) {
                 this.apps = CI_STATIC_APPS.filter(app =>
@@ -196,6 +208,9 @@ export class HomepageComponent implements OnInit, OnDestroy {
                 });
 
                 this.feeds.set([...(this.feeds() || []), ...novosItens]);
+                if (!this.highlightedFeed() && this.feeds().length > 0) {
+                    this.highlightedFeed.set(this.feeds()[0]);
+                }
                 // Dispara a atualização imediata da view assim que o array é montado
                 this.cdr?.detectChanges();
             },
@@ -330,12 +345,135 @@ export class HomepageComponent implements OnInit, OnDestroy {
             data: { tipo_postagem }
         });
     }
-
     async interacao(origem: any, event: string) {
         if (event === 'open') {
             window.open(origem.url, '_blank', '');
         }
     }
+
+    /**
+     * Registra ou altera o voto (UP ou DOWN) na notícia para o usuário logado.
+     */
+    votar(feed: any, vote: 'UP' | 'DOWN', event?: Event) {
+        if (event) {
+            event.stopPropagation();
+        }
+
+        if (!this.isLoggedIn) {
+            this.snackBar?.open('Faça login para votar nas notícias.', 'Entrar', { duration: 4000 })
+                .onAction().subscribe(() => {
+                    this.router?.navigate(['/acessar']);
+                });
+            return;
+        }
+
+        if (!this.news) return;
+
+        const newsId = feed.id || feed.url;
+        this.news.vote(newsId, vote).subscribe({
+            next: (stats) => {
+                feed.upVotes = stats.upVotes;
+                feed.downVotes = stats.downVotes;
+                feed.userVote = stats.userVote;
+                this.cdr?.markForCheck();
+            },
+            error: (err) => {
+                console.error('Erro ao registrar voto na notícia:', err);
+                this.snackBar?.open('Não foi possível registrar seu voto.', 'Fechar', { duration: 3000 });
+            }
+        });
+    }
+
+    /**
+     * Foca a notícia manualmente ao clicar nela.
+     */
+    focarNoticia(feed: any) {
+        if (this.highlightedFeed() !== feed) {
+            this.highlightedFeed.set(feed);
+            this.cdr?.markForCheck();
+        }
+    }
+
+    /**
+     * Abre os comentários e foca a notícia selecionada.
+     */
+    focarComentarios(feed: any, event?: Event) {
+        if (event) {
+            event.stopPropagation();
+        }
+        this.highlightedFeed.set(feed);
+        this.showCommentsPane.set(true);
+        this.cdr?.markForCheck();
+    }
+
+    /**
+     * Alterna a visibilidade do painel contextual de comentários.
+     */
+    toggleCommentsPane() {
+        this.showCommentsPane.update(v => !v);
+        this.cdr?.markForCheck();
+    }
+
+    /**
+     * Monitora a rolagem para detectar qual notícia está no terço superior (foco de leitura)
+     * e atualizar dinamicamente o painel de comentários sem recriar DOM desnecessário.
+     */
+    private setupScrollFocusDetection() {
+        if (!this._feedContainer?.nativeElement) return;
+        const el = this._feedContainer.nativeElement;
+
+        let ticking = false;
+        this.ngZone?.runOutsideAngular(() => {
+            el.addEventListener('scroll', () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        this.detectHighlightedFeed(el);
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }, { passive: true });
+        });
+    }
+
+    private detectHighlightedFeed(container: HTMLElement) {
+        const items = container.querySelectorAll('.feed-item');
+        if (!items || items.length === 0) return;
+
+        const containerRect = container.getBoundingClientRect();
+        const focalPointY = containerRect.top + containerRect.height * 0.35;
+
+        let closestFeed: any = null;
+        let minDistance = Infinity;
+
+        const currentFeeds = this.feeds();
+
+        items.forEach((itemEl, index) => {
+            const rect = itemEl.getBoundingClientRect();
+            const itemCenter = rect.top + rect.height / 2;
+            const distance = Math.abs(itemCenter - focalPointY);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestFeed = currentFeeds[index];
+            }
+        });
+
+        if (closestFeed && this.highlightedFeed() !== closestFeed) {
+            this.ngZone?.run(() => {
+                this.highlightedFeed.set(closestFeed);
+                this.cdr?.markForCheck();
+            });
+        }
+    }
+
+    /**
+     * Alterna a exibição da caixa de comentários da notícia (legado).
+     */
+    alternarComentarios(feed: any) {
+        this.focarComentarios(feed);
+    }
+
     async AtivarAlerta() {
         // TODO: implementar ativar alerta.
     }

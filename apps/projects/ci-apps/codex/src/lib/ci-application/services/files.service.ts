@@ -17,11 +17,15 @@ export class Files {
             }
         });
     }
-    public async openFile(file: IArquivo) {
-        this.router.navigate(['Codex', 'editor'], {
+    public async openFile(file?: IArquivo | null) {
+        if (!file) return;
+        const filePath = file?.info?.path || file?.caminho || (file?.name ? '/' + file.name : undefined);
+        if (!filePath) return;
+
+        this.router.navigate(['/Codex', 'editor'], {
             queryParams: {
-                file: (file?.info?.path || '/' + file.name)
+                file: filePath
             }
-        })
+        });
     }
 }

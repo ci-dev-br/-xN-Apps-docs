@@ -68,7 +68,11 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
     private searchDebounceTimer?: any;
     private order?: Record<string, 'ASC' | 'DESC'>;
     private oTitle?: string;
-
+    acoes = [
+        { type: 'raised', label: 'Pesquisar', icon: 'refresh', onClick: (event: Event) => this.search(), tooltip: 'Atualizar Lista' },
+        { type: 'flat', label: 'Cadastrar', icon: 'add', onClick: (event: Event) => this.createNew(), tooltip: 'Inserir novo cadastro' },
+        { type: 'stroked', label: 'Filtros', icon: 'filter_alt', onClick: (event: Event) => (this.showColumnFilters = !this.showColumnFilters), active: () => (this.showColumnFilters || this.activeFilterCount > 0), badge: () => (this.activeFilterCount > 0 ? this.activeFilterCount : undefined), tooltip: '', class: 'filter-toggle-btn' },
+    ];
     constructor(
         @Optional() private daoBuilder?: DaoBuilder,
         @Optional() private daos?: DaoService,
@@ -412,7 +416,12 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
                 };
             }
         }
-        const result: number | any = await this.window?.open(
+        const windowService = this.window || this.injector?.get(WindowService, null);
+        if (!windowService) {
+            console.warn('WindowService não encontrado no injetor para abrir edição do schema:', this.schemaName);
+            return;
+        }
+        const result: number | any = await windowService.open(
             EditarDetailComponent,
             {
                 schemaName: this.schemaName,

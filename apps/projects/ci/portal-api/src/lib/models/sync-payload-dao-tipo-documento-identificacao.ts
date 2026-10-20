@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-import { TipoDocumentoIdentificacao } from './tipo-documento-identificacao';
+import { TipoDocumentoIdentificacao } from '../models/tipo-documento-identificacao';
 export interface SyncPayloadDaoTipoDocumentoIdentificacao {
-  data?: TipoDocumentoIdentificacao;
+  data: TipoDocumentoIdentificacao;
 }

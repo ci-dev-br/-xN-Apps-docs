@@ -6,6 +6,7 @@ import { ApplicationService } from "./service/application.service";
 import { Domain } from "./model/domain.entity";
 import { Painel } from "./model/painel.entity";
 import { ApplicationServer } from "./model/application-server.entity";
+import { ClientVersionCatalog } from "./model/client-version-catalog.entity";
 import { DomainService } from "./service/domain.service";
 import { DomainController } from "./controller/domain.controller";
 import { CoreModule } from "@ci/core";
@@ -22,6 +23,7 @@ export const ManagerEntities = [
     ApplicationServer,
     DinamycPageView,
     ManagerDeployOption,
+    ClientVersionCatalog,
 ]
 export class IOptionApplication {
     icon?: string;

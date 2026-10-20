@@ -1,0 +1,111 @@
+<div class="simulator-container">
+    <div class="simulator-card">
+        <div class="card-header">
+            <div class="title-with-icon">
+                <mat-icon class="sim-icon">science</mat-icon>
+                <div>
+                    <h3>Simulador de Logs de Erros & Ingestão</h3>
+                    <p>Injete logs e exceções no pipeline do sistema para testar filtros, alertas e catalogação.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Presets Rápidos -->
+        <div class="presets-section">
+            <span class="presets-label">Modelos Pré-definidos:</span>
+            <div class="presets-buttons">
+                @for (preset of presets; track preset.title) {
+                    <button type="button" class="preset-btn" (click)="applyPreset(preset)">
+                        <mat-icon>flash_on</mat-icon>
+                        <span>{{ preset.title }}</span>
+                    </button>
+                }
+            </div>
+        </div>
+
+        @if (successMessage) {
+            <div class="success-banner">
+                <mat-icon>check_circle</mat-icon>
+                <span>{{ successMessage }}</span>
+            </div>
+        }
+
+        <!-- Formulário de Simulação -->
+        <form class="sim-form" (ngSubmit)="submitSimulation()">
+            <div class="form-row">
+                <div class="form-group flex-1">
+                    <label>Severidade (Level)</label>
+                    <select class="form-input" [(ngModel)]="form.level" name="level">
+                        <option value="error">ERROR</option>
+                        <option value="fatal">FATAL</option>
+                        <option value="warn">WARN</option>
+                        <option value="info">INFO</option>
+                        <option value="debug">DEBUG</option>
+                    </select>
+                </div>
+
+                <div class="form-group flex-1">
+                    <label>Origem</label>
+                    <select class="form-input" [(ngModel)]="form.origem" name="origem">
+                        <option value="SERVER">SERVER (NestJS Backend)</option>
+                        <option value="CLIENT">CLIENT (Angular Frontend)</option>
+                        <option value="CRON">CRON (Job em Background)</option>
+                    </select>
+                </div>
+
+                <div class="form-group flex-2">
+                    <label>Aplicação de Origem</label>
+                    <input
+                        type="text"
+                        class="form-input"
+                        [(ngModel)]="form.application"
+                        name="application"
+                        placeholder="Ex: @ci-apps/Codex"
+                    />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Mensagem do Erro</label>
+                <input
+                    type="text"
+                    class="form-input"
+                    [(ngModel)]="form.message"
+                    name="message"
+                    placeholder="Digite a mensagem descritiva do erro..."
+                    required
+                />
+            </div>
+
+            <div class="form-group">
+                <label>Stack Trace ou Payload JSON</label>
+                <textarea
+                    class="form-textarea"
+                    rows="5"
+                    [ngModel]="form.log?.stack || (form.log | json)"
+                    (ngModelChange)="form.log = { error: form.message, stack: $event }"
+                    name="payload"
+                ></textarea>
+            </div>
+
+            <div class="checkboxes-row">
+                <label class="check-item">
+                    <input type="checkbox" [(ngModel)]="form.deveCorrigir" name="deveCorrigir" />
+                    <span>Marcar como "Deve Ser Corrigido" (deveCorrigir = true)</span>
+                </label>
+
+                <label class="check-item">
+                    <input type="checkbox" [(ngModel)]="form.dispararAlerta" name="dispararAlerta" />
+                    <span>Disparar Alerta Operacional Automático (dispararAlerta = true)</span>
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button mat-flat-button color="primary" type="submit" [disabled]="isSending || !form.message">
+                    <mat-icon>{{ isSending ? 'sync' : 'send' }}</mat-icon>
+                    <span>{{ isSending ? 'Enviando...' : 'Disparar Log no Sistema' }}</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

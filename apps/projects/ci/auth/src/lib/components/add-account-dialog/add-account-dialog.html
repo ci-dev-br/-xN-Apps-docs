@@ -1,0 +1,68 @@
+<div class="add-account-dialog-container">
+    <div class="dialog-header">
+        <div class="dialog-title-wrapper">
+            <mat-icon class="title-icon">person_add</mat-icon>
+            <div>
+                <h2 mat-dialog-title>Adicionar outra conta</h2>
+                <p class="subtitle">Conecte-se a outra conta ci.dev.br. Suas permissões e políticas serão combinadas.</p>
+            </div>
+        </div>
+        <button mat-icon-button mat-dialog-close [disabled]="loading" class="close-btn" aria-label="Fechar">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    @if(loading) {
+        <mat-progress-bar mode="indeterminate" class="loading-bar"></mat-progress-bar>
+    }
+
+    <mat-dialog-content>
+        @if(errorMessage) {
+            <div class="error-banner">
+                <mat-icon>error_outline</mat-icon>
+                <span>{{ errorMessage }}</span>
+            </div>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="submit()" class="account-form" autocomplete="off">
+            <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Identificador</mat-label>
+                <input matInput formControlName="identification" placeholder="Usuário, e-mail ou documento" [disabled]="loading" autocomplete="username">
+                <mat-icon matSuffix>account_circle</mat-icon>
+                @if(form.get('identification')?.hasError('required') && form.get('identification')?.touched) {
+                    <mat-error>Informe seu identificador de acesso.</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Senha</mat-label>
+                <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Digite sua senha" [disabled]="loading" autocomplete="current-password">
+                <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Ocultar senha'" [attr.aria-pressed]="hidePassword">
+                    <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                @if(form.get('password')?.hasError('required') && form.get('password')?.touched) {
+                    <mat-error>Informe sua senha.</mat-error>
+                }
+            </mat-form-field>
+
+            <div class="policy-notice">
+                <mat-icon>shield</mat-icon>
+                <small>Ao conectar mais de uma conta simultaneamente, as políticas de acesso e papéis (roles) de todas as contas conectadas se combinam automaticamente.</small>
+            </div>
+
+            <button type="submit" style="display: none;"></button>
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close [disabled]="loading">Cancelar</button>
+        <button mat-flat-button color="primary" [disabled]="loading || form.invalid" (click)="submit()">
+            @if(loading) {
+                <span>Autenticando...</span>
+            } @else {
+                <mat-icon>login</mat-icon>
+                <span>Conectar Conta</span>
+            }
+        </button>
+    </mat-dialog-actions>
+</div>

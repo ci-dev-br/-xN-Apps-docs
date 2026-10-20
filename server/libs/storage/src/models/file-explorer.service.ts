@@ -20,13 +20,36 @@ export class FileExplorerService {
     private resolveExistingPath(rawPath?: string): string {
         if (!rawPath || !rawPath.trim()) return './';
         let normalized = rawPath.trim().replace(/\\/g, '/');
-        if (!isAbsolute(normalized) && !normalized.startsWith('./') && !normalized.startsWith('../') && !normalized.startsWith('/')) {
+
+        // Se for no formato /c:/... normaliza para c:/...
+        if (/^\/[a-zA-Z]:/.test(normalized)) {
+            normalized = normalized.substring(1);
+        } else if (normalized.startsWith('/') && !/^[a-zA-Z]:/.test(normalized)) {
+            normalized = normalized.replace(/^\/+/, '');
+        }
+
+        if (isAbsolute(normalized) && existsSync(normalized)) {
+            return normalized;
+        }
+
+        if (!normalized.startsWith('./') && !normalized.startsWith('../')) {
             normalized = `./${normalized}`;
         }
-        if (!existsSync(normalized) && normalized.startsWith('./')) {
+
+        if (existsSync(normalized)) {
+            return normalized;
+        }
+
+        if (normalized.startsWith('./')) {
             const parentCandidate = `../${normalized.substring(2)}`;
             if (existsSync(parentCandidate)) {
                 return parentCandidate;
+            }
+            if (normalized.startsWith('./projects/')) {
+                const appsCandidate = `../apps/${normalized.substring(2)}`;
+                if (existsSync(appsCandidate)) {
+                    return appsCandidate;
+                }
             }
         }
         return normalized;

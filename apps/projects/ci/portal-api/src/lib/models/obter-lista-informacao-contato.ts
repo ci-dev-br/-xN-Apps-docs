@@ -1,11 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
-import { InformacaoContato } from './informacao-contato';
+import { InformacaoContato } from '../models/informacao-contato';
 export interface ObterListaInformacaoContato {
+  filter?: InformacaoContato | null;
+  orderBy?: {
+} | null;
+  search?: string | null;
   skip?: number | null;
   take?: number | null;
-  where?: Partial<InformacaoContato> | null;
-  filter?: Partial<InformacaoContato> | null;
-  search?: string | null;
-  orderBy?: Record<string, 'ASC' | 'DESC'> | null;
+  where?: InformacaoContato | null;
 }

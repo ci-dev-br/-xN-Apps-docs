@@ -294,5 +294,19 @@ export const CI_STATIC_APPS: IApp[] = [
         roles: [
             'USER',
         ]
+    },
+    {
+        shortDescription: 'Comunidades e grupos de trabalho corporativos.',
+        url: '/Grupos',
+        name: 'Grupos',
+        description: 'Explore comunidades corporativas, participe de discussões temáticas e compartilhe ativos como Noticiários Diários, Formulários e Cadastros com isolamento seguro via Tenant ID.',
+        type: 'mat',
+        icon: 'diversity_3',
+        color: getColor(),
+        roles: [
+            'USER',
+            'ADMIN',
+            'MASTER'
+        ]
     }
 ];

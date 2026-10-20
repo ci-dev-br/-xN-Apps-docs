@@ -9,15 +9,15 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deletePais } from '../fn/pais/delete-pais';
+import { DeletePais$Params } from '../fn/pais/delete-pais';
+import { getByInternalIdPais } from '../fn/pais/get-by-internal-id-pais';
+import { GetByInternalIdPais$Params } from '../fn/pais/get-by-internal-id-pais';
 import { getListPais } from '../fn/pais/get-list-pais';
 import { GetListPais$Params } from '../fn/pais/get-list-pais';
 import { Pais } from '../models/pais';
 import { syncPais } from '../fn/pais/sync-pais';
 import { SyncPais$Params } from '../fn/pais/sync-pais';
-import { GetByInternalIdInputDto } from '../models/get-by-internal-id-input-dto';
-import { RequestBuilder } from '../request-builder';
-import { filter } from 'rxjs/operators';
-import { HttpResponse } from '@angular/common/http';
 
 @Injectable()
 export class PaisService extends BaseService {
@@ -27,8 +27,6 @@ export class PaisService extends BaseService {
 
   /** Path part for operation `syncPais()` */
   static readonly SyncPaisPath = '/Pais/Sync';
-  static readonly GetByInternalIdPaisPath = '/Pais/GetByInternalId';
-  static readonly DeletePaisPath = '/Pais/Delete';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -52,12 +50,28 @@ export class PaisService extends BaseService {
     );
   }
 
-  getByInternalId(params: { body: GetByInternalIdInputDto }, context?: HttpContext): Observable<Pais> {
-    const rb = new RequestBuilder(this.rootUrl, PaisService.GetByInternalIdPaisPath, 'post');
-    if (params) rb.body(params.body, 'application/json');
-    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
-      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-      map((r: HttpResponse<any>) => (r as StrictHttpResponse<Pais>).body)
+  /** Path part for operation `getByInternalIdPais()` */
+  static readonly GetByInternalIdPaisPath = '/Pais/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdPais()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdPais$Response(params: GetByInternalIdPais$Params, context?: HttpContext): Observable<StrictHttpResponse<Pais>> {
+    return getByInternalIdPais(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdPais$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdPais$Params, context?: HttpContext): Observable<Pais> {
+    return this.getByInternalIdPais$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Pais>): Pais => r.body)
     );
   }
 
@@ -86,12 +100,28 @@ export class PaisService extends BaseService {
     );
   }
 
-  delete(params: { body: Pais }, context?: HttpContext): Observable<Pais> {
-    const rb = new RequestBuilder(this.rootUrl, PaisService.DeletePaisPath, 'post');
-    if (params) rb.body(params.body, 'application/json');
-    return this.http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
-      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-      map((r: HttpResponse<any>) => (r as StrictHttpResponse<Pais>).body)
+  /** Path part for operation `deletePais()` */
+  static readonly DeletePaisPath = '/Pais/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deletePais()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deletePais$Response(params: DeletePais$Params, context?: HttpContext): Observable<StrictHttpResponse<Pais>> {
+    return deletePais(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deletePais$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeletePais$Params, context?: HttpContext): Observable<Pais> {
+    return this.deletePais$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Pais>): Pais => r.body)
     );
   }
 

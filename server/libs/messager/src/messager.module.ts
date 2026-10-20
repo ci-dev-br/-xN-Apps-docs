@@ -13,12 +13,16 @@ import { ChamadaController } from "./controller/chamada.controller";
 import { NotificacaoModule } from "@ci/notification";
 import { ConversationController } from "./controller/conversation.controller";
 import { ConversationService } from "./service/conversation.service";
+import { MessageService } from "./service/message.service";
+import { MessagerController } from "./controller/messager.controller";
+
 export const Entities = [
     Conversation,
     DirectMessage,
     Contact,
     Chamada,
 ];
+
 @Module({
     imports: [
         TypeOrmModule.forFeature([
@@ -32,12 +36,18 @@ export const Entities = [
         ContactService,
         ChamadaService,
         ConversationService,
+        MessageService,
     ],
     controllers: [
         ContactController,
         ChamadaController,
         ConversationController,
+        MessagerController,
     ],
+    exports: [
+        ConversationService,
+        MessageService,
+    ]
 })
 export class MessagerModule { }
 export {
@@ -45,4 +55,5 @@ export {
     DirectMessage,
     Contact,
     ConversationService,
+    MessageService,
 }

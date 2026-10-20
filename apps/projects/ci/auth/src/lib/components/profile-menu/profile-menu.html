@@ -11,23 +11,161 @@
     <mat-accordion (click)="$event.stopPropagation()">
         <mat-expansion-panel>
             <mat-expansion-panel-header>
-                <mat-panel-title>Mostrar mais contas</mat-panel-title>
+                <mat-panel-title>
+                    <mat-icon class="panel-icon">group</mat-icon>
+                    <span>Mostrar mais contas</span>
+                    @if((accounts$ | async)?.length; as count) {
+                        <span class="accounts-count-badge">{{ count }}</span>
+                    }
+                </mat-panel-title>
             </mat-expansion-panel-header>
-            <button mat-button>
-                <mat-icon>add</mat-icon>
-                Adicionar outra conta</button>
-            <button mat-button>
-                <mat-icon>exit_to_app</mat-icon>
-                Sair de todas as contas</button>
+
+            <div class="accounts-container">
+                <div class="accounts-list">
+                    @for(acc of (accounts$ | async); track acc.id) {
+                        <div class="account-card" [class.active-account]="acc.isActive" (click)="alternarConta(acc, $event)">
+                            <div class="account-avatar-wrapper">
+                                @if(getAccountPhoto(acc.user, acc.id); as photo) {
+                                    <img [src]="photo" alt="Foto da conta" class="account-avatar-img" (error)="onAccountPhotoError(acc.id)">
+                                } @else {
+                                    <div class="account-avatar-placeholder">
+                                        {{ getAccountInitials(acc.user) }}
+                                    </div>
+                                }
+                                @if(acc.isActive) {
+                                    <span class="active-badge-dot" title="Conta ativa - realizando ações"></span>
+                                }
+                            </div>
+
+                            <div class="account-info">
+                                <div class="account-header">
+                                    <span class="account-name">
+                                        {{ acc.user.surname || acc.user.fullName || acc.user.username }}
+                                    </span>
+                                    @if(acc.isActive) {
+                                        <span class="badge active-badge">
+                                            <mat-icon>check_circle</mat-icon>
+                                            Ativa
+                                        </span>
+                                    }
+                                </div>
+                                <div class="account-meta">
+                                    @if(acc.user.username) {
+                                        <span class="account-username">{{ acc.user.username }}</span>
+                                    }
+                                    @if(acc.user.roles && acc.user.roles.length > 0) {
+                                        <span class="roles-preview">
+                                            {{ acc.user.roles.slice(0, 2).join(', ') }}
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="account-actions" (click)="$event.stopPropagation()">
+                                @if(!acc.isActive) {
+                                    <button mat-icon-button class="btn-switch" title="Selecionar para realizar ações" (click)="alternarConta(acc, $event)">
+                                        <mat-icon>swap_horiz</mat-icon>
+                                    </button>
+                                }
+                                @if((accounts$ | async)?.length! > 1) {
+                                    <button mat-icon-button color="warn" class="btn-disconnect-account" title="Desconectar esta conta" (click)="desconectarConta(acc, $event)">
+                                        <mat-icon>logout</mat-icon>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                @if(combinedRoles.length > 0) {
+                    <div class="combined-policy-box">
+                        <div class="combined-header">
+                            <mat-icon>verified_user</mat-icon>
+                            <span>Permissões e políticas combinadas:</span>
+                        </div>
+                        <div class="combined-roles-chips">
+                            @for(role of combinedRoles; track role) {
+                                <span class="role-chip">{{ role }}</span>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <div class="accounts-footer-actions">
+                    <button mat-button class="btn-add-account" (click)="abrirAdicionarConta($event)">
+                        <mat-icon>add</mat-icon>
+                        Adicionar outra conta
+                    </button>
+                    <button mat-button color="warn" class="btn-logout-all" (click)="sairDeTodasAsContas($event)">
+                        <mat-icon>exit_to_app</mat-icon>
+                        Sair de todas as contas
+                    </button>
+                </div>
+            </div>
         </mat-expansion-panel>
 
-        <mat-expansion-panel>
+        <mat-expansion-panel (opened)="loadDevices()">
             <mat-expansion-panel-header>
-                <mat-panel-title>Dispositivos Viinculados</mat-panel-title>
+                <mat-panel-title>
+                    <mat-icon class="panel-icon">devices</mat-icon>
+                    <span>Dispositivos Vinculados</span>
+                </mat-panel-title>
             </mat-expansion-panel-header>
-            <button mat-button>
-                <mat-icon>device</mat-icon>
-                Este dispositivo</button>
+
+            <div class="devices-container">
+                @if(loadingDevices && devices.length === 0) {
+                    <div class="device-loading">
+                        <small>Buscando dispositivos vinculados...</small>
+                    </div>
+                }
+
+                @for(device of devices; track device.id) {
+                    <div class="device-card" [class.current-device]="device.isCurrent">
+                        <div class="device-icon-wrapper">
+                            <mat-icon class="device-icon">{{ getDeviceIcon(device) }}</mat-icon>
+                            <span class="online-indicator" [class.online]="device.isOnline" [title]="device.isOnline ? 'Conectado ao socket (Online)' : 'Desconectado do socket (Offline)'"></span>
+                        </div>
+                        <div class="device-info">
+                            <div class="device-header">
+                                <span class="device-name">{{ device.browser || 'Navegador' }} no {{ device.os || 'Dispositivo' }}</span>
+                                @if(device.isCurrent) {
+                                    <span class="badge current-badge">Este dispositivo</span>
+                                }
+                            </div>
+                            <div class="device-meta">
+                                @if(device.ip) {
+                                    <span class="device-ip">{{ device.ip }}</span>
+                                }
+                                <span class="status-pill" [class.online]="device.isOnline">
+                                    <span class="status-dot" [class.online]="device.isOnline"></span>
+                                    {{ device.isOnline ? 'Online' : 'Offline' }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="device-actions">
+                            <button mat-icon-button color="warn" class="btn-disconnect" [title]="device.isCurrent ? 'Desconectar este dispositivo (sair)' : 'Desconectar este dispositivo'" (click)="desconectar(device, $event)">
+                                <mat-icon>phonelink_erase</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                }
+
+                @if(!loadingDevices && devices.length === 0) {
+                    <div class="empty-state">
+                        <mat-icon>devices</mat-icon>
+                        <small>Nenhum dispositivo encontrado.</small>
+                    </div>
+                }
+
+                @if(hasOtherDevices) {
+                    <div class="bulk-actions">
+                        <button mat-stroked-button color="warn" class="btn-disconnect-others" (click)="desconectarOutros($event)">
+                            <mat-icon>phonelink_erase</mat-icon>
+                            Desconectar outros dispositivos
+                        </button>
+                    </div>
+                }
+            </div>
         </mat-expansion-panel>
     </mat-accordion>
 </div>

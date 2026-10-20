@@ -6,9 +6,11 @@ import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { SyncPayloadDaoPessoa } from "../dto/sync-payload-dao-pessoa";
 import { ObterListaPessoa } from "../dto/obter-list-pessoa";
 import { GetByInternalIdInputDto } from "./GetByInternalIdInputDto";
+import { Role } from "@ci/auth/decorators/role.decorator";
 /**
  * Pessoa Controller
  */
+@Role('USER')
 @ApiTags('Pessoa')
 @Controller('Pessoa')
 export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
@@ -17,6 +19,7 @@ export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
     ) {
         super(service);
     }
+    @Role('USER')
     @Post('Sync')
     @ApiResponse({
         type: SyncPayloadDaoPessoa
@@ -30,6 +33,7 @@ export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
     ) {
         return await super.Sync(body, req)
     }
+    @Role('USER')
     @Post('GetByInternalId')
     @ApiResponse({
         type: Pessoa,
@@ -43,6 +47,7 @@ export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
     ) {
         return await super.GetByInternalId(input, req);
     }
+    @Role('USER')
     @Post('GetList')
     @ApiResponse({
         type:
@@ -57,6 +62,7 @@ export class PessoaController extends ControllerDaoBase<PessoaService, Pessoa> {
     ) {
         return super.GetList(input, req);
     }
+    @Role('USER')
     @Post('Delete')
     @ApiResponse({
         type: Pessoa

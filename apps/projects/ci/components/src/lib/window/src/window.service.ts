@@ -9,7 +9,9 @@ export interface ConsoleEvent {
     args?: any | any[];
 }
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class WindowService {
     private static _logger_origin: any;
     private static emitter = new EventEmitter<ConsoleEvent>();

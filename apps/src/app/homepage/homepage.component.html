@@ -5,26 +5,113 @@
 <mat-tab-group>
     <mat-tab label="Noticiário Diário">
         <div class="page--wrapper">
-            <div class="wrapper">
-                @if(!!feeds()){
-                <div class="feed" #feedContainer>
-                    @for(feed of feeds(); track feed.id || feed.url || $index) {
+            <div class="news-experience-layout">
+                <!-- Coluna de Notícias (Feed Stream) -->
+                <div class="feed-column">
+                    @if(!!feeds()){
+                    <div class="feed" #feedContainer>
+                        @for(feed of feeds(); track feed.id || feed.url || $index) {
+                        <article class="feed-item" 
+                            [class.in-focus]="highlightedFeed() === feed"
+                            (click)="focarNoticia(feed)">
+                            
+                            @if(feed.title){
+                                <h4 class="feed-title" [innerHtml]="feed.title"></h4>
+                            }
+                            <div [innerHtml]="feed.content" class="feed-content"></div>
+                            
+                            <div class="feed-source">
+                                Fonte: <a target="_blank" (click)="$event.stopPropagation()"
+                                    [href]="'https://' + feed?.sourceInfo?.domain">{{feed?.sourceInfo?.name || feed?.sourceInfo?.domain || 'Origem'}}
+                                </a>
+                            </div>
 
-                    <div class="feed-item">
-                        @if(feed.title){<h4 [innerHtml]="feed.title"></h4>}
-                        <div [innerHtml]="feed.content" class="feed-content"></div>
-                        <div style="text-align:right">Fonte: <a target="_blank"
-                                [href]="'https://' + feed?.sourceInfo?.domain">{{feed?.sourceInfo?.name}}
-                            </a>
-                        </div>
-                        <div class="interactions">
-                            <button mat-icon-button color="primary" (click)="interacao(feed, 'open')"
-                                [matTooltip]="'Abrir na Origem'"><mat-icon>open_in_new</mat-icon></button>
-                        </div>
-                        <div>{{feed.categoria}}</div>
+                            <div class="interactions">
+                                <!-- Voto UP -->
+                                <button mat-button class="btn-vote" [class.voted-up]="feed.userVote === 'UP'"
+                                    (click)="votar(feed, 'UP', $event)"
+                                    [matTooltip]="isLoggedIn ? (feed.userVote === 'UP' ? 'Remover voto positivo' : 'Voto positivo') : 'Faça login para votar'">
+                                    <mat-icon>thumb_up</mat-icon>
+                                    <span class="vote-count">{{ feed.upVotes || 0 }}</span>
+                                </button>
+
+                                <!-- Voto DOWN -->
+                                <button mat-button class="btn-vote" [class.voted-down]="feed.userVote === 'DOWN'"
+                                    (click)="votar(feed, 'DOWN', $event)"
+                                    [matTooltip]="isLoggedIn ? (feed.userVote === 'DOWN' ? 'Remover voto negativo' : 'Voto negativo') : 'Faça login para votar'">
+                                    <mat-icon>thumb_down</mat-icon>
+                                    <span class="vote-count">{{ feed.downVotes || 0 }}</span>
+                                </button>
+
+                                <!-- Botão de focar/abrir comentários da notícia -->
+                                <button mat-button class="btn-comments-toggle" 
+                                    [class.active]="highlightedFeed() === feed && showCommentsPane()"
+                                    (click)="focarComentarios(feed, $event)"
+                                    [matTooltip]="'Ver comentários desta notícia'">
+                                    <mat-icon>chat_bubble_outline</mat-icon>
+                                    <span class="comments-count">{{ feed.commentsCount || 0 }}</span>
+                                </button>
+
+                                <span class="spacer"></span>
+
+                                <button mat-icon-button color="primary" (click)="interacao(feed, 'open'); $event.stopPropagation()"
+                                    [matTooltip]="'Abrir na Origem'"><mat-icon>open_in_new</mat-icon></button>
+                            </div>
+
+                            <div class="feed-category">{{feed.categoria}}</div>
+                        </article>
+                        }
                     </div>
                     }
-                </div>}
+                </div>
+
+                <!-- Painel Lateral Moderno de Comentários (Assume a notícia em destaque) -->
+                @if(showCommentsPane()) {
+                <aside class="comments-stage" [class.visible]="showCommentsPane()">
+                    <div class="comments-stage-header">
+                        <div class="stage-badge">
+                            <mat-icon>forum</mat-icon>
+                            <span>Comentários em Foco</span>
+                        </div>
+                        <button mat-icon-button (click)="toggleCommentsPane()" matTooltip="Fechar painel de comentários" class="btn-close-comments">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </div>
+
+                    @if(highlightedFeed(); as activeNews) {
+                        <div class="active-news-context">
+                            <span class="context-label">Notícia Selecionada</span>
+                            <h5 class="active-news-title" [innerHtml]="activeNews.title || 'Notícia sem título'"></h5>
+                            <div class="active-news-meta">
+                                <span>{{ activeNews?.sourceInfo?.name || 'Noticiário' }}</span>
+                                @if(activeNews.categoria) {
+                                    <span class="tag">{{ activeNews.categoria }}</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="comments-body">
+                            <ci-post-coments 
+                                [newsId]="activeNews.id || activeNews.url" 
+                                [feed]="activeNews" 
+                                (commentCountChange)="activeNews.commentsCount = $event">
+                            </ci-post-coments>
+                        </div>
+                    } @else {
+                        <div class="no-selection-placeholder">
+                            <mat-icon>article</mat-icon>
+                            <p>Role a página ou clique em uma notícia para visualizar e participar dos comentários.</p>
+                        </div>
+                    }
+                </aside>
+                }
+
+                @if(!showCommentsPane()) {
+                <button mat-fab extended class="btn-floating-comments-toggle" (click)="toggleCommentsPane()" matTooltip="Abrir comentários da notícia em destaque">
+                    <mat-icon>forum</mat-icon>
+                    <span>Comentários</span>
+                </button>
+                }
             </div>
         </div>
     </mat-tab>

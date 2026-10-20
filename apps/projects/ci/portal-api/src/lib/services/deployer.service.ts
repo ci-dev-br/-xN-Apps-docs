@@ -36,44 +36,6 @@ export class DeployerService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `getVersionDeployer()` */
-  static readonly GetVersionDeployerPath = '/Deployer/version';
-
-  /**
-   * Obtém as informações da versão disponível, estado do build/gulp e ambiente de execução (Debug/Produção).
-   */
-  getVersionDeployer$Response(params?: GetVersionDeployer$Params, context?: HttpContext): Observable<StrictHttpResponse<AvailableVersionInfoDto>> {
-    return getVersionDeployer(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Obtém as informações da versão disponível, estado do build/gulp e ambiente de execução (Debug/Produção).
-   */
-  getVersion(params?: GetVersionDeployer$Params, context?: HttpContext): Observable<AvailableVersionInfoDto> {
-    return this.getVersionDeployer$Response(params, context).pipe(
-      map((r: StrictHttpResponse<AvailableVersionInfoDto>): AvailableVersionInfoDto => r.body)
-    );
-  }
-
-  /** Path part for operation `publishDeployer()` */
-  static readonly PublishDeployerPath = '/Deployer/publish';
-
-  /**
-   * Executa ações de publicação (geração de versão em produção do cliente via Gulp em /gulp e/ou compilação do backend).
-   */
-  publishDeployer$Response(params: PublishDeployer$Params, context?: HttpContext): Observable<StrictHttpResponse<ActionResponseDto>> {
-    return publishDeployer(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Executa ações de publicação (geração de versão em produção do cliente via Gulp em /gulp e/ou compilação do backend).
-   */
-  publish(params: PublishDeployer$Params, context?: HttpContext): Observable<ActionResponseDto> {
-    return this.publishDeployer$Response(params, context).pipe(
-      map((r: StrictHttpResponse<ActionResponseDto>): ActionResponseDto => r.body)
-    );
-  }
-
   /** Path part for operation `deployerControllerReport()` */
   static readonly DeployerControllerReportPath = '/Deployer/report';
 
@@ -96,6 +58,72 @@ export class DeployerService extends BaseService {
   deployerControllerReport(params: DeployerControllerReport$Params, context?: HttpContext): Observable<void> {
     return this.deployerControllerReport$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `getVersionDeployer()` */
+  static readonly GetVersionDeployerPath = '/Deployer/version';
+
+  /**
+   * Obtém as informações da versão disponível, estado do build/gulp e ambiente de execução (Debug/Produção).
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getVersionDeployer()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getVersionDeployer$Response(params?: GetVersionDeployer$Params, context?: HttpContext): Observable<StrictHttpResponse<AvailableVersionInfoDto>> {
+    return getVersionDeployer(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtém as informações da versão disponível, estado do build/gulp e ambiente de execução (Debug/Produção).
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getVersionDeployer$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getVersion(params?: GetVersionDeployer$Params, context?: HttpContext): Observable<AvailableVersionInfoDto> {
+    return this.getVersionDeployer$Response(params, context).pipe(
+      map((r: StrictHttpResponse<AvailableVersionInfoDto>): AvailableVersionInfoDto => r.body)
+    );
+  }
+
+  /** Path part for operation `publishDeployer()` */
+  static readonly PublishDeployerPath = '/Deployer/publish';
+
+  /**
+   * Executa ações de publicação (geração de versão em produção do cliente via Gulp em /gulp e/ou compilação do backend).
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `publishDeployer()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  publishDeployer$Response(params: PublishDeployer$Params, context?: HttpContext): Observable<StrictHttpResponse<ActionResponseDto>> {
+    return publishDeployer(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Executa ações de publicação (geração de versão em produção do cliente via Gulp em /gulp e/ou compilação do backend).
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `publishDeployer$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  publish(params: PublishDeployer$Params, context?: HttpContext): Observable<ActionResponseDto> {
+    return this.publishDeployer$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ActionResponseDto>): ActionResponseDto => r.body)
     );
   }
 
@@ -265,4 +293,3 @@ export class DeployerService extends BaseService {
   }
 
 }
-

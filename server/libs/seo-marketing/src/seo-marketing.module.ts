@@ -16,6 +16,10 @@ import { Source } from './models/source.entity';
 import { CategoryEvent } from './models/category-event.entity';
 import { DiscoveryService } from './services/discovery.service';
 import { NewsController } from './controller/news.controller';
+import { NewsVote } from './models/news-vote.entity';
+import { NewsComment } from './models/news-comment.entity';
+import { UsersModule } from '@ci/user/users.module';
+
 export const SeoMarketingEntities = [
   SeoKeyWord,
   SeoPage,
@@ -25,12 +29,15 @@ export const SeoMarketingEntities = [
   News,
   Source,
   CategoryEvent,
+  NewsVote,
+  NewsComment,
 ];
 @Module({
   imports: [
     HttpModule,
     ScheduleModule.forRoot(),
     CoreModule,
+    UsersModule,
     TypeOrmModule.forFeature([
       ...SeoMarketingEntities
     ]),

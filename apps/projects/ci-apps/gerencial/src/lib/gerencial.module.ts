@@ -30,6 +30,7 @@ import { UsersComponent } from "./views/users/users.component";
 import { DynFormModule } from "@ci/components/dyn-form";
 import { MasterDetailComponent, MasterDetailModule } from "@ci/components/master-detail";
 import { HomeComponent } from "./views/home/home.component";
+import { LojaComponent } from "./views/loja/loja.component";
 
 const routes: Routes = [
     {
@@ -39,6 +40,10 @@ const routes: Routes = [
             role: 'MASTER',
         },
         children: [
+            {
+                path: 'loja', component: LojaComponent,
+                data: { title: 'Loja', icon: 'storefront' }
+            },
             {
                 path: 'home', component: HomeComponent,
                 data: { title: '    ', icon: 'smartphone' }
@@ -77,6 +82,7 @@ const routes: Routes = [
     ],
     imports: [
         ApplicationManagerComponent,
+        LojaComponent,
         GerecialSettingsComponent,
         DevicesComponent,
         UsersComponent,

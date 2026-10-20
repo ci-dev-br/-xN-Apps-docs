@@ -1,4 +1,3 @@
-
 export * from './core.module';
 export * from '../../manager/src/dao/entities';
 export * from './audt';
@@ -9,5 +8,11 @@ export * from './logging.interceptor';
 export * from './system';
 export * from './webhook';
 export * from './logger/logger';
+export * from './logger/log.entity';
+export * from './logger/logger.service';
+export * from './logger/logger.controller';
+export * from './logger/logger.module';
+export * from './logger/dto/log.dto';
 export * from './events/events.gateway';
+export * from './events/bus.service';
 export * from './data-io/response';

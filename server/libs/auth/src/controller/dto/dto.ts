@@ -48,8 +48,12 @@ export class AcessoPayload {
 export class RefreshPayloadInputDto {
     @ApiProperty({ required: true, nullable: false })
     refreshToken: string;
+    @ApiProperty({ required: false, nullable: true })
+    chaveAcesso?: string;
 }
 export class AuthorizationOutput {
     @ApiProperty({ required: true, nullable: false })
     authorization: string;
+    @ApiProperty({ required: false, nullable: true })
+    chaveAcesso?: string;
 }

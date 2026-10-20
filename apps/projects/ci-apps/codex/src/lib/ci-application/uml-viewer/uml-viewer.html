@@ -1,14 +1,346 @@
 <div class="uml-wrapper">
-    @if (error) {
-    <div class="error-message">Falhou ao gerar diagrama: {{ error }}</div>
-    }@else{
-    <!-- Viewport de 300x300 com eventos de mouse -->
-    <div class="mermaid-viewport" [class.grabbing]="isDragging" (wheel)="onWheel($event)"
-        (mousedown)="onMouseDown($event)" (mousemove)="onMouseMove($event)" (mouseup)="onMouseUp()"
-        (mouseleave)="onMouseUp()">
-        <!-- Wrapper que recebe a transformação de matriz (Zoom/Pan) -->
-        <div class="zoom-wrapper" [style.transform]="transformStyle">
-            <div #mermaidContainer class="mermaid-container"></div>
+    <div #viewport class="mermaid-viewport">
+        <!-- Barra flutuante de ações de navegação e criação -->
+        <div class="uml-controls">
+            <button type="button" class="uml-btn uml-btn-accent" (click)="openNewClassModal()" matTooltip="Nova Classe ou Interface no Código">
+                <mat-icon>add_box</mat-icon>
+                <span class="btn-label">Nova Classe</span>
+            </button>
+            <button type="button" class="uml-btn" (click)="openNewRelationshipModal()" matTooltip="Novo Relacionamento / Conexão UML">
+                <mat-icon>mediation</mat-icon>
+                <span class="btn-label">Relacionamento</span>
+            </button>
+            <button 
+                type="button" 
+                class="uml-btn" 
+                [class.active]="showGeneralDiagram" 
+                (click)="toggleGeneralDiagram()" 
+                [matTooltip]="showGeneralDiagram ? 'Visão Geral Ativa: Carregando metadados de dependências TS' : 'Ativar Visão Geral Completa com dependências TS'">
+                <mat-icon>hub</mat-icon>
+                <span class="btn-label">Visão Geral</span>
+            </button>
+            <div class="btn-divider"></div>
+            <button type="button" class="uml-btn" (click)="zoomIn()" matTooltip="Aumentar zoom (+)">
+                <mat-icon>add</mat-icon>
+            </button>
+            <button type="button" class="uml-btn" (click)="zoomOut()" matTooltip="Diminuir zoom (-)">
+                <mat-icon>remove</mat-icon>
+            </button>
+            <button type="button" class="uml-btn" (click)="resetView()" matTooltip="Ajustar e centralizar">
+                <mat-icon>center_focus_strong</mat-icon>
+            </button>
+            <div class="btn-divider"></div>
+            <button type="button" class="uml-btn" (click)="exportSvg()" matTooltip="Exportar Diagrama como SVG Vetorial (Enquadrado)">
+                <mat-icon>file_download</mat-icon>
+                <span class="btn-label">SVG</span>
+            </button>
+            <button type="button" class="uml-btn" (click)="exportPng()" matTooltip="Exportar Diagrama como Imagem PNG em Alta Resolução">
+                <mat-icon>image</mat-icon>
+                <span class="btn-label">PNG</span>
+            </button>
+            <button type="button" class="uml-btn" [disabled]="isExportingPdf" (click)="exportPdf()" matTooltip="Exportar Relatório PDF Compilado (Código + Diagrama + JSDocs)">
+                <mat-icon>{{ isExportingPdf ? 'hourglass_top' : 'picture_as_pdf' }}</mat-icon>
+                <span class="btn-label">{{ isExportingPdf ? 'Gerando...' : 'PDF' }}</span>
+            </button>
+        </div>
+
+        @if (error) {
+        <div class="error-overlay" [matTooltip]="error">
+            <mat-icon class="error-icon">info</mat-icon>
+            <span class="error-text">{{ error }}</span>
+        </div>
+        }
+
+        <!-- Contêiner do SVG do Mermaid (renderização 100% vetorial sem desfoque) -->
+        <div #mermaidContainer class="mermaid-container"></div>
+
+        <!-- Barra de Ações Rápidas e Visualização Gráfica JSDoc da Classe Selecionada -->
+        @if (selectedClassInfo) {
+        <div class="uml-class-action-bar">
+            <div class="class-summary-row">
+                <div class="class-info">
+                    <mat-icon class="class-badge-icon">{{ selectedClassInfo.kind === 'interface' ? 'layers' : 'class' }}</mat-icon>
+                    <span class="class-name">{{ selectedClassInfo.name }}</span>
+                    @if (selectedClassInfo.isImported) {
+                        <span class="badge-imported">Importado</span>
+                    }
+                </div>
+                <div class="action-buttons">
+                    @if (!selectedClassInfo.isImported) {
+                    <button type="button" class="action-btn" (click)="openEditClassModal(selectedClassInfo.name)" matTooltip="Editar Nome e Herança da Classe">
+                        <mat-icon>edit</mat-icon> Editar
+                    </button>
+                    <button type="button" class="action-btn" (click)="openAddPropertyModal(selectedClassInfo.name)" matTooltip="Adicionar Propriedade">
+                        <mat-icon>add</mat-icon> Propriedade
+                    </button>
+                    <button type="button" class="action-btn" (click)="openAddMethodModal(selectedClassInfo.name)" matTooltip="Adicionar Método">
+                        <mat-icon>add</mat-icon> Método
+                    </button>
+                    <button type="button" class="action-btn" (click)="openNewRelationshipModal(selectedClassInfo.name)" matTooltip="Adicionar Relacionamento / Conexão">
+                        <mat-icon>mediation</mat-icon> Conexão
+                    </button>
+                    }
+                    <button type="button" class="action-btn" (click)="goToCode(selectedClassInfo.startLine)" matTooltip="Ir para declaração no editor Monaco">
+                        <mat-icon>code</mat-icon> Código
+                    </button>
+                    @if (!selectedClassInfo.isImported) {
+                    <button type="button" class="action-btn action-btn-danger" (click)="confirmDeleteClass(selectedClassInfo.name)" matTooltip="Excluir classe do código">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                    }
+                    <button type="button" class="action-btn-close" (click)="selectedClassInfo = null">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Painel Gráfico de Documentação JSDoc da Classe -->
+            @if (selectedClassInfo.jsdoc) {
+            <div class="class-jsdoc-panel">
+                <div class="jsdoc-header">
+                    <mat-icon class="jsdoc-icon">auto_stories</mat-icon>
+                    <span class="jsdoc-title">Documentação JSDoc</span>
+                </div>
+                @if (selectedClassInfo.jsdoc.description) {
+                    <p class="jsdoc-description">{{ selectedClassInfo.jsdoc.description }}</p>
+                }
+                @if (selectedClassInfo.jsdoc.tags && selectedClassInfo.jsdoc.tags.length > 0) {
+                    <div class="jsdoc-tag-chips">
+                        @for (tag of selectedClassInfo.jsdoc.tags; track $index) {
+                            <span class="tag-chip" [class.deprecated-chip]="tag.tag === 'deprecated'">
+                                <span class="tag-name">@{{ tag.tag }}</span>
+                                @if (tag.name) { <span class="tag-target">{{ tag.name }}</span> }
+                                @if (tag.text) { <span class="tag-text">{{ tag.text }}</span> }
+                            </span>
+                        }
+                    </div>
+                }
+            </div>
+            }
+        </div>
+        }
+    </div>
+
+    <!-- Modal: Criar Nova Classe ou Interface -->
+    @if (isNewClassModalOpen) {
+    <div class="uml-modal-backdrop" (click)="closeModals()">
+        <div class="uml-modal" (click)="$event.stopPropagation()">
+            <div class="uml-modal-header">
+                <span class="uml-modal-title">
+                    <mat-icon>add_box</mat-icon> Construir Nova Entidade UML
+                </span>
+                <button type="button" class="uml-modal-close" (click)="closeModals()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            <div class="uml-modal-body">
+                <div class="form-group">
+                    <label>Tipo de Entidade</label>
+                    <select [(ngModel)]="newClassData.kind" class="uml-input">
+                        <option value="class">Classe</option>
+                        <option value="interface">Interface</option>
+                        <option value="abstract">Classe Abstrata</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nome da Entidade</label>
+                    <input type="text" [(ngModel)]="newClassData.name" placeholder="Ex: PedidoService" class="uml-input" autofocus />
+                </div>
+                <div class="form-group">
+                    <label>Herança (extends - opcional)</label>
+                    <input type="text" [(ngModel)]="newClassData.extendsClass" placeholder="Ex: BaseService" class="uml-input" />
+                </div>
+                @if (newClassData.kind === 'class' || newClassData.kind === 'abstract') {
+                <div class="form-group">
+                    <label>Implementa (implements - opcional)</label>
+                    <input type="text" [(ngModel)]="newClassData.implementsInterface" placeholder="Ex: IPedido" class="uml-input" />
+                </div>
+                }
+            </div>
+            <div class="uml-modal-footer">
+                <button type="button" class="btn-secondary" (click)="closeModals()">Cancelar</button>
+                <button type="button" class="btn-primary" [disabled]="!newClassData.name.trim()" (click)="confirmCreateNewClass()">
+                    <mat-icon>check</mat-icon> Criar no Código
+                </button>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Modal: Editar Classe / Interface Existente -->
+    @if (isEditClassModalOpen) {
+    <div class="uml-modal-backdrop" (click)="closeModals()">
+        <div class="uml-modal" (click)="$event.stopPropagation()">
+            <div class="uml-modal-header">
+                <span class="uml-modal-title">
+                    <mat-icon>edit</mat-icon> Editar Entidade: {{ editClassData.originalName }}
+                </span>
+                <button type="button" class="uml-modal-close" (click)="closeModals()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            <div class="uml-modal-body">
+                <div class="form-group">
+                    <label>Tipo de Entidade</label>
+                    <select [(ngModel)]="editClassData.kind" class="uml-input">
+                        <option value="class">Classe</option>
+                        <option value="interface">Interface</option>
+                        <option value="abstract">Classe Abstrata</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nome da Entidade</label>
+                    <input type="text" [(ngModel)]="editClassData.name" class="uml-input" autofocus />
+                </div>
+                <div class="form-group">
+                    <label>Herança (extends - opcional)</label>
+                    <input type="text" [(ngModel)]="editClassData.extendsClass" placeholder="Ex: BaseService" class="uml-input" />
+                </div>
+                @if (editClassData.kind === 'class' || editClassData.kind === 'abstract') {
+                <div class="form-group">
+                    <label>Implementa (implements - opcional)</label>
+                    <input type="text" [(ngModel)]="editClassData.implementsInterface" placeholder="Ex: OnInit, OnDestroy" class="uml-input" />
+                </div>
+                }
+            </div>
+            <div class="uml-modal-footer">
+                <button type="button" class="btn-secondary" (click)="closeModals()">Cancelar</button>
+                <button type="button" class="btn-primary" [disabled]="!editClassData.name.trim()" (click)="confirmEditClass()">
+                    <mat-icon>check</mat-icon> Salvar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Modal: Novo Relacionamento / Conexão -->
+    @if (isRelationshipModalOpen) {
+    <div class="uml-modal-backdrop" (click)="closeModals()">
+        <div class="uml-modal" (click)="$event.stopPropagation()">
+            <div class="uml-modal-header">
+                <span class="uml-modal-title">
+                    <mat-icon>mediation</mat-icon> Conectar Entidades UML
+                </span>
+                <button type="button" class="uml-modal-close" (click)="closeModals()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            <div class="uml-modal-body">
+                <div class="form-group">
+                    <label>Classe Origem</label>
+                    <select [(ngModel)]="relationshipData.sourceClassName" class="uml-input">
+                        @for (cls of classesByName.values(); track cls.name) {
+                            @if (!cls.isImported) {
+                                <option [value]="cls.name">{{ cls.name }}</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Relação</label>
+                    <select [(ngModel)]="relationshipData.relationType" class="uml-input">
+                        <option value="association">Associação / Propriedade (-->)</option>
+                        <option value="injection">Injeção de Dependência no Construtor (..>)</option>
+                        <option value="extends">Herança (extends <|--)</option>
+                        <option value="implements">Implementação de Interface (implements <|..)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Classe / Interface Destino</label>
+                    <input type="text" [(ngModel)]="relationshipData.targetClassName" placeholder="Ex: FilesService" class="uml-input" list="classes-list" />
+                    <datalist id="classes-list">
+                        @for (cls of classesByName.values(); track cls.name) {
+                            <option [value]="cls.name">
+                        }
+                    </datalist>
+                </div>
+                @if (relationshipData.relationType === 'association' || relationshipData.relationType === 'injection') {
+                <div class="form-group">
+                    <label>Nome do Campo / Parâmetro</label>
+                    <input type="text" [(ngModel)]="relationshipData.memberName" placeholder="Ex: filesService" class="uml-input" />
+                </div>
+                }
+            </div>
+            <div class="uml-modal-footer">
+                <button type="button" class="btn-secondary" (click)="closeModals()">Cancelar</button>
+                <button type="button" class="btn-primary" [disabled]="!relationshipData.sourceClassName.trim() || !relationshipData.targetClassName.trim()" (click)="confirmCreateRelationship()">
+                    <mat-icon>check</mat-icon> Aplicar Conexão
+                </button>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Modal: Adicionar ou Alterar Parâmetro / Membro (Propriedade ou Método) -->
+    @if (isMemberModalOpen) {
+    <div class="uml-modal-backdrop" (click)="closeModals()">
+        <div class="uml-modal" (click)="$event.stopPropagation()">
+            <div class="uml-modal-header">
+                <span class="uml-modal-title">
+                    <mat-icon>{{ memberData.kind === 'property' ? 'data_object' : 'functions' }}</mat-icon>
+                    {{ memberModalMode === 'add' ? 'Adicionar' : 'Alterar' }} {{ memberData.kind === 'property' ? 'Propriedade' : 'Método' }} em {{ memberTargetClassName }}
+                </span>
+                <button type="button" class="uml-modal-close" (click)="closeModals()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            <div class="uml-modal-body">
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label>Visibilidade</label>
+                        <select [(ngModel)]="memberData.visibility" class="uml-input">
+                            <option value="public">+ Public</option>
+                            <option value="private">- Private</option>
+                            <option value="protected"># Protected</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-checkbox">
+                        <label class="checkbox-label">
+                            <input type="checkbox" [(ngModel)]="memberData.isStatic" />
+                            <span>Static</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Nome do {{ memberData.kind === 'property' ? 'Parâmetro / Propriedade' : 'Método' }}</label>
+                    <input type="text" [(ngModel)]="memberData.name" placeholder="Ex: status" class="uml-input" autofocus />
+                </div>
+
+                @if (memberData.kind === 'method') {
+                <div class="form-group">
+                    <label>Parâmetros do Método</label>
+                    <input type="text" [(ngModel)]="memberData.params" placeholder="Ex: id: string, ativo: boolean" class="uml-input" />
+                </div>
+                }
+
+                <div class="form-group">
+                    <label>{{ memberData.kind === 'property' ? 'Tipo da Propriedade' : 'Tipo de Retorno' }}</label>
+                    <input type="text" [(ngModel)]="memberData.type" placeholder="Ex: string, number, void, Promise<void>" class="uml-input" list="common-types-list" />
+                    <datalist id="common-types-list">
+                        <option value="string">
+                        <option value="number">
+                        <option value="boolean">
+                        <option value="void">
+                        <option value="any">
+                        <option value="Date">
+                        <option value="Promise<void>">
+                        <option value="string[]">
+                    </datalist>
+                </div>
+            </div>
+            <div class="uml-modal-footer">
+                @if (memberModalMode === 'edit') {
+                <button type="button" class="btn-danger" (click)="confirmDeleteMember()">
+                    <mat-icon>delete</mat-icon> Excluir
+                </button>
+                }
+                <div class="spacer"></div>
+                <button type="button" class="btn-secondary" (click)="closeModals()">Cancelar</button>
+                <button type="button" class="btn-primary" [disabled]="!memberData.name.trim()" (click)="confirmSaveMember()">
+                    <mat-icon>check</mat-icon> {{ memberModalMode === 'add' ? 'Adicionar ao Código' : 'Salvar Alterações' }}
+                </button>
+            </div>
         </div>
     </div>
     }

@@ -14,23 +14,27 @@ export class PhotoService {
     ) { }
     async Sync(photo: Photo) {
         try {
+            let rawFile = photo?.originalFile as any;
+            if (typeof rawFile === 'string' && rawFile.includes('base64,')) {
+                rawFile = rawFile.split('base64,')[1];
+            }
+            const buffer = rawFile instanceof Buffer ? rawFile : (rawFile ? Buffer.from(rawFile, 'base64') : null);
+
             if (photo?.internalId) {
                 const photo_exists = await this.userRepo.findOne({ where: { internalId: photo.internalId } });
                 if (photo_exists) {
-                    photo_exists.originalFile = photo.originalFile instanceof Buffer ? photo.originalFile : Buffer.from(photo.originalFile as any, 'base64');
-                    photo_exists.format = photo.format;
-                    // photo_exists.lastModifiedBy = photo.lastModifiedBy;
+                    photo_exists.originalFile = buffer;
+                    if (photo.format) photo_exists.format = photo.format;
                     return await this.userRepo.save(photo_exists, { reload: true });
                 }
-            } else {
-                const nova_photo = await this.userRepo.create();
-                nova_photo.originalFile = photo.originalFile instanceof Buffer ? photo.originalFile : Buffer.from(photo.originalFile as any, 'base64');
-                nova_photo.format = photo.format;
-                // nova_photo.createdBy = photo.createdBy;
-                return await this.userRepo.save(nova_photo, { reload: true, listeners: true, transaction: true });
             }
+            const nova_photo = this.userRepo.create();
+            nova_photo.originalFile = buffer;
+            nova_photo.format = photo?.format || 'image/jpeg';
+            return await this.userRepo.save(nova_photo, { reload: true, listeners: true, transaction: true });
         } catch (error) {
             console.trace(error);
+            throw error;
         }
     }
     async Get(query: string,) {

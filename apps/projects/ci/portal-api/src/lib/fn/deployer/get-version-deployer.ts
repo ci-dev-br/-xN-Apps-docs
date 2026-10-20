@@ -12,7 +12,7 @@ export interface GetVersionDeployer$Params {
 }
 
 export function getVersionDeployer(http: HttpClient, rootUrl: string, params?: GetVersionDeployer$Params, context?: HttpContext): Observable<StrictHttpResponse<AvailableVersionInfoDto>> {
-  const rb = new RequestBuilder(rootUrl, getVersionDeployer.PATH, 'get');
+  const rb = new RequestBuilder(rootUrl, getVersionDeployer.PATH, 'post');
   if (params) {
   }
 

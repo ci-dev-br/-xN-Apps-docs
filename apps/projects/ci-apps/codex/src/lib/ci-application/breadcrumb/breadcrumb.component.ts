@@ -3,6 +3,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { CoreModule } from '@ci/core';
 import { FileDto, FileExplorerService, ReadDirectoryOutput } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
+import { Router } from '@angular/router';
+
 export interface IFile extends ReadDirectoryOutput {
   name?: string;
   path?: string;
@@ -10,6 +12,7 @@ export interface IFile extends ReadDirectoryOutput {
 }
 @Component({
   selector: 'ci-breadcrumb',
+  standalone: true,
   imports: [
     CoreModule,
     MatMenuModule,
@@ -30,6 +33,7 @@ export class BreadcrumbComponent implements OnChanges {
   }
   constructor(
     private readonly explorer: FileExplorerService,
+    private readonly router: Router,
   ) { }
   load() {
     this.paths = this.oppenedFile?.path?.replaceAll('\\', '/').split('/').map((path, i, arr) => ({
@@ -56,12 +60,20 @@ export class BreadcrumbComponent implements OnChanges {
     })
     );
     if (dir) {
-      menu.list = dir
-      // old - menu.list = dir.map(el => el.name || '')
-      /*.map(el => ({
-        name: el.name
-      }))*/
+      menu.list = dir;
     }
   }
- 
+
+  openItem(item: ReadDirectoryOutput | IFile, parent?: IFile) {
+    if (item.isDirectory) return;
+    const parentPath = parent?.path || '';
+    const fullPath = item.path && item.path.includes('/')
+      ? item.path
+      : parentPath ? `${parentPath}/${item.name}` : (item.name || '');
+    if (fullPath) {
+      this.router.navigate(['/Codex', 'editor'], {
+        queryParams: { file: fullPath }
+      });
+    }
+  }
 }

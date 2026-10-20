@@ -22,7 +22,12 @@ export class UserController {
     async sync(
         @Req() req: any,
         @Body() user: User) {
-        if (!!req.user?.id && req.user?.id === user.id) {
+        const targetUserId = req.user?.id;
+        if (targetUserId && (!user.id || targetUserId === user.id)) {
+            user.id = targetUserId;
+            return await this.user.sync(user);
+        }
+        if (!targetUserId && user?.id) {
             return await this.user.sync(user);
         }
     }

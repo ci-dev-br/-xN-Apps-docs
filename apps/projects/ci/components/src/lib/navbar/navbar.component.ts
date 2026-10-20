@@ -1,10 +1,13 @@
 import { Component, Input, OnDestroy, OnInit, Optional, signal } from "@angular/core";
-import { UserAuthenticationService } from "@ci/auth";
+import { formatUserPhotoUrl, UserAuthenticationService } from "@ci/auth";
 import { INavbarItemMenu } from "./i-menu-item";
 import { IItemMenu } from "@ci/components/window";
 import { MenuService } from "@ci/core";
-import { AvailableVersionInfoDto, DeployerService, User } from "@ci/portal-api";
+import { AvailableVersionInfoDto, DeployerService, User, InternalNotificationService, InternalNotification } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
+import { Router } from "@angular/router";
+import { MatDialog } from "@angular/material/dialog";
+import { GruposModalComponent } from "../grupos-modal/grupos-modal.component";
 
 @Component({
     selector: 'ci-navbar',
@@ -33,7 +36,24 @@ export class NavbarComponent implements OnInit, OnDestroy {
     loadingVersion = signal<boolean>(false);
     publishing = signal<boolean>(false);
     lastActionMessage = signal<string | undefined>(undefined);
+    photoError = signal<boolean>(false);
     private pollTimer: any = null;
+
+    /**
+     * Retorna a URL tratada da foto do usuário para exibição na navbar
+     */
+    get userPhotoUrl(): string | undefined {
+        if (this.photoError()) return undefined;
+        return this.extractPhotoUrl(this.user()?.photo);
+    }
+
+    onPhotoError(): void {
+        this.photoError.set(true);
+    }
+
+    private extractPhotoUrl(photo: any): string | undefined {
+        return formatUserPhotoUrl(photo) || undefined;
+    }
 
     /**
      * Visível exclusivamente para usuários que possuem a ROLE 'DEVELOPER'
@@ -47,15 +67,90 @@ export class NavbarComponent implements OnInit, OnDestroy {
         private readonly userService: UserAuthenticationService,
         @Optional() menuService?: MenuService,
         @Optional() private readonly deployerService?: DeployerService,
+        @Optional() private readonly dialog?: MatDialog,
+        @Optional() public readonly notificationService?: InternalNotificationService,
+        @Optional() private readonly router?: Router,
     ) {
         menuService?.userMenu?.subscribe(menu => {
             this.userMenuList = menu;
         });
     }
 
+    get unreadCount$() {
+        return this.notificationService?.unreadCount$;
+    }
+
+    get notifications$() {
+        return this.notificationService?.notifications$;
+    }
+
+    get pushStatus$() {
+        return this.notificationService?.pushPermissionStatus;
+    }
+
+    async solicitarPermissaoPush(event?: Event) {
+        event?.stopPropagation();
+        await this.notificationService?.solicitarPermissaoPush();
+    }
+
+    marcarNotificacaoComoLida(notificacao: InternalNotification, event?: Event) {
+        event?.stopPropagation();
+        this.notificationService?.marcarComoLida(notificacao).subscribe();
+    }
+
+    marcarTodasNotificacoesComoLidas(event?: Event) {
+        event?.stopPropagation();
+        this.notificationService?.marcarTodasComoLidas().subscribe();
+    }
+
+    testarNotificacao(event?: Event) {
+        event?.stopPropagation();
+        this.notificationService?.enviarNotificacaoTeste().subscribe({
+            next: () => {
+                this.notificationService?.carregarNotificacoes();
+            }
+        });
+    }
+
+    abrirAcaoNotificacao(notificacao: InternalNotification, event?: Event) {
+        event?.stopPropagation();
+        this.marcarNotificacaoComoLida(notificacao);
+        if (notificacao.actionUrl) {
+            if (notificacao.actionUrl.startsWith('http')) {
+                window.open(notificacao.actionUrl, '_blank');
+            } else {
+                this.router?.navigateByUrl(notificacao.actionUrl);
+            }
+        }
+    }
+
+    getNotificationIcon(type?: string): string {
+        switch (type) {
+            case 'MENSAGEM': return 'chat';
+            case 'GRUPO': return 'groups';
+            case 'SISTEMA': return 'terminal';
+            case 'AVISO': return 'warning';
+            default: return 'notifications';
+        }
+    }
+
+    /**
+     * Abre a modal de Grupos e Comunidades na aba solicitada (0: Encontrar, 1: Criar, 2: Meus Grupos).
+     */
+    abrirGrupos(initialTab: number = 0) {
+        this.dialog?.open(GruposModalComponent, {
+            data: { initialTab },
+            width: '880px',
+            maxWidth: '96vw',
+            panelClass: 'ci-grupos-dialog-panel',
+            disableClose: false,
+        });
+    }
+
     ngOnInit(): void {
         try {
             this.userService.user.subscribe(u => {
+                this.photoError.set(false);
                 this.user.set(u);
                 if (!!this.apps)
                     this.recentes = localStorage.getItem('NAV(RECENTES)')?.split(',').map(x => this.apps?.find(a => a?.name === x));

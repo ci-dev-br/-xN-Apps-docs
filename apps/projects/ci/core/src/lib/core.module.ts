@@ -76,5 +76,6 @@ export {
   AtOf,
   NomenclaturaPipe,
   Apps,
+  ConsoleService,
 }
 

@@ -1,0 +1,113 @@
+<div class="loja-container">
+    <!-- Header Hero -->
+    <header class="loja-header">
+        <div class="loja-header-content">
+            <div class="loja-header-icon">
+                <mat-icon>storefront</mat-icon>
+            </div>
+            <div>
+                <h1 class="loja-title">Loja de Aplicativos</h1>
+                <p class="loja-subtitle">
+                    Descubra, ative e integre novas aplicações para uso em sua conta.
+                    Cada aplicação inclui uma mini documentação e guia de primeiros passos.
+                </p>
+            </div>
+        </div>
+
+        <!-- Barra de Busca -->
+        <div class="loja-search-bar">
+            <mat-form-field appearance="outline" class="search-field">
+                <mat-icon matPrefix>search</mat-icon>
+                <mat-label>Pesquisar aplicações por nome, categoria ou palavra-chave...</mat-label>
+                <input matInput [formControl]="searchControl" placeholder="Ex: Mensagens, Arquivos, Financeiro...">
+                <button mat-icon-button matSuffix *ngIf="searchControl.value" (click)="searchControl.setValue('')" aria-label="Limpar busca">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </mat-form-field>
+        </div>
+
+        <!-- Filtro por Categoria -->
+        <div class="categories-bar">
+            <mat-chip-listbox [value]="selectedCategory" aria-label="Filtro de categoria">
+                <mat-chip-option *ngFor="let cat of categories" [value]="cat" (selectionChange)="selectCategory(cat)">
+                    {{ cat }}
+                </mat-chip-option>
+            </mat-chip-listbox>
+        </div>
+    </header>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+        <mat-spinner diameter="44"></mat-spinner>
+        <span>Carregando catálogo de aplicações...</span>
+    </div>
+
+    <!-- Grid de Aplicações -->
+    <div class="loja-grid" *ngIf="!isLoading && filteredApps.length > 0">
+        <div class="app-card" *ngFor="let app of filteredApps" [class.is-active]="app.isActivated">
+            <div class="app-card-header">
+                <div class="app-card-icon-wrapper" [class.active-icon]="app.isActivated">
+                    <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
+                </div>
+                <div class="app-card-meta">
+                    <span class="app-category-badge">{{ app.categoria || 'Geral' }}</span>
+                    <h3 class="app-name">{{ app.name }}</h3>
+                </div>
+                <div class="app-status-indicator">
+                    <span class="status-pill active-pill" *ngIf="app.isActivated">
+                        <mat-icon class="pill-icon">check</mat-icon>
+                        Ativo
+                    </span>
+                    <span class="status-pill inactive-pill" *ngIf="!app.isActivated">
+                        Disponível
+                    </span>
+                </div>
+            </div>
+
+            <p class="app-description">
+                {{ app.description || 'Aplicação empresarial pronta para uso em sua conta.' }}
+            </p>
+
+            <div class="app-card-footer">
+                <button mat-icon-button 
+                        class="doc-btn" 
+                        (click)="openDocumentation(app)" 
+                        matTooltip="Visualizar mini documentação" 
+                        aria-label="Documentação">
+                    <mat-icon>help_outline</mat-icon>
+                </button>
+
+                <div class="actions-group">
+                    <button mat-stroked-button 
+                            color="primary" 
+                            *ngIf="app.isActivated" 
+                            (click)="openApp(app)"
+                            class="open-btn">
+                        <mat-icon>launch</mat-icon>
+                        Abrir
+                    </button>
+
+                    <button mat-flat-button 
+                            [color]="app.isActivated ? 'warn' : 'primary'"
+                            (click)="toggleActivation(app)" 
+                            [disabled]="app.loading"
+                            class="activate-btn">
+                        <mat-icon *ngIf="!app.loading">{{ app.isActivated ? 'power_settings_new' : 'add_circle_outline' }}</mat-icon>
+                        <mat-spinner diameter="18" *ngIf="app.loading"></mat-spinner>
+                        <span>{{ app.isActivated ? 'Desativar' : 'Ativar' }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading && filteredApps.length === 0">
+        <mat-icon class="empty-icon">search_off</mat-icon>
+        <h3>Nenhuma aplicação encontrada</h3>
+        <p>Tente ajustar os filtros ou pesquisar com outros termos.</p>
+        <button mat-stroked-button color="primary" (click)="searchControl.setValue(''); selectedCategory = 'Todas'; applyFilters()">
+            Limpar Filtros
+        </button>
+    </div>
+</div>

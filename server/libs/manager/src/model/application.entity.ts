@@ -50,6 +50,127 @@ export class Application {
     })
     @PrimaryGeneratedColumn('uuid')
     id?: string;
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        title: 'Chave da Aplicação',
+        description: 'Chave única associada à rota da aplicação no cliente (ex: Mensagens, Arquivos, Cadastros).',
+    })
+    @Column({
+        nullable: true,
+        unique: true,
+    })
+    appKey?: string;
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        title: 'Rota da Aplicação',
+        description: 'Caminho da rota registrado no painel do cliente (ex: /Mensagens, /Arquivos).',
+    })
+    @Column({
+        nullable: true,
+    })
+    routePath?: string;
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        title: 'Hash de Versão Git',
+        description: 'Hash do commit Git originário da última execução ou catalogação da aplicação.',
+    })
+    @Column({
+        nullable: true,
+    })
+    gitVersionHash?: string;
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        title: 'Status Ativo',
+        description: 'Determina se a aplicação está ativa e disponível para carregamento na plataforma.',
+        default: true,
+    })
+    @Column({
+        default: true,
+    })
+    isActive?: boolean;
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        title: 'Tenants Permitidos',
+        description: 'Lista de IDs de tenants com permissão para carregar esta aplicação. Se vazio ou nulo, liberado a todos.',
+    })
+    @Column({
+        nullable: true,
+        type: 'varchar',
+        array: true,
+    })
+    allowedTenantIds?: string[];
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        title: 'Colaboradores',
+        description: 'Lista de desenvolvedores e colaboradores do repositório/aplicação.',
+    })
+    @Column({
+        nullable: true,
+        type: 'varchar',
+        array: true,
+    })
+    collaborators?: string[];
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        title: 'Trava do Catálogo',
+        description: 'Quando verdadeiro, impede que a catalogação automática sobrescreva customizações manuais feitas por administradores.',
+        default: false,
+    })
+    @Column({
+        default: false,
+    })
+    isCatalogLocked?: boolean;
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        title: 'Políticas de Contexto',
+        description: 'Regras e metadados contextuais (ex: versão mínima, recursos exigidos, restrições de planos).',
+    })
+    @Column({
+        type: 'jsonb',
+        nullable: true,
+    })
+    contextPolicies?: Record<string, any>;
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        title: 'Primeira Catalogação',
+        description: 'Data e hora da primeira execução/catalogação da aplicação.',
+    })
+    @Column({
+        type: 'timestamp',
+        nullable: true,
+    })
+    firstSeenAt?: Date;
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        title: 'Última Execução Registrada',
+        description: 'Data e hora da última requisição assinada ou execução detectada.',
+    })
+    @Column({
+        type: 'timestamp',
+        nullable: true,
+    })
+    lastSeenAt?: Date;
+
     @ApiProperty({
         nullable: true,
         required: false,

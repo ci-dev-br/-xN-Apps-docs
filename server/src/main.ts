@@ -1133,10 +1133,15 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(
     AppModule,
     new ExpressAdapter(server),
+    {
+      bodyParser: false,
+    },
   );
 
   app.set('trust proxy', 'loopback');
   app.use(cookieParser());
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ limit: '50mb', extended: true }));
   app.enableCors(corsOptionsDelegate);
 
   const options = new DocumentBuilder()

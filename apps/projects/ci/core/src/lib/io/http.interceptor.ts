@@ -7,6 +7,9 @@ import { AuthService } from "@ci/portal-api";
 import { CORE_ENV, ICoreEnvironment } from "../provider";
 import { Router } from "@angular/router";
 import { Message } from "../services/message";
+import { ConsoleService } from "../services/console.service";
+import { GIT_VERSION } from "../version/git-version";
+import { ApplicationCatalogService } from "../apps/application-catalog.service";
 
 // import { AuthService } from "@ci/portal-api";
 /**
@@ -49,6 +52,7 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         @Optional() private readonly auth: AuthService,
         @Optional() private readonly message: Message,
         private readonly injector: Injector,
+        @Optional() private readonly consoleService?: ConsoleService,
         @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
     ) {
         let efail = typeof localStorage !== 'undefined' ? localStorage.getItem('e-fail') : null;
@@ -88,6 +92,23 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             }))
             .pipe(catchError((error) => {
                 if (error) {
+                    if (!request.url.includes('/Logger')) {
+                        const isServerError = error?.status >= 500 || error?.status === 0;
+                        if (isServerError) {
+                            this.consoleService?.error(
+                                `[HTTP Error ${error?.status || 0}] ${request.method} ${request.url}`,
+                                {
+                                    url: request.url,
+                                    method: request.method,
+                                    status: error?.status,
+                                    statusText: error?.statusText,
+                                    error: error?.error || error?.message,
+                                },
+                                true,
+                                error?.status >= 500,
+                            );
+                        }
+                    }
                     if (error?.error?.error?.options?.message?.indexOf('expirou') > -1) {
                         this.storage?.clean();
                         this.router?.navigate(['/']);
@@ -123,6 +144,28 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             }));
     }
 
+    private getSecondaryTokens(activeBearer?: string): string[] {
+        if (typeof localStorage === 'undefined') return [];
+        try {
+            const raw = localStorage.getItem('CI_ACCOUNTS');
+            if (!raw) return [];
+            let parsed: any;
+            try {
+                parsed = JSON.parse(decodeURIComponent(escape(atob(raw))));
+            } catch {
+                parsed = JSON.parse(atob(raw));
+            }
+            if (Array.isArray(parsed)) {
+                return parsed
+                    .map(a => a?.authentication?.bearer)
+                    .filter((t): t is string => !!t && t !== activeBearer);
+            }
+        } catch {
+            return [];
+        }
+        return [];
+    }
+
     private addBearerToken(request: HttpRequest<any>): HttpRequest<any> {
         let bearer: string | undefined = undefined;
         const isApiRequest =
@@ -137,12 +180,30 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                 bearer = user_storage.authentication.bearer;
             }
         }
-        return bearer ? request.clone({
-            headers: new HttpHeaders({
-                timeout: '10000',
-                'Authorization': `Bearer ${bearer}`
-            })
-        }) : request;
+
+        // Assina a aplicação de origem e o hash da versão segundo o Git
+        const originApp = ApplicationCatalogService.currentAppKey ||
+            ApplicationCatalogService.detectFromUrl(this.router?.url || (typeof window !== 'undefined' ? window.location.pathname : '')) ||
+            'Portal';
+        const gitHash = GIT_VERSION.shortHash;
+
+        const headersConfig: { [key: string]: string } = {
+            'X-Origin-Application': originApp,
+            'X-Application-Git-Hash': gitHash
+        };
+
+        if (bearer) {
+            headersConfig['timeout'] = '10000';
+            headersConfig['Authorization'] = `Bearer ${bearer}`;
+            const secondaryTokens = this.getSecondaryTokens(bearer);
+            if (secondaryTokens.length > 0) {
+                headersConfig['x-additional-tokens'] = secondaryTokens.join(',');
+            }
+        }
+
+        return request.clone({
+            setHeaders: headersConfig
+        });
     }
 
     /**
@@ -159,22 +220,27 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         }
 
         if (error?.status === 401 || error?.status === 408) {
-            const user: { authentication?: { bearer?: string, refreshToken?: string } } =
+            const user: { authentication?: { bearer?: string, refreshToken?: string, chaveAcesso?: string }, chaveAcesso?: string } =
                 this.storage?.restore('apps.ci.dev.br.store.User');
 
+            const chaveAcesso = user?.authentication?.chaveAcesso || user?.chaveAcesso;
             if (user?.authentication?.refreshToken && this.auth) {
                 if (!this._refreshInFlight$) {
                     this._refreshing = true;
                     this._refreshInFlight$ = this.auth.refresh({
                         body: {
-                            refreshToken: user.authentication.refreshToken
-                        }
+                            refreshToken: user.authentication.refreshToken,
+                            chaveAcesso
+                        } as any
                     }).pipe(
-                        switchMap(async (token: { authorization?: string }) => {
+                        switchMap(async (token: { authorization?: string, chaveAcesso?: string }) => {
                             if (token?.authorization) {
                                 const latestUser = this.storage?.restore('apps.ci.dev.br.store.User') || user;
                                 if (latestUser?.authentication) {
                                     latestUser.authentication.bearer = token.authorization;
+                                    if (token.chaveAcesso) {
+                                        latestUser.authentication.chaveAcesso = token.chaveAcesso;
+                                    }
                                     this.storage?.store('apps.ci.dev.br.store.User', latestUser);
                                 }
                             }
@@ -190,7 +256,13 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
 
                 return this._refreshInFlight$.pipe(
                     switchMap(() => next.handle(this.addBearerToken(request))),
-                    catchError(refreshErr => throwError(() => refreshErr))
+                    catchError(refreshErr => {
+                        if (refreshErr?.status === 401 || refreshErr?.status === 403) {
+                            this.storage?.clean();
+                            this.router?.navigate(['/']);
+                        }
+                        return throwError(() => refreshErr);
+                    })
                 );
             }
         }

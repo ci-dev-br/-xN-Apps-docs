@@ -1,11 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
-import { UnidadeMedida } from './unidade-medida';
+import { UnidadeMedida } from '../models/unidade-medida';
 export interface ObterListaUnidadeMedida {
+  filter?: UnidadeMedida | null;
+  orderBy?: {
+} | null;
+  search?: string | null;
   skip?: number | null;
   take?: number | null;
-  where?: Partial<UnidadeMedida> | null;
-  filter?: Partial<UnidadeMedida> | null;
-  search?: string | null;
-  orderBy?: Record<string, 'ASC' | 'DESC'> | null;
+  where?: UnidadeMedida | null;
 }

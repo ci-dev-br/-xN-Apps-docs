@@ -1410,6 +1410,29 @@
         }
       }
     },
+    "@ci-apps/grupos": {
+      "projectType": "library",
+      "root": "projects/ci-apps/grupos",
+      "sourceRoot": "projects/ci-apps/grupos/src",
+      "prefix": "ci",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "options": {
+            "project": "projects/ci-apps/grupos/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ci-apps/grupos/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ci-apps/grupos/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        }
+      }
+    },
     "@ci/Launcher": {
       "projectType": "library",
       "root": "projects/ci/launcher",

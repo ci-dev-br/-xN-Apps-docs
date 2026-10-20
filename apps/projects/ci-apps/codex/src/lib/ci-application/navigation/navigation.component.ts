@@ -63,13 +63,15 @@ export class NavigationComponent {
     protected readonly files: Files,
   ) {
 
-    this.abas = route.routeConfig?.children?.map(r => {
-      return {
-        label: (r?.data as any)?.title || r.path,
-        path: '/' + r.path,
-        icon: (r?.data as any)?.icon || undefined,
-      } as { label: string, path: string, icon: string }
-    }) || undefined;
+    this.abas = route.routeConfig?.children
+      ?.filter(r => r.path !== undefined)
+      .map(r => {
+        return {
+          label: (r?.data as any)?.title || (r.path === '' ? 'Início' : r.path),
+          path: r.path || '',
+          icon: (r?.data as any)?.icon || undefined,
+        } as { label: string, path: string, icon: string }
+      }) || undefined;
   }
   items = [
     { titulo: "Criar novo Módulo" },
@@ -93,14 +95,21 @@ export class NavigationComponent {
     })
     dialog_files.afterClosed().subscribe(value => {
       try {
-        if (value) this.arquivos = [value, ...(this.arquivos || [])];
-        this.open(value);
+        if (value) {
+          const list = this.arquivos || [];
+          const exists = list.some(a => (a.info?.path || a.caminho || a.name) === (value.info?.path || value.caminho || value.name));
+          if (!exists) {
+            this.arquivos = [value, ...list];
+          }
+          this.open(value);
+        }
       } catch (error) {
         console.trace(error)
       }
     });
   }
-  open(arquivo: IArquivo) {
+  open(arquivo?: IArquivo) {
+    if (!arquivo) return;
     this.current = arquivo;
     this.files.openFile(arquivo);
   }

@@ -3,7 +3,9 @@ import { schema } from "./schema";
 import { FullAuditedEntity } from "@ci/manager";
 import { Website } from "./website.entity";
 import { ApiProperty } from "@nestjs/swagger";
-
+/**
+ * Gestão de Sites e Conteúdo na Internet e Redes Sociais
+ */
 @Entity({ schema })
 export class SitePost extends FullAuditedEntity {
     @ApiProperty({ type: Website })
