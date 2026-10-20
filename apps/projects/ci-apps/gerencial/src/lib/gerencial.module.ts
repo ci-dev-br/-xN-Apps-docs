@@ -82,6 +82,7 @@ const routes: Routes = [
     ],
     imports: [
         ApplicationManagerComponent,
+        LojaComponent,
         GerecialSettingsComponent,
         DevicesComponent,
         UsersComponent,
