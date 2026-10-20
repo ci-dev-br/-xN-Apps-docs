@@ -7,7 +7,7 @@ import { UserAuthenticationService } from '@ci/auth';
 
 export interface InternalNotification {
   id: string;
-  userId: string;
+  userId?: string;
   title: string;
   message: string;
   type: 'MENSAGEM' | 'GRUPO' | 'SISTEMA' | 'INFO' | 'AVISO' | string;
@@ -143,6 +143,7 @@ export class InternalNotificationService extends BaseService {
         // Dispara notificação de confirmação imediata para retorno visual e sonoro
         this.dispararPushLocal({
           id: 'welcome-' + Date.now(),
+          userId: this.userService?.user.value?.id || '',
           title: 'Notificações Ativadas!',
           message: 'Você receberá avisos importantes do sistema neste dispositivo.',
           type: 'SISTEMA',
