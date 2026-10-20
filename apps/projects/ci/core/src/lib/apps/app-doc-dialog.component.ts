@@ -81,13 +81,15 @@ import { IAppDocumentation } from './app-docs.model';
             padding: 1.5rem;
             max-width: 600px;
             font-family: inherit;
+            color: var(--mat-sys-on-surface, var(--mat-app-text-color, #212121));
+            background: var(--mat-sys-surface, var(--mat-app-background-color, #ffffff));
         }
         .doc-dialog-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.25rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            border-bottom: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.08));
             padding-bottom: 1rem;
         }
         .doc-header-info {
@@ -99,28 +101,28 @@ import { IAppDocumentation } from './app-docs.model';
             width: 48px;
             height: 48px;
             border-radius: 12px;
-            background: linear-gradient(135deg, #1976d2, #2196f3);
+            background: linear-gradient(135deg, var(--mat-sys-primary, #1976d2), var(--mat-sys-primary-container, #2196f3));
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+            color: var(--mat-sys-on-primary, #ffffff);
+            box-shadow: 0 4px 12px var(--mat-sys-primary-container, rgba(33, 150, 243, 0.3));
         }
         .doc-category {
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #666;
+            color: var(--mat-sys-on-surface-variant, #666666);
             font-weight: 600;
         }
         .doc-title {
             margin: 0;
             font-size: 1.4rem;
             font-weight: 700;
-            color: #212121;
+            color: var(--mat-sys-on-surface, #212121);
         }
         .close-btn {
-            color: #757575;
+            color: var(--mat-sys-on-surface-variant, #757575);
         }
         .doc-dialog-content {
             max-height: 65vh;
@@ -130,7 +132,7 @@ import { IAppDocumentation } from './app-docs.model';
         .doc-summary {
             font-size: 1rem;
             line-height: 1.6;
-            color: #424242;
+            color: var(--mat-sys-on-surface-variant, #424242);
             margin-bottom: 1.5rem;
         }
         .doc-section {
@@ -143,13 +145,13 @@ import { IAppDocumentation } from './app-docs.model';
             font-size: 1.05rem;
             font-weight: 600;
             margin-bottom: 0.75rem;
-            color: #1a237e;
+            color: var(--mat-sys-primary, #1a237e);
         }
         .section-icon {
             font-size: 20px;
             width: 20px;
             height: 20px;
-            color: #1976d2;
+            color: var(--mat-sys-primary, #1976d2);
         }
         .feature-list {
             list-style: none;
@@ -164,13 +166,13 @@ import { IAppDocumentation } from './app-docs.model';
             align-items: center;
             gap: 0.75rem;
             font-size: 0.925rem;
-            color: #37474f;
+            color: var(--mat-sys-on-surface, #37474f);
         }
         .check-icon {
             font-size: 18px;
             width: 18px;
             height: 18px;
-            color: #2e7d32;
+            color: var(--mat-sys-primary, #2e7d32);
         }
         .step-list {
             list-style: none;
@@ -185,7 +187,7 @@ import { IAppDocumentation } from './app-docs.model';
             align-items: flex-start;
             gap: 0.75rem;
             font-size: 0.925rem;
-            color: #37474f;
+            color: var(--mat-sys-on-surface, #37474f);
         }
         .step-number {
             display: inline-flex;
@@ -194,8 +196,8 @@ import { IAppDocumentation } from './app-docs.model';
             min-width: 22px;
             height: 22px;
             border-radius: 50%;
-            background: #e3f2fd;
-            color: #1565c0;
+            background: var(--mat-sys-primary-container, #e3f2fd);
+            color: var(--mat-sys-on-primary-container, #1565c0);
             font-weight: 700;
             font-size: 0.75rem;
         }
@@ -209,15 +211,15 @@ import { IAppDocumentation } from './app-docs.model';
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            background: #fff8e1;
-            border-left: 4px solid #ffb300;
+            background: var(--mat-sys-tertiary-container, #fff8e1);
+            border-left: 4px solid var(--mat-sys-tertiary, #ffb300);
             padding: 0.75rem 1rem;
             border-radius: 4px;
             font-size: 0.875rem;
-            color: #795548;
+            color: var(--mat-sys-on-tertiary-container, #795548);
         }
         .tip-icon {
-            color: #ffb300;
+            color: var(--mat-sys-tertiary, #ffb300);
             font-size: 20px;
             width: 20px;
             height: 20px;
@@ -225,7 +227,7 @@ import { IAppDocumentation } from './app-docs.model';
         .doc-dialog-actions {
             margin-top: 1.5rem;
             padding-top: 1rem;
-            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            border-top: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.08));
         }
         .start-btn {
             border-radius: 8px;

@@ -9,6 +9,8 @@
         [description]="field?.description"
         [fieldName]="field?.property"
         [type]="field.type || 'text'"
+        [format]="field.format"
+        [enumOptions]="field.enum"
         [isArray]="field.isArray"
         [schemaName]="field?.schemaName!">
     </ci-dyn-input>

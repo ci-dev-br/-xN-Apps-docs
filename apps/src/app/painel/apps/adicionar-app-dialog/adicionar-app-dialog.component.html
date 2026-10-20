@@ -1,0 +1,166 @@
+<div class="add-dialog-container">
+    <!-- Header -->
+    <header class="add-dialog-header">
+        <div class="header-title-box">
+            <button mat-icon-button *ngIf="selectedMode === 'git-form'" (click)="backToChoice()" class="back-btn" aria-label="Voltar">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <div class="dialog-icon-badge" [class.dev-badge]="selectedMode === 'git-form'">
+                <mat-icon>{{ selectedMode === 'git-form' ? 'terminal' : 'add_circle' }}</mat-icon>
+            </div>
+            <div>
+                <h2 mat-dialog-title class="dialog-title">
+                    {{ selectedMode === 'git-form' ? 'Adicionar Módulo NestJS via Git' : 'Adicionar Aplicativo' }}
+                </h2>
+                <p class="dialog-subtitle">
+                    {{ selectedMode === 'git-form' 
+                        ? 'O repositório é clonado em pasta isolada com git próprio e compila paralelamente.' 
+                        : 'Escolha como deseja adicionar ou ativar novas ferramentas para uso em sua conta.' }}
+                </p>
+            </div>
+        </div>
+
+        <button mat-icon-button mat-dialog-close class="close-btn" aria-label="Fechar janela">
+            <mat-icon>close</mat-icon>
+        </button>
+    </header>
+
+    <!-- Modo 1: Escolha das Opções -->
+    <div class="options-view" *ngIf="selectedMode === 'choice'">
+        <div class="choice-cards-grid">
+            <!-- Opção 1: Ir para a Loja -->
+            <div class="choice-card" (click)="goToStore()" tabindex="0" role="button" (keydown.enter)="goToStore()">
+                <div class="choice-card-icon store-icon">
+                    <mat-icon>storefront</mat-icon>
+                </div>
+                <div class="choice-card-content">
+                    <div class="card-badge">Catálogo Oficial</div>
+                    <h3 class="card-title">Ativar ou ir para a Loja</h3>
+                    <p class="card-description">
+                        Explore o catálogo corporativo de aplicações disponíveis, consulte a mini documentação e ative recursos para a sua conta.
+                    </p>
+                </div>
+                <div class="choice-card-footer">
+                    <button mat-flat-button color="primary" class="choice-btn">
+                        <mat-icon>shopping_bag</mat-icon>
+                        Ir para a Loja
+                    </button>
+                </div>
+            </div>
+
+            <!-- Opção 2: Adicionar via Git (DEVELOPER) -->
+            <div class="choice-card dev-card" 
+                 [class.disabled-card]="!isDeveloper" 
+                 (click)="openGitForm()" 
+                 tabindex="0" 
+                 role="button" 
+                 (keydown.enter)="openGitForm()">
+                <div class="choice-card-icon git-icon">
+                    <mat-icon>code</mat-icon>
+                </div>
+                <div class="choice-card-content">
+                    <div class="card-badge dev-badge-tag">
+                        <mat-icon class="badge-mini-icon">engineering</mat-icon>
+                        ROLE DEVELOPER
+                    </div>
+                    <h3 class="card-title">Módulo NestJS via Git</h3>
+                    <p class="card-description">
+                        Adicione um repositório Git com uma lib NestJS contendo uma aplicação personalizada. Clona isoladamente e compila em paralelo.
+                    </p>
+                </div>
+                <div class="choice-card-footer">
+                    <button mat-flat-button 
+                            color="accent" 
+                            class="choice-btn dev-btn" 
+                            [disabled]="!isDeveloper"
+                            [matTooltip]="!isDeveloper ? 'Esta opção é restrita a usuários com ROLE DEVELOPER.' : ''">
+                        <mat-icon>terminal</mat-icon>
+                        Configurar Módulo Git
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modo 2: Formulário de Configuração do Módulo Git -->
+    <div class="git-form-view" *ngIf="selectedMode === 'git-form'">
+        <form [formGroup]="gitForm" (ngSubmit)="submitGitModule()">
+            <div class="form-grid">
+                <!-- URL do Git -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Endereço do Repositório Git (HTTPS ou SSH)</mat-label>
+                    <mat-icon matPrefix>link</mat-icon>
+                    <input matInput formControlName="gitUrl" placeholder="https://github.com/usuario/minha-lib-nest.git">
+                    <mat-error *ngIf="gitForm.get('gitUrl')?.hasError('required')">
+                        O endereço do Git é obrigatório.
+                    </mat-error>
+                </mat-form-field>
+
+                <div class="form-row">
+                    <!-- Nome do Módulo NestJS -->
+                    <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>Nome do Módulo NestJS</mat-label>
+                        <mat-icon matPrefix>view_module</mat-icon>
+                        <input matInput formControlName="moduleName" placeholder="Ex: MeuModuloCustomModule">
+                        <mat-hint>Nome exato da classe exported do Módulo NestJS.</mat-hint>
+                        <mat-error *ngIf="gitForm.get('moduleName')?.hasError('required')">
+                            O nome do módulo é obrigatório.
+                        </mat-error>
+                    </mat-form-field>
+
+                    <!-- Branch -->
+                    <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>Branch do Git</mat-label>
+                        <mat-icon matPrefix>fork_right</mat-icon>
+                        <input matInput formControlName="branch" placeholder="main">
+                    </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                    <!-- Chave / AppKey -->
+                    <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>Identificador da Aplicação (appKey)</mat-label>
+                        <mat-icon matPrefix>tag</mat-icon>
+                        <input matInput formControlName="appKey" (input)="onAppKeyInput()" placeholder="Ex: meu-modulo-app">
+                        <mat-hint>Identificador único da aplicação.</mat-hint>
+                        <mat-error *ngIf="gitForm.get('appKey')?.hasError('required')">
+                            A chave da aplicação é obrigatória.
+                        </mat-error>
+                    </mat-form-field>
+
+                    <!-- Nome de Exibição -->
+                    <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>Nome de Exibição</mat-label>
+                        <mat-icon matPrefix>badge</mat-icon>
+                        <input matInput formControlName="name" placeholder="Ex: Meu Módulo Personalizado">
+                    </mat-form-field>
+                </div>
+
+                <!-- Configurações Necessárias (JSON) -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Configurações e Parâmetros do Módulo (JSON)</mat-label>
+                    <textarea matInput formControlName="configurations" rows="4" placeholder="{\n  &quot;apiKey&quot;: &quot;...&quot;\n}"></textarea>
+                    <mat-hint>Parâmetros passados para a inicialização e injeção do módulo.</mat-hint>
+                </mat-form-field>
+            </div>
+
+            <div class="isolation-notice">
+                <mat-icon class="notice-icon">info</mat-icon>
+                <span>
+                    Este repositório será clonado em uma pasta isolada com git próprio sem mesclar no projeto principal, e sua compilação será executada em paralelo em segundo plano.
+                </span>
+            </div>
+
+            <mat-dialog-actions align="end" class="form-actions">
+                <button mat-button type="button" (click)="backToChoice()" [disabled]="isSubmitting">
+                    Voltar
+                </button>
+                <button mat-flat-button color="primary" type="submit" [disabled]="gitForm.invalid || isSubmitting" class="submit-btn">
+                    <mat-spinner diameter="18" *ngIf="isSubmitting"></mat-spinner>
+                    <mat-icon *ngIf="!isSubmitting">download_for_offline</mat-icon>
+                    <span>{{ isSubmitting ? 'Clonando e Compilando...' : 'Clonar e Compilar Módulo' }}</span>
+                </button>
+            </mat-dialog-actions>
+        </form>
+    </div>
+</div>

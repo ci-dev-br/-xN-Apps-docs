@@ -78,13 +78,13 @@ import { CurrencyPipe, DatePipe, DecimalPipe } from "@angular/common";
         .full-width { width: 100%; }
         .config-row { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
         .results-container { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
-        .price-header { text-align: center; border-bottom: 1px solid #eee; padding-bottom: 12px; }
-        .price-header h2 { margin: 0; font-size: 2rem; color: #2e7d32; }
-        .price-header small { color: #666; }
+        .price-header { text-align: center; border-bottom: 1px solid var(--mat-sys-outline-variant, #eee); padding-bottom: 12px; }
+        .price-header h2 { margin: 0; font-size: 2rem; color: var(--mat-sys-tertiary, #2e7d32); }
+        .price-header small { color: var(--mat-sys-on-surface-variant, #666); }
         .indicators-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .indicator-box { background: #f5f5f5; padding: 12px; border-radius: 8px; text-align: center; display: flex; flex-direction: column;}
-        .indicator-box .label { font-size: 0.8rem; color: #555; text-transform: uppercase; font-weight: bold;}
-        .indicator-box .value { font-size: 1.2rem; color: #111; font-weight: 500; margin-top: 4px;}
+        .indicator-box { background: var(--mat-sys-surface-container-low, var(--mat-sys-surface, #f5f5f5)); padding: 12px; border-radius: 8px; text-align: center; display: flex; flex-direction: column; border: 1px solid var(--mat-sys-outline-variant, #eee);}
+        .indicator-box .label { font-size: 0.8rem; color: var(--mat-sys-on-surface-variant, #555); text-transform: uppercase; font-weight: bold;}
+        .indicator-box .value { font-size: 1.2rem; color: var(--mat-sys-on-surface, #111); font-weight: 500; margin-top: 4px;}
         .btn-edit { margin-top: 16px; }
     `],
     standalone: true,
@@ -99,7 +99,7 @@ export class FundamentalIndicatorsCard implements OnInit {
     @Input() ticker?: string;
 
     // Substitua pela URL base real da sua API NestJS
-    private readonly API_URL = 'https://apps.ci.dev.br/indicators';
+    private readonly API_URL = '/indicators';
 
     constructor(private readonly http: HttpClient) { }
 

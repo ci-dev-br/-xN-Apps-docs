@@ -1,0 +1,23 @@
+/* Beauty CRM Specialized Theme Styles */
+.beauty-theme {
+  --primary-color: #e91e63;
+  --primary-accent: #f06292;
+  --beauty-rose-bg: rgba(233, 30, 99, 0.04);
+  --beauty-card-border: rgba(233, 30, 99, 0.15);
+
+  .mat-mdc-button.mat-primary,
+  .mat-mdc-raised-button.mat-primary,
+  .mat-mdc-flat-button.mat-primary {
+    --mdc-filled-button-container-color: #e91e63;
+    --mdc-protected-button-container-color: #e91e63;
+  }
+
+  .combined-topbar {
+    background: linear-gradient(135deg, #fff 0%, #fff5f8 100%);
+  }
+
+  .banner-icon-box.box-custom {
+    background: rgba(233, 30, 99, 0.12);
+    color: #e91e63;
+  }
+}

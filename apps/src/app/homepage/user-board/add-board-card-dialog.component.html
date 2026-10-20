@@ -1,0 +1,85 @@
+<div class="dialog-header">
+    <div class="header-title">
+        <mat-icon class="header-icon">dashboard_customize</mat-icon>
+        <div>
+            <h2>Adicionar Cards ao seu Board</h2>
+            <p>Selecione cards e ferramentas disponíveis para os seus aplicativos ativos.</p>
+        </div>
+    </div>
+    <button mat-icon-button (click)="close()" class="btn-close" matTooltip="Fechar">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<mat-dialog-content class="dialog-body">
+    <!-- Barra de busca e filtros de categoria -->
+    <div class="search-and-filters">
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Pesquisar cards, indicadores ou aplicativos</mat-label>
+            <input matInput [(ngModel)]="searchTerm" (input)="applyFilter()" placeholder="Ex: Selic, Cotações, B3..." />
+            <mat-icon matPrefix>search</mat-icon>
+            @if(searchTerm) {
+                <button mat-icon-button matSuffix (click)="searchTerm = ''; applyFilter()">
+                    <mat-icon>clear</mat-icon>
+                </button>
+            }
+        </mat-form-field>
+
+        <div class="category-chips">
+            @for (cat of categories; track cat) {
+                <button type="button" class="category-pill" 
+                    [class.active]="selectedCategory === cat"
+                    (click)="filterByCategory(cat)">
+                    {{ cat }}
+                </button>
+            }
+        </div>
+    </div>
+
+    <!-- Lista de Cards Disponíveis -->
+    <div class="cards-grid">
+        @for (card of filteredCards; track card.id) {
+            <div class="card-item" [class.is-added]="isCardAdded(card.id)">
+                <div class="card-item-header">
+                    <div class="card-icon-badge">
+                        <mat-icon>{{ card.icon || 'widgets' }}</mat-icon>
+                    </div>
+                    <div class="card-meta">
+                        <span class="app-source-tag">{{ card.appName }}</span>
+                        <h4 class="card-title">{{ card.title }}</h4>
+                    </div>
+                </div>
+
+                <p class="card-description">{{ card.description }}</p>
+
+                <div class="card-tags">
+                    @for (tag of card.tags; track tag) {
+                        <span class="tag-badge">{{ tag }}</span>
+                    }
+                </div>
+
+                <div class="card-item-footer">
+                    @if (isCardAdded(card.id)) {
+                        <span class="added-badge">
+                            <mat-icon>check_circle</mat-icon> Já no Board
+                        </span>
+                    } @else {
+                        <button mat-flat-button color="primary" class="btn-add-card" (click)="addCard(card)">
+                            <mat-icon>add</mat-icon> Adicionar ao Board
+                        </button>
+                    }
+                </div>
+            </div>
+        } @empty {
+            <div class="empty-results">
+                <mat-icon class="empty-icon">search_off</mat-icon>
+                <h4>Nenhum card encontrado</h4>
+                <p>Verifique o termo pesquisado ou certifique-se de que possui aplicativos ativados em seu perfil.</p>
+            </div>
+        }
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button (click)="close()">Fechar</button>
+</mat-dialog-actions>

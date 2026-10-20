@@ -1,11 +1,17 @@
 import { Component, Injector, Input, Optional, Type } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { DynInputDateComponent } from "./dyn-input-date.component";
+import { DynInputModulesComponent } from "./dyn-input-modules.component";
+import { DynInputChipsAutocompleteComponent } from "./dyn-input-chips-autocomplete.component";
 import { DaoBuilder, DaoService, IAmSchematization } from "@ci/core";
 import { getServiceAsSchema } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 
 const types: any = {
+    'modules': DynInputModulesComponent,
+    'app-modules': DynInputModulesComponent,
+    'chips-autocomplete': DynInputChipsAutocompleteComponent,
+    'modules-autocomplete': DynInputChipsAutocompleteComponent,
 }
 
 @Component({
@@ -24,6 +30,9 @@ export class DynInputComponent implements IAmSchematization {
     @Input() formGroup?: FormGroup;
     @Input() inputComponent?: Type<any>;
     @Input() isArray?: boolean;
+    @Input() format?: string;
+    @Input() enumOptions?: string[];
+
     private _schemaName?: string | undefined;
     public get schemaName(): string {
         return this._schemaName!;
@@ -67,7 +76,6 @@ export class DynInputComponent implements IAmSchematization {
         if (!!value && !!types[value])
             this.inputComponent = types[value];
     }
-    @Input() format?: string;
     auto?: boolean;
     list?: any[];
     service?: any;

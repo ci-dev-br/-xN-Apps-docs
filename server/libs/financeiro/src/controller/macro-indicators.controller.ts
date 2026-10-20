@@ -1,5 +1,6 @@
 import { Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Public } from '@ci/auth/decorators/public.decorator';
 
 import { MacroIndicator } from '../model/macro-indicator.entity'; // Apenas para tipagem do Swagger
 import { MacroIndicatorsService } from '../service/macro-indicators.service';
@@ -13,6 +14,8 @@ export class MacroIndicatorsController {
         private readonly bcbScraperService: BcbScraperService,
     ) { }
 
+    @Public()
+    @Get('latest')
     @Post('latest')
     @ApiOperation({
         summary: 'Obtém os últimos indicadores',

@@ -70,6 +70,16 @@ export interface Application {
   /**
    * O endereço URL principal da aplicação. Este é o ponto de acesso externo para a aplicação.
    */
+  /**
+   * Módulos e aplicações padrão contidos e combinados nesta aplicação.
+   */
+  modules?: Array<string> | null;
+
+  /**
+   * Regras adicionais customizadas da aplicação.
+   */
+  customRules?: Record<string, any> | null;
+
   url?: string | null;
 
   /**

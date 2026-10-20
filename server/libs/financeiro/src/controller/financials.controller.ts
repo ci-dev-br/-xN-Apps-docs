@@ -1,5 +1,6 @@
 import { Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { Public } from '@ci/auth/decorators/public.decorator';
 import { FinancialsService } from '../service/financials.service';
 
 @ApiTags('Dados Fundamentalistas (CVM)')
@@ -7,6 +8,8 @@ import { FinancialsService } from '../service/financials.service';
 export class FinancialsController {
     constructor(private readonly financialsService: FinancialsService) { }
 
+    @Public()
+    @Get(':ticker/latest')
     @Post(':ticker/latest')
     @ApiOperation({ summary: 'Obtém o balanço e DRE mais recente de uma empresa pelo ticker' })
     @ApiParam({ name: 'ticker', example: 'PETR4' })

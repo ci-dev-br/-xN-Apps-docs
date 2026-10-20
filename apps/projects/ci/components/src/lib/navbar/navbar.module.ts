@@ -15,6 +15,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { GruposModalComponent } from "../grupos-modal/grupos-modal.component";
 
 import { MatBadgeModule } from "@angular/material/badge";
+import { MatDividerModule } from "@angular/material/divider";
 import { CommonModule } from "@angular/common";
 
 @NgModule({
@@ -36,6 +37,7 @@ import { CommonModule } from "@angular/common";
         MatTooltipModule,
         MatDialogModule,
         MatBadgeModule,
+        MatDividerModule,
         GruposModalComponent,
     ],
     exports: [

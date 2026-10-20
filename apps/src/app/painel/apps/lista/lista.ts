@@ -1,9 +1,11 @@
 import { MatIconModule } from "@angular/material/icon";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { AdicionarAppDialogComponent } from "../adicionar-app-dialog/adicionar-app-dialog.component";
 import { CI_STATIC_APPS, IApp } from "../apps";
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, Optional } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserAuthenticationService } from '@ci/auth';
-import { CoreModule } from "@ci/core";
+import { CoreModule, ApplicationCatalogService } from "@ci/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -21,6 +23,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
         MatFormFieldModule,
         ReactiveFormsModule,
         MatTooltipModule,
+        MatDialogModule,
     ],
     styleUrl: 'lista.scss'
 })
@@ -34,16 +37,31 @@ export class Lista {
         private readonly userService: UserAuthenticationService,
         private readonly router: Router,
         private readonly route: ActivatedRoute,
+        @Optional() private readonly catalogService?: ApplicationCatalogService,
+        @Optional() private readonly dialog?: MatDialog,
     ) { }
     async ngOnInit() {
         this.userService.user.subscribe(user => {
             if (!!user) {
-                this.apps = CI_STATIC_APPS.filter(app => !!this.userService && !!this.userService.user && !!this.userService.user.value ?
-                    this.userService.user?.value?.roles?.find(role => app.roles && app.roles.indexOf(role) > -1) : false);
+                this.catalogService?.refreshMyActivations().subscribe();
+
             } else {
                 // this.router.navigate(['/']);
             }
         });
+        this.catalogService?.activatedApps$.subscribe(activeSet => {
+            const user = this.userService?.user?.value;
+            if (!user) {
+                this.apps = [];
+                return;
+            }
+            this.apps = CI_STATIC_APPS.filter(app => {
+                const appKey = app.name || app.url?.replace(/^\//, '');
+                return Boolean(appKey && activeSet.has(appKey));
+            });
+            this.applySearchFilter(this.searchControl.value);
+        });
+
         this.searchControl.valueChanges.subscribe((value: string) => {
             if (!!value && value.trim().length > 0) {
                 this.appsFiltered = this.apps?.filter(x => {
@@ -56,6 +74,25 @@ export class Lista {
             } else {
                 this.appsFiltered = undefined;
             }
+        });
+    }
+    private applySearchFilter(value?: string) {
+        if (!!value && value.trim().length > 0) {
+            this.appsFiltered = this.apps?.filter(x => {
+                return JSON.stringify(x).toLocaleLowerCase().indexOf(value.toLocaleLowerCase()) > -1;
+            });
+        } else {
+            this.appsFiltered = undefined;
+        }
+    }
+    openLoja() {
+        this.router.navigate(['/painel/Loja']);
+    }
+    openAddAppDialog() {
+        this.dialog?.open(AdicionarAppDialogComponent, {
+            width: '680px',
+            maxWidth: '92vw',
+            panelClass: 'ci-add-app-dialog-panel'
         });
     }
     async appClickHandler(event: any, app: any) {

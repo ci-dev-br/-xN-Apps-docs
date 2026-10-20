@@ -4,7 +4,7 @@ import { Application } from "../model/application.entity";
 import { ApplicationService } from "../service/application.service";
 import { User } from "@ci/auth/models/user.entity";
 import { GetInputDtos } from "../dto/input-dto";
-import { CatalogAppDto, CanLoadAppDto, CheckVersionDto, ReconcileCatalogDto, ToggleUserActivationDto, GetStoreDto } from "../dto/catalog-app.dto";
+import { CatalogAppDto, CanLoadAppDto, CheckVersionDto, ReconcileCatalogDto, ToggleUserActivationDto, GetStoreDto, ToggleGlobalAppDto, InstallGitModuleDto } from "../dto/catalog-app.dto";
 import { Role } from "@ci/auth/decorators/role.decorator";
 import { Public } from "@ci/auth/decorators/public.decorator";
 import { SyncPayloadDao } from "@ci/core";
@@ -94,6 +94,45 @@ export class ApplicationController {
     ) {
         const user: User = (req as any).user;
         return await this.service.getUserActivations(user);
+    }
+
+    /**
+     * Alternar status global de uma aplicação (Ativar/Desativar para todos os usuários).
+     * Restrito a usuários com perfil MASTER + DEVELOPER que sejam colaboradores da aplicação.
+     */
+    @Post('ToggleGlobalStatus')
+    @ApiResponse({
+        description: 'Ativar ou desativar aplicação globalmente na plataforma'
+    })
+    @ApiOperation({
+        operationId: 'ToggleGlobalApplicationStatus',
+    })
+    async toggleGlobalStatus(
+        @Request() req: Request,
+        @Body() dto: ToggleGlobalAppDto
+    ) {
+        const user: User = (req as any).user;
+        return await this.service.toggleGlobalStatus(dto, user);
+    }
+
+    /**
+     * Adiciona e instala uma aplicação/lib NestJS a partir de um repositório Git isolado.
+     * Restrito a usuários com ROLE DEVELOPER.
+     */
+    @Role('DEVELOPER')
+    @Post('InstallGitModule')
+    @ApiResponse({
+        description: 'Clonar repositório Git isolado e instalar módulo NestJS da aplicação'
+    })
+    @ApiOperation({
+        operationId: 'InstallGitModuleApplication',
+    })
+    async installGitModule(
+        @Request() req: Request,
+        @Body() dto: InstallGitModuleDto
+    ) {
+        const user: User = (req as any).user;
+        return await this.service.installGitModule(dto, user);
     }
 
     /**

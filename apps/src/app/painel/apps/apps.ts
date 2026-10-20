@@ -13,6 +13,9 @@ export interface IApp extends Application {
     name?: string;
     shortDescription?: string; // Campo novo para descrição curta
     description?: string;      // Campo existente para descrição longa
+    modules?: string[];
+    isCombinedApp?: boolean;
+    customRules?: Record<string, any>;
     __cta_hndlred?: number;
     __presentation_order?: number;
 }
@@ -280,8 +283,8 @@ export const CI_STATIC_APPS: IApp[] = [
         color: getColor(),
         url: '/Loja',
         name: 'Loja',
-        roles: ['USER'],
-        icon: 'apps',
+        roles: ['USER', 'ADMIN', 'MASTER'],
+        icon: 'storefront',
         type: 'mat'
     },
     {
@@ -308,5 +311,34 @@ export const CI_STATIC_APPS: IApp[] = [
             'ADMIN',
             'MASTER'
         ]
+    },
+    {
+        name: 'Beauty CRM',
+        shortDescription: 'CRM especializado para estética e beleza, combinando múltiplos módulos padrão e regras de negócio sem necessidade de código.',
+        description: 'O Beauty CRM exemplifica uma aplicação composta: reúne módulos padrão essenciais (Cadastros, CRM, Financeiro, Vendas, Mensagens) integrados a módulos verticais customizados (Agendamento Estética, Ficha de Anamnese), operando com regras de negócio adaptadas sem necessidade de codificação manual.',
+        color: '#E91E63',
+        url: '/BeautyCRM',
+        categoria: 'Business',
+        roles: ['USER', 'ADMIN', 'MASTER'],
+        icon: 'crm',
+        type: 'svg',
+        isCombinedApp: true,
+        modules: [
+            'Cadastros',
+            'CRM',
+            'Financeiro',
+            'Vendas',
+            'Mensagens',
+            'Agendamento Estética',
+            'Ficha de Anamnese'
+        ],
+        customRules: {
+            vertical: 'beauty',
+            theme: 'beauty',
+            defaultModule: 'CRM',
+            commissionRate: 0.15,
+            requireAnamneseForServices: true,
+            remindersViaMensagens: true
+        }
     }
 ];

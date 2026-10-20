@@ -88,6 +88,22 @@ export class DynFormComponent implements OnInit, OnChanges {
       ...schemaProps,
     };
 
+    // Se estiver editando Application, garante que a propriedade modules esteja disponível para seleção de módulos via chips com autocomplete
+    if ((name === 'Application' || name?.toLowerCase() === 'application') && !mergedProperties['modules']) {
+      mergedProperties['modules'] = {
+        title: 'Módulos Integrados',
+        description: 'Lista de módulos ou aplicações padrão contidos e combinados nesta aplicação.',
+        type: 'chips-autocomplete' as any,
+        format: 'chips-autocomplete',
+        enum: [
+          'CRM', 'Cadastros', 'Financeiro', 'Vendas', 'Produtos', 'Mensagens',
+          'Organizacao', 'Projetos', 'Arquivos', 'Formularios', 'CMS', 'LowCode',
+          'Dynamic', 'Treinamento', 'DevTools', 'Codex', 'SEO', 'Threejs', 'Grupos'
+        ],
+        isArray: true
+      };
+    }
+
     // Fallback: incorpora chaves existentes no objeto `data` ou no `formGroup` caso o schema esteja vazio ou incompleto
     const candidateKeys = new Set<string>(Object.keys(mergedProperties));
     if (this.data && typeof this.data === 'object') {
@@ -102,20 +118,35 @@ export class DynFormComponent implements OnInit, OnChanges {
     for (const p of candidateKeys) {
       if (this.isInternalOrAuditKey(p)) continue;
 
+      const propInfo = mergedProperties[p];
+      const isChipsAutocomplete =
+        propInfo?.format === 'chips-autocomplete' ||
+        propInfo?.format === 'modules-autocomplete' ||
+        propInfo?.type === 'chips-autocomplete';
+
+      const isModulesField = (p === 'modules' || p === 'modulos' || p === 'containedModules' || isChipsAutocomplete || ((name === 'Application' || this.schemaName === 'Application') && p === 'modules'));
       const sampleVal = this.data?.[p] ?? this.formGroup?.get(p)?.value;
       const inferredType =
-        typeof sampleVal === 'number'
-          ? 'number'
-          : typeof sampleVal === 'boolean'
-            ? 'boolean'
-            : Array.isArray(sampleVal)
-              ? 'array'
-              : 'text';
+        isChipsAutocomplete
+          ? 'chips-autocomplete'
+          : isModulesField
+            ? 'modules'
+            : typeof sampleVal === 'number'
+              ? 'number'
+              : typeof sampleVal === 'boolean'
+                ? 'boolean'
+                : Array.isArray(sampleVal)
+                  ? 'array'
+                  : 'text';
 
-      const property_info: ISchemaProperty = mergedProperties[p] || {
-        title: p,
+      const property_info: ISchemaProperty = propInfo || {
+        title: isModulesField ? 'Módulos Integrados' : p,
         type: inferredType,
       };
+
+      const finalType = (isChipsAutocomplete || property_info.format === 'chips-autocomplete' || isModulesField)
+        ? 'chips-autocomplete'
+        : (property_info.type || inferredType);
 
       const schema_name =
         !!(property_info as any).items && (property_info as any).items['$ref']
@@ -129,7 +160,8 @@ export class DynFormComponent implements OnInit, OnChanges {
               : undefined;
 
       if (this.formGroup && !this.formGroup.get(p)) {
-        const ctrl = new FormControl(this.data?.[p] ?? null);
+        const initialVal = this.data?.[p] ?? (isModulesField || isChipsAutocomplete ? [] : null);
+        const ctrl = new FormControl(initialVal);
         ctrl.valueChanges.subscribe(val => {
           if (this.data && typeof this.data === 'object') {
             this.data[p] = val;
@@ -139,15 +171,17 @@ export class DynFormComponent implements OnInit, OnChanges {
       }
 
       fields.push({
-        label: property_info.title || p,
+        label: property_info.title || (isModulesField ? 'Módulos Integrados' : p),
         property: p,
-        description: property_info.description,
-        type: property_info.type || inferredType,
+        description: property_info.description || (isModulesField ? 'Selecione os módulos e aplicações padrão contidos e combinados nesta aplicação.' : undefined),
+        type: finalType as any,
+        format: property_info.format,
+        enum: property_info.enum,
         items: property_info.items,
         schemaName: schema_name,
         readonly: property_info.readOnly,
         dataService: schema_name ? (getServiceAsSchema(schema_name) as any) : undefined,
-        isArray: property_info.type === 'array' || property_info.isArray,
+        isArray: property_info.type === 'array' || property_info.isArray || isModulesField || isChipsAutocomplete,
       } as IFormFieldDefinition<any>);
     }
 

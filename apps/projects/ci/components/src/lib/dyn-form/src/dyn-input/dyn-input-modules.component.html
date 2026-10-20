@@ -1,0 +1,219 @@
+<div class="ci-dyn-modules-container">
+  <!-- Cabeçalho -->
+  <div class="modules-header">
+    <div class="header-titles">
+      <h3 class="header-label">
+        <mat-icon class="header-icon">dashboard_customize</mat-icon>
+        {{ label || 'Módulos da Aplicação' }}
+      </h3>
+      <p class="header-description">
+        {{ description || 'As aplicações podem combinar múltiplas aplicações padrão e regras adicionais customizadas, sem necessidade de código manual.' }}
+      </p>
+    </div>
+    <div class="header-badge" [class.has-selection]="selectedModules.length > 0">
+      <mat-icon>check_circle</mat-icon>
+      <span>{{ selectedModules.length }} módulo(s) combinado(s)</span>
+    </div>
+  </div>
+
+  <!-- Barra de Módulos Combinados na Aplicação (Pipeline de Combinação) -->
+  <div class="combined-pipeline-card">
+    <div class="pipeline-header">
+      <div class="pipeline-title">
+        <mat-icon>alt_route</mat-icon>
+        <span>Módulos Combinados nesta Aplicação</span>
+        <span class="pipeline-hint">(Defina a ordem de execução e as regras de cada módulo)</span>
+      </div>
+      <button mat-stroked-button type="button" class="btn-toggle-rules" (click)="showGlobalRules = !showGlobalRules">
+        <mat-icon>tune</mat-icon>
+        {{ showGlobalRules ? 'Ocultar Regras Globais' : 'Regras da Aplicação' }}
+      </button>
+    </div>
+
+    @if(selectedModules.length === 0){
+      <div class="empty-pipeline-state">
+        <mat-icon>layers_clear</mat-icon>
+        <p>Nenhum módulo selecionado ainda. Selecione aplicações padrão abaixo ou adicione módulos customizados para compor esta aplicação.</p>
+      </div>
+    }@else{
+      <div class="pipeline-chips-list">
+        @for(mod of selectedModules; track mod.key; let i = $index){
+          <div class="pipeline-chip-item" [class.is-custom]="!mod.isStandard">
+            <span class="chip-order-number">{{ i + 1 }}</span>
+            <mat-icon class="chip-mod-icon">{{ mod.icon || 'widgets' }}</mat-icon>
+            <div class="chip-mod-info">
+              <span class="chip-mod-name">{{ mod.customRules?.alias || mod.name }}</span>
+              <span class="chip-mod-badge" [class.badge-custom]="!mod.isStandard">
+                {{ mod.isStandard ? 'Padrão' : 'Customizado' }}
+              </span>
+            </div>
+
+            <div class="chip-actions">
+              <button mat-icon-button type="button" class="btn-mini" matTooltip="Subir ordem" [disabled]="i === 0" (click)="moveModule(i, 'up', $event)">
+                <mat-icon>arrow_upward</mat-icon>
+              </button>
+              <button mat-icon-button type="button" class="btn-mini" matTooltip="Descer ordem" [disabled]="i === selectedModules.length - 1" (click)="moveModule(i, 'down', $event)">
+                <mat-icon>arrow_downward</mat-icon>
+              </button>
+              <button mat-icon-button type="button" class="btn-mini" matTooltip="Regras customizadas deste módulo" (click)="openModuleRules(mod, $event)">
+                <mat-icon>settings</mat-icon>
+              </button>
+              <button mat-icon-button type="button" class="btn-mini btn-remove" matTooltip="Remover da combinação" (click)="removeModuleFromSelection(mod, $event)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Painel de Regras Globais da Aplicação Combinada -->
+    @if(showGlobalRules){
+      <div class="global-rules-panel">
+        <div class="rules-panel-title">
+          <mat-icon>settings_suggest</mat-icon>
+          <span>Regras Adicionais Customizadas da Aplicação (Sem Código)</span>
+        </div>
+        <div class="global-rules-grid">
+          <mat-form-field appearance="outline" class="rules-field">
+            <mat-label>Tema Visual Personalizado</mat-label>
+            <input matInput type="text" [(ngModel)]="appTheme" [ngModelOptions]="{standalone: true}" placeholder="Ex: beauty, minimal, dark" (change)="updateGlobalRules()">
+            <mat-hint>Aplica temas específicos (ex: beauty.styles.scss)</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="rules-field">
+            <mat-label>Módulo Padrão Inicial</mat-label>
+            <input matInput type="text" [(ngModel)]="appDefaultModule" [ngModelOptions]="{standalone: true}" placeholder="Ex: CRM ou Cadastros" (change)="updateGlobalRules()">
+            <mat-hint>Módulo carregado inicialmente na abertura</mat-hint>
+          </mat-form-field>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Painel de Edição de Regras Customizadas do Módulo Aberto -->
+  @if(editingRulesModule){
+    <div class="module-rules-dialog-inline">
+      <div class="dialog-inline-header">
+        <div class="dialog-inline-title">
+          <mat-icon>tune</mat-icon>
+          <span>Regras do Módulo: <strong>{{ editingRulesModule.name }}</strong></span>
+        </div>
+        <button mat-icon-button type="button" (click)="closeModuleRules()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="dialog-inline-body">
+        <mat-form-field appearance="outline" class="inline-field">
+          <mat-label>Nome de Exibição / Alias Customizado</mat-label>
+          <input matInput type="text" [(ngModel)]="ruleAlias" [ngModelOptions]="{standalone: true}" [placeholder]="editingRulesModule.name">
+          <mat-hint>Substitui o nome padrão no contexto desta aplicação (ex: "Clientes e Pacientes")</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="inline-field">
+          <mat-label>Rota Inicial Específica</mat-label>
+          <input matInput type="text" [(ngModel)]="ruleInitialRoute" [ngModelOptions]="{standalone: true}" placeholder="Ex: /painel/CRM ou /Cadastros/clientes">
+          <mat-hint>Rota ou tela inicial acionada neste módulo</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="inline-field full-width">
+          <mat-label>Parâmetros e Regras em JSON (Opcional)</mat-label>
+          <textarea matInput rows="3" [(ngModel)]="ruleParamsJson" [ngModelOptions]="{standalone: true}" placeholder='{ "filtrarPor": "estetica", "fidelidade": true }'></textarea>
+          <mat-hint>Regras e configurações extras passadas para o módulo em tempo de execução</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="dialog-inline-footer">
+        <button mat-button type="button" (click)="closeModuleRules()">Cancelar</button>
+        <button mat-flat-button color="primary" type="button" (click)="saveModuleRules()">Salvar Regras</button>
+      </div>
+    </div>
+  }
+
+  <!-- Adição de Módulos Customizados / Faltantes ("Ainda Faltam") -->
+  <div class="custom-module-adder-card">
+    <div class="adder-header">
+      <mat-icon>add_circle_outline</mat-icon>
+      <span>Adicionar Módulo Customizado ou Faltante (Sem Código)</span>
+    </div>
+    <div class="adder-controls">
+      <mat-form-field appearance="outline" class="adder-field">
+        <mat-label>Nome do Módulo Customizado</mat-label>
+        <input matInput type="text" [(ngModel)]="newCustomModuleName" [ngModelOptions]="{standalone: true}" placeholder="Ex: Agendamento Estética, Ficha de Anamnese..." (keydown.enter)="addCustomModule()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="adder-field desc-field">
+        <mat-label>Descrição / Propósito da Regra</mat-label>
+        <input matInput type="text" [(ngModel)]="newCustomModuleDesc" [ngModelOptions]="{standalone: true}" placeholder="Finalidade do módulo dentro da aplicação combinada" (keydown.enter)="addCustomModule()">
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" type="button" class="btn-add-custom" [disabled]="!newCustomModuleName.trim()" (click)="addCustomModule()">
+        <mat-icon>add</mat-icon>
+        Incluir Módulo
+      </button>
+    </div>
+  </div>
+
+  <!-- Catálogo de Aplicações Padrão com Filtros e Busca -->
+  <div class="catalog-section">
+    <div class="catalog-toolbar">
+      <div class="catalog-search-wrapper">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text" class="search-input" [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}" placeholder="Buscar aplicação padrão por nome ou descrição..." (input)="applyFilters()">
+        @if(searchTerm){
+          <button mat-icon-button type="button" class="btn-clear-search" (click)="searchTerm = ''; applyFilters()">
+            <mat-icon>clear</mat-icon>
+          </button>
+        }
+      </div>
+
+      <div class="category-pills">
+        @for(cat of categories; track cat){
+          <button type="button" class="category-pill" [class.active]="selectedCategory === cat" (click)="selectCategory(cat)">
+            {{ cat }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Grade de Módulos Selecionáveis -->
+    <div class="modules-grid">
+      @for(mod of filteredModules; track mod.key){
+        <div class="module-card" [class.selected]="isModuleSelected(mod)" (click)="toggleModule(mod)">
+          <div class="module-card-header">
+            <div class="card-icon-wrapper" [class.icon-custom]="!mod.isStandard">
+              <mat-icon>{{ mod.icon || 'widgets' }}</mat-icon>
+            </div>
+            <div class="card-title-group">
+              <span class="module-card-title">{{ mod.name }}</span>
+              <span class="module-card-cat">{{ mod.category }}</span>
+            </div>
+            <div class="card-checkbox-wrapper">
+              <mat-icon class="check-indicator" [class.checked]="isModuleSelected(mod)">
+                {{ isModuleSelected(mod) ? 'check_box' : 'check_box_outline_blank' }}
+              </mat-icon>
+            </div>
+          </div>
+
+          <p class="module-card-desc">
+            {{ mod.shortDescription || 'Módulo padrão integrado disponível para combinação.' }}
+          </p>
+
+          <div class="module-card-footer">
+            <span class="tag-pill" [class.tag-standard]="mod.isStandard" [class.tag-custom]="!mod.isStandard">
+              {{ mod.isStandard ? 'App Padrão' : 'Customizado' }}
+            </span>
+
+            @if(isModuleSelected(mod)){
+              <button mat-stroked-button type="button" class="btn-card-rules" (click)="openModuleRules(mod, $event)">
+                <mat-icon>tune</mat-icon>
+                Regras
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

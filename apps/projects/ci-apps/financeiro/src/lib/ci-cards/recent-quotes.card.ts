@@ -72,16 +72,16 @@ interface QuoteResponse {
         .mt-16 { margin-top: 16px; }
         .config-row { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
         .quotes-list { display: flex; flex-direction: column; margin-top: 12px; }
-        .quote-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .quote-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--mat-sys-outline-variant, #eee); }
         .quote-item:last-child { border-bottom: none; }
-        .quote-date { color: #666; font-size: 0.9rem; width: 60px; }
+        .quote-date { color: var(--mat-sys-on-surface-variant, #666); font-size: 0.9rem; width: 60px; }
         .quote-price { flex-grow: 1; text-align: center; font-size: 1.1rem; }
         .quote-var { display: flex; align-items: center; gap: 4px; font-weight: bold; font-size: 0.9rem; width: 80px; justify-content: flex-end;}
         .var-icon { font-size: 18px; width: 18px; height: 18px; }
-        .positive { color: #2e7d32; }
-        .negative { color: #c62828; }
-        .neutral { color: #757575; }
-        .empty { text-align: center; color: #888; padding: 16px 0; }
+        .positive { color: var(--mat-sys-tertiary, #2e7d32); }
+        .negative { color: var(--mat-sys-error, #c62828); }
+        .neutral { color: var(--mat-sys-outline, #757575); }
+        .empty { text-align: center; color: var(--mat-sys-outline, #888); padding: 16px 0; }
     `],
     standalone: true,
     imports: [CoreModule, MatFormFieldModule, MatInputModule, FormsModule, MatCardModule, MatButtonModule, MatIconModule, CurrencyPipe, DatePipe, DecimalPipe, NgClass]
@@ -92,7 +92,7 @@ export class RecentQuotesCard implements OnInit {
     @Input() ticker?: string;
 
     // URL do endpoint que criaremos no NestJS (veja abaixo)
-    private readonly API_URL = 'http://localhost:3000/api/quotes';
+    private readonly API_URL = '/api/quotes';
 
     constructor(private readonly http: HttpClient) { }
 

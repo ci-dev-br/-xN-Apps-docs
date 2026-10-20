@@ -2,8 +2,13 @@
 @if(userService && !!(userService.user | async)){
 <!-- Informações do Usuário -->
 }
-<mat-tab-group>
-    <mat-tab label="Noticiário Diário">
+<ci-financial-ticker></ci-financial-ticker>
+<mat-tab-group animationDuration="200ms" class="homepage-tabs">
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon style="margin-right: 8px;">newspaper</mat-icon>
+            <span>Noticiário Diário</span>
+        </ng-template>
         <div class="page--wrapper">
             <div class="news-experience-layout">
                 <!-- Coluna de Notícias (Feed Stream) -->
@@ -114,5 +119,13 @@
                 }
             </div>
         </div>
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon style="margin-right: 8px;">space_dashboard</mat-icon>
+            <span>Meu Board</span>
+        </ng-template>
+        <ci-user-board></ci-user-board>
     </mat-tab>
 </mat-tab-group>

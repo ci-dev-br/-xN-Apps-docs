@@ -1,0 +1,243 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.ci-user-board-container {
+    padding: 16px 24px 32px;
+}
+
+.board-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 16px 20px;
+    background: var(--mat-sys-surface-container, var(--mat-sys-surface, #ffffff));
+    border: 1px solid var(--mat-sys-outline-variant, #e0e0e0);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 4px var(--mat-sys-shadow, rgba(0, 0, 0, 0.04));
+
+    .board-meta {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+
+        .board-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            .board-icon {
+                font-size: 28px;
+                width: 28px;
+                height: 28px;
+                color: var(--mat-sys-primary, #1976d2);
+            }
+
+            .board-title-text {
+                h3 {
+                    margin: 0;
+                    font-size: 1.15rem;
+                    font-weight: 700;
+                    color: var(--mat-sys-on-surface, #212121);
+                }
+
+                p {
+                    margin: 2px 0 0;
+                    font-size: 0.8rem;
+                    color: var(--mat-sys-on-surface-variant, #666666);
+                }
+            }
+        }
+
+        .board-stats {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .stat-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 4px 10px;
+                border-radius: 16px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                background: var(--mat-sys-surface-container-high, #f0f0f0);
+                color: var(--mat-sys-on-surface-variant, #555555);
+
+                mat-icon {
+                    font-size: 14px;
+                    width: 14px;
+                    height: 14px;
+                }
+
+                &.app-count {
+                    background: var(--mat-sys-primary-container, rgba(25, 118, 210, 0.08));
+                    color: var(--mat-sys-primary, #1976d2);
+                }
+            }
+        }
+    }
+
+    .board-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .btn-reset-board {
+            border-color: var(--mat-sys-outline-variant, #e0e0e0);
+            color: var(--mat-sys-on-surface-variant, #666666);
+        }
+
+        .btn-add-card {
+            font-weight: 600;
+        }
+    }
+}
+
+.board-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+}
+
+.board-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    background: var(--mat-sys-surface, #ffffff);
+    border: 1px solid var(--mat-sys-outline-variant, #e0e0e0);
+    box-shadow: 0 2px 6px var(--mat-sys-shadow, rgba(0, 0, 0, 0.04));
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        box-shadow: 0 4px 14px var(--mat-sys-shadow, rgba(0, 0, 0, 0.08));
+    }
+
+    .card-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 14px;
+        background: var(--mat-sys-surface-container, var(--mat-sys-surface-variant, #f8f9fa));
+        border-bottom: 1px solid var(--mat-sys-outline-variant, #e0e0e0);
+
+        .card-info-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+
+            .card-app-badge {
+                font-size: 0.68rem;
+                font-weight: 700;
+                padding: 2px 6px;
+                border-radius: 4px;
+                background: var(--mat-sys-primary, #1976d2);
+                color: var(--mat-sys-on-primary, #ffffff);
+                text-transform: uppercase;
+                letter-spacing: 0.4px;
+                flex-shrink: 0;
+            }
+
+            .card-title-label {
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: var(--mat-sys-on-surface, #212121);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        .card-controls {
+            display: flex;
+            align-items: center;
+
+            .btn-remove-card {
+                width: 28px;
+                height: 28px;
+                line-height: 28px;
+                color: var(--mat-sys-on-surface-variant, #757575);
+
+                mat-icon {
+                    font-size: 16px;
+                    width: 16px;
+                    height: 16px;
+                }
+
+                &:hover {
+                    color: var(--mat-sys-error, #d32f2f);
+                    background: var(--mat-sys-error-container, rgba(211, 47, 47, 0.08));
+                }
+            }
+        }
+    }
+
+    .card-dynamic-content {
+        flex: 1;
+        padding: 4px;
+
+        ::ng-deep mat-card {
+            box-shadow: none !important;
+            border: none !important;
+            border-radius: 0 !important;
+        }
+    }
+}
+
+.board-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 64px 24px;
+    background: var(--mat-sys-surface-container-low, var(--mat-sys-surface, #fafafa));
+    border: 2px dashed var(--mat-sys-outline-variant, #e0e0e0);
+    border-radius: 16px;
+
+    .empty-illustration {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: var(--mat-sys-primary-container, rgba(25, 118, 210, 0.08));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+
+        .huge-icon {
+            font-size: 40px;
+            width: 40px;
+            height: 40px;
+            color: var(--mat-sys-primary, #1976d2);
+        }
+    }
+
+    h4 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--mat-sys-on-surface, #212121);
+    }
+
+    p {
+        max-width: 500px;
+        margin: 8px 0 20px;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        color: var(--mat-sys-on-surface-variant, #666666);
+    }
+
+    .btn-cta-add {
+        font-weight: 600;
+        padding: 0 24px;
+    }
+}

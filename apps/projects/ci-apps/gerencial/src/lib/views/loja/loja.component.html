@@ -44,7 +44,7 @@
 
     <!-- Grid de Aplicações -->
     <div class="loja-grid" *ngIf="!isLoading && filteredApps.length > 0">
-        <div class="app-card" *ngFor="let app of filteredApps" [class.is-active]="app.isActivated">
+        <div class="app-card" *ngFor="let app of filteredApps" [class.is-active]="app.isActivated" [class.is-globally-inactive]="!app.isActive">
             <div class="app-card-header">
                 <div class="app-card-icon-wrapper" [class.active-icon]="app.isActivated">
                     <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
@@ -64,9 +64,42 @@
                 </div>
             </div>
 
+            <!-- Badges e Avisos de Permissão / Global -->
+            <div class="app-card-badges">
+                <span class="badge-tag global-inactive" *ngIf="!app.isActive">
+                    <mat-icon class="tag-icon">visibility_off</mat-icon>
+                    Desativado Globalmente
+                </span>
+                <span class="badge-tag role-restricted" *ngIf="app.roleRestricted && !app.canActivate">
+                    <mat-icon class="tag-icon">lock</mat-icon>
+                    Requer papel: {{ app.roles?.join(', ') }}
+                </span>
+                <span class="badge-tag collab-tag" *ngIf="app.isCollaborator">
+                    <mat-icon class="tag-icon">engineering</mat-icon>
+                    Você é Colaborador
+                </span>
+            </div>
+
             <p class="app-description">
                 {{ app.description || 'Aplicação empresarial pronta para uso em sua conta.' }}
             </p>
+
+            <!-- Painel de Gerenciamento Global (MASTER + DEVELOPER + Colaborador) -->
+            <div class="global-admin-bar" *ngIf="app.canToggleGlobal">
+                <span class="global-admin-label">
+                    <mat-icon class="admin-icon">shield</mat-icon>
+                    Gestão Global (Colaborador)
+                </span>
+                <button mat-button 
+                        [color]="app.isActive ? 'warn' : 'accent'" 
+                        (click)="toggleGlobalStatus(app)" 
+                        [disabled]="app.globalLoading"
+                        class="global-toggle-btn">
+                    <mat-spinner diameter="14" *ngIf="app.globalLoading"></mat-spinner>
+                    <mat-icon *ngIf="!app.globalLoading">{{ app.isActive ? 'public_off' : 'public' }}</mat-icon>
+                    <span>{{ app.isActive ? 'Desativar Global' : 'Ativar Global' }}</span>
+                </button>
+            </div>
 
             <div class="app-card-footer">
                 <button mat-icon-button 
@@ -90,7 +123,8 @@
                     <button mat-flat-button 
                             [color]="app.isActivated ? 'warn' : 'primary'"
                             (click)="toggleActivation(app)" 
-                            [disabled]="app.loading"
+                            [disabled]="app.loading || (!app.isActivated && !app.canActivate)"
+                            [matTooltip]="!app.canActivate ? ('Exige papel: ' + app.roles?.join(', ')) : ''"
                             class="activate-btn">
                         <mat-icon *ngIf="!app.loading">{{ app.isActivated ? 'power_settings_new' : 'add_circle_outline' }}</mat-icon>
                         <mat-spinner diameter="18" *ngIf="app.loading"></mat-spinner>

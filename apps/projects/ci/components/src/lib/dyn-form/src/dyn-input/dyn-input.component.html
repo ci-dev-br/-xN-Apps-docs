@@ -1,5 +1,16 @@
 @if(!!formGroup && !!fieldName){<form style="display:contents" [formGroup]="formGroup">
-    @if(inputComponent !== undefined && !!inputComponent){
+    @if(type === 'chips-autocomplete' || format === 'chips-autocomplete' || type === 'modules-autocomplete' || format === 'modules-autocomplete' || type === 'modules' || type === 'app-modules' || fieldName === 'modules' || fieldName === 'modulos'){
+    <ci-dyn-input-chips-autocomplete
+        [fieldName]="fieldName"
+        [label]="label"
+        [description]="description"
+        [placeholder]="placeholder"
+        [formGroup]="formGroup"
+        [formControl]="formControl"
+        [enumOptions]="enumOptions">
+    </ci-dyn-input-chips-autocomplete>
+    }
+    @else if(inputComponent !== undefined && !!inputComponent){
     <ng-container *ngComponentOutlet="inputComponent"></ng-container>
     }
     @else{

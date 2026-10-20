@@ -150,6 +150,44 @@ export class Application {
     @ApiProperty({
         nullable: true,
         required: false,
+        title: 'Módulos Integrados',
+        description: 'Lista de módulos ou aplicações padrão contidos e combinados nesta aplicação.',
+        type: 'string',
+        isArray: true,
+        format: 'chips-autocomplete',
+        enum: [
+            'CRM',
+            'Cadastros',
+            'Financeiro',
+            'Vendas',
+            'Produtos',
+            'Mensagens',
+            'Organizacao',
+            'Projetos',
+            'Arquivos',
+            'Formularios',
+            'CMS',
+            'LowCode',
+            'Dynamic',
+            'Treinamento',
+            'DevTools',
+            'Codex',
+            'SEO',
+            'Threejs',
+            'Grupos'
+        ],
+        example: ['CRM', 'Cadastros', 'Financeiro', 'Vendas', 'Mensagens']
+    })
+    @Column({
+        nullable: true,
+        type: 'varchar',
+        array: true,
+    })
+    modules?: string[];
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
         title: 'Primeira Catalogação',
         description: 'Data e hora da primeira execução/catalogação da aplicação.',
     })

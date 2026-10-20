@@ -13,6 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterModule } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ApplicationCatalogService, APP_DOCUMENTATION_REGISTRY, IAppDocumentation } from '@ci/core';
+import { UserAuthenticationService } from '@ci/auth';
 
 export interface IStoreApp {
     id?: string;
@@ -23,9 +24,15 @@ export interface IStoreApp {
     categoria?: string;
     routePath?: string;
     isActivated?: boolean;
+    isActive?: boolean;
+    isCollaborator?: boolean;
+    canToggleGlobal?: boolean;
+    canActivate?: boolean;
+    roleRestricted?: boolean;
     roles?: string[];
     collaborators?: string[];
     loading?: boolean;
+    globalLoading?: boolean;
 }
 
 @Component({
@@ -60,6 +67,7 @@ export class LojaComponent implements OnInit {
 
     constructor(
         private readonly catalogService: ApplicationCatalogService,
+        @Optional() private readonly userService?: UserAuthenticationService,
         @Optional() private readonly snackBar?: MatSnackBar,
         @Optional() private readonly router?: Router,
         private readonly cdr?: ChangeDetectorRef
@@ -78,21 +86,39 @@ export class LojaComponent implements OnInit {
 
     loadStoreApps(): void {
         this.isLoading = true;
+        const currentUser = this.userService?.user?.value;
+        const isGoodness = currentUser?.roles?.includes('GOODNESS');
+
         this.catalogService.getStore().subscribe({
             next: (data) => {
                 if (data && data.length > 0) {
-                    this.apps = data.map(item => ({
-                        id: item.id,
-                        appKey: item.appKey || item.routePath?.replace(/^\//, '') || item.name,
-                        name: item.name || item.appKey,
-                        description: item.description,
-                        icon: item.icon || 'apps',
-                        categoria: item.categoria || 'Geral',
-                        routePath: item.routePath || `/${item.appKey}`,
-                        isActivated: Boolean(item.isActivated),
-                        roles: item.roles,
-                        collaborators: item.collaborators
-                    }));
+                    this.apps = data.map(item => {
+                        const isCollab = Boolean(item.isCollaborator);
+                        const canToggleGlobal = Boolean(item.canToggleGlobal);
+                        let canActivate = Boolean(item.canActivate);
+
+                        if (isGoodness || isCollab) {
+                            canActivate = true;
+                        }
+
+                        return {
+                            id: item.id,
+                            appKey: item.appKey || item.routePath?.replace(/^\//, '') || item.name,
+                            name: item.name || item.appKey,
+                            description: item.description,
+                            icon: item.icon || 'apps',
+                            categoria: item.categoria || 'Geral',
+                            routePath: item.routePath || `/${item.appKey}`,
+                            isActivated: Boolean(item.isActivated),
+                            isActive: item.isActive !== false,
+                            isCollaborator: isCollab,
+                            canToggleGlobal,
+                            canActivate,
+                            roleRestricted: Boolean(item.roleRestricted),
+                            roles: item.roles,
+                            collaborators: item.collaborators
+                        };
+                    });
                 } else {
                     // Fallback para as documentações conhecidas caso a API retorne vazio
                     this.apps = Object.values(APP_DOCUMENTATION_REGISTRY).map(doc => ({
@@ -102,7 +128,9 @@ export class LojaComponent implements OnInit {
                         icon: doc.icon || 'apps',
                         categoria: doc.category || 'Geral',
                         routePath: `/${doc.appKey || doc.title}`,
-                        isActivated: false
+                        isActivated: false,
+                        isActive: true,
+                        canActivate: true
                     }));
                 }
                 this.applyFilters();
@@ -111,7 +139,6 @@ export class LojaComponent implements OnInit {
             },
             error: (err) => {
                 console.warn('[Loja] Erro ao carregar catálogo da Loja:', err);
-                // Fallback seguro offline
                 this.apps = Object.values(APP_DOCUMENTATION_REGISTRY).map(doc => ({
                     appKey: doc.appKey || doc.title,
                     name: doc.title,
@@ -119,7 +146,9 @@ export class LojaComponent implements OnInit {
                     icon: doc.icon || 'apps',
                     categoria: doc.category || 'Geral',
                     routePath: `/${doc.appKey || doc.title}`,
-                    isActivated: false
+                    isActivated: false,
+                    isActive: true,
+                    canActivate: true
                 }));
                 this.applyFilters();
                 this.isLoading = false;
@@ -153,6 +182,11 @@ export class LojaComponent implements OnInit {
      * Quando ativado, exibe imediatamente a mini documentação vinculada aos metadados.
      */
     toggleActivation(app: IStoreApp): void {
+        if (!app.canActivate) {
+            this.snackBar?.open(`Esta aplicação exige papel específico (${app.roles?.join(', ')}) para ativação.`, 'Fechar', { duration: 3500 });
+            return;
+        }
+
         app.loading = true;
         const targetState = !app.isActivated;
 
@@ -160,6 +194,9 @@ export class LojaComponent implements OnInit {
             next: (res) => {
                 app.isActivated = targetState;
                 app.loading = false;
+
+                // Atualiza cache de aplicações ativadas para reflexo imediato em 'meus-apps'
+                this.catalogService.refreshMyActivations().subscribe();
 
                 if (targetState) {
                     this.snackBar?.open(`Aplicação "${app.name}" ativada na sua conta com sucesso!`, 'OK', {
@@ -181,12 +218,37 @@ export class LojaComponent implements OnInit {
             },
             error: (err) => {
                 app.loading = false;
-                // Simulação local caso a requisição falhe por falta de sessão
-                app.isActivated = targetState;
-                if (targetState) {
-                    this.openDocumentation(app);
-                }
-                this.snackBar?.open(`Status atualizado para "${app.name}".`, 'OK', { duration: 2500 });
+                const errorMsg = err?.error?.message || `Não foi possível ativar a aplicação.`;
+                this.snackBar?.open(errorMsg, 'Fechar', { duration: 4000 });
+                this.cdr?.markForCheck();
+            }
+        });
+    }
+
+    /**
+     * Alterna o status global da aplicação (MASTER + DEVELOPER + Colaborador).
+     */
+    toggleGlobalStatus(app: IStoreApp): void {
+        if (!app.canToggleGlobal) return;
+        app.globalLoading = true;
+        const targetGlobal = !app.isActive;
+
+        this.catalogService.toggleGlobalStatus(app.appKey, targetGlobal).subscribe({
+            next: (res) => {
+                app.isActive = targetGlobal;
+                app.globalLoading = false;
+                this.snackBar?.open(
+                    targetGlobal
+                        ? `Aplicação "${app.name}" agora está disponível globalmente para os usuários.`
+                        : `Aplicação "${app.name}" desativada globalmente.`,
+                    'OK',
+                    { duration: 4000 }
+                );
+                this.cdr?.markForCheck();
+            },
+            error: (err) => {
+                app.globalLoading = false;
+                this.snackBar?.open(err?.error?.message || 'Falha ao alterar status global da aplicação.', 'Fechar', { duration: 4000 });
                 this.cdr?.markForCheck();
             }
         });

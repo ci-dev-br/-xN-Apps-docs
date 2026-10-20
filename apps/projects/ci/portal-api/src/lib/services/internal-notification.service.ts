@@ -17,6 +17,8 @@ export interface InternalNotification {
   createdAt: string;
 }
 
+export type NotificationDisplayMode = 'menu' | 'sidebar' | 'statusbar';
+
 export interface NotificationResponse {
   unreadCount: number;
   notifications: InternalNotification[];
@@ -34,9 +36,56 @@ export class InternalNotificationService extends BaseService {
 
   public pushPermissionStatus = new BehaviorSubject<NotificationPermission>('default');
 
+  // Modo de exibição: menu (popup), sidebar (aba lateral à direita), statusbar (inferior)
+  private displayModeSubject = new BehaviorSubject<NotificationDisplayMode>(this.getStoredDisplayMode());
+  public displayMode$ = this.displayModeSubject.asObservable();
+  public get displayMode(): NotificationDisplayMode {
+    return this.displayModeSubject.value;
+  }
+
+  // Estado da aba lateral à direita
+  public isSidebarOpenSubject = new BehaviorSubject<boolean>(false);
+  public isSidebarOpen$ = this.isSidebarOpenSubject.asObservable();
+
+  // Estado do painel expandido da statusbar inferior
+  public isStatusbarExpandedSubject = new BehaviorSubject<boolean>(false);
+  public isStatusbarExpanded$ = this.isStatusbarExpandedSubject.asObservable();
+
   private pollingSub?: Subscription;
   private lastKnownCount = 0;
   private isChecking = false;
+
+  public setDisplayMode(mode: NotificationDisplayMode) {
+    this.displayModeSubject.next(mode);
+    if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem('ci_notification_display_mode', mode);
+      } catch {}
+    }
+    // Fecha painéis abertos ao trocar de modo
+    if (mode !== 'sidebar') this.isSidebarOpenSubject.next(false);
+    if (mode !== 'statusbar') this.isStatusbarExpandedSubject.next(false);
+  }
+
+  private getStoredDisplayMode(): NotificationDisplayMode {
+    if (typeof localStorage !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('ci_notification_display_mode') as NotificationDisplayMode;
+        if (stored === 'menu' || stored === 'sidebar' || stored === 'statusbar') {
+          return stored;
+        }
+      } catch {}
+    }
+    return 'menu';
+  }
+
+  public toggleSidebar(open?: boolean) {
+    this.isSidebarOpenSubject.next(open !== undefined ? open : !this.isSidebarOpenSubject.value);
+  }
+
+  public toggleStatusbar(open?: boolean) {
+    this.isStatusbarExpandedSubject.next(open !== undefined ? open : !this.isStatusbarExpandedSubject.value);
+  }
 
   constructor(
     config: ApiConfiguration,
