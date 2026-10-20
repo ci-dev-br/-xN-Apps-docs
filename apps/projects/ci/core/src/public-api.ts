@@ -19,6 +19,7 @@ export * from './lib/apps/apps.service';
 export * from './lib/apps/application-catalog.service';
 export * from './lib/apps/app-context.guard';
 export * from './lib/apps/app-docs.model';
+export * from './lib/apps/app-docs.data';
 export * from './lib/apps/app-doc-dialog.component';
 export * from './lib/version/git-version';
 export * from './lib/notification/notification.service';
