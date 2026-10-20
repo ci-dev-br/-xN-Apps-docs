@@ -17,6 +17,8 @@ export interface SecureChar {
 export interface DecryptedMessage {
   id: string;
   conversationId: string;
+  messageHash?: string;
+  previousMessageHash?: string;
   senderId: string;
   senderName: string;
   senderPhoto?: string;
@@ -38,6 +40,7 @@ export interface DecryptedMessage {
 
 export interface ConversationItem {
   id: string;
+  channelHash?: string;
   title: string;
   contactId: string;
   contactName: string;
@@ -45,6 +48,7 @@ export interface ConversationItem {
   lastMessage?: string; // Descriptografado
   lastMessageEncrypted?: string;
   lastMessageAt: string;
+  lastMessageHash?: string;
   unreadCount: number;
 }
 
@@ -239,8 +243,10 @@ export class EncryptedMessagerService extends BaseService {
         return (mensagens || []).map((m) => {
           const decrypted = this.decryptText(m.encryptedContent, conversationId, m.senderId);
           return {
-            id: m.internalId || m.id,
+            id: m.internalId || m.id || m.messageHash,
             conversationId: m.conversationId,
+            messageHash: m.messageHash,
+            previousMessageHash: m.previousMessageHash,
             senderId: m.senderId,
             senderName: m.senderName,
             senderPhoto: m.senderPhoto,
@@ -277,8 +283,10 @@ export class EncryptedMessagerService extends BaseService {
       map((m) => {
         const finalText = plainText || textToEncrypt;
         return {
-          id: m.internalId || m.id,
+          id: m.internalId || m.id || m.messageHash,
           conversationId: m.conversationId,
+          messageHash: m.messageHash,
+          previousMessageHash: m.previousMessageHash,
           senderId: m.senderId,
           senderName: m.senderName,
           senderPhoto: m.senderPhoto,

@@ -457,6 +457,29 @@
           }
         }
 
+        .hash-chain-indicator {
+          display: flex;
+          align-items: center;
+          gap: 3px;
+          font-size: 0.7rem;
+          color: #7b1fa2;
+          background: rgba(123, 31, 162, 0.08);
+          padding: 1px 6px;
+          border-radius: 8px;
+          font-weight: 600;
+
+          mat-icon {
+            font-size: 13px;
+            width: 13px;
+            height: 13px;
+            flex-shrink: 0;
+          }
+
+          .chain-label {
+            white-space: nowrap;
+          }
+        }
+
         .anti-print-indicator {
           display: flex;
           align-items: center;
@@ -714,6 +737,14 @@
     font-size: 0.68rem;
     opacity: 0.7;
     margin-top: 2px;
+
+    .hash-indicator {
+      font-size: 11px;
+      width: 11px;
+      height: 11px;
+      color: #9c27b0;
+      opacity: 0.85;
+    }
 
     .lock-indicator {
       font-size: 11px;
