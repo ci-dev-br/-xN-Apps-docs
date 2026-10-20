@@ -280,8 +280,8 @@ export const CI_STATIC_APPS: IApp[] = [
         color: getColor(),
         url: '/Loja',
         name: 'Loja',
-        roles: ['USER'],
-        icon: 'apps',
+        roles: ['USER', 'ADMIN', 'MASTER'],
+        icon: 'storefront',
         type: 'mat'
     },
     {

@@ -58,6 +58,9 @@ export class Lista {
             }
         });
     }
+    openLoja() {
+        this.router.navigate(['/painel/Loja']);
+    }
     async appClickHandler(event: any, app: any) {
         if (event.ctrlKey) {
             window.open(location.href + '/' + app.url, '')
