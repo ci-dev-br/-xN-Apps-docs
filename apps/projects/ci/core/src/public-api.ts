@@ -18,6 +18,8 @@ export * from './lib/abstractions/IAmSchmatization';
 export * from './lib/apps/apps.service';
 export * from './lib/apps/application-catalog.service';
 export * from './lib/apps/app-context.guard';
+export * from './lib/apps/app-docs.model';
+export * from './lib/apps/app-doc-dialog.component';
 export * from './lib/version/git-version';
 export * from './lib/notification/notification.service';
 export * from './lib/services/menu.service';

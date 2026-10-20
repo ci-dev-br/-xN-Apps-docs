@@ -36,6 +36,16 @@ export const AppContextGuard: CanActivateFn = (
                 router.navigate(['/painel/meus-apps']);
                 return false;
             }
+
+            // Se a rota possui mini documentação declarada em seus metadados,
+            // verifica e exibe automaticamente no primeiro acesso
+            const docs = (route.data && route.data['docs']) || (route.routeConfig?.data && (route.routeConfig.data as any)['docs']);
+            if (docs) {
+                setTimeout(() => {
+                    catalogService.checkAndShowFirstAccessDoc(appKey, docs);
+                }, 350);
+            }
+
             return true;
         }),
         catchError(err => {

@@ -1,10 +1,13 @@
 import { Injectable, Inject, Optional, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router, NavigationEnd } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { filter } from 'rxjs/operators';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { GIT_VERSION } from '../version/git-version';
 import { CORE_ENV, ICoreEnvironment } from '../provider';
+import { IAppDocumentation } from './app-docs.model';
+import { AppDocDialogComponent } from './app-doc-dialog.component';
 
 export interface ICatalogAppPayload {
     appKey: string;
@@ -38,6 +41,7 @@ export class ApplicationCatalogService {
     constructor(
         @Optional() private readonly http?: HttpClient,
         @Optional() private readonly router?: Router,
+        @Optional() private readonly dialog?: MatDialog,
         @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
     ) {
         if (typeof window !== 'undefined') {
@@ -273,5 +277,79 @@ export class ApplicationCatalogService {
             appKey,
             tenantId
         });
+    }
+
+    /**
+     * Obtém as aplicações da Loja com status de ativação da conta.
+     */
+    public getStore(search?: string, categoria?: string): Observable<any[]> {
+        const rootApi = this.config?.rootApi || 'https://apps.ci.dev.br';
+        const url = `${rootApi}/Application/Store`;
+        if (!this.http) return of([]);
+        return this.http.post<any[]>(url, { search, categoria });
+    }
+
+    /**
+     * Ativa ou desativa uma aplicação para a conta do usuário.
+     */
+    public toggleActivation(appKeyOrId: string, active?: boolean): Observable<any> {
+        const rootApi = this.config?.rootApi || 'https://apps.ci.dev.br';
+        const url = `${rootApi}/Application/ToggleActivation`;
+        if (!this.http) return of(null);
+
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(appKeyOrId);
+        const payload = isUuid ? { applicationId: appKeyOrId, active } : { appKey: appKeyOrId, active };
+        return this.http.post(url, payload);
+    }
+
+    /**
+     * Lista de chaves de aplicações ativadas para o usuário logado.
+     */
+    public getMyActivations(): Observable<string[]> {
+        const rootApi = this.config?.rootApi || 'https://apps.ci.dev.br';
+        const url = `${rootApi}/Application/MyActivations`;
+        if (!this.http) return of([]);
+        return this.http.post<string[]>(url, {});
+    }
+
+    /**
+     * Abre o modal com a mini documentação da aplicação.
+     */
+    public showDocumentation(doc: IAppDocumentation) {
+        if (!this.dialog) {
+            console.log('[ApplicationCatalog] Mini documentação:', doc);
+            return null;
+        }
+        return this.dialog.open(AppDocDialogComponent, {
+            data: doc,
+            width: '580px',
+            maxWidth: '92vw',
+            panelClass: 'ci-app-doc-dialog-panel'
+        });
+    }
+
+    /**
+     * Exibe a mini documentação no primeiro acesso do usuário após ativação.
+     */
+    public checkAndShowFirstAccessDoc(appKey: string, doc: IAppDocumentation, userId?: string) {
+        if (!appKey || !doc) return;
+        const key = `ci_seen_doc_${appKey}_${userId || 'default'}`;
+        if (typeof localStorage !== 'undefined') {
+            const seen = localStorage.getItem(key);
+            if (!seen) {
+                const ref = this.showDocumentation(doc);
+                if (ref) {
+                    ref.afterClosed().subscribe(() => {
+                        try {
+                            localStorage.setItem(key, '1');
+                        } catch {}
+                    });
+                } else {
+                    try {
+                        localStorage.setItem(key, '1');
+                    } catch {}
+                }
+            }
+        }
     }
 }

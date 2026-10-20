@@ -58,3 +58,22 @@ export class ReconcileCatalogDto {
     @ApiProperty({ isArray: true, type: CatalogAppDto, description: 'Lista completa de aplicações ativas no cliente' })
     apps: CatalogAppDto[];
 }
+
+export class ToggleUserActivationDto {
+    @ApiProperty({ required: false, description: 'Chave da aplicação' })
+    appKey?: string;
+
+    @ApiProperty({ required: false, description: 'ID da aplicação' })
+    applicationId?: string;
+
+    @ApiProperty({ required: false, description: 'Estado desejado da ativação (se omitido, inverte o estado atual)' })
+    active?: boolean;
+}
+
+export class GetStoreDto {
+    @ApiProperty({ required: false, description: 'Termo de busca por nome ou descrição' })
+    search?: string;
+
+    @ApiProperty({ required: false, description: 'Filtro por categoria' })
+    categoria?: string;
+}

@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Application } from "../model/application.entity";
 import { ClientVersionCatalog } from "../model/client-version-catalog.entity";
 import { Repository } from "typeorm";
-import { CatalogAppDto, ReconcileCatalogDto } from "../dto/catalog-app.dto";
+import { CatalogAppDto, ReconcileCatalogDto, ToggleUserActivationDto } from "../dto/catalog-app.dto";
 import { User } from "@ci/auth/models/user.entity";
 
 @Injectable()
@@ -310,7 +310,7 @@ export class ApplicationService {
     /**
      * Avalia se a aplicação pode ser carregada no contexto atual do usuário / tenant.
      */
-    async canLoad(appKey: string, user?: User, tenantId?: string): Promise<{ canLoad: boolean; reason?: string; app?: Application }> {
+    async canLoad(appKey: string, user?: User, tenantId?: string): Promise<{ canLoad: boolean; reason?: string; app?: Application; requiresActivation?: boolean }> {
         const app = await this.repo.findOne({
             where: [
                 { appKey },
@@ -339,7 +339,114 @@ export class ApplicationService {
             }
         }
 
+        if (app.contextPolicies?.requiresActivation && user?.id) {
+            const userApps = await this.repo.createQueryBuilder('app')
+                .innerJoin('app.users', 'user', 'user.id = :userId', { userId: user.id })
+                .where('app.id = :appId', { appId: app.id })
+                .getCount();
+            if (userApps === 0 && !user.roles?.includes('ADMIN') && !user.roles?.includes('MASTER')) {
+                return { canLoad: false, reason: 'Esta aplicação precisa ser ativada na Loja antes de ser utilizada.', app, requiresActivation: true };
+            }
+        }
+
         return { canLoad: true, app };
+    }
+
+    /**
+     * Obtém as aplicações disponíveis na Loja para o usuário,
+     * incluindo o status de ativação na conta (isActivated).
+     */
+    async getStore(user?: User, search?: string, categoria?: string) {
+        const query = this.repo.createQueryBuilder('app')
+            .leftJoinAndSelect('app.domain', 'domain')
+            .where('(app.isActive = true OR app.isActive IS NULL)');
+
+        if (search && search.trim()) {
+            query.andWhere('(LOWER(app.name) LIKE LOWER(:search) OR LOWER(app.description) LIKE LOWER(:search) OR LOWER(app.appKey) LIKE LOWER(:search))', { search: `%${search.trim()}%` });
+        }
+
+        if (categoria && categoria !== 'all' && categoria !== 'Todas') {
+            query.andWhere('app.categoria = :categoria', { categoria });
+        }
+
+        query.orderBy('app.name', 'ASC');
+
+        const apps = await query.getMany();
+
+        let userAppIds = new Set<string>();
+        if (user?.id) {
+            // Consulta aplicações vinculadas a este usuário
+            const userApps = await this.repo.createQueryBuilder('app')
+                .innerJoin('app.users', 'user', 'user.id = :userId', { userId: user.id })
+                .select('app.id')
+                .getMany();
+            userAppIds = new Set(userApps.map(a => a.id).filter(Boolean) as string[]);
+        }
+
+        return apps.map(app => {
+            const isActivated = userAppIds.has(app.id!);
+            return {
+                ...app,
+                isActivated
+            };
+        });
+    }
+
+    /**
+     * Alterna ou define a ativação de uma aplicação para a conta do usuário.
+     */
+    async toggleUserActivation(dto: ToggleUserActivationDto, user: User) {
+        if (!user || !user.id) {
+            throw new ForbiddenException('Usuário não autenticado.');
+        }
+
+        const app = await this.repo.findOne({
+            where: [
+                ...(dto.applicationId ? [{ id: dto.applicationId }] : []),
+                ...(dto.appKey ? [{ appKey: dto.appKey }, { routePath: `/${dto.appKey}` }] : [])
+            ],
+            relations: ['users']
+        });
+
+        if (!app) {
+            throw new NotFoundException('Aplicação não encontrada.');
+        }
+
+        const isCurrentlyActive = (app.users || []).some(u => u.id === user.id);
+        const shouldBeActive = dto.active !== undefined ? dto.active : !isCurrentlyActive;
+
+        if (shouldBeActive && !isCurrentlyActive) {
+            await this.repo.createQueryBuilder()
+                .relation(Application, 'users')
+                .of(app)
+                .add(user);
+        } else if (!shouldBeActive && isCurrentlyActive) {
+            await this.repo.createQueryBuilder()
+                .relation(Application, 'users')
+                .of(app)
+                .remove(user);
+        }
+
+        return {
+            success: true,
+            appKey: app.appKey,
+            applicationId: app.id,
+            isActivated: shouldBeActive,
+            firstActivation: shouldBeActive && !isCurrentlyActive
+        };
+    }
+
+    /**
+     * Retorna a lista de chaves de aplicações ativadas para o usuário logado.
+     */
+    async getUserActivations(user: User): Promise<string[]> {
+        if (!user || !user.id) return [];
+        const apps = await this.repo.createQueryBuilder('app')
+            .innerJoin('app.users', 'user', 'user.id = :userId', { userId: user.id })
+            .select(['app.appKey', 'app.routePath'])
+            .getMany();
+
+        return apps.map(a => a.appKey || a.routePath?.replace(/^\//, '')).filter(Boolean) as string[];
     }
 
     async delete(applicationId: string) {

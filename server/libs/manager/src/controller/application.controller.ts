@@ -4,7 +4,7 @@ import { Application } from "../model/application.entity";
 import { ApplicationService } from "../service/application.service";
 import { User } from "@ci/auth/models/user.entity";
 import { GetInputDtos } from "../dto/input-dto";
-import { CatalogAppDto, CanLoadAppDto, CheckVersionDto, ReconcileCatalogDto } from "../dto/catalog-app.dto";
+import { CatalogAppDto, CanLoadAppDto, CheckVersionDto, ReconcileCatalogDto, ToggleUserActivationDto, GetStoreDto } from "../dto/catalog-app.dto";
 import { Role } from "@ci/auth/decorators/role.decorator";
 import { Public } from "@ci/auth/decorators/public.decorator";
 import { SyncPayloadDao } from "@ci/core";
@@ -40,6 +40,60 @@ export class ApplicationController {
         } catch (error) {
             console.trace(error);
         }
+    }
+
+    /**
+     * Catálogo da Loja de Aplicações com status de ativação da conta do usuário.
+     */
+    @Public()
+    @Post('Store')
+    @ApiResponse({
+        description: 'Obter catálogo de aplicações da Loja com status de ativação'
+    })
+    @ApiOperation({
+        operationId: 'GetStoreApplications',
+    })
+    async getStore(
+        @Request() req: Request,
+        @Body() body?: GetStoreDto
+    ) {
+        const user: User = (req as any).user;
+        return await this.service.getStore(user, body?.search, body?.categoria);
+    }
+
+    /**
+     * Ativar ou desativar aplicação para a conta do usuário.
+     */
+    @Post('ToggleActivation')
+    @ApiResponse({
+        description: 'Ativar ou desativar aplicação para uso na conta do usuário'
+    })
+    @ApiOperation({
+        operationId: 'ToggleApplicationActivation',
+    })
+    async toggleActivation(
+        @Request() req: Request,
+        @Body() dto: ToggleUserActivationDto
+    ) {
+        const user: User = (req as any).user;
+        return await this.service.toggleUserActivation(dto, user);
+    }
+
+    /**
+     * Lista de chaves de aplicações ativadas para o usuário autenticado.
+     */
+    @Post('MyActivations')
+    @ApiResponse({
+        description: 'Obter chaves das aplicações ativadas para o usuário'
+    })
+    @ApiOperation({
+        operationId: 'GetMyActivatedApplications',
+    })
+    async getMyActivations(
+        @Request() req: Request
+    ) {
+        const user: User = (req as any).user;
+        return await this.service.getUserActivations(user);
     }
 
     /**
