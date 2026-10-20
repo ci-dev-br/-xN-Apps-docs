@@ -230,7 +230,7 @@ export class EstudosComponent implements OnInit, OnDestroy {
       this.pomodoroMinutes = 5;
       this.completedPomodoros++;
     } else {
-      this.pomodoroMode === 'study';
+      this.pomodoroMode = 'study';
       this.pomodoroMinutes = 25;
     }
     this.pomodoroSeconds = 0;

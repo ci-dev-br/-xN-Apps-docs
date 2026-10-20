@@ -1,79 +1,160 @@
 <div class="composer-container">
-    <header class="composer-header">
-        <div class="header-main">
-            <h2>{{ master.projectName || 'Nova Composição' }}</h2>
-            <button mat-button class="playback-btn" (click)="togglePlayback()" [class.active]="isPlaying">
-                <mat-icon>{{ isPlaying ? 'stop' : 'play_arrow' }}</mat-icon>
-                {{ isPlaying ? 'Parar' : 'Tocar' }}
-            </button>
+  <!-- Top Transport / Studio Bar -->
+  <header class="composer-header">
+    <div class="header-main">
+      <div class="brand">
+        <mat-icon class="brand-icon">equalizer</mat-icon>
+        <div>
+          <h2>Composite-se DAW</h2>
+          <span class="sub">Estúdio Modular & Sequenciador de 16 Steps</span>
         </div>
-        <!-- Seção de Metadados -->
-        <div class="metadata-form">
-            <div class="input-group">
-                <label>Nome da Música:</label>
-                <input type="text" [(ngModel)]="master.projectName" [disabled]="isPlaying" />
-            </div>
-            <div class="input-group">
-                <label>Autor(a):</label>
-                <input type="text" [(ngModel)]="master.author" [disabled]="isPlaying" />
-            </div>
-            <div class="input-group">
-                <label>Gênero:</label>
-                <input type="text" [(ngModel)]="master.genre" [disabled]="isPlaying" />
-            </div>
-            <div class="input-group">
-                <label>BPM:</label>
-                <input type="number" [(ngModel)]="master.bpm" [disabled]="isPlaying" style="width: 80px;" />
-            </div>
-        </div>
-    </header>
+      </div>
 
-    <div class="sequencer-grid">
-        <div class="track" *ngFor="let track of master.tracks; let i = index">
-            <div class="track-info">
-                <span>{{ track.name }}</span>
-            </div>
-            <div class="steps">
-                <button *ngFor="let step of track.steps; let j = index" class="step-btn" [class.active]="step"
-                    [class.current]="isPlaying && currentStep === j" (click)="toggleStep(i, j)">
-                </button>
-            </div>
+      <div class="transport-controls">
+        <button mat-flat-button class="playback-btn" (click)="togglePlayback()" [class.active]="isPlaying">
+          <mat-icon>{{ isPlaying ? 'stop' : 'play_arrow' }}</mat-icon>
+          {{ isPlaying ? 'Parar' : 'Tocar Loop' }}
+        </button>
+
+        <div class="tempo-control">
+          <label>BPM:</label>
+          <input type="number" [(ngModel)]="master.bpm" min="40" max="240" />
         </div>
+
+        <div class="master-vol-control">
+          <mat-icon>volume_up</mat-icon>
+          <input type="range" [(ngModel)]="masterVolume" min="0" max="100" (ngModelChange)="setMasterGain($event)" />
+          <span>{{ masterVolume }}%</span>
+        </div>
+      </div>
     </div>
 
-    <!-- Seção: Rack de Plugins -->
-    <div class="plugins-rack">
-        <h3>Rack de Efeitos e Plugins</h3>
-        <div class="plugin-list">
-            <label class="plugin-item" *ngFor="let p of availablePlugins">
-                <input type="checkbox" [checked]="p.enabled" (change)="togglePlugin(p)" [disabled]="isPlaying">
-                {{ p.name }}
-            </label>
+    <!-- Metadata & Presets -->
+    <div class="meta-presets-row">
+      <div class="metadata-form">
+        <div class="input-group">
+          <label>Nome do Projeto:</label>
+          <input type="text" [(ngModel)]="master.projectName" />
         </div>
+        <div class="input-group">
+          <label>Gênero:</label>
+          <input type="text" [(ngModel)]="master.genre" />
+        </div>
+        <div class="input-group">
+          <label>Produtor(a):</label>
+          <input type="text" [(ngModel)]="master.author" />
+        </div>
+      </div>
+
+      <div class="presets-section">
+        <label>Presets de Ritmo:</label>
+        <div class="preset-buttons">
+          <button mat-stroked-button (click)="applyPreset('synthwave')">Synthwave</button>
+          <button mat-stroked-button (click)="applyPreset('techno')">Techno</button>
+          <button mat-stroked-button (click)="applyPreset('trap')">Trap</button>
+          <button mat-stroked-button (click)="applyPreset('lofi')">Lo-Fi</button>
+          <button mat-stroked-button class="btn-clear" (click)="applyPreset('clear')">Limpar</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Step Tracker Header (1..16) -->
+  <div class="step-tracker-row">
+    <div class="track-header-spacer">Pistas & Mixagem</div>
+    <div class="step-numbers">
+      @for (step of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]; track step) {
+        <div class="step-col-head" [class.current-head]="isPlaying && currentStep === step" [class.beat-start]="step % 4 === 0">
+          {{ step + 1 }}
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Sequencer Grid -->
+  <div class="sequencer-grid">
+    @for (track of master.tracks; track track.id; let i = $index) {
+      <div class="track-row" [class.track-muted]="track.muted" [class.track-solo]="track.solo">
+        <!-- Track Control Panel -->
+        <div class="track-control-panel">
+          <div class="track-color-indicator" [style.background-color]="track.color || '#3b82f6'"></div>
+          <div class="track-title-vol">
+            <span class="track-name">{{ track.name }}</span>
+            <input type="range" min="0" max="1" step="0.05" [(ngModel)]="track.volume" class="track-vol-slider" matTooltip="Volume da pista" />
+          </div>
+
+          <div class="track-mute-solo">
+            <button class="ms-btn mute-btn" [class.active]="track.muted" (click)="toggleMute(track)" matTooltip="Silenciar">M</button>
+            <button class="ms-btn solo-btn" [class.active]="track.solo" (click)="toggleSolo(track)" matTooltip="Solo">S</button>
+          </div>
+        </div>
+
+        <!-- 16 Step Buttons grouped in 4 beats -->
+        <div class="steps-container">
+          @for (step of track.steps; track $index; let j = $index) {
+            <button
+              class="step-pad"
+              [style.--track-color]="track.color || '#00f0ff'"
+              [class.active]="step"
+              [class.current]="isPlaying && currentStep === j"
+              [class.beat-first]="j % 4 === 0"
+              (click)="toggleStep(i, j)">
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Plugins & Effects Rack -->
+  <div class="plugins-rack">
+    <div class="rack-title">
+      <mat-icon>tune</mat-icon>
+      <h3>Rack de Efeitos & Processamento</h3>
+    </div>
+    <div class="plugin-list">
+      @for (p of availablePlugins; track p.id) {
+        <label class="plugin-chip" [class.active]="p.enabled">
+          <input type="checkbox" [checked]="p.enabled" (change)="togglePlugin(p)" [disabled]="isPlaying" />
+          <span>{{ p.name }}</span>
+        </label>
+      }
+    </div>
+  </div>
+
+  <!-- Import / Export Bar -->
+  <footer class="export-actions">
+    <div class="action-card">
+      <span class="card-lbl">Salvar / Carregar Projeto</span>
+      <div class="card-controls">
+        <select [(ngModel)]="selectedMasterFormat">
+          <option value="json">Padrão JSON (.json)</option>
+          <option value="b64">CI Master (.ciproj)</option>
+          <option value="txt">Ficha Técnica (.txt)</option>
+        </select>
+        <button mat-stroked-button class="btn-action" (click)="exportMaster()">
+          <mat-icon>save</mat-icon> Salvar
+        </button>
+
+        <label class="btn-import-label">
+          <mat-icon>folder_open</mat-icon> Abrir
+          <input type="file" (change)="onImportFile($event)" accept=".json,.ciproj" style="display:none;" />
+        </label>
+      </div>
     </div>
 
-    <!-- Menus de Exportação Dinâmicos -->
-    <footer class="export-actions">
-        <div class="export-block">
-            <select [(ngModel)]="selectedMasterFormat">
-                <option value="json">Padrão (.json)</option>
-                <option value="b64">CI Project (.ciproj)</option>
-                <option value="txt">Info Texto (.txt)</option>
-            </select>
-            <button mat-button class="btn-master" (click)="exportMaster()">
-                <mat-icon>save</mat-icon> Salvar Master
-            </button>
-        </div>
-
-        <div class="export-block">
-            <select [(ngModel)]="selectedAudioFormat" [disabled]="isRecording">
-                <option value="audio/webm">WebM Audio</option>
-                <option value="audio/ogg; codecs=opus">Ogg Opus Audio</option>
-            </select>
-            <button mat-button class="btn-audio" (click)="exportAudio()" [disabled]="isRecording">
-                <mat-icon>mic</mat-icon>
-                {{ isRecording ? 'Gravando Loop...' : 'Exportar Áudio' }}
-            </button>
-        </div>
-    </footer>
+    <div class="action-card">
+      <span class="card-lbl">Exportar / Renderizar Áudio</span>
+      <div class="card-controls">
+        <select [(ngModel)]="selectedAudioFormat" [disabled]="isRecording">
+          <option value="audio/webm">WebM Audio (Opus)</option>
+          <option value="audio/ogg; codecs=opus">Ogg Vorbis Audio</option>
+        </select>
+        <button mat-flat-button color="accent" class="btn-record" (click)="exportAudio()" [disabled]="isRecording">
+          <mat-icon>{{ isRecording ? 'fiber_manual_record' : 'mic' }}</mat-icon>
+          {{ isRecording ? 'Gravando Loop...' : 'Renderizar Áudio' }}
+        </button>
+      </div>
+    </div>
+  </footer>
 </div>
