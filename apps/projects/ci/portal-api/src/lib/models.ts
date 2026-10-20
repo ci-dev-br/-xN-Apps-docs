@@ -206,3 +206,5 @@ export * from './models/vinculo-social';
 export * from './models/vote-input-dto';
 export * from './models/website';
 export * from './models/work-item';
+export * from './models/news-comment-item';
+export * from './models/news-vote-stats';

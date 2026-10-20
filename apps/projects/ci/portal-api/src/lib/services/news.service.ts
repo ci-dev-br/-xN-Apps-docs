@@ -14,6 +14,8 @@ import { GetFeed$Params } from '../fn/news/get-feed';
 import { getMarketNews } from '../fn/news/get-market-news';
 import { GetMarketNews$Params } from '../fn/news/get-market-news';
 import { News } from '../models/news';
+import { NewsCommentItem } from '../models/news-comment-item';
+import { NewsVoteStats } from '../models/news-vote-stats';
 import { newsComment } from '../fn/news/news-comment';
 import { NewsComment$Params } from '../fn/news/news-comment';
 import { newsGetComments } from '../fn/news/news-get-comments';
@@ -35,8 +37,6 @@ export class NewsService extends BaseService {
   /**
    * Obtém notícias de mercado e economia da base de dados.
    *
-   *
-   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `getMarketNews()` instead.
    *
@@ -49,8 +49,6 @@ export class NewsService extends BaseService {
   /**
    * Obtém notícias de mercado e economia da base de dados.
    *
-   *
-   *
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `getMarketNews$Response()` instead.
    *
@@ -60,6 +58,16 @@ export class NewsService extends BaseService {
     return this.getMarketNews$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<News>>): Array<News> => r.body)
     );
+  }
+
+  getMarketNews(params?: { search?: string; category?: string; limit?: number; offset?: number }, context?: HttpContext): Observable<Array<News>> {
+    const queryParams: string[] = [];
+    if (params?.search) queryParams.push(`search=${encodeURIComponent(params.search)}`);
+    if (params?.category) queryParams.push(`category=${encodeURIComponent(params.category)}`);
+    if (params?.limit !== undefined) queryParams.push(`limit=${params.limit}`);
+    if (params?.offset !== undefined) queryParams.push(`offset=${params.offset}`);
+    const qs = queryParams.length ? `?${queryParams.join('&')}` : '';
+    return this.http.get<Array<News>>(`${this.rootUrl}/News/Market${qs}`, { context });
   }
 
   /** Path part for operation `getFeed()` */
@@ -112,6 +120,10 @@ export class NewsService extends BaseService {
     );
   }
 
+  vote(newsId: string, vote: 'UP' | 'DOWN', context?: HttpContext): Observable<NewsVoteStats> {
+    return this.http.post<NewsVoteStats>(`${this.rootUrl}/News/Vote`, { newsId, vote }, { context });
+  }
+
   /** Path part for operation `newsVoteStats()` */
   static readonly NewsVoteStatsPath = '/News/VoteStats/{newsId}';
 
@@ -135,6 +147,10 @@ export class NewsService extends BaseService {
     return this.newsVoteStats$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
+  }
+
+  getVoteStats(newsId: string, context?: HttpContext): Observable<NewsVoteStats> {
+    return this.http.get<NewsVoteStats>(`${this.rootUrl}/News/VoteStats/${newsId}`, { context });
   }
 
   /** Path part for operation `newsComment()` */
@@ -162,6 +178,10 @@ export class NewsService extends BaseService {
     );
   }
 
+  comment(newsId: string, content: string, context?: HttpContext): Observable<NewsCommentItem> {
+    return this.http.post<NewsCommentItem>(`${this.rootUrl}/News/Comment`, { newsId, content }, { context });
+  }
+
   /** Path part for operation `newsGetComments()` */
   static readonly NewsGetCommentsPath = '/News/Comments/{newsId}';
 
@@ -187,4 +207,19 @@ export class NewsService extends BaseService {
     );
   }
 
+  getComments(newsId: string, context?: HttpContext): Observable<Array<NewsCommentItem>> {
+    return this.http.get<Array<NewsCommentItem>>(`${this.rootUrl}/News/Comments/${newsId}`, { context });
+  }
+
+  followUser(userId: string, context?: HttpContext): Observable<any> {
+    return this.http.post<any>(`${this.rootUrl}/Social/Follow/${userId}`, {}, { context });
+  }
+
+  unfollowUser(userId: string, context?: HttpContext): Observable<{ success: boolean }> {
+    return this.http.post<{ success: boolean }>(`${this.rootUrl}/Social/Unfollow/${userId}`, {}, { context });
+  }
+
+  getSocialStatus(userId: string, context?: HttpContext): Observable<{ isFollowing: boolean; isFollower: boolean; isConhecido: boolean; tipo: string }> {
+    return this.http.get<any>(`${this.rootUrl}/Social/Status/${userId}`, { context });
+  }
 }
