@@ -88,6 +88,16 @@ export class DynFormComponent implements OnInit, OnChanges {
       ...schemaProps,
     };
 
+    // Se estiver editando Application, garante que a propriedade modules esteja disponível para seleção de módulos
+    if ((name === 'Application' || name?.toLowerCase() === 'application') && !mergedProperties['modules']) {
+      mergedProperties['modules'] = {
+        title: 'Módulos Integrados',
+        description: 'Selecione os módulos e aplicações padrão contidos e combinados nesta aplicação.',
+        type: 'modules' as any,
+        isArray: true
+      };
+    }
+
     // Fallback: incorpora chaves existentes no objeto `data` ou no `formGroup` caso o schema esteja vazio ou incompleto
     const candidateKeys = new Set<string>(Object.keys(mergedProperties));
     if (this.data && typeof this.data === 'object') {
@@ -102,20 +112,27 @@ export class DynFormComponent implements OnInit, OnChanges {
     for (const p of candidateKeys) {
       if (this.isInternalOrAuditKey(p)) continue;
 
+      const isModulesField = (p === 'modules' || p === 'modulos' || p === 'containedModules' || ((name === 'Application' || this.schemaName === 'Application') && p === 'modules'));
       const sampleVal = this.data?.[p] ?? this.formGroup?.get(p)?.value;
       const inferredType =
-        typeof sampleVal === 'number'
-          ? 'number'
-          : typeof sampleVal === 'boolean'
-            ? 'boolean'
-            : Array.isArray(sampleVal)
-              ? 'array'
-              : 'text';
+        isModulesField
+          ? 'modules'
+          : typeof sampleVal === 'number'
+            ? 'number'
+            : typeof sampleVal === 'boolean'
+              ? 'boolean'
+              : Array.isArray(sampleVal)
+                ? 'array'
+                : 'text';
 
       const property_info: ISchemaProperty = mergedProperties[p] || {
-        title: p,
+        title: isModulesField ? 'Módulos Integrados' : p,
         type: inferredType,
       };
+
+      const finalType = (property_info.type === 'modules' || property_info.type === 'app-modules' || isModulesField)
+        ? 'modules'
+        : (property_info.type || inferredType);
 
       const schema_name =
         !!(property_info as any).items && (property_info as any).items['$ref']
@@ -129,7 +146,8 @@ export class DynFormComponent implements OnInit, OnChanges {
               : undefined;
 
       if (this.formGroup && !this.formGroup.get(p)) {
-        const ctrl = new FormControl(this.data?.[p] ?? null);
+        const initialVal = this.data?.[p] ?? (finalType === 'modules' ? [] : null);
+        const ctrl = new FormControl(initialVal);
         ctrl.valueChanges.subscribe(val => {
           if (this.data && typeof this.data === 'object') {
             this.data[p] = val;
@@ -139,15 +157,15 @@ export class DynFormComponent implements OnInit, OnChanges {
       }
 
       fields.push({
-        label: property_info.title || p,
+        label: property_info.title || (isModulesField ? 'Módulos Integrados' : p),
         property: p,
-        description: property_info.description,
-        type: property_info.type || inferredType,
+        description: property_info.description || (isModulesField ? 'Selecione os módulos e aplicações padrão contidos e combinados nesta aplicação.' : undefined),
+        type: finalType as any,
         items: property_info.items,
         schemaName: schema_name,
         readonly: property_info.readOnly,
         dataService: schema_name ? (getServiceAsSchema(schema_name) as any) : undefined,
-        isArray: property_info.type === 'array' || property_info.isArray,
+        isArray: property_info.type === 'array' || property_info.isArray || isModulesField,
       } as IFormFieldDefinition<any>);
     }
 

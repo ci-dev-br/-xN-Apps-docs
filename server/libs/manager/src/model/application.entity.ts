@@ -150,6 +150,21 @@ export class Application {
     @ApiProperty({
         nullable: true,
         required: false,
+        title: 'Módulos Integrados',
+        description: 'Lista de módulos ou aplicações padrão contidos e combinados nesta aplicação.',
+        type: 'string',
+        isArray: true,
+    })
+    @Column({
+        nullable: true,
+        type: 'varchar',
+        array: true,
+    })
+    modules?: string[];
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
         title: 'Primeira Catalogação',
         description: 'Data e hora da primeira execução/catalogação da aplicação.',
     })

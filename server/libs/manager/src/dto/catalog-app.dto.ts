@@ -30,6 +30,9 @@ export class CatalogAppDto {
 
     @ApiProperty({ required: false, description: 'Políticas contextuais adicionais' })
     contextPolicies?: Record<string, any>;
+
+    @ApiProperty({ required: false, isArray: true, type: String, description: 'Módulos ou aplicações padrão combinados' })
+    modules?: string[];
 }
 
 export class CanLoadAppDto {

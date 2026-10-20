@@ -5,7 +5,7 @@ export abstract class DataServiceBase<T> {
     abstract findByText(text: string): Promise<T[]>;
 }
 
-export type TypeFormField = 'text' | 'number' | 'option' | 'date' | 'date-time' | 'time' | 'multi-option';
+export type TypeFormField = 'text' | 'number' | 'option' | 'date' | 'date-time' | 'time' | 'multi-option' | 'modules' | 'app-modules';
 
 export interface IFormOptions {
     code?: string;
