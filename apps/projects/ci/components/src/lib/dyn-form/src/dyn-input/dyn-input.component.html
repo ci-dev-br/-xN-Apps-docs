@@ -1,5 +1,14 @@
 @if(!!formGroup && !!fieldName){<form style="display:contents" [formGroup]="formGroup">
-    @if(inputComponent !== undefined && !!inputComponent){
+    @if(type === 'modules' || type === 'app-modules' || fieldName === 'modules' || fieldName === 'modulos'){
+    <ci-dyn-input-modules
+        [fieldName]="fieldName"
+        [label]="label"
+        [description]="description"
+        [formGroup]="formGroup"
+        [formControl]="formControl">
+    </ci-dyn-input-modules>
+    }
+    @else if(inputComponent !== undefined && !!inputComponent){
     <ng-container *ngComponentOutlet="inputComponent"></ng-container>
     }
     @else{

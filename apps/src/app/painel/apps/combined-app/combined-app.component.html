@@ -1,0 +1,141 @@
+<div class="ci-combined-app-wrapper" [ngClass]="themeClass">
+  <!-- Topbar Unificada da Aplicação Combinada -->
+  <header class="combined-topbar">
+    <div class="topbar-left">
+      <button mat-icon-button type="button" class="btn-back" matTooltip="Voltar para Meus Aplicativos" (click)="voltarParaPainel()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+
+      <div class="app-identity">
+        <div class="app-icon-badge" [style.background-color]="app?.color || '#E91E63'">
+          <mat-icon>{{ app?.icon || 'crm' }}</mat-icon>
+        </div>
+        <div class="app-text-group">
+          <div class="app-title-row">
+            <h1 class="app-name">{{ app?.name || 'Aplicação Combinada' }}</h1>
+            <span class="combined-tag">Aplicação Composta</span>
+          </div>
+          <p class="app-desc">{{ app?.shortDescription || 'Módulos padrão e regras adicionais combinados sem código.' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <div class="modules-counter-pill">
+        <mat-icon>layers</mat-icon>
+        <span>{{ combinedModules.length }} Módulos Integrados</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sub-navbar com Abas dos Módulos Combinados -->
+  <nav class="combined-modules-nav">
+    <div class="modules-nav-track">
+      @for(mod of combinedModules; track mod.key; let i = $index){
+        <button
+          type="button"
+          class="module-tab-btn"
+          [class.active]="activeModuleIndex === i"
+          [class.is-custom]="!mod.isStandard"
+          (click)="selectModule(i)">
+          <mat-icon class="tab-icon">{{ mod.icon }}</mat-icon>
+          <span class="tab-label">{{ mod.name }}</span>
+          <span class="tab-badge" [class.badge-custom]="!mod.isStandard">
+            {{ mod.isStandard ? 'Padrão' : 'Custom' }}
+          </span>
+        </button>
+      }
+    </div>
+  </nav>
+
+  <!-- Corpo do Módulo Ativo -->
+  <main class="combined-content-area">
+    @if(activeModule){
+      <div class="active-module-view">
+        <!-- Banner Informativo do Módulo no Contexto da Aplicação -->
+        <div class="module-context-banner">
+          <div class="banner-left">
+            <div class="banner-icon-box" [class.box-custom]="!activeModule.isStandard">
+              <mat-icon>{{ activeModule.icon }}</mat-icon>
+            </div>
+            <div class="banner-info">
+              <h2 class="banner-title">{{ activeModule.name }}</h2>
+              <p class="banner-description">{{ activeModule.description }}</p>
+            </div>
+          </div>
+
+          <div class="banner-right">
+            @if(activeModule.isStandard){
+              <button mat-flat-button color="primary" type="button" class="btn-open-standard" (click)="navigateToStandardModule(activeModule)">
+                <mat-icon>open_in_new</mat-icon>
+                Acessar Módulo Completo
+              </button>
+            }@else{
+              <span class="status-no-code">
+                <mat-icon>auto_fix_high</mat-icon>
+                Regras Ativas Sem Código
+              </span>
+            }
+          </div>
+        </div>
+
+        <!-- Seção do Conteúdo do Módulo -->
+        @if(activeModule.isStandard){
+          <div class="standard-module-preview-card">
+            <div class="preview-header">
+              <mat-icon>bolt</mat-icon>
+              <span>Módulo Padrão Integrado: <strong>{{ activeModule.name }}</strong></span>
+            </div>
+            <p class="preview-text">
+              Este módulo padrão funciona de forma unificada com a aplicação <strong>{{ app?.name }}</strong>, herdando suas credenciais de acesso, regras de tenant e políticas de contexto pré-configuradas.
+            </p>
+            <div class="preview-actions">
+              <button mat-stroked-button color="primary" type="button" (click)="navigateToStandardModule(activeModule)">
+                <mat-icon>launch</mat-icon>
+                Abrir Tela de {{ activeModule.name }}
+              </button>
+            </div>
+          </div>
+        }@else{
+          <!-- Módulo Customizado Sem Código (ex: Agendamento Estética, Ficha de Anamnese) -->
+          <div class="custom-module-workspace">
+            <div class="workspace-header">
+              <mat-icon>extension</mat-icon>
+              <span>Workspace de Regras Customizadas (No-Code): <strong>{{ activeModule.name }}</strong></span>
+            </div>
+
+            <div class="rules-summary-box">
+              <div class="rules-badge-group">
+                <span class="rule-chip"><mat-icon>verified</mat-icon> Regra Própria Integrada</span>
+                <span class="rule-chip"><mat-icon>palette</mat-icon> Tema: {{ customRules?.['theme'] || 'beauty' }}</span>
+                <span class="rule-chip"><mat-icon>percent</mat-icon> Comissão: {{ customRules?.['commissionRate'] ? (customRules?.['commissionRate'] * 100) + '%' : 'Configurada' }}</span>
+              </div>
+              <p class="rules-detail-text">
+                Módulo criado sob demanda sem necessidade de compilar código novo. As regras de negócio e validação operam sobre as entidades padrão combinadas.
+              </p>
+            </div>
+
+            <!-- Painel de Demonstração Interativa do Módulo Customizado -->
+            <div class="custom-data-placeholder">
+              <div class="placeholder-icon">
+                <mat-icon>spa</mat-icon>
+              </div>
+              <h3>Fluxo de Trabalho de {{ activeModule.name }}</h3>
+              <p>Os registros e parâmetros definidos para este módulo são sincronizados automaticamente com o banco de dados e combinados aos módulos de Cadastros, CRM e Vendas.</p>
+              <div class="placeholder-buttons">
+                <button mat-flat-button color="accent" type="button">
+                  <mat-icon>add</mat-icon>
+                  Novo Registro em {{ activeModule.name }}
+                </button>
+                <button mat-stroked-button type="button">
+                  <mat-icon>list_alt</mat-icon>
+                  Consultar Histórico
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </main>
+</div>

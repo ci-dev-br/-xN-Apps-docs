@@ -1,11 +1,14 @@
 import { Component, Injector, Input, Optional, Type } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { DynInputDateComponent } from "./dyn-input-date.component";
+import { DynInputModulesComponent } from "./dyn-input-modules.component";
 import { DaoBuilder, DaoService, IAmSchematization } from "@ci/core";
 import { getServiceAsSchema } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 
 const types: any = {
+    'modules': DynInputModulesComponent,
+    'app-modules': DynInputModulesComponent,
 }
 
 @Component({
