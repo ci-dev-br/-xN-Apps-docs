@@ -1,1 +1,1 @@
-{"branch":"development","commit":"6ce83a59dfff3c6d217ddf8bd2b42c953fcbb90f","author":"pLinho","date":"Tue Oct 20 03:13:56 2026 -0300","message":"feat(portal-api): Adiciona campos cols, rows, title em Card e scope em PranchetaSyncPayloadDto","builtAt":"2026-10-20T12:57:55.016Z"}
+{"branch":"development","commit":"fa8b3536aa337a12d9eab9fca70d360378b817f1","author":"pLinho","date":"Tue Oct 20 14:05:52 2026 -0300","message":"feat(homepage, api): Adiciona Radar de Mercado, guia de autoria e aprimora Auth","builtAt":"2026-10-20T18:28:46.214Z"}

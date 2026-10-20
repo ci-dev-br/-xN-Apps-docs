@@ -426,6 +426,129 @@
             </div>
         </mat-tab>
 
+        <!-- ABA 4: Gratidão de Desenvolvedor (ROLE DEVELOPER) -->
+        @if (isDeveloper) {
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="tab-icon">favorite</mat-icon>
+                    <span>Gratidão de Desenvolvedor</span>
+                </ng-template>
+
+                <div class="tab-body">
+                    <div class="gratitude-header-card">
+                        <div class="gratitude-badge">
+                            <mat-icon>terminal</mat-icon>
+                            <span>ROLE DEVELOPER</span>
+                        </div>
+                        <h2>Créditos de Gratidão por Uso de Aplicações</h2>
+                        <p class="section-description">
+                            Sempre que um aplicativo do qual você é autor ou co-autor é executado na plataforma, um crédito de gratidão é registrado para você.
+                            Configure quanto vale sua gratidão para calcular e converter seus créditos em saldo real na sua carteira financeira.
+                        </p>
+                    </div>
+
+                    <!-- Cards de Métricas de Gratidão -->
+                    <div class="gratitude-metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon credits-icon">
+                                <mat-icon>volunteer_activism</mat-icon>
+                            </div>
+                            <div class="metric-content">
+                                <span class="metric-label">Créditos Pendentes</span>
+                                <span class="metric-value">{{ gratitudeSummary?.unconvertedCredits || 0 }}</span>
+                                <span class="metric-subtext">Não convertidos</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card highlight-card">
+                            <div class="metric-icon balance-icon">
+                                <mat-icon>account_balance_wallet</mat-icon>
+                            </div>
+                            <div class="metric-content">
+                                <span class="metric-label">Saldo Calculado</span>
+                                <span class="metric-value">R$ {{ (gratitudeSummary?.estimatedBalance || 0) | number:'1.2-2' }}</span>
+                                <span class="metric-subtext">Créditos × Valor Unitário</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-icon converted-icon">
+                                <mat-icon>check_circle</mat-icon>
+                            </div>
+                            <div class="metric-content">
+                                <span class="metric-label">Já Convertido</span>
+                                <span class="metric-value">R$ {{ (gratitudeSummary?.totalEarnedValor || 0) | number:'1.2-2' }}</span>
+                                <span class="metric-subtext">{{ gratitudeSummary?.convertedCredits || 0 }} créditos convertidos</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuração do Perfil de Gratidão -->
+                    <div class="gratitude-config-card">
+                        <div class="card-title-row">
+                            <mat-icon>tune</mat-icon>
+                            <h3>Configuração do Seu Perfil</h3>
+                        </div>
+                        <p class="config-hint">
+                            Defina o valor em Reais (R$) de cada unidade de gratidão. Esse valor é considerado pelo sistema financeiro para calcular seu saldo.
+                        </p>
+
+                        <div class="config-form-row">
+                            <mat-form-field appearance="outline" class="unit-value-field">
+                                <mat-label>Quanto vale sua gratidão (R$ / crédito)</mat-label>
+                                <input matInput type="number" step="0.01" min="0" [(ngModel)]="gratitudeUnitValue" placeholder="Ex: 0.50">
+                                <span matPrefix>R$&nbsp;</span>
+                                <mat-icon matSuffix>price_change</mat-icon>
+                            </mat-form-field>
+
+                            <div class="auto-convert-toggle">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" [(ngModel)]="gratitudeAutoConvert">
+                                    <span>Conversão Automática (depositar direto na carteira a cada uso)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="config-actions-row">
+                            <button mat-raised-button color="primary" [disabled]="isSavingGratitude" (click)="saveGratitudeConfig()">
+                                <mat-icon>save</mat-icon>
+                                <span>{{ isSavingGratitude ? 'Salvando...' : 'Salvar Configuração no Perfil' }}</span>
+                            </button>
+
+                            <button mat-raised-button color="accent" [disabled]="isConvertingGratitude || !(gratitudeSummary?.unconvertedCredits > 0)" (click)="convertGratitude()">
+                                <mat-icon>currency_exchange</mat-icon>
+                                <span>{{ isConvertingGratitude ? 'Convertendo...' : 'Converter Gratidão em Saldo Financeiro' }}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Detalhamento por Aplicação -->
+                    @if (gratitudeSummary?.appBreakdown && gratitudeSummary.appBreakdown.length > 0) {
+                        <div class="gratitude-apps-card">
+                            <div class="card-title-row">
+                                <mat-icon>folder_special</mat-icon>
+                                <h3>Suas Aplicações com Commits / Gratidão</h3>
+                            </div>
+                            <div class="app-breakdown-list">
+                                @for (item of gratitudeSummary.appBreakdown; track item.appKey) {
+                                    <div class="app-breakdown-item">
+                                        <div class="app-info-col">
+                                            <span class="app-name">{{ item.appKey }}</span>
+                                            <span class="app-credits-total">Total: {{ item.totalCredits }} uso(s)</span>
+                                        </div>
+                                        <div class="app-badges-col">
+                                            <span class="badge pending-badge">{{ item.unconverted }} pendente(s)</span>
+                                            <span class="badge converted-badge">{{ item.converted }} convertido(s)</span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </mat-tab>
+        }
+
     </mat-tab-group>
 
 </div>

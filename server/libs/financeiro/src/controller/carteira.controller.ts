@@ -104,4 +104,17 @@ export class CarteiraController {
             skip: skip ? parseInt(skip, 10) : 0,
         });
     }
+
+    /**
+     * Avalia se o usuário cumpriu os requisitos para receber a ROLE DEVELOPER como cortesia:
+     * - E-mail verificado (emailVerificado === true)
+     * - Saldo na carteira >= 50
+     * - Autoria comprovada no projeto (PR aceito na branch development) vinculada ao mesmo e-mail
+     */
+    @Post('AvaliarRoleDeveloper')
+    @ApiOperation({ operationId: 'CarteiraAvaliarRoleDeveloper', summary: 'Avalia e concede a ROLE DEVELOPER de cortesia por autoria e saldo' })
+    async avaliarRoleDeveloper(@Req() req: any) {
+        const userId = this.getUserId(req);
+        return await this.carteiraService.verificarEConcederRoleDeveloper(userId);
+    }
 }

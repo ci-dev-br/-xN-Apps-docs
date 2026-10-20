@@ -19,6 +19,11 @@ export interface ICatalogAppPayload {
     roles?: string[] | null;
     gitVersionHash?: string | null;
     collaborators?: string[] | null;
+    folderPath?: string | null;
+    authors?: string[] | null;
+    coAuthors?: string[] | null;
+    commitCount?: number | null;
+    lastCommitDate?: string | null;
     contextPolicies?: Record<string, any> | null;
 }
 
@@ -108,6 +113,13 @@ export class ApplicationCatalogService {
         ApplicationCatalogService.currentAppKey = appKey;
         ApplicationCatalogService.currentAppRoute = routePath || `/${appKey}`;
         this._currentApp$.next(appKey);
+
+        // Registra o consumo da aplicação ao ser selecionada/utilizada
+        try {
+            this.recordUsage(appKey).subscribe({
+                error: () => {}
+            });
+        } catch {}
     }
 
     /**
@@ -123,7 +135,8 @@ export class ApplicationCatalogService {
     /**
      * Reconciliação do catálogo de aplicações:
      * Envia as aplicações hardcoded para o backend confrontar com o banco,
-     * atualizar ativas, cadastrar novas e desativar removidas.
+     * atualizar ativas, cadastrar novas e desativar removidas, considerando
+     * o local da pasta da aplicação, autores e co-autores dos commits.
      * Requer ROLE MASTER.
      */
     public reconcileCatalog(staticApps: any[], gitInfo = GIT_VERSION): Observable<any> {
@@ -134,17 +147,31 @@ export class ApplicationCatalogService {
             versionHash: gitInfo.shortHash,
             branch: gitInfo.branch,
             collaborators: gitInfo.collaborators,
-            apps: (staticApps || []).map(a => ({
-                appKey: a.name || a.url?.replace(/^\//, ''),
-                routePath: a.url,
-                name: a.name,
-                description: a.description || a.shortDescription,
-                icon: a.icon,
-                categoria: a.categoria || 'System',
-                roles: a.roles,
-                gitVersionHash: gitInfo.shortHash,
-                collaborators: gitInfo.collaborators,
-            }))
+            apps: (staticApps || []).map(a => {
+                const rawKey = a.name || a.url?.replace(/^\//, '');
+                const cleanKey = (rawKey || '').replace(/^\//, '').trim();
+                const appGit = (gitInfo as any).getAppGitInfo?.(cleanKey)
+                    || (gitInfo as any).applications?.[cleanKey]
+                    || (gitInfo as any).applications?.[cleanKey.toLowerCase()]
+                    || (gitInfo as any).applications?.[a.url?.replace(/^\//, '')];
+
+                return {
+                    appKey: rawKey,
+                    routePath: a.url,
+                    name: a.name,
+                    description: a.description || a.shortDescription,
+                    icon: a.icon,
+                    categoria: a.categoria || 'System',
+                    roles: a.roles,
+                    gitVersionHash: appGit?.shortHash || gitInfo.shortHash,
+                    collaborators: appGit?.collaborators || gitInfo.collaborators,
+                    folderPath: appGit?.folderPath || null,
+                    authors: appGit?.authors || null,
+                    coAuthors: appGit?.coAuthors || null,
+                    commitCount: appGit?.commitCount || null,
+                    lastCommitDate: appGit?.lastCommitDate || null,
+                };
+            })
         };
 
         if (!this.http) return of(null);
@@ -212,10 +239,17 @@ export class ApplicationCatalogService {
         const appKey = app.appKey || (app.routePath ? app.routePath.replace(/^\//, '') : null);
         if (!appKey) return of(null);
 
-        const gitHash = GIT_VERSION.shortHash;
+        const cleanKey = appKey.replace(/^\//, '').trim();
+        const appGit = (GIT_VERSION as any).getAppGitInfo?.(cleanKey)
+            || (GIT_VERSION as any).applications?.[cleanKey]
+            || (GIT_VERSION as any).applications?.[cleanKey.toLowerCase()];
+
+        const gitHash = appGit?.shortHash || GIT_VERSION.shortHash;
         const cacheKey = `ci_cat_${appKey}_${gitHash}`;
 
         if (this.catalogedInSession.has(cacheKey)) {
+            // Ainda assim registra o consumo do uso
+            this.recordUsage(appKey).subscribe({ error: () => {} });
             return of(true);
         }
 
@@ -223,6 +257,7 @@ export class ApplicationCatalogService {
             const stored = localStorage.getItem(cacheKey);
             if (stored === '1') {
                 this.catalogedInSession.add(cacheKey);
+                this.recordUsage(appKey).subscribe({ error: () => {} });
                 return of(true);
             }
         }
@@ -236,7 +271,12 @@ export class ApplicationCatalogService {
             categoria: app.categoria || 'System',
             roles: app.roles || undefined,
             gitVersionHash: gitHash,
-            collaborators: GIT_VERSION.collaborators,
+            collaborators: appGit?.collaborators || GIT_VERSION.collaborators,
+            folderPath: appGit?.folderPath || app.folderPath,
+            authors: appGit?.authors || app.authors,
+            coAuthors: appGit?.coAuthors || app.coAuthors,
+            commitCount: appGit?.commitCount !== undefined ? appGit.commitCount : app.commitCount,
+            lastCommitDate: appGit?.lastCommitDate || app.lastCommitDate,
             contextPolicies: app.contextPolicies || undefined
         };
 
@@ -256,6 +296,8 @@ export class ApplicationCatalogService {
                             localStorage.setItem(cacheKey, '1');
                         } catch {}
                     }
+                    // Registra o consumo
+                    this.recordUsage(appKey).subscribe({ error: () => {} });
                     observer.next(res);
                     observer.complete();
                 },
@@ -265,6 +307,74 @@ export class ApplicationCatalogService {
                 }
             });
         });
+    }
+
+    /**
+     * Registra o consumo de uma aplicação quando ela é utilizada.
+     * Sempre que o aplicativo é usado, registra um consumo e credita para cada autor
+     * e co-autor um crédito de gratidão que pode ou não ser convertido em saldo no financeiro.
+     */
+    public recordUsage(appKey: string, metadata?: any): Observable<any> {
+        if (!appKey) return of(null);
+        const cleanKey = appKey.replace(/^\//, '').trim();
+
+        // Evita chamadas duplicadas frequentes na mesma sessão (15 segundos)
+        const now = Date.now();
+        const lastUsageKey = `ci_usage_ts_${cleanKey}`;
+        if (typeof sessionStorage !== 'undefined') {
+            const lastTs = Number(sessionStorage.getItem(lastUsageKey)) || 0;
+            if (now - lastTs < 15000) {
+                return of({ skipped: true });
+            }
+            sessionStorage.setItem(lastUsageKey, String(now));
+        }
+
+        const appGit = (GIT_VERSION as any).getAppGitInfo?.(cleanKey)
+            || (GIT_VERSION as any).applications?.[cleanKey]
+            || (GIT_VERSION as any).applications?.[cleanKey.toLowerCase()];
+
+        const rootApi = this.config?.rootApi || 'https://apps.ci.dev.br';
+        const url = `${rootApi}/Application/RecordUsage`;
+
+        if (!this.http) return of(null);
+
+        return this.http.post(url, {
+            appKey: cleanKey,
+            gitVersionHash: appGit?.shortHash || GIT_VERSION.shortHash,
+            metadata
+        });
+    }
+
+    /**
+     * Obtém resumo dos créditos de gratidão e saldo financeiro do desenvolvedor (ROLE DEVELOPER).
+     */
+    public getDeveloperGratitudeSummary(): Observable<any> {
+        const rootApi = this.config?.rootApi || 'https://apps.ci.dev.br';
+        const url = `${rootApi}/Application/Gratitude/Summary`;
+        if (!this.http) return of(null);
+        return this.http.post(url, {});
+    }
+
+    /**
+     * Configura quanto vale a gratidão no perfil do desenvolvedor (ROLE DEVELOPER).
+     * "Cada usuário ROLE DEVELOPER pode configurar quanto vale sua gratidão em seu perfil,
+     * e essa é considerada para calcular o saldo."
+     */
+    public setDeveloperGratitudeConfig(unitValue: number, autoConvert?: boolean): Observable<any> {
+        const rootApi = this.config?.rootApi || 'https://apps.ci.dev.br';
+        const url = `${rootApi}/Application/Gratitude/Configure`;
+        if (!this.http) return of(null);
+        return this.http.post(url, { unitValue, autoConvert });
+    }
+
+    /**
+     * Converte créditos de gratidão em saldo na carteira do Financeiro.
+     */
+    public convertGratitudeToBalance(credits?: number): Observable<any> {
+        const rootApi = this.config?.rootApi || 'https://apps.ci.dev.br';
+        const url = `${rootApi}/Application/Gratitude/Convert`;
+        if (!this.http) return of(null);
+        return this.http.post(url, { credits });
     }
 
     /**

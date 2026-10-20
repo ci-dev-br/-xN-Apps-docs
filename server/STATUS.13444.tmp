@@ -1,0 +1,55 @@
+{
+  "1228": {
+    "startedAt": "2026-10-20T17:12:27.283Z",
+    "status": "running",
+    "debug": false,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T17:15:43.081Z",
+    "nextStatusCheckAt": "2026-10-20T17:15:43.381Z",
+    "updatedAt": "2026-10-20T17:15:43.081Z"
+  },
+  "5164": {
+    "startedAt": "2026-10-20T17:15:14.242Z",
+    "status": "stopped",
+    "debug": true,
+    "warmedUp": false,
+    "lastHeartbeat": "2026-10-20T17:15:18.410Z",
+    "updatedAt": "2026-10-20T17:15:19.009Z",
+    "stoppedAt": "2026-10-20T17:15:18.410Z"
+  },
+  "7260": {
+    "startedAt": "2026-10-20T17:15:00.098Z",
+    "status": "stopped",
+    "debug": true,
+    "warmedUp": false,
+    "lastHeartbeat": "2026-10-20T17:15:07.691Z",
+    "updatedAt": "2026-10-20T17:15:08.570Z",
+    "stoppedAt": "2026-10-20T17:15:07.691Z"
+  },
+  "11752": {
+    "startedAt": "2026-10-20T17:11:14.215Z",
+    "status": "stopped",
+    "debug": false,
+    "warmedUp": true,
+    "port": 86,
+    "lastHeartbeat": "2026-10-20T17:15:43.122Z",
+    "updatedAt": "2026-10-20T17:15:43.122Z",
+    "previousPort": 50516,
+    "lastPort86ClaimedAt": "2026-10-20T17:14:44.844Z",
+    "stoppedAt": "2026-10-20T17:15:01.392Z",
+    "nextStatusCheckAt": "2026-10-20T17:15:43.681Z"
+  },
+  "13444": {
+    "startedAt": "2026-10-20T17:15:24.974Z",
+    "status": "online",
+    "debug": true,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T17:15:43.200Z",
+    "updatedAt": "2026-10-20T17:15:43.200Z",
+    "port": 53613,
+    "previousPort": 53613,
+    "lastPort86ClaimedAt": "2026-10-20T17:15:41.309Z",
+    "stoppedAt": "2026-10-20T17:15:31.154Z",
+    "nextStatusCheckAt": "2026-10-20T17:15:43.681Z"
+  }
+}

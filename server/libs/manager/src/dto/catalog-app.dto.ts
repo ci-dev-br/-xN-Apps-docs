@@ -28,6 +28,21 @@ export class CatalogAppDto {
     @ApiProperty({ required: false, isArray: true, type: String, description: 'Colaboradores' })
     collaborators?: string[];
 
+    @ApiProperty({ required: false, description: 'Caminho da pasta do repositório onde reside a aplicação' })
+    folderPath?: string;
+
+    @ApiProperty({ required: false, isArray: true, type: String, description: 'Autores dos commits da pasta' })
+    authors?: string[];
+
+    @ApiProperty({ required: false, isArray: true, type: String, description: 'Co-autores identificados nas mensagens dos commits' })
+    coAuthors?: string[];
+
+    @ApiProperty({ required: false, description: 'Quantidade de commits na pasta da aplicação' })
+    commitCount?: number;
+
+    @ApiProperty({ required: false, description: 'Data do último commit da aplicação' })
+    lastCommitDate?: string | Date;
+
     @ApiProperty({ required: false, description: 'Políticas contextuais adicionais' })
     contextPolicies?: Record<string, any>;
 
@@ -120,3 +135,28 @@ export class GetStoreDto {
     @ApiProperty({ required: false, description: 'Filtro por categoria' })
     categoria?: string;
 }
+
+export class RecordUsageDto {
+    @ApiProperty({ description: 'Chave da aplicação utilizada (ex: Mensagens, Financeiro)' })
+    appKey: string;
+
+    @ApiProperty({ required: false, description: 'Hash da versão do Git informada pelo cliente' })
+    gitVersionHash?: string;
+
+    @ApiProperty({ required: false, description: 'Metadados contextuais da execução' })
+    metadata?: Record<string, any>;
+}
+
+export class DeveloperGratitudeConfigDto {
+    @ApiProperty({ description: 'Valor unitário de cada crédito de gratidão em Reais (R$)' })
+    unitValue: number;
+
+    @ApiProperty({ required: false, description: 'Se verdadeiro, converte automaticamente em saldo a cada consumo' })
+    autoConvert?: boolean;
+}
+
+export class ConvertGratitudeDto {
+    @ApiProperty({ required: false, description: 'Quantidade específica de créditos a converter (se omitido, converte todos os pendentes)' })
+    credits?: number;
+}
+

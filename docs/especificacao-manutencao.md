@@ -533,6 +533,18 @@ Sempre que precisar criar uma nova entidade ou adicionar campos/endpoints a uma 
    - O backend compilado (`server/dist/main.js`) já constitui a versão de produção.
    - A orquestração via arquivo `server/STATUS` permite que uma instância iniciada em **Debug Mode** (`--debug` / `--inspect` / `npm run start:debug`) assuma automaticamente a porta principal (`86`) após aquecer em uma porta secundária (`3001`–`3100`), deslocando ou substituindo a instância de produção de forma transparente e sem afetar ambos os ambientes. Quando o processo de debug é encerrado, a instância de produção reassume a porta `86` automaticamente.
 
+5. **Concessão da `ROLE 'DEVELOPER'` como Cortesia por Contribuição e Saldo**:
+   - **Regra de Negócio e Elegibilidade:**
+     - O usuário deve possuir **e-mail verificado** na plataforma (`emailVerificado === true`).
+     - O usuário deve possuir **autoria comprovada** no projeto vinculada ao mesmo e-mail (via Pull Request aceito e mergeado na branch `development`, conforme diretrizes de [Colaboradores](./colaboradores.md) e [Guia de Autoria](./guia-boas-praticas-referencias.md)).
+     - O usuário deve alcançar um **saldo mínimo de 50** na plataforma (`carteira.saldo >= 50.00`), gerado por suas contribuições ou depósitos.
+   - **Concessão Automática e Desbloqueio:**
+     - Atendidos os três critérios, o backend (`CarteiraService.verificarEConcederRoleDeveloper`) adiciona a role `'DEVELOPER'` ao perfil do usuário em `user.roles`.
+     - O colaborador passa a usufruir de imediato de todos os privilégios de desenvolvedor (Menu Deployer, alternância para `development.ci.dev.br`, catalogação de novas aplicações Git, execução de rotas restritas).
+   - **Mecanismos de Gatilho e API:**
+     - Disparo automático durante a consulta da carteira (`obterVisaoGeralCarteira`) e após acréscimos de saldo (`registrarDeposito`).
+     - Endpoint dedicado: `POST /Financeiro/Carteira/AvaliarRoleDeveloper` exposto via `CarteiraController` para reavaliação pontual a pedido do cliente.
+
 ---
 
 ### 6.6. Explorador de Arquivos (`@ci-apps/Arquivos`) e Integração com `@ci/components/data-grid`

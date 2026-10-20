@@ -7,6 +7,9 @@ import { Domain } from "./model/domain.entity";
 import { Painel } from "./model/painel.entity";
 import { ApplicationServer } from "./model/application-server.entity";
 import { ClientVersionCatalog } from "./model/client-version-catalog.entity";
+import { ApplicationConsumption } from "./model/application-consumption.entity";
+import { DeveloperGratitude } from "./model/developer-gratitude.entity";
+import { DeveloperGratitudeConfig } from "./model/developer-gratitude-config.entity";
 import { DomainService } from "./service/domain.service";
 import { DomainController } from "./controller/domain.controller";
 import { CoreModule } from "@ci/core";
@@ -14,8 +17,9 @@ import { ServerController } from "./controller";
 import { DinamycPageView } from "./model/dinamic-page-view.entity";
 import { DNSService } from "./service/dns.service";
 import { ManagerDeployOption } from "./model/deploy-option.entity";
-// import { UsersModule } from "@ci/user";
-// import { AuthModule } from "@ci/auth/auth.module";
+import { User } from "@ci/auth/models/user.entity";
+import { FinanceiroModule } from "@ci/financeiro";
+
 export const ManagerEntities = [
     Application,
     Domain,
@@ -24,7 +28,11 @@ export const ManagerEntities = [
     DinamycPageView,
     ManagerDeployOption,
     ClientVersionCatalog,
-]
+    ApplicationConsumption,
+    DeveloperGratitude,
+    DeveloperGratitudeConfig,
+];
+
 export class IOptionApplication {
     icon?: string;
     title?: string;
@@ -34,14 +42,15 @@ export class IOptionApplication {
 export class IOptionsApplicationFeatures {
     application?: IOptionApplication;
 }
+
 @Module({
     imports: [
         forwardRef(() => CoreModule),
+        forwardRef(() => FinanceiroModule),
         TypeOrmModule.forFeature([
-            ...ManagerEntities
+            ...ManagerEntities,
+            User,
         ]),
-        // forwardRef(() => AuthModule),
-        //  UsersModule,
     ],
     controllers: [
         ApplicationController,
@@ -52,6 +61,10 @@ export class IOptionsApplicationFeatures {
         ApplicationService,
         DomainService,
         DNSService,
+    ],
+    exports: [
+        ApplicationService,
+        DomainService,
     ]
 })
 export class ManagerModule {
@@ -59,7 +72,10 @@ export class ManagerModule {
         return {
             module: ManagerModule,
             providers: [
-                { provide: 'CI::OptionsApplicationFeatures', useValue: options }
+                {
+                    provide: 'APPLICATION_OPTIONS',
+                    useValue: options
+                }
             ]
         }
     }

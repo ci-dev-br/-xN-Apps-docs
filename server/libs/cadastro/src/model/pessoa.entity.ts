@@ -12,7 +12,7 @@ import {
 } from "@nestjs/swagger";
 import { InformacaoContato } from "./informacao-contato.entity";
 import { DocumentoIdentificacao } from "./documento-identificacao.entity";
-import { t } from "@ci/core";
+import { t } from "@ci/core/i18n";
 import { schema } from "./schema";
 /**
  * Cadastro de Pessoa,

@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Endereco } from "./model/endereco.entity";
 import { Pessoa } from "./model/pessoa.entity";
@@ -29,7 +29,7 @@ import { DocumentoIdentificacaoService } from "./service/documento-identificacao
 import { TipoDocumentoIdentificacaoService } from "./service/tipo-documento-identificacao.service";
 import { DocumentoIdentificacaoController } from "./controller/documento-identificacao.controller";
 import { TipoDocumentoIdentificacaoController } from "./controller/tipo-documento-identificacao.controller";
-import { ManagerModule } from "@ci/manager";
+import { ManagerModule } from "@ci/manager/manager.module";
 const FORM_PROVIDERS = [
     CadastroPessoaForm,
     CadastroEnderecoForm,
@@ -49,7 +49,7 @@ export const CadastroEntidades = [
     imports: [
         CoreModule,
         TypeOrmModule.forFeature(CadastroEntidades),
-        ManagerModule,
+        forwardRef(() => ManagerModule),
     ],
     providers: [
         CategoryService,

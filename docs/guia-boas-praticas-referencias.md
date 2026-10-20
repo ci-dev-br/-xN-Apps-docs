@@ -136,3 +136,13 @@ Antes de aprovar qualquer Pull Request ou submissão de artefatos, o revisor dev
  * ----------------------------------------------------------------------------
  */
 ```
+
+---
+
+## 7. Relação com o Programa de Colaboradores e Concessão da ROLE DEVELOPER
+
+A conformidade com este guia de autoria é o requisito técnico que viabiliza o reconhecimento de contribuições na plataforma:
+
+1. **Identificação por E-mail Pessoal Verificado:** O e-mail informado nos cabeçalhos e commits deve ser o mesmo e-mail verificado na conta do usuário no portal (`apps.ci.dev.br`).
+2. **Geração de Saldo por PR na Branch `development`:** Uma vez aceito o Pull Request para a branch `development`, a contribuição passa a gerar saldo diretamente na carteira digital do autor.
+3. **Cortesia da ROLE DEVELOPER:** Quando o usuário alcançar **50 em saldo** na plataforma mantendo a autoria comprovada pelo mesmo e-mail verificado, o sistema concede automaticamente a **ROLE DEVELOPER** como cortesia vitalícia, desbloqueando o menu Deployer, alternância de ambientes e ferramentas avançadas de desenvolvimento. Para mais detalhes, consulte o documento [Colaboradores](./colaboradores.md).

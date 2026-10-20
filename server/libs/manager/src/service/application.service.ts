@@ -1,10 +1,14 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException, forwardRef, Inject, Optional } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Application } from "../model/application.entity";
 import { ClientVersionCatalog } from "../model/client-version-catalog.entity";
+import { ApplicationConsumption } from "../model/application-consumption.entity";
+import { DeveloperGratitude } from "../model/developer-gratitude.entity";
+import { DeveloperGratitudeConfig } from "../model/developer-gratitude-config.entity";
 import { Repository } from "typeorm";
-import { CatalogAppDto, ReconcileCatalogDto, ToggleUserActivationDto, ToggleGlobalAppDto, InstallGitModuleDto } from "../dto/catalog-app.dto";
+import { CatalogAppDto, ReconcileCatalogDto, ToggleUserActivationDto, ToggleGlobalAppDto, InstallGitModuleDto, DeveloperGratitudeConfigDto } from "../dto/catalog-app.dto";
 import { User } from "@ci/auth/models/user.entity";
+import { CarteiraService } from "@ci/financeiro/service/carteira.service";
 import * as fs from 'fs';
 import * as path from 'path';
 import { exec, spawn } from 'child_process';
@@ -19,6 +23,16 @@ export class ApplicationService {
         private readonly repo: Repository<Application>,
         @InjectRepository(ClientVersionCatalog)
         private readonly versionRepo: Repository<ClientVersionCatalog>,
+        @InjectRepository(ApplicationConsumption)
+        private readonly consumptionRepo: Repository<ApplicationConsumption>,
+        @InjectRepository(DeveloperGratitude)
+        private readonly gratitudeRepo: Repository<DeveloperGratitude>,
+        @InjectRepository(DeveloperGratitudeConfig)
+        private readonly gratitudeConfigRepo: Repository<DeveloperGratitudeConfig>,
+        @InjectRepository(User)
+        private readonly userRepo: Repository<User>,
+        @Optional() @Inject(forwardRef(() => CarteiraService))
+        private readonly carteiraService?: CarteiraService,
     ) { }
 
     async find(roles?: string[], tenantId?: string, includeInactive = false) {
@@ -105,8 +119,13 @@ export class ApplicationService {
                     icon: appDto.icon,
                     categoria: appDto.categoria || 'System',
                     roles: appDto.roles || ['USER'],
-                    gitVersionHash: dto.versionHash,
-                    collaborators: dto.collaborators || appDto.collaborators,
+                    gitVersionHash: appDto.gitVersionHash || dto.versionHash,
+                    collaborators: appDto.collaborators || dto.collaborators,
+                    folderPath: appDto.folderPath,
+                    authors: appDto.authors,
+                    coAuthors: appDto.coAuthors,
+                    commitCount: appDto.commitCount || 0,
+                    lastCommitDate: appDto.lastCommitDate ? new Date(appDto.lastCommitDate) : undefined,
                     isActive: true,
                     isCatalogLocked: false,
                     firstSeenAt: now,
@@ -118,12 +137,18 @@ export class ApplicationService {
                 // Aplicação existente: atualiza e garante isActive: true
                 existing.isActive = true;
                 existing.lastSeenAt = now;
-                existing.gitVersionHash = dto.versionHash;
-                if (dto.collaborators && dto.collaborators.length > 0) {
-                    existing.collaborators = dto.collaborators;
-                } else if (appDto.collaborators && appDto.collaborators.length > 0) {
+                existing.gitVersionHash = appDto.gitVersionHash || dto.versionHash;
+                if (appDto.collaborators && appDto.collaborators.length > 0) {
                     existing.collaborators = appDto.collaborators;
+                } else if (dto.collaborators && dto.collaborators.length > 0) {
+                    existing.collaborators = dto.collaborators;
                 }
+                if (appDto.folderPath) existing.folderPath = appDto.folderPath;
+                if (appDto.authors && appDto.authors.length > 0) existing.authors = appDto.authors;
+                if (appDto.coAuthors && appDto.coAuthors.length > 0) existing.coAuthors = appDto.coAuthors;
+                if (appDto.commitCount !== undefined) existing.commitCount = appDto.commitCount;
+                if (appDto.lastCommitDate) existing.lastCommitDate = new Date(appDto.lastCommitDate);
+
                 if (!existing.appKey) existing.appKey = appKey;
                 if (!existing.routePath) existing.routePath = routePath;
 
@@ -222,6 +247,11 @@ export class ApplicationService {
                 roles: dto.roles || ['USER'],
                 gitVersionHash: dto.gitVersionHash,
                 collaborators: dto.collaborators,
+                folderPath: dto.folderPath,
+                authors: dto.authors,
+                coAuthors: dto.coAuthors,
+                commitCount: dto.commitCount || 0,
+                lastCommitDate: dto.lastCommitDate ? new Date(dto.lastCommitDate) : undefined,
                 isActive: true,
                 isCatalogLocked: false,
                 contextPolicies: dto.contextPolicies,
@@ -237,6 +267,11 @@ export class ApplicationService {
             if (dto.collaborators && dto.collaborators.length > 0) {
                 app.collaborators = dto.collaborators;
             }
+            if (dto.folderPath) app.folderPath = dto.folderPath;
+            if (dto.authors && dto.authors.length > 0) app.authors = dto.authors;
+            if (dto.coAuthors && dto.coAuthors.length > 0) app.coAuthors = dto.coAuthors;
+            if (dto.commitCount !== undefined) app.commitCount = dto.commitCount;
+            if (dto.lastCommitDate) app.lastCommitDate = new Date(dto.lastCommitDate);
             if (!app.appKey) {
                 app.appKey = appKey;
             }
@@ -296,8 +331,9 @@ export class ApplicationService {
 
     /**
      * Registra a assinatura da requisição com a aplicação de origem e hash do git.
+     * Computa o consumo e credita gratidão para os autores.
      */
-    async recordSignature(appKey: string, gitHash?: string) {
+    async recordSignature(appKey: string, gitHash?: string, user?: User, tenantId?: string) {
         if (!appKey) return;
         try {
             await this.repo.createQueryBuilder()
@@ -308,9 +344,364 @@ export class ApplicationService {
                 })
                 .where('appKey = :appKey OR routePath = :routePath', { appKey, routePath: `/${appKey}` })
                 .execute();
+
+            // Tombamento em banco do consumo e crédito de gratidão aos autores
+            await this.recordConsumption(appKey, user, gitHash, tenantId);
         } catch (err) {
             // Silencia erro de telemetria
         }
+    }
+
+    /**
+     * Registra o consumo de uma aplicação quando ela é utilizada.
+     * Gera o registro de ApplicationConsumption e credita 1 crédito de gratidão
+     * para cada autor e co-autor cadastrado nos metadados de Git da pasta da aplicação.
+     * Caso o desenvolvedor tenha configurado autoConvert, converte imediatamente para saldo na carteira.
+     */
+    async recordConsumption(
+        appKey: string,
+        user?: User,
+        gitHash?: string,
+        tenantId?: string,
+        metadata?: Record<string, any>
+    ) {
+        if (!appKey) return null;
+
+        const cleanKey = appKey.replace(/^\//, '').trim();
+        const app = await this.repo.findOne({
+            where: [
+                { appKey: cleanKey },
+                { routePath: `/${cleanKey}` },
+                { name: cleanKey }
+            ]
+        });
+
+        const now = new Date();
+        const consumption = this.consumptionRepo.create({
+            appKey: cleanKey,
+            applicationId: app?.id,
+            userId: user?.id,
+            tenantId,
+            gitVersionHash: gitHash || app?.gitVersionHash,
+            metadata: metadata || {},
+            gratitudeCreditedCount: 0,
+            createdAt: now,
+        });
+
+        const savedConsumption = await this.consumptionRepo.save(consumption);
+
+        // Atualiza lastSeenAt da aplicação
+        if (app) {
+            app.lastSeenAt = now;
+            if (gitHash && !app.gitVersionHash) {
+                app.gitVersionHash = gitHash;
+            }
+            await this.repo.save(app);
+        }
+
+        // Obtém todos os autores e co-autores da aplicação
+        const authorEntries = new Set<string>();
+        if (app?.authors && Array.isArray(app.authors)) {
+            for (const a of app.authors) if (a && a.trim()) authorEntries.add(a.trim());
+        }
+        if (app?.coAuthors && Array.isArray(app.coAuthors)) {
+            for (const ca of app.coAuthors) if (ca && ca.trim()) authorEntries.add(ca.trim());
+        }
+        if (authorEntries.size === 0 && app?.collaborators && Array.isArray(app.collaborators)) {
+            for (const c of app.collaborators) if (c && c.trim()) authorEntries.add(c.trim());
+        }
+
+        let creditedCount = 0;
+
+        for (const rawAuthor of authorEntries) {
+            let email = '';
+            let name = rawAuthor.trim();
+            const emailMatch = /<([^>]+)>/.exec(rawAuthor);
+            if (emailMatch && emailMatch[1]) {
+                email = emailMatch[1].trim().toLowerCase();
+                name = rawAuthor.replace(/<[^>]+>/, '').trim();
+            } else if (rawAuthor.includes('@')) {
+                email = rawAuthor.trim().toLowerCase();
+            }
+
+            if (!email) continue;
+
+            // Busca usuário desenvolvedor correspondente
+            let devUser: User | null = null;
+            try {
+                devUser = await this.userRepo.findOne({
+                    where: [
+                        { email: email },
+                        { username: name }
+                    ]
+                });
+            } catch {}
+
+            // Busca configuração de perfil de gratidão do desenvolvedor
+            let config: DeveloperGratitudeConfig | null = null;
+            if (devUser?.id) {
+                try {
+                    config = await this.gratitudeConfigRepo.findOneBy({ developerUserId: devUser.id });
+                } catch {}
+            }
+
+            const unitValue = config ? Number(config.unitValue) : 0.10;
+            const autoConvert = config ? Boolean(config.autoConvert) : false;
+
+            const gratitude = this.gratitudeRepo.create({
+                authorEmail: email,
+                authorName: name,
+                developerUserId: devUser?.id,
+                appKey: cleanKey,
+                applicationId: app?.id,
+                consumptionId: savedConsumption.id,
+                credits: 1,
+                isConverted: false,
+                createdAt: now,
+            });
+
+            const savedGratitude = await this.gratitudeRepo.save(gratitude);
+            creditedCount++;
+
+            // Se autoConvert estiver ativo e houver CarteiraService e usuário vinculado, converte direto para saldo
+            if (autoConvert && devUser?.id && this.carteiraService) {
+                try {
+                    const depositResult = await this.carteiraService.registrarDeposito(devUser.id, {
+                        valor: unitValue,
+                        descricao: `Crédito de gratidão automático pelo uso do app ${cleanKey}`,
+                        metadados: {
+                            appKey: cleanKey,
+                            gratitudeId: savedGratitude.id,
+                            consumptionId: savedConsumption.id,
+                            unitValue
+                        }
+                    });
+
+                    savedGratitude.isConverted = true;
+                    savedGratitude.convertedAt = new Date();
+                    savedGratitude.transacaoFinanceiraId = (depositResult?.transacao as any)?.id || (depositResult?.transacao as any)?.internalId;
+                    savedGratitude.convertedValor = unitValue;
+                    savedGratitude.unitValueAtConversion = unitValue;
+                    await this.gratitudeRepo.save(savedGratitude);
+                } catch (err) {
+                    console.warn(`[ApplicationService] Falha ao autoconverter gratidão para usuário ${devUser.id}:`, err?.message || err);
+                }
+            }
+        }
+
+        savedConsumption.gratitudeCreditedCount = creditedCount;
+        await this.consumptionRepo.save(savedConsumption);
+
+        return {
+            consumptionId: savedConsumption.id,
+            appKey: cleanKey,
+            creditedCount
+        };
+    }
+
+    /**
+     * Obtém o resumo dos créditos de gratidão do desenvolvedor autenticado,
+     * total não convertido, total já convertido, valor unitário configurado e saldo financeiro calculado.
+     * "Cada usuário ROLE DEVELOPER pode configurar quanto vale sua gratidão em seu perfil,
+     * e essa é considerada para calcular o saldo."
+     */
+    async getDeveloperGratitudeSummary(user: User) {
+        if (!user || (!user.roles?.includes('DEVELOPER') && !user.roles?.includes('ADMIN') && !user.roles?.includes('MASTER'))) {
+            throw new ForbiddenException('Apenas usuários com papel DEVELOPER têm acesso ao perfil de gratidão.');
+        }
+
+        const devUserId = user.id;
+        const devEmail = user.email?.toLowerCase().trim();
+
+        // Busca configuração do desenvolvedor
+        let config: DeveloperGratitudeConfig | null = null;
+        if (devUserId) {
+            config = await this.gratitudeConfigRepo.findOneBy({ developerUserId: devUserId });
+        }
+
+        const unitValue = config ? Number(config.unitValue) : 0.10;
+        const autoConvert = config ? Boolean(config.autoConvert) : false;
+
+        // Query créditos atribuídos ao desenvolvedor
+        const query = this.gratitudeRepo.createQueryBuilder('g')
+            .where('(g.developerUserId = :devUserId' + (devEmail ? ' OR LOWER(g.authorEmail) = :devEmail' : '') + ')', {
+                devUserId,
+                devEmail
+            });
+
+        const allCredits = await query.orderBy('g.createdAt', 'DESC').getMany();
+
+        let unconvertedCredits = 0;
+        let convertedCredits = 0;
+        let totalEarnedValor = 0;
+        const appBreakdown: Record<string, { appKey: string; totalCredits: number; unconverted: number; converted: number }> = {};
+
+        for (const item of allCredits) {
+            if (!appBreakdown[item.appKey]) {
+                appBreakdown[item.appKey] = {
+                    appKey: item.appKey,
+                    totalCredits: 0,
+                    unconverted: 0,
+                    converted: 0
+                };
+            }
+
+            appBreakdown[item.appKey].totalCredits += item.credits;
+
+            if (item.isConverted) {
+                convertedCredits += item.credits;
+                totalEarnedValor += Number(item.convertedValor) || 0;
+                appBreakdown[item.appKey].converted += item.credits;
+            } else {
+                unconvertedCredits += item.credits;
+                appBreakdown[item.appKey].unconverted += item.credits;
+            }
+        }
+
+        const estimatedBalance = Number((unconvertedCredits * unitValue).toFixed(2));
+
+        return {
+            developerUserId: devUserId,
+            developerEmail: devEmail,
+            unitValue,
+            autoConvert,
+            unconvertedCredits,
+            convertedCredits,
+            totalCredits: unconvertedCredits + convertedCredits,
+            estimatedBalance,
+            totalEarnedValor: Number(totalEarnedValor.toFixed(2)),
+            appBreakdown: Object.values(appBreakdown),
+            recentHistory: allCredits.slice(0, 20)
+        };
+    }
+
+    /**
+     * Atualiza a configuração de quanto vale a gratidão no perfil do desenvolvedor.
+     * "Cada usuário ROLE DEVELOPER pode configurar quanto vale sua gratidão em seu perfil,
+     * e essa é considerada para calcular o saldo."
+     */
+    async setDeveloperGratitudeConfig(user: User, dto: DeveloperGratitudeConfigDto) {
+        if (!user || (!user.roles?.includes('DEVELOPER') && !user.roles?.includes('ADMIN') && !user.roles?.includes('MASTER'))) {
+            throw new ForbiddenException('Apenas usuários com papel DEVELOPER podem configurar o valor da gratidão.');
+        }
+
+        if (dto.unitValue === undefined || dto.unitValue === null || isNaN(Number(dto.unitValue)) || Number(dto.unitValue) < 0) {
+            throw new BadRequestException('O valor unitário da gratidão deve ser um número maior ou igual a zero.');
+        }
+
+        let config = await this.gratitudeConfigRepo.findOneBy({ developerUserId: user.id });
+        if (!config) {
+            config = this.gratitudeConfigRepo.create({
+                developerUserId: user.id,
+                unitValue: Number(dto.unitValue),
+                autoConvert: Boolean(dto.autoConvert),
+            });
+        } else {
+            config.unitValue = Number(dto.unitValue);
+            if (dto.autoConvert !== undefined) {
+                config.autoConvert = Boolean(dto.autoConvert);
+            }
+        }
+
+        const savedConfig = await this.gratitudeConfigRepo.save(config);
+        return {
+            success: true,
+            developerUserId: user.id,
+            unitValue: Number(savedConfig.unitValue),
+            autoConvert: Boolean(savedConfig.autoConvert),
+            updatedAt: savedConfig.updatedAt
+        };
+    }
+
+    /**
+     * Converte créditos de gratidão acumulados pelo desenvolvedor em saldo financeiro na sua carteira.
+     * "que credita para cada autor um crédito de gratidão que pode ou não ser convertido em saldo no financeiro."
+     */
+    async convertGratitudeToBalance(user: User, requestedCredits?: number) {
+        if (!user || (!user.roles?.includes('DEVELOPER') && !user.roles?.includes('ADMIN') && !user.roles?.includes('MASTER'))) {
+            throw new ForbiddenException('Apenas usuários com papel DEVELOPER podem converter gratidão em saldo financeiro.');
+        }
+
+        if (!this.carteiraService) {
+            throw new BadRequestException('Serviço financeiro de carteira indisponível no momento.');
+        }
+
+        const devUserId = user.id;
+        const devEmail = user.email?.toLowerCase().trim();
+
+        // Busca configuração do desenvolvedor para saber quanto vale cada gratidão
+        let config: DeveloperGratitudeConfig | null = null;
+        if (devUserId) {
+            config = await this.gratitudeConfigRepo.findOneBy({ developerUserId: devUserId });
+        }
+
+        const unitValue = config ? Number(config.unitValue) : 0.10;
+        if (unitValue <= 0) {
+            throw new BadRequestException('O valor unitário da gratidão configurado em seu perfil é zero. Configure um valor maior que zero para converter em saldo financeiro.');
+        }
+
+        // Busca créditos pendentes de conversão
+        const query = this.gratitudeRepo.createQueryBuilder('g')
+            .where('g.isConverted = false')
+            .andWhere('(g.developerUserId = :devUserId' + (devEmail ? ' OR LOWER(g.authorEmail) = :devEmail' : '') + ')', {
+                devUserId,
+                devEmail
+            })
+            .orderBy('g.createdAt', 'ASC');
+
+        const pendentes = await query.getMany();
+
+        if (!pendentes || pendentes.length === 0) {
+            throw new BadRequestException('Não há créditos de gratidão pendentes para conversão.');
+        }
+
+        let aConverter = pendentes;
+        if (requestedCredits && requestedCredits > 0 && requestedCredits < pendentes.length) {
+            aConverter = pendentes.slice(0, requestedCredits);
+        }
+
+        const totalCredits = aConverter.reduce((acc, curr) => acc + curr.credits, 0);
+        const valorTotal = Number((totalCredits * unitValue).toFixed(2));
+
+        if (valorTotal <= 0) {
+            throw new BadRequestException('O valor total a ser creditado deve ser superior a R$ 0,00.');
+        }
+
+        // Executa depósito na Carteira do Financeiro
+        const appKeys = Array.from(new Set(aConverter.map(c => c.appKey))).join(', ');
+        const depositResult = await this.carteiraService.registrarDeposito(user.id, {
+            valor: valorTotal,
+            descricao: `Conversão de ${totalCredits} crédito(s) de gratidão (Apps: ${appKeys})`,
+            metadados: {
+                tipo: 'CONVERSAO_GRATIDAO_DEVELOPER',
+                totalCredits,
+                unitValue,
+                apps: appKeys
+            }
+        });
+
+        const now = new Date();
+        const transacaoId = (depositResult?.transacao as any)?.id || (depositResult?.transacao as any)?.internalId;
+
+        for (const item of aConverter) {
+            item.isConverted = true;
+            item.convertedAt = now;
+            item.developerUserId = user.id;
+            item.transacaoFinanceiraId = transacaoId;
+            item.convertedValor = Number((item.credits * unitValue).toFixed(2));
+            item.unitValueAtConversion = unitValue;
+            await this.gratitudeRepo.save(item);
+        }
+
+        return {
+            success: true,
+            convertedCredits: totalCredits,
+            unitValue,
+            creditedValor: valorTotal,
+            transacao: depositResult?.transacao,
+            carteira: depositResult?.carteira,
+            remainingUnconvertedCredits: pendentes.length - aConverter.length
+        };
     }
 
     /**

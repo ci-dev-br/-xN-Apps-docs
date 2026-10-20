@@ -1,0 +1,31 @@
+{
+  "1228": {
+    "startedAt": "2026-10-20T17:12:27.283Z",
+    "status": "running",
+    "debug": false,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T17:14:41.570Z",
+    "nextStatusCheckAt": "2026-10-20T17:14:41.994Z",
+    "updatedAt": "2026-10-20T17:14:41.570Z"
+  },
+  "10820": {
+    "startedAt": "2026-10-20T17:09:37.683Z",
+    "status": "running",
+    "debug": true,
+    "warmedUp": true,
+    "port": 86,
+    "lastHeartbeat": "2026-10-20T17:14:42.445Z",
+    "nextStatusCheckAt": "2026-10-20T17:14:42.919Z",
+    "updatedAt": "2026-10-20T17:14:42.445Z"
+  },
+  "11752": {
+    "startedAt": "2026-10-20T17:11:14.215Z",
+    "status": "running",
+    "debug": false,
+    "warmedUp": true,
+    "port": 50516,
+    "lastHeartbeat": "2026-10-20T17:14:42.319Z",
+    "nextStatusCheckAt": "2026-10-20T17:14:42.619Z",
+    "updatedAt": "2026-10-20T17:14:42.319Z"
+  }
+}

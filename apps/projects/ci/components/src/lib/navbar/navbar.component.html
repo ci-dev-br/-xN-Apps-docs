@@ -1,205 +1,280 @@
-@if(!!user()){
-<mat-toolbar color="accent">
-    @if(!!_apps() && _apps()!.length > 0){ <button mat-icon-button [matMenuTriggerFor]="menuApps">
-        <mat-icon>apps</mat-icon>
-    </button>
-    <mat-menu #menuApps>
-        <h1>Principais Àpps</h1>
-        <div class="menu--inner">
-            @for (app of _apps(); track $index) {
-            <button mat-button routerLinkActive="side-ativo" [routerLink]="'/' + app.url"
-                (click)="appClickHandler($event, app)">
-                @if(app.icon){
-                @if(app.type === 'svg'){
-                <mat-icon [svgIcon]="app.icon"></mat-icon>
-                }
-                @else{
-                @if(!!app?.icon){<mat-icon>{{app.icon}}</mat-icon>}
-                }
-                }
-            </button>
-            }
-        </div>
-        <a routerLink="/meus-apps/apps">Todos os Àpps</a>
-    </mat-menu>
-    @if(!!recentes && recentes.length > 0){<div class="recent">
-        @for (app of recentes; track $index) {
-        <button mat-icon-button routerLinkActive="side-ativo" [routerLink]="'/' + app.url"
-            (click)="appClickHandler($event, app)">
-            @if(!!app?.icon){<mat-icon [svgIcon]="app.icon"></mat-icon>}
-        </button>
-        }
-    </div>}}@else{
-    <button mat-button routerLink="/meus-apps/apps">
-        <mat-icon>apps</mat-icon>
-    </button>
-    }
-    <ci-logo></ci-logo>
-    <span style="flex: auto;"></span>
-    @if(!!userMenu && !!userMenuList){
-    @if(isDeveloper){
-    <button mat-icon-button [matMenuTriggerFor]="deployMenu" (click)="carregarVersaoDisponivel()"
-        matTooltip="Deployer — Versão e Publicação">
-        <mat-icon>deployed_code</mat-icon>
-    </button>
-    <mat-menu #deployMenu="matMenu" class="deployer-menu">
-        <div class="deployer-panel" (click)="$event.stopPropagation()">
-            <div class="deployer-header">
-                <strong>Deployer — Versão Disponível</strong>
-                <button mat-icon-button (click)="carregarVersaoDisponivel($event)" [disabled]="loadingVersion()"
-                    matTooltip="Atualizar informações">
-                    <mat-icon>refresh</mat-icon>
+<mat-toolbar class="ci-navbar-toolbar">
+    <!-- Bloco de Identidade da Marca (Logo sempre em destaque à esquerda) -->
+    <div class="brand-section">
+        <ci-logo></ci-logo>
+    </div>
+
+    @if(!!user()){
+        <div class="nav-divider"></div>
+
+        <!-- Launcher de Apps e Acessos Recentes -->
+        <div class="apps-launcher-section">
+            @if(!!_apps() && _apps()!.length > 0){
+                <button mat-icon-button [matMenuTriggerFor]="menuApps" class="nav-icon-btn apps-btn" matTooltip="Principais Aplicativos">
+                    <mat-icon>apps</mat-icon>
                 </button>
-            </div>
-
-            @if(versionInfo(); as v){
-            <div class="deployer-info">
-                <div><strong>Versão:</strong> v{{v.version}} ({{v.branch}} @ <code>{{v.shortCommit}}</code>)</div>
-                <div><strong>Autor:</strong> {{v.author}}</div>
-                <div class="deployer-msg" [title]="v.message"><strong>Commit:</strong> {{v.message}}</div>
-                <div>
-                    <strong>Ambiente Ativo:</strong>
-                    <span class="env-badge" [class.debug]="v.currentEnvironment === 'debug'">
-                        {{v.currentEnvironment === 'debug' ? 'DEBUG (Auto-Swap)' : 'PRODUÇÃO (Compilado)'}} (PID
-                        {{v.currentPid}})
-                    </span>
-                </div>
-                <div class="deployer-sub">{{v.orchestrationMode}}</div>
-                <div>
-                    <strong>Cliente Prod (/gulp):</strong>
-                    {{v.clientPublishedAt ? (v.clientPublishedAt | date:'dd/MM/yyyy HH:mm:ss') : 'Pendente'}}
-                </div>
-                <div>
-                    <strong>Backend Prod (dist):</strong>
-                    {{v.serverCompiledAt ? (v.serverCompiledAt | date:'dd/MM/yyyy HH:mm:ss') : 'Compilado'}}
-                </div>
-                <div>
-                    <strong>Status Publicação:</strong>
-                    <code>{{v.publishStatus}}</code>
-                    @if(v.dirtyFilesCount > 0){
-                    <span>({{v.dirtyFilesCount}} arq. alterados)</span>
-                    }
-                </div>
-                @if(lastActionMessage()){
-                <div class="deployer-feedback">{{lastActionMessage()}}</div>
+                @if(!!recentes && recentes.length > 0){
+                    <div class="recent-apps-bar">
+                        @for (app of recentes; track $index) {
+                            <button mat-icon-button routerLinkActive="active-recent-app" [routerLink]="'/' + app.url"
+                                (click)="appClickHandler($event, app)" class="recent-app-btn" [matTooltip]="app.name || app.title || 'App'">
+                                @if(!!app?.icon){
+                                    @if(app.type === 'svg'){
+                                        <mat-icon [svgIcon]="app.icon"></mat-icon>
+                                    } @else {
+                                        <mat-icon>{{app.icon}}</mat-icon>
+                                    }
+                                }
+                            </button>
+                        }
+                    </div>
                 }
-                @if(v.publishLogs && v.publishLogs.length > 0){
-                <pre class="deployer-logs">{{v.publishLogs.slice(-4).join('\n')}}</pre>
-                }
-            </div>
-            }@else{
-            <div class="deployer-info">
-                @if(loadingVersion()){
-                <span>Carregando informações da versão...</span>
-                }@else{
-                <span>Clique em atualizar para consultar a versão disponível.</span>
-                }
-            </div>
+            } @else {
+                <button mat-icon-button routerLink="/meus-apps/apps" class="nav-icon-btn apps-btn" matTooltip="Todos os Aplicativos">
+                    <mat-icon>apps</mat-icon>
+                </button>
             }
         </div>
-
-        <button mat-menu-item (click)="publicarVersao('gulp', $event)"
-            [disabled]="publishing() || versionInfo()?.publishStatus === 'running'">
-            <mat-icon>rocket_launch</mat-icon>
-            <span>Publicar Cliente Produção (Gulp)</span>
-        </button>
-        <button mat-menu-item (click)="publicarVersao('server-build', $event)"
-            [disabled]="publishing() || versionInfo()?.publishStatus === 'running'">
-            <mat-icon>memory</mat-icon>
-            <span>Compilar Backend Produção</span>
-        </button>
-        <button mat-menu-item (click)="publicarVersao('full-publish', $event)"
-            [disabled]="publishing() || versionInfo()?.publishStatus === 'running'">
-            <mat-icon>publish</mat-icon>
-            <span>Publicação Completa (Gulp + Backend)</span>
-        </button>
-        <button mat-menu-item (click)="publicarVersao('sync-git', $event)"
-            [disabled]="publishing() || versionInfo()?.publishStatus === 'running'">
-            <mat-icon>sync</mat-icon>
-            <span>Sincronizar Git (Pull / Push)</span>
-        </button>
-    </mat-menu>
     }
-    <button mat-icon-button [matMenuTriggerFor]="communitiesMenu" matTooltip="Grupos e Comunidades">
-        <mat-icon>groups</mat-icon>
-    </button>
-    <mat-menu #communitiesMenu>
-        <button mat-menu-item (click)="abrirGrupos(0)">
-            <mat-icon>search</mat-icon>
-            <span>Encontrar grupos</span>
-        </button>
-        <button mat-menu-item (click)="abrirGrupos(1)">
-            <mat-icon>group_add</mat-icon>
-            <span>Criar novo grupo</span>
-        </button>
-        <button mat-menu-item (click)="abrirGrupos(2)">
-            <mat-icon>diversity_3</mat-icon>
-            <span>Meus grupos</span>
-        </button>
-    </mat-menu>
 
-    <!-- Caixa de Notificações Internas & Web Push -->
-    @if((displayMode$ | async) === 'sidebar') {
-        <button mat-icon-button (click)="toggleSidebar()" class="notif-btn" matTooltip="Notificações (Aba Lateral)">
-            <mat-icon [matBadge]="unreadCount$ | async" [matBadgeHidden]="!(unreadCount$ | async) || (unreadCount$ | async) === 0" matBadgeColor="warn" matBadgeSize="small">
-                notifications
-            </mat-icon>
+    <!-- Espaçador flexível central -->
+    <span class="toolbar-spacer"></span>
+
+    <!-- Ações e Perfil à Direita -->
+    @if(!!user()){
+        @if(isDeveloper){
+            <button mat-icon-button [matMenuTriggerFor]="deployMenu" (click)="carregarVersaoDisponivel()"
+                matTooltip="Deployer — Versão e Publicação" class="nav-icon-btn">
+                <mat-icon>deployed_code</mat-icon>
+            </button>
+        }
+
+        <button mat-icon-button [matMenuTriggerFor]="communitiesMenu" matTooltip="Grupos e Comunidades" class="nav-icon-btn">
+            <mat-icon>groups</mat-icon>
         </button>
-    } @else if((displayMode$ | async) === 'statusbar') {
-        <button mat-icon-button (click)="toggleStatusbar()" class="notif-btn" matTooltip="Notificações (Statusbar)">
-            <mat-icon [matBadge]="unreadCount$ | async" [matBadgeHidden]="!(unreadCount$ | async) || (unreadCount$ | async) === 0" matBadgeColor="warn" matBadgeSize="small">
-                notifications
-            </mat-icon>
+
+        <!-- Caixa de Notificações Internas & Web Push -->
+        @if((displayMode$ | async) === 'sidebar') {
+            <button mat-icon-button (click)="toggleSidebar()" class="nav-icon-btn notif-btn" matTooltip="Notificações (Aba Lateral)">
+                <mat-icon [matBadge]="unreadCount$ | async" [matBadgeHidden]="!(unreadCount$ | async) || (unreadCount$ | async) === 0" matBadgeColor="warn" matBadgeSize="small">
+                    notifications
+                </mat-icon>
+            </button>
+        } @else if((displayMode$ | async) === 'statusbar') {
+            <button mat-icon-button (click)="toggleStatusbar()" class="nav-icon-btn notif-btn" matTooltip="Notificações (Statusbar)">
+                <mat-icon [matBadge]="unreadCount$ | async" [matBadgeHidden]="!(unreadCount$ | async) || (unreadCount$ | async) === 0" matBadgeColor="warn" matBadgeSize="small">
+                    notifications
+                </mat-icon>
+            </button>
+        } @else {
+            <button mat-icon-button [matMenuTriggerFor]="notificationsMenu" class="nav-icon-btn notif-btn" matTooltip="Notificações">
+                <mat-icon [matBadge]="unreadCount$ | async" [matBadgeHidden]="!(unreadCount$ | async) || (unreadCount$ | async) === 0" matBadgeColor="warn" matBadgeSize="small">
+                    notifications
+                </mat-icon>
+            </button>
+        }
+
+        <!-- Botão do Menu de Usuário -->
+        <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-btn" [matTooltip]="user()?.surname || user()?.fullName || user()?.username || 'Usuário'">
+            @if(userPhotoUrl){
+                <img [src]="userPhotoUrl" class="navbar-user-photo" alt="Foto do usuário" (error)="onPhotoError()" />
+            }@else{
+                <mat-icon>account_circle</mat-icon>
+            }
         </button>
     } @else {
-        <button mat-icon-button [matMenuTriggerFor]="notificationsMenu" class="notif-btn" matTooltip="Notificações">
-            <mat-icon [matBadge]="unreadCount$ | async" [matBadgeHidden]="!(unreadCount$ | async) || (unreadCount$ | async) === 0" matBadgeColor="warn" matBadgeSize="small">
-                notifications
-            </mat-icon>
-        </button>
+        <div class="auth-actions">
+            <a mat-button routerLink="/acessar" class="auth-btn btn-login">
+                <mat-icon>login</mat-icon>
+                <span>Entrar</span>
+            </a>
+            <a mat-flat-button color="primary" routerLink="/registrar" class="auth-btn btn-register">
+                <mat-icon>person_add</mat-icon>
+                <span>Registrar</span>
+            </a>
+        </div>
     }
-    <mat-menu #notificationsMenu="matMenu" class="notifications-menu-panel" xPosition="before">
-        <ng-container *ngTemplateOutlet="notificationsListContent"></ng-container>
-    </mat-menu>
-
-    <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-btn" [matTooltip]="user()?.surname || user()?.fullName || user()?.username || 'Usuário'">
-        @if(userPhotoUrl){
-            <img [src]="userPhotoUrl" class="navbar-user-photo" alt="Foto do usuário" (error)="onPhotoError()" />
-        }@else{
-            <mat-icon>people</mat-icon>
-        }
-    </button>}
-    <mat-menu #userMenu>
-        @if(!!userMenu && !!userMenuList){@for(menu_item of userMenuList; track menu_item){
-        @if(!!menu_item && menu_item.component !== undefined){
-        <ng-container *ngComponentOutlet="menu_item.component"></ng-container>
-        }@else{
-        @if(!!menu_item?.onClick){
-        <button mat-menu-item (click)="itemMenuActionHandler(menu_item, $event)">
-            <ng-container *ngTemplateOutlet="innerItemMenu"></ng-container>
-        </button>
-        }@else{
-        <ng-container *ngTemplateOutlet="innerItemMenu"></ng-container>
-        }
-        }
-        <ng-template #innerItemMenu>
-            <div class="row --vc">
-                @if(menu_item.label){
-                @if(menu_item.icon){<mat-icon>{{menu_item.icon}}</mat-icon>}
-                {{menu_item.label}}
-                }
-            </div>
-        </ng-template>
-        }}
-        <mat-divider></mat-divider>
-        <button mat-menu-item [matMenuTriggerFor]="notifSettingsSubmenu">
-            <mat-icon>tune</mat-icon>
-            <span>Visualização de Notificações</span>
-        </button>
-    </mat-menu>
 </mat-toolbar>
 
-<!-- Submenu Oculto no Menu do Usuário para Configuração de Notificações -->
+<!-- Menu de Aplicativos -->
+<mat-menu #menuApps="matMenu" class="apps-dropdown-panel">
+    <div class="menu-header">
+        <mat-icon>apps</mat-icon>
+        <span>Principais Aplicativos</span>
+    </div>
+    <div class="menu--inner">
+        @for (app of _apps(); track $index) {
+        <button mat-menu-item routerLinkActive="side-ativo" [routerLink]="'/' + app.url"
+            (click)="appClickHandler($event, app)" class="app-menu-entry">
+            @if(app.icon){
+                @if(app.type === 'svg'){
+                    <mat-icon [svgIcon]="app.icon"></mat-icon>
+                } @else {
+                    <mat-icon>{{app.icon}}</mat-icon>
+                }
+            }
+            <span>{{ app.name || app.title || app.url }}</span>
+        </button>
+        }
+    </div>
+    <mat-divider></mat-divider>
+    <a mat-button routerLink="/meus-apps/apps" class="all-apps-link">
+        <mat-icon>grid_view</mat-icon>
+        <span>Todos os Apps</span>
+    </a>
+</mat-menu>
+
+<!-- Menu do Deployer (ROLE DEVELOPER) -->
+<mat-menu #deployMenu="matMenu" class="deployer-menu">
+    <div class="deployer-panel" (click)="$event.stopPropagation()">
+        <div class="deployer-header">
+            <strong>Deployer — Versão Disponível</strong>
+            <button mat-icon-button (click)="carregarVersaoDisponivel($event)" [disabled]="loadingVersion()"
+                matTooltip="Atualizar informações">
+                <mat-icon>refresh</mat-icon>
+            </button>
+        </div>
+
+        @if(versionInfo(); as v){
+        <div class="deployer-info">
+            <div><strong>Versão:</strong> v{{v.version}} ({{v.branch}} @ <code>{{v.shortCommit}}</code>)</div>
+            <div><strong>Autor:</strong> {{v.author}}</div>
+            <div class="deployer-msg" [title]="v.message"><strong>Commit:</strong> {{v.message}}</div>
+            <div>
+                <strong>Ambiente Ativo:</strong>
+                <span class="env-badge" [class.debug]="v.currentEnvironment === 'debug'">
+                    {{v.currentEnvironment === 'debug' ? 'DEBUG (Auto-Swap)' : 'PRODUÇÃO (Compilado)'}} (PID
+                    {{v.currentPid}})
+                </span>
+            </div>
+            <div class="deployer-sub">{{v.orchestrationMode}}</div>
+            <div>
+                <strong>Cliente Prod (/gulp):</strong>
+                {{v.clientPublishedAt ? (v.clientPublishedAt | date:'dd/MM/yyyy HH:mm:ss') : 'Pendente'}}
+            </div>
+            <div>
+                <strong>Backend Prod (dist):</strong>
+                {{v.serverCompiledAt ? (v.serverCompiledAt | date:'dd/MM/yyyy HH:mm:ss') : 'Compilado'}}
+            </div>
+            <div>
+                <strong>Status Publicação:</strong>
+                <code>{{v.publishStatus}}</code>
+                @if(v.dirtyFilesCount > 0){
+                <span>({{v.dirtyFilesCount}} arq. alterados)</span>
+                }
+            </div>
+            @if(lastActionMessage()){
+            <div class="deployer-feedback">{{lastActionMessage()}}</div>
+            }
+            @if(v.publishLogs && v.publishLogs.length > 0){
+            <pre class="deployer-logs">{{v.publishLogs.slice(-4).join('\n')}}</pre>
+            }
+        </div>
+        }@else{
+        <div class="deployer-info">
+            @if(loadingVersion()){
+            <span>Carregando informações da versão...</span>
+            }@else{
+            <span>Clique em atualizar para consultar a versão disponível.</span>
+            }
+        </div>
+        }
+    </div>
+
+    <button mat-menu-item (click)="publicarVersao('gulp', $event)"
+        [disabled]="publishing() || versionInfo()?.publishStatus === 'running'">
+        <mat-icon>rocket_launch</mat-icon>
+        <span>Publicar Cliente Produção (Gulp)</span>
+    </button>
+    <button mat-menu-item (click)="publicarVersao('server-build', $event)"
+        [disabled]="publishing() || versionInfo()?.publishStatus === 'running'">
+        <mat-icon>memory</mat-icon>
+        <span>Compilar Backend Produção</span>
+    </button>
+    <button mat-menu-item (click)="publicarVersao('full-publish', $event)"
+        [disabled]="publishing() || versionInfo()?.publishStatus === 'running'">
+        <mat-icon>publish</mat-icon>
+        <span>Publicação Completa (Gulp + Backend)</span>
+    </button>
+    <button mat-menu-item (click)="publicarVersao('sync-git', $event)"
+        [disabled]="publishing() || versionInfo()?.publishStatus === 'running'">
+        <mat-icon>sync</mat-icon>
+        <span>Sincronizar Git (Pull / Push)</span>
+    </button>
+</mat-menu>
+
+<!-- Menu de Grupos e Comunidades -->
+<mat-menu #communitiesMenu="matMenu">
+    <button mat-menu-item (click)="abrirGrupos(0)">
+        <mat-icon>search</mat-icon>
+        <span>Encontrar grupos</span>
+    </button>
+    <button mat-menu-item (click)="abrirGrupos(1)">
+        <mat-icon>group_add</mat-icon>
+        <span>Criar novo grupo</span>
+    </button>
+    <button mat-menu-item (click)="abrirGrupos(2)">
+        <mat-icon>diversity_3</mat-icon>
+        <span>Meus grupos</span>
+    </button>
+</mat-menu>
+
+<!-- Menu de Notificações -->
+<mat-menu #notificationsMenu="matMenu" class="notifications-menu-panel" xPosition="before">
+    <ng-container *ngTemplateOutlet="notificationsListContent"></ng-container>
+</mat-menu>
+
+<!-- Menu do Perfil do Usuário -->
+<mat-menu #userMenu="matMenu" class="user-dropdown-menu">
+    @if(user(); as u){
+        <div class="user-menu-profile-card">
+            @if(userPhotoUrl){
+                <img [src]="userPhotoUrl" class="user-card-photo" alt="Foto" (error)="onPhotoError()" />
+            } @else {
+                <div class="user-card-placeholder">
+                    <mat-icon>person</mat-icon>
+                </div>
+            }
+            <div class="user-card-info">
+                <span class="user-card-name">{{ u.surname || u.fullName || u.username || 'Usuário' }}</span>
+                @if(u.email){
+                    <span class="user-card-email">{{ u.email }}</span>
+                }
+            </div>
+        </div>
+        <mat-divider></mat-divider>
+    }
+
+    @if(userMenuList && userMenuList.length > 0){
+        @for(menu_item of userMenuList; track $index){
+            @if(menu_item && menu_item.component !== undefined){
+                <ng-container *ngComponentOutlet="menu_item.component"></ng-container>
+            } @else {
+                <button mat-menu-item (click)="itemMenuActionHandler(menu_item, $event)">
+                    @if(menu_item.icon){
+                        <mat-icon>{{menu_item.icon}}</mat-icon>
+                    }
+                    <span>{{menu_item.label}}</span>
+                </button>
+            }
+        }
+        <mat-divider></mat-divider>
+    }
+
+    <button mat-menu-item [matMenuTriggerFor]="notifSettingsSubmenu">
+        <mat-icon>tune</mat-icon>
+        <span>Visualização de Notificações</span>
+    </button>
+
+    <mat-divider></mat-divider>
+
+    <button mat-menu-item (click)="sair()" class="logout-menu-item">
+        <mat-icon color="warn">logout</mat-icon>
+        <span>Sair da Conta</span>
+    </button>
+</mat-menu>
+
+<!-- Submenu para Configuração de Notificações -->
 <mat-menu #notifSettingsSubmenu="matMenu" class="notif-settings-menu">
     <button mat-menu-item (click)="setDisplayMode('menu')">
         <mat-icon [color]="(displayMode$ | async) === 'menu' ? 'primary' : null">
@@ -303,7 +378,7 @@
 </ng-template>
 
 <!-- Aba Lateral e Drawer de Notificações (Modo 'sidebar') -->
-@if((displayMode$ | async) === 'sidebar') {
+@if(!!user() && (displayMode$ | async) === 'sidebar') {
     <aside class="ci-notif-lateral-tab" (click)="toggleSidebar()" matTooltip="Abrir Notificações">
         <mat-icon [matBadge]="unreadCount$ | async" [matBadgeHidden]="!(unreadCount$ | async) || (unreadCount$ | async) === 0" matBadgeColor="warn" matBadgeSize="small">
             notifications
@@ -320,7 +395,7 @@
 }
 
 <!-- Statusbar Inferior e Drawer Expansível (Modo 'statusbar') -->
-@if((displayMode$ | async) === 'statusbar') {
+@if(!!user() && (displayMode$ | async) === 'statusbar') {
     @if(isStatusbarExpanded$ | async) {
         <div class="ci-notif-statusbar-backdrop" (click)="toggleStatusbar(false)"></div>
     }
@@ -359,16 +434,4 @@
             </button>
         </div>
     </footer>
-}
-}@else{
-<nav>
-    <ul>
-        <li>
-            <a routerLink="registrar">Registrar</a>
-        </li>
-        <li>
-            <a routerLink="acessar">Entrar</a>
-        </li>
-    </ul>
-</nav>
 }

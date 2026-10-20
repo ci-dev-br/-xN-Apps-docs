@@ -1,7 +1,7 @@
 // indicator-config.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { FullAuditedEntity } from '@ci/manager';
+import { FullAuditedEntity } from '@ci/manager/dao/entities';
 
 @Entity('indicator_configs')
 export class IndicatorConfig extends FullAuditedEntity {

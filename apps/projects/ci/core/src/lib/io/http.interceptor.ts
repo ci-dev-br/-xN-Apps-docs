@@ -185,7 +185,9 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         const originApp = ApplicationCatalogService.currentAppKey ||
             ApplicationCatalogService.detectFromUrl(this.router?.url || (typeof window !== 'undefined' ? window.location.pathname : '')) ||
             'Portal';
-        const gitHash = GIT_VERSION.shortHash;
+        const cleanKey = originApp.replace(/^\//, '').trim();
+        const appGit = (GIT_VERSION as any).getAppGitInfo?.(cleanKey) || (GIT_VERSION as any).applications?.[cleanKey] || (GIT_VERSION as any).applications?.[cleanKey.toLowerCase()];
+        const gitHash = appGit?.shortHash || GIT_VERSION.shortHash;
 
         const headersConfig: { [key: string]: string } = {
             'X-Origin-Application': originApp,

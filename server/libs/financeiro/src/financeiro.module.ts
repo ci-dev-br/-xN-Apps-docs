@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { LancamentoFinanceiro } from "./model/lancamento-financeiro.entity";
 import { BillingType } from "./model/billing-type.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -66,7 +66,7 @@ export const FinanceiroEntities = [
         ]),
         I11nModule,
         TenantModule,
-        ManagerModule,
+        forwardRef(() => ManagerModule),
         CasdastroModule,
         ScheduleModule.forRoot(),
     ],

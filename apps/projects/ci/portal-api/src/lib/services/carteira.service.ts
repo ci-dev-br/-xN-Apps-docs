@@ -109,4 +109,22 @@ export class CarteiraService extends BaseService {
             { params: httpParams }
         );
     }
+
+    /**
+     * Solicita a avaliação de elegibilidade para a concessão da ROLE DEVELOPER como cortesia.
+     * Requisitos: e-mail verificado, autoria comprovada no projeto (PR aceito na branch development) e saldo >= 50.
+     */
+    avaliarRoleDeveloper(): Observable<{
+        promovido: boolean;
+        motivo: string;
+        user?: { id: string; email: string; roles: string[]; emailVerificado: boolean };
+        saldoAtual?: number;
+    }> {
+        return this.http.post<{
+            promovido: boolean;
+            motivo: string;
+            user?: { id: string; email: string; roles: string[]; emailVerificado: boolean };
+            saldoAtual?: number;
+        }>(`${this.rootUrl}/Financeiro/Carteira/AvaliarRoleDeveloper`, {});
+    }
 }

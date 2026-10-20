@@ -31,6 +31,8 @@ export class CommentInputDto {
 export class NewsController {
     private readonly feedCache = new Map<string, CacheEntry<News[]>>();
     private readonly CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
+    private financialCatIdsCache: string[] = [];
+    private lastFinancialCatIdsFetch = 0;
 
     constructor(
         @InjectRepository(News) private newsRepo: Repository<News>,
@@ -40,6 +42,28 @@ export class NewsController {
         private readonly service: ScraperService,
         private readonly socialService?: SocialService,
     ) { }
+
+    private async getFinancialCategoryIds(): Promise<string[]> {
+        const now = Date.now();
+        if (this.financialCatIdsCache.length > 0 && (now - this.lastFinancialCatIdsFetch < 10 * 60 * 1000)) {
+            return this.financialCatIdsCache;
+        }
+
+        try {
+            const cats = await this.categoryRepo.createQueryBuilder('c')
+                .where(`c.name ILIKE '%economia%' OR c.name ILIKE '%mercado%' OR c.name ILIKE '%bolsa%'
+                    OR c.name ILIKE '%finan%' OR c.name ILIKE '%dolar%' OR c.name ILIKE '%dólar%'
+                    OR c.name ILIKE '%invest%' OR c.name ILIKE '%banco central%' OR c.name ILIKE '%selic%'
+                    OR c.name ILIKE '%ipca%'`)
+                .select(['c.id'])
+                .getMany();
+
+            this.financialCatIdsCache = cats.map(c => c.id);
+            this.lastFinancialCatIdsFetch = now;
+        } catch { }
+
+        return this.financialCatIdsCache;
+    }
 
     /**
      * Obtém notícias filtradas de mercado e economia da base de dados (marketing.news).
@@ -62,45 +86,26 @@ export class NewsController {
         const limit = Math.min(Math.max(parseInt(limitStr || '25', 10) || 25, 1), 100);
         const offset = Math.max(parseInt(offsetStr || '0', 10) || 0, 0);
 
-        const minDate = new Date();
-        minDate.setDate(minDate.getDate() - 90);
-
         let qb = this.newsRepo.createQueryBuilder('news')
             .leftJoinAndSelect('news.sourceInfo', 'source')
             .leftJoinAndSelect('news.category', 'category')
-            .where('news.scrapedAt >= :minDate', { minDate })
-            .andWhere('news.title IS NOT NULL AND length(news.title) > 15');
+            .where('news.title IS NOT NULL AND length(news.title) > 15');
 
         if (search && search.trim()) {
             const cleanSearch = `%${search.trim().toLowerCase()}%`;
-            qb = qb.andWhere(
-                '(LOWER(news.title) LIKE :search OR LOWER(news.content) LIKE :search OR LOWER(category.name) LIKE :search OR LOWER(source.name) LIKE :search)',
-                { search: cleanSearch }
-            );
+            qb = qb.andWhere('(LOWER(news.title) LIKE :search OR LOWER(category.name) LIKE :search)', { search: cleanSearch });
         } else if (category && category.trim() && category.trim().toLowerCase() !== 'todos') {
             const catLower = category.trim().toLowerCase();
             qb = qb.andWhere('(LOWER(category.name) LIKE :cat OR LOWER(news.title) LIKE :cat)', {
                 cat: `%${catLower}%`
             });
         } else {
-            qb = qb.andWhere(`
-                (
-                    LOWER(news.title) LIKE '%mercado%' OR LOWER(news.title) LIKE '%bolsa%'
-                    OR LOWER(news.title) LIKE '%ibovespa%' OR LOWER(news.title) LIKE '%ações%'
-                    OR LOWER(news.title) LIKE '%dólar%' OR LOWER(news.title) LIKE '%dolar%'
-                    OR LOWER(news.title) LIKE '%câmbio%' OR LOWER(news.title) LIKE '%inflação%'
-                    OR LOWER(news.title) LIKE '%selic%' OR LOWER(news.title) LIKE '%ipca%'
-                    OR LOWER(news.title) LIKE '%economia%' OR LOWER(news.title) LIKE '%investim%'
-                    OR LOWER(news.title) LIKE '%banco central%' OR LOWER(news.title) LIKE '%tributário%'
-                    OR LOWER(news.title) LIKE '%resseguro%' OR LOWER(news.title) LIKE '%dividendos%'
-                    OR LOWER(news.title) LIKE '%lucro%' OR LOWER(news.title) LIKE '%receita%'
-                    OR LOWER(news.title) LIKE '%faturamento%' OR LOWER(news.title) LIKE '%b3%'
-                    OR LOWER(category.name) LIKE '%economia%' OR LOWER(category.name) LIKE '%mercado%'
-                    OR LOWER(category.name) LIKE '%finan%' OR LOWER(category.name) LIKE '%bolsa%'
-                    OR LOWER(category.name) LIKE '%invest%' OR LOWER(source.name) LIKE '%money%'
-                    OR LOWER(source.name) LIKE '%invest%' OR LOWER(source.name) LIKE '%economia%'
-                )
-            `);
+            const catIds = await this.getFinancialCategoryIds();
+            if (catIds && catIds.length > 0) {
+                qb = qb.andWhere('news.category_id IN (:...catIds)', { catIds });
+            } else {
+                qb = qb.andWhere(`(LOWER(news.title) LIKE '%mercado%' OR LOWER(news.title) LIKE '%economia%' OR LOWER(news.title) LIKE '%bolsa%')`);
+            }
         }
 
         qb = qb.orderBy('news.scrapedAt', 'DESC')

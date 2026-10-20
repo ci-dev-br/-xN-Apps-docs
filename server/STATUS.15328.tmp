@@ -1,0 +1,66 @@
+{
+  "1228": {
+    "startedAt": "2026-10-20T17:12:27.283Z",
+    "status": "running",
+    "debug": false,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T17:15:57.922Z",
+    "nextStatusCheckAt": "2026-10-20T17:15:58.461Z",
+    "updatedAt": "2026-10-20T17:15:57.922Z"
+  },
+  "5164": {
+    "startedAt": "2026-10-20T17:15:14.242Z",
+    "status": "stopped",
+    "debug": true,
+    "warmedUp": false,
+    "lastHeartbeat": "2026-10-20T17:15:18.410Z",
+    "updatedAt": "2026-10-20T17:15:19.009Z",
+    "stoppedAt": "2026-10-20T17:15:18.410Z"
+  },
+  "7260": {
+    "startedAt": "2026-10-20T17:15:00.098Z",
+    "status": "stopped",
+    "debug": true,
+    "warmedUp": false,
+    "lastHeartbeat": "2026-10-20T17:15:07.691Z",
+    "updatedAt": "2026-10-20T17:15:08.570Z",
+    "stoppedAt": "2026-10-20T17:15:07.691Z"
+  },
+  "11752": {
+    "startedAt": "2026-10-20T17:11:14.215Z",
+    "status": "stopped",
+    "debug": false,
+    "warmedUp": true,
+    "port": 86,
+    "lastHeartbeat": "2026-10-20T17:15:57.734Z",
+    "updatedAt": "2026-10-20T17:15:57.734Z",
+    "previousPort": 50516,
+    "lastPort86ClaimedAt": "2026-10-20T17:14:44.844Z",
+    "stoppedAt": "2026-10-20T17:15:01.392Z",
+    "nextStatusCheckAt": "2026-10-20T17:15:58.391Z"
+  },
+  "13444": {
+    "startedAt": "2026-10-20T17:15:24.974Z",
+    "status": "stopped",
+    "debug": true,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T17:15:43.200Z",
+    "updatedAt": "2026-10-20T17:15:43.990Z",
+    "port": 53613,
+    "previousPort": 53613,
+    "lastPort86ClaimedAt": "2026-10-20T17:15:41.309Z",
+    "stoppedAt": "2026-10-20T17:15:43.200Z"
+  },
+  "15328": {
+    "startedAt": "2026-10-20T17:15:50.407Z",
+    "status": "running",
+    "debug": true,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T17:15:58.340Z",
+    "nextStatusCheckAt": "2026-10-20T17:15:58.761Z",
+    "updatedAt": "2026-10-20T17:15:58.340Z",
+    "port": 86,
+    "previousPort": 31693,
+    "lastPort86ClaimedAt": "2026-10-20T17:15:58.063Z"
+  }
+}

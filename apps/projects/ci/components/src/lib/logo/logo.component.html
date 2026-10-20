@@ -1,3 +1,9 @@
-<a [href]="link">
-    <img src="/logo-colorida.svg">
-</a>
+@if (isExternalLink(link)) {
+    <a [href]="link" class="logo-link" title="CI Apps">
+        <img src="/logo-colorida.svg" alt="CI Apps Logo" class="logo-img" />
+    </a>
+} @else {
+    <a [routerLink]="link || '/'" class="logo-link" title="CI Apps">
+        <img src="/logo-colorida.svg" alt="CI Apps Logo" class="logo-img" />
+    </a>
+}

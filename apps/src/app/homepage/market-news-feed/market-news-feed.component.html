@@ -81,7 +81,7 @@
                                 <span class="source-info" (click)="$event.stopPropagation()">
                                     <mat-icon class="meta-icon">public</mat-icon>
                                     @if (item.sourceInfo?.domain) {
-                                        <a [href]="'https://' + item.sourceInfo.domain" target="_blank" rel="noopener">
+                                        <a [href]="'https://' + item.sourceInfo?.domain" target="_blank" rel="noopener">
                                             {{ item.sourceInfo?.name || item.sourceInfo?.domain }}
                                         </a>
                                     } @else {

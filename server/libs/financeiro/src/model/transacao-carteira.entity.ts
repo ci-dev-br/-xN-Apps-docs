@@ -1,6 +1,6 @@
 import { Column, Entity, Index, ManyToOne } from "typeorm";
 import { schema } from "../norms";
-import { FullAuditedEntity } from "@ci/manager";
+import { FullAuditedEntity } from "@ci/manager/dao/entities";
 import { ApiProperty } from "@nestjs/swagger";
 import { Carteira } from "./carteira.entity";
 
