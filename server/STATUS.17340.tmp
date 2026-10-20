@@ -1,0 +1,29 @@
+{
+  "1228": {
+    "startedAt": "2026-10-20T05:29:09.258Z",
+    "status": "running",
+    "debug": false,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T06:02:39.856Z",
+    "nextStatusCheckAt": "2026-10-20T06:02:40.156Z",
+    "updatedAt": "2026-10-20T06:02:39.856Z"
+  },
+  "12964": {
+    "startedAt": "2026-10-20T06:01:27.733Z",
+    "status": "stopped",
+    "debug": true,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T06:01:49.708Z",
+    "updatedAt": "2026-10-20T06:01:50.001Z",
+    "stoppedAt": "2026-10-20T06:01:49.708Z"
+  },
+  "17340": {
+    "startedAt": "2026-10-20T06:01:21.146Z",
+    "status": "running",
+    "debug": false,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-20T06:02:40.010Z",
+    "nextStatusCheckAt": "2026-10-20T06:02:40.456Z",
+    "updatedAt": "2026-10-20T06:02:40.010Z"
+  }
+}
