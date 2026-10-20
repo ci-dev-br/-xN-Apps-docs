@@ -1,28 +1,87 @@
-<h2 mat-dialog-title>Adicionar Cartão
-    <mat-form-field>
-        <mat-label>Procurando por ...</mat-label>
-        <input matInput #pesquisaInput type="text" placeholder="Pesquise por nome ou descrição dos cards"
-            (keydown)="find(pesquisaInput.value)">
-    </mat-form-field>
-</h2>
-
-<mat-dialog-content class="mat-typography">
-    <div class="row">
-        <div>
-            <h4>Resultados de Pesquisa:</h4>
-        </div>
-        <div class="cards">
-            @for (card of lista; track $index) {
-            <div class="card-preview">
-                <div class="info">
-                    @if(!!card.title){<h3>{{card.title}}</h3>}
-                    @if(!!card.descricao){<p>{{card.descricao}}</p>}
-                </div>
-                <div class="col">
-                    <button mat-raised-button (click)="adicionar(card)">Adicionar</button>
-                </div>
+<div class="card-finder-dialog">
+    <div class="dialog-header">
+        <div class="title-group">
+            <mat-icon class="header-icon">widgets</mat-icon>
+            <div>
+                <h2 mat-dialog-title>Adicionar Card ao Board</h2>
+                <p class="subtitle">Selecione componentes dos aplicativos e ferramentas integradas</p>
             </div>
-            }
         </div>
+        <button mat-icon-button (click)="close()" class="btn-close" matTooltip="Fechar">
+            <mat-icon>close</mat-icon>
+        </button>
     </div>
-</mat-dialog-content>
+
+    <!-- Barra de Busca -->
+    <div class="search-bar-row">
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-icon matPrefix>search</mat-icon>
+            <mat-label>Pesquisar cards...</mat-label>
+            <input matInput #pesquisaInput type="text" [(ngModel)]="searchTerm" (input)="find(pesquisaInput.value)"
+                placeholder="Ex: Cotações, Selic, Agenda, Terminal, Chat..." />
+            @if (searchTerm) {
+                <button matSuffix mat-icon-button (click)="searchTerm = ''; find('')">
+                    <mat-icon>clear</mat-icon>
+                </button>
+            }
+        </mat-form-field>
+    </div>
+
+    <!-- Filtro de Categorias por Chips -->
+    @if (categories.length > 2) {
+        <div class="categories-row">
+            <mat-chip-set class="category-chips">
+                @for (cat of categories; track cat) {
+                    <mat-chip [highlighted]="selectedCategory === cat" (click)="filterByCategory(cat)" class="cat-chip">
+                        {{ cat }}
+                    </mat-chip>
+                }
+            </mat-chip-set>
+        </div>
+    }
+
+    <!-- Conteúdo com os Cards -->
+    <mat-dialog-content class="cards-dialog-content">
+        @if (lista.length === 0) {
+            <div class="empty-search">
+                <mat-icon>search_off</mat-icon>
+                <p>Nenhum card encontrado para os filtros selecionados.</p>
+            </div>
+        } @else {
+            <div class="cards-grid">
+                @for (card of lista; track card.componentName || $index) {
+                    <div class="card-preview-item" [class.already-added]="isCardAdded(card)">
+                        <div class="preview-avatar">
+                            <mat-icon>{{ card.icon || 'widgets' }}</mat-icon>
+                        </div>
+                        <div class="preview-body">
+                            <div class="preview-top">
+                                <span class="category-tag">{{ card.category || 'Geral' }}</span>
+                                <h3 class="card-title">{{ card.title }}</h3>
+                            </div>
+                            <p class="card-description">{{ card.descricao }}</p>
+                            @if (card.tags && card.tags.length > 0) {
+                                <div class="tags-row">
+                                    @for (t of card.tags; track t) {
+                                        <span class="tag-pill">{{ t }}</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                        <div class="preview-action">
+                            @if (isCardAdded(card)) {
+                                <span class="added-badge">
+                                    <mat-icon>check_circle</mat-icon> Adicionado
+                                </span>
+                            } @else {
+                                <button mat-flat-button color="primary" class="btn-add" (click)="adicionar(card)">
+                                    <mat-icon>add</mat-icon> Adicionar
+                                </button>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </mat-dialog-content>
+</div>

@@ -1,38 +1,35 @@
-@if(!!board && !!cardInfo){<div class="card-wrapper" [class.editing]="board.edittingCard === cardInfo">
-    <!-- TODO: cdkDrag -->
-    @if(!!componentRef){<div class="inner">
-        <ng-container *ngComponentOutlet="componentRef"></ng-container>
-    </div>}
-    <div class="card-verso">
-        <div class="wrapper">
-            <!-- <ci-settings></ci-settings> -->
+@if (!!board && !!cardInfo) {
+    <div class="card-wrapper" [class.editing]="board.edittingCard === cardInfo" [attr.data-cols]="cols">
+        <!-- Barra de Topo do Cardboard com Drag Handle e Ações -->
+        <div class="card-header-bar">
+            <div class="card-drag-handle" cdkDragHandle matTooltip="Clique e arraste para reposicionar">
+                <mat-icon class="drag-icon">drag_indicator</mat-icon>
+                <div class="card-title-group">
+                    <span class="card-badge">{{ cardCategory }}</span>
+                    <span class="card-title-text">{{ cardTitle }}</span>
+                </div>
+            </div>
+
+            <div class="card-quick-actions">
+                <button mat-icon-button (click)="toggleWidth($event)" [matTooltip]="'Alterar largura (atual: ' + cols + ' col)'" class="btn-resize">
+                    <mat-icon>view_column</mat-icon>
+                </button>
+                <button mat-icon-button (click)="removeCard(cardInfo, $event)" matTooltip="Remover do Board" class="btn-remove">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
         </div>
-    </div>
-    <div class="actions">
-        @if(board.edittingCard === cardInfo){
-        <button mat-icon-button (click)="removeCard(cardInfo!,$event)" [matTooltip]="'Remover cartão'">
-            <mat-icon>delete</mat-icon>
-        </button>
-        <button mat-icon-button (click)="editCard(cardInfo!,$event)" [matTooltip]="'Confirmar ajustes'">
-            <mat-icon>done_all</mat-icon>
-        </button>
-        }@else{
-        <button mat-icon-button (click)="editCard(cardInfo!,$event)" [matTooltip]="'Ajustar preferências'">
-            <mat-icon>settings</mat-icon>
-        </button>
+
+        <!-- Conteúdo do Componente Angular Dinâmico -->
+        @if (!!componentRef) {
+            <div class="inner">
+                <ng-container *ngComponentOutlet="componentRef; inputs: cardInputs"></ng-container>
+            </div>
+        } @else {
+            <div class="inner inner-empty">
+                <mat-icon>broken_image</mat-icon>
+                <span>Componente não encontrado ({{ cardInfo.componentName }})</span>
+            </div>
         }
     </div>
-    @if(board.edittingCard === cardInfo){
-    <div class="actions-lb">
-        <!-- <button mat-icon-button>
-            1:1
-        </button>
-        <button mat-icon-button>
-            0
-        </button>
-        <button mat-icon-button>
-            <mat-icon>arrows_outward</mat-icon>
-        </button> -->
-    </div>
-    }
-</div>}
+}

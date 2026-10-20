@@ -3,6 +3,7 @@ import { CoreModule } from "@ci/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { DragDropModule } from "@angular/cdk/drag-drop";
 import { CardboardComponent } from "./cardboard.component";
 
 @NgModule({
@@ -11,6 +12,7 @@ import { CardboardComponent } from "./cardboard.component";
         MatButtonModule,
         MatIconModule,
         MatTooltipModule,
+        DragDropModule,
     ],
     declarations: [
         CardboardComponent,
