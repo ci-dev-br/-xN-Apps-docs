@@ -109,6 +109,11 @@ export const routes: Routes = [
         loadChildren: () => import('@ci-apps/Threejs').then(m => m.CiApplicationModule)
       },
       {
+        path: 'Estudos',
+        data: { docs: APP_DOCUMENTATION_REGISTRY['Estudos'] },
+        loadChildren: () => import('@ci-apps/Estudos').then(m => m.CiApplicationModule)
+      },
+      {
         path: 'Treinamento',
         data: { docs: APP_DOCUMENTATION_REGISTRY['Treinamento'] },
         loadChildren: () => import('@ci-apps/Treinamento').then(m => m.CiApplicationModule)
@@ -173,3 +178,4 @@ export const routes: Routes = [
   exports: [RouterModule]
 })
 export class PainelRoutingModule { }
+

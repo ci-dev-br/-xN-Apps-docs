@@ -226,6 +226,16 @@ export const CI_STATIC_APPS: IApp[] = [
         type: 'svg'
     },
     {
+        shortDescription: 'Ambiente de estudos com temporizador Pomodoro, flashcards ativos e grupos colaborativos.',
+        description: 'O módulo Estudos oferece um ambiente focado e estruturado para o aprendizado contínuo. Conta com temporizador Pomodoro para gerenciamento de ciclos de foco, sistema interativo de flashcards com repetição espaçada, grupos de estudo colaborativos e caderno integrado para anotações rápidas e sínteses conceituais.',
+        color: getColor(),
+        url: '/Estudos',
+        name: 'Estudos',
+        roles: ['USER', 'MASTER', 'ADMIN'],
+        icon: 'estudos',
+        type: 'svg'
+    },
+    {
         shortDescription: 'Plataforma completa de educação corporativa. Crie cursos, distribua conteúdo e avalie o desempenho dos colaboradores para promover o crescimento contínuo.',
         description: 'O módulo Treinamento funciona como uma Universidade Corporativa digital (LMS). Ele permite a criação e gestão de catálogos de cursos, desde treinamentos de compliance obrigatórios até workshops de desenvolvimento de soft skills. Suportando vídeos, apresentações interativas e avaliações, o sistema gerencia matrículas, frequências e emissão de certificados automaticamente. Relatórios detalhados permitem ao RH medir o ROI dos treinamentos e identificar talentos internos. A plataforma promove uma cultura de aprendizado contínuo, garantindo que a força de trabalho esteja sempre atualizada com as melhores práticas de mercado e as inovações da empresa, aumentando a competitividade e a retenção de talentos.',
         color: getColor(),

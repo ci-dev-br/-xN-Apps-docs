@@ -18,6 +18,12 @@
       "@ci-apps/dev-tools": [
         "./projects/ci-apps/dev-tools/src/public-api"
       ],
+      "@ci-apps/Estudos": [
+        "./projects/ci-apps/estudos/src/public-api"
+      ],
+      "@ci-apps/estudos": [
+        "./projects/ci-apps/estudos/src/public-api"
+      ],
       "@ci-apps/Dynamic": [
         "./projects/ci-apps/dynamic/src/public-api"
       ],
