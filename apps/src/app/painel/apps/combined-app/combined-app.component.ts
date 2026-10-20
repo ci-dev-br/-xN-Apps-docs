@@ -37,7 +37,7 @@ export interface ICombinedModuleView {
 })
 export class CombinedAppComponent implements OnInit {
   appKey: string = 'BeautyCRM';
-  app?: IApp;
+  app?: any;
 
   // Lista dos módulos combinados
   combinedModules: ICombinedModuleView[] = [];
@@ -69,7 +69,7 @@ export class CombinedAppComponent implements OnInit {
 
   private async loadApp(): Promise<void> {
     // 1. Procura na lista local de aplicações
-    let found = CI_STATIC_APPS.find(a =>
+    let found: any = CI_STATIC_APPS.find(a =>
       a.name?.toLowerCase() === this.appKey.toLowerCase() ||
       a.url?.replace(/^\//, '').toLowerCase() === this.appKey.toLowerCase()
     );
