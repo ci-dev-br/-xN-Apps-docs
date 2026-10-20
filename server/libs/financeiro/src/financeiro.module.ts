@@ -27,6 +27,8 @@ import { InflationController } from "./controller/inflation.controller";
 import { InflationService } from "./service/inflation.service";
 import { MacroIndicatorsService } from "./service/macro-indicators.service";
 import { MacroIndicatorsController } from "./controller/macro-indicators.controller";
+import { QuotesController } from "./controller/quote.controller";
+import { QuotesService } from "./service/quotes.services";
 import { FinancialsService } from "./service/financials.service";
 import { FinancialsController } from "./controller/financials.controller";
 import { IndicatorConfig } from "./model/indicator-config.entity";
@@ -71,6 +73,7 @@ export const FinanceiroEntities = [
     exports: [
         LancamentoFinanceiroService,
         CarteiraService,
+        QuotesService,
     ],
     controllers: [
         LancamentoFinanceiroController,
@@ -80,6 +83,7 @@ export const FinanceiroEntities = [
         MacroIndicatorsController,
         FinancialsController,
         CarteiraController,
+        QuotesController,
     ],
     providers: [
         LancamentoFinanceiroService,
@@ -91,6 +95,7 @@ export const FinanceiroEntities = [
         FinancialsService,
         IndicatorConfigService,
         CarteiraService,
+        QuotesService,
     ],
 })
 export class FinanceiroModule { }

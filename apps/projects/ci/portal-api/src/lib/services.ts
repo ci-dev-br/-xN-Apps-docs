@@ -4,7 +4,7 @@ export { SystemService } from './services/system.service';
 export { DeviceService } from './services/device.service';
 export { MessageService } from './services/message.service';
 export { NotificationService } from './services/notification.service';
-export { AuthService } from './services/auth.service';
+export * from './services/auth.service';
 export { RegisterService } from './services/register.service';
 export { InviteService } from './services/invite.service';
 export { TenantService } from './services/tenant.service';

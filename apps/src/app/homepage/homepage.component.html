@@ -3,7 +3,8 @@
 <!-- Informações do Usuário -->
 }
 <ci-financial-ticker></ci-financial-ticker>
-<mat-tab-group animationDuration="200ms" class="homepage-tabs">
+<ci-market-news-ticker (newsSelected)="focarNoticiaMercado($event)"></ci-market-news-ticker>
+<mat-tab-group [(selectedIndex)]="selectedTabIndex" animationDuration="200ms" class="homepage-tabs">
     <mat-tab>
         <ng-template mat-tab-label>
             <mat-icon style="margin-right: 8px;">newspaper</mat-icon>
@@ -119,6 +120,14 @@
                 }
             </div>
         </div>
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon style="margin-right: 8px;">query_stats</mat-icon>
+            <span>Radar de Mercado</span>
+        </ng-template>
+        <ci-market-news-feed></ci-market-news-feed>
     </mat-tab>
 
     <mat-tab>

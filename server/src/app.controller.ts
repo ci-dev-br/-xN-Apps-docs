@@ -33,7 +33,7 @@ export class AppController {
       '/message', '/messager', '/directmessage', '/conversation', '/notification',
       '/storage', '/fiscal', '/financeiro', '/organizacao', '/produto',
       '/payment', '/cms', '/projetos', '/codex', '/notificacao', '/inpi', '/crm',
-      '/dym', '/espazio', '/tasking', '/forms', '/api', '/__orchestration'
+      '/dym', '/espazio', '/tasking', '/forms', '/api', '/indicators', '/__orchestration'
     ].some(prefix => reqPath === prefix || reqPath.startsWith(prefix + '/'));
 
     if (isApiRoute) {

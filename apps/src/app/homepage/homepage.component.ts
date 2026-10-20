@@ -37,6 +37,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ComentariosComponent } from './comentarios/comentarios';
 import { FinancialTickerComponent } from './financial-ticker/financial-ticker.component';
+import { MarketNewsTickerComponent } from './market-news-ticker/market-news-ticker.component';
+import { MarketNewsFeedComponent } from './market-news-feed/market-news-feed.component';
 import { UserBoardComponent } from './user-board/user-board.component';
 import { ApplicationCatalogService } from '@ci/core';
 
@@ -65,6 +67,8 @@ const TERMOS_BLOQUEADOS = [
         MatSnackBarModule,
         ComentariosComponent,
         FinancialTickerComponent,
+        MarketNewsTickerComponent,
+        MarketNewsFeedComponent,
         UserBoardComponent,
     ],
     templateUrl: './homepage.component.html',
@@ -77,6 +81,20 @@ export class HomepageComponent implements OnInit, OnDestroy {
     feeds: WritableSignal<Array<any>> = signal([]);
     highlightedFeed = signal<any | undefined>(undefined);
     showCommentsPane = signal<boolean>(true);
+    selectedTabIndex = 0;
+
+    @ViewChild(MarketNewsFeedComponent) marketFeed?: MarketNewsFeedComponent;
+
+    focarNoticiaMercado(item: any): void {
+        this.selectedTabIndex = 1;
+        this.cdr?.markForCheck();
+        setTimeout(() => {
+            if (this.marketFeed) {
+                this.marketFeed.focarNoticia(item);
+                this.marketFeed.showComments.set(true);
+            }
+        }, 120);
+    }
 
     private _feedContainer?: ElementRef<HTMLDivElement>;
     public get feedContainer(): ElementRef<HTMLDivElement> | undefined {

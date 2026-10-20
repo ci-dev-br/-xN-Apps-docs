@@ -29,6 +29,17 @@ import { registrarAuth } from '../fn/auth/registrar-auth';
 import { RegistrarAuth$Params } from '../fn/auth/registrar-auth';
 import { User } from '../models/user';
 
+export interface ConnectedDevice {
+  id: string;
+  ip?: string;
+  browser?: string;
+  os?: string;
+  deviceType?: 'mobile' | 'tablet' | 'desktop';
+  createdAt?: string | Date;
+  isCurrent?: boolean;
+  isOnline?: boolean;
+}
+
 @Injectable()
 export class AuthService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
@@ -135,6 +146,10 @@ export class AuthService extends BaseService {
     );
   }
 
+  dispositivos(context?: HttpContext): Observable<ConnectedDevice[]> {
+    return this.http.post<ConnectedDevice[]>(`${this.rootUrl}/auth/Dispositivos`, {}, { context });
+  }
+
   /** Path part for operation `desconectarDispositivoAuth()` */
   static readonly DesconectarDispositivoAuthPath = '/auth/DesconectarDispositivo';
 
@@ -154,7 +169,12 @@ export class AuthService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  desconectarDispositivo(params?: DesconectarDispositivoAuth$Params, context?: HttpContext): Observable<void> {
+  desconectarDispositivo(chaveAcesso: string, context?: HttpContext): Observable<{ success: boolean; isCurrent?: boolean }>;
+  desconectarDispositivo(params?: DesconectarDispositivoAuth$Params, context?: HttpContext): Observable<void>;
+  desconectarDispositivo(params?: any, context?: HttpContext): Observable<any> {
+    if (typeof params === 'string') {
+      return this.http.post<{ success: boolean; isCurrent?: boolean }>(`${this.rootUrl}/auth/DesconectarDispositivo`, { chaveAcesso: params }, { context });
+    }
     return this.desconectarDispositivoAuth$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
@@ -179,7 +199,12 @@ export class AuthService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  desconectarOutrosDispositivos(params?: DesconectarOutrosDispositivosAuth$Params, context?: HttpContext): Observable<void> {
+  desconectarOutrosDispositivos(context?: HttpContext): Observable<{ success: boolean }>;
+  desconectarOutrosDispositivos(params?: DesconectarOutrosDispositivosAuth$Params, context?: HttpContext): Observable<void>;
+  desconectarOutrosDispositivos(params?: any, context?: HttpContext): Observable<any> {
+    if (!params || params instanceof HttpContext) {
+      return this.http.post<{ success: boolean }>(`${this.rootUrl}/auth/DesconectarOutrosDispositivos`, {}, { context: params instanceof HttpContext ? params : context });
+    }
     return this.desconectarOutrosDispositivosAuth$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );

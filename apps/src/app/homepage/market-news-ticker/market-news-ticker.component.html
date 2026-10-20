@@ -1,0 +1,69 @@
+<div class="ci-news-ticker-container" [class.paused]="isPaused">
+    <!-- Badge de Notícias de Mercado -->
+    <div class="news-ticker-badge" matTooltip="Notícias e atualizações do mercado em tempo real">
+        <span class="live-dot"></span>
+        <mat-icon class="badge-icon">newspaper</mat-icon>
+        <span class="badge-text">NOTÍCIAS DE MERCADO</span>
+    </div>
+
+    <!-- Botão de scroll anterior -->
+    <button mat-icon-button class="ticker-nav-btn" (click)="scrollLeft()" matTooltip="Voltar notícia">
+        <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <!-- Trilho de notícias contínuo -->
+    <div class="ticker-viewport" #tickerTrack
+        (mouseenter)="isPaused = true" 
+        (mouseleave)="isPaused = false">
+        
+        <div class="ticker-track" [class.is-paused]="isPaused">
+            <!-- Primeiro ciclo de notícias -->
+            @for (item of items; track item.id || item.url || $index) {
+                <div class="news-ticker-item" (click)="onItemClick(item)" matTooltip="Clique para ver no Radar de Mercado">
+                    <span class="item-tag">{{ item.categoria || 'Mercado' }}</span>
+                    <span class="item-title" [innerHtml]="item.title"></span>
+                    <span class="item-source">
+                        <mat-icon class="source-icon">feed</mat-icon>
+                        {{ item.sourceInfo?.name || item.sourceName || 'Mercado' }}
+                    </span>
+                    @if (item.scrapedAt) {
+                        <span class="item-time">{{ formatTimeAgo(item.scrapedAt) }}</span>
+                    }
+                    <mat-icon class="item-arrow">arrow_forward</mat-icon>
+                </div>
+            }
+
+            <!-- Ciclo duplicado para loop infinito suave -->
+            @for (item of items; track ('dup_' + (item.id || item.url || $index))) {
+                <div class="news-ticker-item" (click)="onItemClick(item)" aria-hidden="true" matTooltip="Clique para ver no Radar de Mercado">
+                    <span class="item-tag">{{ item.categoria || 'Mercado' }}</span>
+                    <span class="item-title" [innerHtml]="item.title"></span>
+                    <span class="item-source">
+                        <mat-icon class="source-icon">feed</mat-icon>
+                        {{ item.sourceInfo?.name || item.sourceName || 'Mercado' }}
+                    </span>
+                    @if (item.scrapedAt) {
+                        <span class="item-time">{{ formatTimeAgo(item.scrapedAt) }}</span>
+                    }
+                    <mat-icon class="item-arrow">arrow_forward</mat-icon>
+                </div>
+            }
+
+            <!-- Estado vazio / carregando -->
+            @if (items.length === 0) {
+                <div class="news-ticker-placeholder">
+                    @if (isLoading) {
+                        <span>Carregando notícias de mercado em tempo real...</span>
+                    } @else {
+                        <span>Acompanhe aqui as últimas movimentações e notícias do mercado financeiro.</span>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Botão de scroll seguinte -->
+    <button mat-icon-button class="ticker-nav-btn" (click)="scrollRight()" matTooltip="Avançar notícia">
+        <mat-icon>chevron_right</mat-icon>
+    </button>
+</div>

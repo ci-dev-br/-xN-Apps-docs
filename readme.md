@@ -1,7 +1,7 @@
 <img src="https://apps.ci.dev.br/logo-colorida.svg">
 
 # Plataforma Universal para Aplicativos | ci.dev.br
-[Colaboradores](./docs/colaboradores.md) | [Documentação e Especificação de Manutenção](./docs/especificacao-manutencao.md) | [Sobre]()
+[Colaboradores](./docs/colaboradores.md) | [Guia de Referências e Autoria](./docs/guia-boas-praticas-referencias.md) | [Documentação e Especificação de Manutenção](./docs/especificacao-manutencao.md) | [Sobre]()
 
 
  [Portal](https://apps.ci.dev.br:446/) | [git](https://101.ci.dev.br:444/git/Repository/Detail/94e95210-26d3-4884-a691-0fb9ddbfccda) | [jira]() | [Bibliotecas](docs/bibliotecas.md) | [Recursos Adicionais]() | [Serviços]()

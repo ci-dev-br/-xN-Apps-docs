@@ -1,0 +1,204 @@
+<div class="market-feed-container">
+    <!-- Cabeçalho do Espaço de Mercado -->
+    <header class="market-feed-header">
+        <div class="header-main">
+            <div class="header-icon-box">
+                <mat-icon class="main-icon">query_stats</mat-icon>
+            </div>
+            <div class="header-text">
+                <div class="badge-row">
+                    <span class="live-pill">
+                        <span class="pulse-point"></span>
+                        BASE INDEXADA
+                    </span>
+                    <span class="count-pill">{{ totalLoaded }} notícias carregadas</span>
+                </div>
+                <h2 class="title">Radar do Mercado: Análises & Notícias da Base</h2>
+                <p class="subtitle">
+                    Acompanhe em tempo real as movimentações econômicas, indicadores e relatórios diretamente do acervo de dados.
+                </p>
+            </div>
+        </div>
+
+        <!-- Barra de Filtros e Busca -->
+        <div class="filter-toolbar">
+            <div class="search-box">
+                <mat-icon class="search-icon">search</mat-icon>
+                <input type="text" [formControl]="searchControl" placeholder="Filtrar notícias por ativo, empresa, indicador..." class="search-input" />
+                @if (searchControl.value) {
+                    <button mat-icon-button class="clear-btn" (click)="searchControl.setValue('')" matTooltip="Limpar busca">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                }
+            </div>
+
+            <!-- Chips de Categorias Financeiras -->
+            <div class="category-chips">
+                @for (cat of categories; track cat.value) {
+                    <button 
+                        type="button" 
+                        class="chip-btn" 
+                        [class.active]="activeCategory === cat.value"
+                        (click)="selectCategory(cat.value)">
+                        @if (cat.icon) {
+                            <mat-icon class="chip-icon">{{ cat.icon }}</mat-icon>
+                        }
+                        <span>{{ cat.label }}</span>
+                    </button>
+                }
+            </div>
+        </div>
+    </header>
+
+    <!-- Layout Principal: Feed de Notícias + Painel Lateral de Comentários -->
+    <div class="market-layout" [class.has-comments]="showComments()">
+        <!-- Coluna de Notícias de Mercado -->
+        <div class="news-column">
+            @if (isLoading) {
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Consultando base de notícias de mercado...</p>
+                </div>
+            } @else if (newsList().length === 0) {
+                <div class="empty-state">
+                    <mat-icon class="empty-icon">search_off</mat-icon>
+                    <h3>Nenhuma notícia encontrada</h3>
+                    <p>Tente ajustar os termos de pesquisa ou selecionar outra categoria de mercado.</p>
+                    <button mat-flat-button color="primary" (click)="searchControl.setValue(''); selectCategory('Todos')">
+                        Ver todas as notícias
+                    </button>
+                </div>
+            } @else {
+                <div class="news-grid">
+                    @for (item of newsList(); track item.id || item.url || $index) {
+                        <article class="market-card" 
+                            [class.selected]="highlightedNews() === item"
+                            (click)="focarNoticia(item)">
+                            
+                            <!-- Topo do Card -->
+                            <div class="card-meta">
+                                <span class="category-tag">{{ item.categoria || 'Mercado' }}</span>
+                                <span class="source-info" (click)="$event.stopPropagation()">
+                                    <mat-icon class="meta-icon">public</mat-icon>
+                                    @if (item.sourceInfo?.domain) {
+                                        <a [href]="'https://' + item.sourceInfo.domain" target="_blank" rel="noopener">
+                                            {{ item.sourceInfo?.name || item.sourceInfo?.domain }}
+                                        </a>
+                                    } @else {
+                                        <span>{{ item.sourceInfo?.name || item.sourceName || 'Mercado' }}</span>
+                                    }
+                                </span>
+                                <span class="spacer"></span>
+                                @if (item.scrapedAt) {
+                                    <span class="time-ago">
+                                        <mat-icon class="meta-icon">schedule</mat-icon>
+                                        {{ formatTimeAgo(item.scrapedAt) }}
+                                    </span>
+                                }
+                            </div>
+
+                            <!-- Título da Notícia -->
+                            <h3 class="card-title" [innerHtml]="item.title"></h3>
+
+                            <!-- Resumo / Conteúdo da Base -->
+                            @if (item.content) {
+                                <div class="card-excerpt" [innerHtml]="item.content"></div>
+                            }
+
+                            <!-- Barra de Interações e Ações -->
+                            <div class="card-actions">
+                                <!-- Voto Positivo -->
+                                <button mat-button class="action-btn vote-btn" 
+                                    [class.active]="(item.userVote === 'UP')"
+                                    (click)="votar(item, 'UP', $event)"
+                                    [matTooltip]="isLoggedIn ? 'Votar positivo' : 'Faça login para votar'">
+                                    <mat-icon>thumb_up</mat-icon>
+                                    <span>{{ item.upVotes || 0 }}</span>
+                                </button>
+
+                                <!-- Voto Negativo -->
+                                <button mat-button class="action-btn vote-btn" 
+                                    [class.active]="(item.userVote === 'DOWN')"
+                                    (click)="votar(item, 'DOWN', $event)"
+                                    [matTooltip]="isLoggedIn ? 'Votar negativo' : 'Faça login para votar'">
+                                    <mat-icon>thumb_down</mat-icon>
+                                    <span>{{ item.downVotes || 0 }}</span>
+                                </button>
+
+                                <!-- Botão de Comentários -->
+                                <button mat-button class="action-btn comment-btn" 
+                                    [class.active]="highlightedNews() === item && showComments()"
+                                    (click)="toggleComentarios(item, $event)"
+                                    matTooltip="Ver comentários desta notícia">
+                                    <mat-icon>chat_bubble_outline</mat-icon>
+                                    <span>{{ item.commentsCount || 0 }}</span>
+                                </button>
+
+                                <span class="spacer"></span>
+
+                                <!-- Copiar Link -->
+                                <button mat-icon-button class="icon-action" 
+                                    (click)="copiarLink(item, $event)" 
+                                    matTooltip="Copiar link da notícia">
+                                    <mat-icon>share</mat-icon>
+                                </button>
+
+                                <!-- Abrir na Fonte Oficial -->
+                                <button mat-icon-button color="primary" class="icon-action open-btn" 
+                                    (click)="abrirFonte(item, $event)" 
+                                    matTooltip="Abrir publicação original">
+                                    <mat-icon>open_in_new</mat-icon>
+                                </button>
+                            </div>
+                        </article>
+                    }
+                </div>
+
+                <!-- Botão Carregar Mais -->
+                @if (hasMore) {
+                    <div class="load-more-row">
+                        <button mat-stroked-button class="load-more-btn" 
+                            (click)="loadNews(false)" 
+                            [disabled]="isLoadingMore">
+                            @if (isLoadingMore) {
+                                <span>Carregando notícias...</span>
+                            } @else {
+                                <mat-icon>expand_more</mat-icon>
+                                <span>Carregar Mais Notícias do Mercado</span>
+                            }
+                        </button>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- Painel Lateral de Comentários Integrado -->
+        @if (showComments() && highlightedNews(); as activeNews) {
+            <aside class="comments-sidebar">
+                <div class="sidebar-header">
+                    <div class="header-title">
+                        <mat-icon>forum</mat-icon>
+                        <span>Discussão de Mercado</span>
+                    </div>
+                    <button mat-icon-button (click)="closeComments()" matTooltip="Fechar comentários">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+
+                <div class="selected-news-summary">
+                    <span class="summary-badge">{{ activeNews.categoria || 'Mercado' }}</span>
+                    <h4 class="summary-title" [innerHtml]="activeNews.title"></h4>
+                    <span class="summary-source">{{ activeNews.sourceInfo?.name || activeNews.sourceName }}</span>
+                </div>
+
+                <div class="comments-wrapper">
+                    <ci-post-coments 
+                        [newsId]="activeNews.id || activeNews.url" 
+                        [feed]="activeNews" 
+                        (commentCountChange)="activeNews.commentsCount = $event">
+                    </ci-post-coments>
+                </div>
+            </aside>
+        }
+    </div>
+</div>

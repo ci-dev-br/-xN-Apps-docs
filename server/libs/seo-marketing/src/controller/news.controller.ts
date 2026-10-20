@@ -41,6 +41,120 @@ export class NewsController {
         private readonly socialService?: SocialService,
     ) { }
 
+    /**
+     * Obtém notícias filtradas de mercado e economia da base de dados (marketing.news).
+     */
+    @Public()
+    @Get('Market')
+    @ApiOperation({ operationId: 'getMarketNews', summary: 'Obtém notícias de mercado e economia da base de dados' })
+    @ApiQuery({ name: 'search', type: String, required: false })
+    @ApiQuery({ name: 'category', type: String, required: false })
+    @ApiQuery({ name: 'limit', type: Number, required: false })
+    @ApiQuery({ name: 'offset', type: Number, required: false })
+    @ApiResponse({ status: 200, type: [News] })
+    async getMarket(
+        @Query('search') search?: string,
+        @Query('category') category?: string,
+        @Query('limit') limitStr?: string,
+        @Query('offset') offsetStr?: string,
+        @Req() request?: any,
+    ) {
+        const limit = Math.min(Math.max(parseInt(limitStr || '25', 10) || 25, 1), 100);
+        const offset = Math.max(parseInt(offsetStr || '0', 10) || 0, 0);
+
+        const minDate = new Date();
+        minDate.setDate(minDate.getDate() - 90);
+
+        let qb = this.newsRepo.createQueryBuilder('news')
+            .leftJoinAndSelect('news.sourceInfo', 'source')
+            .leftJoinAndSelect('news.category', 'category')
+            .where('news.scrapedAt >= :minDate', { minDate })
+            .andWhere('news.title IS NOT NULL AND length(news.title) > 15');
+
+        if (search && search.trim()) {
+            const cleanSearch = `%${search.trim().toLowerCase()}%`;
+            qb = qb.andWhere(
+                '(LOWER(news.title) LIKE :search OR LOWER(news.content) LIKE :search OR LOWER(category.name) LIKE :search OR LOWER(source.name) LIKE :search)',
+                { search: cleanSearch }
+            );
+        } else if (category && category.trim() && category.trim().toLowerCase() !== 'todos') {
+            const catLower = category.trim().toLowerCase();
+            qb = qb.andWhere('(LOWER(category.name) LIKE :cat OR LOWER(news.title) LIKE :cat)', {
+                cat: `%${catLower}%`
+            });
+        } else {
+            qb = qb.andWhere(`
+                (
+                    LOWER(news.title) LIKE '%mercado%' OR LOWER(news.title) LIKE '%bolsa%'
+                    OR LOWER(news.title) LIKE '%ibovespa%' OR LOWER(news.title) LIKE '%ações%'
+                    OR LOWER(news.title) LIKE '%dólar%' OR LOWER(news.title) LIKE '%dolar%'
+                    OR LOWER(news.title) LIKE '%câmbio%' OR LOWER(news.title) LIKE '%inflação%'
+                    OR LOWER(news.title) LIKE '%selic%' OR LOWER(news.title) LIKE '%ipca%'
+                    OR LOWER(news.title) LIKE '%economia%' OR LOWER(news.title) LIKE '%investim%'
+                    OR LOWER(news.title) LIKE '%banco central%' OR LOWER(news.title) LIKE '%tributário%'
+                    OR LOWER(news.title) LIKE '%resseguro%' OR LOWER(news.title) LIKE '%dividendos%'
+                    OR LOWER(news.title) LIKE '%lucro%' OR LOWER(news.title) LIKE '%receita%'
+                    OR LOWER(news.title) LIKE '%faturamento%' OR LOWER(news.title) LIKE '%b3%'
+                    OR LOWER(category.name) LIKE '%economia%' OR LOWER(category.name) LIKE '%mercado%'
+                    OR LOWER(category.name) LIKE '%finan%' OR LOWER(category.name) LIKE '%bolsa%'
+                    OR LOWER(category.name) LIKE '%invest%' OR LOWER(source.name) LIKE '%money%'
+                    OR LOWER(source.name) LIKE '%invest%' OR LOWER(source.name) LIKE '%economia%'
+                )
+            `);
+        }
+
+        qb = qb.orderBy('news.scrapedAt', 'DESC')
+            .limit(limit)
+            .offset(offset);
+
+        const rawPosts = await qb.getMany();
+
+        const currentUserId = request?.user?.id;
+        const postsComInteracoes = await Promise.all(
+            rawPosts.map(async post => {
+                let upVotes = 0;
+                let downVotes = 0;
+                let commentsCount = 0;
+                let userVote: TipoVoto | null = null;
+
+                try {
+                    if (post.id) {
+                        const [votes, comments] = await Promise.all([
+                            this.voteRepo.find({ where: { news: { id: post.id } } }),
+                            this.commentRepo.count({ where: { news: { id: post.id } } }),
+                        ]);
+
+                        upVotes = votes.filter(v => v.vote === TipoVoto.UP).length;
+                        downVotes = votes.filter(v => v.vote === TipoVoto.DOWN).length;
+                        commentsCount = comments;
+
+                        if (currentUserId) {
+                            const found = votes.find(v => v.user?.id === currentUserId);
+                            if (found) userVote = found.vote;
+                        }
+                    }
+                } catch { }
+
+                return {
+                    ...post,
+                    categoria: post.category?.name || 'Mercado',
+                    upVotes,
+                    downVotes,
+                    commentsCount,
+                    userVote,
+                    content: Policy(
+                        { reading: post.content },
+                        request,
+                        'READER',
+                        r => (r ? r.substring(0, 180) + ' \n\n[...]' : '')
+                    ).reading,
+                };
+            })
+        );
+
+        return postsComInteracoes;
+    }
+
     @Public()
     @Post('getFeed')
     @ApiOperation({ operationId: 'getFeed' })

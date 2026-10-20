@@ -228,6 +228,19 @@ export class NewsService extends BaseService {
   }
 
   /**
+   * Obtém notícias filtradas de mercado e economia da base de dados.
+   */
+  getMarketNews(params?: { search?: string; category?: string; limit?: number; offset?: number }, context?: HttpContext): Observable<Array<News>> {
+    const queryParams: string[] = [];
+    if (params?.search) queryParams.push(`search=${encodeURIComponent(params.search)}`);
+    if (params?.category) queryParams.push(`category=${encodeURIComponent(params.category)}`);
+    if (params?.limit !== undefined) queryParams.push(`limit=${params.limit}`);
+    if (params?.offset !== undefined) queryParams.push(`offset=${params.offset}`);
+    const qs = queryParams.length ? `?${queryParams.join('&')}` : '';
+    return this.http.get<Array<News>>(`${this.rootUrl}/News/Market${qs}`, { context });
+  }
+
+  /**
    * Obtém o status do vínculo social entre o usuário logado e outro usuário.
    */
   getSocialStatus(userId: string, context?: HttpContext): Observable<{ isFollowing: boolean; isFollower: boolean; isConhecido: boolean; tipo: string }> {

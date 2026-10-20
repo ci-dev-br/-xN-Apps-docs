@@ -613,7 +613,7 @@ async function shouldThisInstanceClaimPort86(statusMap: StatusMap, nowMs = Date.
     }
 
     const aliveDebugCandidates = Object.entries(statusMap)
-      .filter(([pid, info]) => info.status === 'online' && Boolean(info.debug) && isProcessTrulyAlive(info, nowMs, pid))
+      .filter(([pid, info]) => (info.status === 'online' || info.status === 'running') && Boolean(info.port) && Boolean(info.debug) && isProcessTrulyAlive(info, nowMs, pid))
       .sort(compareProcessPriority);
 
     return aliveDebugCandidates.length > 0 && aliveDebugCandidates[0][0] === currentPid;
@@ -635,7 +635,7 @@ async function shouldThisInstanceClaimPort86(statusMap: StatusMap, nowMs = Date.
 
   // 3. Eleição entre nós normais: vence o nó online que está há mais tempo sem assumir a porta 86
   const aliveCandidates = Object.entries(statusMap)
-    .filter(([pid, info]) => (info.status === 'online' || info.status === 'running') && isProcessTrulyAlive(info, nowMs, pid))
+    .filter(([pid, info]) => (info.status === 'online' || info.status === 'running') && Boolean(info.port) && isProcessTrulyAlive(info, nowMs, pid))
     .sort(compareProcessPriority);
 
   if (aliveCandidates.length === 0 || aliveCandidates[0][0] !== currentPid) {
