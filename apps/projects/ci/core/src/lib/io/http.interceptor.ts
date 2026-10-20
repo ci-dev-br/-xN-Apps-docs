@@ -8,6 +8,8 @@ import { CORE_ENV, ICoreEnvironment } from "../provider";
 import { Router } from "@angular/router";
 import { Message } from "../services/message";
 import { ConsoleService } from "../services/console.service";
+import { GIT_VERSION } from "../version/git-version";
+import { ApplicationCatalogService } from "../apps/application-catalog.service";
 
 // import { AuthService } from "@ci/portal-api";
 /**
@@ -179,20 +181,28 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             }
         }
 
-        if (!bearer) return request;
+        // Assina a aplicação de origem e o hash da versão segundo o Git
+        const originApp = ApplicationCatalogService.currentAppKey ||
+            ApplicationCatalogService.detectFromUrl(this.router?.url || (typeof window !== 'undefined' ? window.location.pathname : '')) ||
+            'Portal';
+        const gitHash = GIT_VERSION.shortHash;
 
-        const secondaryTokens = this.getSecondaryTokens(bearer);
         const headersConfig: { [key: string]: string } = {
-            timeout: '10000',
-            'Authorization': `Bearer ${bearer}`
+            'X-Origin-Application': originApp,
+            'X-Application-Git-Hash': gitHash
         };
 
-        if (secondaryTokens.length > 0) {
-            headersConfig['x-additional-tokens'] = secondaryTokens.join(',');
+        if (bearer) {
+            headersConfig['timeout'] = '10000';
+            headersConfig['Authorization'] = `Bearer ${bearer}`;
+            const secondaryTokens = this.getSecondaryTokens(bearer);
+            if (secondaryTokens.length > 0) {
+                headersConfig['x-additional-tokens'] = secondaryTokens.join(',');
+            }
         }
 
         return request.clone({
-            headers: new HttpHeaders(headersConfig)
+            setHeaders: headersConfig
         });
     }
 

@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PainelComponent } from './painel.component';
+import { AppContextGuard } from '@ci/core';
 export const routes: Routes = [
   { path: 'launcher', loadChildren: () => import('@ci/Launcher').then(m => m.LauncherRouterModule) },
   {
-    path: '', component: PainelComponent, children: [
+    path: '', component: PainelComponent, canActivateChild: [AppContextGuard], children: [
       { path: '', loadChildren: () => import('@ci/Launcher').then(m => m.LauncherRouterModule) },
       { path: 'meus-apps', loadChildren: () => import('./apps/apps.module').then(m => m.AppsModule) },
       { path: 'Arquivos', loadChildren: () => import('@ci-apps/Arquivos').then(m => m.CiApplicationModule) },

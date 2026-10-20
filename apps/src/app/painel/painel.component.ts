@@ -1,5 +1,5 @@
 import { Component, ElementRef, inject, OnInit, Optional, ViewChild } from '@angular/core';
-import { CoreModule, LoadIconsModule, IconLoaderSerices, StorageService } from '@ci/core';
+import { CoreModule, LoadIconsModule, IconLoaderSerices, StorageService, ApplicationCatalogService, GIT_VERSION } from '@ci/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,7 +8,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenu, MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { CI_STATIC_APPS, IApp } from './apps/apps';
 import { AuthModule, USER_MENU, UserAuthenticationService } from '@ci/auth';
 import { IconModule, NavbarModule } from '@ci/components';
@@ -47,6 +48,7 @@ export class PainelComponent implements OnInit {
     @Optional() private readonly userAuthenticationInstanceService?: UserAuthenticationService,
     // @Optional() private readonly route: ActivatedRoute,
     @Optional() iconLoader?: IconLoaderSerices,
+    @Optional() private readonly catalogService?: ApplicationCatalogService,
   ) {
     iconLoader?.load({ /// TODO: mover para fora
       'devtools': { url: 'icons/dev-tools-icon.svg' },
@@ -95,7 +97,16 @@ export class PainelComponent implements OnInit {
     });
     this.userAuthenticationInstanceService?.user.subscribe(user => {
       if (!!user) {
-        this.apps = CI_STATIC_APPS.filter(app => !!app.roles?.find(role => !!user.roles?.find(r => r === role)))
+        this.apps = CI_STATIC_APPS.filter(app => !!app.roles?.find(role => !!user.roles?.find(r => r === role)));
+        if (user.roles?.includes('MASTER')) {
+          this.catalogService?.verifyAndReconcileCatalogIfMaster(user, CI_STATIC_APPS).subscribe({
+            next: (res) => {
+              if (res && !res.skipped) {
+                console.log(`[ApplicationCatalog] Catálogo reconciliado com sucesso para a versão ${GIT_VERSION.shortHash}:`, res);
+              }
+            }
+          });
+        }
       }
     })
   }
@@ -115,6 +126,18 @@ export class PainelComponent implements OnInit {
     localStorage.setItem('x-menu-cached-favs', JSON.stringify(this.apps?.map(x => x.__cta_hndlred || 0)));
   }
   async appClickHandler(event: MouseEvent, app: any) {
+    const appKey = app.name || (app.url ? app.url.replace(/^\//, '') : null);
+    if (appKey) {
+      this.catalogService?.catalogOnFirstExecution({
+        appKey,
+        routePath: app.url,
+        name: app.name,
+        description: app.description || app.shortDescription,
+        icon: app.icon,
+        categoria: app.categoria,
+        roles: app.roles,
+      }).subscribe();
+    }
     if (event.ctrlKey) {
       // window.open(location.href + '/' + app.url, '')
     } else {
@@ -149,6 +172,36 @@ export class PainelComponent implements OnInit {
     }
     setTimeout(() => {
       this.appsFavoritos = [...this.apps || []];
-    })
+    });
+
+    // Auto-catalogar aplicação em execução na primeira abertura
+    this.catalogCurrentIfActive(this.router?.url || (typeof window !== 'undefined' ? window.location.pathname : ''));
+    this.router?.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd)
+    ).subscribe((e: NavigationEnd) => {
+      this.catalogCurrentIfActive(e.urlAfterRedirects || e.url);
+    });
+  }
+
+  private catalogCurrentIfActive(url: string) {
+    const activeKey = ApplicationCatalogService.detectFromUrl(url);
+    if (activeKey) {
+      const found = CI_STATIC_APPS.find(a =>
+        a.name === activeKey ||
+        a.url === `/${activeKey}` ||
+        a.url?.replace(/^\//, '') === activeKey
+      );
+      if (found) {
+        this.catalogService?.catalogOnFirstExecution({
+          appKey: activeKey,
+          routePath: found.url,
+          name: found.name,
+          description: found.description || found.shortDescription,
+          icon: found.icon,
+          categoria: found.categoria,
+          roles: found.roles,
+        }).subscribe();
+      }
+    }
   }
 }
