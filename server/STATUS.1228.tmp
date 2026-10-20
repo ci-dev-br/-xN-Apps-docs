@@ -4,26 +4,27 @@
     "status": "running",
     "debug": false,
     "warmedUp": true,
-    "lastHeartbeat": "2026-10-20T04:29:37.903Z",
-    "nextStatusCheckAt": "2026-10-20T04:29:38.203Z",
-    "updatedAt": "2026-10-20T04:29:37.903Z"
+    "lastHeartbeat": "2026-10-20T04:31:29.435Z",
+    "nextStatusCheckAt": "2026-10-20T04:31:30.031Z",
+    "updatedAt": "2026-10-20T04:31:29.435Z"
   },
   "13440": {
-    "startedAt": "2026-10-20T04:12:02.847Z",
+    "startedAt": "2026-10-20T04:31:17.700Z",
     "status": "running",
     "debug": true,
     "warmedUp": true,
-    "lastHeartbeat": "2026-10-20T04:29:37.295Z",
-    "nextStatusCheckAt": "2026-10-20T04:29:37.857Z",
-    "updatedAt": "2026-10-20T04:29:37.295Z"
+    "lastHeartbeat": "2026-10-20T04:31:29.378Z",
+    "nextStatusCheckAt": "2026-10-20T04:31:29.731Z",
+    "updatedAt": "2026-10-20T04:31:29.378Z"
   },
   "17340": {
     "startedAt": "2026-10-20T04:11:04.008Z",
-    "status": "running",
+    "status": "stopped",
     "debug": false,
     "warmedUp": true,
-    "lastHeartbeat": "2026-10-20T04:29:36.900Z",
-    "nextStatusCheckAt": "2026-10-20T04:29:37.557Z",
-    "updatedAt": "2026-10-20T04:29:36.900Z"
+    "lastHeartbeat": "2026-10-20T04:31:28.120Z",
+    "updatedAt": "2026-10-20T04:31:28.120Z",
+    "stoppedAt": "2026-10-20T04:30:51.352Z",
+    "nextStatusCheckAt": "2026-10-20T04:31:28.627Z"
   }
 }
