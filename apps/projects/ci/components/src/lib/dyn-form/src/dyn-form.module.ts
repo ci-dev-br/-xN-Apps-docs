@@ -13,6 +13,7 @@ import { FORM_OPTIONS, FormOptionsBuilder, IFormOptions } from './i-form-options
 import { DynInputDateComponent } from './dyn-input/dyn-input-date.component';
 import { DynInputComponent } from './dyn-input/dyn-input.component';
 import { DynInputModulesComponent } from './dyn-input/dyn-input-modules.component';
+import { DynInputChipsAutocompleteComponent } from './dyn-input/dyn-input-chips-autocomplete.component';
 import { NgxCurrencyDirective } from 'ngx-currency';
 
 @NgModule({
@@ -21,6 +22,7 @@ import { NgxCurrencyDirective } from 'ngx-currency';
     DynInputComponent,
     DynInputDateComponent,
     DynInputModulesComponent,
+    DynInputChipsAutocompleteComponent,
   ],
   imports: [
     CoreModule,
@@ -43,6 +45,7 @@ import { NgxCurrencyDirective } from 'ngx-currency';
     DynInputComponent,
     DynInputDateComponent,
     DynInputModulesComponent,
+    DynInputChipsAutocompleteComponent,
   ]
 })
 export class DynFormModule {
@@ -60,4 +63,5 @@ export {
   DynInputComponent,
   DynInputDateComponent,
   DynInputModulesComponent,
+  DynInputChipsAutocompleteComponent,
 }

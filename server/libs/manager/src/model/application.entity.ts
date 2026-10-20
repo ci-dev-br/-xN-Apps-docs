@@ -154,6 +154,29 @@ export class Application {
         description: 'Lista de módulos ou aplicações padrão contidos e combinados nesta aplicação.',
         type: 'string',
         isArray: true,
+        format: 'chips-autocomplete',
+        enum: [
+            'CRM',
+            'Cadastros',
+            'Financeiro',
+            'Vendas',
+            'Produtos',
+            'Mensagens',
+            'Organizacao',
+            'Projetos',
+            'Arquivos',
+            'Formularios',
+            'CMS',
+            'LowCode',
+            'Dynamic',
+            'Treinamento',
+            'DevTools',
+            'Codex',
+            'SEO',
+            'Threejs',
+            'Grupos'
+        ],
+        example: ['CRM', 'Cadastros', 'Financeiro', 'Vendas', 'Mensagens']
     })
     @Column({
         nullable: true,

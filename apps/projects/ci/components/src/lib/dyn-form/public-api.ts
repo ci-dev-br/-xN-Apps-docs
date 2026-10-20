@@ -4,3 +4,4 @@ export * from './src/i-form-options';
 export * from './src/dyn-input/dyn-input-date.component';
 export * from './src/dyn-input/dyn-input.component';
 export * from './src/dyn-input/dyn-input-modules.component';
+export * from './src/dyn-input/dyn-input-chips-autocomplete.component';

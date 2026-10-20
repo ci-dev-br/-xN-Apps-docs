@@ -5,7 +5,7 @@ export abstract class DataServiceBase<T> {
     abstract findByText(text: string): Promise<T[]>;
 }
 
-export type TypeFormField = 'text' | 'number' | 'option' | 'date' | 'date-time' | 'time' | 'multi-option' | 'modules' | 'app-modules';
+export type TypeFormField = 'text' | 'number' | 'option' | 'date' | 'date-time' | 'time' | 'multi-option' | 'modules' | 'app-modules' | 'chips-autocomplete' | 'chips';
 
 export interface IFormOptions {
     code?: string;
@@ -27,6 +27,8 @@ export interface IFormFieldDefinition<T> {
      * Type represent a abtraction with manipulate, validate, store and apresentation of Classes or primitives data
      */
     type?: TypeFormField;
+    format?: string;
+    enum?: any[];
     schemaName?: string;
     /**
      * Property name of Object to connect field with propertie view and edit data

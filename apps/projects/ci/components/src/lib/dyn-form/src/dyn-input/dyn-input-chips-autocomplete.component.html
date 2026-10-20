@@ -1,0 +1,88 @@
+<div class="ci-chips-autocomplete-wrapper">
+  <!-- Campo Mat-Form-Field com Mat-Chip-Grid e Mat-Autocomplete -->
+  <mat-form-field appearance="outline" class="ci-chips-field">
+    <mat-label>{{ label || 'Módulos Integrados da Aplicação' }}</mat-label>
+
+    <mat-chip-grid #chipGrid aria-label="Módulos da Aplicação">
+      @for(mod of selectedModules; track mod; let i = $index){
+        <mat-chip-row
+          [removable]="true"
+          (removed)="removeChip(mod)"
+          [class.chip-custom]="!isStandardModule(mod)"
+          [matTooltip]="isStandardModule(mod) ? 'Módulo Padrão (Ordem ' + (i + 1) + ')' : 'Módulo Customizado / Sem Código (Ordem ' + (i + 1) + ')'">
+          <mat-icon matChipLeadingIcon class="chip-icon">{{ getModuleIcon(mod) }}</mat-icon>
+          <span class="chip-text">{{ mod }}</span>
+
+          <!-- Botões de Reordenação Rápida -->
+          <button type="button" class="btn-chip-arrow" [disabled]="i === 0" (click)="moveChip(i, 'up', $event)" matTooltip="Mover para esquerda/início">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <button type="button" class="btn-chip-arrow" [disabled]="i === selectedModules.length - 1" (click)="moveChip(i, 'down', $event)" matTooltip="Mover para direita/fim">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+
+          <button matChipRemove [attr.aria-label]="'remover ' + mod">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+      }
+
+      <input
+        #moduleInput
+        [formControl]="inputCtrl"
+        [matChipInputFor]="chipGrid"
+        [matAutocomplete]="auto"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="addChip($event)"
+        [placeholder]="selectedModules.length === 0 ? (placeholder || 'Digite para buscar ou criar módulo...') : 'Adicionar outro módulo...'" />
+    </mat-chip-grid>
+
+    <!-- Painel de Auto-complete conectado ao @ApiProperty enum / Catálogo -->
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedOption($event)">
+      @for(opt of filteredOptions$ | async; track opt.key){
+        <mat-option [value]="opt.key" class="module-autocomplete-option">
+          <div class="option-content">
+            <div class="option-icon-box">
+              <mat-icon>{{ opt.icon || 'widgets' }}</mat-icon>
+            </div>
+            <div class="option-texts">
+              <span class="option-name">{{ opt.name }}</span>
+              <span class="option-category">{{ opt.category }}</span>
+              @if(opt.shortDescription){
+                <small class="option-desc">{{ opt.shortDescription }}</small>
+              }
+            </div>
+            <span class="option-badge">App Padrão</span>
+          </div>
+        </mat-option>
+      }
+    </mat-autocomplete>
+
+    <!-- Botão de Ação no Sufixo para Alternar Visualização Completa -->
+    <button mat-icon-button matSuffix type="button" class="btn-toggle-view" [matTooltip]="showDetailedPipeline ? 'Fechar catálogo visual' : 'Abrir catálogo visual com regras'" (click)="showDetailedPipeline = !showDetailedPipeline">
+      <mat-icon>{{ showDetailedPipeline ? 'expand_less' : 'dashboard_customize' }}</mat-icon>
+    </button>
+
+    @if(description){
+      <mat-hint>
+        {{ description }}
+        @if(selectedModules.length > 0){
+          <strong>— {{ selectedModules.length }} módulo(s) combinado(s).</strong>
+        }
+      </mat-hint>
+    }
+  </mat-form-field>
+
+  <!-- Visualização Complementar: Pipeline Completo e Regras Expandidas quando acionado -->
+  @if(showDetailedPipeline){
+    <div class="detailed-pipeline-drawer">
+      <ci-dyn-input-modules
+        [fieldName]="fieldName"
+        [label]="label"
+        [description]="description"
+        [formGroup]="formGroup"
+        [formControl]="formControl">
+      </ci-dyn-input-modules>
+    </div>
+  }
+</div>
