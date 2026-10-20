@@ -152,6 +152,18 @@ export const routes: Routes = [
         data: { docs: APP_DOCUMENTATION_REGISTRY['Infra'] },
         loadChildren: () => import('@ci-apps/Infra').then(m => m.CiApplicationModule)
       },
+      {
+        path: 'BeautyCRM',
+        data: {
+          title: 'Beauty CRM',
+          icon: 'crm'
+        },
+        loadComponent: () => import('./apps/combined-app/combined-app.component').then(m => m.CombinedAppComponent)
+      },
+      {
+        path: 'app-combinada/:appKey',
+        loadComponent: () => import('./apps/combined-app/combined-app.component').then(m => m.CombinedAppComponent)
+      },
     ]
   }
 ];
