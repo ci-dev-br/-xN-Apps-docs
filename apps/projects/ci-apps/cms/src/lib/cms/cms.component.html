@@ -1,18 +1,43 @@
-<mat-toolbar>
-    <button mat-icon-button (click)="sideMenu.toggle()">
+<mat-toolbar class="cms-top-toolbar">
+    <button mat-icon-button (click)="sideMenu.toggle()" matTooltip="Alternar menu lateral">
         <mat-icon>menu</mat-icon>
     </button>
+    <div class="toolbar-brand">
+        <mat-icon class="brand-icon">auto_stories</mat-icon>
+        <span class="brand-title">CMS — Gestor de Conteúdo</span>
+    </div>
+    <span class="spacer"></span>
+    <button mat-button routerLink="/CMS" routerLinkActive="active-nav-link" [routerLinkActiveOptions]="{exact: true}">
+        <mat-icon>dashboard</mat-icon>
+        <span>Painel Editorial</span>
+    </button>
 </mat-toolbar>
-<mat-drawer-container>
-    <mat-drawer #sideMenu mode="over" opened>
-        @for(entitie of entidades; track $index){
-        <button mat-menu-item [routerLink]="'./' + entitie">
-            <mat-icon>dashboard</mat-icon>{{entitie | nomenclatura}}</button>
-        }
-    </mat-drawer>
-    <mat-drawer-content>
-        <div class="container">
-            <router-outlet></router-outlet>
+
+<mat-drawer-container class="cms-drawer-container">
+    <mat-drawer #sideMenu mode="side" opened class="cms-side-drawer">
+        <div class="drawer-header">
+            <mat-icon>feed</mat-icon>
+            <span>Publicações & Mídias</span>
         </div>
+
+        <nav class="drawer-nav">
+            <a mat-list-item routerLink="/CMS" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="drawer-link">
+                <mat-icon>dashboard</mat-icon>
+                <span>Visão Geral & Artigos</span>
+            </a>
+
+            <div class="drawer-section-heading">Tabelas & Modelos CMS</div>
+
+            @for(entitie of entidades; track entitie){
+                <a mat-list-item [routerLink]="'./' + entitie" routerLinkActive="active" class="drawer-link">
+                    <mat-icon>article</mat-icon>
+                    <span>{{entitie | nomenclatura}}</span>
+                </a>
+            }
+        </nav>
+    </mat-drawer>
+
+    <mat-drawer-content class="cms-content">
+        <router-outlet></router-outlet>
     </mat-drawer-content>
 </mat-drawer-container>

@@ -10,6 +10,9 @@ import { BoardModule } from "@ci/components";
 import { models } from "../models";
 import { DataGridModule } from "@ci/components/data-grid";
 import { WindowModule } from "@ci/components/window";
+import { MatListModule } from "@angular/material/list";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
     selector: 'ci-cms',
@@ -24,6 +27,9 @@ import { WindowModule } from "@ci/components/window";
         MatButtonModule,
         MatMenuModule,
         WindowModule,
+        MatListModule,
+        MatDividerModule,
+        MatTooltipModule,
     ],
     standalone: true,
     styleUrl: 'cms.component.scss',
@@ -32,10 +38,12 @@ import { WindowModule } from "@ci/components/window";
 export class CMSComponent implements OnInit, OnDestroy {
     entidades = models;
     private t?: string;
+
     ngOnInit() {
         this.t = document.title;
-        document.title = `${this.t || ''} :: CMS`;
+        document.title = `CMS :: Gestor de Conteúdo`;
     }
+
     ngOnDestroy() {
         if (this.t) document.title = this.t;
     }

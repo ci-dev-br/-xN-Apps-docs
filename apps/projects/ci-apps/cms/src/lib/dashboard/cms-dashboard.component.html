@@ -1,0 +1,286 @@
+<div class="cms-dashboard">
+  <!-- Header -->
+  <header class="cms-header">
+    <div class="header-titles">
+      <div class="badge">CMS & Publicações</div>
+      <h1>Gestão Editorial de Conteúdo</h1>
+      <p class="subtitle">Publique páginas, artigos corporativos, mídias e gerencie o ecossistema de conteúdo.</p>
+    </div>
+
+    <div class="header-actions">
+      <button mat-flat-button color="primary" class="create-btn" (click)="openNewModal()">
+        <mat-icon>add_circle</mat-icon>
+        Novo Conteúdo
+      </button>
+    </div>
+  </header>
+
+  <!-- Metrics Grid -->
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="icon-wrap blue"><mat-icon>article</mat-icon></div>
+      <div class="kpi-details">
+        <span class="label">Posts / Artigos</span>
+        <span class="value">{{ totalPosts }}</span>
+        <span class="trend positive"><mat-icon>check</mat-icon> Publicações ativas</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="icon-wrap purple"><mat-icon>web</mat-icon></div>
+      <div class="kpi-details">
+        <span class="label">Páginas Institucionais</span>
+        <span class="value">{{ totalPages }}</span>
+        <span class="trend positive"><mat-icon>insights</mat-icon> Rotas indexadas</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="icon-wrap emerald"><mat-icon>visibility</mat-icon></div>
+      <div class="kpi-details">
+        <span class="label">Visualizações de Conteúdo</span>
+        <span class="value">{{ totalViews | number:'1.0-0':'pt-BR' }}</span>
+        <span class="trend positive"><mat-icon>trending_up</mat-icon> Engajamento contínuo</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="icon-wrap amber"><mat-icon>perm_media</mat-icon></div>
+      <div class="kpi-details">
+        <span class="label">Arquivos de Mídia</span>
+        <span class="value">{{ recentMedia.length }}</span>
+        <span class="trend neutral"><mat-icon>storage</mat-icon> Otimizados para CDN</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content Manager Section -->
+  <section class="content-manager-card">
+    <div class="toolbar-row">
+      <div class="tabs-filter">
+        <button [class.active]="selectedFilter === 'todos'" (click)="selectedFilter = 'todos'">Todos ({{ contents.length }})</button>
+        <button [class.active]="selectedFilter === 'post'" (click)="selectedFilter = 'post'">Posts / Artigos ({{ totalPosts }})</button>
+        <button [class.active]="selectedFilter === 'page'" (click)="selectedFilter = 'page'">Páginas ({{ totalPages }})</button>
+        <button [class.active]="selectedFilter === 'notice'" (click)="selectedFilter = 'notice'">Comunicados</button>
+      </div>
+
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input type="text" [(ngModel)]="searchQuery" placeholder="Buscar por título, tag ou slug..." />
+      </div>
+    </div>
+
+    <!-- Articles Table / Cards -->
+    <div class="table-container">
+      <table class="cms-table">
+        <thead>
+          <tr>
+            <th>Título & Resumo</th>
+            <th>Tipo</th>
+            <th>Categoria</th>
+            <th>Autor</th>
+            <th>Publicação</th>
+            <th>Visualizações</th>
+            <th>Status</th>
+            <th class="actions-col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of filteredContents; track item.id) {
+            <tr>
+              <td class="title-cell">
+                <div class="item-title">{{ item.title }}</div>
+                <div class="item-slug">/{{ item.slug }}</div>
+                <div class="item-excerpt">{{ item.excerpt }}</div>
+              </td>
+              <td>
+                <span class="type-pill" [ngClass]="item.type">{{ item.type | uppercase }}</span>
+              </td>
+              <td>
+                <span class="cat-label">{{ item.category }}</span>
+              </td>
+              <td>
+                <span class="author-label">{{ item.author }}</span>
+              </td>
+              <td>
+                <span class="date-label">{{ item.publishDate }}</span>
+              </td>
+              <td>
+                <span class="views-count">
+                  <mat-icon>visibility</mat-icon>
+                  {{ item.views | number }}
+                </span>
+              </td>
+              <td>
+                <span class="status-pill" [ngClass]="item.status">
+                  {{ item.status | uppercase }}
+                </span>
+              </td>
+              <td class="actions-col">
+                <button mat-icon-button (click)="togglePublish(item)" [matTooltip]="item.status === 'publicado' ? 'Despublicar' : 'Publicar'">
+                  <mat-icon [color]="item.status === 'publicado' ? 'primary' : ''">
+                    {{ item.status === 'publicado' ? 'check_circle' : 'publish' }}
+                  </mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteContent(item.id)" matTooltip="Excluir">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </td>
+            </tr>
+          }
+
+          @if (filteredContents.length === 0) {
+            <tr>
+              <td colspan="8" class="empty-state">
+                <mat-icon>find_in_page</mat-icon>
+                <span>Nenhum conteúdo encontrado para os filtros selecionados.</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Bottom Section: Recent Media & Shortcuts -->
+  <section class="bottom-grid">
+    <!-- Media Library Snapshot -->
+    <div class="media-card">
+      <div class="card-header">
+        <mat-icon>perm_media</mat-icon>
+        <h3>Biblioteca de Mídias Recentes</h3>
+      </div>
+      <div class="media-list">
+        @for (m of recentMedia; track m.id) {
+          <div class="media-item">
+            <div class="media-icon">
+              <mat-icon>{{ m.type === 'image' ? 'image' : m.type === 'pdf' ? 'picture_as_pdf' : 'videocam' }}</mat-icon>
+            </div>
+            <div class="media-details">
+              <span class="media-name">{{ m.filename }}</span>
+              <span class="media-meta">{{ m.size }} • {{ m.uploadedAt }}</span>
+            </div>
+            <button mat-icon-button matTooltip="Copiar Link"><mat-icon>link</mat-icon></button>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Shortcuts to CMS Tables -->
+    <div class="shortcuts-card">
+      <div class="card-header">
+        <mat-icon>dataset</mat-icon>
+        <h3>Tabelas do CMS</h3>
+      </div>
+      <div class="shortcuts-grid">
+        <a routerLink="/CMS/SitePage" class="cms-shortcut">
+          <mat-icon>web</mat-icon>
+          <div>
+            <strong>SitePage</strong>
+            <small>Páginas fixas do portal</small>
+          </div>
+        </a>
+        <a routerLink="/CMS/SitePost" class="cms-shortcut">
+          <mat-icon>newspaper</mat-icon>
+          <div>
+            <strong>SitePost</strong>
+            <small>Artigos de blog e notícias</small>
+          </div>
+        </a>
+        <a routerLink="/CMS/Comment" class="cms-shortcut">
+          <mat-icon>forum</mat-icon>
+          <div>
+            <strong>Comment</strong>
+            <small>Comentários de leitores</small>
+          </div>
+        </a>
+        <a routerLink="/CMS/Links" class="cms-shortcut">
+          <mat-icon>link</mat-icon>
+          <div>
+            <strong>Links</strong>
+            <small>Redirecionamentos e URLs</small>
+          </div>
+        </a>
+        <a routerLink="/CMS/Website" class="cms-shortcut">
+          <mat-icon>language</mat-icon>
+          <div>
+            <strong>Website</strong>
+            <small>Configurações de domínios</small>
+          </div>
+        </a>
+        <a routerLink="/CMS/Term" class="cms-shortcut">
+          <mat-icon>label</mat-icon>
+          <div>
+            <strong>Term (Tags & Categorias)</strong>
+            <small>Taxonomias do conteúdo</small>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Novo Conteúdo -->
+  @if (showNewContentModal) {
+    <div class="modal-backdrop" (click)="showNewContentModal = false">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Criar Novo Conteúdo CMS</h3>
+          <button mat-icon-button (click)="showNewContentModal = false"><mat-icon>close</mat-icon></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Título *</label>
+            <input type="text" [(ngModel)]="newContent.title" (input)="generateSlug()" placeholder="Ex: Guia de Boas Práticas de Segurança" />
+          </div>
+
+          <div class="form-group">
+            <label>Slug / URL Amigável</label>
+            <input type="text" [(ngModel)]="newContent.slug" placeholder="guia-boas-praticas-seguranca" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tipo de Conteúdo</label>
+              <select [(ngModel)]="newContent.type">
+                <option value="post">Post de Notícia / Blog</option>
+                <option value="page">Página Institucional</option>
+                <option value="notice">Comunicado Interno</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Categoria</label>
+              <input type="text" [(ngModel)]="newContent.category" placeholder="Ex: Tecnologia, Corporativo" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Resumo / Descrição Rápida</label>
+            <textarea [(ngModel)]="newContent.excerpt" rows="2" placeholder="Breve introdução que aparecerá na listagem"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Autor Responsável</label>
+              <input type="text" [(ngModel)]="newContent.author" placeholder="Nome do autor ou departamento" />
+            </div>
+            <div class="form-group">
+              <label>Status Inicial</label>
+              <select [(ngModel)]="newContent.status">
+                <option value="publicado">Publicado Imediatamente</option>
+                <option value="rascunho">Rascunho</option>
+                <option value="agendado">Agendado</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button mat-button (click)="showNewContentModal = false">Cancelar</button>
+          <button mat-flat-button color="primary" [disabled]="!newContent.title" (click)="saveContent()">
+            Publicar Conteúdo
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,66 +1,134 @@
 :host {
-    flex: auto;
     display: flex;
     flex-direction: column;
-    overflow: auto;
-    align-items: stretch;
-    justify-content: stretch;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--mat-sys-surface, #f8fafc);
+    color: var(--mat-sys-on-surface, #1e293b);
 }
 
-mat-drawer-container {
-    flex: auto;
-    --mat-sidenav-container-width: 250px;
-}
-
-nav {
+.cms-top-toolbar {
+    background: var(--mat-sys-surface-container, #ffffff);
+    color: var(--mat-sys-on-surface, #1e293b);
+    border-bottom: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.08));
     display: flex;
-    flex-direction: row;
-    flex: unset;
-    padding: 12px;
+    align-items: center;
     gap: 12px;
+    height: 56px;
+    padding: 0 16px;
 
-    ul,
-    li {
-        display: contents;
+    .toolbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .brand-icon {
+            color: var(--mat-sys-primary, #7c3aed);
+        }
+
+        .brand-title {
+            font-weight: 700;
+            font-size: 16px;
+        }
     }
 
-    a {
-        padding: 15px;
-        margin: 0;
-        background: white;
-        border-radius: 15px;
+    .spacer {
+        flex: 1;
     }
 
-    +* {
-        flex: auto;
+    .active-nav-link {
+        background: var(--mat-sys-primary-container, #f3e8ff);
+        color: var(--mat-sys-on-primary-container, #6b21a8);
+        border-radius: 8px;
     }
 }
 
-ci-board {
-    flex: auto;
+.cms-drawer-container {
+    flex: 1;
+    height: calc(100% - 56px);
 }
 
+.cms-side-drawer {
+    width: 240px;
+    background: var(--mat-sys-surface-container-low, #f8fafc);
+    border-right: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.08));
+    display: flex;
+    flex-direction: column;
+    padding: 12px 8px;
 
-mat-drawer-content {
-    .inner-container {
+    .drawer-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px 14px 12px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--mat-sys-on-surface-variant, #64748b);
+        border-bottom: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.06));
+        margin-bottom: 8px;
+
+        mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    .drawer-section-heading {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--mat-sys-on-surface-variant, #94a3b8);
+        padding: 12px 12px 4px 12px;
+    }
+
+    .drawer-nav {
         display: flex;
         flex-direction: column;
-        flex: 1;
-        justify-content: stretch;
-        align-items: stretch;
-        overflow: hidden;
-        height: 100%;
-        width: 100%;
+        gap: 4px;
+
+        .drawer-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--mat-sys-on-surface, #334155);
+            font-size: 13px;
+            font-weight: 500;
+            transition: background 0.15s;
+
+            mat-icon {
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+                color: var(--mat-sys-on-surface-variant, #64748b);
+            }
+
+            &:hover {
+                background: var(--mat-sys-surface-container-high, #f1f5f9);
+            }
+
+            &.active {
+                background: var(--mat-sys-primary-container, #f3e8ff);
+                color: var(--mat-sys-on-primary-container, #7c3aed);
+                font-weight: 600;
+
+                mat-icon {
+                    color: var(--mat-sys-primary, #7c3aed);
+                }
+            }
+        }
     }
 }
 
-.container {
-    flex: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-
-    justify-content: stretch;
-    flex: auto;
+.cms-content {
+    background-color: var(--mat-sys-surface, #f8fafc);
+    overflow-y: auto;
     height: 100%;
 }

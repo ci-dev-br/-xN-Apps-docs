@@ -1,10 +1,335 @@
-<h2>Crie, gerencie e ministre cursos e treinamentos. Prepare aulas e monte turmas de estudos. Completamente
-    personalizável.</h2>
-
-<div class="cards">
-    @if(actions){@for (action of actions; track $index) {
-    <div class="card" (click)="action.onClick ? action.onClick(undefined) : undefined">
-        @if(action.label){{{action.label}}}
+<div class="training-hub">
+  <!-- Top Banner / Header -->
+  <header class="hub-header">
+    <div class="header-content">
+      <div class="badge">Universidade Corporativa</div>
+      <h1>Portal de Treinamento & Desenvolvimento</h1>
+      <p class="subtitle">Aprimore suas competências, acompanhe trilhas corporativas e obtenha certificados oficiais.</p>
     </div>
-    }}
+
+    <div class="header-actions">
+      <button mat-flat-button color="primary" class="create-btn" (click)="openCreateCourseModal()">
+        <mat-icon>add_circle</mat-icon>
+        Novo Treinamento
+      </button>
+    </div>
+  </header>
+
+  <!-- Metrics Overview Cards -->
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="icon-wrap blue"><mat-icon>school</mat-icon></div>
+      <div class="kpi-details">
+        <span class="label">Cursos no Catálogo</span>
+        <span class="value">{{ courses.length }}</span>
+        <span class="trend neutral">Disponíveis na organização</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="icon-wrap emerald"><mat-icon>task_alt</mat-icon></div>
+      <div class="kpi-details">
+        <span class="label">Concluídos</span>
+        <span class="value">{{ completedCoursesCount }}</span>
+        <span class="trend positive"><mat-icon>verified</mat-icon> 100% de aproveitamento</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="icon-wrap amber"><mat-icon>timer</mat-icon></div>
+      <div class="kpi-details">
+        <span class="label">Horas Cumpridas</span>
+        <span class="value">{{ totalHoursCompleted }}h</span>
+        <span class="trend positive"><mat-icon>trending_up</mat-icon> Carga horária validada</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="icon-wrap purple"><mat-icon>workspace_premium</mat-icon></div>
+      <div class="kpi-details">
+        <span class="label">Certificados Conquistados</span>
+        <span class="value">{{ certificates.length }}</span>
+        <span class="trend positive"><mat-icon>military_tech</mat-icon> Emitidos com hash</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filter & Search Bar -->
+  <section class="catalog-controls">
+    <div class="track-pills">
+      @for (track of tracks; track track) {
+        <button [class.active]="selectedTrack === track" (click)="selectedTrack = track">
+          {{ track }}
+        </button>
+      }
+    </div>
+
+    <div class="search-bar">
+      <mat-icon>search</mat-icon>
+      <input type="text" [(ngModel)]="searchQuery" placeholder="Buscar treinamentos por nome ou instrutor..." />
+    </div>
+  </section>
+
+  <!-- Courses Grid -->
+  <section class="courses-grid">
+    @for (course of filteredCourses; track course.id) {
+      <div class="course-card" (click)="openCourse(course)">
+        <div class="course-thumb" [style.background-color]="course.thumbnailColor">
+          <mat-icon class="thumb-icon">{{ course.icon }}</mat-icon>
+          <span class="track-tag">{{ course.track }}</span>
+          <span class="level-tag">{{ course.level }}</span>
+        </div>
+
+        <div class="course-body">
+          <h3 class="course-title">{{ course.title }}</h3>
+          <p class="course-desc">{{ course.description }}</p>
+
+          <div class="course-meta">
+            <span class="meta-item"><mat-icon>schedule</mat-icon> {{ course.hours }}h de conteúdo</span>
+            <span class="meta-item"><mat-icon>video_library</mat-icon> {{ course.lessons.length }} aulas</span>
+            <span class="meta-item rating"><mat-icon>star</mat-icon> {{ course.rating }}</span>
+          </div>
+
+          <div class="course-instructor">
+            <mat-icon>person</mat-icon>
+            <span>Instrutor(a): {{ course.instructor }}</span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="progress-section">
+            <div class="progress-header">
+              <span>Progresso</span>
+              <strong>{{ course.progress }}%</strong>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" [style.width.%]="course.progress" [class.done]="course.progress === 100"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="course-footer">
+          <button mat-flat-button color="primary" class="action-btn" (click)="$event.stopPropagation(); openCourse(course)">
+            <mat-icon>{{ course.progress === 100 ? 'replay' : course.progress > 0 ? 'play_arrow' : 'login' }}</mat-icon>
+            {{ course.progress === 100 ? 'Revisar Treinamento' : course.progress > 0 ? 'Continuar Aula' : 'Iniciar Treinamento' }}
+          </button>
+        </div>
+      </div>
+    }
+
+    @if (filteredCourses.length === 0) {
+      <div class="empty-courses">
+        <mat-icon>search_off</mat-icon>
+        <h3>Nenhum curso encontrado</h3>
+        <p>Tente ajustar os filtros de trilha ou o termo digitado na busca.</p>
+      </div>
+    }
+  </section>
+
+  <!-- Certificates Section -->
+  <section class="certificates-section">
+    <div class="section-title-row">
+      <mat-icon>military_tech</mat-icon>
+      <h2>Meus Certificados Oficiais</h2>
+    </div>
+
+    <div class="certs-grid">
+      @for (cert of certificates; track cert.id) {
+        <div class="cert-card">
+          <div class="cert-ribbon"><mat-icon>verified</mat-icon></div>
+          <div class="cert-info">
+            <div class="cert-course">{{ cert.courseTitle }}</div>
+            <div class="cert-meta">
+              <span>Emitido em: {{ cert.issuedAt }}</span>
+              <span>Carga horária: {{ cert.hours }} horas</span>
+            </div>
+            <div class="cert-code">Cód. Autenticidade: <code>{{ cert.code }}</code></div>
+          </div>
+          <button mat-stroked-button color="primary" (click)="viewCertificate(cert)">
+            <mat-icon>visibility</mat-icon> Ver Certificado
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Modal Player de Curso & Aulas -->
+  @if (showCoursePlayerModal && activeCourse) {
+    <div class="modal-backdrop" (click)="showCoursePlayerModal = false">
+      <div class="modal-dialog player-dialog" (click)="$event.stopPropagation()">
+        <div class="dialog-header">
+          <div class="header-left">
+            <span class="track-crumb">{{ activeCourse.track }}</span>
+            <h3>{{ activeCourse.title }}</h3>
+          </div>
+          <button mat-icon-button (click)="showCoursePlayerModal = false"><mat-icon>close</mat-icon></button>
+        </div>
+
+        <div class="dialog-content player-layout">
+          <!-- Video Screen Mockup -->
+          <div class="player-main">
+            <div class="video-mockup">
+              <mat-icon class="play-overlay">play_circle_outline</mat-icon>
+              <div class="video-info-overlay">
+                <span>{{ activeLesson?.title }}</span>
+                <span class="dur">{{ activeLesson?.duration }}</span>
+              </div>
+            </div>
+
+            <div class="lesson-actions-bar">
+              <div class="instructor-note">
+                <mat-icon>school</mat-icon>
+                <span>Ministrado por: <strong>{{ activeCourse.instructor }}</strong></span>
+              </div>
+
+              @if (activeLesson) {
+                <button mat-flat-button color="accent" (click)="toggleLessonComplete(activeLesson)">
+                  <mat-icon>{{ activeLesson.completed ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                  {{ activeLesson.completed ? 'Marcar como Pendente' : 'Marcar Aula como Concluída' }}
+                </button>
+              }
+            </div>
+
+            <div class="lesson-notes">
+              <h4>Resumo da Aula & Material de Apoio</h4>
+              <p>Esta aula aborda os conceitos fundamentais para a correta aplicação dos padrões corporativos. Certifique-se de revisar os tópicos e concluir as atividades propostas ao final de cada módulo.</p>
+            </div>
+          </div>
+
+          <!-- Lesson Checklist Sidebar -->
+          <div class="player-sidebar">
+            <div class="sidebar-title">
+              <span>Conteúdo Programático</span>
+              <small>{{ activeCourse.lessons.length }} aulas</small>
+            </div>
+
+            <div class="lessons-list">
+              @for (lesson of activeCourse.lessons; track lesson.id; let idx = $index) {
+                <div class="lesson-row" [class.selected]="activeLesson?.id === lesson.id" (click)="selectLesson(lesson)">
+                  <div class="lesson-idx">{{ idx + 1 }}</div>
+                  <div class="lesson-text">
+                    <span class="l-title">{{ lesson.title }}</span>
+                    <span class="l-dur">{{ lesson.duration }}</span>
+                  </div>
+                  <mat-icon class="check-icon" [class.checked]="lesson.completed">
+                    {{ lesson.completed ? 'check_circle' : 'radio_button_unchecked' }}
+                  </mat-icon>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Certificado Oficial -->
+  @if (showCertModal && selectedCertificate) {
+    <div class="modal-backdrop" (click)="showCertModal = false">
+      <div class="modal-dialog cert-dialog" (click)="$event.stopPropagation()">
+        <div class="cert-frame">
+          <div class="cert-border">
+            <div class="cert-header">
+              <mat-icon class="cert-logo-icon">military_tech</mat-icon>
+              <h2>CERTIFICADO DE CONCLUSÃO</h2>
+              <span class="sub">UNIVERSIDADE CORPORATIVA CI APPS</span>
+            </div>
+
+            <div class="cert-text">
+              <p>Certificamos com louvor que o colaborador</p>
+              <h1 class="student-name">{{ selectedCertificate.studentName }}</h1>
+              <p>concluiu satisfatoriamente o treinamento corporativo</p>
+              <h3 class="cert-course-name">{{ selectedCertificate.courseTitle }}</h3>
+              <p>com carga horária total de <strong>{{ selectedCertificate.hours }} horas</strong>, cumprindo todas as avaliações e requisitos exigidos.</p>
+            </div>
+
+            <div class="cert-signatures">
+              <div class="sig-block">
+                <div class="sig-line"></div>
+                <span>Diretoria de Treinamento & DHO</span>
+              </div>
+              <div class="sig-block">
+                <div class="sig-line"></div>
+                <span>Coordenação Acadêmica</span>
+              </div>
+            </div>
+
+            <div class="cert-footer">
+              <span>Data de Emissão: {{ selectedCertificate.issuedAt }}</span>
+              <span>Autenticação: <code>{{ selectedCertificate.code }}</code></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cert-modal-actions">
+          <button mat-button (click)="showCertModal = false">Fechar</button>
+          <button mat-flat-button color="primary" (click)="showCertModal = false">
+            <mat-icon>download</mat-icon> Imprimir / Baixar PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Criar Treinamento -->
+  @if (showNewCourseModal) {
+    <div class="modal-backdrop" (click)="showNewCourseModal = false">
+      <div class="modal-dialog form-dialog" (click)="$event.stopPropagation()">
+        <div class="dialog-header">
+          <h3>Cadastrar Novo Treinamento Corporativo</h3>
+          <button mat-icon-button (click)="showNewCourseModal = false"><mat-icon>close</mat-icon></button>
+        </div>
+
+        <div class="form-body">
+          <div class="form-group">
+            <label>Nome do Treinamento *</label>
+            <input type="text" [(ngModel)]="newCourse.title" placeholder="Ex: Gestão Financeira Avançada" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Trilha de Conhecimento</label>
+              <select [(ngModel)]="newCourse.track">
+                @for (tr of tracks; track tr) {
+                  @if (tr !== 'Todos') {
+                    <option [value]="tr">{{ tr }}</option>
+                  }
+                }
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Nível</label>
+              <select [(ngModel)]="newCourse.level">
+                <option value="Iniciante">Iniciante</option>
+                <option value="Intermediário">Intermediário</option>
+                <option value="Avançado">Avançado</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Instrutor Responsável *</label>
+              <input type="text" [(ngModel)]="newCourse.instructor" placeholder="Nome do especialista ou setor" />
+            </div>
+            <div class="form-group">
+              <label>Carga Horária (Horas)</label>
+              <input type="number" [(ngModel)]="newCourse.hours" min="1" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Ementa / Descrição do Treinamento</label>
+            <textarea [(ngModel)]="newCourse.description" rows="3" placeholder="Resumo dos objetivos pedagógicos e conteúdo..."></textarea>
+          </div>
+        </div>
+
+        <div class="dialog-footer">
+          <button mat-button (click)="showNewCourseModal = false">Cancelar</button>
+          <button mat-flat-button color="primary" [disabled]="!newCourse.title || !newCourse.instructor" (click)="saveNewCourse()">
+            Criar Treinamento
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>
