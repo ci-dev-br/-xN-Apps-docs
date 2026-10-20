@@ -1,24 +1,43 @@
-<mat-toolbar>
-    <button mat-icon-button (click)="sideMenu.toggle()">
+<mat-toolbar class="crm-top-toolbar">
+    <button mat-icon-button (click)="sideMenu.toggle()" matTooltip="Alternar menu lateral">
         <mat-icon>menu</mat-icon>
     </button>
-    <!--  <button mat-raised-button>
+    <div class="toolbar-brand">
+        <mat-icon class="brand-icon">contact_phone</mat-icon>
+        <span class="brand-title">CRM & Relacionamento</span>
+    </div>
+    <span class="spacer"></span>
+    <button mat-button routerLink="/CRM" routerLinkActive="active-nav-link" [routerLinkActiveOptions]="{exact: true}">
         <mat-icon>dashboard</mat-icon>
-        Visão Geral
-    </button> -->
-    <!--  <button mat-raised-button>
-        <mat-icon>create</mat-icon>
-        Novo
-    </button> -->
+        <span>Funil & Dashboard</span>
+    </button>
 </mat-toolbar>
-<mat-drawer-container>
-    <h4>Registros</h4>
-    <mat-drawer #sideMenu mode="over" opened>
-        @for(item of cadastros; track item){
-        <button mat-menu-item [routerLink]="'./' + item">{{item}}</button>
-        }
+
+<mat-drawer-container class="crm-drawer-container">
+    <mat-drawer #sideMenu mode="side" opened class="crm-side-drawer">
+        <div class="drawer-header">
+            <mat-icon>folder_shared</mat-icon>
+            <span>Módulos do CRM</span>
+        </div>
+
+        <nav class="drawer-nav">
+            <a mat-list-item routerLink="/CRM" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="drawer-link">
+                <mat-icon>dashboard</mat-icon>
+                <span>Dashboard / Funil</span>
+            </a>
+
+            <div class="drawer-section-heading">Tabelas & Registros</div>
+
+            @for(item of cadastros; track item) {
+                <a mat-list-item [routerLink]="'./' + item" routerLinkActive="active" class="drawer-link">
+                    <mat-icon>table_chart</mat-icon>
+                    <span>{{item}}</span>
+                </a>
+            }
+        </nav>
     </mat-drawer>
-    <mat-drawer-content>
+
+    <mat-drawer-content class="crm-content">
         <router-outlet></router-outlet>
     </mat-drawer-content>
 </mat-drawer-container>

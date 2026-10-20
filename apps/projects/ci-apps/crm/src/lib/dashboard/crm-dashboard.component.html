@@ -1,0 +1,298 @@
+<div class="crm-dashboard">
+  <!-- Top Bar / KPI Stats -->
+  <header class="dashboard-header">
+    <div class="title-section">
+      <div class="badge">CRM & Vendas</div>
+      <h1>Funil de Oportunidades & Pipeline</h1>
+      <p class="subtitle">Monitore negociações, taxas de conversão e acelere o fechamento de vendas.</p>
+    </div>
+
+    <div class="actions-section">
+      <div class="filter-group">
+        <label>Responsável:</label>
+        <select [(ngModel)]="selectedOwner">
+          <option value="Todos">Todos os Corretores / Vendedores</option>
+          <option value="Roberto Silva">Roberto Silva</option>
+          <option value="Juliana Costa">Juliana Costa</option>
+          <option value="Lucas Prado">Lucas Prado</option>
+          <option value="Mariana Duarte">Mariana Duarte</option>
+        </select>
+      </div>
+
+      <button mat-flat-button color="primary" class="new-opp-btn" (click)="openNewOppModal()">
+        <mat-icon>add</mat-icon>
+        Nova Oportunidade
+      </button>
+    </div>
+  </header>
+
+  <!-- KPI Metrics Cards -->
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon-wrapper blue">
+        <mat-icon>monetization_on</mat-icon>
+      </div>
+      <div class="kpi-data">
+        <span class="kpi-label">Pipeline Ativo</span>
+        <span class="kpi-value">{{ getTotalPipelineValue() | currency:'BRL':'symbol':'1.0-0':'pt-BR' }}</span>
+        <span class="kpi-trend positive"><mat-icon>trending_up</mat-icon> +18.4% vs mês anterior</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon-wrapper green">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <div class="kpi-data">
+        <span class="kpi-label">Total Fechado / Ganho</span>
+        <span class="kpi-value">{{ getTotalWonValue() | currency:'BRL':'symbol':'1.0-0':'pt-BR' }}</span>
+        <span class="kpi-trend positive"><mat-icon>verified</mat-icon> Meta do mês: 92% atingida</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon-wrapper amber">
+        <mat-icon>leaderboard</mat-icon>
+      </div>
+      <div class="kpi-data">
+        <span class="kpi-label">Oportunidades em Aberto</span>
+        <span class="kpi-value">{{ filteredOpportunities.length }}</span>
+        <span class="kpi-trend neutral"><mat-icon>timelapse</mat-icon> Ciclo médio: 14 dias</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon-wrapper purple">
+        <mat-icon>donut_large</mat-icon>
+      </div>
+      <div class="kpi-data">
+        <span class="kpi-label">Taxa de Conversão</span>
+        <span class="kpi-value">34.8%</span>
+        <span class="kpi-trend positive"><mat-icon>trending_up</mat-icon> +3.2% este trimestre</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sales Pipeline Kanban Board -->
+  <section class="pipeline-section">
+    <div class="section-header">
+      <h2>Estágios do Funil</h2>
+      <div class="pipeline-hint">
+        <mat-icon>info</mat-icon>
+        Utilize as ações dos cartões para movimentar negócios entre as etapas do funil.
+      </div>
+    </div>
+
+    <div class="kanban-board">
+      @for (stage of stages; track stage.id) {
+        <div class="kanban-column">
+          <!-- Column Header -->
+          <div class="column-header" [style.border-top-color]="stage.color">
+            <div class="column-title-row">
+              <span class="stage-title">{{ stage.title }}</span>
+              <span class="stage-count">{{ getStageOpportunities(stage.id).length }}</span>
+            </div>
+            <div class="stage-total">
+              {{ getStageTotal(stage.id) | currency:'BRL':'symbol':'1.0-0':'pt-BR' }}
+            </div>
+          </div>
+
+          <!-- Cards in Column -->
+          <div class="column-cards">
+            @for (opp of getStageOpportunities(stage.id); track opp.id) {
+              <div class="opp-card" [class.won]="opp.stageId === 'ganho'">
+                <div class="opp-header">
+                  <span class="client-name">{{ opp.client }}</span>
+                  <span class="priority-tag" [ngClass]="opp.priority">{{ opp.priority | uppercase }}</span>
+                </div>
+
+                <div class="opp-title">{{ opp.title }}</div>
+
+                <div class="opp-value">
+                  {{ opp.value | currency:'BRL':'symbol':'1.0-0':'pt-BR' }}
+                </div>
+
+                <div class="opp-progress">
+                  <div class="progress-bar-container">
+                    <div class="progress-bar-fill" [style.width.%]="opp.probability"></div>
+                  </div>
+                  <span class="probability-label">{{ opp.probability }}% prob.</span>
+                </div>
+
+                <div class="opp-footer">
+                  <div class="owner-info">
+                    <mat-icon>person</mat-icon>
+                    <span>{{ opp.owner }}</span>
+                  </div>
+                  <span class="days-in-stage">{{ opp.daysInStage }}d na etapa</span>
+                </div>
+
+                <!-- Actions to advance or backtrack -->
+                <div class="opp-actions">
+                  <button mat-icon-button (click)="moveStage(opp, 'prev')" [disabled]="opp.stageId === 'lead'" matTooltip="Voltar etapa">
+                    <mat-icon>arrow_back</mat-icon>
+                  </button>
+                  <span class="stage-step-info">
+                    Previsão: {{ opp.expectedClose }}
+                  </span>
+                  <button mat-icon-button (click)="moveStage(opp, 'next')" [disabled]="opp.stageId === 'ganho'" matTooltip="Avançar etapa">
+                    <mat-icon>arrow_forward</mat-icon>
+                  </button>
+                </div>
+              </div>
+            }
+
+            @if (getStageOpportunities(stage.id).length === 0) {
+              <div class="empty-column-msg">
+                <mat-icon>inbox</mat-icon>
+                <span>Nenhuma oportunidade nesta etapa</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Secondary Section: Recent Activities & Shortcuts -->
+  <section class="bottom-grid">
+    <!-- Tasks and Follow-ups -->
+    <div class="activities-card">
+      <div class="card-title-row">
+        <mat-icon>pending_actions</mat-icon>
+        <h3>Próximos Follow-ups & Tarefas</h3>
+      </div>
+      <div class="activities-list">
+        @for (act of activities; track act.id) {
+          <div class="activity-item" [class.completed]="act.status === 'completed'">
+            <button mat-icon-button class="check-btn" (click)="toggleActivity(act)">
+              <mat-icon>{{ act.status === 'completed' ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
+            </button>
+            <div class="activity-details">
+              <span class="activity-title">{{ act.title }}</span>
+              <span class="activity-meta">{{ act.client }} • {{ act.dueTime }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Quick Shortcuts to CRM Records -->
+    <div class="shortcuts-card">
+      <div class="card-title-row">
+        <mat-icon>hub</mat-icon>
+        <h3>Cadastros & Registros do CRM</h3>
+      </div>
+      <div class="shortcuts-grid">
+        <a routerLink="/CRM/ClienteCrm" class="shortcut-btn">
+          <mat-icon>groups</mat-icon>
+          <div class="shortcut-text">
+            <strong>Clientes CRM</strong>
+            <small>Base cadastral 360°</small>
+          </div>
+        </a>
+        <a routerLink="/CRM/Atendimento" class="shortcut-btn">
+          <mat-icon>support_agent</mat-icon>
+          <div class="shortcut-text">
+            <strong>Atendimentos</strong>
+            <small>Chamados e suporte</small>
+          </div>
+        </a>
+        <a routerLink="/CRM/Agendamento" class="shortcut-btn">
+          <mat-icon>event</mat-icon>
+          <div class="shortcut-text">
+            <strong>Agendamentos</strong>
+            <small>Reuniões e visitas</small>
+          </div>
+        </a>
+        <a routerLink="/CRM/HistoricoContato" class="shortcut-btn">
+          <mat-icon>history</mat-icon>
+          <div class="shortcut-text">
+            <strong>Histórico de Contatos</strong>
+            <small>Logs e anotações</small>
+          </div>
+        </a>
+        <a routerLink="/CRM/Produto" class="shortcut-btn">
+          <mat-icon>inventory_2</mat-icon>
+          <div class="shortcut-text">
+            <strong>Produtos & Serviços</strong>
+            <small>Catálogo e preços</small>
+          </div>
+        </a>
+        <a routerLink="/CRM/Promocao" class="shortcut-btn">
+          <mat-icon>campaign</mat-icon>
+          <div class="shortcut-text">
+            <strong>Campanhas & Promoções</strong>
+            <small>Segmentação de leads</small>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Nova Oportunidade -->
+  @if (showNewOppModal) {
+    <div class="modal-backdrop" (click)="showNewOppModal = false">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Nova Oportunidade no Funil</h3>
+          <button mat-icon-button (click)="showNewOppModal = false"><mat-icon>close</mat-icon></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Título do Negócio *</label>
+            <input type="text" [(ngModel)]="newOpp.title" placeholder="Ex: Licença Enterprise Cloud" />
+          </div>
+
+          <div class="form-group">
+            <label>Cliente / Empresa *</label>
+            <input type="text" [(ngModel)]="newOpp.client" placeholder="Ex: Organizações Globo" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Valor Estimado (R$)</label>
+              <input type="number" [(ngModel)]="newOpp.value" />
+            </div>
+            <div class="form-group">
+              <label>Probabilidade (%)</label>
+              <input type="number" [(ngModel)]="newOpp.probability" min="0" max="100" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Etapa Inicial</label>
+              <select [(ngModel)]="newOpp.stageId">
+                <option value="lead">1. Prospecção</option>
+                <option value="qualificacao">2. Qualificação</option>
+                <option value="proposta">3. Proposta</option>
+                <option value="negociacao">4. Negociação</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Prioridade</label>
+              <select [(ngModel)]="newOpp.priority">
+                <option value="alta">Alta</option>
+                <option value="media">Média</option>
+                <option value="baixa">Baixa</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Responsável</label>
+            <input type="text" [(ngModel)]="newOpp.owner" placeholder="Nome do corretor / vendedor" />
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button mat-button (click)="showNewOppModal = false">Cancelar</button>
+          <button mat-flat-button color="primary" [disabled]="!newOpp.title || !newOpp.client" (click)="saveNewOpportunity()">
+            Salvar Oportunidade
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
