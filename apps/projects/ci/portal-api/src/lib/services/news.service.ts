@@ -75,7 +75,7 @@ export class NewsService extends BaseService {
    * This method doesn't expect any request body.
    */
   getFeed(params?: GetFeed$Params, context?: HttpContext): Observable<Array<News>> {
-    return this.getFeed$Response(params || {}, context).pipe(
+    return this.getFeed$Response(params || { offset: 0 }, context).pipe(
       map((r: StrictHttpResponse<Array<News>>): Array<News> => r.body)
     );
   }

@@ -75,6 +75,7 @@ let isChangingPort = false;
 let isOrchestrating = false;
 let isWarmAndReady = false;
 let currentPort86SessionStartMs = 0;
+let currentInstancePort: number | undefined;
 
 /**
  * Pausa assíncrona auxiliar.
@@ -375,6 +376,7 @@ function savePidStatus(
     ? { nextIso: undefined, delayMs: CHECK_DISTANCE_MS }
     : calculateNextCheckTime(statusMap, nowMs, forceImmediateCheck);
 
+  if (data.port) currentInstancePort = data.port;
   const existing = statusMap[pid];
 
   if (startNewProcess || !existing) {
@@ -383,6 +385,7 @@ function savePidStatus(
       status: 'running',
       debug: IS_DEBUG_INSTANCE,
       warmedUp: isWarmAndReady,
+      port: data.port ?? currentInstancePort,
       ...data,
       lastHeartbeat: isStopping ? existing?.lastHeartbeat : nowIso,
       nextStatusCheckAt: nextIso,
@@ -393,6 +396,7 @@ function savePidStatus(
       ...existing,
       debug: IS_DEBUG_INSTANCE,
       warmedUp: isWarmAndReady,
+      port: data.port ?? currentInstancePort,
       ...data,
       ...(isStopping ? { nextStatusCheckAt: undefined } : { lastHeartbeat: nowIso, nextStatusCheckAt: nextIso }),
       updatedAt: nowIso,
@@ -581,7 +585,7 @@ async function shouldThisInstanceClaimPort86(statusMap: StatusMap, nowMs = Date.
   const currentPid = String(process.pid);
   const myInfo = statusMap[currentPid];
 
-  if (!myInfo || myInfo.status !== 'online' || !myInfo.port || myInfo.port === 86) {
+  if (!myInfo || (myInfo.status !== 'online' && myInfo.status !== 'running') || !myInfo.port || myInfo.port === 86) {
     return false;
   }
 
@@ -631,7 +635,7 @@ async function shouldThisInstanceClaimPort86(statusMap: StatusMap, nowMs = Date.
 
   // 3. Eleição entre nós normais: vence o nó online que está há mais tempo sem assumir a porta 86
   const aliveCandidates = Object.entries(statusMap)
-    .filter(([pid, info]) => info.status === 'online' && isProcessTrulyAlive(info, nowMs, pid))
+    .filter(([pid, info]) => (info.status === 'online' || info.status === 'running') && isProcessTrulyAlive(info, nowMs, pid))
     .sort(compareProcessPriority);
 
   if (aliveCandidates.length === 0 || aliveCandidates[0][0] !== currentPid) {

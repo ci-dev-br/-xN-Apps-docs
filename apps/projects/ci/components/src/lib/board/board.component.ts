@@ -185,6 +185,10 @@ export class BoardComponent implements OnInit {
             }
         }
 
+        if (!loaded) {
+            loaded = { cards: [] };
+        }
+
         // Garante que o layout tenha valores padrão consistentes
         if (!loaded.layout) {
             loaded.layout = { type: 'grid', columns: 3, gap: 'normal' };

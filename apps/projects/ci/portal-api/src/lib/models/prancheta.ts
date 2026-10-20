@@ -20,4 +20,9 @@ export interface Prancheta {
   order?: number | null;
   tenants?: Array<string> | null;
   title?: string | null;
+
+  /**
+   * Escopo de compartilhamento: USER (apenas criador) ou TENANT (compartilhado com a organização/tenant)
+   */
+  scope?: 'USER' | 'TENANT' | null;
 }

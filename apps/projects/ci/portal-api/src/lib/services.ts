@@ -70,3 +70,6 @@ export { GameplayService } from './services/gameplay.service';
 export { KeyboardThemesService } from './services/keyboard-themes.service';
 export { ChangelogService } from './services/changelog.service';
 export * from './services/carteira.service';
+export * from './services/internal-notification.service';
+export * from './services/encrypted-messager.service';
+export * from './services/group.service';
