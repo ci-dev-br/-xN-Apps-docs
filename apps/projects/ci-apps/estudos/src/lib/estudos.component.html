@@ -1,0 +1,372 @@
+<div class="estudos-container">
+  <!-- Top Header -->
+  <header class="estudos-header">
+    <div class="header-titles">
+      <div class="badge">Portal do Estudante & Pesquisa</div>
+      <h1>Espaço de Estudos & Memorização</h1>
+      <p class="subtitle">Acompanhe seu ciclo de foco (Pomodoro), treine com flashcards ativos e participe de grupos de estudo.</p>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+      <button [class.active]="activeTab === 'metas'" (click)="activeTab = 'metas'">
+        <mat-icon>timer</mat-icon>
+        <span>Foco & Metas</span>
+      </button>
+      <button [class.active]="activeTab === 'flashcards'" (click)="activeTab = 'flashcards'">
+        <mat-icon>style</mat-icon>
+        <span>Flashcards ({{ flashcards.length }})</span>
+      </button>
+      <button [class.active]="activeTab === 'turmas'" (click)="activeTab = 'turmas'">
+        <mat-icon>groups</mat-icon>
+        <span>Turmas & Grupos</span>
+      </button>
+      <button [class.active]="activeTab === 'caderno'" (click)="activeTab = 'caderno'">
+        <mat-icon>menu_book</mat-icon>
+        <span>Caderno & Resumos</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- TAB 1: METAS & POMODORO -->
+  @if (activeTab === 'metas') {
+    <div class="tab-content">
+      <!-- Pomodoro & Goals Grid -->
+      <div class="metas-grid">
+        <!-- Pomodoro Timer Card -->
+        <div class="pomodoro-card">
+          <div class="card-tag" [class.break]="pomodoroMode === 'break'">
+            <mat-icon>{{ pomodoroMode === 'study' ? 'psychology' : 'self_improvement' }}</mat-icon>
+            {{ pomodoroMode === 'study' ? 'Sessão de Foco' : 'Intervalo de Descanso' }}
+          </div>
+
+          <div class="timer-display">
+            {{ formatTimer() }}
+          </div>
+
+          <div class="timer-actions">
+            <button mat-flat-button color="primary" class="ctrl-btn main" (click)="toggleTimer()">
+              <mat-icon>{{ isTimerRunning ? 'pause' : 'play_arrow' }}</mat-icon>
+              {{ isTimerRunning ? 'Pausar' : 'Iniciar Foco' }}
+            </button>
+            <button mat-stroked-button class="ctrl-btn" (click)="resetTimer()">
+              <mat-icon>refresh</mat-icon> Reiniciar
+            </button>
+            <button mat-stroked-button class="ctrl-btn" (click)="switchTimerMode()">
+              <mat-icon>skip_next</mat-icon> Alternar Modo
+            </button>
+          </div>
+
+          <div class="pomodoro-stats">
+            <div class="p-stat">
+              <span class="p-val">{{ completedPomodoros }}</span>
+              <span class="p-lbl">Ciclos Concluídos Hoje</span>
+            </div>
+            <div class="p-stat">
+              <span class="p-val">{{ completedPomodoros * 25 }}m</span>
+              <span class="p-lbl">Tempo Líquido Focado</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Study Goals -->
+        <div class="goals-card">
+          <div class="card-header-row">
+            <mat-icon class="icon-accent">flag</mat-icon>
+            <h3>Metas Diárias de Aprendizado</h3>
+          </div>
+
+          <div class="goals-list">
+            <div class="goal-item">
+              <div class="goal-info">
+                <strong>Revisar Flashcards Diários</strong>
+                <span>{{ flashcards.length }} cartões pendentes</span>
+              </div>
+              <div class="goal-progress-wrap">
+                <mat-progress-bar mode="determinate" [value]="80"></mat-progress-bar>
+                <span>80%</span>
+              </div>
+            </div>
+
+            <div class="goal-item">
+              <div class="goal-info">
+                <strong>Tempo de Leitura & Artigos</strong>
+                <span>45m de 60m planejados</span>
+              </div>
+              <div class="goal-progress-wrap">
+                <mat-progress-bar mode="determinate" [value]="75"></mat-progress-bar>
+                <span>75%</span>
+              </div>
+            </div>
+
+            <div class="goal-item">
+              <div class="goal-info">
+                <strong>Prática de Código & Exercícios</strong>
+                <span>2 exercícios concluídos</span>
+              </div>
+              <div class="goal-progress-wrap">
+                <mat-progress-bar mode="determinate" [value]="100"></mat-progress-bar>
+                <span>100%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Shortcuts -->
+          <div class="quick-banner">
+            <mat-icon>lightbulb</mat-icon>
+            <span>Dica: A repetição espaçada aumenta a retenção de conceitos em até 84% a longo prazo.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- TAB 2: FLASHCARDS INTERATIVOS -->
+  @if (activeTab === 'flashcards') {
+    <div class="tab-content flashcards-tab">
+      <div class="flashcards-topbar">
+        <div class="deck-info">
+          <h3>Deck de Memorização</h3>
+          <span>Cartão {{ currentFlashcardIndex + 1 }} de {{ flashcards.length }}</span>
+        </div>
+        <button mat-flat-button color="primary" (click)="openNewCardModal()">
+          <mat-icon>add</mat-icon> Novo Flashcard
+        </button>
+      </div>
+
+      <!-- Flashcard 3D Interactive Card -->
+      @if (flashcards.length > 0) {
+        <div class="flashcard-scene" (click)="flipCard(flashcards[currentFlashcardIndex])">
+          <div class="flashcard-3d" [class.is-flipped]="flashcards[currentFlashcardIndex].flipped">
+            <!-- Front Face -->
+            <div class="card-face front-face">
+              <div class="face-tag">
+                <span class="subject-tag">{{ flashcards[currentFlashcardIndex].subject }}</span>
+                <span class="diff-tag">{{ flashcards[currentFlashcardIndex].difficulty | uppercase }}</span>
+              </div>
+              <div class="question-text">
+                {{ flashcards[currentFlashcardIndex].front }}
+              </div>
+              <div class="flip-hint">
+                <mat-icon>touch_app</mat-icon> Clique para revelar a resposta
+              </div>
+            </div>
+
+            <!-- Back Face -->
+            <div class="card-face back-face">
+              <div class="face-tag">
+                <span class="answer-badge">Resposta Correta</span>
+                <span class="rev-badge">{{ flashcards[currentFlashcardIndex].reviewsCount }} revisões</span>
+              </div>
+              <div class="answer-text">
+                {{ flashcards[currentFlashcardIndex].back }}
+              </div>
+              <div class="flip-hint">
+                <mat-icon>touch_app</mat-icon> Clique para voltar à pergunta
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rating Feedback Buttons -->
+        <div class="flashcard-controls">
+          <button mat-icon-button class="nav-btn" (click)="prevCard()" matTooltip="Cartão Anterior">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+
+          <div class="rate-buttons">
+            <button mat-stroked-button class="rate-hard" (click)="rateFlashcard('dificil')">
+              <mat-icon>sentiment_dissatisfied</mat-icon> Difícil (Revisar em Breve)
+            </button>
+            <button mat-stroked-button class="rate-review" (click)="rateFlashcard('revisar')">
+              <mat-icon>sentiment_neutral</mat-icon> Bom (Revisar Amanhã)
+            </button>
+            <button mat-flat-button color="primary" class="rate-easy" (click)="rateFlashcard('facil')">
+              <mat-icon>sentiment_very_satisfied</mat-icon> Fácil (Dominado!)
+            </button>
+          </div>
+
+          <button mat-icon-button class="nav-btn" (click)="nextCard()" matTooltip="Próximo Cartão">
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- TAB 3: TURMAS & GRUPOS DE ESTUDO -->
+  @if (activeTab === 'turmas') {
+    <div class="tab-content">
+      <div class="groups-header">
+        <div>
+          <h2>Grupos & Turmas de Estudo Colaborativo</h2>
+          <p class="sub">Participe de discussões técnicas, tire dúvidas com pares e participe de encontros semanais.</p>
+        </div>
+      </div>
+
+      <div class="groups-grid">
+        @for (grp of groups; track grp.id) {
+          <div class="group-card">
+            <div class="group-header">
+              <span class="group-subject">{{ grp.subject }}</span>
+              <span class="members-badge"><mat-icon>group</mat-icon> {{ grp.membersCount }} membros</span>
+            </div>
+
+            <h3 class="group-name">{{ grp.name }}</h3>
+
+            <div class="group-topic">
+              <mat-icon>chat_bubble_outline</mat-icon>
+              <div>
+                <small>Tópico em Discussão:</small>
+                <strong>{{ grp.activeTopic }}</strong>
+              </div>
+            </div>
+
+            <div class="group-schedule">
+              <mat-icon>event</mat-icon>
+              <span>{{ grp.meetingSchedule }}</span>
+            </div>
+
+            <div class="group-footer">
+              <button mat-flat-button [color]="grp.isMember ? 'warn' : 'primary'" (click)="toggleJoinGroup(grp)">
+                <mat-icon>{{ grp.isMember ? 'logout' : 'login' }}</mat-icon>
+                {{ grp.isMember ? 'Sair do Grupo' : 'Participar do Grupo' }}
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- TAB 4: CADERNO & RESUMOS -->
+  @if (activeTab === 'caderno') {
+    <div class="tab-content">
+      <div class="notes-header">
+        <div>
+          <h2>Meu Caderno de Anotações & Resumos</h2>
+          <p class="sub">Guarde referências, snippets de código e apontamentos importantes dos seus estudos.</p>
+        </div>
+        <button mat-flat-button color="primary" (click)="openNewNoteModal()">
+          <mat-icon>edit_note</mat-icon> Nova Anotação
+        </button>
+      </div>
+
+      <div class="notes-grid">
+        @for (note of notes; track note.id) {
+          <div class="note-card">
+            <div class="note-header">
+              <span class="note-subject">{{ note.subject }}</span>
+              <span class="note-date">{{ note.updatedAt }}</span>
+            </div>
+
+            <h3 class="note-title">{{ note.title }}</h3>
+            <p class="note-content">{{ note.content }}</p>
+
+            <div class="note-tags">
+              @for (tag of note.tags; track tag) {
+                <span class="tag-pill">#{{ tag }}</span>
+              }
+            </div>
+
+            <div class="note-footer">
+              <button mat-icon-button color="warn" (click)="deleteNote(note.id)" matTooltip="Excluir">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Modal Novo Flashcard -->
+  @if (showNewCardModal) {
+    <div class="modal-backdrop" (click)="showNewCardModal = false">
+      <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <div class="dialog-header">
+          <h3>Adicionar Novo Flashcard</h3>
+          <button mat-icon-button (click)="showNewCardModal = false"><mat-icon>close</mat-icon></button>
+        </div>
+        <div class="dialog-body">
+          <div class="form-group">
+            <label>Matéria / Assunto</label>
+            <input type="text" [(ngModel)]="newCard.subject" placeholder="Ex: Arquitetura, JavaScript, Nuvem" />
+          </div>
+
+          <div class="form-group">
+            <label>Pergunta (Frente do Cartão) *</label>
+            <textarea [(ngModel)]="newCard.front" rows="3" placeholder="Qual o conceito ou problema a ser lembrado?"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Resposta (Verso do Cartão) *</label>
+            <textarea [(ngModel)]="newCard.back" rows="3" placeholder="Explicação clara e concisa da resposta"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Dificuldade Estimada</label>
+            <select [(ngModel)]="newCard.difficulty">
+              <option value="fácil">Fácil</option>
+              <option value="médio">Médio</option>
+              <option value="difícil">Difícil</option>
+            </select>
+          </div>
+        </div>
+        <div class="dialog-footer">
+          <button mat-button (click)="showNewCardModal = false">Cancelar</button>
+          <button mat-flat-button color="primary" [disabled]="!newCard.front || !newCard.back" (click)="saveNewCard()">
+            Salvar Flashcard
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Nova Anotação -->
+  @if (showNewNoteModal) {
+    <div class="modal-backdrop" (click)="showNewNoteModal = false">
+      <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <div class="dialog-header">
+          <h3>Nova Anotação no Caderno</h3>
+          <button mat-icon-button (click)="showNewNoteModal = false"><mat-icon>close</mat-icon></button>
+        </div>
+        <div class="dialog-body">
+          <div class="form-group">
+            <label>Título do Resumo *</label>
+            <input type="text" [(ngModel)]="newNote.title" placeholder="Ex: Princípios SOLID em TypeScript" />
+          </div>
+
+          <div class="form-group">
+            <label>Disciplina / Tema</label>
+            <input type="text" [(ngModel)]="newNote.subject" placeholder="Ex: Programação Orientada a Objetos" />
+          </div>
+
+          <div class="form-group">
+            <label>Conteúdo da Anotação *</label>
+            <textarea [(ngModel)]="newNote.content" rows="4" placeholder="Escreva suas conclusões, referências ou código..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Tags (Pressione enter ou adicione)</label>
+            <div class="tag-input-row">
+              <input type="text" [(ngModel)]="noteTagInput" (keydown.enter)="addTag()" placeholder="Ex: TypeScript, Backend" />
+              <button mat-stroked-button (click)="addTag()">Adicionar Tag</button>
+            </div>
+            <div class="added-tags">
+              @for (tag of newNote.tags; track tag) {
+                <span class="tag-badge">#{{ tag }}</span>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="dialog-footer">
+          <button mat-button (click)="showNewNoteModal = false">Cancelar</button>
+          <button mat-flat-button color="primary" [disabled]="!newNote.title || !newNote.content" (click)="saveNewNote()">
+            Salvar no Caderno
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
