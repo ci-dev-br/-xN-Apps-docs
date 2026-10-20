@@ -81,14 +81,14 @@ import { CurrencyPipe, DatePipe, NgClass } from "@angular/common";
         .mt-16 { margin-top: 16px; }
         .config-row { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
         .financial-grid { display: flex; flex-direction: column; gap: 16px; margin-top: 12px; }
-        .fin-section { background: #f9f9f9; padding: 12px; border-radius: 8px; border: 1px solid #eee; }
-        .fin-section h4 { margin: 0 0 12px 0; color: #444; font-size: 0.9rem; text-transform: uppercase; border-bottom: 2px solid #ddd; padding-bottom: 4px;}
-        .fin-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; color: #555; }
-        .fin-row strong { color: #111; }
-        .fin-row.highlight { padding-top: 8px; border-top: 1px dashed #ccc; font-size: 1rem; }
-        .fin-row.profit strong { color: #2e7d32; }
-        .fin-row.loss strong { color: #c62828; }
-        .fin-row.warning strong { color: #e65100; }
+        .fin-section { background: var(--mat-sys-surface-container-low, var(--mat-sys-surface, #f9f9f9)); padding: 12px; border-radius: 8px; border: 1px solid var(--mat-sys-outline-variant, #eee); }
+        .fin-section h4 { margin: 0 0 12px 0; color: var(--mat-sys-on-surface-variant, #444); font-size: 0.9rem; text-transform: uppercase; border-bottom: 2px solid var(--mat-sys-outline-variant, #ddd); padding-bottom: 4px;}
+        .fin-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; color: var(--mat-sys-on-surface-variant, #555); }
+        .fin-row strong { color: var(--mat-sys-on-surface, #111); }
+        .fin-row.highlight { padding-top: 8px; border-top: 1px dashed var(--mat-sys-outline-variant, #ccc); font-size: 1rem; }
+        .fin-row.profit strong { color: var(--mat-sys-tertiary, #2e7d32); }
+        .fin-row.loss strong { color: var(--mat-sys-error, #c62828); }
+        .fin-row.warning strong { color: var(--mat-sys-error, #e65100); }
     `],
     standalone: true,
     imports: [CoreModule, MatFormFieldModule, MatInputModule, FormsModule, MatCardModule, MatButtonModule, CurrencyPipe, DatePipe, NgClass]
@@ -99,7 +99,7 @@ export class FinancialHealthCard implements OnInit {
     @Input() ticker?: string;
 
     // URL do endpoint que criaremos no NestJS (veja abaixo)
-    private readonly API_URL = 'https://apps.ci.dev.br/api/companies/financials';
+    private readonly API_URL = '/api/companies/financials';
 
     constructor(private readonly http: HttpClient) { }
 

@@ -1,1 +1,1 @@
-{"branch":"development","commit":"f46d2d3d5a84fee94df159691dd18b9ba7832405","author":"pLinho","date":"Mon Oct 19 18:33:25 2026 -0300","message":"refactor: Aprimora componentes da interface de mensagens e serviço de criptografia","builtAt":"2026-10-19T23:13:47.627Z"}
+{"branch":"development","commit":"61810f6f477031875f5c0779cb31394272d9b8da","author":"pLinho","date":"Mon Oct 19 23:40:02 2026 -0300","message":"feat(apps, manager): Adiciona instalação dinâmica de módulos NestJS via Git (ROLE DEVELOPER)","builtAt":"2026-10-20T03:06:04.975Z"}

@@ -1,6 +1,6 @@
 import { MatIconModule } from "@angular/material/icon";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
-import { AdicionarAppDialogComponent } from "./adicionar-app-dialog/adicionar-app-dialog.component";
+import { AdicionarAppDialogComponent } from "../adicionar-app-dialog/adicionar-app-dialog.component";
 import { CI_STATIC_APPS, IApp } from "../apps";
 import { Component, ElementRef, HostListener, ViewChild, Optional } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -23,6 +23,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
         MatFormFieldModule,
         ReactiveFormsModule,
         MatTooltipModule,
+        MatDialogModule,
     ],
     styleUrl: 'lista.scss'
 })
@@ -37,6 +38,7 @@ export class Lista {
         private readonly router: Router,
         private readonly route: ActivatedRoute,
         @Optional() private readonly catalogService?: ApplicationCatalogService,
+        @Optional() private readonly dialog?: MatDialog,
     ) { }
     async ngOnInit() {
         this.userService.user.subscribe(user => {
@@ -85,6 +87,13 @@ export class Lista {
     }
     openLoja() {
         this.router.navigate(['/painel/Loja']);
+    }
+    openAddAppDialog() {
+        this.dialog?.open(AdicionarAppDialogComponent, {
+            width: '680px',
+            maxWidth: '92vw',
+            panelClass: 'ci-add-app-dialog-panel'
+        });
     }
     async appClickHandler(event: any, app: any) {
         if (event.ctrlKey) {

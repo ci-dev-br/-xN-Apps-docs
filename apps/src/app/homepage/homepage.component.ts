@@ -36,6 +36,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ComentariosComponent } from './comentarios/comentarios';
+import { FinancialTickerComponent } from './financial-ticker/financial-ticker.component';
+import { UserBoardComponent } from './user-board/user-board.component';
+import { ApplicationCatalogService } from '@ci/core';
 
 const TERMOS_BLOQUEADOS = [
     'oferta', 'sex', 'bet', ' odds', 'member', 'vip', 'cassino', 'unathorized', 'token'
@@ -61,6 +64,8 @@ const TERMOS_BLOQUEADOS = [
         MatTooltipModule,
         MatSnackBarModule,
         ComentariosComponent,
+        FinancialTickerComponent,
+        UserBoardComponent,
     ],
     templateUrl: './homepage.component.html',
     standalone: true,
@@ -137,10 +142,14 @@ export class HomepageComponent implements OnInit, OnDestroy {
         private readonly pendingTasks?: PendingTasks,
         private readonly ngZone?: NgZone,
         private readonly cdr?: ChangeDetectorRef,
-        @Inject(PLATFORM_ID) private readonly platformId?: Object
+        @Inject(PLATFORM_ID) private readonly platformId?: Object,
+        @Optional() private readonly catalogService?: ApplicationCatalogService
     ) {
         this.userService?.user.subscribe(user => {
             this.isLoggedIn = !!user && !!user.id;
+            if (this.isLoggedIn) {
+                this.catalogService?.refreshMyActivations().subscribe();
+            }
             this.cdr?.markForCheck();
         });
         this.userAuthenticationInstanceService?.user.subscribe(user => {

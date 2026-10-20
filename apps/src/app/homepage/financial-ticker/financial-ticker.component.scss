@@ -1,0 +1,250 @@
+:host {
+    display: block;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.ci-ticker-container {
+    display: flex;
+    align-items: center;
+    background: var(--mat-sys-surface-container, var(--mat-sys-surface, #1e1e24));
+    border-top: 1px solid var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.08));
+    border-bottom: 1px solid var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.08));
+    box-shadow: 0 2px 8px var(--mat-sys-shadow, rgba(0, 0, 0, 0.05));
+    height: 48px;
+    overflow: hidden;
+    position: relative;
+    user-select: none;
+    z-index: 10;
+}
+
+.ticker-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 16px;
+    height: 100%;
+    background: var(--mat-sys-surface-container-high, var(--mat-sys-surface-variant, #2a2a32));
+    border-right: 1px solid var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.1));
+    flex-shrink: 0;
+    z-index: 2;
+
+    .live-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--mat-sys-tertiary, #00e676);
+        box-shadow: 0 0 8px var(--mat-sys-tertiary, #00e676);
+        animation: pulse 1.8s infinite ease-in-out;
+    }
+
+    .badge-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        color: var(--mat-sys-tertiary, #00e676);
+    }
+
+    .badge-text {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        color: var(--mat-sys-on-surface, #ffffff);
+        text-transform: uppercase;
+    }
+}
+
+.ticker-nav-btn {
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    color: var(--mat-sys-on-surface-variant, #aaaaaa);
+    flex-shrink: 0;
+    z-index: 2;
+
+    mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+    }
+
+    &:hover {
+        color: var(--mat-sys-on-surface, #ffffff);
+        background: var(--mat-sys-surface-container-highest, rgba(255, 255, 255, 0.08));
+    }
+}
+
+.ticker-viewport {
+    flex: 1;
+    overflow-x: hidden;
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 24px,
+        black calc(100% - 24px),
+        transparent 100%
+    );
+}
+
+.ticker-track {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    white-space: nowrap;
+    will-change: transform;
+    animation: marquee 38s linear infinite;
+
+    &.is-paused {
+        animation-play-state: paused;
+    }
+}
+
+.ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    background: var(--mat-sys-surface-container-low, rgba(255, 255, 255, 0.03));
+    border: 1px solid var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.06));
+    transition: background 0.2s ease, transform 0.2s ease;
+    cursor: default;
+
+    &:hover {
+        background: var(--mat-sys-surface-container-high, rgba(255, 255, 255, 0.08));
+        transform: translateY(-1px);
+    }
+
+    .ticker-item-header {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+
+        .ticker-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--mat-sys-on-surface, #ffffff);
+            letter-spacing: 0.3px;
+        }
+
+        .ticker-code {
+            font-size: 0.65rem;
+            color: var(--mat-sys-outline, #888888);
+            text-transform: uppercase;
+        }
+    }
+
+    .ticker-item-body {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        .ticker-value {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--mat-sys-primary, #64b5f6);
+            font-family: monospace, sans-serif;
+        }
+
+        .ticker-variation {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 1px 4px;
+            border-radius: 4px;
+
+            .var-icon {
+                font-size: 14px;
+                width: 14px;
+                height: 14px;
+                margin-left: -2px;
+            }
+
+            &.positive {
+                color: var(--mat-sys-tertiary, #4caf50);
+                background: var(--mat-sys-tertiary-container, rgba(76, 175, 80, 0.12));
+            }
+
+            &.negative {
+                color: var(--mat-sys-error, #f44336);
+                background: var(--mat-sys-error-container, rgba(244, 67, 54, 0.12));
+            }
+
+            &.neutral {
+                color: var(--mat-sys-outline, #9e9e9e);
+                background: var(--mat-sys-surface-variant, rgba(158, 158, 158, 0.12));
+            }
+        }
+    }
+}
+
+.ticker-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 10px;
+    background: var(--mat-sys-surface-container-high, var(--mat-sys-surface-variant, #2a2a32));
+    border-left: 1px solid var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.1));
+    height: 100%;
+    flex-shrink: 0;
+    z-index: 2;
+
+    .action-btn {
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        color: var(--mat-sys-on-surface-variant, #aaaaaa);
+
+        mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+        }
+
+        &:hover {
+            color: var(--mat-sys-on-surface, #ffffff);
+        }
+    }
+}
+
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.9);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.15);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.9);
+        opacity: 0.7;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

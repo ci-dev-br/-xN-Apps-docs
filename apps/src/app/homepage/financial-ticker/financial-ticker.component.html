@@ -1,0 +1,96 @@
+<div class="ci-ticker-container" [class.paused]="isPaused">
+    <!-- Badge Ao Vivo / Mercado -->
+    <div class="ticker-badge" matTooltip="Indicadores do Banco Central e B3 atualizados em tempo real">
+        <span class="live-dot"></span>
+        <mat-icon class="badge-icon">trending_up</mat-icon>
+        <span class="badge-text">MERCADO</span>
+    </div>
+
+    <!-- Botão de scroll anterior -->
+    <button mat-icon-button class="ticker-nav-btn" (click)="scrollLeft()" matTooltip="Rolar para a esquerda">
+        <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <!-- Trilho de cotações contínuo com efeito Marquee -->
+    <div class="ticker-viewport" #tickerTrack
+        (mouseenter)="isPaused = true" 
+        (mouseleave)="isPaused = false">
+        
+        <div class="ticker-track" [class.is-paused]="isPaused">
+            <!-- Primeiro ciclo de itens -->
+            @for (item of items; track item.id) {
+                <div class="ticker-item" [attr.data-type]="item.type">
+                    <div class="ticker-item-header">
+                        <span class="ticker-label">{{ item.label }}</span>
+                        @if(item.code) {
+                            <span class="ticker-code">{{ item.code }}</span>
+                        }
+                    </div>
+                    <div class="ticker-item-body">
+                        <span class="ticker-value">{{ item.value }}</span>
+
+                        @if (item.variation !== undefined) {
+                            <span class="ticker-variation" 
+                                [class.positive]="item.variation > 0" 
+                                [class.negative]="item.variation < 0"
+                                [class.neutral]="item.variation === 0">
+                                @if (item.variation > 0) {
+                                    <mat-icon class="var-icon">arrow_drop_up</mat-icon>
+                                } @else if (item.variation < 0) {
+                                    <mat-icon class="var-icon">arrow_drop_down</mat-icon>
+                                }
+                                <span>{{ item.variationText || (item.variation + '%') }}</span>
+                            </span>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Ciclo duplicado para loop infinito contínuo e sem emendas -->
+            @for (item of items; track ('dup_' + item.id)) {
+                <div class="ticker-item" [attr.data-type]="item.type" aria-hidden="true">
+                    <div class="ticker-item-header">
+                        <span class="ticker-label">{{ item.label }}</span>
+                        @if(item.code) {
+                            <span class="ticker-code">{{ item.code }}</span>
+                        }
+                    </div>
+                    <div class="ticker-item-body">
+                        <span class="ticker-value">{{ item.value }}</span>
+
+                        @if (item.variation !== undefined) {
+                            <span class="ticker-variation" 
+                                [class.positive]="item.variation > 0" 
+                                [class.negative]="item.variation < 0"
+                                [class.neutral]="item.variation === 0">
+                                @if (item.variation > 0) {
+                                    <mat-icon class="var-icon">arrow_drop_up</mat-icon>
+                                } @else if (item.variation < 0) {
+                                    <mat-icon class="var-icon">arrow_drop_down</mat-icon>
+                                }
+                                <span>{{ item.variationText || (item.variation + '%') }}</span>
+                            </span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Botão de scroll seguinte -->
+    <button mat-icon-button class="ticker-nav-btn" (click)="scrollRight()" matTooltip="Rolar para a direita">
+        <mat-icon>chevron_right</mat-icon>
+    </button>
+
+    <!-- Ações: Pausar/Retomar e Atualizar -->
+    <div class="ticker-actions">
+        <button mat-icon-button class="action-btn" (click)="togglePause()" 
+            [matTooltip]="isPaused ? 'Retomar animação' : 'Pausar animação'">
+            <mat-icon>{{ isPaused ? 'play_arrow' : 'pause' }}</mat-icon>
+        </button>
+        <button mat-icon-button class="action-btn" (click)="loadTickerData(true)" 
+            [disabled]="isLoading" matTooltip="Atualizar cotações do BCB e B3">
+            <mat-icon [class.spinning]="isLoading">sync</mat-icon>
+        </button>
+    </div>
+</div>
