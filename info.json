@@ -1,1 +1,1 @@
-{"branch":"development","commit":"f6c346177f4bb8c3983bd02208190420d8768384","author":"pLinho","date":"Tue Oct 20 00:34:21 2026 -0300","message":"feat(homepage, financeiro, api): Implementa Ticker Financeiro e Board de Cards Personalizáveis","builtAt":"2026-10-20T03:39:14.825Z"}
+{"branch":"development","commit":"6ce83a59dfff3c6d217ddf8bd2b42c953fcbb90f","author":"pLinho","date":"Tue Oct 20 03:13:56 2026 -0300","message":"feat(portal-api): Adiciona campos cols, rows, title em Card e scope em PranchetaSyncPayloadDto","builtAt":"2026-10-20T12:57:55.016Z"}

@@ -32,6 +32,11 @@ import { FinancialsController } from "./controller/financials.controller";
 import { IndicatorConfig } from "./model/indicator-config.entity";
 import { IndicatorConfigService } from "./service/indicator-config.service";
 import { CategoryEvent } from "@ci/seo-marketing/models/category-event.entity";
+import { Carteira } from "./model/carteira.entity";
+import { TransacaoCarteira } from "./model/transacao-carteira.entity";
+import { CarteiraService } from "./service/carteira.service";
+import { CarteiraController } from "./controller/carteira.controller";
+
 export const FinanceiroEntities = [
     LancamentoFinanceiro,
     BillingType,
@@ -47,8 +52,10 @@ export const FinanceiroEntities = [
     IndicatorConfig,
 
     CategoryEvent,
-
+    Carteira,
+    TransacaoCarteira,
 ];
+
 @Module({
     imports: [
         CoreModule,
@@ -63,6 +70,7 @@ export const FinanceiroEntities = [
     ],
     exports: [
         LancamentoFinanceiroService,
+        CarteiraService,
     ],
     controllers: [
         LancamentoFinanceiroController,
@@ -71,6 +79,7 @@ export const FinanceiroEntities = [
         InflationController,
         MacroIndicatorsController,
         FinancialsController,
+        CarteiraController,
     ],
     providers: [
         LancamentoFinanceiroService,
@@ -81,9 +90,11 @@ export const FinanceiroEntities = [
         MacroIndicatorsService,
         FinancialsService,
         IndicatorConfigService,
+        CarteiraService,
     ],
 })
 export class FinanceiroModule { }
+
 export {
     LancamentoFinanceiro,
     BillingType,
@@ -94,4 +105,8 @@ export {
     DailyQuote,
     FinancialStatement,
     IndicatorConfig,
+    Carteira,
+    TransacaoCarteira,
+    CarteiraService,
+    CarteiraController,
 }

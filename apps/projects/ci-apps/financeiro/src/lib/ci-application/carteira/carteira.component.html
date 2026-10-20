@@ -1,0 +1,328 @@
+<div class="carteira-page-container">
+    <!-- CABEÇALHO DA CARTEIRA -->
+    <header class="carteira-header">
+        <div class="header-title-group">
+            <div class="wallet-badge-icon">
+                <mat-icon>account_balance_wallet</mat-icon>
+            </div>
+            <div>
+                <h2>Carteira Digital</h2>
+                <p class="subtitle">Gestão de saldo, recebimento de depósitos identificados e liquidação de faturas</p>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <button mat-icon-button (click)="carregarDadosCarteira()" [disabled]="loading" matTooltip="Atualizar dados">
+                <mat-icon [class.spin]="loading">refresh</mat-icon>
+            </button>
+        </div>
+    </header>
+
+    @if (loading && !carteira) {
+        <div class="loading-state">
+            <mat-spinner diameter="44"></mat-spinner>
+            <span>Carregando dados da sua carteira...</span>
+        </div>
+    } @else {
+        <!-- HERO CARD DE SALDO E AÇÕES PRINCIPAIS -->
+        <section class="wallet-hero-card">
+            <div class="wallet-info-top">
+                <div class="wallet-id-block">
+                    <span class="label">ID da Carteira (Depósitos Identificados):</span>
+                    <div class="id-row">
+                        <strong class="wallet-number">{{ carteira?.numeroCarteira || 'Carregando...' }}</strong>
+                        <button mat-icon-button (click)="copiarIdentificador()" matTooltip="Copiar código para depósito" class="btn-copy">
+                            <mat-icon>content_copy</mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="wallet-status-badge">
+                    <span class="status-dot"></span>
+                    <span>Carteira {{ carteira?.status || 'ATIVA' }}</span>
+                </div>
+            </div>
+
+            <div class="wallet-balance-row">
+                <div class="balance-container">
+                    <span class="balance-label">Saldo Disponível</span>
+                    <div class="balance-value-group">
+                        <h1 class="balance-amount">
+                            @if (mostrarSaldo) {
+                                {{ (carteira?.saldo || 0) | currency:'BRL':'symbol':'1.2-2' }}
+                            } @else {
+                                R$ ••••••••
+                            }
+                        </h1>
+                        <button mat-icon-button (click)="toggleMostrarSaldo()" [matTooltip]="mostrarSaldo ? 'Ocultar saldo' : 'Exibir saldo'" class="btn-toggle-eye">
+                            <mat-icon>{{ mostrarSaldo ? 'visibility' : 'visibility_off' }}</mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- BARRINHA DE RESUMO FINANCEIRO -->
+                <div class="balance-metrics">
+                    <div class="metric-item inflow">
+                        <span class="metric-label">
+                            <mat-icon>arrow_downward</mat-icon> Entradas
+                        </span>
+                        <strong class="metric-val">{{ totalEntradas() | currency:'BRL':'symbol':'1.2-2' }}</strong>
+                    </div>
+                    <div class="metric-item outflow">
+                        <span class="metric-label">
+                            <mat-icon>arrow_upward</mat-icon> Saídas / Faturas
+                        </span>
+                        <strong class="metric-val">{{ totalSaidas() | currency:'BRL':'symbol':'1.2-2' }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTÕES DE AÇÕES OPERACIONAIS -->
+            <div class="wallet-actions-bar">
+                <button mat-flat-button color="primary" class="btn-action deposit" (click)="abrirModal('DEPOSITO')">
+                    <mat-icon>add_card</mat-icon>
+                    <span>Receber Depósito</span>
+                </button>
+
+                <button mat-flat-button class="btn-action pay-invoice" (click)="abrirModal('FATURA')">
+                    <mat-icon>receipt_long</mat-icon>
+                    <span>Pagar Fatura</span>
+                </button>
+
+                <button mat-stroked-button class="btn-action operations" (click)="abrirModal('OPERACOES_FUTURAS')">
+                    <mat-icon>tune</mat-icon>
+                    <span>Operações & Ações</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SEÇÃO DO EXTRATO DE MOVIMENTAÇÕES -->
+        <section class="transactions-section">
+            <div class="section-top">
+                <div class="title-and-count">
+                    <h3>Extrato de Movimentações</h3>
+                    <span class="count-tag">{{ transacoesFiltradas.length }} registros</span>
+                </div>
+
+                <!-- Chips de Filtro -->
+                <div class="filter-chips">
+                    <button class="chip-filter" [class.active]="filtroTipo === 'TODOS'" (click)="aplicarFiltro('TODOS')">
+                        Todas
+                    </button>
+                    <button class="chip-filter" [class.active]="filtroTipo === 'ENTRADA'" (click)="aplicarFiltro('ENTRADA')">
+                        <mat-icon class="chip-icon inflow">arrow_downward</mat-icon> Depósitos (Entradas)
+                    </button>
+                    <button class="chip-filter" [class.active]="filtroTipo === 'SAIDA'" (click)="aplicarFiltro('SAIDA')">
+                        <mat-icon class="chip-icon outflow">arrow_upward</mat-icon> Faturas (Saídas)
+                    </button>
+                </div>
+            </div>
+
+            @if (transacoesFiltradas.length === 0) {
+                <div class="empty-transactions">
+                    <mat-icon>receipt</mat-icon>
+                    <p>Nenhuma movimentação encontrada para o filtro selecionado.</p>
+                    <button mat-stroked-button color="primary" (click)="abrirModal('DEPOSITO')">
+                        <mat-icon>add</mat-icon> Realizar Primeiro Depósito
+                    </button>
+                </div>
+            } @else {
+                <div class="transactions-list">
+                    @for (t of transacoesFiltradas; track t.internalId || $index) {
+                        <div class="transaction-row" [class.is-inflow]="t.tipo === 'ENTRADA'" [class.is-outflow]="t.tipo === 'SAIDA'">
+                            <div class="tx-icon-box">
+                                <mat-icon>{{ t.tipo === 'ENTRADA' ? 'call_received' : 'call_made' }}</mat-icon>
+                            </div>
+
+                            <div class="tx-info-col">
+                                <div class="tx-top-line">
+                                    <span class="tx-category-badge">{{ t.categoria }}</span>
+                                    @if (t.referenciaFaturaId) {
+                                        <span class="tx-invoice-badge">Fatura #{{ t.referenciaFaturaId }}</span>
+                                    }
+                                    <strong class="tx-title">{{ t.descricao || (t.tipo === 'ENTRADA' ? 'Depósito' : 'Pagamento') }}</strong>
+                                </div>
+                                <div class="tx-bottom-line">
+                                    <span class="tx-date">{{ t.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                                    @if (t.identificador) {
+                                        <span class="tx-identifier">Ref: {{ t.identificador }}</span>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="tx-amount-col">
+                                <strong class="tx-val" [class.val-in]="t.tipo === 'ENTRADA'" [class.val-out]="t.tipo === 'SAIDA'">
+                                    {{ t.tipo === 'ENTRADA' ? '+' : '-' }} {{ (t.valor || 0) | currency:'BRL':'symbol':'1.2-2' }}
+                                </strong>
+                                @if (t.saldoPosterior !== undefined && t.saldoPosterior !== null) {
+                                    <small class="tx-resulting-balance">Saldo: {{ t.saldoPosterior | currency:'BRL':'symbol':'1.2-2' }}</small>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </section>
+    }
+
+    <!-- MODAL DE DEPÓSITO IDENTIFICADO -->
+    @if (modalAberto === 'DEPOSITO') {
+        <div class="custom-modal-backdrop" (click)="fecharModal()">
+            <div class="custom-modal-content" (click)="$event.stopPropagation()">
+                <div class="modal-header">
+                    <div class="modal-title-group">
+                        <mat-icon class="icon-deposit">add_card</mat-icon>
+                        <div>
+                            <h3>Receber Depósito Identificado</h3>
+                            <p>Adicione saldo para a carteira {{ carteira?.numeroCarteira }}</p>
+                        </div>
+                    </div>
+                    <button mat-icon-button (click)="fecharModal()"><mat-icon>close</mat-icon></button>
+                </div>
+
+                <div class="modal-body">
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Valor do Depósito (R$)</mat-label>
+                        <input matInput type="number" [(ngModel)]="depositoValor" placeholder="Ex: 250.00" min="0.01" step="0.01" />
+                        <span matPrefix>R$&nbsp;</span>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Código Identificador Bancário / Pix</mat-label>
+                        <input matInput [(ngModel)]="depositoIdentificador" placeholder="Ex: PIX-984210" />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Descrição / Observações (Opcional)</mat-label>
+                        <input matInput [(ngModel)]="depositoDescricao" placeholder="Ex: Aporte para pagamento de faturas da equipe" />
+                    </mat-form-field>
+
+                    <div class="info-callout">
+                        <mat-icon>info</mat-icon>
+                        <span>O depósito identificado credita saldo imediato na carteira para liquidação de faturas de serviços e produtos.</span>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button mat-stroked-button (click)="fecharModal()" [disabled]="processando">Cancelar</button>
+                    <button mat-flat-button color="primary" (click)="executarDeposito()" [disabled]="processando || !depositoValor">
+                        @if (processando) {
+                            <mat-spinner diameter="18"></mat-spinner>
+                        } @else {
+                            <span>Confirmar Depósito</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- MODAL DE PAGAMENTO DE FATURA -->
+    @if (modalAberto === 'FATURA') {
+        <div class="custom-modal-backdrop" (click)="fecharModal()">
+            <div class="custom-modal-content" (click)="$event.stopPropagation()">
+                <div class="modal-header">
+                    <div class="modal-title-group">
+                        <mat-icon class="icon-invoice">receipt_long</mat-icon>
+                        <div>
+                            <h3>Pagar Fatura com a Carteira</h3>
+                            <p>Saldo atual disponível: {{ (carteira?.saldo || 0) | currency:'BRL':'symbol':'1.2-2' }}</p>
+                        </div>
+                    </div>
+                    <button mat-icon-button (click)="fecharModal()"><mat-icon>close</mat-icon></button>
+                </div>
+
+                <div class="modal-body">
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Número ou Código da Fatura</mat-label>
+                        <input matInput [(ngModel)]="faturaId" placeholder="Ex: FAT-2026-0042" />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Valor da Fatura (R$)</mat-label>
+                        <input matInput type="number" [(ngModel)]="faturaValor" placeholder="Ex: 89.90" min="0.01" step="0.01" />
+                        <span matPrefix>R$&nbsp;</span>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Descrição do Pagamento (Opcional)</mat-label>
+                        <input matInput [(ngModel)]="faturaDescricao" placeholder="Ex: Mensalidade de Infraestrutura Cloud" />
+                    </mat-form-field>
+
+                    @if (faturaValor && faturaValor > (carteira?.saldo || 0)) {
+                        <div class="alert-callout">
+                            <mat-icon>warning</mat-icon>
+                            <span>Saldo insuficiente na carteira para liquidar esta fatura. Adicione saldo via depósito identificado.</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="modal-footer">
+                    <button mat-stroked-button (click)="fecharModal()" [disabled]="processando">Cancelar</button>
+                    <button mat-flat-button color="primary" (click)="executarPagamentoFatura()" 
+                        [disabled]="processando || !faturaId || !faturaValor || faturaValor > (carteira?.saldo || 0)">
+                        @if (processando) {
+                            <mat-spinner diameter="18"></mat-spinner>
+                        } @else {
+                            <span>Liquidar Fatura</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- MODAL DE OPERAÇÕES FUTURAS & EXTENSÕES -->
+    @if (modalAberto === 'OPERACOES_FUTURAS') {
+        <div class="custom-modal-backdrop" (click)="fecharModal()">
+            <div class="custom-modal-content" (click)="$event.stopPropagation()">
+                <div class="modal-header">
+                    <div class="modal-title-group">
+                        <mat-icon class="icon-operations">tune</mat-icon>
+                        <div>
+                            <h3>Operações & Ações da Carteira</h3>
+                            <p>Recursos avançados e eventuais operações integradas</p>
+                        </div>
+                    </div>
+                    <button mat-icon-button (click)="fecharModal()"><mat-icon>close</mat-icon></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="future-ops-grid">
+                        <div class="op-card" (click)="fecharModal(); abrirModal('DEPOSITO')">
+                            <mat-icon>pix</mat-icon>
+                            <h4>Chave Pix de Depósito</h4>
+                            <p>Receba transferências instantâneas identificadas diretamente na carteira.</p>
+                            <span class="op-badge active">Pronto para uso</span>
+                        </div>
+
+                        <div class="op-card" (click)="fecharModal(); abrirModal('FATURA')">
+                            <mat-icon>auto_mode</mat-icon>
+                            <h4>Débito Automático de Faturas</h4>
+                            <p>Liquidação automática de faturas emitidas pelo sistema usando o saldo.</p>
+                            <span class="op-badge active">Configurado</span>
+                        </div>
+
+                        <div class="op-card">
+                            <mat-icon>swap_horiz</mat-icon>
+                            <h4>Transferência entre Carteiras</h4>
+                            <p>Envie e receba saldo entre usuários e filiais da sua organização.</p>
+                            <span class="op-badge future">Em definição</span>
+                        </div>
+
+                        <div class="op-card">
+                            <mat-icon>lock_clock</mat-icon>
+                            <h4>Custódia Programada (Escrow)</h4>
+                            <p>Retenção temporária de saldo com liberação após entrega de ordens.</p>
+                            <span class="op-badge future">Em definição</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button mat-flat-button color="primary" (click)="fecharModal()">Entendi</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>

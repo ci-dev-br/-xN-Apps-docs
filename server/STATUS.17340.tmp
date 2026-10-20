@@ -1,29 +1,33 @@
 {
   "1228": {
-    "startedAt": "2026-10-20T05:29:09.258Z",
+    "startedAt": "2026-10-20T13:33:24.738Z",
     "status": "running",
     "debug": false,
     "warmedUp": true,
-    "lastHeartbeat": "2026-10-20T06:02:39.856Z",
-    "nextStatusCheckAt": "2026-10-20T06:02:40.156Z",
-    "updatedAt": "2026-10-20T06:02:39.856Z"
+    "lastHeartbeat": "2026-10-20T14:30:21.421Z",
+    "nextStatusCheckAt": "2026-10-20T14:30:22.294Z",
+    "updatedAt": "2026-10-20T14:30:21.421Z"
   },
-  "12964": {
-    "startedAt": "2026-10-20T06:01:27.733Z",
-    "status": "stopped",
+  "16208": {
+    "startedAt": "2026-10-20T14:24:50.001Z",
+    "status": "running",
     "debug": true,
     "warmedUp": true,
-    "lastHeartbeat": "2026-10-20T06:01:49.708Z",
-    "updatedAt": "2026-10-20T06:01:50.001Z",
-    "stoppedAt": "2026-10-20T06:01:49.708Z"
+    "lastHeartbeat": "2026-10-20T14:30:21.275Z",
+    "updatedAt": "2026-10-20T14:30:21.275Z",
+    "port": 86,
+    "previousPort": 2924,
+    "lastPort86ClaimedAt": "2026-10-20T14:25:34.389Z",
+    "stoppedAt": "2026-10-20T14:24:56.139Z",
+    "nextStatusCheckAt": "2026-10-20T14:30:21.994Z"
   },
   "17340": {
-    "startedAt": "2026-10-20T06:01:21.146Z",
+    "startedAt": "2026-10-20T13:32:24.528Z",
     "status": "running",
     "debug": false,
     "warmedUp": true,
-    "lastHeartbeat": "2026-10-20T06:02:40.010Z",
-    "nextStatusCheckAt": "2026-10-20T06:02:40.456Z",
-    "updatedAt": "2026-10-20T06:02:40.010Z"
+    "lastHeartbeat": "2026-10-20T14:30:21.734Z",
+    "nextStatusCheckAt": "2026-10-20T14:30:22.594Z",
+    "updatedAt": "2026-10-20T14:30:21.734Z"
   }
 }

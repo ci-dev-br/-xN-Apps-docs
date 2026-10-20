@@ -66,3 +66,4 @@ export { ChangelogService } from './services/changelog.service';
 export { GroupService, GroupItem, GroupMemberRequestItem, CriarGrupoPayload, GroupTopicItem, GroupTopicMessageItem, GroupSharedAssetItem } from './services/group.service';
 export { InternalNotificationService, InternalNotification, NotificationResponse, NotificationDisplayMode } from './services/internal-notification.service';
 export { EncryptedMessagerService, DecryptedMessage, ConversationItem, AvailableUserItem } from './services/encrypted-messager.service';
+export { CarteiraService, CarteiraDto, TransacaoCarteiraDto, VisaoGeralCarteiraDto } from './services/carteira.service';
