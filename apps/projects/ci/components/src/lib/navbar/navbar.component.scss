@@ -225,29 +225,38 @@ ci-logo {
     flex-direction: column;
     padding: 0;
     box-sizing: border-box;
+    background: var(--mat-sys-surface-container-low, var(--mat-sys-surface, #ffffff));
+    color: var(--mat-sys-on-surface, inherit);
 
     .notif-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 12px 16px;
-        border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+        background: var(--mat-sys-surface-container, transparent);
+        border-bottom: 1px solid var(--mat-sys-outline-variant, rgba(128, 128, 128, 0.15));
+        color: var(--mat-sys-on-surface, inherit);
 
         .notif-title-row {
             display: flex;
             align-items: center;
             gap: 8px;
 
+            mat-icon {
+                color: var(--mat-sys-primary, #1976d2);
+            }
+
             strong {
                 font-size: 1rem;
+                color: var(--mat-sys-on-surface, inherit);
             }
 
             .unread-pill {
                 font-size: 0.72rem;
                 padding: 2px 6px;
                 border-radius: 10px;
-                background: #f44336;
-                color: #ffffff;
+                background: var(--mat-sys-error, #f44336);
+                color: var(--mat-sys-on-error, #ffffff);
                 font-weight: 600;
             }
         }
@@ -260,6 +269,8 @@ ci-logo {
                 width: 32px;
                 height: 32px;
                 line-height: 32px;
+                color: var(--mat-sys-on-surface-variant, inherit);
+
                 mat-icon {
                     font-size: 18px;
                     width: 18px;
@@ -274,11 +285,12 @@ ci-logo {
         align-items: center;
         gap: 10px;
         padding: 10px 16px;
-        background: rgba(33, 150, 243, 0.1);
-        border-bottom: 1px solid rgba(33, 150, 243, 0.2);
+        background: var(--mat-sys-primary-container, rgba(33, 150, 243, 0.12));
+        border-bottom: 1px solid var(--mat-sys-outline-variant, rgba(33, 150, 243, 0.25));
+        color: var(--mat-sys-on-primary-container, inherit);
 
         mat-icon {
-            color: #1976d2;
+            color: var(--mat-sys-primary, #1976d2);
             font-size: 20px;
             width: 20px;
             height: 20px;
@@ -292,11 +304,13 @@ ci-logo {
             span {
                 font-size: 0.8rem;
                 font-weight: 600;
+                color: var(--mat-sys-on-primary-container, var(--mat-sys-on-surface, inherit));
             }
 
             small {
                 font-size: 0.72rem;
-                opacity: 0.8;
+                opacity: 0.85;
+                color: var(--mat-sys-on-surface-variant, inherit);
             }
         }
 
@@ -322,16 +336,18 @@ ci-logo {
             justify-content: center;
             padding: 40px 16px;
             gap: 8px;
-            opacity: 0.6;
+            color: var(--mat-sys-outline, rgba(128, 128, 128, 0.7));
 
             mat-icon {
                 font-size: 36px;
                 width: 36px;
                 height: 36px;
+                color: var(--mat-sys-outline, inherit);
             }
 
             span {
                 font-size: 0.85rem;
+                color: var(--mat-sys-on-surface-variant, inherit);
             }
         }
 
@@ -340,19 +356,20 @@ ci-logo {
             align-items: flex-start;
             gap: 12px;
             padding: 12px 16px;
-            border-bottom: 1px solid rgba(128, 128, 128, 0.08);
+            border-bottom: 1px solid var(--mat-sys-outline-variant, rgba(128, 128, 128, 0.08));
             cursor: pointer;
             transition: background 0.15s ease;
 
             &:hover {
-                background: rgba(128, 128, 128, 0.06);
+                background: var(--mat-sys-surface-container-high, rgba(128, 128, 128, 0.06));
             }
 
             &.unread {
-                background: rgba(33, 150, 243, 0.05);
+                background: var(--mat-sys-secondary-container, rgba(33, 150, 243, 0.08));
 
                 .notif-item-title {
                     font-weight: 700;
+                    color: var(--mat-sys-on-secondary-container, var(--mat-sys-on-surface, inherit));
                 }
             }
 
@@ -366,13 +383,25 @@ ci-logo {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    color: #fff;
-                    background: #1976d2;
+                    color: var(--mat-sys-on-primary, #ffffff);
+                    background: var(--mat-sys-primary, #1976d2);
 
-                    &.mensagem { background: #00897b; }
-                    &.grupo { background: #7b1fa2; }
-                    &.sistema { background: #455a64; }
-                    &.aviso { background: #f57c00; }
+                    &.mensagem {
+                        background: var(--mat-sys-tertiary, #00897b);
+                        color: var(--mat-sys-on-tertiary, #ffffff);
+                    }
+                    &.grupo {
+                        background: #7b1fa2;
+                        color: #ffffff;
+                    }
+                    &.sistema {
+                        background: var(--mat-sys-secondary, #455a64);
+                        color: var(--mat-sys-on-secondary, #ffffff);
+                    }
+                    &.aviso {
+                        background: var(--mat-sys-error, #f57c00);
+                        color: var(--mat-sys-on-error, #ffffff);
+                    }
 
                     mat-icon {
                         font-size: 18px;
@@ -390,18 +419,18 @@ ci-logo {
 
                 .notif-item-title {
                     font-size: 0.88rem;
-                    color: inherit;
+                    color: var(--mat-sys-on-surface, inherit);
                 }
 
                 .notif-item-message {
                     font-size: 0.8rem;
-                    opacity: 0.8;
+                    color: var(--mat-sys-on-surface-variant, inherit);
                     line-height: 1.35;
                 }
 
                 .notif-item-time {
                     font-size: 0.7rem;
-                    opacity: 0.55;
+                    color: var(--mat-sys-outline, rgba(128, 128, 128, 0.7));
                     margin-top: 2px;
                 }
             }
@@ -410,8 +439,10 @@ ci-logo {
                 width: 28px;
                 height: 28px;
                 line-height: 28px;
-                opacity: 0.6;
-                &:hover { opacity: 1; }
+                color: var(--mat-sys-outline, inherit);
+                &:hover {
+                    color: var(--mat-sys-primary, inherit);
+                }
 
                 mat-icon {
                     font-size: 16px;
@@ -429,8 +460,8 @@ ci-logo {
     right: 0;
     top: 50%;
     transform: translateY(-50%);
-    background: #1976d2;
-    color: #ffffff;
+    background: var(--mat-sys-primary, #1976d2);
+    color: var(--mat-sys-on-primary, #ffffff);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -440,11 +471,12 @@ ci-logo {
     cursor: pointer;
     z-index: 999;
     user-select: none;
-    transition: transform 0.2s ease, filter 0.2s ease;
+    transition: transform 0.2s ease, filter 0.2s ease, background 0.2s ease;
 
     &:hover {
         transform: translateY(-50%) translateX(-3px);
-        filter: brightness(1.1);
+        background: var(--mat-sys-primary-container, #1565c0);
+        color: var(--mat-sys-on-primary-container, #ffffff);
     }
 
     mat-icon {
@@ -471,7 +503,9 @@ ci-logo {
     bottom: 0;
     width: 380px;
     max-width: 90vw;
-    background: #ffffff;
+    background: var(--mat-sys-surface-container-low, var(--mat-sys-surface, #ffffff));
+    color: var(--mat-sys-on-surface, inherit);
+    border-left: 1px solid var(--mat-sys-outline-variant, rgba(128, 128, 128, 0.2));
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.25);
     z-index: 1002;
     transform: translateX(100%);
@@ -487,6 +521,7 @@ ci-logo {
         max-width: 100%;
         height: 100%;
         max-height: 100vh;
+        background: transparent;
 
         .notif-items-list {
             flex: 1;
@@ -513,13 +548,14 @@ ci-logo {
     left: 0;
     right: 0;
     height: 32px;
-    background: #1e293b;
-    color: #e2e8f0;
+    background: var(--mat-sys-surface-container, #1e293b);
+    color: var(--mat-sys-on-surface, #e2e8f0);
+    border-top: 1px solid var(--mat-sys-outline-variant, rgba(128, 128, 128, 0.2));
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 12px;
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
     z-index: 1000;
     font-size: 12px;
     user-select: none;
@@ -531,16 +567,18 @@ ci-logo {
         cursor: pointer;
         padding: 2px 6px;
         border-radius: 4px;
+        color: var(--mat-sys-on-surface, inherit);
         transition: background 0.15s ease;
 
         &:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--mat-sys-surface-container-high, rgba(255, 255, 255, 0.08));
         }
 
         mat-icon {
             font-size: 16px;
             width: 16px;
             height: 16px;
+            color: var(--mat-sys-primary, inherit);
         }
 
         .statusbar-label {
@@ -549,8 +587,8 @@ ci-logo {
         }
 
         .statusbar-badge {
-            background: #ef4444;
-            color: #ffffff;
+            background: var(--mat-sys-error, #ef4444);
+            color: var(--mat-sys-on-error, #ffffff);
             font-size: 10px;
             font-weight: bold;
             padding: 1px 5px;
@@ -576,9 +614,10 @@ ci-logo {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            color: var(--mat-sys-on-surface, inherit);
 
             &.unread {
-                color: #38bdf8;
+                color: var(--mat-sys-primary, #38bdf8);
                 font-weight: 500;
             }
 
@@ -594,11 +633,12 @@ ci-logo {
 
             .latest-msg {
                 opacity: 0.85;
+                color: var(--mat-sys-on-surface-variant, inherit);
             }
         }
 
         .statusbar-empty {
-            opacity: 0.5;
+            color: var(--mat-sys-outline, rgba(128, 128, 128, 0.6));
             font-size: 11px;
             font-style: italic;
         }
@@ -617,11 +657,11 @@ ci-logo {
                 font-size: 18px;
                 width: 18px;
                 height: 18px;
-                color: #94a3b8;
+                color: var(--mat-sys-on-surface-variant, #94a3b8);
             }
 
             &:hover mat-icon {
-                color: #ffffff;
+                color: var(--mat-sys-on-surface, #ffffff);
             }
         }
     }
@@ -633,7 +673,10 @@ ci-logo {
     right: 24px;
     width: 380px;
     max-width: calc(100vw - 48px);
-    background: #ffffff;
+    background: var(--mat-sys-surface-container-low, var(--mat-sys-surface, #ffffff));
+    color: var(--mat-sys-on-surface, inherit);
+    border: 1px solid var(--mat-sys-outline-variant, rgba(128, 128, 128, 0.2));
+    border-bottom: none;
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
     border-radius: 8px 8px 0 0;
     z-index: 1002;
@@ -649,6 +692,7 @@ ci-logo {
         width: 100%;
         max-width: 100%;
         max-height: 500px;
+        background: transparent;
         border-radius: 8px 8px 0 0;
 
         .notif-items-list {

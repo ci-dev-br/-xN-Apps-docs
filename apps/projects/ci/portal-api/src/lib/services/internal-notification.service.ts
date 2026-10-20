@@ -119,16 +119,52 @@ export class InternalNotificationService extends BaseService {
     }
 
     try {
-      const permission = await Notification.requestPermission();
+      // Registra o ServiceWorker se disponível
+      if ('serviceWorker' in navigator) {
+        try {
+          await navigator.serviceWorker.register('/sw.js');
+        } catch {}
+      }
+
+      let permission: NotificationPermission = Notification.permission;
+      if (permission !== 'granted') {
+        try {
+          permission = await Notification.requestPermission();
+        } catch {
+          permission = await new Promise<NotificationPermission>((resolve) => {
+            Notification.requestPermission((p) => resolve(p));
+          });
+        }
+      }
+
       this.pushPermissionStatus.next(permission);
 
       if (permission === 'granted') {
-        // Tenta registrar no ServiceWorker se disponível
+        // Dispara notificação de confirmação imediata para retorno visual e sonoro
+        this.dispararPushLocal({
+          id: 'welcome-' + Date.now(),
+          title: 'Notificações Ativadas!',
+          message: 'Você receberá avisos importantes do sistema neste dispositivo.',
+          type: 'SISTEMA',
+          read: false,
+          createdAt: new Date().toISOString(),
+        });
+        this.tocarSomNotificacao();
+
+        // Tenta registrar subscrição no PushManager do navegador e sincronizar com o backend
         if ('serviceWorker' in navigator) {
           try {
-            const reg = await navigator.serviceWorker.ready;
+            const reg = await Promise.race([
+              navigator.serviceWorker.ready,
+              new Promise<null>((resolve) => setTimeout(() => resolve(null), 2500))
+            ]);
             if (reg && reg.pushManager) {
-              const sub = await reg.pushManager.getSubscription();
+              let sub = await reg.pushManager.getSubscription();
+              if (!sub) {
+                try {
+                  sub = await reg.pushManager.subscribe({ userVisibleOnly: true });
+                } catch {}
+              }
               if (sub) {
                 const subJson = sub.toJSON();
                 this.http.post(`${this.rootUrl}/Notification/Push/Subscribe`, {
@@ -215,21 +251,34 @@ export class InternalNotificationService extends BaseService {
     if (Notification.permission !== 'granted') return;
 
     try {
-      const options: NotificationOptions = {
+      const options: any = {
         body: notificacao.message,
         icon: '/favicon.ico',
         tag: notificacao.id,
         badge: '/favicon.ico',
+        data: {
+          url: notificacao.actionUrl || '/meus-apps/apps'
+        }
       };
 
-      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-        navigator.serviceWorker.ready.then(reg => {
-          reg.showNotification(notificacao.title, options);
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration().then(reg => {
+          if (reg && typeof reg.showNotification === 'function') {
+            reg.showNotification(notificacao.title, options);
+          } else {
+            try {
+              new Notification(notificacao.title, options);
+            } catch {}
+          }
         }).catch(() => {
-          new Notification(notificacao.title, options);
+          try {
+            new Notification(notificacao.title, options);
+          } catch {}
         });
       } else {
-        new Notification(notificacao.title, options);
+        try {
+          new Notification(notificacao.title, options);
+        } catch {}
       }
     } catch {}
   }

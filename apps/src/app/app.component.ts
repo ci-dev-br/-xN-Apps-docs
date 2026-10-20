@@ -81,7 +81,7 @@ export class AppComponent implements OnInit, OnDestroy {
         // showInAppInstallPromotion();
       });
     }
-    // this.worker();
+    this.worker();
     this.window?.addEventListener('log', (...args) => {
       this.snack?.open(String(args), 'Visto')
     })
@@ -100,7 +100,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   private worker() {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register("https://apps.ci.dev.br/sw.js");
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
     }
   }
   @HostListener('window:keydown', ['$event'])
