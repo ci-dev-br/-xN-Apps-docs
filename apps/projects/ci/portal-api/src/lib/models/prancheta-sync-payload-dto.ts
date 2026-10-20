@@ -4,5 +4,9 @@ import { Prancheta } from '../models/prancheta';
 export interface PranchetaSyncPayloadDto {
   defaultGlobalCode?: string;
   prancheta?: Prancheta | null;
-  scope?: 'USER' | 'TENANT' | null;
+
+  /**
+   * Escopo do Board: USER ou TENANT
+   */
+  scope?: 'USER' | 'TENANT';
 }

@@ -1,10 +1,10 @@
 /* tslint:disable */
 /* eslint-disable */
+import { Credential } from '../models/credential';
 export interface TipoDocumentoIdentificacao {
   code?: string | null;
   createdAt?: Date | null;
-  createdBy?: {
-} | null;
+  createdBy?: Credential | null;
   deleted?: boolean | null;
 
   /**
@@ -13,7 +13,6 @@ export interface TipoDocumentoIdentificacao {
   description?: string | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
-  lastModifiedBy?: {
-} | null;
+  lastModifiedBy?: Credential | null;
   tenants?: Array<string> | null;
 }

@@ -1,17 +1,16 @@
 /* tslint:disable */
 /* eslint-disable */
+import { Credential } from '../models/credential';
 import { Pessoa } from '../models/pessoa';
 import { Photo } from '../models/photo';
 import { Tenant } from '../models/tenant';
 export interface Organizacao {
   createdAt?: Date | null;
-  createdBy?: {
-} | null;
+  createdBy?: Credential | null;
   deleted?: boolean | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
-  lastModifiedBy?: {
-} | null;
+  lastModifiedBy?: Credential | null;
 
   /**
    * Logomarca da Organização

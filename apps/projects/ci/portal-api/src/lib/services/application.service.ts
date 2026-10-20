@@ -16,8 +16,12 @@ import { catalogApplication } from '../fn/application/catalog-application';
 import { CatalogApplication$Params } from '../fn/application/catalog-application';
 import { checkVersionCataloged } from '../fn/application/check-version-cataloged';
 import { CheckVersionCataloged$Params } from '../fn/application/check-version-cataloged';
+import { convertDeveloperGratitudeToBalance } from '../fn/application/convert-developer-gratitude-to-balance';
+import { ConvertDeveloperGratitudeToBalance$Params } from '../fn/application/convert-developer-gratitude-to-balance';
 import { deleteApplication } from '../fn/application/delete-application';
 import { DeleteApplication$Params } from '../fn/application/delete-application';
+import { getDeveloperGratitudeSummary } from '../fn/application/get-developer-gratitude-summary';
+import { GetDeveloperGratitudeSummary$Params } from '../fn/application/get-developer-gratitude-summary';
 import { getListApplication } from '../fn/application/get-list-application';
 import { GetListApplication$Params } from '../fn/application/get-list-application';
 import { getMyActivatedApplications } from '../fn/application/get-my-activated-applications';
@@ -28,6 +32,10 @@ import { installGitModuleApplication } from '../fn/application/install-git-modul
 import { InstallGitModuleApplication$Params } from '../fn/application/install-git-module-application';
 import { reconcileApplicationCatalog } from '../fn/application/reconcile-application-catalog';
 import { ReconcileApplicationCatalog$Params } from '../fn/application/reconcile-application-catalog';
+import { recordApplicationUsage } from '../fn/application/record-application-usage';
+import { RecordApplicationUsage$Params } from '../fn/application/record-application-usage';
+import { setDeveloperGratitudeConfig } from '../fn/application/set-developer-gratitude-config';
+import { SetDeveloperGratitudeConfig$Params } from '../fn/application/set-developer-gratitude-config';
 import { syncApplication } from '../fn/application/sync-application';
 import { SyncApplication$Params } from '../fn/application/sync-application';
 import { toggleApplicationActivation } from '../fn/application/toggle-application-activation';
@@ -298,9 +306,9 @@ export class ApplicationService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `syncApplication()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  syncApplication$Response(params?: SyncApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
+  syncApplication$Response(params: SyncApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
     return syncApplication(this.http, this.rootUrl, params, context);
   }
 
@@ -308,9 +316,9 @@ export class ApplicationService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `syncApplication$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  sync(params?: SyncApplication$Params, context?: HttpContext): Observable<Application> {
+  sync(params: SyncApplication$Params, context?: HttpContext): Observable<Application> {
     return this.syncApplication$Response(params, context).pipe(
       map((r: StrictHttpResponse<Application>): Application => r.body)
     );
@@ -338,6 +346,106 @@ export class ApplicationService extends BaseService {
   delete(params: DeleteApplication$Params, context?: HttpContext): Observable<Application> {
     return this.deleteApplication$Response(params, context).pipe(
       map((r: StrictHttpResponse<Application>): Application => r.body)
+    );
+  }
+
+  /** Path part for operation `recordApplicationUsage()` */
+  static readonly RecordApplicationUsagePath = '/Application/RecordUsage';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `recordApplicationUsage()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  recordApplicationUsage$Response(params: RecordApplicationUsage$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return recordApplicationUsage(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `recordApplicationUsage$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  recordUsage(params: RecordApplicationUsage$Params, context?: HttpContext): Observable<void> {
+    return this.recordApplicationUsage$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `getDeveloperGratitudeSummary()` */
+  static readonly GetDeveloperGratitudeSummaryPath = '/Application/Gratitude/Summary';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getDeveloperGratitudeSummary()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getDeveloperGratitudeSummary$Response(params?: GetDeveloperGratitudeSummary$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return getDeveloperGratitudeSummary(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getDeveloperGratitudeSummary$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getDeveloperGratitudeSummary(params?: GetDeveloperGratitudeSummary$Params, context?: HttpContext): Observable<void> {
+    return this.getDeveloperGratitudeSummary$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `setDeveloperGratitudeConfig()` */
+  static readonly SetDeveloperGratitudeConfigPath = '/Application/Gratitude/Configure';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `setDeveloperGratitudeConfig()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  setDeveloperGratitudeConfig$Response(params: SetDeveloperGratitudeConfig$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return setDeveloperGratitudeConfig(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `setDeveloperGratitudeConfig$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  setDeveloperGratitudeConfig(params: SetDeveloperGratitudeConfig$Params, context?: HttpContext): Observable<void> {
+    return this.setDeveloperGratitudeConfig$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `convertDeveloperGratitudeToBalance()` */
+  static readonly ConvertDeveloperGratitudeToBalancePath = '/Application/Gratitude/Convert';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `convertDeveloperGratitudeToBalance()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  convertDeveloperGratitudeToBalance$Response(params: ConvertDeveloperGratitudeToBalance$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return convertDeveloperGratitudeToBalance(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `convertDeveloperGratitudeToBalance$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  convertDeveloperGratitudeToBalance(params: ConvertDeveloperGratitudeToBalance$Params, context?: HttpContext): Observable<void> {
+    return this.convertDeveloperGratitudeToBalance$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 

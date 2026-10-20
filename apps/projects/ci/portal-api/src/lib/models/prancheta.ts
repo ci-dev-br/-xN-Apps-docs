@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import { Card } from '../models/card';
+import { Credential } from '../models/credential';
 export interface Prancheta {
   cards?: Array<Card> | null;
 
@@ -9,20 +10,18 @@ export interface Prancheta {
    */
   codigoGlobal?: string | null;
   createdAt?: Date | null;
-  createdBy?: {
-} | null;
+  createdBy?: Credential | null;
   deleted?: boolean | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
-  lastModifiedBy?: {
-} | null;
+  lastModifiedBy?: Credential | null;
   layout?: any | null;
   order?: number | null;
-  tenants?: Array<string> | null;
-  title?: string | null;
 
   /**
-   * Escopo de compartilhamento: USER (apenas criador) ou TENANT (compartilhado com a organização/tenant)
+   * Escopo de compartilhamento: USER (apenas criador) ou TENANT (todos os membros do tenant)
    */
-  scope?: 'USER' | 'TENANT' | null;
+  scope?: ('USER' | 'TENANT') | null;
+  tenants?: Array<string> | null;
+  title?: string | null;
 }

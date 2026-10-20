@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+import { Credential } from '../models/credential';
 import { Website } from '../models/website';
 export interface SitePage {
 
@@ -9,13 +10,11 @@ export interface SitePage {
   content: Array<string>;
   contentType?: string | null;
   createdAt?: Date | null;
-  createdBy?: {
-} | null;
+  createdBy?: Credential | null;
   deleted?: boolean | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
-  lastModifiedBy?: {
-} | null;
+  lastModifiedBy?: Credential | null;
   tempalte: string;
   tenants?: Array<string> | null;
 

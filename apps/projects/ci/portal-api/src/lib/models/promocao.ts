@@ -1,9 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
+import { Credential } from '../models/credential';
 export interface Promocao {
   createdAt?: Date | null;
-  createdBy?: {
-} | null;
+  createdBy?: Credential | null;
   dataFim: Date | null;
   dataInicio: Date | null;
   deleted?: boolean | null;
@@ -12,8 +12,7 @@ export interface Promocao {
   descricao: string | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
-  lastModifiedBy?: {
-} | null;
+  lastModifiedBy?: Credential | null;
   nome: string;
 
   /**

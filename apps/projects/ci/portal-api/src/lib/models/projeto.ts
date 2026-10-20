@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import { ClienteProjeto } from '../models/cliente-projeto';
+import { Credential } from '../models/credential';
 export interface Projeto {
 
   /**
@@ -13,8 +14,7 @@ export interface Projeto {
    */
   controleVersao?: string | null;
   createdAt?: Date | null;
-  createdBy?: {
-} | null;
+  createdBy?: Credential | null;
 
   /**
    * Data de Início
@@ -28,8 +28,7 @@ export interface Projeto {
   descricao?: string | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
-  lastModifiedBy?: {
-} | null;
+  lastModifiedBy?: Credential | null;
 
   /**
    * Nome

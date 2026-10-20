@@ -8,14 +8,29 @@ export interface CatalogAppDto {
   appKey: string;
 
   /**
+   * Autores dos commits da pasta
+   */
+  authors?: Array<string>;
+
+  /**
    * Categoria
    */
   categoria?: string;
 
   /**
+   * Co-autores identificados nas mensagens dos commits
+   */
+  coAuthors?: Array<string>;
+
+  /**
    * Colaboradores
    */
   collaborators?: Array<string>;
+
+  /**
+   * Quantidade de commits na pasta da aplicação
+   */
+  commitCount?: number;
 
   /**
    * Políticas contextuais adicionais
@@ -29,6 +44,11 @@ export interface CatalogAppDto {
   description?: string;
 
   /**
+   * Caminho da pasta do repositório onde reside a aplicação
+   */
+  folderPath?: string;
+
+  /**
    * Hash do commit Git
    */
   gitVersionHash?: string;
@@ -37,6 +57,17 @@ export interface CatalogAppDto {
    * Ícone da aplicação
    */
   icon?: string;
+
+  /**
+   * Data do último commit da aplicação
+   */
+  lastCommitDate?: {
+};
+
+  /**
+   * Módulos ou aplicações padrão combinados
+   */
+  modules?: Array<string>;
 
   /**
    * Nome da aplicação

@@ -1,20 +1,19 @@
 /* tslint:disable */
 /* eslint-disable */
+import { Credential } from '../models/credential';
 import { Marca } from '../models/marca';
 import { UnidadeMedida } from '../models/unidade-medida';
 export interface Product {
   codigoBarras?: string | null;
   codigoFabricanete?: string | null;
   createdAt?: Date | null;
-  createdBy?: {
-} | null;
+  createdBy?: Credential | null;
   deleted?: boolean | null;
   description?: string | null;
   gtin?: string | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
-  lastModifiedBy?: {
-} | null;
+  lastModifiedBy?: Credential | null;
   marca?: Marca | null;
   moeda?: string | null;
   name?: string | null;

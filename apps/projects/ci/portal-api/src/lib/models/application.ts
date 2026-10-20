@@ -20,14 +20,29 @@ export interface Application {
   appKey?: string | null;
 
   /**
+   * Lista de autores que realizaram commits dentro da pasta da aplicação.
+   */
+  authors?: Array<string> | null;
+
+  /**
    * A categoria à qual a aplicação pertence. Isso ajuda na organização e filtragem das aplicações.
    */
   categoria?: string | null;
 
   /**
+   * Lista de co-autores identificados nas mensagens dos commits da pasta da aplicação.
+   */
+  coAuthors?: Array<string> | null;
+
+  /**
    * Lista de desenvolvedores e colaboradores do repositório/aplicação.
    */
   collaborators?: Array<string> | null;
+
+  /**
+   * Total de commits registrados para a pasta desta aplicação.
+   */
+  commitCount?: number | null;
 
   /**
    * Regras e metadados contextuais (ex: versão mínima, recursos exigidos, restrições de planos).
@@ -50,6 +65,11 @@ export interface Application {
    * Data e hora da primeira execução/catalogação da aplicação.
    */
   firstSeenAt?: string | null;
+
+  /**
+   * Localização da pasta do repositório onde reside o código da aplicação.
+   */
+  folderPath?: string | null;
 
   /**
    * Hash do commit Git originário da última execução ou catalogação da aplicação.
@@ -82,6 +102,11 @@ export interface Application {
   isCatalogLocked?: boolean | null;
 
   /**
+   * Data do último commit registrado na pasta da aplicação.
+   */
+  lastCommitDate?: string | null;
+
+  /**
    * Data e hora da última requisição assinada ou execução detectada.
    */
   lastSeenAt?: string | null;
@@ -101,6 +126,11 @@ export interface Application {
    */
   masters?: Array<User> | null;
   menuGroupName?: string | null;
+
+  /**
+   * Lista de módulos ou aplicações padrão contidos e combinados nesta aplicação.
+   */
+  modules?: (Array<'CRM' | 'Cadastros' | 'Financeiro' | 'Vendas' | 'Produtos' | 'Mensagens' | 'Organizacao' | 'Projetos' | 'Arquivos' | 'Formularios' | 'CMS' | 'LowCode' | 'Dynamic' | 'Treinamento' | 'DevTools' | 'Codex' | 'SEO' | 'Threejs' | 'Grupos'>) | null;
 
   /**
    * O nome da aplicação. Este nome é exibido aos usuários e é usado para identificação.

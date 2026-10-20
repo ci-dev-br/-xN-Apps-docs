@@ -1,17 +1,16 @@
 /* tslint:disable */
 /* eslint-disable */
+import { Credential } from '../models/credential';
 export interface Produto {
   categoria: string | null;
   createdAt?: Date | null;
-  createdBy?: {
-} | null;
+  createdBy?: Credential | null;
   deleted?: boolean | null;
   descricao: string | null;
   estoque: number;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
-  lastModifiedBy?: {
-} | null;
+  lastModifiedBy?: Credential | null;
   marca: string | null;
   nome: string;
   precoCusto: number;
