@@ -1,6 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface SyncPayloadDao {
-  data: {
-};
+  data?: {
+    [key: string]: any;
+  };
+  id?: string | null;
+  [key: string]: any;
 }

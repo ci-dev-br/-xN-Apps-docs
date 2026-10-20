@@ -5,7 +5,7 @@ function getColor() {
     return `#${hex()}${hex()}${hex()}${hex()}${hex()}${hex()}`.toUpperCase()
 }
 
-export interface IApp extends Application {
+export interface IApp extends Omit<Application, 'modules'> {
     color?: string;
     url?: string;
     icon?: string;

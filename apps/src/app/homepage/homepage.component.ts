@@ -130,7 +130,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     protected info?: any[];
     protected sidebar = false;
     protected categorias?: any[];
-    protected apps?: Application[];
+    protected apps?: any[];
     protected bgs = ['/bg-apps-290847.jpg'];
     loading?: boolean;
 
