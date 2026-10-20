@@ -185,8 +185,22 @@ export class DynInputModulesComponent implements OnInit, OnDestroy {
   @Input() fieldName?: string = 'modules';
   @Input() label?: string = 'Módulos da Aplicação';
   @Input() description?: string = 'Selecione e combine quais módulos padrão e customizados compõem esta aplicação.';
-  @Input() formGroup?: FormGroup;
-  @Input() formControl?: FormControl;
+  @Input() parentFormGroup?: FormGroup;
+  @Input() parentFormControl?: FormControl;
+
+  @Input() set formGroup(val: FormGroup | undefined) {
+    this.parentFormGroup = val;
+  }
+  get formGroup(): FormGroup | undefined {
+    return this.parentFormGroup;
+  }
+
+  @Input() set formControl(val: FormControl | undefined) {
+    this.parentFormControl = val;
+  }
+  get formControl(): FormControl | undefined {
+    return this.parentFormControl;
+  }
 
   // Lista de módulos disponíveis (padrões + customizados adicionados)
   allModules: IModuleItem[] = [];

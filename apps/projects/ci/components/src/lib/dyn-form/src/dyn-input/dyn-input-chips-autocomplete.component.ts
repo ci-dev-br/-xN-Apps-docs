@@ -18,8 +18,22 @@ export class DynInputChipsAutocompleteComponent implements OnInit, OnDestroy {
   @Input() label?: string = 'Módulos Integrados';
   @Input() description?: string = 'Selecione os módulos com auto-complete e organize via chips.';
   @Input() placeholder?: string = 'Digite ou selecione um módulo...';
-  @Input() formGroup?: FormGroup;
-  @Input() formControl?: FormControl;
+  @Input() parentFormGroup?: FormGroup;
+  @Input() parentFormControl?: FormControl;
+
+  @Input() set formGroup(val: FormGroup | undefined) {
+    this.parentFormGroup = val;
+  }
+  get formGroup(): FormGroup | undefined {
+    return this.parentFormGroup;
+  }
+
+  @Input() set formControl(val: FormControl | undefined) {
+    this.parentFormControl = val;
+  }
+  get formControl(): FormControl | undefined {
+    return this.parentFormControl;
+  }
   @Input() enumOptions?: string[];
 
   @ViewChild('moduleInput') moduleInput?: ElementRef<HTMLInputElement>;
