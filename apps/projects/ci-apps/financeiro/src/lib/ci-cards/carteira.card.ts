@@ -101,11 +101,14 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
             display: flex;
             flex-direction: column;
             border-radius: 14px;
+            background: var(--mat-sys-surface-container, var(--mat-sys-surface, #ffffff));
+            border: 1px solid var(--mat-sys-outline-variant, #e2e8f0);
+            color: var(--mat-sys-on-surface, #0f172a);
         }
 
         .wallet-avatar {
-            background: rgba(99, 102, 241, 0.15);
-            color: #4f46e5;
+            background: var(--mat-sys-primary-container, rgba(99, 102, 241, 0.15));
+            color: var(--mat-sys-on-primary-container, #4f46e5);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -124,8 +127,9 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
 
         .balance-container {
             margin: 16px 0 12px 0;
-            background: linear-gradient(135deg, #1e1e38 0%, #2b2b52 100%);
-            color: white;
+            background: linear-gradient(135deg, var(--mat-sys-surface-container-highest, #1e1b4b) 0%, var(--mat-sys-primary-container, #312e81) 100%);
+            color: var(--mat-sys-on-primary-container, #ffffff);
+            border: 1px solid var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.15));
             border-radius: 12px;
             padding: 16px;
 
@@ -138,11 +142,12 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
                     font-size: 0.8rem;
                     text-transform: uppercase;
                     letter-spacing: 0.05em;
-                    opacity: 0.8;
+                    color: var(--mat-sys-on-primary-container, rgba(255, 255, 255, 0.8));
+                    opacity: 0.85;
                 }
 
                 .eye-btn {
-                    color: white;
+                    color: var(--mat-sys-on-primary-container, rgba(255, 255, 255, 0.85));
                     width: 24px;
                     height: 24px;
                     line-height: 24px;
@@ -154,6 +159,7 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
                 font-size: 1.8rem;
                 font-weight: 700;
                 margin-top: 4px;
+                color: var(--mat-sys-on-primary-container, #ffffff);
             }
         }
 
@@ -175,13 +181,13 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
                 mat-icon { font-size: 14px; width: 14px; height: 14px; }
 
                 &.entrada {
-                    background: rgba(34, 197, 94, 0.1);
+                    background: rgba(34, 197, 94, 0.12);
                     color: #16a34a;
                 }
 
                 &.saida {
-                    background: rgba(239, 68, 68, 0.1);
-                    color: #ef4444;
+                    background: rgba(var(--mat-sys-error-rgb, 239, 68, 68), 0.12);
+                    color: var(--mat-sys-error, #ef4444);
                 }
             }
         }
@@ -193,7 +199,7 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
                 font-weight: 600;
                 text-transform: uppercase;
                 letter-spacing: 0.05em;
-                color: #6b7280;
+                color: var(--mat-sys-on-surface-variant, #6b7280);
                 margin-bottom: 8px;
             }
 
@@ -208,20 +214,26 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
                 justify-content: space-between;
                 align-items: center;
                 font-size: 0.8rem;
-                padding: 4px 0;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+                padding: 6px 0;
+                border-bottom: 1px solid var(--mat-sys-outline-variant, #f1f5f9);
 
                 .tx-info {
                     display: flex;
                     flex-direction: column;
-                    .tx-desc { font-weight: 500; }
-                    .tx-date { font-size: 0.7rem; color: #9ca3af; }
+                    .tx-desc {
+                        font-weight: 500;
+                        color: var(--mat-sys-on-surface, #1e293b);
+                    }
+                    .tx-date {
+                        font-size: 0.7rem;
+                        color: var(--mat-sys-on-surface-variant, #9ca3af);
+                    }
                 }
 
                 .tx-amount {
                     font-weight: 600;
                     &.entrada { color: #16a34a; }
-                    &.saida { color: #ef4444; }
+                    &.saida { color: var(--mat-sys-error, #ef4444); }
                 }
             }
         }
