@@ -17,7 +17,7 @@ export interface IndicatorsControllerGetIndicators$Params {
 }
 
 export function indicatorsControllerGetIndicators(http: HttpClient, rootUrl: string, params: IndicatorsControllerGetIndicators$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, indicatorsControllerGetIndicators.PATH, 'post');
+  const rb = new RequestBuilder(rootUrl, indicatorsControllerGetIndicators.PATH, 'get');
   if (params) {
     rb.path('ticker', params.ticker, {});
     rb.query('date', params.date, {});

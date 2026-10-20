@@ -12,7 +12,7 @@ export interface FinancialsControllerGetLatest$Params {
 }
 
 export function financialsControllerGetLatest(http: HttpClient, rootUrl: string, params: FinancialsControllerGetLatest$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, financialsControllerGetLatest.PATH, 'post');
+  const rb = new RequestBuilder(rootUrl, financialsControllerGetLatest.PATH, 'get');
   if (params) {
     rb.path('ticker', params.ticker, {});
   }

@@ -5,8 +5,4 @@ export interface Card {
   componentName?: string | null;
   componentVersion?: string | null;
   settings?: CardOption | null;
-  cols?: number | null;
-  rows?: number | null;
-  title?: string | null;
-  inputs?: any | null;
 }

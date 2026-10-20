@@ -10,9 +10,30 @@ export interface Application {
   administrators?: Array<User> | null;
 
   /**
+   * Lista de IDs de tenants com permissão para carregar esta aplicação. Se vazio ou nulo, liberado a todos.
+   */
+  allowedTenantIds?: Array<string> | null;
+
+  /**
+   * Chave única associada à rota da aplicação no cliente (ex: Mensagens, Arquivos, Cadastros).
+   */
+  appKey?: string | null;
+
+  /**
    * A categoria à qual a aplicação pertence. Isso ajuda na organização e filtragem das aplicações.
    */
   categoria?: string | null;
+
+  /**
+   * Lista de desenvolvedores e colaboradores do repositório/aplicação.
+   */
+  collaborators?: Array<string> | null;
+
+  /**
+   * Regras e metadados contextuais (ex: versão mínima, recursos exigidos, restrições de planos).
+   */
+  contextPolicies?: {
+} | null;
 
   /**
    * A descrição detalhada da aplicação.
@@ -24,6 +45,16 @@ export interface Application {
    * Adicione os domínios que podem responder por esta aplicação.
    */
   domains?: Array<Domain> | null;
+
+  /**
+   * Data e hora da primeira execução/catalogação da aplicação.
+   */
+  firstSeenAt?: string | null;
+
+  /**
+   * Hash do commit Git originário da última execução ou catalogação da aplicação.
+   */
+  gitVersionHash?: string | null;
 
   /**
    * Usuário responsável pelo hosteamento da aplicação.
@@ -39,6 +70,21 @@ export interface Application {
    * ID interno da aplicação. Este ID é gerado automaticamente e é usado para identificar a aplicação de forma única no sistema.
    */
   id?: string | null;
+
+  /**
+   * Determina se a aplicação está ativa e disponível para carregamento na plataforma.
+   */
+  isActive?: boolean | null;
+
+  /**
+   * Quando verdadeiro, impede que a catalogação automática sobrescreva customizações manuais feitas por administradores.
+   */
+  isCatalogLocked?: boolean | null;
+
+  /**
+   * Data e hora da última requisição assinada ou execução detectada.
+   */
+  lastSeenAt?: string | null;
 
   /**
    * Logo da aplicação
@@ -68,18 +114,13 @@ export interface Application {
   roles?: Array<string> | null;
 
   /**
+   * Caminho da rota registrado no painel do cliente (ex: /Mensagens, /Arquivos).
+   */
+  routePath?: string | null;
+
+  /**
    * O endereço URL principal da aplicação. Este é o ponto de acesso externo para a aplicação.
    */
-  /**
-   * Módulos e aplicações padrão contidos e combinados nesta aplicação.
-   */
-  modules?: Array<string> | null;
-
-  /**
-   * Regras adicionais customizadas da aplicação.
-   */
-  customRules?: Record<string, any> | null;
-
   url?: string | null;
 
   /**

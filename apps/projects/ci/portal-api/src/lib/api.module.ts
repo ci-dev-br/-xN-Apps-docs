@@ -5,12 +5,15 @@ import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
 import { ApiService } from './services/api.service';
+import { LoggerService } from './services/logger.service';
 import { SystemService } from './services/system.service';
 import { DeviceService } from './services/device.service';
 import { MessageService } from './services/message.service';
+import { NotificationService } from './services/notification.service';
 import { AuthService } from './services/auth.service';
 import { RegisterService } from './services/register.service';
 import { InviteService } from './services/invite.service';
+import { TenantService } from './services/tenant.service';
 import { PhotoService } from './services/photo.service';
 import { FileService } from './services/file.service';
 import { FileExplorerService } from './services/file-explorer.service';
@@ -20,9 +23,12 @@ import { DomainService } from './services/domain.service';
 import { ContactsService } from './services/contacts.service';
 import { ChamadaService } from './services/chamada.service';
 import { ConversationService } from './services/conversation.service';
+import { MessagerService } from './services/messager.service';
 import { ProductService } from './services/product.service';
+import { CodexService } from './services/codex.service';
 import { PranchetaService } from './services/prancheta.service';
 import { UserService } from './services/user.service';
+import { SocialService } from './services/social.service';
 import { CategoryService } from './services/category.service';
 import { CadastroService } from './services/cadastro.service';
 import { EnderecoService } from './services/endereco.service';
@@ -71,7 +77,7 @@ import { KeyboardThemesService } from './services/keyboard-themes.service';
 import { ChangelogService } from './services/changelog.service';
 
 export function getServiceAsSchema(schema: string): Type<any>{
-  return ({ 'ApiService': ApiService,'SystemService': SystemService,'DeviceService': DeviceService,'MessageService': MessageService,'AuthService': AuthService,'RegisterService': RegisterService,'InviteService': InviteService,'PhotoService': PhotoService,'FileService': FileService,'FileExplorerService': FileExplorerService,'VideoService': VideoService,'ApplicationService': ApplicationService,'DomainService': DomainService,'ContactsService': ContactsService,'ChamadaService': ChamadaService,'ConversationService': ConversationService,'ProductService': ProductService,'PranchetaService': PranchetaService,'UserService': UserService,'CategoryService': CategoryService,'CadastroService': CadastroService,'EnderecoService': EnderecoService,'InformacaoContatoService': InformacaoContatoService,'PessoaService': PessoaService,'UnidadeMedidaService': UnidadeMedidaService,'PaisService': PaisService,'DocumentoIdentificacaoService': DocumentoIdentificacaoService,'TipoDocumentoIdentificacaoService': TipoDocumentoIdentificacaoService,'NotasFiscaisService': NotasFiscaisService,'LancamentoFinanceiroService': LancamentoFinanceiroService,'AnaliseFundamentalistaService': AnaliseFundamentalistaService,'AnaliseMacroeconomicaService': AnaliseMacroeconomicaService,'IndicadoresMacroeconomicosService': IndicadoresMacroeconomicosService,'DadosFundamentalistasCvmService': DadosFundamentalistasCvmService,'I11NService': I11NService,'OrganizacaoService': OrganizacaoService,'NewsService': NewsService,'FormsService': FormsService,'WebsiteService': WebsiteService,'SitePageService': SitePageService,'CommentMetaService': CommentMetaService,'CommentService': CommentService,'LinksService': LinksService,'SiteOptionService': SiteOptionService,'SitePostService': SitePostService,'TermService': TermService,'TermMetaService': TermMetaService,'ProjetoService': ProjetoService,'ClienteProjetoService': ClienteProjetoService,'WorkItemService': WorkItemService,'VendaProdutoService': VendaProdutoService,'ServicoService': ServicoService,'PromocaoService': PromocaoService,'ProfissionalService': ProfissionalService,'ProdutoService': ProdutoService,'PagamentoService': PagamentoService,'HistoricoContatoService': HistoricoContatoService,'ClienteCrmService': ClienteCrmService,'AtendimentoService': AtendimentoService,'AgendamentoService': AgendamentoService,'DeployerService': DeployerService,'ChessService': ChessService,'GameplayService': GameplayService,'KeyboardThemesService': KeyboardThemesService,'ChangelogService': ChangelogService, }[ schema + 'Service'] as any) || undefined;
+  return ({ 'ApiService': ApiService,'LoggerService': LoggerService,'SystemService': SystemService,'DeviceService': DeviceService,'MessageService': MessageService,'NotificationService': NotificationService,'AuthService': AuthService,'RegisterService': RegisterService,'InviteService': InviteService,'TenantService': TenantService,'PhotoService': PhotoService,'FileService': FileService,'FileExplorerService': FileExplorerService,'VideoService': VideoService,'ApplicationService': ApplicationService,'DomainService': DomainService,'ContactsService': ContactsService,'ChamadaService': ChamadaService,'ConversationService': ConversationService,'MessagerService': MessagerService,'ProductService': ProductService,'CodexService': CodexService,'PranchetaService': PranchetaService,'UserService': UserService,'SocialService': SocialService,'CategoryService': CategoryService,'CadastroService': CadastroService,'EnderecoService': EnderecoService,'InformacaoContatoService': InformacaoContatoService,'PessoaService': PessoaService,'UnidadeMedidaService': UnidadeMedidaService,'PaisService': PaisService,'DocumentoIdentificacaoService': DocumentoIdentificacaoService,'TipoDocumentoIdentificacaoService': TipoDocumentoIdentificacaoService,'NotasFiscaisService': NotasFiscaisService,'LancamentoFinanceiroService': LancamentoFinanceiroService,'AnaliseFundamentalistaService': AnaliseFundamentalistaService,'AnaliseMacroeconomicaService': AnaliseMacroeconomicaService,'IndicadoresMacroeconomicosService': IndicadoresMacroeconomicosService,'DadosFundamentalistasCvmService': DadosFundamentalistasCvmService,'I11NService': I11NService,'OrganizacaoService': OrganizacaoService,'NewsService': NewsService,'FormsService': FormsService,'WebsiteService': WebsiteService,'SitePageService': SitePageService,'CommentMetaService': CommentMetaService,'CommentService': CommentService,'LinksService': LinksService,'SiteOptionService': SiteOptionService,'SitePostService': SitePostService,'TermService': TermService,'TermMetaService': TermMetaService,'ProjetoService': ProjetoService,'ClienteProjetoService': ClienteProjetoService,'WorkItemService': WorkItemService,'VendaProdutoService': VendaProdutoService,'ServicoService': ServicoService,'PromocaoService': PromocaoService,'ProfissionalService': ProfissionalService,'ProdutoService': ProdutoService,'PagamentoService': PagamentoService,'HistoricoContatoService': HistoricoContatoService,'ClienteCrmService': ClienteCrmService,'AtendimentoService': AtendimentoService,'AgendamentoService': AgendamentoService,'DeployerService': DeployerService,'ChessService': ChessService,'GameplayService': GameplayService,'KeyboardThemesService': KeyboardThemesService,'ChangelogService': ChangelogService, }[ schema + 'Service'] as any) || undefined;
 } 
 
 /**
@@ -91,12 +97,15 @@ export class ApiModule {
       ngModule: ApiModule,
       providers: [
         ApiService,
+        LoggerService,
         SystemService,
         DeviceService,
         MessageService,
+        NotificationService,
         AuthService,
         RegisterService,
         InviteService,
+        TenantService,
         PhotoService,
         FileService,
         FileExplorerService,
@@ -106,9 +115,12 @@ export class ApiModule {
         ContactsService,
         ChamadaService,
         ConversationService,
+        MessagerService,
         ProductService,
+        CodexService,
         PranchetaService,
         UserService,
+        SocialService,
         CategoryService,
         CadastroService,
         EnderecoService,

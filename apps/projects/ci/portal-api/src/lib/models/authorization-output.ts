@@ -2,4 +2,5 @@
 /* eslint-disable */
 export interface AuthorizationOutput {
   authorization: string;
+  chaveAcesso?: string | null;
 }
