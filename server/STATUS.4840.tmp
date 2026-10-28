@@ -1,0 +1,24 @@
+{
+  "4840": {
+    "startedAt": "2026-10-21T04:13:34.626Z",
+    "status": "running",
+    "debug": false,
+    "warmedUp": true,
+    "port": 86,
+    "lastHeartbeat": "2026-10-21T04:27:08.376Z",
+    "nextStatusCheckAt": "2026-10-21T04:27:08.676Z",
+    "updatedAt": "2026-10-21T04:27:08.376Z"
+  },
+  "9552": {
+    "startedAt": "2026-10-21T02:58:10.658Z",
+    "status": "online",
+    "debug": false,
+    "warmedUp": true,
+    "port": 16850,
+    "lastHeartbeat": "2026-10-21T04:27:06.891Z",
+    "nextStatusCheckAt": "2026-10-21T04:27:07.191Z",
+    "updatedAt": "2026-10-21T04:27:06.891Z",
+    "previousPort": 16850,
+    "lastPort86ClaimedAt": "2026-10-21T04:13:34.322Z"
+  }
+}
