@@ -8,7 +8,6 @@ import { lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { GruposModalComponent } from "../grupos-modal/grupos-modal.component";
-
 @Component({
     selector: 'ci-navbar',
     standalone: false,

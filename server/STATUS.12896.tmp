@@ -1,0 +1,36 @@
+{
+  "10920": {
+    "startedAt": "2026-10-23T07:32:34.721Z",
+    "status": "stopped",
+    "debug": false,
+    "warmedUp": true,
+    "port": 86,
+    "lastHeartbeat": "2026-10-23T15:05:02.603Z",
+    "updatedAt": "2026-10-23T15:05:02.652Z",
+    "stoppedAt": "2026-10-23T15:05:02.603Z"
+  },
+  "12896": {
+    "startedAt": "2026-10-23T02:36:21.120Z",
+    "status": "online",
+    "debug": false,
+    "warmedUp": true,
+    "port": 86,
+    "lastHeartbeat": "2026-10-23T15:05:02.652Z",
+    "updatedAt": "2026-10-23T15:05:02.652Z",
+    "previousPort": 21722,
+    "lastPort86ClaimedAt": "2026-10-23T02:45:32.326Z",
+    "stoppedAt": "2026-10-23T02:37:39.314Z",
+    "nextStatusCheckAt": "2026-10-23T15:05:02.952Z",
+    "handoffTargetPid": "12896"
+  },
+  "14144": {
+    "startedAt": "2026-10-23T15:04:57.165Z",
+    "status": "online",
+    "debug": true,
+    "warmedUp": true,
+    "lastHeartbeat": "2026-10-23T15:05:02.611Z",
+    "nextStatusCheckAt": "2026-10-23T15:05:03.496Z",
+    "updatedAt": "2026-10-23T15:05:02.611Z",
+    "port": 11404
+  }
+}

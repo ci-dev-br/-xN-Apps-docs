@@ -108,7 +108,7 @@ export class RecentQuotesCard implements OnInit {
                 );
                 this.stage = 'run';
             } catch (error) {
-                alert('Erro ao buscar histórico de cotações.');
+                console.trace(error);
             }
         }
     }

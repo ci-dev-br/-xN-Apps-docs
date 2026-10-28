@@ -6,7 +6,9 @@ import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom, from, lastValueFrom, mergeMap, of, throwError, toArray } from 'rxjs';
 import * as Parser from 'rss-parser';
 import * as cheerio from 'cheerio';
+//
 // Entidades (Certifique-se de que os caminhos refletem a sua estrutura de pastas)
+//
 import { News } from '../models/news.entity';
 import { Category } from '../models/category.entity';
 import { Source, SourceStatus } from '../models/source.entity';
