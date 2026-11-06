@@ -3,7 +3,7 @@ import { Projeto } from './models/projeto.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkItem } from './models/work-item.entity';
 import { ClienteProjeto } from './models/cliente-projeto.entity';
-import { CasdastroModule } from '@ci/cadastro';
+import { CadastroModule } from '@ci/cadastro';
 import { ProjetoService } from './service/projeto.service';
 import { ProjetoController } from './controller/projeto.controller';
 import { CoreModule } from '@ci/core';
@@ -25,7 +25,7 @@ export const ProjetosEntities = [
     TypeOrmModule.forFeature([
       ...ProjetosEntities,
     ]),
-    CasdastroModule,
+    CadastroModule,
 
   ],
   providers: [

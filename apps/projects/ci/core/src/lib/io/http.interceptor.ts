@@ -10,22 +10,18 @@ import { Message } from "../services/message";
 import { ConsoleService } from "../services/console.service";
 import { GIT_VERSION } from "../version/git-version";
 import { ApplicationCatalogService } from "../apps/application-catalog.service";
-
 // import { AuthService } from "@ci/portal-api";
 /**
  *  Interceptador de requisições HTTP para adicionar o token de autorização e tratar erros.
  * 
  * ## Descrição:
  * Este interceptador é responsável por interceptar todas as requisições HTTP feitas pela aplicação. Ele executa as seguintes tarefas:
-
 1. **Adição de Token de Autorização:** Antes de cada requisição, verifica se existe um token de autorização (bearer token) armazenado localmente. Se sim, adiciona este token ao cabeçalho `Authorization` da requisição. Isso garante que as requisições autenticadas sejam enviadas com as credenciais necessárias.
-
 2. **Tratamento de Erros de Rede e API:**
    - **Timeout:** Aplica um timeout para cada requisição. Se a requisição não for concluída dentro desse tempo, um `HttpErrorResponse` com status 0 (Interceptor Timeout) é gerado.
    - **Erros de Conexão (status 0 ou 404):** Se a requisição falhar com status 0 (geralmente indicando problemas de rede ou timeout) ou 404 (recurso não encontrado), o interceptador tenta alternar para um gateway de API alternativo, se configurado. Ele mantém uma lista de `alternativeApiGateways` e tenta a próxima URL na lista. Isso visa melhorar a resiliência da aplicação em caso de falhas de um servidor de API. Um contador `_pipocate` é usado para evitar loops infinitos de tentativas.
    - **Acesso Negado (mensagem específica):** Se a mensagem de erro indicar "Acesso negado. Não corresponde ao nível de acesso necessário.", o usuário é redirecionado para a página `/meus-apps`.
    - **Erro de Autorização (status 401):** Se a requisição retornar um status 401 (Não Autorizado) e houver um `refreshToken` disponível, o interceptador tenta renovar o token de acesso usando o `AuthService`. Se a renovação for bem-sucedida, o novo token é armazenado, e a requisição original é repetida com o novo token. Se a renovação falhar, o erro é propagado.
-
 3. **Gerenciamento de `efail`:** A propriedade `efail` é usada para armazenar a URL do gateway de API que está falhando ou sendo testado. Isso permite que o interceptador "lembre" qual gateway tentar em caso de falhas consecutivas. O valor de `efail` é persistido no `localStorage`.  
  */
 @Injectable()
@@ -34,41 +30,6 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
     private _refreshInFlight$?: Observable<{ authorization?: string }>;
     private _pipocate: number = 0;
     private _efail?: string | number | undefined;
-    public get efail(): string | number | undefined {
-        return this._efail;
-    }
-    public set efail(value: string | number | undefined) {
-        if (this._efail === value) return;
-        this._efail = value;
-        if (!!value) {
-            localStorage.setItem('e-fail', JSON.stringify(value));
-        } else {
-            localStorage.removeItem('e-fail');
-        }
-    }
-    constructor(
-        @Optional() private readonly router: Router,
-        @Optional() private readonly storage: StorageService,
-        @Optional() private readonly auth: AuthService,
-        @Optional() private readonly message: Message,
-        private readonly injector: Injector,
-        @Optional() private readonly consoleService?: ConsoleService,
-        @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
-    ) {
-        let efail = typeof localStorage !== 'undefined' ? localStorage.getItem('e-fail') : null;
-        if (!!efail) {
-            try {
-                this.efail = JSON.parse(efail);
-            } catch (error) {
-                console.trace(error);
-            }
-        }
-    }
-
-    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        return this._executeRequest(request, next);
-    }
-
     /**
      * Executa a requisição HTTP aplicando gateway alternativo quando configurado.
      */
@@ -83,7 +44,6 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         }
         return this._eTry(request, next) as any;
     }
-
     private _eTry(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(this.addBearerToken(request))
             .pipe(timeout({
@@ -143,7 +103,6 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                 return throwError(() => error);
             }));
     }
-
     private getSecondaryTokens(activeBearer?: string): string[] {
         if (typeof localStorage === 'undefined') return [];
         try {
@@ -165,7 +124,6 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         }
         return [];
     }
-
     private addBearerToken(request: HttpRequest<any>): HttpRequest<any> {
         let bearer: string | undefined = undefined;
         const isApiRequest =
@@ -173,14 +131,12 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
             (!!this.config?.rootApi && request.url.startsWith(this.config.rootApi)) ||
             (Array.isArray(this.config?.alternativeApiGateways) && this.config!.alternativeApiGateways.some(gw => request.url.startsWith(gw))) ||
             request.url.startsWith('/');
-
         if (isApiRequest && this.storage) {
             const user_storage: any = this.storage.restore('apps.ci.dev.br.store.User');
             if (user_storage?.authentication?.bearer) {
                 bearer = user_storage.authentication.bearer;
             }
         }
-
         // Assina a aplicação de origem e o hash da versão segundo o Git
         const originApp = ApplicationCatalogService.currentAppKey ||
             ApplicationCatalogService.detectFromUrl(this.router?.url || (typeof window !== 'undefined' ? window.location.pathname : '')) ||
@@ -188,12 +144,10 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         const cleanKey = originApp.replace(/^\//, '').trim();
         const appGit = (GIT_VERSION as any).getAppGitInfo?.(cleanKey) || (GIT_VERSION as any).applications?.[cleanKey] || (GIT_VERSION as any).applications?.[cleanKey.toLowerCase()];
         const gitHash = appGit?.shortHash || GIT_VERSION.shortHash;
-
         const headersConfig: { [key: string]: string } = {
             'X-Origin-Application': originApp,
             'X-Application-Git-Hash': gitHash
         };
-
         if (bearer) {
             headersConfig['timeout'] = '10000';
             headersConfig['Authorization'] = `Bearer ${bearer}`;
@@ -202,12 +156,10 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                 headersConfig['x-additional-tokens'] = secondaryTokens.join(',');
             }
         }
-
         return request.clone({
             setHeaders: headersConfig
         });
     }
-
     /**
      * Trata erros 401/408 realizando um único Refresh compartilhado para todas as requisições simultâneas.
      */
@@ -220,11 +172,9 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
         if (request.url.includes('/auth/Refresh') || request.url.includes('/auth/Acessar')) {
             return throwError(() => error);
         }
-
         if (error?.status === 401 || error?.status === 408) {
             const user: { authentication?: { bearer?: string, refreshToken?: string, chaveAcesso?: string }, chaveAcesso?: string } =
                 this.storage?.restore('apps.ci.dev.br.store.User');
-
             const chaveAcesso = user?.authentication?.chaveAcesso || user?.chaveAcesso;
             if (user?.authentication?.refreshToken && this.auth) {
                 if (!this._refreshInFlight$) {
@@ -255,7 +205,6 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                         shareReplay(1)
                     );
                 }
-
                 return this._refreshInFlight$.pipe(
                     switchMap(() => next.handle(this.addBearerToken(request))),
                     catchError(refreshErr => {
@@ -268,7 +217,39 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                 );
             }
         }
-
         return throwError(() => error);
+    }
+    constructor(
+        @Optional() private readonly router: Router,
+        @Optional() private readonly storage: StorageService,
+        @Optional() private readonly auth: AuthService,
+        @Optional() private readonly message: Message,
+        private readonly injector: Injector,
+        @Optional() private readonly consoleService?: ConsoleService,
+        @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
+    ) {
+        let efail = typeof localStorage !== 'undefined' ? localStorage.getItem('e-fail') : null;
+        if (!!efail) {
+            try {
+                this.efail = JSON.parse(efail);
+            } catch (error) {
+                console.trace(error);
+            }
+        }
+    }
+    public get efail(): string | number | undefined {
+        return this._efail;
+    }
+    public set efail(value: string | number | undefined) {
+        if (this._efail === value) return;
+        this._efail = value;
+        if (!!value) {
+            localStorage.setItem('e-fail', JSON.stringify(value));
+        } else {
+            localStorage.removeItem('e-fail');
+        }
+    }
+    public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        return this._executeRequest(request, next);
     }
 }

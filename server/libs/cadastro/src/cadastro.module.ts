@@ -87,7 +87,7 @@ export const CadastroEntidades = [
         TipoDocumentoIdentificacaoController,
     ]
 })
-export class CasdastroModule { }
+export class CadastroModule { }
 export {
     Endereco,
     Pessoa,

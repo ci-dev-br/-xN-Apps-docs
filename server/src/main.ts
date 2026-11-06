@@ -46,7 +46,7 @@ const IS_DEBUG_INSTANCE = Boolean(
   process.argv.some((arg) => arg === '--debug' || arg.startsWith('--debug=') || arg.startsWith('--inspect')) ||
   process.execArgv.some((arg) => arg.startsWith('--inspect') || arg.startsWith('--debug')) ||
   (ENV_DEBUG_BEFORE_DOTENV && ENV_DEBUG_BEFORE_DOTENV !== 'false' && ENV_DEBUG_BEFORE_DOTENV !== '0') ||
-  (process.env.DEBUG === 'true' || process.env.DEBUG === '1')
+(process.env.DEBUG === 'true' || process.env.DEBUG === '1')
 );
 
 interface ProcessInfo {

@@ -36,4 +36,4 @@ lerna-debug.log*
 ormconfig.json
 .env
 public/*
-STATUS
+STATUS**

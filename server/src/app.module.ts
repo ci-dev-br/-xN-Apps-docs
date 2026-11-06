@@ -15,7 +15,7 @@ import { UsersModule, UserEntities } from '@ci/user/users.module';
 import { StorageEntities, StorageModule } from '@ci/storage/storage.module';
 import { CoreEntities, CoreModule, LoggerModule } from '@ci/core';
 import { ProlaboreEntities } from '@ci/prolabore/prolabore.module';
-import { CadastroEntidades, CasdastroModule } from '@ci/cadastro/cadastro.module';
+import { CadastroEntidades, CadastroModule } from '@ci/cadastro/cadastro.module';
 import { PaymentEntities, PaymentModule } from '@ci/payment/payment.module';
 import { FiscalEntities, FiscalModule } from '@ci/fiscal';
 import { InfraEntities, InfraModule } from '@ci/core/infra/infra.module';
@@ -37,6 +37,7 @@ import { CrmModule } from '@ci/crm';
 import { DyMEntities, DyMModule } from '@ci/mlms';
 import { EspazioModule, Entities as EspazioEntities } from '@ci/espazio/espazio.module';
 import { TaskingModule, Entities as TaskingEntities } from '@ci/tasking/tasking.module';
+
 /**
  * Adicione os módulos que podem ser carregados pela configfuração do environment;
  * Nesta versão a compilação possui todos os módulos mesmo não estando indicados no .env
@@ -46,10 +47,10 @@ import { TaskingModule, Entities as TaskingEntities } from '@ci/tasking/tasking.
  */
 const is_production = !!process.execArgv.find(arg => arg === '--prod');
 config({ path: is_production ? '.env' : '.env.dev' });
-const LoadedEntities = [
-];
-const LoadedModules = [
-]
+
+const LoadedEntities = [];
+const LoadedModules = [];
+
 /***
  * Trecho auto-gerado, não modificar manualmente «
  */
@@ -86,7 +87,8 @@ const _entities_name = {
   Espazio: EspazioEntities,
   Tasking: TaskingEntities,
   Users: UserEntities,
-}
+};
+
 const _modules_name = {
   System: SystemModule,
   Notificacao: NotificacaoModule,
@@ -100,7 +102,7 @@ const _modules_name = {
   Tenant: TenantModule,
   Users: UsersModule,
   Storage: StorageModule,
-  Casdastro: CasdastroModule,
+  Cadastro: CadastroModule,
   Payment: PaymentModule,
   Fiscal: FiscalModule,
   Infra: InfraModule,
@@ -120,31 +122,34 @@ const _modules_name = {
   Tasking: TaskingModule,
   Logger: LoggerModule,
   Core: CoreModule,
-}
+};
 /**
  * « end
  */
+
 process.env.MODULES.split(',').forEach(e => {
   if (_entities_name[e]) LoadedEntities.push(..._entities_name[e]);
   if (_modules_name[e]) LoadedModules.push(_modules_name[e]);
-})
+});
+
 @Module({
   imports: [
     CoreModule.forRoot({
       snapshot: true
     }),
     TypeOrmModule.forRoot({
-      type: process.env.DB_TYPE as any,
+      type: /* (process.env.DB_TYPE ||  */'postgres',
       host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT || 0),
       username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
+      password: String(process.env.DB_PASSWORD || ''), // <-- AQUI ESTÁ A CORREÇÃO ♥
       database: process.env.DB_DATABASE,
-      synchronize: Boolean(process.env.DB_SYNCHRONIZE || false),
-      autoSave: true,
+      // logging: [/*'query'*/, 'error'],
+      synchronize: !!(process.env.DB_SYNCHRONIZE || false),
       cache: true,
-      statementCacheSize: 1000,
+      //statementCacheSize: 1000,
       // logger: 'file',
+      // multithreading: true,
       maxQueryExecutionTime: 1000,
       namingStrategy: new SnakeNamingStrategy(),
       verboseRetryLog: false,
@@ -161,7 +166,6 @@ process.env.MODULES.split(',').forEach(e => {
   ],
   providers: [
     CiApplicationService,
-
   ],
 })
 export class AppModule { }

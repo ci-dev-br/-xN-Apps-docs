@@ -130,6 +130,7 @@ export class FormularioEditComponent {
     }
   }
   async compartilhar() {
+    // TODO: Acionar compartilhamento para objeto em evidência.
 
   }
 }

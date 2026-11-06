@@ -11,7 +11,7 @@ interface ActionsDialogData {
     acoes: { title: string, act?: any }[];
 }
 @Component({
-    selector: 'ci-keyboartd-action-menu',
+    selector: 'ci-keyboard-action-menu',
     template: `
  @if(stage==='menu'){
  @if(!!actions&& actions.length > 0){
@@ -24,7 +24,7 @@ interface ActionsDialogData {
  </div>
  }
  }@else{
- <span>Nenhuma ação catalogada...</span>
+ <span class="--vazio" >Nenhuma ação catalogada...</span>
  }
  <button mat-raised-button (click)="createNewAction()">Nova Ação</button>
  }@else if(stage === 'edit' && !!doEditing){

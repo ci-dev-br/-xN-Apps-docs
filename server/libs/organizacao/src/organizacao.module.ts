@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { Organizacao } from "./model/organizacao.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { CasdastroModule } from "@ci/cadastro/cadastro.module";
+import { CadastroModule } from "@ci/cadastro/cadastro.module";
 import { StorageModule } from "@ci/storage/storage.module";
 import { TenantModule } from "@ci/tenant/tenant.module";
 import { OrganizacaoController } from "./controller/organizacao.controller";
@@ -21,7 +21,7 @@ export const OrganizacaoEntities = [
             ...OrganizacaoEntities
         ]),
         ManagerModule,
-        CasdastroModule,
+        CadastroModule,
         StorageModule,
         TenantModule,
         AuthModule,

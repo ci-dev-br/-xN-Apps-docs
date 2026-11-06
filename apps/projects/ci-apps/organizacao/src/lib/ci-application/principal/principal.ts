@@ -69,4 +69,8 @@ export class Principal implements AfterViewInit, OnInit {
             console.trace(error);
         }
     }
+    async visualizarMinhasOrganizacoes() {
+        // TODO: abrir minhas organizações,
+
+    }
 }
