@@ -22,28 +22,30 @@ export class LoggingInterceptor implements NestInterceptor {
                             const status = err?.status || err?.statusCode || (isTimeout ? 408 : 500);
                             const isServerError = status >= 500 || !err?.status;
                             const message = `[HTTP ${status}] ${request.method} ${request.url} - ${err?.message || 'Erro de execução'}`;
-
-                            loggerService.registerServerLog({
-                                message,
-                                log: {
-                                    error: err?.message,
-                                    stack: err?.stack,
-                                    name: err?.name,
-                                    status,
-                                    controller: context.getClass()?.name,
-                                    handler: context.getHandler()?.name,
-                                },
-                                level: isServerError ? LogLevel.ERROR : LogLevel.WARN,
-                                status: isServerError ? LogStatus.NEW : LogStatus.RESOLVED,
-                                deveCorrigir: isServerError,
-                                dispararAlerta: isServerError,
-                                metadata: {
-                                    url: request.url,
-                                    method: request.method,
-                                    statusCode: status,
-                                    durationMs: Date.now() - now,
-                                },
-                            }, request).catch(() => { });
+                            setTimeout(() => (async () => {
+                                /**Registra log assincrono */
+                                loggerService.registerServerLog({
+                                    message,
+                                    log: {
+                                        error: err?.message,
+                                        stack: err?.stack,
+                                        name: err?.name,
+                                        status,
+                                        controller: context.getClass()?.name,
+                                        handler: context.getHandler()?.name,
+                                    },
+                                    level: isServerError ? LogLevel.ERROR : LogLevel.WARN,
+                                    status: isServerError ? LogStatus.NEW : LogStatus.RESOLVED,
+                                    deveCorrigir: isServerError,
+                                    dispararAlerta: isServerError,
+                                    metadata: {
+                                        url: request.url,
+                                        method: request.method,
+                                        statusCode: status,
+                                        durationMs: Date.now() - now,
+                                    },
+                                }, request).catch(() => { });
+                            })());
                         }
                     } catch { }
 

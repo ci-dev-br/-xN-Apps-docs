@@ -527,3 +527,17 @@ a:visited {
     gap: 48px;
 
 }
+
+.news-content {
+    flex: 1;
+    white-space: pre-wrap;
+    overflow-x: none;
+    overflow-y: auto;
+}
+
+.active-news-context {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+    max-height: 30vh;
+}

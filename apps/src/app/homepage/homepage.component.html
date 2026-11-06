@@ -17,18 +17,18 @@
                     @if(!!feeds()){
                     <div class="feed" #feedContainer>
                         @for(feed of feeds(); track feed.id || feed.url || $index) {
-                        <article class="feed-item" 
-                            [class.in-focus]="highlightedFeed() === feed"
+                        <article class="feed-item" [class.in-focus]="highlightedFeed() === feed"
                             (click)="focarNoticia(feed)">
-                            
+
                             @if(feed.title){
-                                <h4 class="feed-title" [innerHtml]="feed.title"></h4>
+                            <h4 class="feed-title" [innerHtml]="feed.title"></h4>
                             }
                             <div [innerHtml]="feed.content" class="feed-content"></div>
-                            
+
                             <div class="feed-source">
                                 Fonte: <a target="_blank" (click)="$event.stopPropagation()"
-                                    [href]="'https://' + feed?.sourceInfo?.domain">{{feed?.sourceInfo?.name || feed?.sourceInfo?.domain || 'Origem'}}
+                                    [href]="'https://' + feed?.sourceInfo?.domain">{{feed?.sourceInfo?.name ||
+                                    feed?.sourceInfo?.domain || 'Origem'}}
                                 </a>
                             </div>
 
@@ -50,7 +50,7 @@
                                 </button>
 
                                 <!-- Botão de focar/abrir comentários da notícia -->
-                                <button mat-button class="btn-comments-toggle" 
+                                <button mat-button class="btn-comments-toggle"
                                     [class.active]="highlightedFeed() === feed && showCommentsPane()"
                                     (click)="focarComentarios(feed, $event)"
                                     [matTooltip]="'Ver comentários desta notícia'">
@@ -60,7 +60,8 @@
 
                                 <span class="spacer"></span>
 
-                                <button mat-icon-button color="primary" (click)="interacao(feed, 'open'); $event.stopPropagation()"
+                                <button mat-icon-button color="primary"
+                                    (click)="interacao(feed, 'open'); $event.stopPropagation()"
                                     [matTooltip]="'Abrir na Origem'"><mat-icon>open_in_new</mat-icon></button>
                             </div>
 
@@ -79,41 +80,42 @@
                             <mat-icon>forum</mat-icon>
                             <span>Comentários em Foco</span>
                         </div>
-                        <button mat-icon-button (click)="toggleCommentsPane()" matTooltip="Fechar painel de comentários" class="btn-close-comments">
+                        <button mat-icon-button (click)="toggleCommentsPane()" matTooltip="Fechar painel de comentários"
+                            class="btn-close-comments">
                             <mat-icon>close</mat-icon>
                         </button>
                     </div>
 
                     @if(highlightedFeed(); as activeNews) {
-                        <div class="active-news-context">
-                            <span class="context-label">Notícia Selecionada</span>
-                            <h5 class="active-news-title" [innerHtml]="activeNews.title || 'Notícia sem título'"></h5>
-                            <div class="active-news-meta">
-                                <span>{{ activeNews?.sourceInfo?.name || 'Noticiário' }}</span>
-                                @if(activeNews.categoria) {
-                                    <span class="tag">{{ activeNews.categoria }}</span>
-                                }
-                            </div>
+                    <div class="active-news-context">
+                        <span class="context-label">Notícia Selecionada</span>
+                        <h3 class="active-news-title" [innerHtml]="activeNews.title || 'Notícia sem título'"></h3>
+                        <div class="news-content" [innerHtml]="activeNews.content" ></div>
+                        <div class="active-news-meta">
+                            <span>{{ activeNews?.sourceInfo?.name || 'Noticiário' }}</span>
+                            @if(activeNews.categoria) {
+                            <span class="tag">{{ activeNews.categoria }}</span>
+                            }
                         </div>
-
-                        <div class="comments-body">
-                            <ci-post-coments 
-                                [newsId]="activeNews.id || activeNews.url" 
-                                [feed]="activeNews" 
-                                (commentCountChange)="activeNews.commentsCount = $event">
-                            </ci-post-coments>
-                        </div>
+                    </div>
+                    <!-- :Comentários -->
+                    <div class="comments-body">
+                        <ci-post-coments [newsId]="activeNews.id || activeNews.url" [feed]="activeNews"
+                            (commentCountChange)="activeNews.commentsCount = $event">
+                        </ci-post-coments>
+                    </div>
                     } @else {
-                        <div class="no-selection-placeholder">
-                            <mat-icon>article</mat-icon>
-                            <p>Role a página ou clique em uma notícia para visualizar e participar dos comentários.</p>
-                        </div>
+                    <div class="no-selection-placeholder">
+                        <mat-icon>article</mat-icon>
+                        <p>Role a página ou clique em uma notícia para visualizar e participar dos comentários.</p>
+                    </div>
                     }
                 </aside>
                 }
 
                 @if(!showCommentsPane()) {
-                <button mat-fab extended class="btn-floating-comments-toggle" (click)="toggleCommentsPane()" matTooltip="Abrir comentários da notícia em destaque">
+                <button mat-fab extended class="btn-floating-comments-toggle" (click)="toggleCommentsPane()"
+                    matTooltip="Abrir comentários da notícia em destaque">
                     <mat-icon>forum</mat-icon>
                     <span>Comentários</span>
                 </button>
