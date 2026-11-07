@@ -10,6 +10,8 @@ export interface LancamentoFinanceiro {
   internalId?: string | null;
   lastModifiedAt?: Date | null;
   lastModifiedBy?: Credential | null;
+  mesReferencia?: string | null;
+  status?: string | null;
   tenants?: Array<string> | null;
 
   /**

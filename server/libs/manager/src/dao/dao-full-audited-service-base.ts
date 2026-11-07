@@ -233,4 +233,11 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
         }
         return data;
     }
+
+    toJSON() {
+
+        return {
+            // ...this,
+        }
+    }
 }

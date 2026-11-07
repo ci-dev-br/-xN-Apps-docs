@@ -27,7 +27,7 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
                 .replace('Bearer', '').trim();
             return {
                 ...payload,
-                refreshToken
+                // efreshToken
             };
         } catch (error) {
             console.trace(error);

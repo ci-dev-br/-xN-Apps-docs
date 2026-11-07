@@ -52,20 +52,22 @@ export class MarketNewsTickerComponent implements OnInit, OnDestroy {
             this.cdr?.markForCheck();
         }
 
+        /*
+    Desativado: 
         this.newsService.getMarketNews({ limit: 20 }).subscribe({
-            next: (data) => {
-                if (data && Array.isArray(data)) {
-                    this.items = data.filter(item => !!item && !!item.title);
-                }
-                this.isLoading = false;
-                this.cdr?.markForCheck();
-            },
-            error: (err) => {
-                console.warn('Falha ao carregar notícias de mercado para o ticker:', err);
-                this.isLoading = false;
-                this.cdr?.markForCheck();
-            }
-        });
+             next: (data: any) => {
+                 if (data && Array.isArray(data)) {
+                     this.items = data.filter(item => !!item && !!item.title);
+                 }
+                 this.isLoading = false;
+                 this.cdr?.markForCheck();
+             },
+             error: (err: any) => {
+                 console.warn('Falha ao carregar notícias de mercado para o ticker:', err);
+                 this.isLoading = false;
+                 this.cdr?.markForCheck();
+             }
+         }); */
     }
 
     onItemClick(item: News): void {

@@ -132,7 +132,7 @@ export class AuthController {
           const refreshTokenArg2 = await this.userService.updateRefreshToken(authenticated_user.id, permission_uuid);
           chave.valid = true;
           chave.alive = true;
-          chave.refreshToken = refreshTokenArg2;
+          // chave.refreshToken = refreshTokenArg2;
           await this.credencialService.atualizar(chave);
           const { /* photo, */ ...user_payload } = authenticated_user;
           res.json({
