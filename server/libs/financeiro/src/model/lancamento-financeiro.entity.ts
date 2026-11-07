@@ -42,4 +42,18 @@ export class LancamentoFinanceiro extends FullAuditedEntity {
         nullable: true
     })
     categoria?: string;
+    @ApiProperty({
+        title: 'Status',
+        nullable: true,
+        required: false
+    })
+    @Column({ nullable: true })
+    status?: string;
+    @ApiProperty({
+        title: 'Mês de Referência',
+        nullable: true,
+        required: false
+    })
+    @Column({ nullable: true })
+    mesReferencia?: Date;
 }
