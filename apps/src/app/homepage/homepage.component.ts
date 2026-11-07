@@ -82,9 +82,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
     highlightedFeed = signal<any | undefined>(undefined);
     showCommentsPane = signal<boolean>(true);
     selectedTabIndex = 0;
-
+    endMenu = signal([]);
     @ViewChild(MarketNewsFeedComponent) marketFeed?: MarketNewsFeedComponent;
-
     focarNoticiaMercado(item: any): void {
         this.selectedTabIndex = 1;
         this.cdr?.markForCheck();

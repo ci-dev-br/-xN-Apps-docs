@@ -1,4 +1,4 @@
-<ci-navbar [apps]="apps"></ci-navbar>
+<ci-navbar [apps]="apps" [endMenu]="endMenu()"></ci-navbar>
 @if(userService && !!(userService.user | async)){
 <!-- Informações do Usuário -->
 }

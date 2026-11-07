@@ -97,7 +97,7 @@ export class User {
     @ApiProperty({
         title: 'Token de atualização',
         nullable: true,
-        required: false
+        required: false,
     })
     @Column({ nullable: true })
     refreshToken?: string;
@@ -155,4 +155,5 @@ export class User {
     // Armazena o vetor de 128 dimensões gerado pelo face-api.js
     @Column({ type: 'jsonb', nullable: true })
     faceDescriptor?: number[];
+
 }
