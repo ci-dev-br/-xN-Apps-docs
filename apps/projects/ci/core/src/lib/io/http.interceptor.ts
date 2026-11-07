@@ -208,9 +208,11 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                 return this._refreshInFlight$.pipe(
                     switchMap(() => next.handle(this.addBearerToken(request))),
                     catchError(refreshErr => {
-                        if (refreshErr?.status === 401 || refreshErr?.status === 403) {
+                        if (refreshErr?.status === 401) {
                             this.storage?.clean();
                             this.router?.navigate(['/']);
+                        } else if (refreshErr?.status === 403) {
+                            console.trace(refreshErr, this);
                         }
                         return throwError(() => refreshErr);
                     })

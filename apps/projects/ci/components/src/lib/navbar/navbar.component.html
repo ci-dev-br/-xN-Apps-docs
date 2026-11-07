@@ -225,24 +225,6 @@
 </mat-menu>
 <!-- Menu do Perfil do Usuário -->
 <mat-menu #userMenu="matMenu" class="user-dropdown-menu">
-    @if(user(); as u){
-    <div class="user-menu-profile-card">
-        @if(userPhotoUrl){
-        <img [src]="userPhotoUrl" class="user-card-photo" alt="Foto" (error)="onPhotoError()" />
-        } @else {
-        <div class="user-card-placeholder">
-            <mat-icon>person</mat-icon>
-        </div>
-        }
-        <div class="user-card-info">
-            <span class="user-card-name">{{ u.surname || u.fullName || u.username || 'Usuário' }}</span>
-            @if(u.email){
-            <span class="user-card-email">{{ u.email }}</span>
-            }
-        </div>
-    </div>
-    <mat-divider></mat-divider>
-    }
     @if(userMenuList && userMenuList.length > 0){
     @for(menu_item of userMenuList; track $index){
     @if(menu_item && menu_item.component !== undefined){

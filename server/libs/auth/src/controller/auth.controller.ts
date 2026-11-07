@@ -74,7 +74,14 @@ export class AuthController {
   ) {
     try {
       let { refreshToken, password, ...user } = await this.userService.findById((req as any)?.user?.id);
-      return user;
+      return {
+        surname: user.surname || user.fullName || user.username || user.email,
+        photo: {
+          originalFile: user.photo.originalFile,
+          format: user.photo.format
+        },
+        roles: user.roles
+      };
     } catch (error) {
       console.trace(error);
       return {
