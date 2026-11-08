@@ -3,7 +3,7 @@ import { formatUserPhotoUrl, UserAuthenticationService } from "@ci/auth";
 import { INavbarItemMenu } from "./i-menu-item";
 import { IItemMenu } from "@ci/components/window";
 import { MenuService } from "@ci/core";
-import { AvailableVersionInfoDto, DeployerService, User, InternalNotificationService, InternalNotification, NotificationDisplayMode } from "@ci/portal-api";
+import { AvailableVersionInfoDto, DeployerService, User, /* InternalNotificationService, InternalNotification, NotificationDisplayMode */ } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
@@ -36,8 +36,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     publishing = signal<boolean>(false);
     lastActionMessage = signal<string | undefined>(undefined);
     photoError = signal<boolean>(false);
-    latestNotification = signal<InternalNotification | undefined>(undefined);
-    endMenu?:IItemMenu[];
+    /*  latestNotification = signal<InternalNotification | undefined>(undefined); */
+    endMenu?: IItemMenu[];
     private notifSub: any = null;
     private pollTimer: any = null;
 
@@ -70,7 +70,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         @Optional() menuService?: MenuService,
         @Optional() private readonly deployerService?: DeployerService,
         @Optional() private readonly dialog?: MatDialog,
-        @Optional() public readonly notificationService?: InternalNotificationService,
+        /*  @Optional() public readonly notificationService?: InternalNotificationService, */
         @Optional() private readonly router?: Router,
     ) {
         menuService?.userMenu?.subscribe(menu => {
@@ -78,73 +78,73 @@ export class NavbarComponent implements OnInit, OnDestroy {
         });
     }
 
-    get displayMode$() {
-        return this.notificationService?.displayMode$;
-    }
+    /*  get displayMode$() {
+         return this.notificationService?.displayMode$;
+     } */
 
-    get displayMode(): NotificationDisplayMode {
-        return this.notificationService?.displayMode || 'menu';
-    }
+    /*  get displayMode(): NotificationDisplayMode {
+         return this.notificationService?.displayMode || 'menu';
+     } */
 
-    setDisplayMode(mode: NotificationDisplayMode) {
-        this.notificationService?.setDisplayMode(mode);
-    }
+    /*   setDisplayMode(mode: NotificationDisplayMode) {
+          this.notificationService?.setDisplayMode(mode);
+      }
+/*    */
+    /*   get isSidebarOpen$() {
+           return this.notificationService?.isSidebarOpen$;
+       }
+   
+       toggleSidebar(open?: boolean) {
+           this.notificationService?.toggleSidebar(open);
+       }
+   
+       get isStatusbarExpanded$() {
+           return this.notificationService?.isStatusbarExpanded$;
+       }
+   
+       toggleStatusbar(open?: boolean) {
+           this.notificationService?.toggleStatusbar(open);
+       }
+   
+       get unreadCount$() {
+           return this.notificationService?.unreadCount$;
+       }
+   
+       get notifications$() {
+           return this.notificationService?.notifications$;
+       }
+   
+       get pushStatus$() {
+           return this.notificationService?.pushPermissionStatus;
+       }
+   
+       async solicitarPermissaoPush(event?: Event) {
+           event?.stopPropagation();
+           await this.notificationService?.solicitarPermissaoPush();
+       }
+   
+       marcarNotificacaoComoLida(notificacao: InternalNotification, event?: Event) {
+           event?.stopPropagation();
+           this.notificationService?.marcarComoLida(notificacao).subscribe();
+       }
+   
+       marcarTodasNotificacoesComoLidas(event?: Event) {
+           event?.stopPropagation();
+           this.notificationService?.marcarTodasComoLidas().subscribe();
+       } */
+    /*
+        testarNotificacao(event?: Event) {
+            event?.stopPropagation();
+            this.notificationService?.enviarNotificacaoTeste().subscribe({
+                next: () => {
+                    this.notificationService?.carregarNotificacoes();
+                }
+            });
+        } */
 
-    get isSidebarOpen$() {
-        return this.notificationService?.isSidebarOpen$;
-    }
-
-    toggleSidebar(open?: boolean) {
-        this.notificationService?.toggleSidebar(open);
-    }
-
-    get isStatusbarExpanded$() {
-        return this.notificationService?.isStatusbarExpanded$;
-    }
-
-    toggleStatusbar(open?: boolean) {
-        this.notificationService?.toggleStatusbar(open);
-    }
-
-    get unreadCount$() {
-        return this.notificationService?.unreadCount$;
-    }
-
-    get notifications$() {
-        return this.notificationService?.notifications$;
-    }
-
-    get pushStatus$() {
-        return this.notificationService?.pushPermissionStatus;
-    }
-
-    async solicitarPermissaoPush(event?: Event) {
+    abrirAcaoNotificacao(notificacao: any/* InternalNotification */, event?: Event) {
         event?.stopPropagation();
-        await this.notificationService?.solicitarPermissaoPush();
-    }
-
-    marcarNotificacaoComoLida(notificacao: InternalNotification, event?: Event) {
-        event?.stopPropagation();
-        this.notificationService?.marcarComoLida(notificacao).subscribe();
-    }
-
-    marcarTodasNotificacoesComoLidas(event?: Event) {
-        event?.stopPropagation();
-        this.notificationService?.marcarTodasComoLidas().subscribe();
-    }
-
-    testarNotificacao(event?: Event) {
-        event?.stopPropagation();
-        this.notificationService?.enviarNotificacaoTeste().subscribe({
-            next: () => {
-                this.notificationService?.carregarNotificacoes();
-            }
-        });
-    }
-
-    abrirAcaoNotificacao(notificacao: InternalNotification, event?: Event) {
-        event?.stopPropagation();
-        this.marcarNotificacaoComoLida(notificacao);
+        // this.marcarNotificacaoComoLida(notificacao);
         if (notificacao.actionUrl) {
             if (notificacao.actionUrl.startsWith('http')) {
                 window.open(notificacao.actionUrl, '_blank');
@@ -185,9 +185,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
                 if (!!this.apps)
                     this.recentes = localStorage.getItem('NAV(RECENTES)')?.split(',').map(x => this.apps?.find(a => a?.name === x));
             });
-            this.notifSub = this.notificationService?.notifications$.subscribe((notifs: InternalNotification[]) => {
+            /* this.notifSub = this.notificationService?.notifications$.subscribe((notifs: InternalNotification[]) => {
                 this.latestNotification.set(notifs && notifs.length > 0 ? notifs[0] : undefined);
-            });
+            }); */
         } catch (error) {
             console.trace(error);
         }

@@ -13,3 +13,9 @@ export * from './lib/roles/role.directive';
 export * from './lib/models/connected-account';
 export * from './lib/components/add-account-dialog/add-account-dialog';
 export * from './lib/utils/photo.utils';
+
+import { UserMenuDefaultComponent } from './lib/components/user-menu/user-menu';
+/** Novos componentes */
+export {
+    UserMenuDefaultComponent
+}

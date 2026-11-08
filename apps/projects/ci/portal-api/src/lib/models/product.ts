@@ -18,6 +18,11 @@ export interface Product {
   moeda?: string | null;
   name?: string | null;
   nossoCodigo?: string | null;
+
+  /**
+   * Posição Estoque
+   */
+  posicaoEstoque?: number | null;
   shortDescription?: string | null;
   sku?: string | null;
   subGrupo?: string | null;

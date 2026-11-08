@@ -396,7 +396,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
         if (!this.news) return;
 
         const newsId = feed.id || feed.url;
-        this.news.vote(newsId, vote).subscribe({
+        /* this.news.vote(newsId, vote).subscribe({
             next: (stats) => {
                 feed.upVotes = stats.upVotes;
                 feed.downVotes = stats.downVotes;
@@ -407,7 +407,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
                 console.error('Erro ao registrar voto na notícia:', err);
                 this.snackBar?.open('Não foi possível registrar seu voto.', 'Fechar', { duration: 3000 });
             }
-        });
+        }); */
     }
 
     /**
