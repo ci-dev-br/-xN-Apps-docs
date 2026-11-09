@@ -37,7 +37,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     lastActionMessage = signal<string | undefined>(undefined);
     photoError = signal<boolean>(false);
     /*  latestNotification = signal<InternalNotification | undefined>(undefined); */
-    endMenu?: IItemMenu[];
+    @Input() endMenu?: IItemMenu[];
     private notifSub: any = null;
     private pollTimer: any = null;
 

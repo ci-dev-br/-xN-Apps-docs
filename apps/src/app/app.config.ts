@@ -68,7 +68,7 @@ export const appConfig: ApplicationConfig = {
       ]
     }),
     { provide: CardSetting, useValue: Cards },
-    MyEndMenu,
+    { provide: USER_MENU, useValue: MyEndMenu },
     provideEnvironmentNgxMask(maskConfig),
     ...(AuthModule.forRoot().providers || []),
   ],

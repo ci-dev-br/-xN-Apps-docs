@@ -500,11 +500,11 @@ export class UserAuthenticationService {
     async desconectarDispositivo(chaveAcesso: string): Promise<boolean> {
         if (!this.authService) return false;
         try {
-            const res = await lastValueFrom(this.authService.desconectarDispositivo(chaveAcesso));
-            if (res.isCurrent) {
+            const res: any = await lastValueFrom(this.authService.desconectarDispositivo(chaveAcesso as any));
+            if (res?.isCurrent) {
                 await this.sair();
             }
-            return !!res.success;
+            return !!res?.success;
         } catch (error) {
             console.error('Erro ao desconectar dispositivo:', error);
             return false;
@@ -517,8 +517,8 @@ export class UserAuthenticationService {
     async desconectarOutrosDispositivos(): Promise<boolean> {
         if (!this.authService) return false;
         try {
-            const res = await lastValueFrom(this.authService.desconectarOutrosDispositivos());
-            return !!res.success;
+            const res: any = await lastValueFrom(this.authService.desconectarOutrosDispositivos());
+            return !!res?.success;
         } catch (error) {
             console.error('Erro ao desconectar outros dispositivos:', error);
             return false;

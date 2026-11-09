@@ -54,7 +54,7 @@ export class EditarAplicativoComponent implements OnInit, OnDestroy {
       try {
         if (this.data && data) {
           Object.assign(this.data,
-            await lastValueFrom(this.applicationService.sync({ body: { ...data, id: this.data?.id } }))
+            await lastValueFrom(this.applicationService.sync({ body: { ...data, id: this.data?.id } as any }))
           );
           delete (_data as IChangeable).__pre;
           dao.prepareToEdit(_data);
