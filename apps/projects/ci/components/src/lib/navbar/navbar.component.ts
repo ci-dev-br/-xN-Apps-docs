@@ -68,7 +68,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     constructor(
         private readonly userService: UserAuthenticationService,
         @Optional() menuService?: MenuService,
-        @Optional() private readonly deployerService?: DeployerService,
+        // TODO: mover! @Optional() private readonly deployerService?: DeployerService,
         @Optional() private readonly dialog?: MatDialog,
         /*  @Optional() public readonly notificationService?: InternalNotificationService, */
         @Optional() private readonly router?: Router,
@@ -204,55 +204,55 @@ export class NavbarComponent implements OnInit, OnDestroy {
         }
     }
 
-    async carregarVersaoDisponivel(event?: Event) {
-        if (event) {
-            event.stopPropagation();
-        }
-        if (!this.isDeveloper || !this.deployerService) return;
+    /*  async carregarVersaoDisponivel(event?: Event) {
+         if (event) {
+             event.stopPropagation();
+         }
+         if (!this.isDeveloper || !this.deployerService) return;
+ 
+         this.loadingVersion.set(true);
+         try {
+             const info = await lastValueFrom(this.deployerService.getVersion());
+             this.versionInfo.set(info);
+ 
+             if (this.pollTimer) {
+                 clearTimeout(this.pollTimer);
+                 this.pollTimer = null;
+             }
+             if (info?.publishStatus === 'running') {
+                 this.pollTimer = setTimeout(() => this.carregarVersaoDisponivel(), 2500);
+             }
+         } catch (error) {
+             console.trace(error);
+         } finally {
+             this.loadingVersion.set(false);
+         }
+     } */
 
-        this.loadingVersion.set(true);
-        try {
-            const info = await lastValueFrom(this.deployerService.getVersion());
-            this.versionInfo.set(info);
-
-            if (this.pollTimer) {
-                clearTimeout(this.pollTimer);
-                this.pollTimer = null;
-            }
-            if (info?.publishStatus === 'running') {
-                this.pollTimer = setTimeout(() => this.carregarVersaoDisponivel(), 2500);
-            }
-        } catch (error) {
-            console.trace(error);
-        } finally {
-            this.loadingVersion.set(false);
-        }
-    }
-
-    async publicarVersao(
-        action: 'gulp' | 'server-build' | 'full-publish' | 'sync-git' = 'gulp',
-        event?: Event
-    ) {
-        if (event) {
-            event.stopPropagation();
-        }
-        if (!this.isDeveloper || !this.deployerService) return;
-
-        this.publishing.set(true);
-        try {
-            const res = await lastValueFrom(
-                this.deployerService.publish({ body: { action } })
-            );
-            this.lastActionMessage.set(res?.mensagem || 'Ação de publicação enviada.');
-            await this.carregarVersaoDisponivel();
-        } catch (error: any) {
-            console.trace(error);
-            this.lastActionMessage.set(error?.error?.message || error?.message || 'Erro ao acionar publicação.');
-        } finally {
-            this.publishing.set(false);
-        }
-    }
-
+    /*  async publicarVersao(
+         action: 'gulp' | 'server-build' | 'full-publish' | 'sync-git' = 'gulp',
+         event?: Event
+     ) {
+         if (event) {
+             event.stopPropagation();
+         }
+         if (!this.isDeveloper || !this.deployerService) return;
+ 
+         this.publishing.set(true);
+         try {
+             const res = await lastValueFrom(
+                 this.deployerService.publish({ body: { action } })
+             );
+             this.lastActionMessage.set(res?.mensagem || 'Ação de publicação enviada.');
+             await this.carregarVersaoDisponivel();
+         } catch (error: any) {
+             console.trace(error);
+             this.lastActionMessage.set(error?.error?.message || error?.message || 'Erro ao acionar publicação.');
+         } finally {
+             this.publishing.set(false);
+         }
+     }
+  */
     async sair() {
         this.userService?.sair();
     }

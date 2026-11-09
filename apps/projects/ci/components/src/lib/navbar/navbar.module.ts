@@ -17,6 +17,7 @@ import { GruposModalComponent } from "../grupos-modal/grupos-modal.component";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatDividerModule } from "@angular/material/divider";
 import { CommonModule } from "@angular/common";
+import { NavbarService } from "./navbar.service";
 
 @NgModule({
     declarations: [
@@ -50,4 +51,5 @@ export {
     NavbarComponent,
     IconModule,
     LogoComponent,
+    NavbarService,
 }

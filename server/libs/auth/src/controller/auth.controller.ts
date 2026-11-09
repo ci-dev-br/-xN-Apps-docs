@@ -45,17 +45,17 @@ export class AuthController {
       } else {
         throw new Error('Erro temporário, tente novamente mais tarde.');
       }
-      /* const created_user = await this.userService.registrar({
-         email: input.email,
-         fullName: input.fullName,
-         emailVerificado: false,
-         surname: input.surname,
-         password: await argon2.hash(input.password),
-         username: input.identificacao,
-         phone: input.phone,
-         passwordMode: 'argon2',
-       });
-       return created_user; */
+      const created_user = await this.userService.registrar({
+        email: input.email,
+        fullName: input.fullName,
+        emailVerificado: false,
+        surname: input.surname,
+        password: await argon2.hash(input.password),
+        username: input.identificacao,
+        phone: input.phone,
+        passwordMode: 'argon2',
+      });
+      return created_user;
     } catch (error) {
       console.trace(error);
       return {
