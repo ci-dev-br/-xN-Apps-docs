@@ -1,5 +1,140 @@
 <mat-toolbar class="ci-navbar-toolbar">
+    @if(!!user()){
+    <div class="nav-divider"></div>
+    <!-- Launcher de Apps e Acessos Recentes -->
+    <div class="apps-launcher-section">
+        @if(!!_apps() && _apps()!.length > 0){
+        <button mat-icon-button [matMenuTriggerFor]="menuApps" class="nav-icon-btn apps-btn"
+            matTooltip="Principais Aplicativos">
+            <mat-icon>apps</mat-icon>
+        </button>
+        @if(!!recentes && recentes.length > 0){
+        <div class="recent-apps-bar">
+            @for (app of recentes; track $index) {
+            <button mat-icon-button routerLinkActive="active-recent-app" [routerLink]="'/' + app.url"
+                (click)="appClickHandler($event, app)" class="recent-app-btn"
+                [matTooltip]="app.name || app.title || 'App'">
+                @if(!!app?.icon){
+                @if(app.type === 'svg'){
+                <mat-icon [svgIcon]="app.icon"></mat-icon>
+                } @else {
+                <mat-icon>{{app.icon}}</mat-icon>
+                }
+                }
+            </button>
+            }
+        </div>
+        }
+        } @else {
+        <button mat-icon-button routerLink="/meus-apps/apps" class="nav-icon-btn apps-btn"
+            matTooltip="Todos o  s Aplicativos">
+            <mat-icon>apps</mat-icon>
+        </button>
+        }
+    </div>
+    }
     <div class="brand-section">
         <ci-logo></ci-logo>
     </div>
+    <span style="flex: auto"></span>
+    @if(!!user()){
+    <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-btn"
+        [matTooltip]="user()?.surname || user()?.fullName || user()?.username || 'Usuário'">
+        @if(userPhotoUrl){
+        <img [src]="userPhotoUrl" class="navbar-user-photo" alt="Foto do usuário" (error)="onPhotoError()" />
+        }@else{
+        <mat-icon>account_circle</mat-icon>
+        }
+    </button>
+    }@else{
+    <div class="auth-actions">
+        <a mat-button routerLink="/acessar" class="auth-btn btn-login">
+            <mat-icon>login</mat-icon>
+            <span>Entrar</span>
+        </a>
+        <a mat-flat-button color="primary" routerLink="/registrar" class="auth-btn btn-register">
+            <mat-icon>person_add</mat-icon>
+            <span>Registrar</span>
+        </a>
+    </div>
+    }
+    <!--   @if(!!endMenu){@for(item of endMenu){
+
+    }}
+ -->
+    <!-- Menu de Aplicativos -->
+    <mat-menu #menuApps="matMenu" class="apps-dropdown-panel">
+        <div class="menu-header">
+            <mat-icon>apps</mat-icon>
+            <span>Principais Aplicativos</span>
+        </div>
+        <div class="menu--inner">
+            @for (app of _apps(); track $index) {
+            <button mat-menu-item routerLinkActive="side-ativo" [routerLink]="'/' + app.url"
+                (click)="appClickHandler($event, app)" class="app-menu-entry">
+                @if(app.icon){
+                @if(app.type === 'svg'){
+                <mat-icon [svgIcon]="app.icon"></mat-icon>
+                } @else {
+                <mat-icon>{{app.icon}}</mat-icon>
+                }
+                }
+                <span>{{ app.name || app.title || app.url }}</span>
+            </button>
+            }
+        </div>
+        <mat-divider></mat-divider>
+        <a mat-button routerLink="/meus-apps/apps" class="all-apps-link">
+            <mat-icon>grid_view</mat-icon>
+            <span>Todos os Apps</span>
+        </a>
+    </mat-menu>
+    <!-- Menu do Perfil do Usuário -->
+    <mat-menu #userMenu="matMenu" class="user-dropdown-menu">
+        @if(userMenuList && userMenuList.length > 0){
+        @for(menu_item of userMenuList; track $index){
+        @if(menu_item && menu_item.component !== undefined){
+        <ng-container *ngComponentOutlet="menu_item.component"></ng-container>
+        } @else {
+        <button mat-menu-item (click)="itemMenuActionHandler(menu_item, $event)">
+            @if(menu_item.icon){
+            <mat-icon>{{menu_item.icon}}</mat-icon>
+            }
+            <span>{{menu_item.label}}</span>
+        </button>
+        }
+        }
+        <mat-divider></mat-divider>
+        }
+        <button mat-menu-item [matMenuTriggerFor]="notifSettingsSubmenu">
+            <mat-icon>tune</mat-icon>
+            <span>Visualização de Notificações</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="sair()" class="logout-menu-item">
+            <mat-icon color="warn">logout</mat-icon>
+            <span>Sair da Conta</span>
+        </button>
+    </mat-menu>
+    <!-- Submenu para Configuração de Notificações -->
+    <mat-menu #notifSettingsSubmenu="matMenu" class="notif-settings-menu">
+        <button mat-menu-item (click)="setDisplayMode('menu')">
+            <mat-icon [color]="(displayMode$ | async) === 'menu' ? 'primary' : null">
+                {{ (displayMode$ | async) === 'menu' ? 'radio_button_checked' : 'radio_button_unchecked' }}
+            </mat-icon>
+            <span>Menu Superior (Padrão)</span>
+        </button>
+        <button mat-menu-item (click)="setDisplayMode('sidebar')">
+            <mat-icon [color]="(displayMode$ | async) === 'sidebar' ? 'primary' : null">
+                {{ (displayMode$ | async) === 'sidebar' ? 'radio_button_checked' : 'radio_button_unchecked' }}
+            </mat-icon>
+            <span>Aba Lateral à Direita</span>
+        </button>
+        <button mat-menu-item (click)="setDisplayMode('statusbar')">
+            <mat-icon [color]="(displayMode$ | async) === 'statusbar' ? 'primary' : null">
+                {{ (displayMode$ | async) === 'statusbar' ? 'radio_button_checked' : 'radio_button_unchecked' }}
+            </mat-icon>
+            <span>Statusbar Inferior</span>
+        </button>
+    </mat-menu>
 </mat-toolbar>

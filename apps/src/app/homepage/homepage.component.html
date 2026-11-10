@@ -3,7 +3,7 @@
 <!-- Informações do Usuário -->
 }
 <ci-financial-ticker></ci-financial-ticker>
-<ci-market-news-ticker (newsSelected)="focarNoticiaMercado($event)"></ci-market-news-ticker>
+<!-- <ci-market-news-ticker (newsSelected)="focarNoticiaMercado($event)"></ci-market-news-ticker> -->
 <div class="content">
     <mat-tab-group [(selectedIndex)]="selectedTabIndex" animationDuration="200ms" class="homepage-tabs">
         <mat-tab>
@@ -19,14 +19,13 @@
                         <div class="proper-noun-search-bar">
                             <div class="search-field-container">
                                 <mat-icon class="search-prefix-icon">travel_explore</mat-icon>
-                                <input type="text"
-                                    [formControl]="pesquisaSubstantivoControl"
+                                <input type="text" [formControl]="pesquisaSubstantivoControl"
                                     (keyup.enter)="pesquisarSubstantivoManual()"
                                     placeholder="Pesquisar substantivo próprio (empresa, entidade, pessoa, ativo)..."
                                     class="proper-noun-search-input" />
                                 @if (pesquisaSubstantivoControl.value) {
-                                <button mat-icon-button class="clear-search-btn" (click)="pesquisaSubstantivoControl.setValue('')"
-                                    matTooltip="Limpar busca">
+                                <button mat-icon-button class="clear-search-btn"
+                                    (click)="pesquisaSubstantivoControl.setValue('')" matTooltip="Limpar busca">
                                     <mat-icon>close</mat-icon>
                                 </button>
                                 }
@@ -65,7 +64,8 @@
                                     <span class="wiki-source-tag">Wikipedia API</span>
                                     <h4 class="wiki-entry-title">{{ wiki.title }}</h4>
                                 </div>
-                                <button mat-icon-button (click)="fecharResumoWikipedia()" matTooltip="Fechar resumo" class="btn-close-wiki">
+                                <button mat-icon-button (click)="fecharResumoWikipedia()" matTooltip="Fechar resumo"
+                                    class="btn-close-wiki">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             </div>
@@ -91,16 +91,19 @@
                             </div>
                             <div class="wiki-summary-actions">
                                 @if (wiki.url) {
-                                <a [href]="wiki.url" target="_blank" rel="noopener noreferrer" mat-stroked-button color="primary" class="wiki-link-btn">
+                                <a [href]="wiki.url" target="_blank" rel="noopener noreferrer" mat-stroked-button
+                                    color="primary" class="wiki-link-btn">
                                     <mat-icon>open_in_new</mat-icon>
                                     <span>Artigo Completo</span>
                                 </a>
                                 }
-                                <button mat-stroked-button (click)="pesquisarGoogle(wiki.title || wiki.termo)" class="wiki-action-btn">
+                                <button mat-stroked-button (click)="pesquisarGoogle(wiki.title || wiki.termo)"
+                                    class="wiki-action-btn">
                                     <mat-icon>search</mat-icon>
                                     <span>Google</span>
                                 </button>
-                                <button mat-stroked-button (click)="pesquisarTikTok(wiki.title || wiki.termo)" class="wiki-action-btn">
+                                <button mat-stroked-button (click)="pesquisarTikTok(wiki.title || wiki.termo)"
+                                    class="wiki-action-btn">
                                     <mat-icon>play_circle</mat-icon>
                                     <span>TikTok</span>
                                 </button>
@@ -159,9 +162,7 @@
                                         }
                                     </div>
                                 </div>
-                                }
-                                }
-
+                                }}
                                 <!-- Barra de interações do card -->
                                 <div class="interactions">
                                     <button mat-button class="btn-vote" [class.voted-up]="feed.userVote === 'UP'"
@@ -200,15 +201,16 @@
 
                     <!-- Painel Lateral Moderno de Comentários (Assume a notícia em destaque) -->
                     @if(showCommentsPane()) {
-                    <aside class="comments-stage" [class.visible]="showCommentsPane()" [class.expanded]="isCommentsExpanded()">
+                    <aside class="comments-stage" [class.visible]="showCommentsPane()"
+                        [class.expanded]="isCommentsExpanded()">
                         <div class="comments-stage-header">
                             <div class="stage-badge">
                                 <mat-icon>forum</mat-icon>
                                 <span>Comentários em Foco</span>
                                 @if (highlightedFeed(); as hFeed) {
-                                    @if (hFeed.commentsCount !== undefined) {
-                                        <span class="header-comments-count">({{ hFeed.commentsCount }})</span>
-                                    }
+                                @if (hFeed.commentsCount !== undefined) {
+                                <span class="header-comments-count">({{ hFeed.commentsCount }})</span>
+                                }
                                 }
                             </div>
                             <div class="stage-header-actions">
@@ -234,7 +236,8 @@
                                 <span class="news-source">
                                     <mat-icon class="source-icon">public</mat-icon>
                                     @if(activeNews?.sourceInfo?.domain) {
-                                    <a [href]="'https://' + activeNews.sourceInfo.domain" target="_blank" rel="noopener">
+                                    <a [href]="'https://' + activeNews.sourceInfo.domain" target="_blank"
+                                        rel="noopener">
                                         {{ activeNews.sourceInfo.name || activeNews.sourceInfo.domain }}
                                     </a>
                                     } @else {
@@ -247,13 +250,13 @@
 
                             <!-- Corpo do Texto com links em substantivos próprios e frases-chave correlacionadas -->
                             <div class="news-content-wrapper">
-                                <div class="news-content"
-                                    [innerHtml]="obterConteudoComLinks(activeNews)"
+                                <div class="news-content" [innerHtml]="obterConteudoComLinks(activeNews)"
                                     (click)="onConteudoClick($event)">
                                 </div>
                                 <div class="content-hint">
                                     <mat-icon>touch_app</mat-icon>
-                                    <span>Toque nos nomes próprios ou termos destacados para navegar em conteúdos correlacionados e pesquisar.</span>
+                                    <span>Toque nos nomes próprios ou termos destacados para navegar em conteúdos
+                                        correlacionados e pesquisar.</span>
                                 </div>
                             </div>
 
@@ -268,7 +271,9 @@
                                 <div class="active-nouns-chips">
                                     @for (substantivo of activeNouns; track substantivo) {
                                     <div class="active-noun-badge">
-                                        <span class="noun-name" (click)="selecionarSubstantivoParaPesquisa(substantivo)">{{ substantivo }}</span>
+                                        <span class="noun-name"
+                                            (click)="selecionarSubstantivoParaPesquisa(substantivo)">{{ substantivo
+                                            }}</span>
                                         <div class="noun-quick-actions">
                                             <button mat-icon-button (click)="pesquisarWikipedia(substantivo, $event)"
                                                 matTooltip="Consultar Wikipedia API" class="mini-platform-btn wiki">
@@ -303,7 +308,8 @@
                                     <div class="correlated-item-card" (click)="focarNoticia(item)">
                                         <div class="correlated-item-meta">
                                             <span class="correl-tag">{{ item.categoria || 'Mercado' }}</span>
-                                            <span class="correl-source">{{ item?.sourceInfo?.name || item?.sourceInfo?.domain || 'Origem' }}</span>
+                                            <span class="correl-source">{{ item?.sourceInfo?.name ||
+                                                item?.sourceInfo?.domain || 'Origem' }}</span>
                                         </div>
                                         <h5 class="correl-title" [innerHtml]="item.title"></h5>
                                     </div>

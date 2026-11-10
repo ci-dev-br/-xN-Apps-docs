@@ -3,7 +3,7 @@ import { formatUserPhotoUrl, UserAuthenticationService } from "@ci/auth";
 import { INavbarItemMenu } from "./i-menu-item";
 import { IItemMenu } from "@ci/components/window";
 import { MenuService } from "@ci/core";
-import { AvailableVersionInfoDto, DeployerService, User, /* InternalNotificationService, InternalNotification, NotificationDisplayMode */ } from "@ci/portal-api";
+import { AvailableVersionInfoDto, DeployerService, User, InternalNotificationService, InternalNotification, NotificationDisplayMode } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
@@ -68,9 +68,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
     constructor(
         private readonly userService: UserAuthenticationService,
         @Optional() menuService?: MenuService,
-        // TODO: mover! @Optional() private readonly deployerService?: DeployerService,
+        // TODO: mover! 
+        @Optional() private readonly deployerService?: DeployerService,
         @Optional() private readonly dialog?: MatDialog,
-        /*  @Optional() public readonly notificationService?: InternalNotificationService, */
+        // TODO: mover!
+        @Optional() public readonly notificationService?: InternalNotificationService,
         @Optional() private readonly router?: Router,
     ) {
         menuService?.userMenu?.subscribe(menu => {
@@ -78,69 +80,69 @@ export class NavbarComponent implements OnInit, OnDestroy {
         });
     }
 
-    /*  get displayMode$() {
-         return this.notificationService?.displayMode$;
-     } */
+    get displayMode$() {
+        return this.notificationService?.displayMode$;
+    }
 
-    /*  get displayMode(): NotificationDisplayMode {
-         return this.notificationService?.displayMode || 'menu';
-     } */
+    get displayMode(): NotificationDisplayMode {
+        return this.notificationService?.displayMode || 'menu';
+    }
 
-    /*   setDisplayMode(mode: NotificationDisplayMode) {
-          this.notificationService?.setDisplayMode(mode);
-      }
-/*    */
-    /*   get isSidebarOpen$() {
-           return this.notificationService?.isSidebarOpen$;
-       }
-   
-       toggleSidebar(open?: boolean) {
-           this.notificationService?.toggleSidebar(open);
-       }
-   
-       get isStatusbarExpanded$() {
-           return this.notificationService?.isStatusbarExpanded$;
-       }
-   
-       toggleStatusbar(open?: boolean) {
-           this.notificationService?.toggleStatusbar(open);
-       }
-   
-       get unreadCount$() {
-           return this.notificationService?.unreadCount$;
-       }
-   
-       get notifications$() {
-           return this.notificationService?.notifications$;
-       }
-   
-       get pushStatus$() {
-           return this.notificationService?.pushPermissionStatus;
-       }
-   
-       async solicitarPermissaoPush(event?: Event) {
-           event?.stopPropagation();
-           await this.notificationService?.solicitarPermissaoPush();
-       }
-   
-       marcarNotificacaoComoLida(notificacao: InternalNotification, event?: Event) {
-           event?.stopPropagation();
-           this.notificationService?.marcarComoLida(notificacao).subscribe();
-       }
-   
-       marcarTodasNotificacoesComoLidas(event?: Event) {
-           event?.stopPropagation();
-           this.notificationService?.marcarTodasComoLidas().subscribe();
-       } */
-    /*
-        testarNotificacao(event?: Event) {
-            event?.stopPropagation();
-            this.notificationService?.enviarNotificacaoTeste().subscribe({
-                next: () => {
-                    this.notificationService?.carregarNotificacoes();
-                }
-            });
-        } */
+    setDisplayMode(mode: NotificationDisplayMode) {
+        this.notificationService?.setDisplayMode(mode);
+    }
+
+    get isSidebarOpen$() {
+        return this.notificationService?.isSidebarOpen$;
+    }
+
+    toggleSidebar(open?: boolean) {
+        this.notificationService?.toggleSidebar(open);
+    }
+
+    get isStatusbarExpanded$() {
+        return this.notificationService?.isStatusbarExpanded$;
+    }
+
+    toggleStatusbar(open?: boolean) {
+        this.notificationService?.toggleStatusbar(open);
+    }
+
+    get unreadCount$() {
+        return this.notificationService?.unreadCount$;
+    }
+
+    get notifications$() {
+        return this.notificationService?.notifications$;
+    }
+
+    get pushStatus$() {
+        return this.notificationService?.pushPermissionStatus;
+    }
+
+    async solicitarPermissaoPush(event?: Event) {
+        event?.stopPropagation();
+        await this.notificationService?.solicitarPermissaoPush();
+    }
+
+    marcarNotificacaoComoLida(notificacao: InternalNotification, event?: Event) {
+        event?.stopPropagation();
+        this.notificationService?.marcarComoLida(notificacao).subscribe();
+    }
+
+    marcarTodasNotificacoesComoLidas(event?: Event) {
+        event?.stopPropagation();
+        this.notificationService?.marcarTodasComoLidas().subscribe();
+    }
+
+    testarNotificacao(event?: Event) {
+        event?.stopPropagation();
+        this.notificationService?.enviarNotificacaoTeste().subscribe({
+            next: () => {
+                this.notificationService?.carregarNotificacoes();
+            }
+        });
+    }
 
     abrirAcaoNotificacao(notificacao: any/* InternalNotification */, event?: Event) {
         event?.stopPropagation();
@@ -204,55 +206,55 @@ export class NavbarComponent implements OnInit, OnDestroy {
         }
     }
 
-    /*  async carregarVersaoDisponivel(event?: Event) {
-         if (event) {
-             event.stopPropagation();
-         }
-         if (!this.isDeveloper || !this.deployerService) return;
- 
-         this.loadingVersion.set(true);
-         try {
-             const info = await lastValueFrom(this.deployerService.getVersion());
-             this.versionInfo.set(info);
- 
-             if (this.pollTimer) {
-                 clearTimeout(this.pollTimer);
-                 this.pollTimer = null;
-             }
-             if (info?.publishStatus === 'running') {
-                 this.pollTimer = setTimeout(() => this.carregarVersaoDisponivel(), 2500);
-             }
-         } catch (error) {
-             console.trace(error);
-         } finally {
-             this.loadingVersion.set(false);
-         }
-     } */
+    async carregarVersaoDisponivel(event?: Event) {
+        if (event) {
+            event.stopPropagation();
+        }
+        if (!this.isDeveloper || !this.deployerService) return;
 
-    /*  async publicarVersao(
-         action: 'gulp' | 'server-build' | 'full-publish' | 'sync-git' = 'gulp',
-         event?: Event
-     ) {
-         if (event) {
-             event.stopPropagation();
-         }
-         if (!this.isDeveloper || !this.deployerService) return;
- 
-         this.publishing.set(true);
-         try {
-             const res = await lastValueFrom(
-                 this.deployerService.publish({ body: { action } })
-             );
-             this.lastActionMessage.set(res?.mensagem || 'Ação de publicação enviada.');
-             await this.carregarVersaoDisponivel();
-         } catch (error: any) {
-             console.trace(error);
-             this.lastActionMessage.set(error?.error?.message || error?.message || 'Erro ao acionar publicação.');
-         } finally {
-             this.publishing.set(false);
-         }
-     }
-  */
+        this.loadingVersion.set(true);
+        try {
+            const info = await lastValueFrom(this.deployerService.getVersion());
+            this.versionInfo.set(info);
+
+            if (this.pollTimer) {
+                clearTimeout(this.pollTimer);
+                this.pollTimer = null;
+            }
+            if (info?.publishStatus === 'running') {
+                this.pollTimer = setTimeout(() => this.carregarVersaoDisponivel(), 2500);
+            }
+        } catch (error) {
+            console.trace(error);
+        } finally {
+            this.loadingVersion.set(false);
+        }
+    }
+
+    async publicarVersao(
+        action: 'gulp' | 'server-build' | 'full-publish' | 'sync-git' = 'gulp',
+        event?: Event
+    ) {
+        if (event) {
+            event.stopPropagation();
+        }
+        if (!this.isDeveloper || !this.deployerService) return;
+
+        this.publishing.set(true);
+        try {
+            const res = await lastValueFrom(
+                this.deployerService.publish({ body: { action } })
+            );
+            this.lastActionMessage.set(res?.mensagem || 'Ação de publicação enviada.');
+            await this.carregarVersaoDisponivel();
+        } catch (error: any) {
+            console.trace(error);
+            this.lastActionMessage.set(error?.error?.message || error?.message || 'Erro ao acionar publicação.');
+        } finally {
+            this.publishing.set(false);
+        }
+    }
+
     async sair() {
         this.userService?.sair();
     }
