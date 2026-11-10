@@ -1,5 +1,4 @@
 @use '@angular/material' as mat;
-// @use '@ci-dev-br/xd' as xd;
 @include mat.elevation-classes();
 @include mat.app-background();
 $apps-theme-light: mat.define-theme((color: (theme-type: light,
@@ -31,26 +30,54 @@ $apps-theme-dark: mat.define-theme((color: (theme-type: dark,
 html,
 body {
   height: 100%;
-}
-
-body {
+  width: 100%;
   margin: 0;
-  font-family: "Bitter", serif;
-  font-optical-sizing: auto;
-  font-style: normal;
-
+  padding: 0;
+  overflow: hidden; // Previne barras de rolagem globais da janela
+  box-sizing: border-box;
 }
 
-:root {}
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mat-sys-outline-variant, rgba(128, 128, 128, 0.35)) transparent;
 
-html,
-body {
-  height: 100%;
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--mat-sys-outline-variant, rgba(128, 128, 128, 0.35));
+    border-radius: 4px;
+
+    &:hover {
+      background: var(--mat-sys-outline, rgba(128, 128, 128, 0.6));
+    }
+  }
 }
 
 body {
-  margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  color: var(--mat-sys-on-surface);
+  background: var(--mat-app-background-color);
+  display: flex;
+  flex-direction: column;
+}
+
+ci-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 mat-toolbar {
@@ -80,9 +107,7 @@ mat-toolbar {
   flex: auto;
 }
 
-
 body.codex-fullscreen-active {
-
   ci-navbar,
   mat-toolbar,
   .mat-toolbar {
@@ -96,8 +121,4 @@ body.codex-fullscreen-active {
   .cdk-overlay-container {
     z-index: 100000 !important;
   }
-}
-
-body {
-  color: var(--mat-sys-on-surface);
 }

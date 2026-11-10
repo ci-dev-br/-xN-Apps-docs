@@ -3,17 +3,27 @@
     by: .plhx~
 */
 :host {
-    flex: auto;
-    // overflow: auto;
-    // position: fixed;
-
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: stretch;
-    /// overflow: hidden;
-
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
     background: var(--mat-app-background-color);
+}
+
+.container {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    position: relative;
 }
 
 .--dev-mode {
