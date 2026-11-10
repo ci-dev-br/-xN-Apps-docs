@@ -3,37 +3,21 @@
     by: .plhx~
 */
 :host {
-    width: 100dvw;
-    height: 100cqh;
-    overflow: auto;
-    position: fixed;
+    flex: auto;
+    // overflow: auto;
+    // position: fixed;
 
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: stretch;
-    overflow: hidden;
+    /// overflow: hidden;
 
     background: var(--mat-app-background-color);
 }
 
-div {
-    display: flex;
-    flex: auto;
-
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: stretch;
-    overflow: hidden;
-}
-
-div {
-    display: contents;
-}
-
 .--dev-mode {
-    border: 3px dashed rgba(red, .5);
+    border: 0.2px dashed rgba(red, .5);
     position: fixed;
     inset: 1px;
     z-index: 100;
@@ -54,8 +38,8 @@ div {
     z-index: 9999;
 
     // Cores Neutras (Dark Mode Clean)
-    background-color: #000000;
-    color: #888888; // Cinza médio para elegância
+    // background-color: #000000;
+    // color: #888888; // Cinza médio para elegância
 
     // Centralização perfeita
     display: grid;
@@ -84,9 +68,6 @@ div {
     }
 }
 
-span {
-    transition: filter ease .4s;
-}
 
 .connecting {
     pointer-events: auto;
@@ -100,7 +81,7 @@ span {
     height: 3px;
     z-index: 100000;
     pointer-events: none;
-    background: linear-gradient(90deg, transparent, #2196f3, #00e5ff, transparent);
+    //background: linear-gradient(90deg, transparent, #2196f3, #00e5ff, transparent);
     background-size: 200% 100%;
     animation: connection-loading-bar-anim 1.5s infinite linear;
 }
@@ -109,6 +90,7 @@ span {
     0% {
         background-position: 200% 0;
     }
+
     100% {
         background-position: -200% 0;
     }
@@ -125,10 +107,10 @@ span {
     gap: 8px;
     padding: 6px 14px;
     border-radius: 20px;
-    background: rgba(18, 18, 18, 0.85);
+    // background: rgba(18, 18, 18, 0.85);
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.12);
-    color: #e0e0e0;
+    // color: #e0e0e0;
     font-size: 12px;
     font-family: Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
@@ -137,7 +119,7 @@ span {
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background-color: #ff9800;
+        //background-color: #ff9800;
         box-shadow: 0 0 8px #ff9800;
         animation: pulse-dot 1.2s infinite ease-in-out;
     }
@@ -149,10 +131,13 @@ span {
 }
 
 @keyframes pulse-dot {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(0.85);
         opacity: 0.6;
     }
+
     50% {
         transform: scale(1.25);
         opacity: 1;

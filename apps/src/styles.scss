@@ -80,7 +80,9 @@ mat-toolbar {
   flex: auto;
 }
 
+
 body.codex-fullscreen-active {
+
   ci-navbar,
   mat-toolbar,
   .mat-toolbar {
@@ -94,4 +96,8 @@ body.codex-fullscreen-active {
   .cdk-overlay-container {
     z-index: 100000 !important;
   }
+}
+
+body {
+  color: var(--mat-sys-on-surface);
 }

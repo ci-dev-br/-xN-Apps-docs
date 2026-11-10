@@ -11,6 +11,7 @@ import { AuthService } from '../service/auth.service';
 import { Request, Response } from 'express';
 import { TwoFactorAuthenticationService } from '../service/two-factors.service';
 import { BusService } from '@ci/core';
+import * as argon2 from 'argon2';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -38,7 +39,6 @@ export class AuthController {
      * 3 . permite o usuário criar uma senha para acesso rápido ou outra forma de autenticação
      * 
      */
-    // console.info(req.headers);
     try {
       if ((!!input.email || !!input.phone) && !input.identificacao) {
         // TODO: solicitar verificação do e-mail de contato do usuário cadastrante (Cliente ou Desenvolvedor).        
@@ -90,6 +90,14 @@ export class AuthController {
       }
     }
   }
+  /**
+   * Solicitação de Acesso
+   * 
+   * @param ip 
+   * @param payload 
+   * @param req 
+   * @param res 
+   */
   @Public()
   @Post('Acessar')
   @ApiOperation({ operationId: 'AcessarAuth' })
@@ -126,7 +134,7 @@ export class AuthController {
               }, null, 2))
             },
             {
-              expiresIn: '90d',
+              expiresIn: '1d',
             },
           );
           const refreshTokenArg2 = await this.userService.updateRefreshToken(authenticated_user.id, permission_uuid);
@@ -171,11 +179,12 @@ export class AuthController {
         });
       }
     } catch (error) {
-      console.trace(error);
-      res.status(error?.status || 500).json({
-        status: 500,
-        message: 'Falha'
-      } as any);
+      if (!!error && typeof (error as any).status === 'number')
+        res.status(((error as any)?.status) || 500).json({
+          status: 500,
+          message: 'Falha'
+        })
+      else console.trace(error);
     }
   }
   @Post('Dispositivos')
@@ -198,7 +207,6 @@ export class AuthController {
       return [];
     }
   }
-
   @Post('DesconectarDispositivo')
   @ApiOperation({ operationId: 'DesconectarDispositivoAuth' })
   async desconectarDispositivo(@Req() req: any, @Body() body: { chaveAcesso: string }) {
@@ -242,7 +250,6 @@ export class AuthController {
       return { success: false, error: (error as any)?.message };
     }
   }
-
   @Post('Logout')
   @ApiOperation({ operationId: 'LogoutAuth' })
   async logout(@Req() req) {
@@ -251,7 +258,8 @@ export class AuthController {
     } catch (error) {
       console.trace(error);
       return {
-        status: error.status || 500,
+        status: typeof error === 'object' && typeof (error as any).status === 'number' ?
+          (error as { status: number }).status || 500 : 509,
         message: 'Falha'
       } as any
     }
@@ -273,12 +281,11 @@ export class AuthController {
       )));
     } catch (error) {
       console.trace(error);
-      const return_message = {
-        status: error.status || 500,
-        error,
-        message: error?.message || 'Ocorreu um erro não identificado relaizar a operação de refresh do token de acesso'
-      } as any;
-      res.status(return_message.status).json(return_message);
+      return {
+        status: typeof error === 'object' && typeof (error as any).status === 'number' ?
+          (error as { status: number }).status || 500 : 509,
+        message: 'Falha'
+      } as any
     }
   }
 }

@@ -12,6 +12,7 @@ import { ROLE_KEY } from './decorators/role.decorator';
 import { CredencialService } from './service/credencial.service';
 import { UserService } from './auth.module';
 import { IncomingMessage } from 'http';
+import { ignoreElements } from 'rxjs';
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
@@ -31,12 +32,27 @@ export class AuthGuard implements CanActivate {
       context.getClass(),
     ]);
     const request: IncomingMessage = context.switchToHttp().getRequest();
+    /**
+     * Bloqueio por desvio de serviço
+     * 1. validar catalogo.
+     * 
+     */
+    const current_hostname = request.headers.host;
+    if (!!current_hostname) {
+
+    } else {
+      throw new UnauthorizedException('Estamos enfrentando algumas falhas, aguarde um dia.');
+    }
     const token = this.extractTokenFromHeader(request);
     if (request.url.indexOf('Refresh') !== -1) { return true }
     if (!token) {
       if (!by_pass)
         throw new UnauthorizedException('Falha na autenticação. Token não fornecido.');
     } else {
+      // TODO: analisar estratégia de autenticação para que seja paralela a requisição.
+      /* (async () => {
+
+      }) */
       try {
         const payload: { id: string, roles: string[], permission: string, chaveAcesso: string } = await this.jwtService.verifyAsync(token, {
           secret: process.env.MASTER_PASSWORD_AUTHORYTHY || jwtConstants.secret,
@@ -54,11 +70,9 @@ export class AuthGuard implements CanActivate {
           if (!by_pass) throw new UnauthorizedException('Acesso revogado, favor autenticar novamente.');
         }
         request['user'] = await this.userService.findByIdLight(payload.id);
-
         // Suporte a múltiplas contas conectadas simultaneamente: combina permissões e papéis
         const additionalTokensHeader = request.headers['x-additional-tokens'] as string | undefined;
         const combinedRoles = new Set<string>(Array.isArray(payload.roles) ? payload.roles : []);
-
         if (additionalTokensHeader) {
           const additionalTokens = additionalTokensHeader.split(',').map(t => t.trim()).filter(Boolean);
           for (const addToken of additionalTokens) {
@@ -76,13 +90,13 @@ export class AuthGuard implements CanActivate {
             }
           }
         }
-
         const allRoles = Array.from(combinedRoles);
         request['combinedRoles'] = allRoles;
-        if (request['user']) {
-          request['user']['roles'] = allRoles;
-        }
-
+        ((async () => {
+          if (request['user']) {
+            request['user']['roles'] = allRoles;
+          }
+        })());
         if (!!role) {
           if (!combinedRoles.has(role)) {
             if (!by_pass) throw new UnauthorizedException('Acesso negado. Não corresponde ao nível de acesso necessário.');
