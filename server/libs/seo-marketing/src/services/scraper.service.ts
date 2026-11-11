@@ -163,7 +163,7 @@ export class ScraperService implements OnModuleInit {
             // Este método também depende de rede, agregando ao "tempo de espera natural"
             const extractedText = await this.scrapePageContent(item.link);
             const news = this.newsRepository.create({
-              title: item.title,
+              title: item.title || `Sem título (${(extractedText || '').substring(0, 80)}) `,
               url: item.link,
               sourceName: item.creator || item['source'] || source.name,
               content: extractedText,
@@ -172,8 +172,8 @@ export class ScraperService implements OnModuleInit {
             });
             await this.newsRepository.save(news);
           }
-        } catch (itemError) {
-          if (itemError.code === '23505') {
+        } catch (itemError: any) {
+          if ('code' in itemError && itemError.code === '23505') {
             // Silencia URL duplicada, é um comportamento normal
           } else {
             this.logger.error(`Erro ao salvar a notícia "${item.title}"`, itemError.message);

@@ -1,0 +1,86 @@
+classDiagram
+    direction LR
+
+    class Cliente {
+        +UUID id
+        +String nome
+        +String documento
+        +String email
+        +String telefone
+        +StatusCliente status
+        +cadastrarEncomenda()
+        +consultarExtrato()
+    }
+
+    class Carteira {
+        +UUID id
+        +UUID clienteId
+        +String banco
+        +String agencia
+        +String conta
+        +String tokenAutorizacaoDebito
+        +validarConta()
+    }
+
+    class Encomenda {
+        +UUID id
+        +String codigoRastreio
+        +Float peso
+        +String dimensoes
+        +Endereco enderecoOrigem
+        +Endereco enderecoDestino
+        +StatusEncomenda status
+        +criar()
+        +atualizarStatus()
+    }
+
+    class ServicoPrestado {
+        +UUID id
+        +UUID encomendaId
+        +UUID clienteId
+        +TipoServico tipoServico
+        +Decimal valorBase
+        +Decimal taxasAdicionais
+        +Decimal valorTotal
+        +DateTime dataExecucao
+        +calcularValor()
+    }
+
+    class Entrega {
+        +UUID id
+        +UUID servicoPrestadoId
+        +UUID entregadorId
+        +String codigoConfirmacao
+        +DateTime dataInicio
+        +DateTime dataConclusao
+        +StatusEntrega status
+        +iniciar()
+        +finalizar()
+    }
+
+    class Entregador {
+        +UUID id
+        +String nome
+        +String cnh
+        +String veiculo
+        +StatusEntregador status
+    }
+
+    class FaturaDebito {
+        +UUID id
+        +UUID clienteId
+        +UUID servicoPrestadoId
+        +Decimal valor
+        +StatusTransacao statusTransacao
+        +String codigoRetornoBanco
+        +DateTime dataProcessamento
+        +executarDebitoConta()
+        +reprocessar()
+    }
+
+    Cliente *-- Carteira : "possui (1 to 1)"
+    Cliente o-- Encomenda : "envia (1 to N)"
+    Encomenda -- ServicoPrestado : "gera (1 to 1)"
+    ServicoPrestado -- Entrega : "requer (1 to 1)"
+    ServicoPrestado -- FaturaDebito : "fatura (1 to 1)"
+    Entregador "1" --> "*" Entrega : "executada por"

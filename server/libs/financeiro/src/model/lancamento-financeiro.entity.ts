@@ -52,7 +52,8 @@ export class LancamentoFinanceiro extends FullAuditedEntity {
     @ApiProperty({
         title: 'Mês de Referência',
         nullable: true,
-        required: false
+        required: false,
+        type: 'Date'
     })
     @Column({ nullable: true })
     mesReferencia?: Date;

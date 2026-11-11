@@ -1,5 +1,5 @@
 import { FullAuditedEntity } from "@ci/core";
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiOperation, ApiProperty } from "@nestjs/swagger";
 import {
     Column,
     Entity
@@ -9,7 +9,6 @@ import { schema } from "./schema";
  * Endereço 
  */
 @Entity({ schema })
-
 export class Endereco extends FullAuditedEntity {
     /**
      * Logradouro
@@ -28,7 +27,8 @@ export class Endereco extends FullAuditedEntity {
     @ApiProperty({
         title: 'Endereço',
         nullable: true,
-        required: false
+        required: false,
+        type: Endereco,
     })
     @Column({
         nullable: true

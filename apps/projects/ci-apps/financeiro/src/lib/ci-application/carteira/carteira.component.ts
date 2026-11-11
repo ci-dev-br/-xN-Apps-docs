@@ -79,10 +79,10 @@ export class CarteiraComponent implements OnInit, OnDestroy {
         this.loading = true;
         this.sub = this.carteiraService.obterMinhaCarteira().subscribe({
             next: (res: any) => {
+                this.loading = false;
                 this.carteira = res.carteira;
                 this.transacoes = res.transacoesRecentes || [];
                 this.aplicarFiltro(this.filtroTipo);
-                this.loading = false;
                 this.cdr.markForCheck();
             },
             error: (err: any) => {

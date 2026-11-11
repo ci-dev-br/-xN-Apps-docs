@@ -29,6 +29,7 @@ export class AppController {
   async handleAllRequests(@Req() request: Request, @Res() response: Response, @Next() next: NextFunction) {
     const reqPath = (request.path || '').toLowerCase();
     const isApiRoute = [
+      // TODO: remover daqui
       '/tenant', '/news', '/auth', '/users', '/system', '/logger', '/device',
       '/message', '/messager', '/directmessage', '/conversation', '/notification',
       '/storage', '/fiscal', '/financeiro', '/organizacao', '/produto',
