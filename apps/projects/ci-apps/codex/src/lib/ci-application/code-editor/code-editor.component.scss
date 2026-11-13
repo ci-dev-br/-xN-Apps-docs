@@ -581,7 +581,8 @@
             max-height: 320px;
             padding: 4px 6px;
 
-            .folder-loading, .folder-empty {
+            .folder-loading,
+            .folder-empty {
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -1624,8 +1625,13 @@
 }
 
 @keyframes gitFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes gitSlideUp {
@@ -1633,6 +1639,7 @@
         opacity: 0;
         transform: translateY(12px) scale(0.98);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -1644,6 +1651,7 @@
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1673,6 +1681,7 @@
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -1819,6 +1828,7 @@
             &::-webkit-scrollbar {
                 height: 4px;
             }
+
             &::-webkit-scrollbar-thumb {
                 background: #333333;
                 border-radius: 2px;
@@ -1987,11 +1997,30 @@
                         background: #333333;
                         color: #cccccc;
 
-                        &[data-kind="class"] { background: #4ec9b0; color: #000; }
-                        &[data-kind="interface"] { background: #9cdcfe; color: #000; }
-                        &[data-kind="function"] { background: #dcdcaa; color: #000; }
-                        &[data-kind="type"] { background: #c586c0; color: #000; }
-                        &[data-kind="variable"] { background: #4fc1ff; color: #000; }
+                        &[data-kind="class"] {
+                            background: #4ec9b0;
+                            color: #000;
+                        }
+
+                        &[data-kind="interface"] {
+                            background: #9cdcfe;
+                            color: #000;
+                        }
+
+                        &[data-kind="function"] {
+                            background: #dcdcaa;
+                            color: #000;
+                        }
+
+                        &[data-kind="type"] {
+                            background: #c586c0;
+                            color: #000;
+                        }
+
+                        &[data-kind="variable"] {
+                            background: #4fc1ff;
+                            color: #000;
+                        }
                     }
 
                     .symbol-name {
@@ -2057,6 +2086,7 @@
 }
 
 ::ng-deep body.codex-fullscreen-active {
+
     ci-navbar,
     mat-toolbar,
     .mat-toolbar {

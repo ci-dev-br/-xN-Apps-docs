@@ -3,3 +3,4 @@
  */
 export { CiApplicationModule } from './lib/ci-application/ci-application.module';
 export * from './lib/compositor/compositor.component';
+export * from './lib/compositor/compositor.component';

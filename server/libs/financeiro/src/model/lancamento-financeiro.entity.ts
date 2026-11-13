@@ -26,6 +26,7 @@ export class LancamentoFinanceiro extends FullAuditedEntity {
     valor?: number;
     @ApiProperty({
         title: 'Descrição',
+        description: 'Descrição do lançamento',
         nullable: true,
         required: false
     })
@@ -57,4 +58,5 @@ export class LancamentoFinanceiro extends FullAuditedEntity {
     })
     @Column({ nullable: true })
     mesReferencia?: Date;
+
 }

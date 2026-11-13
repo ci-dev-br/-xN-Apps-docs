@@ -24,7 +24,7 @@ export class AppController {
     @Optional() private readonly domain?: DomainService,
   ) { }
 
-  @Get(['/', '/*\w'])
+  @Get(['*'])
   @Public()
   async handleAllRequests(@Req() request: Request, @Res() response: Response, @Next() next: NextFunction) {
     const reqPath = (request.path || '').toLowerCase();
@@ -38,9 +38,9 @@ export class AppController {
     ].some(prefix => reqPath === prefix || reqPath.startsWith(prefix + '/'));
 
     if (isApiRoute) {
-      return next();
+      const absolutePath = resolve(__dirname, '../public/index.csr.html');
+      return response.sendFile(absolutePath);
     }
-
     try {
       if (request.url.indexOf('manifest.webmanifest') > -1) {
         const host: string = this.appService.getHost(request);
@@ -68,11 +68,13 @@ export class AppController {
     } catch (error) {
       console.error(error);
       if (!response.headersSent) {
-        return response.status(404).send('Não existe');
+        // return this.serveStaticWithCache(request, response, next);
+        // old: response.status(404).send('Não existe');
       }
     }
+    const absolutePath = resolve(__dirname, '../public/index.csr.html');
+    return response.sendFile(absolutePath);
   }
-
   /**
    * Lida com arquivos do disco, cache em memória e headers do Cloudflare
    */
@@ -83,7 +85,6 @@ export class AppController {
 
     let isIndex = reqPath.endsWith('index.csr.html');
     let absolutePath = resolve(__dirname, `../public${reqPath}`);
-
     try {
       // Verifica de forma assíncrona se o arquivo existe (não bloqueia a thread como existsSync)
       await fs.access(absolutePath, constants.R_OK);
@@ -96,7 +97,6 @@ export class AppController {
       absolutePath = resolve('public/index.csr.html');
       isIndex = true;
     }
-
     try {
       const stats = await fs.stat(absolutePath);
 

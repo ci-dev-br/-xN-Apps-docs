@@ -12,6 +12,7 @@ export const LAYOUT_PROGRAMMING: KeyboardKey[][] = [
         { label: '|', type: 'char' },
         { label: '?', type: 'char' },
         { label: '!', type: 'char' },
+        { label: '#', type: 'char' },
     ],
     [...['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '='].map(k => ({ label: k, type: 'char' } as KeyboardKey))],
     [...['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '´', '['].map(k => ({ label: k, type: 'char' } as KeyboardKey))],

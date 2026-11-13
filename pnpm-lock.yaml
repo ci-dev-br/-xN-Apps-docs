@@ -40,8 +40,8 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
       dotenv:
-        specifier: ^16.3.1
-        version: 16.4.5
+        specifier: ^18.0.9
+        version: 18.0.10
       express:
         specifier: ^4.18.2
         version: 4.20.0
@@ -50,9 +50,9 @@ importers:
         version: 11.2.0
       karma-junit-reporter:
         specifier: ^2.0.1
-        version: 2.0.1(karma@6.4.4(bufferutil@4.0.9)(utf-8-validate@6.0.5))
+        version: 2.0.1(karma@6.4.4(bufferutil@4.0.9)(debug@4.4.1)(utf-8-validate@6.0.5))
       node-windows:
-        specifier: 1.0.0-beta.8
+        specifier: ^1.0.0-beta.8
         version: 1.0.0-beta.8
       sha256:
         specifier: ^0.2.0
@@ -330,9 +330,10 @@ packages:
   dom-serialize@2.2.1:
     resolution: {integrity: sha512-Yra4DbvoW7/Z6LBN560ZwXMjoNOSAN2wRsKFGc4iBeso+mpIA6qj1vfdf9HpMaKAqG6wXTy+1SYEzmNpKXOSsQ==}
 
-  dotenv@16.4.5:
-    resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
+  dotenv@18.0.10:
+    resolution: {integrity: sha512-89FAA1xchzK2mxVWdr5F/0rldwiueXs6zJM86rO66EzekR1iBdiXRthyG+m5GvkJaFH3C2LESzamTkgndmLT2A==}
     engines: {node: '>=12'}
+    hasBin: true
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -453,6 +454,11 @@ packages:
   follow-redirects@1.15.11:
     resolution: {integrity: sha512-deG2P0JfjrTxl50XGCDyfI97ZGVCxIpfKYmfyrQ54n5FO/0gfIES8C/Psl6kWVDolizcaaxZJnTS0QSMxvnsBQ==}
     engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
 
   forwarded@0.2.0:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
@@ -480,6 +486,7 @@ packages:
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
 
   function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
@@ -1420,7 +1427,7 @@ snapshots:
       extend: 3.0.2
       void-elements: 2.0.1
 
-  dotenv@16.4.5: {}
+  dotenv@18.0.10: {}
 
   dunder-proto@1.0.1:
     dependencies:
@@ -1623,7 +1630,9 @@ snapshots:
 
   flatted@3.4.2: {}
 
-  follow-redirects@1.15.11: {}
+  follow-redirects@1.15.11(debug@4.4.1):
+    optionalDependencies:
+      debug: 4.4.1
 
   forwarded@0.2.0: {}
 
@@ -1768,11 +1777,13 @@ snapshots:
       statuses: 2.0.1
       toidentifier: 1.0.1
 
-  http-proxy@1.18.1:
+  http-proxy@1.18.1(debug@4.4.1):
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.11
+      follow-redirects: 1.15.11(debug@4.4.1)
       requires-port: 1.0.0
+    transitivePeerDependencies:
+      - debug
 
   https-proxy-agent@7.0.6:
     dependencies:
@@ -1860,13 +1871,13 @@ snapshots:
       jwa: 2.0.1
       safe-buffer: 5.2.1
 
-  karma-junit-reporter@2.0.1(karma@6.4.4(bufferutil@4.0.9)(utf-8-validate@6.0.5)):
+  karma-junit-reporter@2.0.1(karma@6.4.4(bufferutil@4.0.9)(debug@4.4.1)(utf-8-validate@6.0.5)):
     dependencies:
-      karma: 6.4.4(bufferutil@4.0.9)(utf-8-validate@6.0.5)
+      karma: 6.4.4(bufferutil@4.0.9)(debug@4.4.1)(utf-8-validate@6.0.5)
       path-is-absolute: 1.0.1
       xmlbuilder: 12.0.0
 
-  karma@6.4.4(bufferutil@4.0.9)(utf-8-validate@6.0.5):
+  karma@6.4.4(bufferutil@4.0.9)(debug@4.4.1)(utf-8-validate@6.0.5):
     dependencies:
       '@colors/colors': 1.5.0
       body-parser: 1.20.3
@@ -1877,7 +1888,7 @@ snapshots:
       dom-serialize: 2.2.1
       glob: 7.2.3
       graceful-fs: 4.2.11
-      http-proxy: 1.18.1
+      http-proxy: 1.18.1(debug@4.4.1)
       isbinaryfile: 4.0.10
       lodash: 4.18.1
       log4js: 6.9.1
@@ -1894,6 +1905,7 @@ snapshots:
       yargs: 16.2.0
     transitivePeerDependencies:
       - bufferutil
+      - debug
       - supports-color
       - utf-8-validate
 
