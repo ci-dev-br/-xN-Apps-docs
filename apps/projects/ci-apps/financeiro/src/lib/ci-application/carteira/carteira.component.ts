@@ -26,6 +26,15 @@ import {
     PeriodoDashboardCarteira,
     PontoSerieTemporalCarteiraDto
 } from '@ci/portal-api';
+import {
+    CarteiraPatrimonioKpiCard,
+    CarteiraGanhosKpiCard,
+    CarteiraPerdasKpiCard,
+    CarteiraResultadoLiquidoKpiCard,
+} from '../../ci-cards/carteira-kpis.card';
+import { CarteiraEvolucaoTemporalCard } from '../../ci-cards/carteira-evolucao-temporal.card';
+import { CarteiraAlocacaoLastroCard } from '../../ci-cards/carteira-alocacao-lastro.card';
+import { CarteiraDesempenhoComparativoCard } from '../../ci-cards/carteira-desempenho-comparativo.card';
 
 export interface PontoRenderGrafico {
     indice: number;
@@ -68,6 +77,13 @@ export interface MoedaPresetItem {
         MatProgressSpinnerModule,
         MatCheckboxModule,
         MatSelectModule,
+        CarteiraPatrimonioKpiCard,
+        CarteiraGanhosKpiCard,
+        CarteiraPerdasKpiCard,
+        CarteiraResultadoLiquidoKpiCard,
+        CarteiraEvolucaoTemporalCard,
+        CarteiraAlocacaoLastroCard,
+        CarteiraDesempenhoComparativoCard,
     ],
     templateUrl: './carteira.component.html',
     styleUrls: ['./carteira.component.scss']
