@@ -24,22 +24,22 @@ export class TransacaoCarteira extends FullAuditedEntity {
 
     @ApiProperty({
         title: 'Categoria',
-        enum: ['DEPOSITO', 'PAGAMENTO_FATURA', 'TRANSFERENCIA', 'ESTORNO', 'OUTROS'],
-        description: 'Categoria da operação financeira'
+        enum: ['DEPOSITO', 'PAGAMENTO_FATURA', 'TRANSFERENCIA', 'ESTORNO', 'AJUSTE_POSICAO', 'RENDIMENTO', 'APORTE', 'RETIRADA', 'VALORIZACAO', 'OUTROS'],
+        description: 'Categoria da operação financeira ou atualização de posição'
     })
     @Column({ default: 'OUTROS' })
-    categoria: 'DEPOSITO' | 'PAGAMENTO_FATURA' | 'TRANSFERENCIA' | 'ESTORNO' | 'OUTROS';
+    categoria: 'DEPOSITO' | 'PAGAMENTO_FATURA' | 'TRANSFERENCIA' | 'ESTORNO' | 'AJUSTE_POSICAO' | 'RENDIMENTO' | 'APORTE' | 'RETIRADA' | 'VALORIZACAO' | 'OUTROS';
 
     @ApiProperty({ title: 'Valor', description: 'Valor da operação em moeda' })
-    @Column({ type: 'numeric', precision: 14, scale: 2 })
+    @Column({ type: 'numeric', precision: 18, scale: 4 })
     valor: number;
 
     @ApiProperty({ title: 'Saldo Anterior', required: false })
-    @Column({ type: 'numeric', precision: 14, scale: 2, nullable: true })
+    @Column({ type: 'numeric', precision: 18, scale: 4, nullable: true })
     saldoAnterior?: number;
 
     @ApiProperty({ title: 'Saldo Posterior', required: false })
-    @Column({ type: 'numeric', precision: 14, scale: 2, nullable: true })
+    @Column({ type: 'numeric', precision: 18, scale: 4, nullable: true })
     saldoPosterior?: number;
 
     @ApiProperty({ title: 'Descrição', description: 'Histórico da transação' })

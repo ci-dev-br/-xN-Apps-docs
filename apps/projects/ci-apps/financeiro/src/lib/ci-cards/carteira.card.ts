@@ -25,8 +25,10 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
             <div mat-card-avatar class="wallet-avatar">
                 <mat-icon>account_balance_wallet</mat-icon>
             </div>
-            <mat-card-title>Minha Carteira</mat-card-title>
-            <mat-card-subtitle>{{ loading ? 'Carregando...' : (possuiCarteira && carteira?.numeroCarteira ? carteira?.numeroCarteira : 'Carteira Digital CI') }}</mat-card-subtitle>
+            <mat-card-title>{{ carteira?.nome || 'Minha Carteira' }}</mat-card-title>
+            <mat-card-subtitle>
+                {{ loading ? 'Carregando...' : (possuiCarteira && carteira?.numeroCarteira ? carteira?.numeroCarteira + (carteiras.length > 1 ? ' • ' + carteiras.length + ' carteiras' : '') : 'Carteira Digital CI') }}
+            </mat-card-subtitle>
             <div class="header-actions">
                 <button mat-icon-button (click)="carregar()" [disabled]="loading" title="Atualizar">
                     <mat-icon>refresh</mat-icon>

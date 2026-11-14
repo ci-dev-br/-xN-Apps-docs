@@ -20,25 +20,55 @@ export interface ConnectedDevice {
   isOnline?: boolean;
 }
 
+export interface ParametrosLastroDto {
+  indexador?: string;
+  casasDecimais?: number;
+  permiteSaldoNegativo?: boolean;
+  emissor?: string;
+  observacoesLastro?: string;
+  metaPosicao?: number;
+}
+
 export interface CarteiraDto {
   internalId?: string;
   userId?: string;
+  nome?: string;
+  descricao?: string;
   numeroCarteira: string;
   saldo: number;
-  saldoBloqueado: number;
+  saldoBloqueado?: number;
+  tipoLastro?: 'MOEDA_REAL' | 'PARAMETRIZADA';
   moeda: string;
-  ativa: boolean;
+  simboloMoeda?: string;
+  nomeMoeda?: string;
+  fatorConversaoBrl?: number;
+  parametrosLastro?: ParametrosLastroDto;
+  principal?: boolean;
+  corTema?: string;
+  ativa?: boolean;
   status?: string;
   limiteDiario?: number;
   createdAt?: string;
   updatedAt?: string;
 }
 
+export type CategoriaTransacaoCarteira =
+  | 'DEPOSITO'
+  | 'PAGAMENTO_FATURA'
+  | 'TRANSFERENCIA'
+  | 'ESTORNO'
+  | 'AJUSTE_POSICAO'
+  | 'RENDIMENTO'
+  | 'APORTE'
+  | 'RETIRADA'
+  | 'VALORIZACAO'
+  | 'OUTROS';
+
 export interface TransacaoCarteiraDto {
   internalId?: string;
   carteiraId?: string;
   tipo: 'ENTRADA' | 'SAIDA';
-  categoria: 'DEPOSITO' | 'PAGAMENTO_FATURA' | 'TRANSFERENCIA' | 'ESTORNO' | 'OUTROS';
+  categoria: CategoriaTransacaoCarteira;
   valor: number;
   saldoAnterior?: number;
   saldoPosterior?: number;
@@ -53,7 +83,39 @@ export interface TransacaoCarteiraDto {
 export interface VisaoGeralCarteiraDto {
   possuiCarteira?: boolean;
   carteira?: CarteiraDto | null;
+  carteiras?: CarteiraDto[];
+  patrimonioTotalBrl?: number;
   transacoesRecentes: TransacaoCarteiraDto[];
+}
+
+export interface CriarCarteiraPayloadDto {
+  nome?: string;
+  descricao?: string;
+  tipoLastro?: 'MOEDA_REAL' | 'PARAMETRIZADA';
+  moeda?: string;
+  simboloMoeda?: string;
+  nomeMoeda?: string;
+  fatorConversaoBrl?: number;
+  saldoInicial?: number;
+  limiteDiario?: number;
+  principal?: boolean;
+  corTema?: string;
+  parametrosLastro?: ParametrosLastroDto;
+  termosAceitos?: boolean;
+}
+
+export interface LancamentoPosicaoPayloadDto {
+  carteiraId?: string;
+  modo: 'MOVIMENTACAO' | 'DEFINIR_POSICAO';
+  tipo?: 'ENTRADA' | 'SAIDA';
+  valor?: number;
+  novaPosicao?: number;
+  novaCotacaoBrl?: number;
+  novaMetaPosicao?: number;
+  categoria?: CategoriaTransacaoCarteira;
+  identificador?: string;
+  descricao?: string;
+  metadados?: any;
 }
 
 export interface NewsSocialStatus {
@@ -120,25 +182,36 @@ declare module '../lib/services/news.service' {
 
 declare module '../lib/services/carteira.service' {
   export interface CarteiraService {
-    obterMinhaCarteira(autoCreate?: boolean): Observable<VisaoGeralCarteiraDto>;
-    criarCarteira(dados?: {
-      moeda?: string;
-      limiteDiario?: number;
-      termosAceitos?: boolean;
-    }): Observable<{ possuiCarteira: boolean; carteira: CarteiraDto; criada: boolean }>;
+    obterMinhaCarteira(autoCreate?: boolean, carteiraId?: string): Observable<VisaoGeralCarteiraDto>;
+    listarCarteiras(): Observable<{ possuiCarteira: boolean; carteiras: CarteiraDto[] }>;
+    criarCarteira(dados?: CriarCarteiraPayloadDto): Observable<{
+      possuiCarteira: boolean;
+      carteira: CarteiraDto;
+      carteiras?: CarteiraDto[];
+      criada: boolean;
+    }>;
+    lancarPosicaoCarteira(dados: LancamentoPosicaoPayloadDto): Observable<{
+      carteira: CarteiraDto;
+      transacao: TransacaoCarteiraDto;
+      carteiras: CarteiraDto[];
+      patrimonioTotalBrl: number;
+    }>;
     registrarDeposito(dados: {
+      carteiraId?: string;
       valor: number;
       identificador?: string;
       descricao?: string;
       metadados?: any;
     }): Observable<{ carteira: CarteiraDto; transacao: TransacaoCarteiraDto }>;
     pagarFatura(dados: {
+      carteiraId?: string;
       faturaId: string;
       valor: number;
       descricao?: string;
       metadados?: any;
     }): Observable<{ carteira: CarteiraDto; transacao: TransacaoCarteiraDto }>;
     listarTransacoes(params?: {
+      carteiraId?: string;
       tipo?: 'ENTRADA' | 'SAIDA';
       categoria?: string;
       de?: string;
@@ -236,24 +309,48 @@ NewsService.prototype.getSocialStatus = function (
 };
 
 // Runtime prototype augmentations for CarteiraService
-CarteiraService.prototype.obterMinhaCarteira = function (this: ServiceCtx, autoCreate?: boolean): Observable<VisaoGeralCarteiraDto> {
-  const qs = autoCreate ? '?autoCreate=true' : '';
+CarteiraService.prototype.obterMinhaCarteira = function (this: ServiceCtx, autoCreate?: boolean, carteiraId?: string): Observable<VisaoGeralCarteiraDto> {
+  const params: string[] = [];
+  if (autoCreate) params.push('autoCreate=true');
+  if (carteiraId) params.push(`carteiraId=${encodeURIComponent(carteiraId)}`);
+  const qs = params.length ? `?${params.join('&')}` : '';
   return this.http.get<VisaoGeralCarteiraDto>(`${this.rootUrl}/Financeiro/Carteira/Minha${qs}`);
+};
+
+CarteiraService.prototype.listarCarteiras = function (this: ServiceCtx): Observable<{ possuiCarteira: boolean; carteiras: CarteiraDto[] }> {
+  return this.http.get<{ possuiCarteira: boolean; carteiras: CarteiraDto[] }>(`${this.rootUrl}/Financeiro/Carteira/Listar`);
 };
 
 CarteiraService.prototype.criarCarteira = function (
   this: ServiceCtx,
-  dados?: { moeda?: string; limiteDiario?: number; termosAceitos?: boolean }
-): Observable<{ possuiCarteira: boolean; carteira: CarteiraDto; criada: boolean }> {
-  return this.http.post<{ possuiCarteira: boolean; carteira: CarteiraDto; criada: boolean }>(
+  dados?: CriarCarteiraPayloadDto
+): Observable<{ possuiCarteira: boolean; carteira: CarteiraDto; carteiras?: CarteiraDto[]; criada: boolean }> {
+  return this.http.post<{ possuiCarteira: boolean; carteira: CarteiraDto; carteiras?: CarteiraDto[]; criada: boolean }>(
     `${this.rootUrl}/Financeiro/Carteira/Criar`,
     dados || {}
   );
 };
 
+CarteiraService.prototype.lancarPosicaoCarteira = function (
+  this: ServiceCtx,
+  dados: LancamentoPosicaoPayloadDto
+): Observable<{
+  carteira: CarteiraDto;
+  transacao: TransacaoCarteiraDto;
+  carteiras: CarteiraDto[];
+  patrimonioTotalBrl: number;
+}> {
+  return this.http.post<{
+    carteira: CarteiraDto;
+    transacao: TransacaoCarteiraDto;
+    carteiras: CarteiraDto[];
+    patrimonioTotalBrl: number;
+  }>(`${this.rootUrl}/Financeiro/Carteira/LancamentoPosicao`, dados);
+};
+
 CarteiraService.prototype.registrarDeposito = function (
   this: ServiceCtx,
-  dados: { valor: number; identificador?: string; descricao?: string; metadados?: any }
+  dados: { carteiraId?: string; valor: number; identificador?: string; descricao?: string; metadados?: any }
 ): Observable<{ carteira: CarteiraDto; transacao: TransacaoCarteiraDto }> {
   return this.http.post<{ carteira: CarteiraDto; transacao: TransacaoCarteiraDto }>(
     `${this.rootUrl}/Financeiro/Carteira/Deposito`,
@@ -263,7 +360,7 @@ CarteiraService.prototype.registrarDeposito = function (
 
 CarteiraService.prototype.pagarFatura = function (
   this: ServiceCtx,
-  dados: { faturaId: string; valor: number; descricao?: string; metadados?: any }
+  dados: { carteiraId?: string; faturaId: string; valor: number; descricao?: string; metadados?: any }
 ): Observable<{ carteira: CarteiraDto; transacao: TransacaoCarteiraDto }> {
   return this.http.post<{ carteira: CarteiraDto; transacao: TransacaoCarteiraDto }>(
     `${this.rootUrl}/Financeiro/Carteira/PagarFatura`,

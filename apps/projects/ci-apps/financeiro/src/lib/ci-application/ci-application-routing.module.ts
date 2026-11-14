@@ -20,6 +20,11 @@ const routes: Routes = [
         component: CarteiraComponent
       },
       {
+        path: 'Carteira/Lancamento',
+        component: CarteiraComponent,
+        data: { abaInicial: 'LANCAMENTO_POSICAO' }
+      },
+      {
         path: ':EntityName',
         component: MasterDetailComponent,
         data: {

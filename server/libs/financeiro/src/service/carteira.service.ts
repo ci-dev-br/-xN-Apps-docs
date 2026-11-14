@@ -9,6 +9,7 @@ import { ClientVersionCatalog } from "@ci/manager/model/client-version-catalog.e
 import { execSync } from "child_process";
 
 export interface DepositoDto {
+    carteiraId?: string;
     valor: number;
     identificador?: string;
     descricao?: string;
@@ -16,11 +17,56 @@ export interface DepositoDto {
 }
 
 export interface PagarFaturaDto {
+    carteiraId?: string;
     faturaId: string;
     valor: number;
     descricao?: string;
     metadados?: any;
 }
+
+export interface CriarCarteiraPayload {
+    nome?: string;
+    descricao?: string;
+    tipoLastro?: 'MOEDA_REAL' | 'PARAMETRIZADA';
+    moeda?: string;
+    simboloMoeda?: string;
+    nomeMoeda?: string;
+    fatorConversaoBrl?: number;
+    saldoInicial?: number;
+    limiteDiario?: number;
+    principal?: boolean;
+    corTema?: string;
+    parametrosLastro?: {
+        indexador?: string;
+        casasDecimais?: number;
+        permiteSaldoNegativo?: boolean;
+        emissor?: string;
+        observacoesLastro?: string;
+        metaPosicao?: number;
+    };
+}
+
+export interface LancamentoPosicaoDto {
+    carteiraId?: string;
+    modo: 'MOVIMENTACAO' | 'DEFINIR_POSICAO';
+    tipo?: 'ENTRADA' | 'SAIDA';
+    valor?: number;
+    novaPosicao?: number;
+    novaCotacaoBrl?: number;
+    novaMetaPosicao?: number;
+    categoria?: 'DEPOSITO' | 'PAGAMENTO_FATURA' | 'TRANSFERENCIA' | 'ESTORNO' | 'AJUSTE_POSICAO' | 'RENDIMENTO' | 'APORTE' | 'RETIRADA' | 'VALORIZACAO' | 'OUTROS';
+    identificador?: string;
+    descricao?: string;
+    metadados?: any;
+}
+
+const MOEDAS_REAIS_PADRAO: Record<string, { simbolo: string; nome: string; fatorBrl: number; corTema: string }> = {
+    BRL: { simbolo: 'R$', nome: 'Real Brasileiro', fatorBrl: 1.0, corTema: 'indigo' },
+    USD: { simbolo: 'US$', nome: 'Dólar Americano', fatorBrl: 5.80, corTema: 'emerald' },
+    EUR: { simbolo: '€', nome: 'Euro', fatorBrl: 6.15, corTema: 'blue' },
+    GBP: { simbolo: '£', nome: 'Libra Esterlina', fatorBrl: 7.35, corTema: 'purple' },
+    BTC: { simbolo: '₿', nome: 'Bitcoin', fatorBrl: 520000.0, corTema: 'amber' },
+};
 
 @Injectable()
 export class CarteiraService {
@@ -33,118 +79,238 @@ export class CarteiraService {
         private readonly transacaoRepo: Repository<TransacaoCarteira>,
     ) { }
 
-    /**
-     * Obtém a carteira existente do usuário sem criá-la automaticamente
-     */
-    async obterCarteiraExistente(userId: string): Promise<Carteira | null> {
-        if (!userId) {
-            throw new BadRequestException('ID do usuário é obrigatório.');
-        }
+    private resolverMetadadosMoeda(dados?: CriarCarteiraPayload) {
+        const codigoMoeda = (dados?.moeda || 'BRL').trim().toUpperCase();
+        const padrao = MOEDAS_REAIS_PADRAO[codigoMoeda];
+        const tipoLastro: 'MOEDA_REAL' | 'PARAMETRIZADA' =
+            dados?.tipoLastro || (padrao ? 'MOEDA_REAL' : 'PARAMETRIZADA');
 
-        return await this.carteiraRepo.findOne({
-            where: { userId },
-            relations: ['transacoes'],
+        const simboloMoeda = dados?.simboloMoeda?.trim() || padrao?.simbolo || codigoMoeda;
+        const nomeMoeda = dados?.nomeMoeda?.trim() || padrao?.nome || (tipoLastro === 'PARAMETRIZADA' ? `Ativo Parametrizado (${codigoMoeda})` : codigoMoeda);
+        const fatorConversaoBrl = dados?.fatorConversaoBrl !== undefined && dados?.fatorConversaoBrl !== null && Number(dados.fatorConversaoBrl) > 0
+            ? Number(dados.fatorConversaoBrl)
+            : (padrao?.fatorBrl ?? 1.0);
+        const corTema = dados?.corTema || padrao?.corTema || (tipoLastro === 'PARAMETRIZADA' ? 'violet' : 'indigo');
+
+        return {
+            moeda: codigoMoeda,
+            tipoLastro,
+            simboloMoeda,
+            nomeMoeda,
+            fatorConversaoBrl,
+            corTema,
+        };
+    }
+
+    private normalizarCarteira(carteira: Carteira): Carteira {
+        if (!carteira) return carteira;
+        const meta = this.resolverMetadadosMoeda({
+            moeda: carteira.moeda,
+            tipoLastro: carteira.tipoLastro,
+            simboloMoeda: carteira.simboloMoeda,
+            nomeMoeda: carteira.nomeMoeda,
+            fatorConversaoBrl: carteira.fatorConversaoBrl,
+            corTema: carteira.corTema,
         });
+        carteira.saldo = Number(carteira.saldo) || 0;
+        carteira.tipoLastro = carteira.tipoLastro || meta.tipoLastro;
+        carteira.simboloMoeda = carteira.simboloMoeda || meta.simboloMoeda;
+        carteira.nomeMoeda = carteira.nomeMoeda || meta.nomeMoeda;
+        carteira.fatorConversaoBrl = Number(carteira.fatorConversaoBrl) > 0 ? Number(carteira.fatorConversaoBrl) : meta.fatorConversaoBrl;
+        carteira.corTema = carteira.corTema || meta.corTema;
+        carteira.nome = carteira.nome || `Carteira ${carteira.moeda}`;
+        if (carteira.limiteDiario !== undefined && carteira.limiteDiario !== null) {
+            carteira.limiteDiario = Number(carteira.limiteDiario) || 0;
+        }
+        return carteira;
     }
 
     /**
-     * Cria explicitamente uma nova carteira digital para o usuário
+     * Lista todas as carteiras ativas/existentes do usuário
      */
-    async criarCarteira(
-        userId: string,
-        dados?: { moeda?: string; limiteDiario?: number }
-    ): Promise<{ possuiCarteira: boolean; carteira: Carteira; criada: boolean }> {
+    async listarCarteirasUsuario(userId: string): Promise<Carteira[]> {
         if (!userId) {
             throw new BadRequestException('ID do usuário é obrigatório.');
         }
 
-        let carteira = await this.carteiraRepo.findOne({
+        const carteiras = await this.carteiraRepo.find({
             where: { userId },
-            relations: ['transacoes'],
+            order: { createdAt: 'ASC' },
         });
 
-        if (carteira) {
-            carteira.saldo = Number(carteira.saldo) || 0;
-            return { possuiCarteira: true, carteira, criada: false };
+        const normalizadas = carteiras
+            .filter(c => !c.deleted)
+            .map(c => this.normalizarCarteira(c));
+
+        normalizadas.sort((a, b) => {
+            if (a.principal && !b.principal) return -1;
+            if (!a.principal && b.principal) return 1;
+            return 0;
+        });
+
+        return normalizadas;
+    }
+
+    /**
+     * Obtém uma carteira existente do usuário (específica por ID ou a principal) sem criá-la automaticamente
+     */
+    async obterCarteiraExistente(userId: string, carteiraId?: string): Promise<Carteira | null> {
+        const carteiras = await this.listarCarteirasUsuario(userId);
+        if (carteiras.length === 0) return null;
+
+        if (carteiraId) {
+            const encontrada = carteiras.find(c => c.internalId === carteiraId || c.numeroCarteira === carteiraId);
+            if (encontrada) return encontrada;
         }
 
-        const numeroCarteira = `CI-WAL-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
-        carteira = this.carteiraRepo.create({
+        return carteiras.find(c => c.principal) || carteiras[0];
+    }
+
+    /**
+     * Cria explicitamente uma nova carteira digital (permitindo múltiplas carteiras por usuário com lastro real ou parametrizado)
+     */
+    async criarCarteira(
+        userId: string,
+        dados?: CriarCarteiraPayload
+    ): Promise<{ possuiCarteira: boolean; carteira: Carteira; carteiras: Carteira[]; criada: boolean }> {
+        if (!userId) {
+            throw new BadRequestException('ID do usuário é obrigatório.');
+        }
+
+        const carteirasExistentes = await this.listarCarteirasUsuario(userId);
+        const ehPrimeira = carteirasExistentes.length === 0;
+        const definirComoPrincipal = ehPrimeira || !!dados?.principal;
+
+        if (definirComoPrincipal && carteirasExistentes.length > 0) {
+            for (const c of carteirasExistentes) {
+                if (c.principal) {
+                    c.principal = false;
+                    await this.carteiraRepo.save(c);
+                }
+            }
+        }
+
+        const meta = this.resolverMetadadosMoeda(dados);
+        const prefixoMoeda = meta.moeda.replace(/[^A-Z0-9]/g, '').slice(0, 4) || 'WAL';
+        const numeroCarteira = `CI-${prefixoMoeda}-${Date.now().toString(36).toUpperCase().slice(-5)}-${Math.floor(1000 + Math.random() * 9000)}`;
+        const nomePadrao = dados?.nome?.trim() || (ehPrimeira ? `Carteira Principal (${meta.moeda})` : `Carteira ${meta.nomeMoeda}`);
+        const saldoInicial = dados?.saldoInicial !== undefined && dados?.saldoInicial !== null && !isNaN(Number(dados.saldoInicial))
+            ? Number(Number(dados.saldoInicial).toFixed(4))
+            : 0;
+
+        let carteira = this.carteiraRepo.create({
             userId,
+            nome: nomePadrao,
+            descricao: dados?.descricao?.trim() || undefined,
             numeroCarteira,
-            saldo: 0.00,
-            moeda: dados?.moeda || 'BRL',
+            saldo: saldoInicial,
+            tipoLastro: meta.tipoLastro,
+            moeda: meta.moeda,
+            simboloMoeda: meta.simboloMoeda,
+            nomeMoeda: meta.nomeMoeda,
+            fatorConversaoBrl: meta.fatorConversaoBrl,
+            parametrosLastro: dados?.parametrosLastro || {
+                indexador: meta.tipoLastro === 'PARAMETRIZADA' ? 'PARAMETRIZADO' : 'CAMBIO_OFICIAL',
+                casasDecimais: 2,
+                permiteSaldoNegativo: false,
+            },
+            principal: definirComoPrincipal,
+            corTema: meta.corTema,
             status: 'ATIVA',
             limiteDiario: dados?.limiteDiario || 10000.00,
         });
-        carteira = await this.carteiraRepo.save(carteira);
-        carteira.saldo = 0;
-        this.logger.log(`Nova carteira ${numeroCarteira} criada para o usuário ${userId}`);
 
-        return { possuiCarteira: true, carteira, criada: true };
+        carteira = await this.carteiraRepo.save(carteira);
+        carteira = this.normalizarCarteira(carteira);
+
+        if (saldoInicial !== 0) {
+            const txInicial = this.transacaoRepo.create({
+                carteiraId: carteira.internalId,
+                tipo: saldoInicial >= 0 ? 'ENTRADA' : 'SAIDA',
+                categoria: 'AJUSTE_POSICAO',
+                valor: Math.abs(saldoInicial),
+                saldoAnterior: 0,
+                saldoPosterior: saldoInicial,
+                descricao: `Posição inicial na abertura da carteira (${meta.simboloMoeda} ${saldoInicial})`,
+                identificador: `INI-${Date.now().toString(36).toUpperCase()}`,
+                status: 'CONCLUIDA',
+                metadados: { aberturaCarteira: true, tipoLastro: meta.tipoLastro, moeda: meta.moeda },
+            });
+            await this.transacaoRepo.save(txInicial);
+        }
+
+        this.logger.log(`Nova carteira ${numeroCarteira} (${meta.moeda} / ${meta.tipoLastro}) criada para o usuário ${userId}`);
+        const todasCarteiras = await this.listarCarteirasUsuario(userId);
+
+        return { possuiCarteira: true, carteira, carteiras: todasCarteiras, criada: true };
     }
 
     /**
      * Obtém ou inicializa a carteira digital do usuário
      */
-    async obterOuCriarCarteira(userId: string): Promise<Carteira> {
+    async obterOuCriarCarteira(userId: string, carteiraId?: string): Promise<Carteira> {
         if (!userId) {
             throw new BadRequestException('ID do usuário é obrigatório.');
         }
 
-        let carteira = await this.carteiraRepo.findOne({
-            where: { userId },
-            relations: ['transacoes'],
-        });
-
-        if (!carteira) {
-            const numeroCarteira = `CI-WAL-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
-            carteira = this.carteiraRepo.create({
-                userId,
-                numeroCarteira,
-                saldo: 0.00,
-                moeda: 'BRL',
-                status: 'ATIVA',
-            });
-            carteira = await this.carteiraRepo.save(carteira);
-            this.logger.log(`Nova carteira ${numeroCarteira} criada para o usuário ${userId}`);
+        const existente = await this.obterCarteiraExistente(userId, carteiraId);
+        if (existente) {
+            return existente;
         }
 
-        return carteira;
+        const criada = await this.criarCarteira(userId, { moeda: 'BRL', tipoLastro: 'MOEDA_REAL' });
+        return criada.carteira;
+    }
+
+    private calcularPatrimonioTotalBrl(carteiras: Carteira[]): number {
+        const soma = carteiras.reduce((acc, c) => {
+            const saldo = Number(c.saldo) || 0;
+            const fator = Number(c.fatorConversaoBrl) > 0 ? Number(c.fatorConversaoBrl) : 1;
+            return acc + (saldo * fator);
+        }, 0);
+        return Number(soma.toFixed(2));
     }
 
     /**
-     * Retorna a carteira com o extrato recente de movimentações.
-     * Caso autoCriar seja falso e a carteira não exista, retorna possuiCarteira = false.
+     * Retorna a visão geral da carteira selecionada + lista de todas as carteiras do usuário e extrato recente.
      */
     async obterVisaoGeralCarteira(
         userId: string,
-        autoCriar: boolean = false
-    ): Promise<{ possuiCarteira: boolean; carteira: Carteira | null; transacoesRecentes: TransacaoCarteira[] }> {
-        let carteira = await this.obterCarteiraExistente(userId);
+        autoCriar: boolean = false,
+        carteiraId?: string
+    ): Promise<{
+        possuiCarteira: boolean;
+        carteira: Carteira | null;
+        carteiras: Carteira[];
+        patrimonioTotalBrl: number;
+        transacoesRecentes: TransacaoCarteira[];
+    }> {
+        let carteiras = await this.listarCarteirasUsuario(userId);
 
-        if (!carteira) {
+        if (carteiras.length === 0) {
             if (!autoCriar) {
                 return {
                     possuiCarteira: false,
                     carteira: null,
+                    carteiras: [],
+                    patrimonioTotalBrl: 0,
                     transacoesRecentes: [],
                 };
             }
-            carteira = await this.obterOuCriarCarteira(userId);
+            const res = await this.criarCarteira(userId, { moeda: 'BRL' });
+            carteiras = res.carteiras;
         }
+
+        const carteira = (carteiraId ? carteiras.find(c => c.internalId === carteiraId || c.numeroCarteira === carteiraId) : null)
+            || carteiras.find(c => c.principal)
+            || carteiras[0];
 
         const transacoesRecentes = await this.transacaoRepo.find({
             where: { carteiraId: carteira.internalId },
             order: { createdAt: 'DESC' },
-            take: 20,
+            take: 30,
         });
 
-        // Converte saldo e valores numéricos caso o TypeORM retorne como string numérica
-        carteira.saldo = Number(carteira.saldo) || 0;
-        if (carteira.limiteDiario !== undefined && carteira.limiteDiario !== null) {
-            carteira.limiteDiario = Number(carteira.limiteDiario) || 0;
-        }
         for (const tx of transacoesRecentes) {
             tx.valor = Number(tx.valor) || 0;
             if (tx.saldoAnterior !== undefined && tx.saldoAnterior !== null) {
@@ -155,8 +321,10 @@ export class CarteiraService {
             }
         }
 
-        // Avalia em segundo plano concessão de cortesia da ROLE DEVELOPER se saldo >= 50
-        if (carteira.saldo >= 50 && userId && userId !== 'guest_user_demo') {
+        const patrimonioTotalBrl = this.calcularPatrimonioTotalBrl(carteiras);
+
+        // Avalia em segundo plano concessão de cortesia da ROLE DEVELOPER se patrimônio >= 50
+        if (patrimonioTotalBrl >= 50 && userId && userId !== 'guest_user_demo') {
             this.verificarEConcederRoleDeveloper(userId).catch(err => {
                 this.logger.warn(`Erro na verificação de cortesia DEVELOPER: ${err?.message}`);
             });
@@ -165,7 +333,126 @@ export class CarteiraService {
         return {
             possuiCarteira: true,
             carteira,
+            carteiras,
+            patrimonioTotalBrl,
             transacoesRecentes,
+        };
+    }
+
+    /**
+     * Realiza lançamento de movimentação ou atualização/ajuste direto da posição da carteira
+     */
+    async lancarPosicaoCarteira(
+        userId: string,
+        dados: LancamentoPosicaoDto
+    ): Promise<{
+        carteira: Carteira;
+        transacao: TransacaoCarteira;
+        carteiras: Carteira[];
+        patrimonioTotalBrl: number;
+    }> {
+        const carteira = await this.obterOuCriarCarteira(userId, dados.carteiraId);
+
+        if (carteira.status !== 'ATIVA') {
+            throw new BadRequestException(`Carteira ${carteira.status.toLowerCase()}. Não é possível atualizar a posição.`);
+        }
+
+        const saldoAnterior = Number(carteira.saldo) || 0;
+        let saldoPosterior = saldoAnterior;
+        let tipoMovimento: 'ENTRADA' | 'SAIDA' = 'ENTRADA';
+        let valorMovimento = 0;
+        let categoriaMovimento = dados.categoria || 'AJUSTE_POSICAO';
+
+        if (dados.modo === 'DEFINIR_POSICAO') {
+            const novaPosicao = Number(dados.novaPosicao);
+            if (isNaN(novaPosicao)) {
+                throw new BadRequestException('Informe um valor numérico válido para a nova posição da carteira.');
+            }
+            const permiteNegativo = !!carteira.parametrosLastro?.permiteSaldoNegativo;
+            if (novaPosicao < 0 && !permiteNegativo) {
+                throw new BadRequestException('Esta carteira não permite posição negativa. Habilite nas configurações de lastro caso necessário.');
+            }
+            const diferenca = Number((novaPosicao - saldoAnterior).toFixed(4));
+            saldoPosterior = Number(novaPosicao.toFixed(4));
+            tipoMovimento = diferenca >= 0 ? 'ENTRADA' : 'SAIDA';
+            valorMovimento = Math.abs(diferenca);
+            categoriaMovimento = dados.categoria || 'AJUSTE_POSICAO';
+        } else {
+            const valor = Number(dados.valor);
+            if (isNaN(valor) || valor <= 0) {
+                throw new BadRequestException('O valor do lançamento deve ser maior que zero.');
+            }
+            tipoMovimento = dados.tipo || 'ENTRADA';
+            valorMovimento = Number(valor.toFixed(4));
+            if (tipoMovimento === 'SAIDA') {
+                const permiteNegativo = !!carteira.parametrosLastro?.permiteSaldoNegativo;
+                if (saldoAnterior < valorMovimento && !permiteNegativo) {
+                    throw new BadRequestException(
+                        `Saldo insuficiente na carteira ${carteira.nome} (${carteira.simboloMoeda} ${saldoAnterior.toFixed(2)}).`
+                    );
+                }
+                saldoPosterior = Number((saldoAnterior - valorMovimento).toFixed(4));
+            } else {
+                saldoPosterior = Number((saldoAnterior + valorMovimento).toFixed(4));
+            }
+            categoriaMovimento = dados.categoria || (tipoMovimento === 'ENTRADA' ? 'APORTE' : 'RETIRADA');
+        }
+
+        if (dados.novaCotacaoBrl !== undefined && dados.novaCotacaoBrl !== null && Number(dados.novaCotacaoBrl) > 0) {
+            carteira.fatorConversaoBrl = Number(dados.novaCotacaoBrl);
+        }
+
+        if (dados.novaMetaPosicao !== undefined && dados.novaMetaPosicao !== null && !isNaN(Number(dados.novaMetaPosicao))) {
+            carteira.parametrosLastro = {
+                ...(carteira.parametrosLastro || {}),
+                metaPosicao: Number(dados.novaMetaPosicao),
+            };
+        }
+
+        const identificador = dados.identificador?.trim() || `POS-${Date.now().toString(36).toUpperCase()}`;
+        const descricaoPadrao = dados.modo === 'DEFINIR_POSICAO'
+            ? `Atualização de Posição (${carteira.simboloMoeda} ${saldoAnterior.toFixed(2)} → ${carteira.simboloMoeda} ${saldoPosterior.toFixed(2)})`
+            : `${tipoMovimento === 'ENTRADA' ? 'Lançamento de Entrada' : 'Lançamento de Saída'} (${categoriaMovimento})`;
+
+        const transacao = this.transacaoRepo.create({
+            carteiraId: carteira.internalId,
+            tipo: tipoMovimento,
+            categoria: categoriaMovimento,
+            valor: valorMovimento,
+            saldoAnterior,
+            saldoPosterior,
+            descricao: dados.descricao?.trim() || descricaoPadrao,
+            identificador,
+            status: 'CONCLUIDA',
+            metadados: {
+                ...(dados.metadados || {}),
+                modoLancamento: dados.modo,
+                fatorConversaoBrl: carteira.fatorConversaoBrl,
+                moeda: carteira.moeda,
+            },
+        });
+
+        const savedTransacao = await this.transacaoRepo.save(transacao);
+        savedTransacao.valor = Number(savedTransacao.valor) || 0;
+        savedTransacao.saldoAnterior = Number(savedTransacao.saldoAnterior) || 0;
+        savedTransacao.saldoPosterior = Number(savedTransacao.saldoPosterior) || 0;
+
+        carteira.saldo = saldoPosterior;
+        let savedCarteira = await this.carteiraRepo.save(carteira);
+        savedCarteira = this.normalizarCarteira(savedCarteira);
+
+        const carteiras = await this.listarCarteirasUsuario(userId);
+        const patrimonioTotalBrl = this.calcularPatrimonioTotalBrl(carteiras);
+
+        this.logger.log(
+            `Posição da carteira ${carteira.numeroCarteira} (${carteira.moeda}) atualizada: ${saldoAnterior} -> ${saldoPosterior}`
+        );
+
+        return {
+            carteira: savedCarteira,
+            transacao: savedTransacao,
+            carteiras,
+            patrimonioTotalBrl,
         };
     }
 
@@ -178,14 +465,14 @@ export class CarteiraService {
             throw new BadRequestException('O valor do depósito deve ser maior que zero.');
         }
 
-        const carteira = await this.obterOuCriarCarteira(userId);
+        const carteira = await this.obterOuCriarCarteira(userId, dados.carteiraId);
 
         if (carteira.status !== 'ATIVA') {
             throw new BadRequestException(`Carteira ${carteira.status.toLowerCase()}. Não é possível receber depósitos.`);
         }
 
         const saldoAnterior = Number(carteira.saldo) || 0;
-        const saldoPosterior = Number((saldoAnterior + valor).toFixed(2));
+        const saldoPosterior = Number((saldoAnterior + valor).toFixed(4));
 
         const identificador = dados.identificador || `DEP-${Date.now().toString(36).toUpperCase()}`;
 
@@ -203,11 +490,15 @@ export class CarteiraService {
         });
 
         const savedTransacao = await this.transacaoRepo.save(transacao);
+        savedTransacao.valor = Number(savedTransacao.valor) || 0;
+        savedTransacao.saldoAnterior = Number(savedTransacao.saldoAnterior) || 0;
+        savedTransacao.saldoPosterior = Number(savedTransacao.saldoPosterior) || 0;
 
         carteira.saldo = saldoPosterior;
-        const savedCarteira = await this.carteiraRepo.save(carteira);
+        let savedCarteira = await this.carteiraRepo.save(carteira);
+        savedCarteira = this.normalizarCarteira(savedCarteira);
 
-        this.logger.log(`Depósito de R$ ${valor} registrado na carteira ${carteira.numeroCarteira}. Novo saldo: R$ ${saldoPosterior}`);
+        this.logger.log(`Depósito de ${carteira.simboloMoeda} ${valor} registrado na carteira ${carteira.numeroCarteira}. Novo saldo: ${saldoPosterior}`);
 
         // Avalia promoção para ROLE DEVELOPER se novo saldo atingir o patamar de 50
         if (saldoPosterior >= 50 && userId && userId !== 'guest_user_demo') {
@@ -234,20 +525,20 @@ export class CarteiraService {
             throw new BadRequestException('Identificador da fatura é obrigatório.');
         }
 
-        const carteira = await this.obterOuCriarCarteira(userId);
+        const carteira = await this.obterOuCriarCarteira(userId, dados.carteiraId);
 
         if (carteira.status !== 'ATIVA') {
             throw new BadRequestException(`Carteira ${carteira.status.toLowerCase()}. Não é possível realizar pagamentos.`);
         }
 
         const saldoAnterior = Number(carteira.saldo) || 0;
-        if (saldoAnterior < valor) {
+        if (saldoAnterior < valor && !carteira.parametrosLastro?.permiteSaldoNegativo) {
             throw new BadRequestException(
-                `Saldo insuficiente. Saldo atual: R$ ${saldoAnterior.toFixed(2)}, valor da fatura: R$ ${valor.toFixed(2)}.`
+                `Saldo insuficiente. Saldo atual: ${carteira.simboloMoeda || 'R$'} ${saldoAnterior.toFixed(2)}, valor da fatura: ${carteira.simboloMoeda || 'R$'} ${valor.toFixed(2)}.`
             );
         }
 
-        const saldoPosterior = Number((saldoAnterior - valor).toFixed(2));
+        const saldoPosterior = Number((saldoAnterior - valor).toFixed(4));
 
         const transacao = this.transacaoRepo.create({
             carteiraId: carteira.internalId,
@@ -264,11 +555,15 @@ export class CarteiraService {
         });
 
         const savedTransacao = await this.transacaoRepo.save(transacao);
+        savedTransacao.valor = Number(savedTransacao.valor) || 0;
+        savedTransacao.saldoAnterior = Number(savedTransacao.saldoAnterior) || 0;
+        savedTransacao.saldoPosterior = Number(savedTransacao.saldoPosterior) || 0;
 
         carteira.saldo = saldoPosterior;
-        const savedCarteira = await this.carteiraRepo.save(carteira);
+        let savedCarteira = await this.carteiraRepo.save(carteira);
+        savedCarteira = this.normalizarCarteira(savedCarteira);
 
-        this.logger.log(`Fatura ${dados.faturaId} paga com sucesso (R$ ${valor}) via carteira ${carteira.numeroCarteira}`);
+        this.logger.log(`Fatura ${dados.faturaId} paga com sucesso (${valor}) via carteira ${carteira.numeroCarteira}`);
 
         return {
             carteira: savedCarteira,
@@ -281,9 +576,9 @@ export class CarteiraService {
      */
     async listarTransacoes(
         userId: string,
-        filtros?: { tipo?: 'ENTRADA' | 'SAIDA'; categoria?: string; take?: number; skip?: number }
+        filtros?: { carteiraId?: string; tipo?: 'ENTRADA' | 'SAIDA'; categoria?: string; take?: number; skip?: number }
     ): Promise<{ transacoes: TransacaoCarteira[]; total: number }> {
-        const carteira = await this.obterOuCriarCarteira(userId);
+        const carteira = await this.obterOuCriarCarteira(userId, filtros?.carteiraId);
 
         const qb = this.transacaoRepo.createQueryBuilder('t')
             .where('t.carteiraId = :carteiraId', { carteiraId: carteira.internalId });

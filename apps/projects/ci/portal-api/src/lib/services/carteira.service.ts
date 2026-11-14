@@ -8,7 +8,13 @@ import { map } from 'rxjs/operators';
 import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
-import { CarteiraDto, TransacaoCarteiraDto, VisaoGeralCarteiraDto } from '../../custom/portal-api-extensions';
+import {
+  CarteiraDto,
+  CriarCarteiraPayloadDto,
+  LancamentoPosicaoPayloadDto,
+  TransacaoCarteiraDto,
+  VisaoGeralCarteiraDto
+} from '../../custom/portal-api-extensions';
 
 import { carteiraAvaliarRoleDeveloper } from '../fn/carteira/carteira-avaliar-role-developer';
 import { CarteiraAvaliarRoleDeveloper$Params } from '../fn/carteira/carteira-avaliar-role-developer';
@@ -196,29 +202,60 @@ export class CarteiraService extends BaseService {
    * Obtém a visão geral da carteira do usuário autenticado.
    * Se autoCreate for false (padrão), não cria carteira automaticamente e retorna possuiCarteira = false.
    */
-  obterMinhaCarteira(autoCreate?: boolean): Observable<VisaoGeralCarteiraDto> {
-    const qs = autoCreate ? '?autoCreate=true' : '';
+  obterMinhaCarteira(autoCreate?: boolean, carteiraId?: string): Observable<VisaoGeralCarteiraDto> {
+    const params: string[] = [];
+    if (autoCreate) params.push('autoCreate=true');
+    if (carteiraId) params.push(`carteiraId=${encodeURIComponent(carteiraId)}`);
+    const qs = params.length ? `?${params.join('&')}` : '';
     return this.http.get<VisaoGeralCarteiraDto>(`${this.rootUrl}/Financeiro/Carteira/Minha${qs}`);
   }
 
   /**
-   * Cria explicitamente uma nova carteira digital para o usuário autenticado.
+   * Lista todas as carteiras do usuário autenticado.
    */
-  criarCarteira(dados?: {
-    moeda?: string;
-    limiteDiario?: number;
-    termosAceitos?: boolean;
-  }): Observable<{ possuiCarteira: boolean; carteira: CarteiraDto; criada: boolean }> {
-    return this.http.post<{ possuiCarteira: boolean; carteira: CarteiraDto; criada: boolean }>(
-      `${this.rootUrl}/Financeiro/Carteira/Criar`,
-      dados || {}
-    );
+  listarCarteiras(): Observable<{ possuiCarteira: boolean; carteiras: CarteiraDto[] }> {
+    return this.http.get<{ possuiCarteira: boolean; carteiras: CarteiraDto[] }>(`${this.rootUrl}/Financeiro/Carteira/Listar`);
+  }
+
+  /**
+   * Cria explicitamente uma nova carteira digital (permitindo múltiplas carteiras com lastro real ou parametrizado).
+   */
+  criarCarteira(dados?: CriarCarteiraPayloadDto): Observable<{
+    possuiCarteira: boolean;
+    carteira: CarteiraDto;
+    carteiras?: CarteiraDto[];
+    criada: boolean;
+  }> {
+    return this.http.post<{
+      possuiCarteira: boolean;
+      carteira: CarteiraDto;
+      carteiras?: CarteiraDto[];
+      criada: boolean;
+    }>(`${this.rootUrl}/Financeiro/Carteira/Criar`, dados || {});
+  }
+
+  /**
+   * Realiza lançamento de movimentação ou atualização direta de posição da carteira.
+   */
+  lancarPosicaoCarteira(dados: LancamentoPosicaoPayloadDto): Observable<{
+    carteira: CarteiraDto;
+    transacao: TransacaoCarteiraDto;
+    carteiras: CarteiraDto[];
+    patrimonioTotalBrl: number;
+  }> {
+    return this.http.post<{
+      carteira: CarteiraDto;
+      transacao: TransacaoCarteiraDto;
+      carteiras: CarteiraDto[];
+      patrimonioTotalBrl: number;
+    }>(`${this.rootUrl}/Financeiro/Carteira/LancamentoPosicao`, dados);
   }
 
   /**
    * Registra um depósito identificado na carteira do usuário.
    */
   registrarDeposito(dados: {
+    carteiraId?: string;
     valor: number;
     identificador?: string;
     descricao?: string;
@@ -234,6 +271,7 @@ export class CarteiraService extends BaseService {
    * Realiza o pagamento de uma fatura utilizando o saldo da carteira.
    */
   pagarFatura(dados: {
+    carteiraId?: string;
     faturaId: string;
     valor: number;
     descricao?: string;
@@ -249,6 +287,7 @@ export class CarteiraService extends BaseService {
    * Lista transações da carteira com filtros opcionais.
    */
   listarTransacoes(params?: {
+    carteiraId?: string;
     tipo?: 'ENTRADA' | 'SAIDA';
     categoria?: string;
     de?: string;
@@ -257,6 +296,7 @@ export class CarteiraService extends BaseService {
     limite?: number;
   }): Observable<{ itens: TransacaoCarteiraDto[]; total: number; pagina: number }> {
     let httpParams = new HttpParams();
+    if (params?.carteiraId) httpParams = httpParams.set('carteiraId', params.carteiraId);
     if (params?.tipo) httpParams = httpParams.set('tipo', params.tipo);
     if (params?.categoria) httpParams = httpParams.set('categoria', params.categoria);
     if (params?.de) httpParams = httpParams.set('de', params.de);
