@@ -141,18 +141,36 @@ export class CarteiraController {
     }
 
     /**
-     * Retorna a visão geral da carteira do usuário atual (saldo, lista de todas as carteiras, patrimônio consolidado e movimentações).
+     * Retorna a visão geral da carteira do usuário atual (saldo, lista de todas as carteiras, patrimônio consolidado, dashboard de ganhos/perdas e movimentações).
      */
     @Get('Minha')
-    @ApiOperation({ operationId: 'CarteiraGetMinha', summary: 'Obtém a carteira selecionada, todas as carteiras do usuário e histórico recente' })
+    @ApiOperation({ operationId: 'CarteiraGetMinha', summary: 'Obtém a carteira selecionada, todas as carteiras do usuário, dashboard de ganhos/perdas e histórico recente' })
     async getMinhaCarteira(
         @Req() req: any,
         @Query('autoCreate') autoCreate?: string,
-        @Query('carteiraId') carteiraId?: string
+        @Query('carteiraId') carteiraId?: string,
+        @Query('periodo') periodo?: '7D' | '30D' | '90D' | '12M' | 'TUDO'
     ) {
         const userId = this.getUserId(req);
         const deveCriar = autoCreate === 'true';
-        return await this.carteiraService.obterVisaoGeralCarteira(userId, deveCriar, carteiraId);
+        return await this.carteiraService.obterVisaoGeralCarteira(userId, deveCriar, carteiraId, periodo || '30D');
+    }
+
+    /**
+     * Retorna o Dashboard Consolidado de Ganhos, Perdas, Alocação e Série Temporal das Carteiras
+     */
+    @Get('Dashboard')
+    @ApiOperation({ operationId: 'CarteiraGetDashboard', summary: 'Obtém o dashboard de visão geral das carteiras com evolução de ganhos e perdas ao longo do tempo' })
+    async getDashboardCarteiras(
+        @Req() req: any,
+        @Query('periodo') periodo?: '7D' | '30D' | '90D' | '12M' | 'TUDO',
+        @Query('carteiraId') carteiraId?: string
+    ) {
+        const userId = this.getUserId(req);
+        return await this.carteiraService.obterDashboardCarteiras(userId, {
+            periodo: periodo || '30D',
+            carteiraId,
+        });
     }
 
     /**

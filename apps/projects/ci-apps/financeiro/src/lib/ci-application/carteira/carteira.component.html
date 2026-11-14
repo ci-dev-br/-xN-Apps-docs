@@ -505,6 +505,401 @@
                 </div>
             </section>
         } @else {
+            <!-- DASHBOARD CONSOLIDADO DE VISÃO GERAL DAS CARTEIRAS E GANHOS / PERDAS AO LONGO DO TEMPO -->
+            @if (dashboard) {
+                <section class="wallets-overview-dashboard">
+                    <div class="dashboard-toolbar">
+                        <div class="toolbar-title-block">
+                            <span class="dashboard-kicker">
+                                <mat-icon>insights</mat-icon>
+                                Performance & Evolução Temporal
+                            </span>
+                            <h3>Visão Geral das Carteiras — Ganhos e Perdas</h3>
+                        </div>
+
+                        <div class="toolbar-filters">
+                            <!-- Filtro de Escopo (Consolidado vs Carteira Específica) -->
+                            <div class="scope-filter-pills">
+                                <button type="button"
+                                        class="scope-pill"
+                                        [class.active]="escopoDashboard === 'TODAS'"
+                                        (click)="selecionarEscopoDashboard('TODAS')">
+                                    <mat-icon>layers</mat-icon>
+                                    <span>Consolidado ({{ carteiras.length }})</span>
+                                </button>
+                                @for (c of carteiras; track c.internalId) {
+                                    <button type="button"
+                                            class="scope-pill"
+                                            [class.active]="escopoDashboard === c.internalId"
+                                            (click)="selecionarEscopoDashboard(c.internalId!)">
+                                        <span>{{ c.moeda }}</span>
+                                    </button>
+                                }
+                            </div>
+
+                            <!-- Filtro de Período -->
+                            <div class="period-filter-pills">
+                                <button type="button" class="period-pill" [class.active]="periodoDashboard === '7D'" (click)="selecionarPeriodoDashboard('7D')">7D</button>
+                                <button type="button" class="period-pill" [class.active]="periodoDashboard === '30D'" (click)="selecionarPeriodoDashboard('30D')">30D</button>
+                                <button type="button" class="period-pill" [class.active]="periodoDashboard === '90D'" (click)="selecionarPeriodoDashboard('90D')">90D</button>
+                                <button type="button" class="period-pill" [class.active]="periodoDashboard === '12M'" (click)="selecionarPeriodoDashboard('12M')">12M</button>
+                                <button type="button" class="period-pill" [class.active]="periodoDashboard === 'TUDO'" (click)="selecionarPeriodoDashboard('TUDO')">Tudo</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4 CARDS DE KPI DE PERFORMANCE E GANHOS/PERDAS -->
+                    <div class="dashboard-kpi-grid">
+                        <div class="kpi-card primary-kpi">
+                            <div class="kpi-top">
+                                <span class="kpi-label">Patrimônio Consolidado</span>
+                                <span class="kpi-badge"
+                                      [class.positive]="dashboard.resumo.variacaoPercentualPeriodo >= 0"
+                                      [class.negative]="dashboard.resumo.variacaoPercentualPeriodo < 0">
+                                    <mat-icon>{{ dashboard.resumo.variacaoPercentualPeriodo >= 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+                                    {{ dashboard.resumo.variacaoPercentualPeriodo >= 0 ? '+' : '' }}{{ dashboard.resumo.variacaoPercentualPeriodo | number:'1.1-2' }}%
+                                </span>
+                            </div>
+                            <strong class="kpi-value">
+                                @if (mostrarSaldo) {
+                                    {{ dashboard.resumo.patrimonioTotalBrl | currency:'BRL':'symbol':'1.2-2' }}
+                                } @else {
+                                    R$ ••••••••
+                                }
+                            </strong>
+                            <div class="kpi-sub-row">
+                                <span>Real: {{ dashboard.resumo.percentualMoedaReal }}%</span>
+                                <span>·</span>
+                                <span>Parametrizado: {{ dashboard.resumo.percentualParametrizado }}%</span>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card gain-kpi">
+                            <div class="kpi-top">
+                                <span class="kpi-label">Ganhos e Entradas no Período</span>
+                                <span class="kpi-icon-pill gain">
+                                    <mat-icon>north_east</mat-icon>
+                                    +{{ dashboard.resumo.eventosPositivos }} eventos
+                                </span>
+                            </div>
+                            <strong class="kpi-value gain-text">
+                                @if (mostrarSaldo) {
+                                    + {{ dashboard.resumo.ganhosTotaisPeriodoBrl | currency:'BRL':'symbol':'1.2-2' }}
+                                } @else {
+                                    + R$ ••••••
+                                }
+                            </strong>
+                            <div class="kpi-sub-row">
+                                <span>Valorização/Ajustes: {{ dashboard.resumo.ganhosRendimentosValorizacaoBrl | currency:'BRL':'symbol':'1.2-2' }}</span>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card loss-kpi">
+                            <div class="kpi-top">
+                                <span class="kpi-label">Perdas e Baixas no Período</span>
+                                <span class="kpi-icon-pill loss">
+                                    <mat-icon>south_east</mat-icon>
+                                    {{ dashboard.resumo.eventosNegativos }} baixas
+                                </span>
+                            </div>
+                            <strong class="kpi-value loss-text">
+                                @if (mostrarSaldo) {
+                                    - {{ dashboard.resumo.perdasTotaisPeriodoBrl | currency:'BRL':'symbol':'1.2-2' }}
+                                } @else {
+                                    - R$ ••••••
+                                }
+                            </strong>
+                            <div class="kpi-sub-row">
+                                <span>Saídas/Pagamentos: {{ dashboard.resumo.retiradasPagamentosBrl | currency:'BRL':'symbol':'1.2-2' }}</span>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card net-kpi">
+                            <div class="kpi-top">
+                                <span class="kpi-label">Resultado Líquido (P&L)</span>
+                                <span class="kpi-badge"
+                                      [class.positive]="dashboard.resumo.resultadoLiquidoPeriodoBrl >= 0"
+                                      [class.negative]="dashboard.resumo.resultadoLiquidoPeriodoBrl < 0">
+                                    {{ dashboard.resumo.resultadoLiquidoPeriodoBrl >= 0 ? 'SUPERÁVIT' : 'DÉFICIT' }}
+                                </span>
+                            </div>
+                            <strong class="kpi-value"
+                                    [class.gain-text]="dashboard.resumo.resultadoLiquidoPeriodoBrl >= 0"
+                                    [class.loss-text]="dashboard.resumo.resultadoLiquidoPeriodoBrl < 0">
+                                @if (mostrarSaldo) {
+                                    {{ dashboard.resumo.resultadoLiquidoPeriodoBrl >= 0 ? '+' : '' }}{{ dashboard.resumo.resultadoLiquidoPeriodoBrl | currency:'BRL':'symbol':'1.2-2' }}
+                                } @else {
+                                    R$ ••••••
+                                }
+                            </strong>
+                            <div class="kpi-sub-row">
+                                @if (dashboard.resumo.melhorCarteira) {
+                                    <span>Destaque: <strong>{{ dashboard.resumo.melhorCarteira.nome }} ({{ dashboard.resumo.melhorCarteira.moeda }})</strong></span>
+                                } @else {
+                                    <span>{{ dashboard.resumo.totalMovimentacoesPeriodo }} movimentações analisadas</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GRÁFICO DE EVOLUÇÃO TEMPORAL (GANHOS VS PERDAS) + ALOCAÇÃO POR CARTEIRA -->
+                    <div class="dashboard-charts-grid">
+                        <!-- Gráfico SVG Interativo -->
+                        <div class="timeseries-chart-card">
+                            <div class="chart-card-header">
+                                <div>
+                                    <h4>Curva de Evolução Patrimonial & Ganhos vs. Perdas</h4>
+                                    <p>Passe o mouse ou clique sobre os marcos temporais para inspecionar ganhos (+), perdas (-) e posição acumulada em R$.</p>
+                                </div>
+                                <div class="chart-legend-inline">
+                                    <span class="leg-item"><i class="dot line-pat"></i> Patrimônio (R$)</span>
+                                    <span class="leg-item"><i class="dot bar-gain"></i> Ganhos (+)</span>
+                                    <span class="leg-item"><i class="dot bar-loss"></i> Perdas (-)</span>
+                                </div>
+                            </div>
+
+                            <!-- Barra de Inspeção do Ponto Selecionado -->
+                            @if (pontoInspecionado(); as ptInfo) {
+                                <div class="chart-inspector-bar">
+                                    <div class="insp-event">
+                                        <span class="insp-date">{{ ptInfo.rotulo }}</span>
+                                        <strong class="insp-desc">{{ ptInfo.descricaoEvento }}</strong>
+                                    </div>
+                                    <div class="insp-metrics">
+                                        <span class="insp-pill neutral">
+                                            Patrimônio: <strong>{{ ptInfo.patrimonioBrl | currency:'BRL':'symbol':'1.2-2' }}</strong>
+                                        </span>
+                                        @if (ptInfo.ganhosBrl > 0) {
+                                            <span class="insp-pill pos">
+                                                Ganho: <strong>+{{ ptInfo.ganhosBrl | currency:'BRL':'symbol':'1.2-2' }}</strong>
+                                            </span>
+                                        }
+                                        @if (ptInfo.perdasBrl > 0) {
+                                            <span class="insp-pill neg">
+                                                Perda: <strong>-{{ ptInfo.perdasBrl | currency:'BRL':'symbol':'1.2-2' }}</strong>
+                                            </span>
+                                        }
+                                        <span class="insp-pill" [class.pos]="ptInfo.ganhoAcumuladoBrl >= 0" [class.neg]="ptInfo.ganhoAcumuladoBrl < 0">
+                                            Acumulado: <strong>{{ ptInfo.ganhoAcumuladoBrl >= 0 ? '+' : '' }}{{ ptInfo.ganhoAcumuladoBrl | currency:'BRL':'symbol':'1.2-2' }}</strong>
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="svg-chart-wrapper">
+                                <svg class="performance-svg" viewBox="0 0 760 235" preserveAspectRatio="none">
+                                    <defs>
+                                        <linearGradient id="patrimonioGrad" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stop-color="#4f46e5" stop-opacity="0.32" />
+                                            <stop offset="100%" stop-color="#4f46e5" stop-opacity="0.02" />
+                                        </linearGradient>
+                                    </defs>
+
+                                    <!-- Linhas de grade horizontais -->
+                                    <line x1="40" y1="30" x2="728" y2="30" class="grid-line" />
+                                    <line x1="40" y1="86" x2="728" y2="86" class="grid-line" />
+                                    <line x1="40" y1="142" x2="728" y2="142" class="grid-line" />
+                                    <line x1="40" y1="198" x2="728" y2="198" class="axis-baseline" />
+
+                                    <!-- Área sombreada e curva de evolução patrimonial -->
+                                    <path [attr.d]="caminhoAreaPatrimonioSvg()" fill="url(#patrimonioGrad)" />
+                                    <path [attr.d]="caminhoCurvaPatrimonioSvg()" class="patrimonio-curve" fill="none" />
+
+                                    <!-- Barras de Ganhos / Perdas e Pontos Interativos -->
+                                    @for (pt of pontosGraficoRender(); track pt.indice) {
+                                        <g class="chart-point-group"
+                                           (mouseenter)="selecionarPontoGrafico(pt.indice)"
+                                           (click)="selecionarPontoGrafico(pt.indice)">
+                                            <!-- Barra de Ganho (+) -->
+                                            @if (pt.alturaBarraGanho > 0) {
+                                                <rect [attr.x]="pt.x - 11"
+                                                      [attr.y]="pt.yBarraGanho"
+                                                      width="10"
+                                                      [attr.height]="pt.alturaBarraGanho"
+                                                      rx="3"
+                                                      class="svg-bar-gain" />
+                                            }
+                                            <!-- Barra de Perda (-) -->
+                                            @if (pt.alturaBarraPerda > 0) {
+                                                <rect [attr.x]="pt.x + 1"
+                                                      [attr.y]="pt.yBarraPerda"
+                                                      width="10"
+                                                      [attr.height]="pt.alturaBarraPerda"
+                                                      rx="3"
+                                                      class="svg-bar-loss" />
+                                            }
+
+                                            <!-- Linha guia vertical quando selecionado -->
+                                            @if (pontoInspecionado()?.indice === pt.indice) {
+                                                <line [attr.x1]="pt.x" y1="20" [attr.x2]="pt.x" y2="198" class="active-guide-line" />
+                                            }
+
+                                            <!-- Ponto na curva de patrimônio -->
+                                            <circle [attr.cx]="pt.x"
+                                                    [attr.cy]="pt.yPatrimonio"
+                                                    [attr.r]="pontoInspecionado()?.indice === pt.indice ? 6.5 : 4.5"
+                                                    class="svg-node-circle"
+                                                    [class.selected]="pontoInspecionado()?.indice === pt.indice" />
+
+                                            <!-- Rótulo do eixo X -->
+                                            <text [attr.x]="pt.x" y="218" text-anchor="middle" class="svg-x-label">
+                                                {{ pt.dados.rotulo }}
+                                            </text>
+                                        </g>
+                                    }
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Card de Composição e Alocação por Carteira e Tipo de Lastro -->
+                        <div class="allocation-breakdown-card">
+                            <div class="alloc-header">
+                                <h4>Composição & Alocação por Carteira</h4>
+                                <span>Participação no Patrimônio Consolidado (BRL)</span>
+                            </div>
+
+                            <!-- Barra Empilhada de Alocação -->
+                            <div class="stacked-allocation-bar">
+                                @for (item of dashboard.desempenhoCarteiras; track item.carteiraId) {
+                                    <div class="alloc-segment"
+                                         [style.width.%]="item.participacaoPercentual > 0 ? item.participacaoPercentual : (100 / dashboard.desempenhoCarteiras.length)"
+                                         [style.background]="corHexPorTema(item.corTema)"
+                                         [matTooltip]="item.nome + ': ' + item.participacaoPercentual + '%'">
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Comparativo Moeda Real vs Parametrizada -->
+                            <div class="backing-split-boxes">
+                                <div class="split-box real">
+                                    <span class="split-tag">Lastro em Moeda Real</span>
+                                    <strong>{{ dashboard.resumo.patrimonioMoedaRealBrl | currency:'BRL':'symbol':'1.2-2' }}</strong>
+                                    <small>{{ dashboard.resumo.percentualMoedaReal }}% do portfólio</small>
+                                </div>
+                                <div class="split-box param">
+                                    <span class="split-tag">Lastro Parametrizado</span>
+                                    <strong>{{ dashboard.resumo.patrimonioParametrizadoBrl | currency:'BRL':'symbol':'1.2-2' }}</strong>
+                                    <small>{{ dashboard.resumo.percentualParametrizado }}% do portfólio</small>
+                                </div>
+                            </div>
+
+                            <!-- Lista de Alocação por Carteira -->
+                            <div class="alloc-wallets-list">
+                                @for (item of dashboard.desempenhoCarteiras; track item.carteiraId) {
+                                    <div class="alloc-wallet-row" (click)="focarExtratoCarteira(item.carteiraId)">
+                                        <div class="alloc-left">
+                                            <span class="color-dot" [style.background]="corHexPorTema(item.corTema)"></span>
+                                            <div>
+                                                <strong>{{ item.nome }}</strong>
+                                                <small>{{ item.simboloMoeda }} {{ item.saldoAtual | number:'1.2-2' }} ({{ item.moeda }})</small>
+                                            </div>
+                                        </div>
+                                        <div class="alloc-right">
+                                            <strong>{{ item.saldoAtualBrl | currency:'BRL':'symbol':'1.2-2' }}</strong>
+                                            <span class="share-pill">{{ item.participacaoPercentual }}%</span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- QUADRO COMPARATIVO DE DESEMPENHO (GANHOS E PERDAS POR CARTEIRA) -->
+                    <div class="wallets-comparison-card">
+                        <div class="comp-header">
+                            <div>
+                                <h4>Desempenho Individual por Carteira — Posição, Ganhos e Perdas</h4>
+                                <p>Acompanhe os ganhos (+), baixas (-), resultado líquido e atingimento de meta de cada carteira real ou parametrizada.</p>
+                            </div>
+                            <button mat-stroked-button color="primary" (click)="alternarAba('LANCAMENTO_POSICAO')">
+                                <mat-icon>tune</mat-icon>
+                                <span>Atualizar Posição</span>
+                            </button>
+                        </div>
+
+                        <div class="comp-table-wrapper">
+                            <table class="wallets-perf-table">
+                                <thead>
+                                    <tr>
+                                        <th>Carteira / Lastro</th>
+                                        <th>Posição Atual</th>
+                                        <th>Equivalente (R$)</th>
+                                        <th>Ganhos no Período (+)</th>
+                                        <th>Perdas / Baixas (-)</th>
+                                        <th>Resultado Líquido (P&L)</th>
+                                        <th class="text-right">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (d of dashboard.desempenhoCarteiras; track d.carteiraId) {
+                                        <tr [class.selected-row]="d.carteiraId === carteira?.internalId">
+                                            <td>
+                                                <div class="cell-wallet-id">
+                                                    <span class="theme-bar" [style.background]="corHexPorTema(d.corTema)"></span>
+                                                    <div>
+                                                        <strong>{{ d.nome }}</strong>
+                                                        <div class="sub-badges">
+                                                            <span class="badge-type" [class.param]="d.tipoLastro === 'PARAMETRIZADA'">
+                                                                {{ d.tipoLastro === 'PARAMETRIZADA' ? 'PARAMETRIZADA' : 'MOEDA REAL' }}
+                                                            </span>
+                                                            <span class="badge-ticker">{{ d.moeda }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="cell-pos">
+                                                    <strong>{{ d.simboloMoeda }} {{ d.saldoAtual | number:'1.2-2' }}</strong>
+                                                    <small>1 {{ d.moeda }} = R$ {{ d.fatorConversaoBrl | number:'1.2-4' }}</small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="cell-brl">
+                                                    <strong>{{ d.saldoAtualBrl | currency:'BRL':'symbol':'1.2-2' }}</strong>
+                                                    <small>{{ d.participacaoPercentual }}% do total</small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="cell-gain">
+                                                    <strong class="gain-val">+ {{ d.simboloMoeda }} {{ d.ganhosPeriodoMoeda | number:'1.2-2' }}</strong>
+                                                    <small>+ {{ d.ganhosPeriodoBrl | currency:'BRL':'symbol':'1.2-2' }}</small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="cell-loss">
+                                                    <strong class="loss-val">- {{ d.simboloMoeda }} {{ d.perdasPeriodoMoeda | number:'1.2-2' }}</strong>
+                                                    <small>- {{ d.perdasPeriodoBrl | currency:'BRL':'symbol':'1.2-2' }}</small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="cell-net">
+                                                    <strong [class.gain-val]="d.resultadoLiquidoBrl >= 0" [class.loss-val]="d.resultadoLiquidoBrl < 0">
+                                                        {{ d.resultadoLiquidoBrl >= 0 ? '+' : '' }}{{ d.resultadoLiquidoBrl | currency:'BRL':'symbol':'1.2-2' }}
+                                                    </strong>
+                                                    <span class="var-pill" [class.pos]="d.rentabilidadePercentual >= 0" [class.neg]="d.rentabilidadePercentual < 0">
+                                                        {{ d.rentabilidadePercentual >= 0 ? '+' : '' }}{{ d.rentabilidadePercentual | number:'1.1-2' }}%
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="row-actions">
+                                                    <button mat-icon-button matTooltip="Selecionar carteira e ver extrato" (click)="focarExtratoCarteira(d.carteiraId)">
+                                                        <mat-icon>visibility</mat-icon>
+                                                    </button>
+                                                    <button mat-icon-button color="primary" matTooltip="Lançar ou atualizar posição desta carteira" (click)="irParaLancamentoDaCarteira(d.carteiraId)">
+                                                        <mat-icon>trending_up</mat-icon>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            }
+
             <!-- HERO CARD DE SALDO E AÇÕES PRINCIPAIS DA CARTEIRA SELECIONADA -->
             <section class="wallet-hero-card" [attr.data-theme]="carteira?.corTema || 'indigo'">
                 <div class="wallet-info-top">

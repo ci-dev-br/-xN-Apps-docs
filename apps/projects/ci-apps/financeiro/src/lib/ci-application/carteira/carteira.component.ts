@@ -20,8 +20,24 @@ import {
     CarteiraService,
     CarteiraDto,
     TransacaoCarteiraDto,
-    CategoriaTransacaoCarteira
+    CategoriaTransacaoCarteira,
+    DashboardCarteirasDto,
+    DesempenhoCarteiraItemDto,
+    PeriodoDashboardCarteira,
+    PontoSerieTemporalCarteiraDto
 } from '@ci/portal-api';
+
+export interface PontoRenderGrafico {
+    indice: number;
+    x: number;
+    yPatrimonio: number;
+    yZero: number;
+    yBarraGanho: number;
+    alturaBarraGanho: number;
+    yBarraPerda: number;
+    alturaBarraPerda: number;
+    dados: PontoSerieTemporalCarteiraDto;
+}
 
 export interface MoedaPresetItem {
     codigo: string;
@@ -70,8 +86,17 @@ export class CarteiraComponent implements OnInit, OnDestroy {
     mostrarSaldo = true;
     filtroTipo: 'TODOS' | 'ENTRADA' | 'SAIDA' = 'TODOS';
 
-    // Navegação interna da Carteira: Visão Geral vs Tela de Lançamento de Posição
+    // Navegação interna da Carteira: Visão Geral & Dashboard vs Tela de Lançamento de Posição
     abaAtiva: 'VISAO_GERAL' | 'LANCAMENTO_POSICAO' = 'VISAO_GERAL';
+
+    // Estado do Dashboard de Visão Geral e Ganhos/Perdas ao Longo do Tempo
+    dashboard?: DashboardCarteirasDto;
+    periodoDashboard: PeriodoDashboardCarteira = '30D';
+    escopoDashboard: string = 'TODAS';
+    modoGraficoDashboard: 'EVOLUCAO_E_BARRAS' | 'GANHOS_PERDAS' = 'EVOLUCAO_E_BARRAS';
+    indicePontoSelecionado: number | null = null;
+    carregandoDashboard = false;
+    exibirDashboardConsolidado = true;
 
     // Presets de Moedas Reais (Fiduciárias / Cripto)
     moedasReaisPreset: MoedaPresetItem[] = [
@@ -217,7 +242,7 @@ export class CarteiraComponent implements OnInit, OnDestroy {
         this.loading = true;
         this.sub?.unsubscribe();
         try {
-            this.sub = this.carteiraService.obterMinhaCarteira(false, targetId).subscribe({
+            this.sub = this.carteiraService.obterMinhaCarteira(false, targetId, this.periodoDashboard).subscribe({
                 next: (res: any) => {
                     this.loading = false;
                     const listaCarteiras = Array.isArray(res?.carteiras) ? res.carteiras : (res?.carteira ? [res.carteira] : []);
@@ -230,11 +255,18 @@ export class CarteiraComponent implements OnInit, OnDestroy {
                         this.transacoes = res.transacoesRecentes || [];
                         this.aplicarFiltro(this.filtroTipo);
                         this.sincronizarFormularioLancamento(res.carteira);
+                        if (res.dashboard) {
+                            this.dashboard = res.dashboard;
+                        } else {
+                            this.dashboard = this.construirDashboardLocal();
+                        }
+                        this.indicePontoSelecionado = null;
                     } else {
                         this.possuiCarteira = false;
                         this.carteira = undefined;
                         this.transacoes = [];
                         this.transacoesFiltradas = [];
+                        this.dashboard = undefined;
                     }
                     this.cdr.markForCheck();
                     this.cdr.detectChanges();
@@ -450,6 +482,7 @@ export class CarteiraComponent implements OnInit, OnDestroy {
                 this.lancamentoValor = null;
                 this.lancamentoDescricao = '';
                 this.sincronizarFormularioLancamento(res.carteira);
+                this.carregarDashboardRemoto();
                 this.snackBar.open(
                     `Posição da carteira "${res.carteira.nome}" atualizada para ${res.carteira.simboloMoeda || res.carteira.moeda} ${Number(res.carteira.saldo).toFixed(2)}!`,
                     'OK',
@@ -529,6 +562,7 @@ export class CarteiraComponent implements OnInit, OnDestroy {
                 this.aplicarFiltro(this.filtroTipo);
                 this.processando = false;
                 this.fecharModal();
+                this.carregarDashboardRemoto();
                 this.snackBar.open(`Depósito de ${this.simboloCarteiraAtiva()} ${Number(res.transacao?.valor || this.depositoValor || 0).toFixed(2)} confirmado com sucesso!`, 'OK', { duration: 3500 });
                 this.cdr.markForCheck();
                 this.cdr.detectChanges();
@@ -575,6 +609,7 @@ export class CarteiraComponent implements OnInit, OnDestroy {
                 this.aplicarFiltro(this.filtroTipo);
                 this.processando = false;
                 this.fecharModal();
+                this.carregarDashboardRemoto();
                 this.snackBar.open(`Fatura #${res.transacao.referenciaFaturaId} liquidada com sucesso!`, 'OK', { duration: 3500 });
                 this.cdr.markForCheck();
                 this.cdr.detectChanges();
@@ -611,5 +646,263 @@ export class CarteiraComponent implements OnInit, OnDestroy {
         return this.transacoes
             .filter(t => t.tipo === 'SAIDA')
             .reduce((acc, t) => acc + Number(t.valor || 0), 0);
+    }
+
+    // -------------------------------------------------------------------------
+    // DASHBOARD DE VISÃO GERAL E GANHOS / PERDAS AO LONGO DO TEMPO
+    // -------------------------------------------------------------------------
+    selecionarPeriodoDashboard(periodo: PeriodoDashboardCarteira): void {
+        if (this.periodoDashboard === periodo) return;
+        this.periodoDashboard = periodo;
+        this.carregarDashboardRemoto();
+    }
+
+    selecionarEscopoDashboard(escopo: string): void {
+        this.escopoDashboard = escopo;
+        this.carregarDashboardRemoto();
+    }
+
+    carregarDashboardRemoto(): void {
+        if (!this.carteiraService || typeof this.carteiraService.obterDashboardCarteiras !== 'function') {
+            this.dashboard = this.construirDashboardLocal();
+            this.cdr.markForCheck();
+            this.cdr.detectChanges();
+            return;
+        }
+        this.carregandoDashboard = true;
+        const carteiraFiltro = this.escopoDashboard === 'TODAS' ? undefined : this.escopoDashboard;
+        this.carteiraService.obterDashboardCarteiras(this.periodoDashboard, carteiraFiltro).subscribe({
+            next: (dash) => {
+                this.carregandoDashboard = false;
+                this.dashboard = dash || this.construirDashboardLocal();
+                this.indicePontoSelecionado = null;
+                this.cdr.markForCheck();
+                this.cdr.detectChanges();
+            },
+            error: () => {
+                this.carregandoDashboard = false;
+                this.dashboard = this.construirDashboardLocal();
+                this.cdr.markForCheck();
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    construirDashboardLocal(): DashboardCarteirasDto {
+        const totalBrl = this.calcularPatrimonioLocal(this.carteiras);
+        let realBrl = 0;
+        let paramBrl = 0;
+        const desempenhoCarteiras: DesempenhoCarteiraItemDto[] = this.carteiras.map((c) => {
+            const fator = Number(c.fatorConversaoBrl) > 0 ? Number(c.fatorConversaoBrl) : 1;
+            const saldo = Number(c.saldo) || 0;
+            const saldoBrl = Number((saldo * fator).toFixed(2));
+            if (c.tipoLastro === 'PARAMETRIZADA') {
+                paramBrl += saldoBrl;
+            } else {
+                realBrl += saldoBrl;
+            }
+            const txs = c.internalId === this.carteira?.internalId ? this.transacoes : [];
+            const ganhosMoeda = txs.filter(t => t.tipo === 'ENTRADA').reduce((a, t) => a + Number(t.valor || 0), 0) || (saldo > 0 ? saldo : 0);
+            const perdasMoeda = txs.filter(t => t.tipo === 'SAIDA').reduce((a, t) => a + Number(t.valor || 0), 0);
+            const ganhosBrl = Number((ganhosMoeda * fator).toFixed(2));
+            const perdasBrl = Number((perdasMoeda * fator).toFixed(2));
+            const liquidoBrl = Number((ganhosBrl - perdasBrl).toFixed(2));
+            const base = ganhosBrl > 0 ? ganhosBrl : (saldoBrl > 0 ? saldoBrl : 1);
+            return {
+                carteiraId: c.internalId || c.numeroCarteira,
+                nome: c.nome || `Carteira ${c.moeda}`,
+                numeroCarteira: c.numeroCarteira,
+                moeda: c.moeda,
+                simboloMoeda: c.simboloMoeda || c.moeda,
+                nomeMoeda: c.nomeMoeda || c.moeda,
+                tipoLastro: c.tipoLastro || 'MOEDA_REAL',
+                corTema: c.corTema || 'indigo',
+                principal: !!c.principal,
+                saldoAtual: saldo,
+                fatorConversaoBrl: fator,
+                saldoAtualBrl: saldoBrl,
+                participacaoPercentual: totalBrl > 0 ? Number(((saldoBrl / totalBrl) * 100).toFixed(1)) : 0,
+                ganhosPeriodoMoeda: ganhosMoeda,
+                perdasPeriodoMoeda: perdasMoeda,
+                resultadoLiquidoMoeda: Number((ganhosMoeda - perdasMoeda).toFixed(4)),
+                ganhosPeriodoBrl: ganhosBrl,
+                perdasPeriodoBrl: perdasBrl,
+                resultadoLiquidoBrl: liquidoBrl,
+                rentabilidadePercentual: Number(((liquidoBrl / base) * 100).toFixed(2)),
+                metaPosicao: c.parametrosLastro?.metaPosicao || null,
+                progressoMetaPercentual: c.parametrosLastro?.metaPosicao
+                    ? Math.min(100, Number(((saldo / Number(c.parametrosLastro.metaPosicao)) * 100).toFixed(1)))
+                    : null,
+                totalTransacoes: txs.length,
+            };
+        });
+
+        const ganhosTotais = desempenhoCarteiras.reduce((a, d) => a + d.ganhosPeriodoBrl, 0);
+        const perdasTotais = desempenhoCarteiras.reduce((a, d) => a + d.perdasPeriodoBrl, 0);
+        const liquidoTotal = Number((ganhosTotais - perdasTotais).toFixed(2));
+        const melhor = [...desempenhoCarteiras].sort((a, b) => b.resultadoLiquidoBrl - a.resultadoLiquidoBrl)[0] || null;
+
+        const serieTemporal: PontoSerieTemporalCarteiraDto[] = [
+            {
+                indice: 0,
+                dataIso: new Date(Date.now() - 86400000).toISOString(),
+                rotulo: 'Início',
+                descricaoEvento: 'Abertura do Período',
+                patrimonioBrl: 0,
+                ganhosBrl: 0,
+                perdasBrl: 0,
+                resultadoLiquidoBrl: 0,
+                ganhoAcumuladoBrl: 0,
+                variacaoPercentualAcumulada: 0,
+            },
+            {
+                indice: 1,
+                dataIso: new Date().toISOString(),
+                rotulo: 'Atual',
+                descricaoEvento: 'Posição Consolidada Atual',
+                patrimonioBrl: totalBrl,
+                ganhosBrl: ganhosTotais,
+                perdasBrl: perdasTotais,
+                resultadoLiquidoBrl: liquidoTotal,
+                ganhoAcumuladoBrl: liquidoTotal,
+                variacaoPercentualAcumulada: ganhosTotais > 0 ? Number(((liquidoTotal / ganhosTotais) * 100).toFixed(1)) : 100,
+            }
+        ];
+
+        return {
+            periodo: this.periodoDashboard,
+            escopoCarteiraId: this.escopoDashboard,
+            resumo: {
+                patrimonioTotalBrl: totalBrl,
+                patrimonioMoedaRealBrl: Number(realBrl.toFixed(2)),
+                patrimonioParametrizadoBrl: Number(paramBrl.toFixed(2)),
+                percentualMoedaReal: totalBrl > 0 ? Number(((realBrl / totalBrl) * 100).toFixed(1)) : 0,
+                percentualParametrizado: totalBrl > 0 ? Number(((paramBrl / totalBrl) * 100).toFixed(1)) : 0,
+                ganhosTotaisPeriodoBrl: Number(ganhosTotais.toFixed(2)),
+                perdasTotaisPeriodoBrl: Number(perdasTotais.toFixed(2)),
+                resultadoLiquidoPeriodoBrl: liquidoTotal,
+                variacaoPercentualPeriodo: ganhosTotais > 0 ? Number(((liquidoTotal / ganhosTotais) * 100).toFixed(2)) : 0,
+                ganhosRendimentosValorizacaoBrl: Number(ganhosTotais.toFixed(2)),
+                aportesDepositosBrl: Number(ganhosTotais.toFixed(2)),
+                retiradasPagamentosBrl: Number(perdasTotais.toFixed(2)),
+                totalMovimentacoesPeriodo: this.transacoes.length || this.carteiras.length,
+                eventosPositivos: this.carteiras.length,
+                eventosNegativos: 0,
+                melhorCarteira: melhor ? {
+                    carteiraId: melhor.carteiraId,
+                    nome: melhor.nome,
+                    moeda: melhor.moeda,
+                    simboloMoeda: melhor.simboloMoeda,
+                    resultadoLiquidoBrl: melhor.resultadoLiquidoBrl,
+                    rentabilidadePercentual: melhor.rentabilidadePercentual,
+                } : null,
+            },
+            desempenhoCarteiras,
+            serieTemporal,
+        };
+    }
+
+    pontosGraficoRender(): PontoRenderGrafico[] {
+        const serie = this.dashboard?.serieTemporal || [];
+        if (serie.length === 0) return [];
+
+        const larguraUtil = 680; // viewBox 760 - 2 * 40
+        const offsetX = 44;
+        const topoY = 24;
+        const basePatrimonioY = 198;
+        const alturaUtil = basePatrimonioY - topoY;
+
+        const maxVal = Math.max(
+            1,
+            ...serie.map(p => Math.max(p.patrimonioBrl || 0, p.ganhosBrl || 0, p.perdasBrl || 0))
+        );
+
+        return serie.map((p, idx) => {
+            const x = serie.length === 1
+                ? offsetX + larguraUtil / 2
+                : Number((offsetX + (idx / (serie.length - 1)) * larguraUtil).toFixed(1));
+
+            const ratioPat = Math.min(1, Math.max(0, (p.patrimonioBrl || 0) / maxVal));
+            const yPatrimonio = Number((basePatrimonioY - ratioPat * alturaUtil).toFixed(1));
+
+            const alturaBarraGanho = Number((Math.min(1, (p.ganhosBrl || 0) / maxVal) * (alturaUtil * 0.72)).toFixed(1));
+            const yBarraGanho = Number((basePatrimonioY - alturaBarraGanho).toFixed(1));
+
+            const alturaBarraPerda = Number((Math.min(1, (p.perdasBrl || 0) / maxVal) * (alturaUtil * 0.72)).toFixed(1));
+            const yBarraPerda = Number((basePatrimonioY - alturaBarraPerda).toFixed(1));
+
+            return {
+                indice: idx,
+                x,
+                yPatrimonio,
+                yZero: basePatrimonioY,
+                yBarraGanho,
+                alturaBarraGanho,
+                yBarraPerda,
+                alturaBarraPerda,
+                dados: p,
+            };
+        });
+    }
+
+    caminhoCurvaPatrimonioSvg(): string {
+        const pts = this.pontosGraficoRender();
+        if (pts.length === 0) return '';
+        if (pts.length === 1) {
+            return `M 44 ${pts[0].yPatrimonio} L 724 ${pts[0].yPatrimonio}`;
+        }
+        return pts.map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt.x} ${pt.yPatrimonio}`).join(' ');
+    }
+
+    caminhoAreaPatrimonioSvg(): string {
+        const pts = this.pontosGraficoRender();
+        if (pts.length === 0) return '';
+        const base = 198;
+        if (pts.length === 1) {
+            return `M 44 ${base} L 44 ${pts[0].yPatrimonio} L 724 ${pts[0].yPatrimonio} L 724 ${base} Z`;
+        }
+        const linha = pts.map(pt => `L ${pt.x} ${pt.yPatrimonio}`).join(' ');
+        return `M ${pts[0].x} ${base} ${linha} L ${pts[pts.length - 1].x} ${base} Z`;
+    }
+
+    pontoInspecionado(): PontoSerieTemporalCarteiraDto | null {
+        const serie = this.dashboard?.serieTemporal || [];
+        if (serie.length === 0) return null;
+        if (this.indicePontoSelecionado !== null && serie[this.indicePontoSelecionado]) {
+            return serie[this.indicePontoSelecionado];
+        }
+        return serie[serie.length - 1];
+    }
+
+    selecionarPontoGrafico(indice: number): void {
+        this.indicePontoSelecionado = indice;
+    }
+
+    corHexPorTema(tema?: string): string {
+        const mapa: Record<string, string> = {
+            indigo: '#4f46e5',
+            emerald: '#10b981',
+            blue: '#2563eb',
+            violet: '#7c3aed',
+            amber: '#f59e0b',
+            purple: '#9333ea',
+        };
+        return mapa[tema || 'indigo'] || '#4f46e5';
+    }
+
+    irParaLancamentoDaCarteira(carteiraId: string): void {
+        const encontrada = this.carteiras.find(c => c.internalId === carteiraId);
+        if (encontrada) {
+            this.carteira = encontrada;
+            this.sincronizarFormularioLancamento(encontrada);
+        }
+        this.alternarAba('LANCAMENTO_POSICAO');
+    }
+
+    focarExtratoCarteira(carteiraId: string): void {
+        const encontrada = this.carteiras.find(c => c.internalId === carteiraId);
+        if (encontrada) {
+            this.selecionarCarteira(encontrada);
+        }
     }
 }

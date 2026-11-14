@@ -11,7 +11,9 @@ import { StrictHttpResponse } from '../strict-http-response';
 import {
   CarteiraDto,
   CriarCarteiraPayloadDto,
+  DashboardCarteirasDto,
   LancamentoPosicaoPayloadDto,
+  PeriodoDashboardCarteira,
   TransacaoCarteiraDto,
   VisaoGeralCarteiraDto
 } from '../../custom/portal-api-extensions';
@@ -202,12 +204,24 @@ export class CarteiraService extends BaseService {
    * Obtém a visão geral da carteira do usuário autenticado.
    * Se autoCreate for false (padrão), não cria carteira automaticamente e retorna possuiCarteira = false.
    */
-  obterMinhaCarteira(autoCreate?: boolean, carteiraId?: string): Observable<VisaoGeralCarteiraDto> {
+  obterMinhaCarteira(autoCreate?: boolean, carteiraId?: string, periodo?: PeriodoDashboardCarteira): Observable<VisaoGeralCarteiraDto> {
     const params: string[] = [];
     if (autoCreate) params.push('autoCreate=true');
     if (carteiraId) params.push(`carteiraId=${encodeURIComponent(carteiraId)}`);
+    if (periodo) params.push(`periodo=${encodeURIComponent(periodo)}`);
     const qs = params.length ? `?${params.join('&')}` : '';
     return this.http.get<VisaoGeralCarteiraDto>(`${this.rootUrl}/Financeiro/Carteira/Minha${qs}`);
+  }
+
+  /**
+   * Obtém o dashboard consolidado de ganhos, perdas, alocação e evolução temporal das carteiras.
+   */
+  obterDashboardCarteiras(periodo?: PeriodoDashboardCarteira, carteiraId?: string): Observable<DashboardCarteirasDto> {
+    const params: string[] = [];
+    if (periodo) params.push(`periodo=${encodeURIComponent(periodo)}`);
+    if (carteiraId) params.push(`carteiraId=${encodeURIComponent(carteiraId)}`);
+    const qs = params.length ? `?${params.join('&')}` : '';
+    return this.http.get<DashboardCarteirasDto>(`${this.rootUrl}/Financeiro/Carteira/Dashboard${qs}`);
   }
 
   /**

@@ -80,12 +80,88 @@ export interface TransacaoCarteiraDto {
   metadados?: any;
 }
 
+export type PeriodoDashboardCarteira = '7D' | '30D' | '90D' | '12M' | 'TUDO';
+
+export interface PontoSerieTemporalCarteiraDto {
+  indice: number;
+  dataIso: string;
+  rotulo: string;
+  descricaoEvento: string;
+  patrimonioBrl: number;
+  ganhosBrl: number;
+  perdasBrl: number;
+  resultadoLiquidoBrl: number;
+  ganhoAcumuladoBrl: number;
+  variacaoPercentualAcumulada: number;
+}
+
+export interface DesempenhoCarteiraItemDto {
+  carteiraId: string;
+  nome: string;
+  numeroCarteira: string;
+  moeda: string;
+  simboloMoeda: string;
+  nomeMoeda: string;
+  tipoLastro: 'MOEDA_REAL' | 'PARAMETRIZADA';
+  corTema: string;
+  principal: boolean;
+  saldoAtual: number;
+  fatorConversaoBrl: number;
+  saldoAtualBrl: number;
+  participacaoPercentual: number;
+  ganhosPeriodoMoeda: number;
+  perdasPeriodoMoeda: number;
+  resultadoLiquidoMoeda: number;
+  ganhosPeriodoBrl: number;
+  perdasPeriodoBrl: number;
+  resultadoLiquidoBrl: number;
+  rentabilidadePercentual: number;
+  metaPosicao: number | null;
+  progressoMetaPercentual: number | null;
+  totalTransacoes: number;
+}
+
+export interface ResumoDashboardCarteiraDto {
+  patrimonioTotalBrl: number;
+  patrimonioMoedaRealBrl: number;
+  patrimonioParametrizadoBrl: number;
+  percentualMoedaReal: number;
+  percentualParametrizado: number;
+  ganhosTotaisPeriodoBrl: number;
+  perdasTotaisPeriodoBrl: number;
+  resultadoLiquidoPeriodoBrl: number;
+  variacaoPercentualPeriodo: number;
+  ganhosRendimentosValorizacaoBrl: number;
+  aportesDepositosBrl: number;
+  retiradasPagamentosBrl: number;
+  totalMovimentacoesPeriodo: number;
+  eventosPositivos: number;
+  eventosNegativos: number;
+  melhorCarteira: {
+    carteiraId: string;
+    nome: string;
+    moeda: string;
+    simboloMoeda: string;
+    resultadoLiquidoBrl: number;
+    rentabilidadePercentual: number;
+  } | null;
+}
+
+export interface DashboardCarteirasDto {
+  periodo: PeriodoDashboardCarteira;
+  escopoCarteiraId: string | 'TODAS';
+  resumo: ResumoDashboardCarteiraDto;
+  desempenhoCarteiras: DesempenhoCarteiraItemDto[];
+  serieTemporal: PontoSerieTemporalCarteiraDto[];
+}
+
 export interface VisaoGeralCarteiraDto {
   possuiCarteira?: boolean;
   carteira?: CarteiraDto | null;
   carteiras?: CarteiraDto[];
   patrimonioTotalBrl?: number;
   transacoesRecentes: TransacaoCarteiraDto[];
+  dashboard?: DashboardCarteirasDto;
 }
 
 export interface CriarCarteiraPayloadDto {
@@ -182,7 +258,8 @@ declare module '../lib/services/news.service' {
 
 declare module '../lib/services/carteira.service' {
   export interface CarteiraService {
-    obterMinhaCarteira(autoCreate?: boolean, carteiraId?: string): Observable<VisaoGeralCarteiraDto>;
+    obterMinhaCarteira(autoCreate?: boolean, carteiraId?: string, periodo?: PeriodoDashboardCarteira): Observable<VisaoGeralCarteiraDto>;
+    obterDashboardCarteiras(periodo?: PeriodoDashboardCarteira, carteiraId?: string): Observable<DashboardCarteirasDto>;
     listarCarteiras(): Observable<{ possuiCarteira: boolean; carteiras: CarteiraDto[] }>;
     criarCarteira(dados?: CriarCarteiraPayloadDto): Observable<{
       possuiCarteira: boolean;
@@ -309,12 +386,30 @@ NewsService.prototype.getSocialStatus = function (
 };
 
 // Runtime prototype augmentations for CarteiraService
-CarteiraService.prototype.obterMinhaCarteira = function (this: ServiceCtx, autoCreate?: boolean, carteiraId?: string): Observable<VisaoGeralCarteiraDto> {
+CarteiraService.prototype.obterMinhaCarteira = function (
+  this: ServiceCtx,
+  autoCreate?: boolean,
+  carteiraId?: string,
+  periodo?: PeriodoDashboardCarteira
+): Observable<VisaoGeralCarteiraDto> {
   const params: string[] = [];
   if (autoCreate) params.push('autoCreate=true');
   if (carteiraId) params.push(`carteiraId=${encodeURIComponent(carteiraId)}`);
+  if (periodo) params.push(`periodo=${encodeURIComponent(periodo)}`);
   const qs = params.length ? `?${params.join('&')}` : '';
   return this.http.get<VisaoGeralCarteiraDto>(`${this.rootUrl}/Financeiro/Carteira/Minha${qs}`);
+};
+
+CarteiraService.prototype.obterDashboardCarteiras = function (
+  this: ServiceCtx,
+  periodo?: PeriodoDashboardCarteira,
+  carteiraId?: string
+): Observable<DashboardCarteirasDto> {
+  const params: string[] = [];
+  if (periodo) params.push(`periodo=${encodeURIComponent(periodo)}`);
+  if (carteiraId) params.push(`carteiraId=${encodeURIComponent(carteiraId)}`);
+  const qs = params.length ? `?${params.join('&')}` : '';
+  return this.http.get<DashboardCarteirasDto>(`${this.rootUrl}/Financeiro/Carteira/Dashboard${qs}`);
 };
 
 CarteiraService.prototype.listarCarteiras = function (this: ServiceCtx): Observable<{ possuiCarteira: boolean; carteiras: CarteiraDto[] }> {

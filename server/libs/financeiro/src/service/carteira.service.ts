@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException, NotFoundException, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { Carteira } from "../model/carteira.entity";
 import { TransacaoCarteira } from "../model/transacao-carteira.entity";
 import { User } from "@ci/auth/models/user.entity";
@@ -58,6 +58,81 @@ export interface LancamentoPosicaoDto {
     identificador?: string;
     descricao?: string;
     metadados?: any;
+}
+
+export type PeriodoDashboardCarteira = '7D' | '30D' | '90D' | '12M' | 'TUDO';
+
+export interface PontoSerieTemporalCarteiraDto {
+    indice: number;
+    dataIso: string;
+    rotulo: string;
+    descricaoEvento: string;
+    patrimonioBrl: number;
+    ganhosBrl: number;
+    perdasBrl: number;
+    resultadoLiquidoBrl: number;
+    ganhoAcumuladoBrl: number;
+    variacaoPercentualAcumulada: number;
+}
+
+export interface DesempenhoCarteiraItemDto {
+    carteiraId: string;
+    nome: string;
+    numeroCarteira: string;
+    moeda: string;
+    simboloMoeda: string;
+    nomeMoeda: string;
+    tipoLastro: 'MOEDA_REAL' | 'PARAMETRIZADA';
+    corTema: string;
+    principal: boolean;
+    saldoAtual: number;
+    fatorConversaoBrl: number;
+    saldoAtualBrl: number;
+    participacaoPercentual: number;
+    ganhosPeriodoMoeda: number;
+    perdasPeriodoMoeda: number;
+    resultadoLiquidoMoeda: number;
+    ganhosPeriodoBrl: number;
+    perdasPeriodoBrl: number;
+    resultadoLiquidoBrl: number;
+    rentabilidadePercentual: number;
+    metaPosicao: number | null;
+    progressoMetaPercentual: number | null;
+    totalTransacoes: number;
+}
+
+export interface ResumoDashboardCarteiraDto {
+    patrimonioTotalBrl: number;
+    patrimonioMoedaRealBrl: number;
+    patrimonioParametrizadoBrl: number;
+    percentualMoedaReal: number;
+    percentualParametrizado: number;
+    ganhosTotaisPeriodoBrl: number;
+    perdasTotaisPeriodoBrl: number;
+    resultadoLiquidoPeriodoBrl: number;
+    variacaoPercentualPeriodo: number;
+    ganhosRendimentosValorizacaoBrl: number;
+    aportesDepositosBrl: number;
+    retiradasPagamentosBrl: number;
+    totalMovimentacoesPeriodo: number;
+    eventosPositivos: number;
+    eventosNegativos: number;
+    melhorCarteira: {
+        carteiraId: string;
+        nome: string;
+        moeda: string;
+        simboloMoeda: string;
+        resultadoLiquidoBrl: number;
+        rentabilidadePercentual: number;
+    } | null;
+}
+
+export interface DashboardCarteirasDto {
+    periodo: PeriodoDashboardCarteira;
+    escopoCarteiraId: string | 'TODAS';
+    resumo: ResumoDashboardCarteiraDto;
+    desempenhoCarteiras: DesempenhoCarteiraItemDto[];
+    serieTemporal: PontoSerieTemporalCarteiraDto[];
 }
 
 const MOEDAS_REAIS_PADRAO: Record<string, { simbolo: string; nome: string; fatorBrl: number; corTema: string }> = {
@@ -272,29 +347,366 @@ export class CarteiraService {
     }
 
     /**
-     * Retorna a visão geral da carteira selecionada + lista de todas as carteiras do usuário e extrato recente.
+     * Calcula o Dashboard Consolidado de Ganhos, Perdas, Alocação e Série Temporal das Carteiras
+     */
+    async obterDashboardCarteiras(
+        userId: string,
+        opcoes?: { periodo?: PeriodoDashboardCarteira; carteiraId?: string }
+    ): Promise<DashboardCarteirasDto> {
+        const periodo: PeriodoDashboardCarteira = opcoes?.periodo || '30D';
+        const escopoCarteiraId = opcoes?.carteiraId && opcoes.carteiraId !== 'TODAS' ? opcoes.carteiraId : 'TODAS';
+
+        const todasCarteiras = await this.listarCarteirasUsuario(userId);
+        const carteirasEscopo = escopoCarteiraId === 'TODAS'
+            ? todasCarteiras
+            : todasCarteiras.filter(c => c.internalId === escopoCarteiraId || c.numeroCarteira === escopoCarteiraId);
+
+        const carteirasConsideradas = carteirasEscopo.length > 0 ? carteirasEscopo : todasCarteiras;
+
+        if (carteirasConsideradas.length === 0) {
+            return {
+                periodo,
+                escopoCarteiraId,
+                resumo: {
+                    patrimonioTotalBrl: 0,
+                    patrimonioMoedaRealBrl: 0,
+                    patrimonioParametrizadoBrl: 0,
+                    percentualMoedaReal: 0,
+                    percentualParametrizado: 0,
+                    ganhosTotaisPeriodoBrl: 0,
+                    perdasTotaisPeriodoBrl: 0,
+                    resultadoLiquidoPeriodoBrl: 0,
+                    variacaoPercentualPeriodo: 0,
+                    ganhosRendimentosValorizacaoBrl: 0,
+                    aportesDepositosBrl: 0,
+                    retiradasPagamentosBrl: 0,
+                    totalMovimentacoesPeriodo: 0,
+                    eventosPositivos: 0,
+                    eventosNegativos: 0,
+                    melhorCarteira: null,
+                },
+                desempenhoCarteiras: [],
+                serieTemporal: [],
+            };
+        }
+
+        const idsCarteiras = todasCarteiras.map(c => c.internalId);
+        const todasTransacoes = idsCarteiras.length > 0
+            ? await this.transacaoRepo.find({
+                where: { carteiraId: In(idsCarteiras) },
+                order: { createdAt: 'ASC' },
+            })
+            : [];
+
+        const mapaCarteira = new Map<string, Carteira>();
+        for (const c of todasCarteiras) {
+            mapaCarteira.set(c.internalId, c);
+        }
+
+        const agora = new Date();
+        const inicioPeriodo = new Date(agora);
+        if (periodo === '7D') {
+            inicioPeriodo.setDate(agora.getDate() - 7);
+        } else if (periodo === '30D') {
+            inicioPeriodo.setDate(agora.getDate() - 30);
+        } else if (periodo === '90D') {
+            inicioPeriodo.setDate(agora.getDate() - 90);
+        } else if (periodo === '12M') {
+            inicioPeriodo.setFullYear(agora.getFullYear() - 1);
+        } else {
+            inicioPeriodo.setFullYear(2020, 0, 1);
+        }
+
+        const patrimonioTotalGeralBrl = this.calcularPatrimonioTotalBrl(todasCarteiras);
+        const patrimonioEscopoBrl = this.calcularPatrimonioTotalBrl(carteirasConsideradas);
+
+        let patrimonioMoedaRealBrl = 0;
+        let patrimonioParametrizadoBrl = 0;
+        for (const c of todasCarteiras) {
+            const valBrl = (Number(c.saldo) || 0) * (Number(c.fatorConversaoBrl) > 0 ? Number(c.fatorConversaoBrl) : 1);
+            if (c.tipoLastro === 'PARAMETRIZADA') {
+                patrimonioParametrizadoBrl += valBrl;
+            } else {
+                patrimonioMoedaRealBrl += valBrl;
+            }
+        }
+        patrimonioMoedaRealBrl = Number(patrimonioMoedaRealBrl.toFixed(2));
+        patrimonioParametrizadoBrl = Number(patrimonioParametrizadoBrl.toFixed(2));
+
+        const percentualMoedaReal = patrimonioTotalGeralBrl > 0
+            ? Number(((patrimonioMoedaRealBrl / patrimonioTotalGeralBrl) * 100).toFixed(1))
+            : 0;
+        const percentualParametrizado = patrimonioTotalGeralBrl > 0
+            ? Number((100 - percentualMoedaReal).toFixed(1))
+            : 0;
+
+        // Desempenho individual por carteira
+        const desempenhoCarteiras: DesempenhoCarteiraItemDto[] = [];
+        let ganhosTotaisPeriodoBrl = 0;
+        let perdasTotaisPeriodoBrl = 0;
+        let ganhosRendimentosValorizacaoBrl = 0;
+        let aportesDepositosBrl = 0;
+        let retiradasPagamentosBrl = 0;
+        let totalMovimentacoesPeriodo = 0;
+        let eventosPositivos = 0;
+        let eventosNegativos = 0;
+
+        for (const c of todasCarteiras) {
+            const fatorAtual = Number(c.fatorConversaoBrl) > 0 ? Number(c.fatorConversaoBrl) : 1;
+            const saldoAtual = Number(c.saldo) || 0;
+            const saldoAtualBrl = Number((saldoAtual * fatorAtual).toFixed(2));
+            const participacaoPercentual = patrimonioTotalGeralBrl > 0
+                ? Number(((saldoAtualBrl / patrimonioTotalGeralBrl) * 100).toFixed(1))
+                : 0;
+
+            const txsCarteira = todasTransacoes.filter(t => t.carteiraId === c.internalId);
+            const txsPeriodo = txsCarteira.filter(t => !t.createdAt || new Date(t.createdAt) >= inicioPeriodo);
+
+            let ganhosMoeda = 0;
+            let perdasMoeda = 0;
+            let ganhosBrl = 0;
+            let perdasBrl = 0;
+
+            for (const tx of txsPeriodo) {
+                const valorTx = Math.abs(Number(tx.valor) || 0);
+                const fatorTx = Number(tx.metadados?.fatorConversaoBrl) > 0
+                    ? Number(tx.metadados.fatorConversaoBrl)
+                    : fatorAtual;
+                const valorBrl = valorTx * fatorTx;
+
+                if (tx.tipo === 'ENTRADA') {
+                    ganhosMoeda += valorTx;
+                    ganhosBrl += valorBrl;
+                } else {
+                    perdasMoeda += valorTx;
+                    perdasBrl += valorBrl;
+                }
+
+                // Contabiliza nos totais do escopo se esta carteira faz parte do escopo
+                if (escopoCarteiraId === 'TODAS' || c.internalId === escopoCarteiraId) {
+                    totalMovimentacoesPeriodo++;
+                    if (tx.tipo === 'ENTRADA') {
+                        if (valorTx > 0) eventosPositivos++;
+                        ganhosTotaisPeriodoBrl += valorBrl;
+                        if (tx.categoria === 'RENDIMENTO' || tx.categoria === 'VALORIZACAO' || tx.categoria === 'AJUSTE_POSICAO') {
+                            ganhosRendimentosValorizacaoBrl += valorBrl;
+                        } else {
+                            aportesDepositosBrl += valorBrl;
+                        }
+                    } else {
+                        if (valorTx > 0) eventosNegativos++;
+                        perdasTotaisPeriodoBrl += valorBrl;
+                        retiradasPagamentosBrl += valorBrl;
+                    }
+                }
+            }
+
+            // Se a carteira possui saldo positivo mas não teve transação gravada (ex.: criada antes do log de tx inicial)
+            if (txsCarteira.length === 0 && saldoAtual > 0) {
+                ganhosMoeda = saldoAtual;
+                ganhosBrl = saldoAtualBrl;
+                if (escopoCarteiraId === 'TODAS' || c.internalId === escopoCarteiraId) {
+                    ganhosTotaisPeriodoBrl += saldoAtualBrl;
+                    ganhosRendimentosValorizacaoBrl += saldoAtualBrl;
+                    eventosPositivos++;
+                    totalMovimentacoesPeriodo++;
+                }
+            }
+
+            const resultadoLiquidoMoeda = Number((ganhosMoeda - perdasMoeda).toFixed(4));
+            const resultadoLiquidoBrl = Number((ganhosBrl - perdasBrl).toFixed(2));
+            const baseReferencia = ganhosMoeda > 0 ? ganhosMoeda : (saldoAtual > 0 ? saldoAtual : 1);
+            const rentabilidadePercentual = (ganhosMoeda > 0 || perdasMoeda > 0)
+                ? Number((((ganhosMoeda - perdasMoeda) / baseReferencia) * 100).toFixed(2))
+                : 0;
+
+            const metaPosicao = c.parametrosLastro?.metaPosicao ? Number(c.parametrosLastro.metaPosicao) : null;
+            const progressoMetaPercentual = metaPosicao && metaPosicao > 0
+                ? Math.min(100, Math.max(0, Number(((saldoAtual / metaPosicao) * 100).toFixed(1))))
+                : null;
+
+            desempenhoCarteiras.push({
+                carteiraId: c.internalId,
+                nome: c.nome || `Carteira ${c.moeda}`,
+                numeroCarteira: c.numeroCarteira,
+                moeda: c.moeda,
+                simboloMoeda: c.simboloMoeda || c.moeda,
+                nomeMoeda: c.nomeMoeda || c.moeda,
+                tipoLastro: c.tipoLastro || 'MOEDA_REAL',
+                corTema: c.corTema || 'indigo',
+                principal: !!c.principal,
+                saldoAtual: Number(saldoAtual.toFixed(4)),
+                fatorConversaoBrl: fatorAtual,
+                saldoAtualBrl,
+                participacaoPercentual,
+                ganhosPeriodoMoeda: Number(ganhosMoeda.toFixed(4)),
+                perdasPeriodoMoeda: Number(perdasMoeda.toFixed(4)),
+                resultadoLiquidoMoeda,
+                ganhosPeriodoBrl: Number(ganhosBrl.toFixed(2)),
+                perdasPeriodoBrl: Number(perdasBrl.toFixed(2)),
+                resultadoLiquidoBrl,
+                rentabilidadePercentual,
+                metaPosicao,
+                progressoMetaPercentual,
+                totalTransacoes: txsCarteira.length,
+            });
+        }
+
+        ganhosTotaisPeriodoBrl = Number(ganhosTotaisPeriodoBrl.toFixed(2));
+        perdasTotaisPeriodoBrl = Number(perdasTotaisPeriodoBrl.toFixed(2));
+        const resultadoLiquidoPeriodoBrl = Number((ganhosTotaisPeriodoBrl - perdasTotaisPeriodoBrl).toFixed(2));
+        const baseTotalRef = ganhosTotaisPeriodoBrl > 0 ? ganhosTotaisPeriodoBrl : (patrimonioEscopoBrl > 0 ? patrimonioEscopoBrl : 1);
+        const variacaoPercentualPeriodo = (ganhosTotaisPeriodoBrl > 0 || perdasTotaisPeriodoBrl > 0)
+            ? Number(((resultadoLiquidoPeriodoBrl / baseTotalRef) * 100).toFixed(2))
+            : 0;
+
+        const ordenadasPorResultado = [...desempenhoCarteiras].sort((a, b) => b.resultadoLiquidoBrl - a.resultadoLiquidoBrl);
+        const melhor = ordenadasPorResultado[0] || null;
+
+        // Construção da Série Temporal de Evolução Patrimonial e Ganhos/Perdas
+        const idsEscopoSet = new Set(carteirasConsideradas.map(c => c.internalId));
+        const txsEscopo = todasTransacoes.filter(t => idsEscopoSet.has(t.carteiraId));
+
+        const serieTemporal: PontoSerieTemporalCarteiraDto[] = [];
+        let acumuladoPatrimonio = 0;
+        let ganhoAcumulado = 0;
+
+        // Ponto Zero (Abertura / Início do Período)
+        const dataZero = txsEscopo[0]?.createdAt
+            ? new Date(new Date(txsEscopo[0].createdAt).getTime() - 3600 * 1000)
+            : new Date(agora.getTime() - 7 * 86400 * 1000);
+
+        serieTemporal.push({
+            indice: 0,
+            dataIso: dataZero.toISOString(),
+            rotulo: 'Início',
+            descricaoEvento: 'Posição Inicial do Período',
+            patrimonioBrl: 0,
+            ganhosBrl: 0,
+            perdasBrl: 0,
+            resultadoLiquidoBrl: 0,
+            ganhoAcumuladoBrl: 0,
+            variacaoPercentualAcumulada: 0,
+        });
+
+        // Se houver transações, cria os marcos cronológicos de evolução
+        for (const tx of txsEscopo) {
+            const c = mapaCarteira.get(tx.carteiraId);
+            if (!c) continue;
+            const fator = Number(tx.metadados?.fatorConversaoBrl) > 0
+                ? Number(tx.metadados.fatorConversaoBrl)
+                : (Number(c.fatorConversaoBrl) > 0 ? Number(c.fatorConversaoBrl) : 1);
+            const valorBrl = Number(((Math.abs(Number(tx.valor) || 0)) * fator).toFixed(2));
+            const ehEntrada = tx.tipo === 'ENTRADA';
+            const ganhoPonto = ehEntrada ? valorBrl : 0;
+            const perdaPonto = !ehEntrada ? valorBrl : 0;
+            const liquidoPonto = Number((ganhoPonto - perdaPonto).toFixed(2));
+
+            acumuladoPatrimonio = Number(Math.max(0, acumuladoPatrimonio + liquidoPonto).toFixed(2));
+            ganhoAcumulado = Number((ganhoAcumulado + liquidoPonto).toFixed(2));
+
+            const dt = tx.createdAt ? new Date(tx.createdAt) : agora;
+            const diaMes = `${String(dt.getDate()).padStart(2, '0')}/${String(dt.getMonth() + 1).padStart(2, '0')}`;
+            const horaMin = `${String(dt.getHours()).padStart(2, '0')}:${String(dt.getMinutes()).padStart(2, '0')}`;
+
+            serieTemporal.push({
+                indice: serieTemporal.length,
+                dataIso: dt.toISOString(),
+                rotulo: `${diaMes} ${horaMin}`,
+                descricaoEvento: `${c.nome}: ${tx.descricao || tx.categoria} (${c.simboloMoeda} ${Number(tx.valor).toFixed(2)})`,
+                patrimonioBrl: acumuladoPatrimonio,
+                ganhosBrl: ganhoPonto,
+                perdasBrl: perdaPonto,
+                resultadoLiquidoBrl: liquidoPonto,
+                ganhoAcumuladoBrl: ganhoAcumulado,
+                variacaoPercentualAcumulada: patrimonioEscopoBrl > 0
+                    ? Number(((acumuladoPatrimonio / patrimonioEscopoBrl) * 100).toFixed(1))
+                    : 100,
+            });
+        }
+
+        // Garante que o ponto final reflita exatamente o patrimônio consolidado atual das carteiras
+        if (Math.abs(acumuladoPatrimonio - patrimonioEscopoBrl) > 0.01 || serieTemporal.length === 1) {
+            const ajusteFinal = Number((patrimonioEscopoBrl - acumuladoPatrimonio).toFixed(2));
+            const ganhoFinal = ajusteFinal > 0 ? ajusteFinal : 0;
+            const perdaFinal = ajusteFinal < 0 ? Math.abs(ajusteFinal) : 0;
+            ganhoAcumulado = Number((ganhoAcumulado + ajusteFinal).toFixed(2));
+
+            serieTemporal.push({
+                indice: serieTemporal.length,
+                dataIso: agora.toISOString(),
+                rotulo: 'Posição Atual',
+                descricaoEvento: 'Posição Consolidada Atual das Carteiras',
+                patrimonioBrl: patrimonioEscopoBrl,
+                ganhosBrl: ganhoFinal,
+                perdasBrl: perdaFinal,
+                resultadoLiquidoBrl: ajusteFinal,
+                ganhoAcumuladoBrl: ganhoAcumulado,
+                variacaoPercentualAcumulada: variacaoPercentualPeriodo,
+            });
+        }
+
+        return {
+            periodo,
+            escopoCarteiraId,
+            resumo: {
+                patrimonioTotalBrl: patrimonioEscopoBrl,
+                patrimonioMoedaRealBrl,
+                patrimonioParametrizadoBrl,
+                percentualMoedaReal,
+                percentualParametrizado,
+                ganhosTotaisPeriodoBrl,
+                perdasTotaisPeriodoBrl,
+                resultadoLiquidoPeriodoBrl,
+                variacaoPercentualPeriodo,
+                ganhosRendimentosValorizacaoBrl: Number(ganhosRendimentosValorizacaoBrl.toFixed(2)),
+                aportesDepositosBrl: Number(aportesDepositosBrl.toFixed(2)),
+                retiradasPagamentosBrl: Number(retiradasPagamentosBrl.toFixed(2)),
+                totalMovimentacoesPeriodo,
+                eventosPositivos,
+                eventosNegativos,
+                melhorCarteira: melhor ? {
+                    carteiraId: melhor.carteiraId,
+                    nome: melhor.nome,
+                    moeda: melhor.moeda,
+                    simboloMoeda: melhor.simboloMoeda,
+                    resultadoLiquidoBrl: melhor.resultadoLiquidoBrl,
+                    rentabilidadePercentual: melhor.rentabilidadePercentual,
+                } : null,
+            },
+            desempenhoCarteiras,
+            serieTemporal,
+        };
+    }
+
+    /**
+     * Retorna a visão geral da carteira selecionada + lista de todas as carteiras do usuário, dashboard de ganhos/perdas e extrato recente.
      */
     async obterVisaoGeralCarteira(
         userId: string,
         autoCriar: boolean = false,
-        carteiraId?: string
+        carteiraId?: string,
+        periodoDashboard: PeriodoDashboardCarteira = '30D'
     ): Promise<{
         possuiCarteira: boolean;
         carteira: Carteira | null;
         carteiras: Carteira[];
         patrimonioTotalBrl: number;
         transacoesRecentes: TransacaoCarteira[];
+        dashboard: DashboardCarteirasDto;
     }> {
         let carteiras = await this.listarCarteirasUsuario(userId);
 
         if (carteiras.length === 0) {
             if (!autoCriar) {
+                const emptyDashboard = await this.obterDashboardCarteiras(userId, { periodo: periodoDashboard });
                 return {
                     possuiCarteira: false,
                     carteira: null,
                     carteiras: [],
                     patrimonioTotalBrl: 0,
                     transacoesRecentes: [],
+                    dashboard: emptyDashboard,
                 };
             }
             const res = await this.criarCarteira(userId, { moeda: 'BRL' });
@@ -322,6 +734,7 @@ export class CarteiraService {
         }
 
         const patrimonioTotalBrl = this.calcularPatrimonioTotalBrl(carteiras);
+        const dashboard = await this.obterDashboardCarteiras(userId, { periodo: periodoDashboard });
 
         // Avalia em segundo plano concessão de cortesia da ROLE DEVELOPER se patrimônio >= 50
         if (patrimonioTotalBrl >= 50 && userId && userId !== 'guest_user_demo') {
@@ -336,6 +749,7 @@ export class CarteiraService {
             carteiras,
             patrimonioTotalBrl,
             transacoesRecentes,
+            dashboard,
         };
     }
 
