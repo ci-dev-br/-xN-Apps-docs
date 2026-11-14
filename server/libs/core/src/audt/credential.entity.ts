@@ -1,8 +1,9 @@
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, TableForeignKey } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, TableForeignKey } from "typeorm";
 import type { Application } from "@ci/manager/model/application.entity";
 import { ApiProperty } from "@nestjs/swagger";
 // import { User } from "@ci/auth/models/user.entity";
 import { schema } from "../schema";
+import { User } from "@ci/auth/models/user.entity";
 @Entity(
     {
         schema
@@ -25,4 +26,7 @@ export class Credential {
     @Column({ nullable: true }) refreshToken?: string;
     @ApiProperty({ required: false, nullable: true })
     user?: any;
+    @ApiProperty({ required: false, nullable: true })
+    @OneToMany(() => User, user => user.createdAt)
+    credenciais?: Credential;
 }

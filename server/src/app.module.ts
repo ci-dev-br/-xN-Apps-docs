@@ -138,18 +138,18 @@ process.env.MODULES.split(',').forEach(e => {
       snapshot: true
     }),
     TypeOrmModule.forRoot({
-      type: /* (process.env.DB_TYPE ||  */'postgres',
+      type: ((process.env.DB_TYPE || 'postgres') as any),
       host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT || 0),
       username: process.env.DB_USERNAME,
-      password: String(process.env.DB_PASSWORD || ''), // <-- AQUI ESTÁ A CORREÇÃO ♥
+      password: String(process.env.DB_PASSWORD || '') as any,
       database: process.env.DB_DATABASE,
       // logging: [/*'query'*/, 'error'],
       synchronize: !!(process.env.DB_SYNCHRONIZE || false),
       cache: true,
-      //statementCacheSize: 1000,
-      // logger: 'file',
-      // multithreading: true,
+      statementCacheSize: 1000,
+      logger: 'file',
+      multithreading: true,
       maxQueryExecutionTime: 1000,
       namingStrategy: new SnakeNamingStrategy(),
       verboseRetryLog: false,

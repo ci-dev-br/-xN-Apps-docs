@@ -53,7 +53,7 @@ export abstract class AuditedEntity extends BasicIdentifiedEntity {
         required: false,
         readOnly: true
     })
-    @ManyToOne(() => Credential, { nullable: true })
+    @ManyToOne(() => Credential, credential => credential)
     @JoinColumn()
     createdBy?: Credential;
     @ApiProperty({
