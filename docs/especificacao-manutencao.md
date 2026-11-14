@@ -1,5 +1,7 @@
 # Especificação Técnica e Guia de Manutenção — Plataforma **Apps**
 
+[voltar](../readme.md)
+
 > **Apps** — *Application Manager Boilerplate, Build And Blocks PWAs*  
 > Plataforma universal modular para construção, gerenciamento e entrega de aplicações web progressivas (PWAs), sistemas corporativos multi-tenant e blocos dinâmicos de interface com **Angular** (`/apps`) e **NestJS** (`/server`).
 

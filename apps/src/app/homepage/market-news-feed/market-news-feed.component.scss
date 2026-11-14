@@ -14,7 +14,7 @@
    CABEÇALHO DO RADAR DE MERCADO
    ===================================================================== */
 .market-feed-header {
-    background: var(--mat-sys-surface-container, #1e1e24);
+   // background: var(--mat-sys-surface-container, #1e1e24);
     border: 1px solid var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.08));
     border-radius: 16px;
     padding: 24px;
@@ -31,7 +31,7 @@
             width: 52px;
             height: 52px;
             border-radius: 14px;
-            background: linear-gradient(135deg, var(--mat-sys-primary, #abc7ff), var(--mat-sys-tertiary, #bec2ff));
+        //    background: linear-gradient(135deg, var(--mat-sys-primary, #abc7ff), var(--mat-sys-tertiary, #bec2ff));
             display: flex;
             align-items: center;
             justify-content: center;
@@ -63,14 +63,14 @@
                     letter-spacing: 0.6px;
                     padding: 3px 8px;
                     border-radius: 20px;
-                    background: var(--mat-sys-primary-container, #00458f);
+               //     background: var(--mat-sys-primary-container, #00458f);
                     color: var(--mat-sys-on-primary-container, #d7e3ff);
 
                     .pulse-point {
                         width: 6px;
                         height: 6px;
                         border-radius: 50%;
-                        background: var(--mat-sys-primary, #abc7ff);
+                 //       background: var(--mat-sys-primary, #abc7ff);
                         box-shadow: 0 0 6px var(--mat-sys-primary, #abc7ff);
                     }
                 }
@@ -110,7 +110,7 @@
     .search-box {
         display: flex;
         align-items: center;
-        background: var(--mat-sys-surface-container-high, #292a2c);
+     //   background: var(--mat-sys-surface-container-high, #292a2c);
         border: 1px solid var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.1));
         border-radius: 12px;
         padding: 0 14px;
@@ -178,7 +178,7 @@
             gap: 6px;
             padding: 6px 14px;
             border-radius: 20px;
-            background: var(--mat-sys-surface-container-high, #292a2c);
+        //    background: var(--mat-sys-surface-container-high, #292a2c);
             border: 1px solid var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.08));
             color: var(--mat-sys-on-surface-variant, #ccc);
             font-size: 0.8125rem;
@@ -194,12 +194,12 @@
             }
 
             &:hover {
-                background: var(--mat-sys-surface-container-highest, #343537);
+           //     background: var(--mat-sys-surface-container-highest, #343537);
                 color: var(--mat-sys-on-surface, #fff);
             }
 
             &.active {
-                background: var(--mat-sys-primary, #abc7ff);
+             //   background: var(--mat-sys-primary, #abc7ff);
                 color: var(--mat-sys-on-primary, #002f65);
                 border-color: var(--mat-sys-primary, #abc7ff);
                 font-weight: 600;
