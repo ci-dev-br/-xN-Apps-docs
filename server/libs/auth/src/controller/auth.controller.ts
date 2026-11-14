@@ -12,6 +12,8 @@ import { Request, Response } from 'express';
 import { TwoFactorAuthenticationService } from '../service/two-factors.service';
 import { BusService } from '@ci/core';
 import * as argon2 from 'argon2';
+const sharp = require('sharp');
+
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -77,8 +79,8 @@ export class AuthController {
       return {
         surname: user.surname || user.fullName || user.username || user.email,
         photo: {
-          originalFile: user.photo.originalFile,
-          format: user.photo.format
+          /*   originalFile: user.photo.originalFile,
+            format: user.photo.format */
         },
         roles: user.roles
       };

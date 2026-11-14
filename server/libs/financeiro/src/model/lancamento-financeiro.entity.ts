@@ -58,5 +58,12 @@ export class LancamentoFinanceiro extends FullAuditedEntity {
     })
     @Column({ nullable: true })
     mesReferencia?: Date;
-
+    @ApiProperty({
+        title: 'Código de Barras',
+        description: 'Código interno do sistema gerador do Documento',
+        nullable: true,
+        required: false,
+    })
+    @Column({ nullable: true })
+    codigoBarras?: string;
 }
