@@ -38,8 +38,13 @@ export class AppController {
     ].some(prefix => reqPath === prefix || reqPath.startsWith(prefix + '/'));
 
     if (isApiRoute) {
-      const absolutePath = resolve(__dirname, '../public/index.csr.html');
-      return response.sendFile(absolutePath);
+      const acceptsHtml = request.headers.accept?.includes('text/html') &&
+        !request.headers.accept?.includes('application/json');
+      if (acceptsHtml) {
+        const absolutePath = resolve(__dirname, '../public/index.csr.html');
+        return response.sendFile(absolutePath);
+      }
+      return next();
     }
     try {
       if (request.url.indexOf('manifest.webmanifest') > -1) {

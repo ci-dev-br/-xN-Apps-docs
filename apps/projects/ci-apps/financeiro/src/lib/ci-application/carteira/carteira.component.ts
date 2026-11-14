@@ -12,6 +12,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSelectModule } from '@angular/material/select';
 import { Subscription } from 'rxjs';
 import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-api';
 
@@ -32,6 +34,8 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
         MatSnackBarModule,
         MatTooltipModule,
         MatProgressSpinnerModule,
+        MatCheckboxModule,
+        MatSelectModule,
     ],
     templateUrl: './carteira.component.html',
     styleUrls: ['./carteira.component.scss']
@@ -42,9 +46,16 @@ export class CarteiraComponent implements OnInit, OnDestroy {
     transacoesFiltradas: TransacaoCarteiraDto[] = [];
 
     loading = false;
+    possuiCarteira = false;
+    criandoCarteira = false;
     processando = false;
     mostrarSaldo = true;
     filtroTipo: 'TODOS' | 'ENTRADA' | 'SAIDA' = 'TODOS';
+
+    // Formulário de Boas-vindas para nova carteira
+    moedaNovaCarteira: 'BRL' | 'USD' | 'EUR' = 'BRL';
+    termosAceitos = true;
+    limiteDiarioSugerido: number = 10000;
 
     // Estados para modais de ações
     modalAberto: 'DEPOSITO' | 'FATURA' | 'OPERACOES_FUTURAS' | null = null;
@@ -77,18 +88,69 @@ export class CarteiraComponent implements OnInit, OnDestroy {
 
     carregarDadosCarteira(): void {
         this.loading = true;
-        this.sub = this.carteiraService.obterMinhaCarteira().subscribe({
-            next: (res: any) => {
-                this.loading = false;
-                this.carteira = res.carteira;
-                this.transacoes = res.transacoesRecentes || [];
-                this.aplicarFiltro(this.filtroTipo);
+        this.sub?.unsubscribe();
+        try {
+            this.sub = this.carteiraService.obterMinhaCarteira().subscribe({
+                next: (res: any) => {
+                    this.loading = false;
+                    if (res && res.carteira && res.possuiCarteira !== false) {
+                        this.possuiCarteira = true;
+                        this.carteira = res.carteira;
+                        this.transacoes = res.transacoesRecentes || [];
+                        this.aplicarFiltro(this.filtroTipo);
+                    } else {
+                        this.possuiCarteira = false;
+                        this.carteira = undefined;
+                        this.transacoes = [];
+                        this.transacoesFiltradas = [];
+                    }
+                    this.cdr.markForCheck();
+                    this.cdr.detectChanges();
+                },
+                error: (err: any) => {
+                    this.loading = false;
+                    this.snackBar.open('Erro ao carregar dados da carteira.', 'Fechar', { duration: 3500 });
+                    this.cdr.markForCheck();
+                    this.cdr.detectChanges();
+                }
+            });
+        } catch (err) {
+            this.loading = false;
+            this.cdr.markForCheck();
+            this.cdr.detectChanges();
+        }
+    }
+
+    criarNovaCarteira(): void {
+        if (!this.termosAceitos) {
+            this.snackBar.open('Por favor, aceite os termos para ativar sua Carteira Digital.', 'OK', { duration: 3500 });
+            return;
+        }
+
+        this.criandoCarteira = true;
+        this.carteiraService.criarCarteira({
+            moeda: this.moedaNovaCarteira,
+            limiteDiario: this.limiteDiarioSugerido,
+            termosAceitos: this.termosAceitos,
+        }).subscribe({
+            next: (res) => {
+                this.criandoCarteira = false;
+                if (res && res.carteira) {
+                    this.carteira = res.carteira;
+                    this.possuiCarteira = true;
+                    this.transacoes = [];
+                    this.transacoesFiltradas = [];
+                    this.snackBar.open('🎉 Bem-vindo! Sua Carteira Digital CI foi criada com sucesso e já está pronta para uso!', 'OK', { duration: 4500 });
+                }
                 this.cdr.markForCheck();
+                this.cdr.detectChanges();
             },
-            error: (err: any) => {
-                this.loading = false;
-                this.snackBar.open('Erro ao carregar dados da carteira.', 'Fechar', { duration: 3500 });
+            error: (err) => {
+                this.criandoCarteira = false;
+                const msg = err?.error?.message || 'Falha ao criar sua carteira. Tente novamente.';
+                this.snackBar.open(msg, 'Fechar', { duration: 4000 });
                 this.cdr.markForCheck();
+                this.cdr.detectChanges();
             }
         });
     }
@@ -147,14 +209,16 @@ export class CarteiraComponent implements OnInit, OnDestroy {
                 this.aplicarFiltro(this.filtroTipo);
                 this.processando = false;
                 this.fecharModal();
-                this.snackBar.open(`Depósito de R$ ${res.transacao.valor.toFixed(2)} confirmado com sucesso!`, 'OK', { duration: 3500 });
+                this.snackBar.open(`Depósito de R$ ${Number(res.transacao?.valor || this.depositoValor || 0).toFixed(2)} confirmado com sucesso!`, 'OK', { duration: 3500 });
                 this.cdr.markForCheck();
+                this.cdr.detectChanges();
             },
             error: (err) => {
                 this.processando = false;
                 const msg = err?.error?.message || 'Falha ao processar o depósito.';
                 this.snackBar.open(msg, 'Fechar', { duration: 4000 });
                 this.cdr.markForCheck();
+                this.cdr.detectChanges();
             }
         });
     }

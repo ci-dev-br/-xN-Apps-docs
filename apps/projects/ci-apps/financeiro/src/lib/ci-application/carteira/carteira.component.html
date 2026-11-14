@@ -18,11 +18,172 @@
         </div>
     </header>
 
-    @if (loading && !carteira) {
+    @if (loading && !possuiCarteira) {
         <div class="loading-state">
             <mat-spinner diameter="44"></mat-spinner>
             <span>Carregando dados da sua carteira...</span>
         </div>
+    } @else if (!possuiCarteira) {
+        <!-- TELA DE BOAS-VINDAS PARA NOVO USUÁRIO / CRIAÇÃO DE CARTEIRA -->
+        <section class="welcome-screen">
+            <div class="welcome-hero-banner">
+                <div class="welcome-badge">
+                    <mat-icon>celebration</mat-icon>
+                    <span>Boas-vindas ao Módulo Financeiro</span>
+                </div>
+                <h1 class="welcome-title">Ative sua Carteira Digital CI</h1>
+                <p class="welcome-description">
+                    Sua central unificada para custódia de saldo, recebimento de depósitos identificados e liquidação instantânea de faturas de produtos e serviços.
+                </p>
+        </div>
+
+            <!-- PREVIEW VISUAL DO CARTÃO DIGITAL E BENEFÍCIOS -->
+            <div class="welcome-main-layout">
+                <div class="virtual-card-showcase">
+                    <div class="digital-card-preview">
+                        <div class="card-glass-glow"></div>
+                        <div class="card-header">
+                            <div class="card-logo-group">
+                                <mat-icon class="card-brand-icon">account_balance_wallet</mat-icon>
+                                <span class="card-brand-name">CI WALLET</span>
+                            </div>
+                            <span class="card-contactless">
+                                <mat-icon>contactless</mat-icon>
+                            </span>
+                        </div>
+
+                        <div class="card-chip-row">
+                            <div class="card-emv-chip"></div>
+                            <span class="card-currency-tag">{{ moedaNovaCarteira }}</span>
+                        </div>
+
+                        <div class="card-number-row">
+                            <span class="card-masked-number">CI-WAL-••••-••••</span>
+                        </div>
+
+                        <div class="card-footer">
+                            <div class="card-holder-info">
+                                <span class="card-label">TITULAR DA CONTA</span>
+                                <strong class="card-holder-name">NOVO USUÁRIO</strong>
+                            </div>
+                            <div class="card-status-badge">
+                                <span class="status-pulse-dot"></span>
+                                <span>PRONTA P/ ATIVAR</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-trust-badges">
+                        <div class="trust-item">
+                            <mat-icon>verified</mat-icon>
+                            <span>Auditoria em Tempo Real</span>
+                        </div>
+                        <div class="trust-item">
+                            <mat-icon>lock</mat-icon>
+                            <span>Custódia Protegida</span>
+                        </div>
+                        <div class="trust-item">
+                            <mat-icon>speed</mat-icon>
+                            <span>Zero Taxa de Ativação</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FORMULÁRIO DE ATIVAÇÃO & VANTAGENS -->
+                <div class="welcome-action-column">
+                    <div class="activation-card">
+                        <div class="activation-header">
+                            <div class="activation-icon-box">
+                                <mat-icon>add_card</mat-icon>
+                            </div>
+                            <div>
+                                <h3>Criar Minha Carteira</h3>
+                                <p>Personalize suas preferências iniciais e ative sua carteira em segundos.</p>
+                            </div>
+                        </div>
+
+                        <div class="activation-form">
+                            <div class="form-group-field">
+                                <label class="field-label">Moeda Principal da Carteira</label>
+                                <div class="currency-pills-selector">
+                                    <button type="button" class="currency-pill" [class.selected]="moedaNovaCarteira === 'BRL'" (click)="moedaNovaCarteira = 'BRL'">
+                                        <strong>R$ BRL</strong>
+                                        <span>Real Brasileiro</span>
+                                    </button>
+                                    <button type="button" class="currency-pill" [class.selected]="moedaNovaCarteira === 'USD'" (click)="moedaNovaCarteira = 'USD'">
+                                        <strong>$ USD</strong>
+                                        <span>Dólar Americano</span>
+                                    </button>
+                                    <button type="button" class="currency-pill" [class.selected]="moedaNovaCarteira === 'EUR'" (click)="moedaNovaCarteira = 'EUR'">
+                                        <strong>€ EUR</strong>
+                                        <span>Euro</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="terms-acceptance-block">
+                                <mat-checkbox [(ngModel)]="termosAceitos" color="primary">
+                                    Li e concordo com os <strong>Termos de Custódia e Gestão Financeira da Carteira Digital CI</strong>.
+                                </mat-checkbox>
+                            </div>
+
+                            <button mat-flat-button color="primary" class="btn-create-wallet-cta" (click)="criarNovaCarteira()" [disabled]="criandoCarteira || !termosAceitos">
+                                @if (criandoCarteira) {
+                                    <mat-spinner diameter="20"></mat-spinner>
+                                    <span>Ativando Carteira Digital...</span>
+                                } @else {
+                                    <mat-icon>arrow_forward</mat-icon>
+                                    <span>Criar Minha Carteira Digital Agora</span>
+                                }
+                            </button>
+
+                            <p class="cta-guarantee-note">
+                                <mat-icon>shield</mat-icon>
+                                Sua carteira será gerada instantaneamente com um identificador exclusivo para depósitos via Pix.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRADE DE BENEFÍCIOS -->
+            <div class="welcome-benefits-section">
+                <h3 class="section-headline">O que você pode fazer com a sua Carteira Digital?</h3>
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-icon-wrapper icon-pix">
+                            <mat-icon>qr_code_2</mat-icon>
+                        </div>
+                        <h4>Depósitos Identificados</h4>
+                        <p>Receba depósitos via Pix e transferências bancárias com conciliação automática vinculada ao código único da sua carteira.</p>
+                    </div>
+
+                    <div class="benefit-card">
+                        <div class="benefit-icon-wrapper icon-fast">
+                            <mat-icon>flash_on</mat-icon>
+                        </div>
+                        <h4>Liquidação com 1 Clique</h4>
+                        <p>Pague faturas de produtos, assinaturas de infraestrutura e serviços com saldo em conta, de forma imediata e sem tarifas de boleto.</p>
+                    </div>
+
+                    <div class="benefit-card">
+                        <div class="benefit-icon-wrapper icon-security">
+                            <mat-icon>account_balance</mat-icon>
+                        </div>
+                        <h4>Custódia e Transparência</h4>
+                        <p>Extrato detalhado com histórico de entradas e saídas, controle de limite diário e rastreabilidade total de movimentações.</p>
+                    </div>
+
+                    <div class="benefit-card">
+                        <div class="benefit-icon-wrapper icon-rewards">
+                            <mat-icon>workspace_premium</mat-icon>
+                        </div>
+                        <h4>Benefícios Developer</h4>
+                        <p>Mantenha saldo ativo na carteira para desbloquear benefícios de nível profissional e elegibilidade a recompensas de autoria.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
     } @else {
         <!-- HERO CARD DE SALDO E AÇÕES PRINCIPAIS -->
         <section class="wallet-hero-card">

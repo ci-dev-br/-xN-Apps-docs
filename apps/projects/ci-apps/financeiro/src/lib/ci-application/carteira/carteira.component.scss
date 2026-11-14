@@ -825,3 +825,570 @@
         transform: translateY(0) scale(1);
     }
 }
+
+// -------------------------------------------------------------
+// TELA DE BOAS-VINDAS / ONBOARDING PARA CRIAÇÃO DE CARTEIRA
+// -------------------------------------------------------------
+.welcome-screen {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    animation: welcomeFadeIn 0.4s ease-out;
+
+    .welcome-hero-banner {
+        text-align: center;
+        max-width: 780px;
+        margin: 8px auto 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+
+        .welcome-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 9999px;
+            background: rgba(99, 102, 241, 0.12);
+            color: var(--mat-sys-primary, #4f46e5);
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+
+            mat-icon {
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+            }
+        }
+
+        .welcome-title {
+            margin: 0;
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--mat-sys-on-surface, #0f172a);
+            line-height: 1.2;
+
+            @media (max-width: 640px) {
+                font-size: 1.7rem;
+            }
+        }
+
+        .welcome-description {
+            margin: 0;
+            font-size: 1.05rem;
+            color: var(--mat-sys-on-surface-variant, #475569);
+            line-height: 1.6;
+        }
+    }
+
+    .welcome-main-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 36px;
+        align-items: stretch;
+
+        @media (max-width: 900px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    // SHOWCASE DO CARTÃO DIGITAL
+    .virtual-card-showcase {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+
+        .digital-card-preview {
+            width: 100%;
+            max-width: 400px;
+            height: 235px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 45%, #4338ca 100%);
+            box-shadow: 0 20px 40px rgba(49, 46, 129, 0.32), 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            padding: 24px 26px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #ffffff;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+
+            .card-glass-glow {
+                position: absolute;
+                top: -50%;
+                left: -30%;
+                width: 160%;
+                height: 140%;
+                background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 65%);
+                pointer-events: none;
+            }
+
+            .card-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                position: relative;
+                z-index: 1;
+
+                .card-logo-group {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+
+                    .card-brand-icon {
+                        font-size: 24px;
+                        width: 24px;
+                        height: 24px;
+                        color: #a5b4fc;
+                    }
+
+                    .card-brand-name {
+                        font-size: 0.95rem;
+                        font-weight: 800;
+                        letter-spacing: 0.12em;
+                        color: #ffffff;
+                    }
+                }
+
+                .card-contactless {
+                    color: rgba(255, 255, 255, 0.7);
+                    mat-icon {
+                        font-size: 22px;
+                        width: 22px;
+                        height: 22px;
+                    }
+                }
+            }
+
+            .card-chip-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                position: relative;
+                z-index: 1;
+                margin: 4px 0;
+
+                .card-emv-chip {
+                    width: 44px;
+                    height: 32px;
+                    border-radius: 6px;
+                    background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+                    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
+                    border: 1px solid rgba(180, 83, 9, 0.6);
+                    position: relative;
+
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        top: 50%;
+                        left: 0;
+                        right: 0;
+                        height: 1px;
+                        background: rgba(0, 0, 0, 0.18);
+                    }
+                }
+
+                .card-currency-tag {
+                    font-size: 0.78rem;
+                    font-weight: 700;
+                    letter-spacing: 0.08em;
+                    padding: 3px 10px;
+                    border-radius: 8px;
+                    background: rgba(255, 255, 255, 0.14);
+                    backdrop-filter: blur(4px);
+                    color: #e0e7ff;
+                }
+            }
+
+            .card-number-row {
+                position: relative;
+                z-index: 1;
+
+                .card-masked-number {
+                    font-family: 'Courier New', Courier, monospace;
+                    font-size: 1.22rem;
+                    font-weight: 700;
+                    letter-spacing: 0.16em;
+                    color: rgba(255, 255, 255, 0.95);
+                    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+                }
+            }
+
+            .card-footer {
+                display: flex;
+                align-items: flex-end;
+                justify-content: space-between;
+                position: relative;
+                z-index: 1;
+
+                .card-holder-info {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 2px;
+
+                    .card-label {
+                        font-size: 0.65rem;
+                        font-weight: 700;
+                        letter-spacing: 0.08em;
+                        color: #a5b4fc;
+                    }
+
+                    .card-holder-name {
+                        font-size: 0.88rem;
+                        font-weight: 700;
+                        letter-spacing: 0.06em;
+                        color: #ffffff;
+                    }
+                }
+
+                .card-status-badge {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-size: 0.7rem;
+                    font-weight: 700;
+                    letter-spacing: 0.06em;
+                    padding: 3px 10px;
+                    border-radius: 9999px;
+                    background: rgba(34, 197, 94, 0.2);
+                    color: #86efac;
+                    border: 1px solid rgba(34, 197, 94, 0.35);
+
+                    .status-pulse-dot {
+                        width: 7px;
+                        height: 7px;
+                        border-radius: 50%;
+                        background: #4ade80;
+                        animation: pulseDot 1.8s infinite;
+                    }
+                }
+            }
+        }
+
+        .card-trust-badges {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+
+            .trust-item {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 0.82rem;
+                font-weight: 600;
+                color: var(--mat-sys-on-surface-variant, #64748b);
+
+                mat-icon {
+                    font-size: 16px;
+                    width: 16px;
+                    height: 16px;
+                    color: var(--mat-sys-primary, #6366f1);
+                }
+            }
+        }
+    }
+
+    // CARD DE ATIVAÇÃO
+    .welcome-action-column {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        .activation-card {
+            background: var(--mat-sys-surface, #ffffff);
+            border: 1px solid var(--mat-sys-outline-variant, #e2e8f0);
+            border-radius: 22px;
+            padding: 32px 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            box-sizing: border-box;
+
+            .activation-header {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+
+                .activation-icon-box {
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 14px;
+                    background: var(--mat-sys-primary, #4f46e5);
+                    color: #ffffff;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
+
+                    mat-icon {
+                        font-size: 24px;
+                        width: 24px;
+                        height: 24px;
+                    }
+                }
+
+                h3 {
+                    margin: 0 0 4px 0;
+                    font-size: 1.3rem;
+                    font-weight: 700;
+                    color: var(--mat-sys-on-surface, #0f172a);
+                }
+
+                p {
+                    margin: 0;
+                    font-size: 0.88rem;
+                    color: var(--mat-sys-on-surface-variant, #64748b);
+                }
+            }
+
+            .activation-form {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+
+                .form-group-field {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+
+                    .field-label {
+                        font-size: 0.88rem;
+                        font-weight: 600;
+                        color: var(--mat-sys-on-surface, #1e293b);
+                    }
+
+                    .currency-pills-selector {
+                        display: flex;
+                        gap: 10px;
+                        flex-wrap: wrap;
+
+                        .currency-pill {
+                            flex: 1;
+                            min-width: 100px;
+                            padding: 12px 14px;
+                            border-radius: 14px;
+                            border: 1.5px solid var(--mat-sys-outline-variant, #e2e8f0);
+                            background: var(--mat-sys-surface, #ffffff);
+                            cursor: pointer;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            gap: 3px;
+                            transition: all 0.2s ease;
+
+                            strong {
+                                font-size: 0.98rem;
+                                color: var(--mat-sys-on-surface, #0f172a);
+                            }
+
+                            span {
+                                font-size: 0.72rem;
+                                color: var(--mat-sys-on-surface-variant, #64748b);
+                            }
+
+                            &:hover {
+                                border-color: var(--mat-sys-primary, #6366f1);
+                                background: var(--mat-sys-surface-container-low, #f8fafc);
+                            }
+
+                            &.selected {
+                                border-color: var(--mat-sys-primary, #4f46e5);
+                                background: rgba(79, 70, 229, 0.08);
+                                box-shadow: 0 2px 8px rgba(79, 70, 229, 0.15);
+
+                                strong {
+                                    color: var(--mat-sys-primary, #4f46e5);
+                                    font-weight: 800;
+                                }
+
+                                span {
+                                    color: var(--mat-sys-primary, #4f46e5);
+                                    font-weight: 600;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .terms-acceptance-block {
+                    padding: 12px 14px;
+                    border-radius: 12px;
+                    background: var(--mat-sys-surface-container-low, #f8fafc);
+                    border: 1px solid var(--mat-sys-outline-variant, #e2e8f0);
+                    font-size: 0.85rem;
+                    color: var(--mat-sys-on-surface, #334155);
+
+                    mat-checkbox {
+                        font-size: 0.85rem;
+                    }
+                }
+
+                .btn-create-wallet-cta {
+                    height: 52px;
+                    border-radius: 14px;
+                    font-size: 1.02rem;
+                    font-weight: 700;
+                    letter-spacing: 0.01em;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 10px;
+                    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+                    color: #ffffff;
+                    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35);
+                    transition: all 0.2s ease;
+
+                    &:hover:not([disabled]) {
+                        box-shadow: 0 8px 24px rgba(79, 70, 229, 0.45);
+                        transform: translateY(-1px);
+                    }
+
+                    &:disabled {
+                        opacity: 0.6;
+                        cursor: not-allowed;
+                    }
+                }
+
+                .cta-guarantee-note {
+                    margin: 0;
+                    font-size: 0.78rem;
+                    color: var(--mat-sys-on-surface-variant, #64748b);
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    line-height: 1.4;
+
+                    mat-icon {
+                        font-size: 15px;
+                        width: 15px;
+                        height: 15px;
+                        color: #16a34a;
+                        flex-shrink: 0;
+                    }
+                }
+            }
+        }
+    }
+
+    // SEÇÃO DE BENEFÍCIOS
+    .welcome-benefits-section {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 8px;
+
+        .section-headline {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--mat-sys-on-surface, #0f172a);
+            text-align: center;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 20px;
+
+            .benefit-card {
+                background: var(--mat-sys-surface, #ffffff);
+                border: 1px solid var(--mat-sys-outline-variant, #e2e8f0);
+                border-radius: 18px;
+                padding: 24px 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+                transition: all 0.25s ease;
+
+                &:hover {
+                    border-color: var(--mat-sys-primary, #6366f1);
+                    transform: translateY(-3px);
+                    box-shadow: 0 8px 24px var(--mat-sys-shadow, rgba(99, 102, 241, 0.1));
+                }
+
+                .benefit-icon-wrapper {
+                    width: 44px;
+                    height: 44px;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    mat-icon {
+                        font-size: 22px;
+                        width: 22px;
+                        height: 22px;
+                    }
+
+                    &.icon-pix {
+                        background: rgba(14, 165, 233, 0.12);
+                        color: #0284c7;
+                    }
+
+                    &.icon-fast {
+                        background: rgba(245, 158, 11, 0.12);
+                        color: #d97706;
+                    }
+
+                    &.icon-security {
+                        background: rgba(34, 197, 94, 0.12);
+                        color: #16a34a;
+                    }
+
+                    &.icon-rewards {
+                        background: rgba(168, 85, 247, 0.12);
+                        color: #9333ea;
+                    }
+                }
+
+                h4 {
+                    margin: 0;
+                    font-size: 1.05rem;
+                    font-weight: 700;
+                    color: var(--mat-sys-on-surface, #0f172a);
+                }
+
+                p {
+                    margin: 0;
+                    font-size: 0.86rem;
+                    color: var(--mat-sys-on-surface-variant, #64748b);
+                    line-height: 1.5;
+                }
+            }
+        }
+    }
+}
+
+@keyframes welcomeFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulseDot {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.4;
+        transform: scale(1.3);
+    }
+}

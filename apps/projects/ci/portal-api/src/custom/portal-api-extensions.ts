@@ -51,7 +51,8 @@ export interface TransacaoCarteiraDto {
 }
 
 export interface VisaoGeralCarteiraDto {
-  carteira: CarteiraDto;
+  possuiCarteira?: boolean;
+  carteira?: CarteiraDto | null;
   transacoesRecentes: TransacaoCarteiraDto[];
 }
 
@@ -119,7 +120,12 @@ declare module '../lib/services/news.service' {
 
 declare module '../lib/services/carteira.service' {
   export interface CarteiraService {
-    obterMinhaCarteira(): Observable<VisaoGeralCarteiraDto>;
+    obterMinhaCarteira(autoCreate?: boolean): Observable<VisaoGeralCarteiraDto>;
+    criarCarteira(dados?: {
+      moeda?: string;
+      limiteDiario?: number;
+      termosAceitos?: boolean;
+    }): Observable<{ possuiCarteira: boolean; carteira: CarteiraDto; criada: boolean }>;
     registrarDeposito(dados: {
       valor: number;
       identificador?: string;
@@ -230,8 +236,19 @@ NewsService.prototype.getSocialStatus = function (
 };
 
 // Runtime prototype augmentations for CarteiraService
-CarteiraService.prototype.obterMinhaCarteira = function (this: ServiceCtx): Observable<VisaoGeralCarteiraDto> {
-  return this.http.get<VisaoGeralCarteiraDto>(`${this.rootUrl}/Financeiro/Carteira/Minha`);
+CarteiraService.prototype.obterMinhaCarteira = function (this: ServiceCtx, autoCreate?: boolean): Observable<VisaoGeralCarteiraDto> {
+  const qs = autoCreate ? '?autoCreate=true' : '';
+  return this.http.get<VisaoGeralCarteiraDto>(`${this.rootUrl}/Financeiro/Carteira/Minha${qs}`);
+};
+
+CarteiraService.prototype.criarCarteira = function (
+  this: ServiceCtx,
+  dados?: { moeda?: string; limiteDiario?: number; termosAceitos?: boolean }
+): Observable<{ possuiCarteira: boolean; carteira: CarteiraDto; criada: boolean }> {
+  return this.http.post<{ possuiCarteira: boolean; carteira: CarteiraDto; criada: boolean }>(
+    `${this.rootUrl}/Financeiro/Carteira/Criar`,
+    dados || {}
+  );
 };
 
 CarteiraService.prototype.registrarDeposito = function (
@@ -285,3 +302,5 @@ CarteiraService.prototype.avaliarRoleDeveloper = function (this: ServiceCtx): Ob
     saldoAtual?: number;
   }>(`${this.rootUrl}/Financeiro/Carteira/AvaliarRoleDeveloper`, {});
 };
+
+export const PORTAL_API_EXTENSIONS_LOADED = true;

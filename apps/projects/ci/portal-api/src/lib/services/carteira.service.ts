@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-import { HttpClient, HttpContext } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -8,6 +8,7 @@ import { map } from 'rxjs/operators';
 import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
+import { CarteiraDto, TransacaoCarteiraDto, VisaoGeralCarteiraDto } from '../../custom/portal-api-extensions';
 
 import { carteiraAvaliarRoleDeveloper } from '../fn/carteira/carteira-avaliar-role-developer';
 import { CarteiraAvaliarRoleDeveloper$Params } from '../fn/carteira/carteira-avaliar-role-developer';
@@ -189,6 +190,101 @@ export class CarteiraService extends BaseService {
     return this.carteiraAvaliarRoleDeveloper$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
+  }
+
+  /**
+   * Obtém a visão geral da carteira do usuário autenticado.
+   * Se autoCreate for false (padrão), não cria carteira automaticamente e retorna possuiCarteira = false.
+   */
+  obterMinhaCarteira(autoCreate?: boolean): Observable<VisaoGeralCarteiraDto> {
+    const qs = autoCreate ? '?autoCreate=true' : '';
+    return this.http.get<VisaoGeralCarteiraDto>(`${this.rootUrl}/Financeiro/Carteira/Minha${qs}`);
+  }
+
+  /**
+   * Cria explicitamente uma nova carteira digital para o usuário autenticado.
+   */
+  criarCarteira(dados?: {
+    moeda?: string;
+    limiteDiario?: number;
+    termosAceitos?: boolean;
+  }): Observable<{ possuiCarteira: boolean; carteira: CarteiraDto; criada: boolean }> {
+    return this.http.post<{ possuiCarteira: boolean; carteira: CarteiraDto; criada: boolean }>(
+      `${this.rootUrl}/Financeiro/Carteira/Criar`,
+      dados || {}
+    );
+  }
+
+  /**
+   * Registra um depósito identificado na carteira do usuário.
+   */
+  registrarDeposito(dados: {
+    valor: number;
+    identificador?: string;
+    descricao?: string;
+    metadados?: any;
+  }): Observable<{ carteira: CarteiraDto; transacao: TransacaoCarteiraDto }> {
+    return this.http.post<{ carteira: CarteiraDto; transacao: TransacaoCarteiraDto }>(
+      `${this.rootUrl}/Financeiro/Carteira/Deposito`,
+      dados
+    );
+  }
+
+  /**
+   * Realiza o pagamento de uma fatura utilizando o saldo da carteira.
+   */
+  pagarFatura(dados: {
+    faturaId: string;
+    valor: number;
+    descricao?: string;
+    metadados?: any;
+  }): Observable<{ carteira: CarteiraDto; transacao: TransacaoCarteiraDto }> {
+    return this.http.post<{ carteira: CarteiraDto; transacao: TransacaoCarteiraDto }>(
+      `${this.rootUrl}/Financeiro/Carteira/PagarFatura`,
+      dados
+    );
+  }
+
+  /**
+   * Lista transações da carteira com filtros opcionais.
+   */
+  listarTransacoes(params?: {
+    tipo?: 'ENTRADA' | 'SAIDA';
+    categoria?: string;
+    de?: string;
+    ate?: string;
+    pagina?: number;
+    limite?: number;
+  }): Observable<{ itens: TransacaoCarteiraDto[]; total: number; pagina: number }> {
+    let httpParams = new HttpParams();
+    if (params?.tipo) httpParams = httpParams.set('tipo', params.tipo);
+    if (params?.categoria) httpParams = httpParams.set('categoria', params.categoria);
+    if (params?.de) httpParams = httpParams.set('de', params.de);
+    if (params?.ate) httpParams = httpParams.set('ate', params.ate);
+    if (params?.pagina) httpParams = httpParams.set('pagina', params.pagina.toString());
+    if (params?.limite) httpParams = httpParams.set('limite', params.limite.toString());
+
+    return this.http.get<{ itens: TransacaoCarteiraDto[]; total: number; pagina: number }>(
+      `${this.rootUrl}/Financeiro/Carteira/Transacoes`,
+      { params: httpParams }
+    );
+  }
+
+  /**
+   * Avalia e concede a ROLE DEVELOPER de cortesia por autoria e saldo.
+   */
+  avaliarRoleDeveloper(): Observable<{
+    promovido: boolean;
+    motivo: string;
+    user?: { id: string; email: string; roles: string[]; emailVerificado: boolean };
+    saldoAtual?: number;
+  }> {
+    return this.http.post<{
+      promovido: boolean;
+      motivo: string;
+      user?: { id: string; email: string; roles: string[]; emailVerificado: boolean };
+      saldoAtual?: number;
+    }>(`${this.rootUrl}/Financeiro/Carteira/AvaliarRoleDeveloper`, {});
   }
 
 }

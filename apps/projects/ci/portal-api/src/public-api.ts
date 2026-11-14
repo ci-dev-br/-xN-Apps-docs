@@ -11,4 +11,5 @@ export * from './lib/strict-http-response';
 export * from './custom/encrypted-messager.service';
 export * from './custom/group.service';
 export * from './custom/internal-notification.service';
+import './custom/portal-api-extensions';
 export * from './custom/portal-api-extensions';

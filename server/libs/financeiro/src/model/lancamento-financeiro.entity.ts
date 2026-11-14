@@ -63,6 +63,9 @@ export class LancamentoFinanceiro extends FullAuditedEntity {
         description: 'Código interno do sistema gerador do Documento',
         nullable: true,
         required: false,
+        ...{
+            component: 'ci-codigo-barras'
+        }
     })
     @Column({ nullable: true })
     codigoBarras?: string;

@@ -15,7 +15,7 @@
         user-select: none !important;
     }
 
-    background: url('/imagens/d41586-026-02173-5_52959440.webp') center no-repeat;
+    background: url('/imagens/d41586-026-03665-0_53966330.webp') center no-repeat;
     background-size: cover;
 }
 
@@ -44,4 +44,19 @@ h4,
 h5,
 h6 {
     text-shadow: 2px 2px 1px black, 4px 4px 2px white;
+}
+
+* {
+        -webkit-touch-callout: none;
+        /* iOS Safari */
+        -webkit-user-select: none;
+        /* Safari */
+        -khtml-user-select: none;
+        /* Konqueror HTML */
+        -moz-user-select: none;
+        /* Old versions of Firefox */
+        -ms-user-select: none;
+        /* Internet Explorer/Edge */
+        user-select: none;
+        /* Non-prefixed version, currently supported by Chrome, Edge, Opera, and Firefox */
 }

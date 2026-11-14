@@ -34,6 +34,57 @@ export class CarteiraService {
     ) { }
 
     /**
+     * Obtém a carteira existente do usuário sem criá-la automaticamente
+     */
+    async obterCarteiraExistente(userId: string): Promise<Carteira | null> {
+        if (!userId) {
+            throw new BadRequestException('ID do usuário é obrigatório.');
+        }
+
+        return await this.carteiraRepo.findOne({
+            where: { userId },
+            relations: ['transacoes'],
+        });
+    }
+
+    /**
+     * Cria explicitamente uma nova carteira digital para o usuário
+     */
+    async criarCarteira(
+        userId: string,
+        dados?: { moeda?: string; limiteDiario?: number }
+    ): Promise<{ possuiCarteira: boolean; carteira: Carteira; criada: boolean }> {
+        if (!userId) {
+            throw new BadRequestException('ID do usuário é obrigatório.');
+        }
+
+        let carteira = await this.carteiraRepo.findOne({
+            where: { userId },
+            relations: ['transacoes'],
+        });
+
+        if (carteira) {
+            carteira.saldo = Number(carteira.saldo) || 0;
+            return { possuiCarteira: true, carteira, criada: false };
+        }
+
+        const numeroCarteira = `CI-WAL-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
+        carteira = this.carteiraRepo.create({
+            userId,
+            numeroCarteira,
+            saldo: 0.00,
+            moeda: dados?.moeda || 'BRL',
+            status: 'ATIVA',
+            limiteDiario: dados?.limiteDiario || 10000.00,
+        });
+        carteira = await this.carteiraRepo.save(carteira);
+        carteira.saldo = 0;
+        this.logger.log(`Nova carteira ${numeroCarteira} criada para o usuário ${userId}`);
+
+        return { possuiCarteira: true, carteira, criada: true };
+    }
+
+    /**
      * Obtém ou inicializa a carteira digital do usuário
      */
     async obterOuCriarCarteira(userId: string): Promise<Carteira> {
@@ -63,10 +114,25 @@ export class CarteiraService {
     }
 
     /**
-     * Retorna a carteira com o extrato recente de movimentações
+     * Retorna a carteira com o extrato recente de movimentações.
+     * Caso autoCriar seja falso e a carteira não exista, retorna possuiCarteira = false.
      */
-    async obterVisaoGeralCarteira(userId: string): Promise<{ carteira: Carteira; transacoesRecentes: TransacaoCarteira[] }> {
-        const carteira = await this.obterOuCriarCarteira(userId);
+    async obterVisaoGeralCarteira(
+        userId: string,
+        autoCriar: boolean = false
+    ): Promise<{ possuiCarteira: boolean; carteira: Carteira | null; transacoesRecentes: TransacaoCarteira[] }> {
+        let carteira = await this.obterCarteiraExistente(userId);
+
+        if (!carteira) {
+            if (!autoCriar) {
+                return {
+                    possuiCarteira: false,
+                    carteira: null,
+                    transacoesRecentes: [],
+                };
+            }
+            carteira = await this.obterOuCriarCarteira(userId);
+        }
 
         const transacoesRecentes = await this.transacaoRepo.find({
             where: { carteiraId: carteira.internalId },
@@ -74,8 +140,20 @@ export class CarteiraService {
             take: 20,
         });
 
-        // Converte saldo para número caso o TypeORM retorne como string numérica
+        // Converte saldo e valores numéricos caso o TypeORM retorne como string numérica
         carteira.saldo = Number(carteira.saldo) || 0;
+        if (carteira.limiteDiario !== undefined && carteira.limiteDiario !== null) {
+            carteira.limiteDiario = Number(carteira.limiteDiario) || 0;
+        }
+        for (const tx of transacoesRecentes) {
+            tx.valor = Number(tx.valor) || 0;
+            if (tx.saldoAnterior !== undefined && tx.saldoAnterior !== null) {
+                tx.saldoAnterior = Number(tx.saldoAnterior);
+            }
+            if (tx.saldoPosterior !== undefined && tx.saldoPosterior !== null) {
+                tx.saldoPosterior = Number(tx.saldoPosterior);
+            }
+        }
 
         // Avalia em segundo plano concessão de cortesia da ROLE DEVELOPER se saldo >= 50
         if (carteira.saldo >= 50 && userId && userId !== 'guest_user_demo') {
@@ -85,6 +163,7 @@ export class CarteiraService {
         }
 
         return {
+            possuiCarteira: true,
             carteira,
             transacoesRecentes,
         };

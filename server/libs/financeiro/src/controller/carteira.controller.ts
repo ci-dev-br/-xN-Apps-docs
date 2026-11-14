@@ -32,6 +32,17 @@ export class PagarFaturaComCarteiraDto {
     metadados?: any;
 }
 
+export class CriarCarteiraDto {
+    @ApiProperty({ description: 'Moeda inicial da carteira', default: 'BRL', required: false, example: 'BRL' })
+    moeda?: string;
+
+    @ApiProperty({ description: 'Limite operacional diário desejado', required: false, example: 10000.00 })
+    limiteDiario?: number;
+
+    @ApiProperty({ description: 'Aceite dos termos de uso da carteira', default: true, required: false })
+    termosAceitos?: boolean;
+}
+
 @ApiTags('Carteira')
 @Controller('Financeiro/Carteira')
 export class CarteiraController {
@@ -49,13 +60,31 @@ export class CarteiraController {
     }
 
     /**
-     * Retorna a visão geral da carteira do usuário atual (saldo, número para depósitos e movimentações)
+     * Retorna a visão geral da carteira do usuário atual (saldo, número para depósitos e movimentações).
+     * Se o usuário ainda não tiver carteira, retorna possuiCarteira = false sem criar automaticamente.
      */
     @Get('Minha')
     @ApiOperation({ operationId: 'CarteiraGetMinha', summary: 'Obtém a carteira do usuário com saldo e histórico recente' })
-    async getMinhaCarteira(@Req() req: any) {
+    async getMinhaCarteira(
+        @Req() req: any,
+        @Query('autoCreate') autoCreate?: string
+    ) {
         const userId = this.getUserId(req);
-        return await this.carteiraService.obterVisaoGeralCarteira(userId);
+        const deveCriar = autoCreate === 'true';
+        return await this.carteiraService.obterVisaoGeralCarteira(userId, deveCriar);
+    }
+
+    /**
+     * Cria explicitamente uma nova carteira digital para o usuário após tela de boas-vindas
+     */
+    @Post('Criar')
+    @ApiOperation({ operationId: 'CarteiraCriar', summary: 'Cria uma nova carteira digital para o usuário' })
+    async criarCarteira(
+        @Req() req: any,
+        @Body() body?: CriarCarteiraDto
+    ) {
+        const userId = this.getUserId(req);
+        return await this.carteiraService.criarCarteira(userId, body);
     }
 
     /**

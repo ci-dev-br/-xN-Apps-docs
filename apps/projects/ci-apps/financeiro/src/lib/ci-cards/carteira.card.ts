@@ -1,4 +1,4 @@
-import { Component, OnInit, Optional } from '@angular/core';
+import { Component, OnInit, Optional, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,7 +26,7 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
                 <mat-icon>account_balance_wallet</mat-icon>
             </div>
             <mat-card-title>Minha Carteira</mat-card-title>
-            <mat-card-subtitle>{{ carteira?.numeroCarteira || 'Carregando...' }}</mat-card-subtitle>
+            <mat-card-subtitle>{{ loading ? 'Carregando...' : (possuiCarteira && carteira?.numeroCarteira ? carteira?.numeroCarteira : 'Carteira Digital CI') }}</mat-card-subtitle>
             <div class="header-actions">
                 <button mat-icon-button (click)="carregar()" [disabled]="loading" title="Atualizar">
                     <mat-icon>refresh</mat-icon>
@@ -38,6 +38,16 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
             @if (loading) {
                 <div class="loading-box">
                     <mat-spinner diameter="32"></mat-spinner>
+                </div>
+            } @else if (!possuiCarteira) {
+                <div class="empty-wallet-onboarding">
+                    <div class="onboarding-badge">
+                        <mat-icon>celebration</mat-icon>
+                        <span>Nova Carteira Digital</span>
+                    </div>
+                    <p class="onboarding-text">
+                        Ative sua Carteira Digital CI gratuitamente para receber depósitos identificados via Pix e liquidar faturas com 1 clique.
+                    </p>
                 </div>
             } @else {
                 <div class="balance-container">
@@ -90,7 +100,8 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
 
         <mat-card-actions align="end">
             <button mat-button color="primary" (click)="abrirCarteiraCompleta()">
-                <mat-icon>open_in_new</mat-icon> Acessar Carteira
+                <mat-icon>{{ possuiCarteira ? 'open_in_new' : 'add_card' }}</mat-icon>
+                {{ possuiCarteira ? 'Acessar Carteira' : 'Ativar Minha Carteira' }}
             </button>
         </mat-card-actions>
     </mat-card>
@@ -237,10 +248,42 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
                 }
             }
         }
+
+        .empty-wallet-onboarding {
+            margin: 16px 0;
+            padding: 16px;
+            border-radius: 12px;
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px dashed rgba(99, 102, 241, 0.35);
+
+            .onboarding-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                color: var(--mat-sys-primary, #4f46e5);
+                margin-bottom: 8px;
+
+                mat-icon {
+                    font-size: 16px;
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+
+            .onboarding-text {
+                margin: 0;
+                font-size: 0.85rem;
+                line-height: 1.45;
+                color: var(--mat-sys-on-surface-variant, #475569);
+            }
+        }
     `]
 })
 export class CarteiraCard implements OnInit {
-    carteira?: CarteiraDto;
+    carteira?: CarteiraDto | null;
+    possuiCarteira = false;
     ultimasTransacoes: TransacaoCarteiraDto[] = [];
     totalEntradas = 0;
     totalSaidas = 0;
@@ -250,6 +293,7 @@ export class CarteiraCard implements OnInit {
     constructor(
         @Optional() private readonly carteiraService?: CarteiraService,
         @Optional() private readonly router?: Router,
+        @Optional() private readonly cdr?: ChangeDetectorRef,
     ) { }
 
     ngOnInit(): void {
@@ -257,11 +301,21 @@ export class CarteiraCard implements OnInit {
     }
 
     carregar(): void {
-        if (!this.carteiraService) return;
+        if (!this.carteiraService || typeof this.carteiraService.obterMinhaCarteira !== 'function') {
+            this.loading = false;
+            return;
+        }
         this.loading = true;
         this.carteiraService.obterMinhaCarteira().subscribe({
             next: (dto) => {
-                this.carteira = dto?.carteira;
+                this.loading = false;
+                if (dto && dto.carteira && dto.possuiCarteira !== false) {
+                    this.possuiCarteira = true;
+                    this.carteira = dto.carteira;
+                } else {
+                    this.possuiCarteira = false;
+                    this.carteira = null;
+                }
                 if (dto?.transacoesRecentes) {
                     this.ultimasTransacoes = dto.transacoesRecentes.slice(0, 3);
                     this.totalEntradas = dto.transacoesRecentes
@@ -270,11 +324,18 @@ export class CarteiraCard implements OnInit {
                     this.totalSaidas = dto.transacoesRecentes
                         .filter(t => t.tipo === 'SAIDA')
                         .reduce((sum, t) => sum + Number(t.valor || 0), 0);
+                } else {
+                    this.ultimasTransacoes = [];
+                    this.totalEntradas = 0;
+                    this.totalSaidas = 0;
                 }
-                this.loading = false;
+                this.cdr?.markForCheck();
+                this.cdr?.detectChanges();
             },
             error: () => {
                 this.loading = false;
+                this.cdr?.markForCheck();
+                this.cdr?.detectChanges();
             }
         });
     }
