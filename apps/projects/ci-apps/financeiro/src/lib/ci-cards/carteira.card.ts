@@ -54,7 +54,9 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
             } @else {
                 <div class="balance-container">
                     <div class="balance-meta">
-                        <span class="balance-label">Saldo Disponível</span>
+                        <span class="balance-label">
+                            Posição ({{ carteira?.moeda || 'BRL' }} • {{ carteira?.tipoLastro === 'PARAMETRIZADA' ? 'Parametrizada' : 'Moeda Real' }})
+                        </span>
                         <button mat-icon-button class="eye-btn" (click)="toggleSaldo()" title="Ocultar/Exibir saldo">
                             <mat-icon>{{ ocultarSaldo ? 'visibility_off' : 'visibility' }}</mat-icon>
                         </button>
@@ -63,9 +65,14 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
                         @if (ocultarSaldo) {
                             ••••••••
                         } @else {
-                            {{ (carteira?.saldo || 0) | currency:'BRL':'symbol':'1.2-2' }}
+                            {{ formatarSaldoCard(carteira?.saldo || 0) }}
                         }
                     </div>
+                    @if (!ocultarSaldo && (carteiras.length > 1 || carteira?.moeda !== 'BRL')) {
+                        <div style="font-size: 0.76rem; opacity: 0.85; margin-top: 4px;">
+                            Consolidado: {{ patrimonioTotalBrl | currency:'BRL':'symbol':'1.2-2' }}
+                        </div>
+                    }
                 </div>
 
                 <div class="stats-pills">
@@ -101,6 +108,12 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
         </mat-card-content>
 
         <mat-card-actions align="end">
+            @if (possuiCarteira) {
+                <button mat-button (click)="abrirLancamentoPosicao()">
+                    <mat-icon>tune</mat-icon>
+                    Lançar Posição
+                </button>
+            }
             <button mat-button color="primary" (click)="abrirCarteiraCompleta()">
                 <mat-icon>{{ possuiCarteira ? 'open_in_new' : 'add_card' }}</mat-icon>
                 {{ possuiCarteira ? 'Acessar Carteira' : 'Ativar Minha Carteira' }}
@@ -285,6 +298,8 @@ import { CarteiraService, CarteiraDto, TransacaoCarteiraDto } from '@ci/portal-a
 })
 export class CarteiraCard implements OnInit {
     carteira?: CarteiraDto | null;
+    carteiras: CarteiraDto[] = [];
+    patrimonioTotalBrl = 0;
     possuiCarteira = false;
     ultimasTransacoes: TransacaoCarteiraDto[] = [];
     totalEntradas = 0;
@@ -311,6 +326,8 @@ export class CarteiraCard implements OnInit {
         this.carteiraService.obterMinhaCarteira().subscribe({
             next: (dto) => {
                 this.loading = false;
+                this.carteiras = dto?.carteiras || (dto?.carteira ? [dto.carteira] : []);
+                this.patrimonioTotalBrl = Number(dto?.patrimonioTotalBrl || 0);
                 if (dto && dto.carteira && dto.possuiCarteira !== false) {
                     this.possuiCarteira = true;
                     this.carteira = dto.carteira;
@@ -342,12 +359,22 @@ export class CarteiraCard implements OnInit {
         });
     }
 
+    formatarSaldoCard(valor: number): string {
+        const num = Number(valor || 0);
+        const simbolo = this.carteira?.simboloMoeda || 'R$';
+        return `${simbolo} ${num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 4 })}`;
+    }
+
     toggleSaldo(): void {
         this.ocultarSaldo = !this.ocultarSaldo;
     }
 
     abrirCarteiraCompleta(): void {
         this.router?.navigate(['/Financeiro/Carteira']);
+    }
+
+    abrirLancamentoPosicao(): void {
+        this.router?.navigate(['/Financeiro/Carteira/Lancamento']);
     }
 }
 
