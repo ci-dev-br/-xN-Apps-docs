@@ -469,10 +469,8 @@ export class CarteiraService {
 
             for (const tx of txsPeriodo) {
                 const valorTx = Math.abs(Number(tx.valor) || 0);
-                const fatorTx = Number(tx.metadados?.fatorConversaoBrl) > 0
-                    ? Number(tx.metadados.fatorConversaoBrl)
-                    : fatorAtual;
-                const valorBrl = valorTx * fatorTx;
+                if (valorTx === 0) continue;
+                const valorBrl = valorTx * fatorAtual;
 
                 if (tx.tipo === 'ENTRADA') {
                     ganhosMoeda += valorTx;
@@ -486,7 +484,7 @@ export class CarteiraService {
                 if (escopoCarteiraId === 'TODAS' || c.internalId === escopoCarteiraId) {
                     totalMovimentacoesPeriodo++;
                     if (tx.tipo === 'ENTRADA') {
-                        if (valorTx > 0) eventosPositivos++;
+                        eventosPositivos++;
                         ganhosTotaisPeriodoBrl += valorBrl;
                         if (tx.categoria === 'RENDIMENTO' || tx.categoria === 'VALORIZACAO' || tx.categoria === 'AJUSTE_POSICAO') {
                             ganhosRendimentosValorizacaoBrl += valorBrl;
@@ -494,7 +492,7 @@ export class CarteiraService {
                             aportesDepositosBrl += valorBrl;
                         }
                     } else {
-                        if (valorTx > 0) eventosNegativos++;
+                        eventosNegativos++;
                         perdasTotaisPeriodoBrl += valorBrl;
                         retiradasPagamentosBrl += valorBrl;
                     }
@@ -593,17 +591,18 @@ export class CarteiraService {
         for (const tx of txsEscopo) {
             const c = mapaCarteira.get(tx.carteiraId);
             if (!c) continue;
-            const fator = Number(tx.metadados?.fatorConversaoBrl) > 0
-                ? Number(tx.metadados.fatorConversaoBrl)
-                : (Number(c.fatorConversaoBrl) > 0 ? Number(c.fatorConversaoBrl) : 1);
-            const valorBrl = Number(((Math.abs(Number(tx.valor) || 0)) * fator).toFixed(2));
-            const ehEntrada = tx.tipo === 'ENTRADA';
-            const ganhoPonto = ehEntrada ? valorBrl : 0;
-            const perdaPonto = !ehEntrada ? valorBrl : 0;
-            const liquidoPonto = Number((ganhoPonto - perdaPonto).toFixed(2));
+            const valorTx = Math.abs(Number(tx.valor) || 0);
+            if (valorTx === 0) continue;
 
-            acumuladoPatrimonio = Number(Math.max(0, acumuladoPatrimonio + liquidoPonto).toFixed(2));
-            ganhoAcumulado = Number((ganhoAcumulado + liquidoPonto).toFixed(2));
+            const fator = Number(c.fatorConversaoBrl) > 0 ? Number(c.fatorConversaoBrl) : 1;
+            const valorBrl = Number((valorTx * fator).toFixed(4));
+            const ehEntrada = tx.tipo === 'ENTRADA';
+            const ganhoPonto = ehEntrada ? Number(valorBrl.toFixed(2)) : 0;
+            const perdaPonto = !ehEntrada ? Number(valorBrl.toFixed(2)) : 0;
+            const liquidoPonto = Number(((ehEntrada ? 1 : -1) * valorBrl).toFixed(2));
+
+            acumuladoPatrimonio = Number(Math.max(0, acumuladoPatrimonio + (ehEntrada ? valorBrl : -valorBrl)).toFixed(2));
+            ganhoAcumulado = Number((ganhoAcumulado + (ehEntrada ? valorBrl : -valorBrl)).toFixed(2));
 
             const dt = tx.createdAt ? new Date(tx.createdAt) : agora;
             const diaMes = `${String(dt.getDate()).padStart(2, '0')}/${String(dt.getMonth() + 1).padStart(2, '0')}`;
@@ -613,7 +612,7 @@ export class CarteiraService {
                 indice: serieTemporal.length,
                 dataIso: dt.toISOString(),
                 rotulo: `${diaMes} ${horaMin}`,
-                descricaoEvento: `${c.nome}: ${tx.descricao || tx.categoria} (${c.simboloMoeda} ${Number(tx.valor).toFixed(2)})`,
+                descricaoEvento: `${c.nome}: ${tx.descricao || tx.categoria} (${ehEntrada ? '+' : '-'}${c.simboloMoeda} ${valorTx.toFixed(2)})`,
                 patrimonioBrl: acumuladoPatrimonio,
                 ganhosBrl: ganhoPonto,
                 perdasBrl: perdaPonto,
