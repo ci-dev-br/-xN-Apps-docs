@@ -1,4 +1,4 @@
-<img src="https://apps.ci.dev.br/logo-colorida.svg">
+<img width="350" src="https://apps.ci.dev.br/logo-colorida.svg" style="margin:0 auto;" >
 
 # Plataforma Universal para Aplicativos | ci.dev.br
 [Colaboradores](./docs/colaboradores.md) | [Guia de Referências e Autoria](./docs/guia-boas-praticas-referencias.md) | [Documentação e Especificação de Manutenção](./docs/especificacao-manutencao.md) | [Sobre]()
@@ -79,4 +79,11 @@ O projeto deve atualizar sozinho corretamente. Porém pode ser que ocorram falha
 
 
 ---
-CiDevBr - Todos os Direitos Reservados - 1993 - 2025
+## Referências externas
+
+
+
+*Adicione acima os links externos para viincular à documentação*
+
+---
+ci.dev.br - Todos os direitos reservados - 1993 até 2026 [Licença](./LICENSE)

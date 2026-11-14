@@ -1,5 +1,7 @@
 # Guia de Boas Práticas: Notoriedade da Fonte e Atribuição de Autoria
 
+[voltar](../readme.md)
+
 ## 1. Objetivo e Princípios
 
 Este documento define a diretriz padrão de governança e boas práticas para **citação e atribuição obrigatória de autoria** em todo o ecossistema do projeto.
