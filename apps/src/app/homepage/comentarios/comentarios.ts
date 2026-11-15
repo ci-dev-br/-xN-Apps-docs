@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Optional, Output } from "@angular/core";
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Optional, Output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -54,8 +54,10 @@ export class ComentariosComponent implements OnInit, OnDestroy {
     loading = false;
     sending = false;
     newCommentText = '';
+    anonymousNickname = '';
     isLoggedIn = false;
     currentUser?: User;
+    anonymousUser?: any;
 
     private destroy$ = new Subject<void>();
 
@@ -63,19 +65,48 @@ export class ComentariosComponent implements OnInit, OnDestroy {
         @Optional() private readonly newsService?: NewsService,
         @Optional() private readonly userService?: UserAuthenticationService,
         @Optional() private readonly snackBar?: MatSnackBar,
+        @Optional() private readonly cdr?: ChangeDetectorRef,
     ) { }
 
     ngOnInit(): void {
+        if (this.newsService && typeof this.newsService.getAnonymousAuthorName === 'function') {
+            this.anonymousNickname = this.newsService.getAnonymousAuthorName() || '';
+        }
+
         this.userService?.user
             ?.pipe(takeUntil(this.destroy$))
             ?.subscribe(u => {
                 this.currentUser = u;
                 this.isLoggedIn = !!u && !!u.id;
+                if (!this.isLoggedIn) {
+                    this.inicializarSessaoAnonima();
+                }
+                this.cdr?.markForCheck();
             });
+
+        if (!this.isLoggedIn) {
+            this.inicializarSessaoAnonima();
+        }
 
         if (this.newsId) {
             this.carregarComentarios();
         }
+    }
+
+    private inicializarSessaoAnonima(): void {
+        if (!this.newsService || typeof this.newsService.initAnonymousSession !== 'function') return;
+        this.newsService.initAnonymousSession(this.anonymousNickname || undefined)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (res) => {
+                    if (res?.user) {
+                        this.anonymousUser = res.user;
+                        this.cdr?.markForCheck();
+                        this.cdr?.detectChanges();
+                    }
+                },
+                error: () => { }
+            });
     }
 
     ngOnDestroy(): void {
@@ -86,6 +117,7 @@ export class ComentariosComponent implements OnInit, OnDestroy {
     carregarComentarios() {
         if (!this.newsService || !this.newsId) return;
         this.loading = true;
+        this.cdr?.markForCheck();
 
         this.newsService.getComments(this.newsId)
             .pipe(takeUntil(this.destroy$))
@@ -94,43 +126,59 @@ export class ComentariosComponent implements OnInit, OnDestroy {
                     this.comments = items || [];
                     this.loading = false;
                     this.commentCountChange.emit(this.comments.length);
+                    this.cdr?.markForCheck();
+                    this.cdr?.detectChanges();
                 },
                 error: (err) => {
                     console.error('Erro ao carregar comentários:', err);
                     this.loading = false;
+                    this.cdr?.markForCheck();
+                    this.cdr?.detectChanges();
                 }
             });
     }
 
     enviarComentario() {
-        if (!this.isLoggedIn) {
-            this.snackBar?.open('Você precisa estar conectado para comentar nesta notícia.', 'Entrar', { duration: 4000 })
-                .onAction().subscribe(() => {
-                    window.location.href = '/acessar';
-                });
-            return;
-        }
-
         const texto = this.newCommentText.trim();
-        if (!texto || this.sending || !this.newsService) return;
+        if (!texto || this.sending || !this.newsService || !this.newsId) return;
 
         this.sending = true;
-        this.newsService.comment(this.newsId, texto)
+        this.cdr?.markForCheck();
+
+        const apelidoAnon = !this.isLoggedIn ? (this.anonymousNickname?.trim() || undefined) : undefined;
+        this.newsService.comment(this.newsId, texto, apelidoAnon)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (novoComentario) => {
-                    this.comments.push(novoComentario);
+                    this.comments = [...this.comments, novoComentario];
+                    if (!this.isLoggedIn && novoComentario?.user) {
+                        this.anonymousUser = novoComentario.user;
+                    }
                     this.newCommentText = '';
                     this.sending = false;
                     this.commentCountChange.emit(this.comments.length);
                     this.snackBar?.open('Comentário publicado!', 'Ok', { duration: 2500 });
+                    this.cdr?.markForCheck();
+                    this.cdr?.detectChanges();
                 },
                 error: (err) => {
                     console.error('Erro ao publicar comentário:', err);
                     this.sending = false;
                     this.snackBar?.open('Não foi possível enviar o comentário. Tente novamente.', 'Fechar', { duration: 3500 });
+                    this.cdr?.markForCheck();
+                    this.cdr?.detectChanges();
                 }
             });
+    }
+
+    isAnonymousAuthor(user: any): boolean {
+        if (!user) return true;
+        if (Array.isArray(user.roles) && user.roles.includes('ANONYMOUS')) return true;
+        return typeof user.username === 'string' && user.username.startsWith('anon_');
+    }
+
+    getActiveActor(): any {
+        return this.isLoggedIn ? this.currentUser : this.anonymousUser;
     }
 
     onEnterPressed(event: Event) {

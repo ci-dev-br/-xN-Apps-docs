@@ -245,10 +245,18 @@ declare module '../lib/services/auth.service' {
 
 declare module '../lib/services/news.service' {
   export interface NewsService {
+    getOrCreateAnonymousId(): string;
+    getAnonymousAuthorName(): string;
+    setAnonymousAuthorName(name: string): void;
+    initAnonymousSession(authorName?: string, context?: HttpContext): Observable<{
+      isAnonymous: boolean;
+      anonymousId: string;
+      user: { id: string; username: string; fullName: string; surname: string; roles: string[] } | null;
+    }>;
     getMarketNews(params?: { search?: string; category?: string; limit?: number; offset?: number } | GetMarketNews$Params, context?: HttpContext): Observable<Array<News>>;
     vote(newsId: string, vote: 'UP' | 'DOWN', context?: HttpContext): Observable<NewsVoteStats>;
     getVoteStats(newsId: string, context?: HttpContext): Observable<NewsVoteStats>;
-    comment(newsId: string, content: string, context?: HttpContext): Observable<NewsCommentItem>;
+    comment(newsId: string, content: string, authorName?: string, context?: HttpContext): Observable<NewsCommentItem>;
     getComments(newsId: string, context?: HttpContext): Observable<Array<NewsCommentItem>>;
     followUser(userId: string, context?: HttpContext): Observable<any>;
     unfollowUser(userId: string, context?: HttpContext): Observable<{ success: boolean }>;
@@ -339,34 +347,105 @@ AuthService.prototype.dispositivos = function (this: ServiceCtx, context?: HttpC
 };
 
 // Runtime prototype augmentations for NewsService
+NewsService.prototype.getOrCreateAnonymousId = function (): string {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      let anonId = localStorage.getItem('ci_anonymous_client_id');
+      if (!anonId || anonId.length < 8) {
+        const rand = Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+        anonId = `anon-${rand}`;
+        localStorage.setItem('ci_anonymous_client_id', anonId);
+      }
+      return anonId;
+    }
+  } catch { }
+  return 'anon-session-default';
+};
+
+NewsService.prototype.getAnonymousAuthorName = function (): string {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      return localStorage.getItem('ci_anonymous_author_name') || '';
+    }
+  } catch { }
+  return '';
+};
+
+NewsService.prototype.setAnonymousAuthorName = function (name: string): void {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('ci_anonymous_author_name', (name || '').trim());
+    }
+  } catch { }
+};
+
+NewsService.prototype.initAnonymousSession = function (this: ServiceCtx, authorName?: string, context?: HttpContext): Observable<any> {
+  const anonymousId = NewsService.prototype.getOrCreateAnonymousId.call(this);
+  if (authorName !== undefined) {
+    NewsService.prototype.setAnonymousAuthorName.call(this, authorName);
+  }
+  const savedName = authorName !== undefined ? authorName : NewsService.prototype.getAnonymousAuthorName.call(this);
+  return this.http.post<any>(
+    `${this.rootUrl}/News/AnonymousSession`,
+    { anonymousId, authorName: savedName || undefined },
+    { headers: { 'x-anonymous-id': anonymousId }, context }
+  );
+};
+
 NewsService.prototype.getMarketNews = function (
   this: ServiceCtx,
   params?: { search?: string; category?: string; limit?: number; offset?: number },
   context?: HttpContext
 ): Observable<Array<News>> {
-  const queryParams: string[] = [];
+  const anonymousId = NewsService.prototype.getOrCreateAnonymousId.call(this);
+  const queryParams: string[] = [`anonymousId=${encodeURIComponent(anonymousId)}`];
   if (params?.search) queryParams.push(`search=${encodeURIComponent(params.search)}`);
   if (params?.category) queryParams.push(`category=${encodeURIComponent(params.category)}`);
   if (params?.limit !== undefined) queryParams.push(`limit=${params.limit}`);
   if (params?.offset !== undefined) queryParams.push(`offset=${params.offset}`);
   const qs = queryParams.length ? `?${queryParams.join('&')}` : '';
-  return this.http.get<Array<News>>(`${this.rootUrl}/News/Market${qs}`, { context });
+  return this.http.get<Array<News>>(`${this.rootUrl}/News/Market${qs}`, {
+    headers: { 'x-anonymous-id': anonymousId },
+    context
+  });
 };
 
 NewsService.prototype.vote = function (this: ServiceCtx, newsId: string, vote: 'UP' | 'DOWN', context?: HttpContext): Observable<NewsVoteStats> {
-  return this.http.post<NewsVoteStats>(`${this.rootUrl}/News/Vote`, { newsId, vote }, { context });
+  const anonymousId = NewsService.prototype.getOrCreateAnonymousId.call(this);
+  return this.http.post<NewsVoteStats>(
+    `${this.rootUrl}/News/Vote`,
+    { newsId, vote, anonymousId },
+    { headers: { 'x-anonymous-id': anonymousId }, context }
+  );
 };
 
 NewsService.prototype.getVoteStats = function (this: ServiceCtx, newsId: string, context?: HttpContext): Observable<NewsVoteStats> {
-  return this.http.get<NewsVoteStats>(`${this.rootUrl}/News/VoteStats/${newsId}`, { context });
+  const anonymousId = NewsService.prototype.getOrCreateAnonymousId.call(this);
+  return this.http.get<NewsVoteStats>(
+    `${this.rootUrl}/News/VoteStats/${encodeURIComponent(newsId)}?anonymousId=${encodeURIComponent(anonymousId)}`,
+    { headers: { 'x-anonymous-id': anonymousId }, context }
+  );
 };
 
-NewsService.prototype.comment = function (this: ServiceCtx, newsId: string, content: string, context?: HttpContext): Observable<NewsCommentItem> {
-  return this.http.post<NewsCommentItem>(`${this.rootUrl}/News/Comment`, { newsId, content }, { context });
+NewsService.prototype.comment = function (this: ServiceCtx, newsId: string, content: string, authorName?: string, context?: HttpContext): Observable<NewsCommentItem> {
+  const anonymousId = NewsService.prototype.getOrCreateAnonymousId.call(this);
+  if (authorName && authorName.trim()) {
+    NewsService.prototype.setAnonymousAuthorName.call(this, authorName.trim());
+  }
+  const resolvedAuthorName = (authorName?.trim() || NewsService.prototype.getAnonymousAuthorName.call(this)) || undefined;
+  return this.http.post<NewsCommentItem>(
+    `${this.rootUrl}/News/Comment`,
+    { newsId, content, anonymousId, authorName: resolvedAuthorName },
+    { headers: { 'x-anonymous-id': anonymousId }, context }
+  );
 };
 
 NewsService.prototype.getComments = function (this: ServiceCtx, newsId: string, context?: HttpContext): Observable<Array<NewsCommentItem>> {
-  return this.http.get<Array<NewsCommentItem>>(`${this.rootUrl}/News/Comments/${newsId}`, { context });
+  const anonymousId = NewsService.prototype.getOrCreateAnonymousId.call(this);
+  return this.http.get<Array<NewsCommentItem>>(
+    `${this.rootUrl}/News/Comments/${encodeURIComponent(newsId)}?anonymousId=${encodeURIComponent(anonymousId)}`,
+    { headers: { 'x-anonymous-id': anonymousId }, context }
+  );
 };
 
 NewsService.prototype.followUser = function (this: ServiceCtx, userId: string, context?: HttpContext): Observable<any> {

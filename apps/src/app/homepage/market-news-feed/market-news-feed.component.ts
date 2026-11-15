@@ -175,17 +175,15 @@ export class MarketNewsFeedComponent implements OnInit, OnDestroy {
 
     votar(item: News, tipo: 'UP' | 'DOWN', event?: Event): void {
         if (event) event.stopPropagation();
-        if (!this.isLoggedIn) {
-            this.snackBar?.open('Você precisa estar autenticado para votar em uma notícia.', 'OK', { duration: 3000 });
-            return;
-        }
-        if (!this.newsService || !item.id) return;
+        const targetId = item?.id || item?.url;
+        if (!this.newsService || !targetId) return;
 
-        this.newsService.vote(item.id, tipo).subscribe({
+        this.newsService.vote(targetId, tipo).subscribe({
             next: (stats: any) => {
                 (item as any).upVotes = stats.upVotes;
                 (item as any).downVotes = stats.downVotes;
                 (item as any).userVote = stats.userVote;
+                this.newsList.update(list => [...list]);
                 this.cdr?.markForCheck();
                 this.cdr?.detectChanges();
             },

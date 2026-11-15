@@ -303,7 +303,8 @@ export class NewsController {
             });
         }
 
-        const currentUserId = request?.user?.id;
+        const actorUser = await this.resolveOrCreateActorUser(request, request?.query?.['anonymousId'], true);
+        const currentUserId = actorUser?.id;
         const postsComInteracoes = await Promise.all(
             rawPosts.map(async post => {
                 let upVotes = 0;
@@ -390,7 +391,8 @@ export class NewsController {
             });
         }
 
-        const currentUserId = request?.user?.id;
+        const actorUser = await this.resolveOrCreateActorUser(request, request?.query?.['anonymousId'], true);
+        const currentUserId = actorUser?.id;
 
         // Anexa contagem e status de voto se houver IDs
         const postsComInteracoes = await Promise.all(
@@ -403,7 +405,7 @@ export class NewsController {
                 try {
                     if (post.id) {
                         const [votes, comments] = await Promise.all([
-                            this.voteRepo.find({ where: { news: { id: post.id } } }),
+                            this.voteRepo.find({ where: { news: { id: post.id } }, relations: ['user'] }),
                             this.commentRepo.count({ where: { news: { id: post.id } } }),
                         ]);
 
@@ -430,7 +432,7 @@ export class NewsController {
                         { reading: post.content },
                         request,
                         'READER',
-                        r => r.substring(0, 170) + ' \n\n[...]'
+                        r => (r ? r.substring(0, 170) + ' \n\n[...]' : '')
                     ).reading,
                 };
             })
@@ -441,26 +443,23 @@ export class NewsController {
 
     /**
      * Vota UP ou DOWN em uma notícia do feed.
-     * Requer usuário autenticado. Se o usuário clicar no mesmo voto, ele é removido (toggle).
+     * Suporta usuários autenticados e clientes anônimos conectados (através de usuário temporário).
+     * Se o usuário clicar no mesmo voto, ele é removido (toggle).
      */
+    @Public()
     @Post('Vote')
     @ApiOperation({ operationId: 'NewsVote' })
     async vote(@Body() input: VoteInputDto, @Req() req: any) {
-        const user = req.user;
-        if (!user || !user.id) {
-            throw new UnauthorizedException('É necessário estar autenticado para votar em uma notícia.');
-        }
-
-        if (!input.newsId || !input.vote) {
+        if (!input?.newsId || !input?.vote) {
             throw new BadRequestException('newsId e vote (UP ou DOWN) são obrigatórios.');
         }
 
-        let news = await this.newsRepo.findOne({ where: { id: input.newsId } });
-        if (!news) {
-            // Tenta localizar por url se o id passado for na verdade uma url
-            news = await this.newsRepo.findOne({ where: { url: input.newsId } });
+        const user = await this.resolveOrCreateActorUser(req, input.anonymousId, true);
+        if (!user || !user.id) {
+            throw new BadRequestException('Não foi possível identificar ou alocar o perfil de votação.');
         }
 
+        const news = await this.resolveNewsByIdOrUrl(input.newsId);
         if (!news) {
             throw new NotFoundException('Notícia não encontrada.');
         }
@@ -470,6 +469,7 @@ export class NewsController {
                 news: { id: news.id },
                 user: { id: user.id },
             },
+            relations: ['user', 'news'],
         });
 
         if (existingVote) {
@@ -501,13 +501,20 @@ export class NewsController {
     @Get('VoteStats/:newsId')
     @ApiOperation({ operationId: 'NewsVoteStats' })
     async getVoteStats(@Param('newsId') newsId: string, @Req() req: any) {
-        const userId = req.user?.id;
-        return await this.getVoteStatsInternal(newsId, userId);
+        const news = await this.resolveNewsByIdOrUrl(newsId);
+        const targetId = news?.id || newsId;
+        const actor = await this.resolveOrCreateActorUser(req, req?.query?.['anonymousId'], false);
+        return await this.getVoteStatsInternal(targetId, actor?.id);
     }
 
     private async getVoteStatsInternal(newsId: string, userId?: string) {
+        if (!this.isUuid(newsId)) {
+            return { newsId, upVotes: 0, downVotes: 0, userVote: null };
+        }
+
         const votes = await this.voteRepo.find({
             where: { news: { id: newsId } },
+            relations: ['user'],
         });
 
         const upVotes = votes.filter(v => v.vote === TipoVoto.UP).length;
@@ -529,25 +536,22 @@ export class NewsController {
 
     /**
      * Adiciona um comentário a uma notícia.
-     * Requer usuário autenticado.
+     * Suporta tanto usuários autenticados quanto clientes anônimos conectados (com usuário temporário).
      */
+    @Public()
     @Post('Comment')
     @ApiOperation({ operationId: 'NewsComment' })
     async addComment(@Body() input: CommentInputDto, @Req() req: any) {
-        const user = req.user;
-        if (!user || !user.id) {
-            throw new UnauthorizedException('É necessário estar autenticado para comentar.');
-        }
-
-        if (!input.newsId || !input.content || !input.content.trim()) {
+        if (!input?.newsId || !input?.content || !input.content.trim()) {
             throw new BadRequestException('newsId e content são obrigatórios.');
         }
 
-        let news = await this.newsRepo.findOne({ where: { id: input.newsId } });
-        if (!news) {
-            news = await this.newsRepo.findOne({ where: { url: input.newsId } });
+        const user = await this.resolveOrCreateActorUser(req, input.anonymousId, true, input.authorName);
+        if (!user || !user.id) {
+            throw new BadRequestException('Não foi possível alocar o usuário para o comentário.');
         }
 
+        const news = await this.resolveNewsByIdOrUrl(input.newsId);
         if (!news) {
             throw new NotFoundException('Notícia não encontrada.');
         }
@@ -571,6 +575,7 @@ export class NewsController {
                 fullName: user.fullName,
                 surname: user.surname,
                 photo: user.photo,
+                roles: user.roles,
             },
             socialStatus: {
                 tipo: 'SELF',
@@ -583,28 +588,25 @@ export class NewsController {
 
     /**
      * Lista os comentários de uma notícia, incluindo o status de vínculo social
-     * (Seguidor, Conhecido, etc.) entre o usuário atual e os autores dos comentários.
+     * (Seguidor, Conhecido, Você, etc.) entre o usuário atual (autenticado ou anônimo) e os autores.
      */
     @Public()
     @Get('Comments/:newsId')
     @ApiOperation({ operationId: 'NewsGetComments' })
     async getComments(@Param('newsId') newsId: string, @Req() req: any) {
-        let targetNewsId = newsId;
-        const news = await this.newsRepo.findOne({
-            where: [{ id: newsId }, { url: newsId }],
-        });
-
-        if (news) {
-            targetNewsId = news.id;
+        const news = await this.resolveNewsByIdOrUrl(newsId);
+        if (!news || !this.isUuid(news.id)) {
+            return [];
         }
 
         const comments = await this.commentRepo.find({
-            where: { news: { id: targetNewsId } },
+            where: { news: { id: news.id } },
             relations: ['user', 'user.photo'],
             order: { createdAt: 'ASC' },
         });
 
-        const currentUserId = req.user?.id;
+        const actorUser = await this.resolveOrCreateActorUser(req, req?.query?.['anonymousId'], false);
+        const currentUserId = actorUser?.id;
 
         const result = await Promise.all(
             comments.map(async c => {
@@ -619,13 +621,14 @@ export class NewsController {
                 if (currentUserId && author?.id) {
                     if (currentUserId === author.id) {
                         socialStatus = { tipo: 'SELF' };
-                    } else if (this.socialService) {
+                    } else if (this.socialService && req?.user?.id) {
                         socialStatus = await this.socialService.obterStatus(currentUserId, author.id);
                     }
                 }
 
                 return {
                     id: c.id,
+                    newsId: news.id,
                     content: c.content,
                     createdAt: c.createdAt,
                     user: author ? {
@@ -634,6 +637,7 @@ export class NewsController {
                         fullName: author.fullName,
                         surname: author.surname,
                         photo: author.photo,
+                        roles: author.roles,
                     } : null,
                     socialStatus,
                 };

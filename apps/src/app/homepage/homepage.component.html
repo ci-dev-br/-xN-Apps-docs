@@ -167,14 +167,14 @@
                                 <div class="interactions">
                                     <button mat-button class="btn-vote" [class.voted-up]="feed.userVote === 'UP'"
                                         (click)="votar(feed, 'UP', $event)"
-                                        [matTooltip]="isLoggedIn ? (feed.userVote === 'UP' ? 'Remover voto positivo' : 'Voto positivo') : 'Faça login para votar'">
+                                        [matTooltip]="feed.userVote === 'UP' ? 'Remover voto positivo' : 'Voto positivo'">
                                         <mat-icon>thumb_up</mat-icon>
                                         <span class="vote-count">{{ feed.upVotes || 0 }}</span>
                                     </button>
 
                                     <button mat-button class="btn-vote" [class.voted-down]="feed.userVote === 'DOWN'"
                                         (click)="votar(feed, 'DOWN', $event)"
-                                        [matTooltip]="isLoggedIn ? (feed.userVote === 'DOWN' ? 'Remover voto negativo' : 'Voto negativo') : 'Faça login para votar'">
+                                        [matTooltip]="feed.userVote === 'DOWN' ? 'Remover voto negativo' : 'Voto negativo'">
                                         <mat-icon>thumb_down</mat-icon>
                                         <span class="vote-count">{{ feed.downVotes || 0 }}</span>
                                     </button>

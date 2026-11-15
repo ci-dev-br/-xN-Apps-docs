@@ -63,32 +63,110 @@ export class NewsService extends BaseService {
   }
 
   /**
+   * Obtém ou gera um identificador persistente para o cliente anônimo conectado.
+   */
+  getOrCreateAnonymousId(): string {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        let anonId = localStorage.getItem('ci_anonymous_client_id');
+        if (!anonId || anonId.length < 8) {
+          const rand = Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+          anonId = `anon-${rand}`;
+          localStorage.setItem('ci_anonymous_client_id', anonId);
+        }
+        return anonId;
+      }
+    } catch { }
+    return 'anon-session-default';
+  }
+
+  getAnonymousAuthorName(): string {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        return localStorage.getItem('ci_anonymous_author_name') || '';
+      }
+    } catch { }
+    return '';
+  }
+
+  setAnonymousAuthorName(name: string): void {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('ci_anonymous_author_name', (name || '').trim());
+      }
+    } catch { }
+  }
+
+  initAnonymousSession(authorName?: string, context?: HttpContext): Observable<{
+    isAnonymous: boolean;
+    anonymousId: string;
+    user: { id: string; username: string; fullName: string; surname: string; roles: string[] } | null;
+  }> {
+    const anonymousId = this.getOrCreateAnonymousId();
+    if (authorName !== undefined) {
+      this.setAnonymousAuthorName(authorName);
+    }
+    const savedName = authorName !== undefined ? authorName : this.getAnonymousAuthorName();
+    return this.http.post<any>(
+      `${this.rootUrl}/News/AnonymousSession`,
+      { anonymousId, authorName: savedName || undefined },
+      { headers: { 'x-anonymous-id': anonymousId }, context }
+    );
+  }
+
+  /**
    * Obtém notícias de mercado e economia da base de dados (alias direto utilizado pelo Radar de Mercado e Ticker).
    */
   getMarketNews(params?: GetMarketNews$Params, context?: HttpContext): Observable<Array<News>> {
-    const queryParams: string[] = [];
+    const anonymousId = this.getOrCreateAnonymousId();
+    const queryParams: string[] = [`anonymousId=${encodeURIComponent(anonymousId)}`];
     if (params?.search) queryParams.push(`search=${encodeURIComponent(params.search)}`);
     if (params?.category) queryParams.push(`category=${encodeURIComponent(params.category)}`);
     if (params?.limit !== undefined) queryParams.push(`limit=${params.limit}`);
     if (params?.offset !== undefined) queryParams.push(`offset=${params.offset}`);
     const qs = queryParams.length ? `?${queryParams.join('&')}` : '';
-    return this.http.get<Array<News>>(`${this.rootUrl}/News/Market${qs}`, { context });
+    return this.http.get<Array<News>>(`${this.rootUrl}/News/Market${qs}`, {
+      headers: { 'x-anonymous-id': anonymousId },
+      context
+    });
   }
 
   vote(newsId: string, vote: 'UP' | 'DOWN', context?: HttpContext): Observable<any> {
-    return this.http.post<any>(`${this.rootUrl}/News/Vote`, { newsId, vote }, { context });
+    const anonymousId = this.getOrCreateAnonymousId();
+    return this.http.post<any>(
+      `${this.rootUrl}/News/Vote`,
+      { newsId, vote, anonymousId },
+      { headers: { 'x-anonymous-id': anonymousId }, context }
+    );
   }
 
   getVoteStats(newsId: string, context?: HttpContext): Observable<any> {
-    return this.http.get<any>(`${this.rootUrl}/News/VoteStats/${encodeURIComponent(newsId)}`, { context });
+    const anonymousId = this.getOrCreateAnonymousId();
+    return this.http.get<any>(
+      `${this.rootUrl}/News/VoteStats/${encodeURIComponent(newsId)}?anonymousId=${encodeURIComponent(anonymousId)}`,
+      { headers: { 'x-anonymous-id': anonymousId }, context }
+    );
   }
 
-  comment(newsId: string, content: string, context?: HttpContext): Observable<any> {
-    return this.http.post<any>(`${this.rootUrl}/News/Comment`, { newsId, content }, { context });
+  comment(newsId: string, content: string, authorName?: string, context?: HttpContext): Observable<any> {
+    const anonymousId = this.getOrCreateAnonymousId();
+    if (authorName && authorName.trim()) {
+      this.setAnonymousAuthorName(authorName.trim());
+    }
+    const resolvedAuthorName = (authorName?.trim() || this.getAnonymousAuthorName()) || undefined;
+    return this.http.post<any>(
+      `${this.rootUrl}/News/Comment`,
+      { newsId, content, anonymousId, authorName: resolvedAuthorName },
+      { headers: { 'x-anonymous-id': anonymousId }, context }
+    );
   }
 
   getComments(newsId: string, context?: HttpContext): Observable<Array<any>> {
-    return this.http.get<Array<any>>(`${this.rootUrl}/News/Comments/${encodeURIComponent(newsId)}`, { context });
+    const anonymousId = this.getOrCreateAnonymousId();
+    return this.http.get<Array<any>>(
+      `${this.rootUrl}/News/Comments/${encodeURIComponent(newsId)}?anonymousId=${encodeURIComponent(anonymousId)}`,
+      { headers: { 'x-anonymous-id': anonymousId }, context }
+    );
   }
 
   followUser(userId: string, context?: HttpContext): Observable<any> {
@@ -123,8 +201,16 @@ export class NewsService extends BaseService {
    * This method doesn't expect any request body.
    */
   getFeed(params: GetFeed$Params, context?: HttpContext): Observable<Array<News>> {
-    return this.getFeed$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<News>>): Array<News> => r.body)
+    const anonymousId = this.getOrCreateAnonymousId();
+    const queryParams: string[] = [`anonymousId=${encodeURIComponent(anonymousId)}`];
+    if (params?.dataInicial) queryParams.push(`dataInicial=${encodeURIComponent(params.dataInicial)}`);
+    if (params?.dataFinal) queryParams.push(`dataFinal=${encodeURIComponent(params.dataFinal)}`);
+    if ((params as any)?.offset !== undefined) queryParams.push(`offset=${(params as any).offset}`);
+    const qs = queryParams.length ? `?${queryParams.join('&')}` : '';
+    return this.http.post<Array<News>>(
+      `${this.rootUrl}/News/getFeed${qs}`,
+      {},
+      { headers: { 'x-anonymous-id': anonymousId }, context }
     );
   }
 

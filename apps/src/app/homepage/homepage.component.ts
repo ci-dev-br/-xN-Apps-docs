@@ -209,6 +209,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
             this.isLoggedIn = !!user && !!user.id;
             if (this.isLoggedIn) {
                 this.catalogService?.refreshMyActivations().subscribe();
+            } else {
+                this.news?.initAnonymousSession().subscribe({ error: () => { } });
             }
             this.cdr?.markForCheck();
         });
@@ -421,30 +423,26 @@ export class HomepageComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Registra ou altera o voto (UP ou DOWN) na notícia para o usuário logado.
+     * Registra ou altera o voto (UP ou DOWN) na notícia para o usuário autenticado ou cliente anônimo conectado.
      */
     votar(feed: any, vote: 'UP' | 'DOWN', event?: Event) {
         if (event) {
             event.stopPropagation();
         }
 
-        if (!this.isLoggedIn) {
-            this.snackBar?.open('Faça login para votar nas notícias.', 'Entrar', { duration: 4000 })
-                .onAction().subscribe(() => {
-                    this.router?.navigate(['/acessar']);
-                });
-            return;
-        }
-
-        if (!this.news) return;
+        if (!this.news || !feed) return;
 
         const newsId = feed.id || feed.url;
+        if (!newsId) return;
+
         this.news.vote(newsId, vote).subscribe({
             next: (stats) => {
                 feed.upVotes = stats.upVotes;
                 feed.downVotes = stats.downVotes;
                 feed.userVote = stats.userVote;
+                this.feeds.update(list => [...list]);
                 this.cdr?.markForCheck();
+                this.cdr?.detectChanges();
             },
             error: (err) => {
                 console.error('Erro ao registrar voto na notícia:', err);

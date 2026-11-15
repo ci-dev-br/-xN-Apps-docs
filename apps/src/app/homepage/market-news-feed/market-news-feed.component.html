@@ -111,7 +111,7 @@
                                 <button mat-button class="action-btn vote-btn" 
                                     [class.active]="(item.userVote === 'UP')"
                                     (click)="votar(item, 'UP', $event)"
-                                    [matTooltip]="isLoggedIn ? 'Votar positivo' : 'Faça login para votar'">
+                                    [matTooltip]="item.userVote === 'UP' ? 'Remover voto positivo' : 'Votar positivo'">
                                     <mat-icon>thumb_up</mat-icon>
                                     <span>{{ item.upVotes || 0 }}</span>
                                 </button>
@@ -120,7 +120,7 @@
                                 <button mat-button class="action-btn vote-btn" 
                                     [class.active]="(item.userVote === 'DOWN')"
                                     (click)="votar(item, 'DOWN', $event)"
-                                    [matTooltip]="isLoggedIn ? 'Votar negativo' : 'Faça login para votar'">
+                                    [matTooltip]="item.userVote === 'DOWN' ? 'Remover voto negativo' : 'Votar negativo'">
                                     <mat-icon>thumb_down</mat-icon>
                                     <span>{{ item.downVotes || 0 }}</span>
                                 </button>
