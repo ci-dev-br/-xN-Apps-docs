@@ -116,31 +116,37 @@ export class MarketNewsFeedComponent implements OnInit, OnDestroy {
             offset: reset ? 0 : this.totalLoaded
         };
 
-        /*  this.newsService.getMarketNews(params).subscribe({
-             next: (data) => {
-                 const list = data || [];
-                 if (reset) {
-                     this.newsList.set(list);
-                     if (list.length > 0 && !this.highlightedNews()) {
-                         this.highlightedNews.set(list[0]);
-                     }
-                 } else {
-                     this.newsList.update(current => [...current, ...list]);
-                 }
- 
-                 this.totalLoaded = (reset ? 0 : this.totalLoaded) + list.length;
-                 this.hasMore = list.length === this.pageSize;
-                 this.isLoading = false;
-                 this.isLoadingMore = false;
-                 this.cdr?.markForCheck();
-             },
-             error: (err) => {
-                 console.error('Erro ao carregar notícias de mercado:', err);
-                 this.isLoading = false;
-                 this.isLoadingMore = false;
-                 this.cdr?.markForCheck();
-             }
-         }); */
+        const req$ = typeof this.newsService.getMarketNews === 'function'
+            ? this.newsService.getMarketNews(params)
+            : this.newsService.getMarket(params);
+
+        req$.subscribe({
+            next: (data) => {
+                const list = Array.isArray(data) ? data : [];
+                if (reset) {
+                    this.newsList.set(list);
+                    if (list.length > 0 && !this.highlightedNews()) {
+                        this.highlightedNews.set(list[0]);
+                    }
+                } else {
+                    this.newsList.update(current => [...current, ...list]);
+                }
+
+                this.totalLoaded = (reset ? 0 : this.totalLoaded) + list.length;
+                this.hasMore = list.length === this.pageSize;
+                this.isLoading = false;
+                this.isLoadingMore = false;
+                this.cdr?.markForCheck();
+                this.cdr?.detectChanges();
+            },
+            error: (err) => {
+                console.error('Erro ao carregar notícias de mercado:', err);
+                this.isLoading = false;
+                this.isLoadingMore = false;
+                this.cdr?.markForCheck();
+                this.cdr?.detectChanges();
+            }
+        });
     }
 
     selectCategory(category: string): void {
@@ -175,17 +181,18 @@ export class MarketNewsFeedComponent implements OnInit, OnDestroy {
         }
         if (!this.newsService || !item.id) return;
 
-        /*    this.newsService.vote(item.id, tipo).subscribe({
-               next: (stats: any) => {
-                   (item as any).upVotes = stats.upVotes;
-                   (item as any).downVotes = stats.downVotes;
-                   (item as any).userVote = stats.userVote;
-                   this.cdr?.markForCheck();
-               },
-               error: () => {
-                   this.snackBar?.open('Erro ao registrar voto.', 'OK', { duration: 2500 });
-               }
-           }); */
+        this.newsService.vote(item.id, tipo).subscribe({
+            next: (stats: any) => {
+                (item as any).upVotes = stats.upVotes;
+                (item as any).downVotes = stats.downVotes;
+                (item as any).userVote = stats.userVote;
+                this.cdr?.markForCheck();
+                this.cdr?.detectChanges();
+            },
+            error: () => {
+                this.snackBar?.open('Erro ao registrar voto.', 'OK', { duration: 2500 });
+            }
+        });
     }
 
     abrirFonte(item: News, event?: Event): void {
