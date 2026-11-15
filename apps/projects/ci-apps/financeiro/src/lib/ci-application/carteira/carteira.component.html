@@ -574,22 +574,21 @@
                     <!-- CARDS DE EVOLUÇÃO TEMPORAL E ALOCAÇÃO POR CARTEIRA / LASTRO (ci-card) -->
                     <div class="dashboard-charts-grid">
                         <ci-card--carteira-evolucao-temporal
-                            [dashboard]="dashboard"
-                            [exibirControlesPeriodo]="false">
+                            [dashboard]="dashboard">
                         </ci-card--carteira-evolucao-temporal>
 
                         <ci-card--carteira-alocacao-lastro
                             [dashboard]="dashboard"
-                            (selecionarCarteiraId)="focarExtratoCarteira($event)">
+                            (selecionarCarteira)="focarExtratoCarteira($event)">
                         </ci-card--carteira-alocacao-lastro>
                     </div>
 
                     <!-- CARD DE DESEMPENHO COMPARATIVO POR CARTEIRA (ci-card) -->
                     <ci-card--carteira-desempenho-comparativo
                         [dashboard]="dashboard"
-                        [carteiraAtivaId]="carteira?.internalId"
-                        (selecionarCarteiraId)="focarExtratoCarteira($event)"
-                        (lancarPosicaoCarteiraId)="irParaLancamentoDaCarteira($event)">
+                        [carteiraSelecionadaId]="carteira?.internalId"
+                        (focarExtrato)="focarExtratoCarteira($event)"
+                        (atualizarPosicao)="irParaLancamentoDaCarteira($event)">
                     </ci-card--carteira-desempenho-comparativo>
                 </section>
             }

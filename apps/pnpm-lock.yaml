@@ -144,6 +144,9 @@ importers:
       '@angular/compiler-cli':
         specifier: ^21.2.3
         version: 21.2.26(@angular/compiler@21.2.26)(supports-color@8.1.1)(typescript@5.9.3)
+      '@ci/api-gen':
+        specifier: link:C:/projetos/ng-openapi-gen
+        version: link:../../ng-openapi-gen
       '@types/chess.js':
         specifier: ^0.13.7
         version: 0.13.7
