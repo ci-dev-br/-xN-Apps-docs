@@ -69,12 +69,12 @@ export class NewsController {
     private obterTermosPorCategoriaMercado(category?: string): string[] {
         const cat = (category || '').trim().toLowerCase();
         const mapa: Record<string, string[]> = {
-            bolsa: ['bolsa', 'ibovespa', 'ações', 'dividendos', 'petrobras', 'vale', 'pregão', 'investidor', 'mercado financeiro'],
+            bolsa: ['bolsa', 'ibovespa', 'ações', 'dividendos', 'petrobras', 'vale', 'pregão', 'investidor', 'mercado'],
             economia: ['economia', 'econômic', 'inflação', 'ipca', 'fazenda', 'mercado', 'financeir', 'orçamento', 'crescimento'],
-            dolar: ['dolar', 'dólar', 'câmbio', 'cambio', 'cotação', 'moeda', 'exportação'],
-            selic: ['selic', 'juros', 'copom', 'renda fixa', 'tesouro', 'banco central', 'crédito', ' financiamento'],
-            'tributário': ['tribut', 'imposto', 'fiscal', 'receita', 'negócio', 'empresa', 'reforma', 'lucro', 'balanço'],
-            tributario: ['tribut', 'imposto', 'fiscal', 'receita', 'negócio', 'empresa', 'reforma', 'lucro', 'balanço'],
+            dolar: ['dolar', 'dólar', 'câmbio', 'cambio', 'cotação', 'moeda', 'exportação', 'mercado'],
+            selic: ['selic', 'juros', 'copom', 'renda fixa', 'tesouro', 'banco central', 'crédito', 'financiamento'],
+            'tributário': ['tributár', 'tributar', 'imposto', 'fiscal', 'receita federal', 'negócio', 'empresa', 'reforma', 'lucro', 'balanço'],
+            tributario: ['tributár', 'tributar', 'imposto', 'fiscal', 'receita federal', 'negócio', 'empresa', 'reforma', 'lucro', 'balanço'],
         };
 
         if (cat && cat !== 'todos') {
@@ -84,7 +84,7 @@ export class NewsController {
         return [
             'mercado', 'economia', 'bolsa', 'ibovespa', 'dolar', 'dólar',
             'câmbio', 'selic', 'juros', 'ipca', 'inflação', 'financeir',
-            'investiment', 'banco central', 'tribut', 'imposto', 'fiscal', 'petrobras'
+            'investiment', 'banco central', 'tributár', 'imposto', 'fiscal', 'petrobras'
         ];
     }
 
@@ -93,7 +93,7 @@ export class NewsController {
         if (/d[oó]lar|c[aâ]mbio|cotac[aã]o|moeda/.test(texto)) return 'Câmbio & Dólar';
         if (/selic|juros|copom|tesouro|banco central|cr[eé]dito/.test(texto)) return 'Juros & Selic';
         if (/bolsa|ibovespa|a[cç][oõ]es|dividend|petrobras|vale|investidor/.test(texto)) return 'Bolsa & B3';
-        if (/tribut|imposto|fiscal|receita|reforma|empresa|neg[oó]cio|lucro|balan[cç]o/.test(texto)) return 'Tributário & Negócios';
+        if (/tribut[aá]r|imposto|fiscal|receita|reforma|empresa|neg[oó]cio|lucro|balan[cç]o/.test(texto)) return 'Tributário & Negócios';
         if (/economia|econ[oô]mic|infla[cç][aã]o|ipca|fazenda|financeir|mercado/.test(texto)) return 'Macro & Economia';
         if (filtroCategoria && filtroCategoria.toLowerCase() !== 'todos') return filtroCategoria;
         return post.category?.name || 'Mercado';
@@ -130,7 +130,7 @@ export class NewsController {
             let qb = this.newsRepo.createQueryBuilder('news')
                 .leftJoinAndSelect('news.sourceInfo', 'source')
                 .leftJoinAndSelect('news.category', 'category')
-                .where('news.title IS NOT NULL AND length(news.title) > 15');
+                .where(`news.title IS NOT NULL AND length(news.title) > 20 AND news.url ILIKE '%.br/%'`);
 
             if (search && search.trim()) {
                 const cleanSearch = `%${search.trim().toLowerCase()}%`;
