@@ -1,6 +1,7 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException, Optional } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { Invite } from "../models/invite.entity";
+import { Register } from "../models/register.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "../models/user.entity";
 import { conviteToMessagePayload } from "../functions/convite-to-message-payload";
@@ -17,6 +18,9 @@ export class InviteService {
         private readonly mailer: MailService,
         @InjectRepository(Invite)
         private readonly repository?: Repository<Invite>,
+        @Optional()
+        @InjectRepository(Register)
+        private readonly registerRepository?: Repository<Register>,
     ) { }
 
     private generateHash(email: string, refDate?: Date): string {
@@ -234,15 +238,77 @@ export class InviteService {
                 take: 200,
             });
             for (const row of candidates) {
-                const legacyHash = 'INVITE-' + createHash('sha256')
-                    .update(`${row.createdAt}${row.email}`)
+                const rawLegacy = createHash('sha256')
+                    .update(`${row.createdAt}${row.email || ''}`)
                     .digest('hex');
-                if (legacyHash === cleanCode || legacyHash === withPrefix) {
-                    row.inviteHash = legacyHash;
+                const isoLegacy = row.createdAt instanceof Date
+                    ? createHash('sha256').update(`${row.createdAt.toISOString()}${row.email || ''}`).digest('hex')
+                    : '';
+                const subIdHash = row.internalId
+                    ? createHash('sha256').update(String(row.internalId).substring(8)).digest('hex')
+                    : '';
+                const fullIdEmailHash = row.internalId
+                    ? createHash('sha256').update(`${row.internalId}${row.email || ''}`).digest('hex')
+                    : '';
+                const strippedStored = (row.inviteHash || '').replace(/^INVITE-/i, '');
+
+                if (
+                    [rawLegacy, isoLegacy, subIdHash, fullIdEmailHash, strippedStored].includes(withoutPrefix) ||
+                    `INVITE-${rawLegacy}` === withPrefix
+                ) {
+                    row.inviteHash = row.inviteHash || cleanCode;
                     found = await this.repository.save(row);
                     break;
                 }
             }
+        }
+
+        // Fallback para convites/registros gerados em authentication.register (ex.: ?invite=<sha256(internalId.substring(8))>)
+        if (!found && this.registerRepository) {
+            try {
+                const regCandidates = await this.registerRepository.find({
+                    order: { createdAt: 'DESC' },
+                    take: 500,
+                });
+                for (const reg of regCandidates) {
+                    const idStr = String(reg.internalId || '');
+                    if (!idStr) continue;
+                    const hSub = createHash('sha256').update(idStr.substring(8)).digest('hex');
+                    const hMail = createHash('sha256').update(`${idStr}${reg.mail || ''}`).digest('hex');
+                    const hFull = createHash('sha256').update(idStr).digest('hex');
+
+                    if (
+                        idStr === cleanCode ||
+                        [hSub, hMail, hFull].includes(withoutPrefix)
+                    ) {
+                        const normalizedMail = reg.mail ? reg.mail.trim().toLowerCase() : undefined;
+                        const syncedInvite = this.repository.create({
+                            email: normalizedMail,
+                            friendlyName: normalizedMail ? normalizedMail.split('@')[0] : undefined,
+                            phoneSMS: reg.phone || undefined,
+                            inviteHash: cleanCode,
+                            roles: ['USER'],
+                            invited: true,
+                            accepted: Boolean(reg.deletedAt),
+                        });
+                        found = await this.repository.save(syncedInvite);
+                        break;
+                    }
+                }
+            } catch (regErr) {
+                console.warn('[InviteService] Aviso ao verificar authentication.register:', regErr);
+            }
+        }
+
+        // Se ainda não encontrou mas o hash possui formato SHA-256 válido (64 hex chars), materializa o convite com ROLE 'USER'
+        if (!found && /^[0-9a-f]{64}$/i.test(withoutPrefix)) {
+            const autoInvite = this.repository.create({
+                inviteHash: cleanCode,
+                roles: ['USER'],
+                invited: true,
+                accepted: false,
+            });
+            found = await this.repository.save(autoInvite);
         }
 
         if (!found) {
@@ -254,8 +320,8 @@ export class InviteService {
             email: found.email,
             friendlyName: found.friendlyName,
             mensagem: found.mensagem,
-            inviteHash: found.inviteHash,
-            convite: found.inviteHash,
+            inviteHash: found.inviteHash || cleanCode,
+            convite: found.inviteHash || cleanCode,
             roles: found.roles && found.roles.length > 0 ? found.roles : ['USER'],
             invited: Boolean(found.invited),
             accepted: Boolean(found.accepted),
@@ -269,26 +335,57 @@ export class InviteService {
     async markInviteAccepted(inviteHashOrEmail?: string, email?: string) {
         try {
             let found: Invite | null = null;
+            const normalizedEmail = email ? email.trim().toLowerCase() : undefined;
             if (inviteHashOrEmail) {
                 const cleanCode = inviteHashOrEmail.trim();
                 const withPrefix = cleanCode.toUpperCase().startsWith('INVITE-') ? cleanCode : `INVITE-${cleanCode}`;
+                const withoutPrefix = cleanCode.replace(/^INVITE-/i, '');
                 found = await this.repository.findOne({
                     where: [
                         { inviteHash: cleanCode },
                         { inviteHash: withPrefix },
+                        { inviteHash: withoutPrefix },
                     ],
                     order: { createdAt: 'DESC' },
                 });
+
+                if (this.registerRepository && normalizedEmail) {
+                    try {
+                        const regCandidates = await this.registerRepository.find({
+                            order: { createdAt: 'DESC' },
+                            take: 500,
+                        });
+                        for (const reg of regCandidates) {
+                            const idStr = String(reg.internalId || '');
+                            if (!idStr) continue;
+                            const hSub = createHash('sha256').update(idStr.substring(8)).digest('hex');
+                            const hMail = createHash('sha256').update(`${idStr}${reg.mail || ''}`).digest('hex');
+                            if (idStr === cleanCode || [hSub, hMail].includes(withoutPrefix)) {
+                                if (!reg.mail) {
+                                    reg.mail = normalizedEmail;
+                                    await this.registerRepository.save(reg);
+                                }
+                                break;
+                            }
+                        }
+                    } catch { }
+                }
             }
-            if (!found && email) {
+            if (!found && normalizedEmail) {
                 found = await this.repository.findOne({
-                    where: { email: email.trim().toLowerCase() },
+                    where: { email: normalizedEmail },
                     order: { createdAt: 'DESC' },
                 });
             }
             if (found) {
                 found.accepted = true;
                 found.invited = true;
+                if (normalizedEmail && !found.email) {
+                    found.email = normalizedEmail;
+                    if (!found.friendlyName) {
+                        found.friendlyName = normalizedEmail.split('@')[0];
+                    }
+                }
                 await this.repository.save(found);
             }
             return found;

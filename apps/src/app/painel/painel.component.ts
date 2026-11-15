@@ -197,6 +197,17 @@ export class PainelComponent implements OnInit {
     if (itemMenu.onClick) itemMenu.onClick(this, event);
   }
   ngOnInit(): void {
+    if (typeof window !== 'undefined' && window.location?.search) {
+      const params = new URLSearchParams(window.location.search);
+      const inviteCode = (params.get('invite') || params.get('inviteHash') || params.get('convite') || '').trim();
+      if (inviteCode) {
+        this.router?.navigate(['/registrar', inviteCode], {
+          queryParams: { invite: inviteCode },
+          replaceUrl: true,
+        });
+        return;
+      }
+    }
     let c: string | number[] | null = localStorage.getItem('x-menu-cached-favs');
     try {
       if (typeof c === 'string') c = JSON.parse(c) as number[];

@@ -115,9 +115,28 @@ export class RegistrarComponent implements OnInit {
 
   ngOnInit(): void {
     combineLatest([this.route.params, this.route.queryParams]).subscribe(([params, queryParams]) => {
-      const hash = params?.['invite'] || queryParams?.['invite'] || queryParams?.['inviteHash'] || queryParams?.['convite'];
-      if (hash && hash !== this.inviteHash) {
+      let hash = params?.['invite'] || queryParams?.['invite'] || queryParams?.['inviteHash'] || queryParams?.['convite'];
+      if (!hash && typeof window !== 'undefined' && window.location?.search) {
+        const searchParams = new URLSearchParams(window.location.search);
+        hash = searchParams.get('invite') || searchParams.get('inviteHash') || searchParams.get('convite') || undefined;
+      }
+      if (!hash && typeof document !== 'undefined' && document.cookie) {
+        const cookieMatch = document.cookie.match(/(?:^|;\s*)invite=([^;]+)/);
+        if (cookieMatch?.[1]) {
+          hash = decodeURIComponent(cookieMatch[1]);
+        }
+      }
+      if (hash && String(hash).trim() !== this.inviteHash) {
         this.carregarConvite(String(hash).trim());
+      }
+    });
+
+    this.inviteForm.controls.email.valueChanges.subscribe((emailVal) => {
+      if (!this.inviteData?.email && typeof emailVal === 'string' && emailVal.includes('@')) {
+        const suggested = emailVal.split('@')[0].replace(/[^a-zA-Z0-9._-]/g, '');
+        if (suggested && !this.inviteForm.controls.identificacao.dirty) {
+          this.inviteForm.controls.identificacao.setValue(suggested, { emitEvent: false });
+        }
       }
     });
 
@@ -221,6 +240,9 @@ export class RegistrarComponent implements OnInit {
         this.catalogService?.refreshMyActivations().subscribe({ error: () => {} });
       }
 
+      if (typeof document !== 'undefined') {
+        document.cookie = 'invite=; Path=/; Max-Age=0';
+      }
       this.isSubmittingInvite = false;
       this.stage = 'invite-completed';
     } catch (err: any) {
@@ -239,30 +261,30 @@ export class RegistrarComponent implements OnInit {
 
   async next() {
     if (!this.validar()) return this.form.markAllAsTouched();
-    const values = this.form.getRawValue() as Register;
+    const values = this.form.getRawValue() as any;
+    const contact = String(values.emailOrPhone || '').trim();
     const register = await lastValueFrom(
-      this.register.requestByFistContact({ body: { ...(values as any) } })
+      this.register.requestByFistContact({
+        body: {
+          identificacao: contact,
+          email: IsEmail(contact) ? contact : undefined,
+          phone: IsPhoneNumber(contact) ? contact : undefined,
+          emailAuthorization: Boolean(values.emailAuthorization),
+        } as any
+      })
     );
     if (values.emailAuthorization) {
       this.stage = 'checking_email';
     } else {
       this.stage = 'waiting_register';
     }
-    this.userService.identificarUsuario(register);
+    if (register) {
+      this.userService.identificarUsuario(register);
+    }
   }
 
   async continue() {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-    }
-    const data = this.form.getRawValue();
-    await lastValueFrom(
-      this.register.requestByFistContact({
-        body: {
-          identificacao: data.emailOrPhone as string,
-        }
-      })
-    );
+    return this.next();
   }
 }
 

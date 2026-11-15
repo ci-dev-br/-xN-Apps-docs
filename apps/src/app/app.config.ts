@@ -25,14 +25,6 @@ const maskConfig: Partial<NgxMaskConfig> = {
 const SETUP = {
   API_URL_GATEWAY: 'https://apps.ci.dev.br',
   ALTERN_GATEWAYS: [
-    // 'https://lorelei.ci.dev.br',
-    // 'https://srv33.internals.ci.dev.br:446',
-    // 'https://srv33.internals.ci.dev.br:664',
-    // 'wss://srv33.internals.ci.dev.br:664',
-    // 'ws://srv33.internals.ci.dev.br:87',
-    // 'wss://apps.ci.dev.br:446',
-    // 'ws://apps.ci.dev.br:87',
-    //  'https://paulorettamozo.com.br/dry'
   ],
   UNSATLY_WS_COMMON: 'wss://apps.ci.dev.br',
 }

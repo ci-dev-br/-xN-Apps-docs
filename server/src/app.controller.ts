@@ -51,11 +51,19 @@ export class AppController {
         const host: string = this.appService.getHost(request);
         return response.send(this.getManifestApplication(host, ''));
       }
-      // 0.1 Assina convite para registro
-      if (!!request.query?.invite) {
-        const redirectUrl = 'https://apps.ci.dev.br/';
-        response.setHeader('set-cookies', String(request.query!.invite!));
-        response.redirect(redirectUrl);
+      // 0.1 Redireciona links de convite (inclusive links antigos com ?invite= ou /registro/:invite) para a rota esperada /registrar/:invite
+      const queryInvite = String(
+        request.query?.invite || request.query?.inviteHash || request.query?.convite || ''
+      ).trim();
+      if (queryInvite && !reqPath.startsWith('/registrar/')) {
+        response.setHeader('Set-Cookie', `invite=${encodeURIComponent(queryInvite)}; Path=/; SameSite=Lax`);
+        return response.redirect(`/registrar/${encodeURIComponent(queryInvite)}?invite=${encodeURIComponent(queryInvite)}`);
+      }
+      const legacyRegistroMatch = request.path.match(/^\/registro\/([^\/?#]+)/i);
+      if (legacyRegistroMatch?.[1]) {
+        const legacyInvite = legacyRegistroMatch[1].trim();
+        response.setHeader('Set-Cookie', `invite=${encodeURIComponent(legacyInvite)}; Path=/; SameSite=Lax`);
+        return response.redirect(`/registrar/${encodeURIComponent(legacyInvite)}?invite=${encodeURIComponent(legacyInvite)}`);
       }
       // 1. Tenta servir dinamicamente via CMS (SitePageService)
       if (this.sitePage) {

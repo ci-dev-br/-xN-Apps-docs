@@ -45,7 +45,7 @@
 
         <mat-form-field appearance="outline">
             <mat-label>E-mail do Convidado</mat-label>
-            <input matInput type="email" formControlName="email" readonly>
+            <input matInput type="email" placeholder="seu.email@dominio.com" formControlName="email" [readonly]="!!inviteData?.email" required>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -116,7 +116,7 @@
             @if(typeRegister){{{termos[typeRegister]}}}@else{mensagem} para validar meu
             cadastro.</mat-checkbox>
         <button [disabled]="form.invalid||false==form.controls.emailAuthorization.value" mat-raised-button type="submit"
-            color="accent" (click)="continue()">Continuar e acessar</button>
+            color="accent">Continuar e acessar</button>
         <small style="margin-top: 12px;" [stage]="'initial-registring'">
             Caso já possua uma conta ci.dev.br, <a routerLink="/acessar" href="/acessar">acesse aqui.</a>
         </small>

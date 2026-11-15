@@ -50,12 +50,12 @@ export class UserService {
         if (!userId || !this.dataSource) return;
         try {
             const appRows = await this.dataSource.query(
-                `SELECT id FROM manager.application WHERE "appKey" = 'Loja' OR "routePath" = '/Loja' OR "name" = 'Loja' LIMIT 1`
+                `SELECT id FROM "Management"."application" WHERE app_key = 'Loja' OR route_path = '/Loja' OR name = 'Loja' LIMIT 1`
             );
             let lojaAppId = appRows?.[0]?.id;
             if (!lojaAppId) {
                 const inserted = await this.dataSource.query(
-                    `INSERT INTO manager.application ("appKey", "routePath", "url", "name", "description", "icon", "categoria", "roles", "isActive")
+                    `INSERT INTO "Management"."application" (app_key, route_path, url, name, description, icon, categoria, roles, is_active)
                      VALUES ('Loja', '/Loja', '/Loja', 'Loja', 'Loja de Aplicativos da Plataforma', 'storefront', 'System', ARRAY['USER', 'ADMIN', 'MASTER'], true)
                      RETURNING id`
                 );
@@ -63,12 +63,12 @@ export class UserService {
             }
             if (lojaAppId) {
                 const existingLink = await this.dataSource.query(
-                    `SELECT 1 FROM manager.application_users_user WHERE "applicationId" = $1 AND "userId" = $2 LIMIT 1`,
+                    `SELECT 1 FROM "Management"."application_users_user" WHERE application_id = $1 AND user_id = $2 LIMIT 1`,
                     [lojaAppId, userId]
                 );
                 if (!existingLink || existingLink.length === 0) {
                     await this.dataSource.query(
-                        `INSERT INTO manager.application_users_user ("applicationId", "userId") VALUES ($1, $2)`,
+                        `INSERT INTO "Management"."application_users_user" (application_id, user_id) VALUES ($1, $2)`,
                         [lojaAppId, userId]
                     );
                 }

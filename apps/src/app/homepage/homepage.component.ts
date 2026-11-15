@@ -293,6 +293,17 @@ export class HomepageComponent implements OnInit, OnDestroy {
 
     async ngOnInit() {
         try {
+            if (typeof window !== 'undefined' && window.location?.search) {
+                const params = new URLSearchParams(window.location.search);
+                const inviteCode = (params.get('invite') || params.get('inviteHash') || params.get('convite') || '').trim();
+                if (inviteCode) {
+                    this.router?.navigate(['/registrar', inviteCode], {
+                        queryParams: { invite: inviteCode },
+                        replaceUrl: true,
+                    });
+                    return;
+                }
+            }
             this.mountStyle();
             this.userService?.user.subscribe(user => this.updateUser(user));
 
