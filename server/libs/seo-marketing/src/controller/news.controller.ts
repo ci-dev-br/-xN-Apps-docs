@@ -30,6 +30,7 @@ export class CommentInputDto {
 @Controller('News')
 export class NewsController {
     private readonly feedCache = new Map<string, CacheEntry<News[]>>();
+    private readonly marketCache = new Map<string, CacheEntry<News[]>>();
     private readonly CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
     private financialCatIdsCache: string[] = [];
     private lastFinancialCatIdsFetch = 0;
@@ -68,12 +69,12 @@ export class NewsController {
     private obterTermosPorCategoriaMercado(category?: string): string[] {
         const cat = (category || '').trim().toLowerCase();
         const mapa: Record<string, string[]> = {
-            bolsa: ['bolsa', 'b3', 'ibovespa', 'ações', 'acoes', 'fii', 'dividendos', 'petrobras', 'vale', 'pregão', 'pregao', 'ativos'],
-            economia: ['economia', 'econômic', 'economic', 'pib', 'inflação', 'inflacao', 'ipca', 'fazenda', 'mercado', 'finan', 'orçamento'],
-            dolar: ['dolar', 'dólar', 'câmbio', 'cambio', 'euro', 'moeda', 'cotação', 'cotacao', 'fed', 'exterior'],
-            selic: ['selic', 'juros', 'copom', 'renda fixa', 'tesouro', 'cdi', 'banco central', 'taxa', 'crédito', 'credito'],
-            'tributário': ['tribut', 'imposto', 'fiscal', 'receita', 'negócio', 'negocio', 'empresa', 'reforma', 'lucro', 'faturamento'],
-            tributario: ['tribut', 'imposto', 'fiscal', 'receita', 'negócio', 'negocio', 'empresa', 'reforma', 'lucro', 'faturamento'],
+            bolsa: ['bolsa', 'ibovespa', 'ações', 'dividendos', 'petrobras', 'vale', 'pregão', 'investidor', 'mercado financeiro'],
+            economia: ['economia', 'econômic', 'inflação', 'ipca', 'fazenda', 'mercado', 'financeir', 'orçamento', 'crescimento'],
+            dolar: ['dolar', 'dólar', 'câmbio', 'cambio', 'cotação', 'moeda', 'exportação'],
+            selic: ['selic', 'juros', 'copom', 'renda fixa', 'tesouro', 'banco central', 'crédito', ' financiamento'],
+            'tributário': ['tribut', 'imposto', 'fiscal', 'receita', 'negócio', 'empresa', 'reforma', 'lucro', 'balanço'],
+            tributario: ['tribut', 'imposto', 'fiscal', 'receita', 'negócio', 'empresa', 'reforma', 'lucro', 'balanço'],
         };
 
         if (cat && cat !== 'todos') {
@@ -81,19 +82,19 @@ export class NewsController {
         }
 
         return [
-            'mercado', 'economia', 'bolsa', 'b3', 'ibovespa', 'dolar', 'dólar',
-            'câmbio', 'selic', 'juros', 'ipca', 'inflação', 'finan', 'invest',
-            'banco', 'empresa', 'negócio', 'tribut', 'imposto', 'pib', 'ações'
+            'mercado', 'economia', 'bolsa', 'ibovespa', 'dolar', 'dólar',
+            'câmbio', 'selic', 'juros', 'ipca', 'inflação', 'financeir',
+            'investiment', 'banco central', 'tribut', 'imposto', 'fiscal', 'petrobras'
         ];
     }
 
     private inferirCategoriaMercado(post: News, filtroCategoria?: string): string {
-        const texto = `${post.title || ''} ${post.content || ''} ${post.category?.name || ''}`.toLowerCase();
-        if (/d[oó]lar|c[aâ]mbio|euro|moeda/.test(texto)) return 'Câmbio & Dólar';
-        if (/selic|juros|copom|tesouro|cdi/.test(texto)) return 'Juros & Selic';
-        if (/bolsa|b3|ibovespa|a[cç][oõ]es|fii|dividend|petrobras|vale/.test(texto)) return 'Bolsa & B3';
-        if (/tribut|imposto|fiscal|receita|reforma|empresa|neg[oó]cio|lucro/.test(texto)) return 'Tributário & Negócios';
-        if (/economia|pib|infla[cç][aã]o|ipca|banco central|finan|mercado/.test(texto)) return 'Macro & Economia';
+        const texto = `${post.title || ''} ${post.category?.name || ''}`.toLowerCase();
+        if (/d[oó]lar|c[aâ]mbio|cotac[aã]o|moeda/.test(texto)) return 'Câmbio & Dólar';
+        if (/selic|juros|copom|tesouro|banco central|cr[eé]dito/.test(texto)) return 'Juros & Selic';
+        if (/bolsa|ibovespa|a[cç][oõ]es|dividend|petrobras|vale|investidor/.test(texto)) return 'Bolsa & B3';
+        if (/tribut|imposto|fiscal|receita|reforma|empresa|neg[oó]cio|lucro|balan[cç]o/.test(texto)) return 'Tributário & Negócios';
+        if (/economia|econ[oô]mic|infla[cç][aã]o|ipca|fazenda|financeir|mercado/.test(texto)) return 'Macro & Economia';
         if (filtroCategoria && filtroCategoria.toLowerCase() !== 'todos') return filtroCategoria;
         return post.category?.name || 'Mercado';
     }
@@ -118,60 +119,52 @@ export class NewsController {
     ) {
         const limit = Math.min(Math.max(parseInt(limitStr || '25', 10) || 25, 1), 100);
         const offset = Math.max(parseInt(offsetStr || '0', 10) || 0, 0);
+        const cacheKey = `${(search || '').trim().toLowerCase()}|${(category || 'todos').trim().toLowerCase()}|${limit}|${offset}`;
+        const now = Date.now();
 
-        let qb = this.newsRepo.createQueryBuilder('news')
-            .leftJoinAndSelect('news.sourceInfo', 'source')
-            .leftJoinAndSelect('news.category', 'category')
-            .where('news.title IS NOT NULL AND length(news.title) > 15');
-
-        if (search && search.trim()) {
-            const cleanSearch = `%${search.trim().toLowerCase()}%`;
-            qb = qb.andWhere(
-                '(LOWER(news.title) LIKE :search OR LOWER(COALESCE(news.content, \'\')) LIKE :search OR LOWER(COALESCE(category.name, \'\')) LIKE :search)',
-                { search: cleanSearch }
-            );
+        let rawPosts: News[];
+        const cached = this.marketCache.get(cacheKey);
+        if (cached && cached.expiresAt > now) {
+            rawPosts = cached.data;
         } else {
-            const termos = this.obterTermosPorCategoriaMercado(category);
-            const paramsTermos: Record<string, any> = {};
-            const clausulasTermos: string[] = [];
+            let qb = this.newsRepo.createQueryBuilder('news')
+                .leftJoinAndSelect('news.sourceInfo', 'source')
+                .leftJoinAndSelect('news.category', 'category')
+                .where('news.title IS NOT NULL AND length(news.title) > 15');
 
-            termos.forEach((termo, idx) => {
-                const key = `termo_${idx}`;
-                paramsTermos[key] = `%${termo.toLowerCase()}%`;
-                clausulasTermos.push(`LOWER(news.title) LIKE :${key}`);
-                clausulasTermos.push(`LOWER(COALESCE(category.name, '')) LIKE :${key}`);
-                clausulasTermos.push(`LOWER(COALESCE(news.content, '')) LIKE :${key}`);
-            });
+            if (search && search.trim()) {
+                const cleanSearch = `%${search.trim().toLowerCase()}%`;
+                qb = qb.andWhere(
+                    '(LOWER(news.title) LIKE :search OR LOWER(category.name) LIKE :search)',
+                    { search: cleanSearch }
+                );
+            } else {
+                const termos = this.obterTermosPorCategoriaMercado(category);
+                const paramsTermos: Record<string, any> = {};
+                const clausulasTermos: string[] = [];
 
-            if (!category || category.trim().toLowerCase() === 'todos') {
-                const catIds = await this.getFinancialCategoryIds();
-                if (catIds && catIds.length > 0) {
-                    paramsTermos['catIds'] = catIds;
-                    clausulasTermos.push('category.id IN (:...catIds)');
+                termos.forEach((termo, idx) => {
+                    const key = `termo_${idx}`;
+                    paramsTermos[key] = `%${termo.toLowerCase()}%`;
+                    clausulasTermos.push(`LOWER(news.title) LIKE :${key}`);
+                    clausulasTermos.push(`LOWER(category.name) LIKE :${key}`);
+                });
+
+                if (clausulasTermos.length > 0) {
+                    qb = qb.andWhere(`(${clausulasTermos.join(' OR ')})`, paramsTermos);
                 }
             }
 
-            if (clausulasTermos.length > 0) {
-                qb = qb.andWhere(`(${clausulasTermos.join(' OR ')})`, paramsTermos);
-            }
-        }
-
-        qb = qb.orderBy('news.scrapedAt', 'DESC')
-            .limit(limit)
-            .offset(offset);
-
-        let rawPosts = await qb.getMany();
-
-        // Fallback: se nenhuma notícia casar na visão geral ('Todos') e não houver busca textual, retorna as mais recentes da base
-        if (rawPosts.length === 0 && !search?.trim() && (!category || category.trim().toLowerCase() === 'todos')) {
-            rawPosts = await this.newsRepo.createQueryBuilder('news')
-                .leftJoinAndSelect('news.sourceInfo', 'source')
-                .leftJoinAndSelect('news.category', 'category')
-                .where('news.title IS NOT NULL AND length(news.title) > 15')
-                .orderBy('news.scrapedAt', 'DESC')
+            qb = qb.orderBy('news.scrapedAt', 'DESC')
                 .limit(limit)
-                .offset(offset)
-                .getMany();
+                .offset(offset);
+
+            rawPosts = await qb.getMany();
+
+            this.marketCache.set(cacheKey, {
+                data: rawPosts,
+                expiresAt: now + this.CACHE_TTL_MS,
+            });
         }
 
         const currentUserId = request?.user?.id;
