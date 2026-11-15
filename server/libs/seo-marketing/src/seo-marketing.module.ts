@@ -19,6 +19,7 @@ import { NewsController } from './controller/news.controller';
 import { NewsVote } from './models/news-vote.entity';
 import { NewsComment } from './models/news-comment.entity';
 import { UsersModule } from '@ci/user/users.module';
+import { User } from '@ci/auth/models/user.entity';
 import { SeoDomain } from './models/seo-domain.entity';
 import { SeoTarefa } from './models/seo-tarefa.entity';
 import { SEOController } from './controller/seo.controller';
@@ -45,7 +46,8 @@ export const SeoMarketingEntities = [
     CoreModule,
     UsersModule,
     TypeOrmModule.forFeature([
-      ...SeoMarketingEntities
+      ...SeoMarketingEntities,
+      User,
     ]),
   ],
   providers: [

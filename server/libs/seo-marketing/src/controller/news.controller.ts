@@ -1,7 +1,8 @@
-import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Query, Req, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Query, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { createHash } from 'crypto';
 import { News } from '../models/news.entity';
 import { Category } from '../models/category.entity';
 import { ScraperService } from '../services/scraper.service';
@@ -10,6 +11,7 @@ import { Policy } from '@ci/core';
 import { NewsVote, TipoVoto } from '../models/news-vote.entity';
 import { NewsComment } from '../models/news-comment.entity';
 import { SocialService } from '@ci/user/service/social.service';
+import { User } from '@ci/auth/models/user.entity';
 
 interface CacheEntry<T> {
     data: T;
@@ -19,11 +21,19 @@ interface CacheEntry<T> {
 export class VoteInputDto {
     newsId: string;
     vote: TipoVoto;
+    anonymousId?: string;
 }
 
 export class CommentInputDto {
     newsId: string;
     content: string;
+    anonymousId?: string;
+    authorName?: string;
+}
+
+export class AnonymousSessionInputDto {
+    anonymousId?: string;
+    authorName?: string;
 }
 
 @ApiTags('News')
@@ -40,9 +50,135 @@ export class NewsController {
         @InjectRepository(Category) private categoryRepo: Repository<Category>,
         @InjectRepository(NewsVote) private voteRepo: Repository<NewsVote>,
         @InjectRepository(NewsComment) private commentRepo: Repository<NewsComment>,
+        @InjectRepository(User) private userRepo: Repository<User>,
         private readonly service: ScraperService,
         private readonly socialService?: SocialService,
     ) { }
+
+    private isUuid(val?: string): boolean {
+        if (!val) return false;
+        return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val.trim());
+    }
+
+    private async resolveNewsByIdOrUrl(newsIdOrUrl: string): Promise<News | null> {
+        if (!newsIdOrUrl) return null;
+        const clean = newsIdOrUrl.trim();
+        if (this.isUuid(clean)) {
+            const byId = await this.newsRepo.findOne({ where: { id: clean } });
+            if (byId) return byId;
+        }
+        return await this.newsRepo.findOne({ where: { url: clean } });
+    }
+
+    private extrairChaveAnonima(req: any, explicitAnonymousId?: string): string {
+        const raw = (
+            explicitAnonymousId ||
+            req?.headers?.['x-anonymous-id'] ||
+            req?.query?.['anonymousId'] ||
+            ''
+        ).toString().trim();
+
+        if (raw && raw.length >= 6) {
+            return createHash('sha256').update(raw).digest('hex').slice(0, 16);
+        }
+
+        const ip = (
+            req?.headers?.['x-forwarded-for'] ||
+            req?.socket?.remoteAddress ||
+            req?.ip ||
+            '127.0.0.1'
+        ).toString();
+        const ua = (req?.headers?.['user-agent'] || 'ci-browser').toString();
+        return createHash('sha256').update(`${ip}|${ua}`).digest('hex').slice(0, 16);
+    }
+
+    /**
+     * Obtém o usuário autenticado ou cria/recupera um usuário temporário anônimo
+     * exclusivo para o cliente conectado.
+     */
+    private async resolveOrCreateActorUser(
+        req: any,
+        explicitAnonymousId?: string,
+        allowCreate = true,
+        customAuthorName?: string,
+    ): Promise<User | null> {
+        if (req?.user?.id) {
+            const dbUser = await this.userRepo.findOne({
+                where: { id: req.user.id },
+                relations: ['photo'],
+            });
+            return dbUser || req.user;
+        }
+
+        const anonHash = this.extrairChaveAnonima(req, explicitAnonymousId);
+        const anonUsername = `anon_${anonHash}`;
+        const sufixo = anonHash.slice(0, 6).toUpperCase();
+
+        let anonUser = await this.userRepo.findOne({
+            where: { username: anonUsername },
+            relations: ['photo'],
+        });
+
+        if (!anonUser && allowCreate) {
+            const apelidoLimpo = customAuthorName?.trim();
+            const surname = apelidoLimpo
+                ? `${apelidoLimpo} (Anônimo #${sufixo.slice(0, 4)})`
+                : `Visitante #${sufixo}`;
+            const fullName = apelidoLimpo
+                ? `${apelidoLimpo} — Visitante Anônimo #${sufixo}`
+                : `Visitante Anônimo #${sufixo}`;
+
+            try {
+                const created = this.userRepo.create({
+                    username: anonUsername,
+                    fullName,
+                    surname,
+                    email: `${anonUsername}@temp.ci.dev.br`,
+                    emailVerificado: false,
+                    passwordMode: 'anonymous-temp',
+                    roles: ['ANONYMOUS', 'READER'],
+                });
+                anonUser = await this.userRepo.save(created);
+            } catch {
+                // Em caso de corrida concorrente na criação do mesmo visitante anônimo
+                anonUser = await this.userRepo.findOne({
+                    where: { username: anonUsername },
+                    relations: ['photo'],
+                });
+            }
+        } else if (anonUser && customAuthorName?.trim()) {
+            const apelidoLimpo = customAuthorName.trim();
+            const novoSurname = `${apelidoLimpo} (Anônimo #${sufixo.slice(0, 4)})`;
+            if (anonUser.surname !== novoSurname) {
+                anonUser.surname = novoSurname;
+                anonUser.fullName = `${apelidoLimpo} — Visitante Anônimo #${sufixo}`;
+                anonUser = await this.userRepo.save(anonUser);
+            }
+        }
+
+        return anonUser;
+    }
+
+    /**
+     * Inicializa ou recupera a sessão de usuário temporário para clientes anônimos conectados.
+     */
+    @Public()
+    @Post('AnonymousSession')
+    @ApiOperation({ operationId: 'NewsAnonymousSession', summary: 'Cria ou recupera usuário temporário para cliente anônimo conectado' })
+    async initAnonymousSession(@Body() input: AnonymousSessionInputDto, @Req() req: any) {
+        const actor = await this.resolveOrCreateActorUser(req, input?.anonymousId, true, input?.authorName);
+        return {
+            isAnonymous: !req?.user?.id,
+            anonymousId: input?.anonymousId || this.extrairChaveAnonima(req, input?.anonymousId),
+            user: actor ? {
+                id: actor.id,
+                username: actor.username,
+                fullName: actor.fullName,
+                surname: actor.surname,
+                roles: actor.roles,
+            } : null,
+        };
+    }
 
     private async getFinancialCategoryIds(): Promise<string[]> {
         const now = Date.now();
