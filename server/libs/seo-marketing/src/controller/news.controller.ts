@@ -65,6 +65,39 @@ export class NewsController {
         return this.financialCatIdsCache;
     }
 
+    private obterTermosPorCategoriaMercado(category?: string): string[] {
+        const cat = (category || '').trim().toLowerCase();
+        const mapa: Record<string, string[]> = {
+            bolsa: ['bolsa', 'b3', 'ibovespa', 'ações', 'acoes', 'fii', 'dividendos', 'petrobras', 'vale', 'pregão', 'pregao', 'ativos'],
+            economia: ['economia', 'econômic', 'economic', 'pib', 'inflação', 'inflacao', 'ipca', 'fazenda', 'mercado', 'finan', 'orçamento'],
+            dolar: ['dolar', 'dólar', 'câmbio', 'cambio', 'euro', 'moeda', 'cotação', 'cotacao', 'fed', 'exterior'],
+            selic: ['selic', 'juros', 'copom', 'renda fixa', 'tesouro', 'cdi', 'banco central', 'taxa', 'crédito', 'credito'],
+            'tributário': ['tribut', 'imposto', 'fiscal', 'receita', 'negócio', 'negocio', 'empresa', 'reforma', 'lucro', 'faturamento'],
+            tributario: ['tribut', 'imposto', 'fiscal', 'receita', 'negócio', 'negocio', 'empresa', 'reforma', 'lucro', 'faturamento'],
+        };
+
+        if (cat && cat !== 'todos') {
+            return mapa[cat] || [cat];
+        }
+
+        return [
+            'mercado', 'economia', 'bolsa', 'b3', 'ibovespa', 'dolar', 'dólar',
+            'câmbio', 'selic', 'juros', 'ipca', 'inflação', 'finan', 'invest',
+            'banco', 'empresa', 'negócio', 'tribut', 'imposto', 'pib', 'ações'
+        ];
+    }
+
+    private inferirCategoriaMercado(post: News, filtroCategoria?: string): string {
+        const texto = `${post.title || ''} ${post.content || ''} ${post.category?.name || ''}`.toLowerCase();
+        if (/d[oó]lar|c[aâ]mbio|euro|moeda/.test(texto)) return 'Câmbio & Dólar';
+        if (/selic|juros|copom|tesouro|cdi/.test(texto)) return 'Juros & Selic';
+        if (/bolsa|b3|ibovespa|a[cç][oõ]es|fii|dividend|petrobras|vale/.test(texto)) return 'Bolsa & B3';
+        if (/tribut|imposto|fiscal|receita|reforma|empresa|neg[oó]cio|lucro/.test(texto)) return 'Tributário & Negócios';
+        if (/economia|pib|infla[cç][aã]o|ipca|banco central|finan|mercado/.test(texto)) return 'Macro & Economia';
+        if (filtroCategoria && filtroCategoria.toLowerCase() !== 'todos') return filtroCategoria;
+        return post.category?.name || 'Mercado';
+    }
+
     /**
      * Obtém notícias filtradas de mercado e economia da base de dados (marketing.news).
      */
@@ -93,18 +126,33 @@ export class NewsController {
 
         if (search && search.trim()) {
             const cleanSearch = `%${search.trim().toLowerCase()}%`;
-            qb = qb.andWhere('(LOWER(news.title) LIKE :search OR LOWER(category.name) LIKE :search)', { search: cleanSearch });
-        } else if (category && category.trim() && category.trim().toLowerCase() !== 'todos') {
-            const catLower = category.trim().toLowerCase();
-            qb = qb.andWhere('(LOWER(category.name) LIKE :cat OR LOWER(news.title) LIKE :cat)', {
-                cat: `%${catLower}%`
-            });
+            qb = qb.andWhere(
+                '(LOWER(news.title) LIKE :search OR LOWER(COALESCE(news.content, \'\')) LIKE :search OR LOWER(COALESCE(category.name, \'\')) LIKE :search)',
+                { search: cleanSearch }
+            );
         } else {
-            const catIds = await this.getFinancialCategoryIds();
-            if (catIds && catIds.length > 0) {
-                qb = qb.andWhere('news.category_id IN (:...catIds)', { catIds });
-            } else {
-                qb = qb.andWhere(`(LOWER(news.title) LIKE '%mercado%' OR LOWER(news.title) LIKE '%economia%' OR LOWER(news.title) LIKE '%bolsa%')`);
+            const termos = this.obterTermosPorCategoriaMercado(category);
+            const paramsTermos: Record<string, any> = {};
+            const clausulasTermos: string[] = [];
+
+            termos.forEach((termo, idx) => {
+                const key = `termo_${idx}`;
+                paramsTermos[key] = `%${termo.toLowerCase()}%`;
+                clausulasTermos.push(`LOWER(news.title) LIKE :${key}`);
+                clausulasTermos.push(`LOWER(COALESCE(category.name, '')) LIKE :${key}`);
+                clausulasTermos.push(`LOWER(COALESCE(news.content, '')) LIKE :${key}`);
+            });
+
+            if (!category || category.trim().toLowerCase() === 'todos') {
+                const catIds = await this.getFinancialCategoryIds();
+                if (catIds && catIds.length > 0) {
+                    paramsTermos['catIds'] = catIds;
+                    clausulasTermos.push('category.id IN (:...catIds)');
+                }
+            }
+
+            if (clausulasTermos.length > 0) {
+                qb = qb.andWhere(`(${clausulasTermos.join(' OR ')})`, paramsTermos);
             }
         }
 
@@ -112,7 +160,19 @@ export class NewsController {
             .limit(limit)
             .offset(offset);
 
-        const rawPosts = await qb.getMany();
+        let rawPosts = await qb.getMany();
+
+        // Fallback: se nenhuma notícia casar na visão geral ('Todos') e não houver busca textual, retorna as mais recentes da base
+        if (rawPosts.length === 0 && !search?.trim() && (!category || category.trim().toLowerCase() === 'todos')) {
+            rawPosts = await this.newsRepo.createQueryBuilder('news')
+                .leftJoinAndSelect('news.sourceInfo', 'source')
+                .leftJoinAndSelect('news.category', 'category')
+                .where('news.title IS NOT NULL AND length(news.title) > 15')
+                .orderBy('news.scrapedAt', 'DESC')
+                .limit(limit)
+                .offset(offset)
+                .getMany();
+        }
 
         const currentUserId = request?.user?.id;
         const postsComInteracoes = await Promise.all(
@@ -125,7 +185,7 @@ export class NewsController {
                 try {
                     if (post.id) {
                         const [votes, comments] = await Promise.all([
-                            this.voteRepo.find({ where: { news: { id: post.id } } }),
+                            this.voteRepo.find({ where: { news: { id: post.id } }, relations: ['user'] }),
                             this.commentRepo.count({ where: { news: { id: post.id } } }),
                         ]);
 
@@ -142,7 +202,7 @@ export class NewsController {
 
                 return {
                     ...post,
-                    categoria: post.category?.name || 'Mercado',
+                    categoria: this.inferirCategoriaMercado(post, category),
                     upVotes,
                     downVotes,
                     commentsCount,
