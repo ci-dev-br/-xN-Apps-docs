@@ -1,43 +1,23 @@
+import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialogRef } from "@angular/material/dialog";
-import { MatFormField, MatFormFieldModule } from "@angular/material/form-field";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
-import { InviteService, UserService } from "@ci/portal-api";
+import { InviteService } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 
-/**
- *  Componente para enviar convite a novos usuários
- * 
- * Descrição:
- * Este componente fornece uma interface para enviar convites a novos usuários
- * para se registrarem na plataforma. Ele inclui um formulário simples onde o
- * administrador pode inserir o e-mail do usuário a ser convidado e enviar o convite.
- * 
- *  Funcionalidades:
- * - Formulário para inserir o e-mail do novo usuário.
- * - Botão para enviar o convite.
- * Validação básica do e-mail.
- * Design responsivo utilizando Angular Material.
- * Uso:
- * ```
- * <ci-enviar-convite></ci-enviar-convite>
- * ```
- * 
- * Notas:
- * Este componente é parte do módulo de gerenciamento de usuários e depende dos
- * módulos Angular Material para estilização e funcionalidade.
- * 
- *  
- **/
 @Component({
     selector: 'ci-enviar-convite',
     standalone: true,
     imports: [
+        CommonModule,
         MatFormFieldModule,
         MatInputModule,
         MatButtonModule,
+        MatIconModule,
         FormsModule,
         ReactiveFormsModule,
     ],
@@ -50,32 +30,64 @@ export class EnviarConviteComponent {
         mensagem: [''],
         friendlyName: [''],
     });
+    protected isSending = false;
+    protected inviteResult?: {
+        inviteHash?: string;
+        registrationLink?: string;
+        email?: string;
+        friendlyName?: string;
+    };
+    protected copied = false;
+
     constructor(
         private readonly fb: FormBuilder,
         private readonly invites: InviteService,
         private dialogRef: MatDialogRef<EnviarConviteComponent>
     ) { }
+
     /**
-     *  Envia o convite para o e-mail especificado no formulário.
+     * Envia o convite para o e-mail especificado no formulário e gera o invite-hash.
      */
     async enviarConvite() {
-        if (this.form.valid) {
+        if (this.form.valid && !this.isSending) {
+            this.isSending = true;
             try {
-                await lastValueFrom(this.invites.sendInvitation({
+                const res = await lastValueFrom(this.invites.sendInvitation({
                     body: {
                         email: this.form.value.email!,
                         mensagem: this.form.value.mensagem!,
                         friendlyName: this.form.value.friendlyName!,
                     }
                 }));
-                this.form.reset();
-                this.dialogRef.close(true);
+                const hash = res?.inviteHash || res?.convite;
+                const origin = typeof window !== 'undefined' ? window.location.origin : 'https://apps.ci.dev.br';
+                this.inviteResult = {
+                    inviteHash: hash,
+                    registrationLink: res?.registrationLink || (hash ? `${origin}/registrar/${hash}` : undefined),
+                    email: res?.email || this.form.value.email!,
+                    friendlyName: res?.friendlyName || this.form.value.friendlyName!,
+                };
+                this.isSending = false;
             } catch (error) {
+                this.isSending = false;
                 this.form.setErrors({ envioFalhou: true });
                 this.form.markAllAsTouched();
             }
         } else {
             this.form.markAllAsTouched();
         }
+    }
+
+    copiarLink() {
+        if (!this.inviteResult?.registrationLink) return;
+        if (typeof navigator !== 'undefined' && navigator.clipboard) {
+            navigator.clipboard.writeText(this.inviteResult.registrationLink);
+            this.copied = true;
+            setTimeout(() => (this.copied = false), 2500);
+        }
+    }
+
+    fechar() {
+        this.dialogRef.close(this.inviteResult || true);
     }
 }

@@ -1,6 +1,7 @@
 import { FullAuditedEntity } from "@ci/manager";
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity } from "typeorm";
+import { BeforeInsert, Column, Entity } from "typeorm";
+import { createHash } from "crypto";
 
 /**
  * Entidade de Convite para registro de novos usuários na plataforma.
@@ -23,6 +24,18 @@ export class Invite extends FullAuditedEntity {
     @ApiProperty({ nullable: true, required: false }) @Column({ nullable: true })
     mensagem?: string;
     /**
+     * Hash único do convite enviado por e-mail para registro do convidado.
+     */
+    @ApiProperty({ nullable: true, required: false, title: 'Invite Hash' })
+    @Column({ nullable: true })
+    inviteHash?: string;
+    /**
+     * Papéis (Roles) atribuídos por padrão ao convidado no momento do cadastro (padrão: ['USER']).
+     */
+    @ApiProperty({ nullable: true, required: false, title: 'Papéis padrão do convidado' })
+    @Column({ nullable: true, type: 'varchar', array: true, default: ['USER'] })
+    roles?: string[];
+    /**
      * Define se o convite já enviou o convite por e-mail.
      */
     @ApiProperty({ nullable: true, required: false }) @Column({ nullable: true })
@@ -42,4 +55,18 @@ export class Invite extends FullAuditedEntity {
      */
     @ApiProperty({ nullable: true, required: false }) @Column({ nullable: true })
     phoneWhatsApp?: string;
+
+    @BeforeInsert()
+    ensureInviteDefaults() {
+        if (!this.inviteHash) {
+            const timestamp = this.createdAt ? this.createdAt.toISOString() : new Date().toISOString();
+            const normalizedEmail = (this.email || '').trim().toLowerCase();
+            this.inviteHash = 'INVITE-' + createHash('sha256')
+                .update(`${timestamp}:${normalizedEmail}:${Math.random()}`)
+                .digest('hex');
+        }
+        if (!this.roles || this.roles.length === 0) {
+            this.roles = ['USER'];
+        }
+    }
 }

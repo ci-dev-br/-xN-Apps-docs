@@ -72,7 +72,12 @@ export class AuthGuard implements CanActivate {
         request['user'] = await this.userService.findByIdLight(payload.id);
         // Suporte a múltiplas contas conectadas simultaneamente: combina permissões e papéis
         const additionalTokensHeader = request.headers['x-additional-tokens'] as string | undefined;
-        const combinedRoles = new Set<string>(Array.isArray(payload.roles) ? payload.roles : []);
+        const dbRoles = Array.isArray(request['user']?.roles) ? request['user'].roles : [];
+        const tokenRoles = Array.isArray(payload.roles) ? payload.roles : [];
+        const combinedRoles = new Set<string>([...dbRoles, ...tokenRoles].filter(Boolean));
+        if (combinedRoles.size === 0 && request['user']) {
+          combinedRoles.add('USER');
+        }
         if (additionalTokensHeader) {
           const additionalTokens = additionalTokensHeader.split(',').map(t => t.trim()).filter(Boolean);
           for (const addToken of additionalTokens) {

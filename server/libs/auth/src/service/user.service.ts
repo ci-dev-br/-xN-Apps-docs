@@ -19,18 +19,70 @@ export class UserService {
         // private readonly mailer: MailService,
     ) { }
     async registrar(registro: User) {
-        return await this.dataSource.transaction(async (manager) => {
+        if (!registro.roles || !Array.isArray(registro.roles) || registro.roles.length === 0) {
+            registro.roles = ['USER'];
+        } else if (!registro.roles.includes('USER')) {
+            registro.roles = ['USER', ...registro.roles];
+        }
+
+        const user_created = await this.dataSource.transaction(async (manager) => {
             const new_user = this.userRepo.create(registro);
-            const user_created = await manager.save(new_user, { transaction: true, reload: true });
-            await this.sendEmailConfirmation(user_created);
-            return user_created;
-        })
+            return await manager.save(new_user, { transaction: true, reload: true });
+        });
+
+        // Garante que o aplicativo da Loja esteja ativo por padrão para o novo usuário
+        await this.ensureLojaActiveForUser(user_created.id);
+
+        // Envio de confirmação em background sem bloquear ou reverter a transação
+        if (user_created?.email) {
+            this.sendEmailConfirmation(user_created).catch((err) => {
+                console.warn('[UserService] Aviso ao enviar confirmação de cadastro:', err?.message || err);
+            });
+        }
+
+        return user_created;
+    }
+
+    /**
+     * Garante que a aplicação 'Loja' exista no catálogo e esteja ativada na conta do usuário.
+     */
+    async ensureLojaActiveForUser(userId?: string) {
+        if (!userId || !this.dataSource) return;
+        try {
+            const appRows = await this.dataSource.query(
+                `SELECT id FROM manager.application WHERE "appKey" = 'Loja' OR "routePath" = '/Loja' OR "name" = 'Loja' LIMIT 1`
+            );
+            let lojaAppId = appRows?.[0]?.id;
+            if (!lojaAppId) {
+                const inserted = await this.dataSource.query(
+                    `INSERT INTO manager.application ("appKey", "routePath", "url", "name", "description", "icon", "categoria", "roles", "isActive")
+                     VALUES ('Loja', '/Loja', '/Loja', 'Loja', 'Loja de Aplicativos da Plataforma', 'storefront', 'System', ARRAY['USER', 'ADMIN', 'MASTER'], true)
+                     RETURNING id`
+                );
+                lojaAppId = inserted?.[0]?.id;
+            }
+            if (lojaAppId) {
+                const existingLink = await this.dataSource.query(
+                    `SELECT 1 FROM manager.application_users_user WHERE "applicationId" = $1 AND "userId" = $2 LIMIT 1`,
+                    [lojaAppId, userId]
+                );
+                if (!existingLink || existingLink.length === 0) {
+                    await this.dataSource.query(
+                        `INSERT INTO manager.application_users_user ("applicationId", "userId") VALUES ($1, $2)`,
+                        [lojaAppId, userId]
+                    );
+                }
+            }
+        } catch (err: any) {
+            console.warn('[UserService] Aviso ao ativar aplicativo Loja para o usuário:', err?.message || err);
+        }
     }
     async serdMailTemplate(template_html, message_data?: any) {
 
     }
     async sendEmailConfirmation(registro: User) {
         return await new Promise<void>((res, rej) => {
+            try {
             const template_data = {
                 ano: null,
                 logo_base64: null,
@@ -86,8 +138,15 @@ export class UserService {
                     console.log('No more data in response.');
                 });
             });
-            req.write(send_mail_request_body);
-            req.end();
+                req.on('error', (err) => {
+                    console.warn('[UserService] Aviso na requisição de e-mail:', err?.message || err);
+                    res();
+                });
+                req.write(send_mail_request_body);
+                req.end();
+            } catch (err) {
+                res();
+            }
         });
     }
     async solicitarAcesso(informacaoAcesso: { identificador?: string }) {

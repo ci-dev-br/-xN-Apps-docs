@@ -121,14 +121,14 @@
                     </button>
 
                     <button mat-flat-button 
-                            [color]="app.isActivated ? 'warn' : 'primary'"
+                            [color]="app.isActivated ? (app.appKey === 'Loja' ? 'primary' : 'warn') : 'primary'"
                             (click)="toggleActivation(app)" 
-                            [disabled]="app.loading || (!app.isActivated && !app.canActivate)"
-                            [matTooltip]="!app.canActivate ? ('Exige papel: ' + app.roles?.join(', ')) : ''"
+                            [disabled]="app.loading || app.appKey === 'Loja' || (!app.isActivated && !app.canActivate)"
+                            [matTooltip]="!app.canActivate ? ('Exige papel: ' + app.roles?.join(', ')) : (app.appKey === 'Loja' ? 'A Loja de Aplicativos permanece sempre ativa na sua conta' : '')"
                             class="activate-btn">
-                        <mat-icon *ngIf="!app.loading">{{ app.isActivated ? 'power_settings_new' : 'add_circle_outline' }}</mat-icon>
+                        <mat-icon *ngIf="!app.loading">{{ app.isActivated ? (app.appKey === 'Loja' ? 'verified' : 'power_settings_new') : 'add_circle_outline' }}</mat-icon>
                         <mat-spinner diameter="18" *ngIf="app.loading"></mat-spinner>
-                        <span>{{ app.isActivated ? 'Desativar' : 'Ativar' }}</span>
+                        <span>{{ app.isActivated ? (app.appKey === 'Loja' ? 'Ativo' : 'Desativar') : 'Assinar' }}</span>
                     </button>
                 </div>
             </div>

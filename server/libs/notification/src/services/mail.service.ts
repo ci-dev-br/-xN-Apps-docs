@@ -135,44 +135,55 @@ export class MailService {
         from_person?: Pessoa,
         need_feedback?: boolean,
     }) {
-        return new Promise<void>((resulte, reject) => {
-            const x_hash = hashMailer(message.to);
-            const mail_payload = {
-                x_hash,
-                content_payload: {
-                    from: 'apps@ci.dev.br',
-                    to: message.to,
-                    subject: message.subject || 'apps.ci.dev.br, sua plataforma de Aplicativos',
-                    message_html: message.template_html || message.message_text,
-                    content_type: 'text/html;charset=UTF-8'
-                },
-                action: 'send_mail_message'
-            };
-            const req = request({
-                hostname: process.env.CI_APPS_MAILER_HOSTNAME,
-                path: '/mailer/br.dev.ci.apps/index.php',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
+        return new Promise<void>((resulte) => {
+            try {
+                const hostname = process.env.CI_APPS_MAILER_HOSTNAME;
+                if (!hostname) {
+                    console.info(`[MailService] CI_APPS_MAILER_HOSTNAME não configurado. E-mail simulado para ${message.to}.`);
+                    return resulte();
                 }
-            }, (r) => {
-                r.on('data', (data) => {
-                    let result;
-                    console.log(data.toString());
-                    try {
-                        result = JSON.parse(data);
-                        console.log(data.toString());
-                    } catch (error) {
-                        console.trace(error);
+                const x_hash = hashMailer(message.to);
+                const mail_payload = {
+                    x_hash,
+                    content_payload: {
+                        from: 'apps@ci.dev.br',
+                        to: message.to,
+                        subject: message.subject || 'apps.ci.dev.br, sua plataforma de Aplicativos',
+                        message_html: message.template_html || message.message_text,
+                        content_type: 'text/html;charset=UTF-8'
+                    },
+                    action: 'send_mail_message'
+                };
+                const req = request({
+                    hostname,
+                    path: '/mailer/br.dev.ci.apps/index.php',
+                    method: 'POST',
+                    timeout: 5000,
+                    headers: {
+                        'Content-Type': 'application/json',
                     }
-                    /*   if (result?.code === 0)
-                      else {
-                      } */
+                }, (r) => {
+                    r.on('data', (data) => {
+                        try {
+                            JSON.parse(data.toString());
+                        } catch { }
+                    });
+                    r.on('end', () => resulte());
+                });
+                req.on('error', (err) => {
+                    console.warn('[MailService] Aviso ao enviar e-mail:', err?.message || err);
                     resulte();
                 });
-            });
-            req.write(JSON.stringify(mail_payload));
-            req.end();
+                req.on('timeout', () => {
+                    req.destroy();
+                    resulte();
+                });
+                req.write(JSON.stringify(mail_payload));
+                req.end();
+            } catch (err: any) {
+                console.warn('[MailService] Falha capturada no envio de e-mail:', err?.message || err);
+                resulte();
+            }
         });
     }
 }  

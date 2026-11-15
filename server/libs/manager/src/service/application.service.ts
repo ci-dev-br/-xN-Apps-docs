@@ -804,16 +804,24 @@ export class ApplicationService {
             userAppIds = new Set(userApps.map(a => a.id).filter(Boolean) as string[]);
         }
 
+        const effectiveRoles = (user?.roles && Array.isArray(user.roles) && user.roles.length > 0)
+            ? user.roles
+            : ['USER'];
+
         return apps.map(app => {
-            const isActivated = userAppIds.has(app.id!);
+            const isLoja = app.appKey === 'Loja' || app.routePath === '/Loja' || app.name === 'Loja';
+            const isActivated = isLoja || userAppIds.has(app.id!);
             const isCollab = this.isCollaborator(app, user);
             const canToggleGlobal = Boolean(isMaster && isDeveloper && isCollab);
 
             let canActivate = false;
             let roleRestricted = false;
 
-            if (isGoodness) {
-                // ROLE GOODNESS permite ativar todas as applications independente
+            if (isLoja) {
+                canActivate = true;
+                roleRestricted = false;
+            } else if (isGoodness || isMaster) {
+                // ROLE GOODNESS / MASTER permite ativar todas as applications
                 canActivate = true;
             } else if (isCollab) {
                 // Para os colaboradores, sempre deve ficar disponível para ativação
@@ -821,8 +829,8 @@ export class ApplicationService {
             } else if (app.isActive === false) {
                 canActivate = false;
             } else if (app.roles && app.roles.length > 0) {
-                // Aplicações que exigem ROLE específica não podem ficar disponíveis para ativação sem o papel
-                const hasRole = app.roles.some(r => user?.roles?.includes(r));
+                // Aplicações cujas ROLES correspondem às ROLES do usuário (ex: 'USER') ficam permitidas para assinar/ativar
+                const hasRole = app.roles.some(r => effectiveRoles.includes(r));
                 canActivate = hasRole;
                 roleRestricted = !hasRole;
             } else {
@@ -861,21 +869,25 @@ export class ApplicationService {
             throw new NotFoundException('Aplicação não encontrada.');
         }
 
+        const isLoja = app.appKey === 'Loja' || app.routePath === '/Loja' || app.name === 'Loja';
         const isCurrentlyActive = (app.users || []).some(u => u.id === user.id);
-        const shouldBeActive = dto.active !== undefined ? dto.active : !isCurrentlyActive;
+        const shouldBeActive = isLoja ? true : (dto.active !== undefined ? dto.active : !isCurrentlyActive);
 
         if (shouldBeActive) {
-            const isGoodness = user.roles?.includes('GOODNESS');
+            const isGoodness = user.roles?.includes('GOODNESS') || user.roles?.includes('MASTER');
             const isCollab = this.isCollaborator(app, user);
+            const effectiveRoles = (user.roles && Array.isArray(user.roles) && user.roles.length > 0)
+                ? user.roles
+                : ['USER'];
 
-            if (!isGoodness && !isCollab) {
+            if (!isGoodness && !isCollab && !isLoja) {
                 if (app.isActive === false) {
                     throw new ForbiddenException('Esta aplicação está temporariamente desativada globalmente.');
                 }
                 if (app.roles && app.roles.length > 0) {
-                    const hasRole = app.roles.some(r => user.roles?.includes(r));
+                    const hasRole = app.roles.some(r => effectiveRoles.includes(r));
                     if (!hasRole) {
-                        throw new ForbiddenException(`Esta aplicação exige papel específico (${app.roles.join(', ')}) para ativação.`);
+                        throw new ForbiddenException(`Esta aplicação exige papel específico (${app.roles.join(', ')}) para assinatura/ativação.`);
                     }
                 }
             }
@@ -947,15 +959,32 @@ export class ApplicationService {
 
     /**
      * Retorna a lista de chaves de aplicações ativadas para o usuário logado.
+     * O aplicativo da Loja ('Loja') está sempre ativo por padrão.
      */
     async getUserActivations(user: User): Promise<string[]> {
-        if (!user || !user.id) return [];
+        if (!user || !user.id) return ['Loja'];
         const apps = await this.repo.createQueryBuilder('app')
             .innerJoin('app.users', 'user', 'user.id = :userId', { userId: user.id })
             .select(['app.appKey', 'app.routePath'])
             .getMany();
 
-        return apps.map(a => a.appKey || a.routePath?.replace(/^\//, '')).filter(Boolean) as string[];
+        const keys = apps.map(a => a.appKey || a.routePath?.replace(/^\//, '')).filter(Boolean) as string[];
+        if (!keys.includes('Loja')) {
+            keys.unshift('Loja');
+            // Garante persistência do vínculo da Loja em background
+            this.repo.findOne({
+                where: [{ appKey: 'Loja' }, { routePath: '/Loja' }, { name: 'Loja' }],
+                relations: ['users']
+            }).then(async (lojaApp) => {
+                if (lojaApp && !(lojaApp.users || []).some(u => u.id === user.id)) {
+                    await this.repo.createQueryBuilder()
+                        .relation(Application, 'users')
+                        .of(lojaApp)
+                        .add(user);
+                }
+            }).catch(() => {});
+        }
+        return Array.from(new Set(keys));
     }
 
     /**

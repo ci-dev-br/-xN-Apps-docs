@@ -1,29 +1,32 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, OnInit, Optional } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { lastValueFrom } from 'rxjs';
-import { AuthService, Register, RegisterService } from '@ci/portal-api';
+import { combineLatest, lastValueFrom } from 'rxjs';
+import { AuthService, InviteService, Register, RegisterService } from '@ci/portal-api';
 import { AuthModule, UserAuthenticationService } from '@ci/auth';
-import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+import { provideNgxMask } from 'ngx-mask';
 import { FooterModule } from '@ci/components';
-import { CoreModule, IsEmail, IsPhoneNumber, StageModule, StageService } from '@ci/core';
+import { ApplicationCatalogService, CoreModule, IsEmail, IsPhoneNumber, StageModule, StageService, StorageService } from '@ci/core';
 
 @Component({
   selector: 'ci-registrar',
   imports: [
+    CommonModule,
     CoreModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatIconModule,
     ReactiveFormsModule,
     MatCheckboxModule,
     RouterModule,
     AuthModule,
-    // NgxMaskDirective,
     FooterModule,
     StageModule,
   ],
@@ -37,7 +40,7 @@ export class RegistrarComponent implements OnInit {
   termos = {
     "M": 'e-mail',
     "P": 'sms'
-  }
+  };
   stageOutput = new EventEmitter<string>();
   private _stage = 'initial-registring';
   public get stage() {
@@ -49,42 +52,75 @@ export class RegistrarComponent implements OnInit {
     this.stageOutput.emit(value);
   }
   protected emailOrPhoneMask?: string;
+
+  inviteHash?: string;
+  inviteData?: {
+    internalId?: string;
+    email?: string;
+    friendlyName?: string;
+    mensagem?: string;
+    inviteHash?: string;
+    roles?: string[];
+    accepted?: boolean;
+  };
+  inviteError?: string;
+  isSubmittingInvite = false;
+  registeredUser?: any;
+
   form = this.fb.group<{
-    // coak: any,
     emailOrPhone: any,
     emailAuthorization: any,
     password: any,
-    passwordConfirmation: [],
+    passwordConfirmation: any,
     confirmConsequencesOfNegationSendMail: any,
   }>({
-    // coak: [false, Validators.required],
     emailOrPhone: [, [Validators.required, Validators.email]],
     emailAuthorization: [false, [Validators.required]],
     password: [],
     passwordConfirmation: [],
     confirmConsequencesOfNegationSendMail: [false, [Validators.required]],
   });
+
+  inviteForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    fullName: ['', [Validators.required, Validators.minLength(2)]],
+    surname: [''],
+    identificacao: ['', [Validators.required, Validators.minLength(3)]],
+    phone: [''],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    passwordConfirmation: ['', [Validators.required, Validators.minLength(6)]],
+    acceptTerms: [true, [Validators.requiredTrue]],
+  });
+
   typeRegister?: 'P' | 'M';
+
   constructor(
     private readonly fb: FormBuilder,
-    // private readonly authService: AuthService,
+    private readonly authService: AuthService,
+    private readonly inviteService: InviteService,
     private readonly userService: UserAuthenticationService,
-    // private readonly router: Router,
-    /* // private readonly */ stages: StageService,
+    private readonly router: Router,
+    stages: StageService,
     private readonly register: RegisterService,
     private readonly route: ActivatedRoute,
+    @Optional() private readonly storageService?: StorageService,
+    @Optional() private readonly catalogService?: ApplicationCatalogService,
   ) {
     stages.host = this;
-    route.params.subscribe((params: any) => {
-      if (params.invite) {
-
-      }
-    })
   }
+
   validar() {
     return this.form.valid;
   }
+
   ngOnInit(): void {
+    combineLatest([this.route.params, this.route.queryParams]).subscribe(([params, queryParams]) => {
+      const hash = params?.['invite'] || queryParams?.['invite'] || queryParams?.['inviteHash'] || queryParams?.['convite'];
+      if (hash && hash !== this.inviteHash) {
+        this.carregarConvite(String(hash).trim());
+      }
+    });
+
     this.form.controls.emailOrPhone?.valueChanges.subscribe(value => {
       this.typeRegister = typeof value === 'string' && IsEmail(value) ? 'M' : typeof value === 'string' && IsPhoneNumber(value) ? 'P' : undefined;
       if (this.typeRegister === 'M') {
@@ -94,14 +130,118 @@ export class RegistrarComponent implements OnInit {
         this.form.controls.emailOrPhone.setValidators([]);
       }
       this.form.updateValueAndValidity();
-    })
+    });
   }
+
+  async carregarConvite(hash: string) {
+    this.inviteHash = hash;
+    this.inviteError = undefined;
+    this.stage = 'loading-invite';
+    try {
+      const data = await lastValueFrom(
+        this.inviteService.get({
+          body: {
+            convite: hash,
+            ...( { invite: hash, inviteHash: hash } as any )
+          }
+        })
+      );
+      if (!data || (!data.email && !data.inviteHash)) {
+        this.inviteError = 'O link de convite informado não foi encontrado ou expirou.';
+        this.stage = 'invite-error';
+        return;
+      }
+      this.inviteData = data;
+      if (data.accepted) {
+        this.stage = 'invite-already-accepted';
+        return;
+      }
+
+      const email = (data.email || '').trim();
+      const friendlyName = (data.friendlyName || '').trim();
+      const suggestedUsername = email ? email.split('@')[0].replace(/[^a-zA-Z0-9._-]/g, '') : '';
+      const suggestedSurname = friendlyName ? friendlyName.split(' ')[0] : suggestedUsername;
+
+      this.inviteForm.patchValue({
+        email,
+        fullName: friendlyName || suggestedUsername,
+        surname: suggestedSurname,
+        identificacao: suggestedUsername,
+        acceptTerms: true,
+      });
+      this.stage = 'invite-registration';
+    } catch (err: any) {
+      this.inviteError = err?.error?.message || 'Não foi possível validar este invite-hash.';
+      this.stage = 'invite-error';
+    }
+  }
+
+  get passwordsMismatch(): boolean {
+    const p1 = this.inviteForm.get('password')?.value;
+    const p2 = this.inviteForm.get('passwordConfirmation')?.value;
+    return Boolean(p1 && p2 && p1 !== p2);
+  }
+
+  async concluirCadastroConvite() {
+    if (this.inviteForm.invalid || this.passwordsMismatch || this.isSubmittingInvite) {
+      this.inviteForm.markAllAsTouched();
+      return;
+    }
+
+    this.isSubmittingInvite = true;
+    this.inviteError = undefined;
+    const val = this.inviteForm.getRawValue();
+
+    try {
+      const response: any = await lastValueFrom(
+        this.authService.registrar({
+          body: {
+            identificacao: val.identificacao?.trim() || undefined,
+            fullName: val.fullName?.trim() || undefined,
+            surname: (val.surname?.trim() || val.fullName?.trim()?.split(' ')[0]) || undefined,
+            email: val.email?.trim() || this.inviteData?.email,
+            phone: val.phone?.trim() || undefined,
+            password: val.password || undefined,
+            emailAuthorization: true,
+            phoneAuthorization: Boolean(val.phone),
+            ...( { invite: this.inviteHash, convite: this.inviteHash } as any ),
+          }
+        })
+      );
+
+      this.registeredUser = response?.user || response;
+      if (response?.bearer && this.registeredUser?.id) {
+        this.storageService?.store('apps.ci.dev.br.store.User', {
+          authentication: {
+            ...response,
+            user: { ...this.registeredUser, photo: null }
+          }
+        });
+        await this.userService.identificarUsuario(this.registeredUser);
+        this.catalogService?.refreshMyActivations().subscribe({ error: () => {} });
+      }
+
+      this.isSubmittingInvite = false;
+      this.stage = 'invite-completed';
+    } catch (err: any) {
+      this.isSubmittingInvite = false;
+      this.inviteError = err?.error?.message || 'Não foi possível concluir o cadastro. Verifique os dados informados.';
+    }
+  }
+
+  irParaLoja() {
+    this.router.navigate(['/Loja']);
+  }
+
+  irParaLogin() {
+    this.router.navigate(['/acessar']);
+  }
+
   async next() {
     if (!this.validar()) return this.form.markAllAsTouched();
     const values = this.form.getRawValue() as Register;
     const register = await lastValueFrom(
       this.register.requestByFistContact({ body: { ...(values as any) } })
-      // this.authService.registrar({ body: { ...(this.form.getRawValue() as any) } })
     );
     if (values.emailAuthorization) {
       this.stage = 'checking_email';
@@ -110,6 +250,7 @@ export class RegistrarComponent implements OnInit {
     }
     this.userService.identificarUsuario(register);
   }
+
   async continue() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -121,8 +262,7 @@ export class RegistrarComponent implements OnInit {
           identificacao: data.emailOrPhone as string,
         }
       })
-    )
-
+    );
   }
 }
 

@@ -97,8 +97,23 @@ export class PainelComponent implements OnInit {
     });
     this.userAuthenticationInstanceService?.user.subscribe(user => {
       if (!!user) {
-        this.apps = CI_STATIC_APPS.filter(app => !!app.roles?.find(role => !!user.roles?.find(r => r === role)));
-        if (user.roles?.includes('MASTER')) {
+        const userRoles = (user.roles && user.roles.length > 0) ? user.roles : ['USER'];
+        const isMasterOrAdmin = userRoles.includes('MASTER') || userRoles.includes('ADMIN');
+
+        this.catalogService?.refreshMyActivations().subscribe({ error: () => {} });
+
+        if (isMasterOrAdmin) {
+          this.apps = CI_STATIC_APPS.filter(app => !!app.roles?.find(role => userRoles.includes(role)));
+        } else {
+          const activeSet = new Set<string>(['Loja']);
+          this.apps = CI_STATIC_APPS.filter(app => {
+            const appKey = app.name || app.url?.replace(/^\//, '');
+            const hasRole = !!app.roles?.find(role => userRoles.includes(role));
+            return hasRole && Boolean(appKey && (appKey === 'Loja' || app.url === '/Loja' || activeSet.has(appKey)));
+          });
+        }
+
+        if (userRoles.includes('MASTER')) {
           this.catalogService?.verifyAndReconcileCatalogIfMaster(user, CI_STATIC_APPS).subscribe({
             next: (res) => {
               if (res && !res.skipped) {
@@ -108,7 +123,28 @@ export class PainelComponent implements OnInit {
           });
         }
       }
-    })
+    });
+
+    this.catalogService?.activatedApps$.subscribe(activeSet => {
+      const user = this.userAuthenticationInstanceService?.user?.value;
+      if (!user) return;
+      const userRoles = (user.roles && user.roles.length > 0) ? user.roles : ['USER'];
+      const isMasterOrAdmin = userRoles.includes('MASTER') || userRoles.includes('ADMIN');
+      if (!isMasterOrAdmin) {
+        this.apps = CI_STATIC_APPS.filter(app => {
+          const appKey = app.name || app.url?.replace(/^\//, '');
+          const cleanUrl = app.url?.replace(/^\//, '');
+          const hasRole = !!app.roles?.find(role => userRoles.includes(role));
+          return hasRole && Boolean(
+            appKey === 'Loja' ||
+            cleanUrl === 'Loja' ||
+            (appKey && activeSet.has(appKey)) ||
+            (cleanUrl && activeSet.has(cleanUrl))
+          );
+        });
+        this.appsFavoritos = [...(this.apps || [])];
+      }
+    });
   }
   private _appsFavoritos?: IApp[] | undefined = [];
   public get appsFavoritos(): IApp[] | undefined {

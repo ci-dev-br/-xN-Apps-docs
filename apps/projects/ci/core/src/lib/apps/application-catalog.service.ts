@@ -41,7 +41,7 @@ export class ApplicationCatalogService {
     private readonly _currentApp$ = new BehaviorSubject<string | null>(null);
     public readonly currentApp$: Observable<string | null> = this._currentApp$.asObservable();
 
-    private readonly _activatedApps$ = new BehaviorSubject<Set<string>>(new Set<string>());
+    private readonly _activatedApps$ = new BehaviorSubject<Set<string>>(new Set<string>(['Loja']));
     public readonly activatedApps$: Observable<Set<string>> = this._activatedApps$.asObservable();
 
     private readonly catalogedInSession = new Set<string>();
@@ -446,14 +446,15 @@ export class ApplicationCatalogService {
         return new Observable(observer => {
             this.getMyActivations().subscribe({
                 next: (keys) => {
-                    const set = new Set<string>(keys || []);
+                    const merged = Array.from(new Set<string>(['Loja', ...(keys || [])]));
+                    const set = new Set<string>(merged);
                     this._activatedApps$.next(set);
                     if (typeof localStorage !== 'undefined') {
                         try {
-                            localStorage.setItem('ci_my_activated_apps', JSON.stringify(keys));
+                            localStorage.setItem('ci_my_activated_apps', JSON.stringify(merged));
                         } catch {}
                     }
-                    observer.next(keys);
+                    observer.next(merged);
                     observer.complete();
                 },
                 error: (err) => {
@@ -462,7 +463,9 @@ export class ApplicationCatalogService {
                             const cached = localStorage.getItem('ci_my_activated_apps');
                             if (cached) {
                                 const parsed = JSON.parse(cached);
-                                this._activatedApps$.next(new Set<string>(parsed));
+                                this._activatedApps$.next(new Set<string>(['Loja', ...(Array.isArray(parsed) ? parsed : [])]));
+                            } else {
+                                this._activatedApps$.next(new Set<string>(['Loja']));
                             }
                         } catch {}
                     }

@@ -29,7 +29,7 @@ export class InviteService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  sendInvitation$Response(params: SendInvitation$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  sendInvitation$Response(params: SendInvitation$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
     return sendInvitation(this.http, this.rootUrl, params, context);
   }
 
@@ -39,9 +39,9 @@ export class InviteService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  sendInvitation(params: SendInvitation$Params, context?: HttpContext): Observable<void> {
+  sendInvitation(params: SendInvitation$Params, context?: HttpContext): Observable<any> {
     return this.sendInvitation$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<any>): any => r.body)
     );
   }
 
@@ -54,7 +54,7 @@ export class InviteService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  getInvite$Response(params: GetInvite$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  getInvite$Response(params: GetInvite$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
     return getInvite(this.http, this.rootUrl, params, context);
   }
 
@@ -64,9 +64,9 @@ export class InviteService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  get(params: GetInvite$Params, context?: HttpContext): Observable<void> {
+  get(params: GetInvite$Params, context?: HttpContext): Observable<any> {
     return this.getInvite$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<any>): any => r.body)
     );
   }
 

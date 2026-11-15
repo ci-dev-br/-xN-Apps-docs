@@ -87,35 +87,43 @@ export class LojaComponent implements OnInit {
     loadStoreApps(): void {
         this.isLoading = true;
         const currentUser = this.userService?.user?.value;
-        const isGoodness = currentUser?.roles?.includes('GOODNESS');
+        const userRoles = (currentUser?.roles && currentUser.roles.length > 0) ? currentUser.roles : ['USER'];
+        const isGoodness = userRoles.includes('GOODNESS') || userRoles.includes('MASTER');
 
         this.catalogService.getStore().subscribe({
             next: (data) => {
                 if (data && data.length > 0) {
                     this.apps = data.map(item => {
+                        const appKey = item.appKey || item.routePath?.replace(/^\//, '') || item.name;
+                        const isLoja = appKey === 'Loja' || item.routePath === '/Loja' || item.name === 'Loja';
                         const isCollab = Boolean(item.isCollaborator);
                         const canToggleGlobal = Boolean(item.canToggleGlobal);
-                        let canActivate = Boolean(item.canActivate);
+                        const appRoles: string[] = Array.isArray(item.roles) ? item.roles : [];
+                        const hasMatchingRole = appRoles.length === 0 || appRoles.some(r => userRoles.includes(r));
 
+                        let canActivate = isLoja || Boolean(item.canActivate) || hasMatchingRole;
                         if (isGoodness || isCollab) {
                             canActivate = true;
+                        }
+                        if (item.isActive === false && !isGoodness && !isCollab && !isLoja) {
+                            canActivate = false;
                         }
 
                         return {
                             id: item.id,
-                            appKey: item.appKey || item.routePath?.replace(/^\//, '') || item.name,
+                            appKey,
                             name: item.name || item.appKey,
                             description: item.description,
-                            icon: item.icon || 'apps',
+                            icon: item.icon || (isLoja ? 'storefront' : 'apps'),
                             categoria: item.categoria || 'Geral',
-                            routePath: item.routePath || `/${item.appKey}`,
-                            isActivated: Boolean(item.isActivated),
+                            routePath: item.routePath || `/${appKey}`,
+                            isActivated: isLoja || Boolean(item.isActivated),
                             isActive: item.isActive !== false,
                             isCollaborator: isCollab,
                             canToggleGlobal,
                             canActivate,
-                            roleRestricted: Boolean(item.roleRestricted),
-                            roles: item.roles,
+                            roleRestricted: !canActivate && !hasMatchingRole,
+                            roles: appRoles,
                             collaborators: item.collaborators
                         };
                     });
@@ -174,6 +182,16 @@ export class LojaComponent implements OnInit {
                 (app.appKey && app.appKey.toLowerCase().includes(query));
 
             return matchesCat && matchesQuery;
+        }).sort((a, b) => {
+            // 1º Loja e aplicativos já ativos
+            if (Boolean(a.isActivated) !== Boolean(b.isActivated)) {
+                return a.isActivated ? -1 : 1;
+            }
+            // 2º Aplicativos permitidos para assinar conforme a ROLE do usuário
+            if (Boolean(a.canActivate) !== Boolean(b.canActivate)) {
+                return a.canActivate ? -1 : 1;
+            }
+            return (a.name || '').localeCompare(b.name || '', 'pt-BR');
         });
     }
 
