@@ -52,18 +52,18 @@ export class EnviarConviteComponent {
         if (this.form.valid && !this.isSending) {
             this.isSending = true;
             try {
-                const res = await lastValueFrom(this.invites.sendInvitation({
+                const res: any = await lastValueFrom(this.invites.sendInvitation({
                     body: {
                         email: this.form.value.email!,
                         mensagem: this.form.value.mensagem!,
                         friendlyName: this.form.value.friendlyName!,
                     }
                 }));
-                const hash = res?.inviteHash || res?.convite;
+                const hash = (res?.inviteHash || res?.convite) as any;
                 const origin = typeof window !== 'undefined' ? window.location.origin : 'https://apps.ci.dev.br';
                 this.inviteResult = {
                     inviteHash: hash,
-                    registrationLink: res?.registrationLink || (hash ? `${origin}/registrar/${hash}` : undefined),
+                    registrationLink: (res?.registrationLink || (hash ? `${origin}/registrar/${hash}` : undefined) as any),
                     email: res?.email || this.form.value.email!,
                     friendlyName: res?.friendlyName || this.form.value.friendlyName!,
                 };

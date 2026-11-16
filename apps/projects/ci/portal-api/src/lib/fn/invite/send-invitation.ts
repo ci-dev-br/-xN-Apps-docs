@@ -7,12 +7,13 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import { InvitationPayload } from '../../models/invitation-payload';
+import { Invite } from '../../models/invite';
 
 export interface SendInvitation$Params {
       body: InvitationPayload
 }
 
-export function sendInvitation(http: HttpClient, rootUrl: string, params: SendInvitation$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+export function sendInvitation(http: HttpClient, rootUrl: string, params: SendInvitation$Params, context?: HttpContext): Observable<StrictHttpResponse<Invite>> {
   const rb = new RequestBuilder(rootUrl, sendInvitation.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -23,7 +24,7 @@ export function sendInvitation(http: HttpClient, rootUrl: string, params: SendIn
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<any>;
+      return r as StrictHttpResponse<Invite>;
     })
   );
 }

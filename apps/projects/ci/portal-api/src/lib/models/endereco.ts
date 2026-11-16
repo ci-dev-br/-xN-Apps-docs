@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { Credential } from '../models/credential';
 export interface Endereco {
-  address?: string | null;
+  address?: Endereco | null;
   addressNumber?: string | null;
   complement?: string | null;
   createdAt?: Date | null;

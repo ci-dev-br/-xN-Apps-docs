@@ -8,6 +8,7 @@ import { RequestBuilder } from '../../request-builder';
 
 
 export interface CarteiraListarTransacoes$Params {
+  carteiraId: string;
   tipo: string;
   categoria: string;
   take: string;
@@ -17,6 +18,7 @@ export interface CarteiraListarTransacoes$Params {
 export function carteiraListarTransacoes(http: HttpClient, rootUrl: string, params: CarteiraListarTransacoes$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
   const rb = new RequestBuilder(rootUrl, carteiraListarTransacoes.PATH, 'get');
   if (params) {
+    rb.query('carteiraId', params.carteiraId, {});
     rb.query('tipo', params.tipo, {});
     rb.query('categoria', params.categoria, {});
     rb.query('take', params.take, {});

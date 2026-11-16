@@ -7,11 +7,11 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 
-export interface AppControllerHandleAllRequests_1$Params {
+export interface CarteiraListar$Params {
 }
 
-export function appControllerHandleAllRequests_1(http: HttpClient, rootUrl: string, params?: AppControllerHandleAllRequests_1$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, appControllerHandleAllRequests_1.PATH, 'get');
+export function carteiraListar(http: HttpClient, rootUrl: string, params?: CarteiraListar$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, carteiraListar.PATH, 'get');
   if (params) {
   }
 
@@ -25,4 +25,4 @@ export function appControllerHandleAllRequests_1(http: HttpClient, rootUrl: stri
   );
 }
 
-appControllerHandleAllRequests_1.PATH = '/*w';
+carteiraListar.PATH = '/Financeiro/Carteira/Listar';

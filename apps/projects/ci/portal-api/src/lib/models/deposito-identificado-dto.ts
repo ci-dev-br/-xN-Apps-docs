@@ -3,6 +3,11 @@
 export interface DepositoIdentificadoDto {
 
   /**
+   * ID da carteira de destino (opcional; usa a principal caso omitido)
+   */
+  carteiraId?: string;
+
+  /**
    * Descrição da operação
    */
   descricao?: string;
@@ -19,7 +24,7 @@ export interface DepositoIdentificadoDto {
 };
 
   /**
-   * Valor a ser depositado na carteira (em R$)
+   * Valor a ser depositado na carteira
    */
   valor: number;
 }

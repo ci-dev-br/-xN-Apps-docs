@@ -80,6 +80,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
         });
     }
 
+
+
+
     get displayMode$() {
         return this.notificationService?.displayMode$;
     }

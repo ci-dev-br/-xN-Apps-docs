@@ -8,11 +8,17 @@ import { RequestBuilder } from '../../request-builder';
 
 
 export interface CarteiraGetMinha$Params {
+  autoCreate: string;
+  carteiraId: string;
+  periodo: string;
 }
 
-export function carteiraGetMinha(http: HttpClient, rootUrl: string, params?: CarteiraGetMinha$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+export function carteiraGetMinha(http: HttpClient, rootUrl: string, params: CarteiraGetMinha$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
   const rb = new RequestBuilder(rootUrl, carteiraGetMinha.PATH, 'get');
   if (params) {
+    rb.query('autoCreate', params.autoCreate, {});
+    rb.query('carteiraId', params.carteiraId, {});
+    rb.query('periodo', params.periodo, {});
   }
 
   return http.request(

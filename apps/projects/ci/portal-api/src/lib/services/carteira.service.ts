@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-import { HttpClient, HttpContext, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -8,20 +8,19 @@ import { map } from 'rxjs/operators';
 import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
-import {
-  CarteiraDto,
-  CriarCarteiraPayloadDto,
-  DashboardCarteirasDto,
-  LancamentoPosicaoPayloadDto,
-  PeriodoDashboardCarteira,
-  TransacaoCarteiraDto,
-  VisaoGeralCarteiraDto
-} from '../../custom/portal-api-extensions';
 
 import { carteiraAvaliarRoleDeveloper } from '../fn/carteira/carteira-avaliar-role-developer';
 import { CarteiraAvaliarRoleDeveloper$Params } from '../fn/carteira/carteira-avaliar-role-developer';
+import { carteiraCriar } from '../fn/carteira/carteira-criar';
+import { CarteiraCriar$Params } from '../fn/carteira/carteira-criar';
+import { carteiraGetDashboard } from '../fn/carteira/carteira-get-dashboard';
+import { CarteiraGetDashboard$Params } from '../fn/carteira/carteira-get-dashboard';
 import { carteiraGetMinha } from '../fn/carteira/carteira-get-minha';
 import { CarteiraGetMinha$Params } from '../fn/carteira/carteira-get-minha';
+import { carteiraLancamentoPosicao } from '../fn/carteira/carteira-lancamento-posicao';
+import { CarteiraLancamentoPosicao$Params } from '../fn/carteira/carteira-lancamento-posicao';
+import { carteiraListar } from '../fn/carteira/carteira-listar';
+import { CarteiraListar$Params } from '../fn/carteira/carteira-listar';
 import { carteiraListarTransacoes } from '../fn/carteira/carteira-listar-transacoes';
 import { CarteiraListarTransacoes$Params } from '../fn/carteira/carteira-listar-transacoes';
 import { carteiraPagarFatura } from '../fn/carteira/carteira-pagar-fatura';
@@ -39,7 +38,7 @@ export class CarteiraService extends BaseService {
   static readonly CarteiraGetMinhaPath = '/Financeiro/Carteira/Minha';
 
   /**
-   * Obtém a carteira do usuário com saldo e histórico recente.
+   * Obtém a carteira selecionada, todas as carteiras do usuário, dashboard de ganhos/perdas e histórico recente.
    *
    *
    *
@@ -48,12 +47,12 @@ export class CarteiraService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  carteiraGetMinha$Response(params?: CarteiraGetMinha$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  carteiraGetMinha$Response(params: CarteiraGetMinha$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
     return carteiraGetMinha(this.http, this.rootUrl, params, context);
   }
 
   /**
-   * Obtém a carteira do usuário com saldo e histórico recente.
+   * Obtém a carteira selecionada, todas as carteiras do usuário, dashboard de ganhos/perdas e histórico recente.
    *
    *
    *
@@ -62,8 +61,140 @@ export class CarteiraService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  carteiraGetMinha(params?: CarteiraGetMinha$Params, context?: HttpContext): Observable<void> {
+  carteiraGetMinha(params: CarteiraGetMinha$Params, context?: HttpContext): Observable<void> {
     return this.carteiraGetMinha$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `carteiraGetDashboard()` */
+  static readonly CarteiraGetDashboardPath = '/Financeiro/Carteira/Dashboard';
+
+  /**
+   * Obtém o dashboard de visão geral das carteiras com evolução de ganhos e perdas ao longo do tempo.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `carteiraGetDashboard()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  carteiraGetDashboard$Response(params: CarteiraGetDashboard$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return carteiraGetDashboard(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtém o dashboard de visão geral das carteiras com evolução de ganhos e perdas ao longo do tempo.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `carteiraGetDashboard$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  carteiraGetDashboard(params: CarteiraGetDashboard$Params, context?: HttpContext): Observable<void> {
+    return this.carteiraGetDashboard$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `carteiraListar()` */
+  static readonly CarteiraListarPath = '/Financeiro/Carteira/Listar';
+
+  /**
+   * Lista todas as carteiras digitais do usuário.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `carteiraListar()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  carteiraListar$Response(params?: CarteiraListar$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return carteiraListar(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Lista todas as carteiras digitais do usuário.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `carteiraListar$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  carteiraListar(params?: CarteiraListar$Params, context?: HttpContext): Observable<void> {
+    return this.carteiraListar$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `carteiraCriar()` */
+  static readonly CarteiraCriarPath = '/Financeiro/Carteira/Criar';
+
+  /**
+   * Cria uma nova carteira digital para o usuário.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `carteiraCriar()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  carteiraCriar$Response(params: CarteiraCriar$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return carteiraCriar(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Cria uma nova carteira digital para o usuário.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `carteiraCriar$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  carteiraCriar(params: CarteiraCriar$Params, context?: HttpContext): Observable<void> {
+    return this.carteiraCriar$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `carteiraLancamentoPosicao()` */
+  static readonly CarteiraLancamentoPosicaoPath = '/Financeiro/Carteira/LancamentoPosicao';
+
+  /**
+   * Realiza lançamento ou atualiza diretamente a posição de uma carteira.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `carteiraLancamentoPosicao()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  carteiraLancamentoPosicao$Response(params: CarteiraLancamentoPosicao$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return carteiraLancamentoPosicao(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Realiza lançamento ou atualiza diretamente a posição de uma carteira.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `carteiraLancamentoPosicao$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  carteiraLancamentoPosicao(params: CarteiraLancamentoPosicao$Params, context?: HttpContext): Observable<void> {
+    return this.carteiraLancamentoPosicao$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
@@ -198,147 +329,6 @@ export class CarteiraService extends BaseService {
     return this.carteiraAvaliarRoleDeveloper$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
-  }
-
-  /**
-   * Obtém a visão geral da carteira do usuário autenticado.
-   * Se autoCreate for false (padrão), não cria carteira automaticamente e retorna possuiCarteira = false.
-   */
-  obterMinhaCarteira(autoCreate?: boolean, carteiraId?: string, periodo?: PeriodoDashboardCarteira): Observable<VisaoGeralCarteiraDto> {
-    const params: string[] = [];
-    if (autoCreate) params.push('autoCreate=true');
-    if (carteiraId) params.push(`carteiraId=${encodeURIComponent(carteiraId)}`);
-    if (periodo) params.push(`periodo=${encodeURIComponent(periodo)}`);
-    const qs = params.length ? `?${params.join('&')}` : '';
-    return this.http.get<VisaoGeralCarteiraDto>(`${this.rootUrl}/Financeiro/Carteira/Minha${qs}`);
-  }
-
-  /**
-   * Obtém o dashboard consolidado de ganhos, perdas, alocação e evolução temporal das carteiras.
-   */
-  obterDashboardCarteiras(periodo?: PeriodoDashboardCarteira, carteiraId?: string): Observable<DashboardCarteirasDto> {
-    const params: string[] = [];
-    if (periodo) params.push(`periodo=${encodeURIComponent(periodo)}`);
-    if (carteiraId) params.push(`carteiraId=${encodeURIComponent(carteiraId)}`);
-    const qs = params.length ? `?${params.join('&')}` : '';
-    return this.http.get<DashboardCarteirasDto>(`${this.rootUrl}/Financeiro/Carteira/Dashboard${qs}`);
-  }
-
-  /**
-   * Lista todas as carteiras do usuário autenticado.
-   */
-  listarCarteiras(): Observable<{ possuiCarteira: boolean; carteiras: CarteiraDto[] }> {
-    return this.http.get<{ possuiCarteira: boolean; carteiras: CarteiraDto[] }>(`${this.rootUrl}/Financeiro/Carteira/Listar`);
-  }
-
-  /**
-   * Cria explicitamente uma nova carteira digital (permitindo múltiplas carteiras com lastro real ou parametrizado).
-   */
-  criarCarteira(dados?: CriarCarteiraPayloadDto): Observable<{
-    possuiCarteira: boolean;
-    carteira: CarteiraDto;
-    carteiras?: CarteiraDto[];
-    criada: boolean;
-  }> {
-    return this.http.post<{
-      possuiCarteira: boolean;
-      carteira: CarteiraDto;
-      carteiras?: CarteiraDto[];
-      criada: boolean;
-    }>(`${this.rootUrl}/Financeiro/Carteira/Criar`, dados || {});
-  }
-
-  /**
-   * Realiza lançamento de movimentação ou atualização direta de posição da carteira.
-   */
-  lancarPosicaoCarteira(dados: LancamentoPosicaoPayloadDto): Observable<{
-    carteira: CarteiraDto;
-    transacao: TransacaoCarteiraDto;
-    carteiras: CarteiraDto[];
-    patrimonioTotalBrl: number;
-  }> {
-    return this.http.post<{
-      carteira: CarteiraDto;
-      transacao: TransacaoCarteiraDto;
-      carteiras: CarteiraDto[];
-      patrimonioTotalBrl: number;
-    }>(`${this.rootUrl}/Financeiro/Carteira/LancamentoPosicao`, dados);
-  }
-
-  /**
-   * Registra um depósito identificado na carteira do usuário.
-   */
-  registrarDeposito(dados: {
-    carteiraId?: string;
-    valor: number;
-    identificador?: string;
-    descricao?: string;
-    metadados?: any;
-  }): Observable<{ carteira: CarteiraDto; transacao: TransacaoCarteiraDto }> {
-    return this.http.post<{ carteira: CarteiraDto; transacao: TransacaoCarteiraDto }>(
-      `${this.rootUrl}/Financeiro/Carteira/Deposito`,
-      dados
-    );
-  }
-
-  /**
-   * Realiza o pagamento de uma fatura utilizando o saldo da carteira.
-   */
-  pagarFatura(dados: {
-    carteiraId?: string;
-    faturaId: string;
-    valor: number;
-    descricao?: string;
-    metadados?: any;
-  }): Observable<{ carteira: CarteiraDto; transacao: TransacaoCarteiraDto }> {
-    return this.http.post<{ carteira: CarteiraDto; transacao: TransacaoCarteiraDto }>(
-      `${this.rootUrl}/Financeiro/Carteira/PagarFatura`,
-      dados
-    );
-  }
-
-  /**
-   * Lista transações da carteira com filtros opcionais.
-   */
-  listarTransacoes(params?: {
-    carteiraId?: string;
-    tipo?: 'ENTRADA' | 'SAIDA';
-    categoria?: string;
-    de?: string;
-    ate?: string;
-    pagina?: number;
-    limite?: number;
-  }): Observable<{ itens: TransacaoCarteiraDto[]; total: number; pagina: number }> {
-    let httpParams = new HttpParams();
-    if (params?.carteiraId) httpParams = httpParams.set('carteiraId', params.carteiraId);
-    if (params?.tipo) httpParams = httpParams.set('tipo', params.tipo);
-    if (params?.categoria) httpParams = httpParams.set('categoria', params.categoria);
-    if (params?.de) httpParams = httpParams.set('de', params.de);
-    if (params?.ate) httpParams = httpParams.set('ate', params.ate);
-    if (params?.pagina) httpParams = httpParams.set('pagina', params.pagina.toString());
-    if (params?.limite) httpParams = httpParams.set('limite', params.limite.toString());
-
-    return this.http.get<{ itens: TransacaoCarteiraDto[]; total: number; pagina: number }>(
-      `${this.rootUrl}/Financeiro/Carteira/Transacoes`,
-      { params: httpParams }
-    );
-  }
-
-  /**
-   * Avalia e concede a ROLE DEVELOPER de cortesia por autoria e saldo.
-   */
-  avaliarRoleDeveloper(): Observable<{
-    promovido: boolean;
-    motivo: string;
-    user?: { id: string; email: string; roles: string[]; emailVerificado: boolean };
-    saldoAtual?: number;
-  }> {
-    return this.http.post<{
-      promovido: boolean;
-      motivo: string;
-      user?: { id: string; email: string; roles: string[]; emailVerificado: boolean };
-      saldoAtual?: number;
-    }>(`${this.rootUrl}/Financeiro/Carteira/AvaliarRoleDeveloper`, {});
   }
 
 }

@@ -3,6 +3,11 @@
 export interface PagarFaturaComCarteiraDto {
 
   /**
+   * ID da carteira pagadora (opcional; usa a principal caso omitido)
+   */
+  carteiraId?: string;
+
+  /**
    * Descrição do pagamento
    */
   descricao?: string;

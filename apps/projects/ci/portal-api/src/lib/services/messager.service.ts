@@ -9,6 +9,7 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { ConversationResponseDto } from '../models/conversation-response-dto';
 import { messagerGetConversations } from '../fn/messager/messager-get-conversations';
 import { MessagerGetConversations$Params } from '../fn/messager/messager-get-conversations';
 import { messagerGetMessages } from '../fn/messager/messager-get-messages';
@@ -35,7 +36,7 @@ export class MessagerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  messagerGetConversations$Response(params?: MessagerGetConversations$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  messagerGetConversations$Response(params?: MessagerGetConversations$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<ConversationResponseDto>>> {
     return messagerGetConversations(this.http, this.rootUrl, params, context);
   }
 
@@ -45,9 +46,9 @@ export class MessagerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  messagerGetConversations(params?: MessagerGetConversations$Params, context?: HttpContext): Observable<void> {
+  messagerGetConversations(params?: MessagerGetConversations$Params, context?: HttpContext): Observable<Array<ConversationResponseDto>> {
     return this.messagerGetConversations$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<Array<ConversationResponseDto>>): Array<ConversationResponseDto> => r.body)
     );
   }
 
@@ -58,9 +59,9 @@ export class MessagerService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `messagerStartConversation()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  messagerStartConversation$Response(params?: MessagerStartConversation$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  messagerStartConversation$Response(params: MessagerStartConversation$Params, context?: HttpContext): Observable<StrictHttpResponse<ConversationResponseDto>> {
     return messagerStartConversation(this.http, this.rootUrl, params, context);
   }
 
@@ -68,11 +69,11 @@ export class MessagerService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `messagerStartConversation$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  messagerStartConversation(params?: MessagerStartConversation$Params, context?: HttpContext): Observable<void> {
+  messagerStartConversation(params: MessagerStartConversation$Params, context?: HttpContext): Observable<ConversationResponseDto> {
     return this.messagerStartConversation$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<ConversationResponseDto>): ConversationResponseDto => r.body)
     );
   }
 
@@ -108,7 +109,7 @@ export class MessagerService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `messagerSendMessage()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
   messagerSendMessage$Response(params: MessagerSendMessage$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
     return messagerSendMessage(this.http, this.rootUrl, params, context);
@@ -118,7 +119,7 @@ export class MessagerService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `messagerSendMessage$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
   messagerSendMessage(params: MessagerSendMessage$Params, context?: HttpContext): Observable<void> {
     return this.messagerSendMessage$Response(params, context).pipe(

@@ -170,7 +170,7 @@ export class RegistrarComponent implements OnInit {
         this.stage = 'invite-error';
         return;
       }
-      this.inviteData = data;
+      this.inviteData = data as any;
       if (data.accepted) {
         this.stage = 'invite-already-accepted';
         return;

@@ -1,6 +1,6 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, HostListener, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, HostListener, Inject, OnInit, PLATFORM_ID, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,10 +24,11 @@ import { CoreModule } from '@ci/core';
 export class Home implements OnInit {
   locked = true;
   ngOnInit(): void {
+    setInterval(() => { this.time.set(new Date()) }, 1000);
   }
   localApps = [
   ]
-  get time() { return new Date() }
+  time = signal(new Date);
   barApps = [
     { icon: 'video_camera_back_add', name: 'Registrar momento', onClick: () => this.criarMomento() },
     { icon: 'phone', name: 'Ligações', onClick: () => this.criarLigacao() },

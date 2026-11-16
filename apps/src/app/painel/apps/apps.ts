@@ -81,7 +81,7 @@ export const CI_STATIC_APPS: IApp[] = [
         color: getColor(),
         url: '/Financeiro',
         name: 'Financeiro',
-        roles: ['MASTER'],
+        roles: ['USER'],
         icon: 'financeiro',
         type: 'svg'
     },

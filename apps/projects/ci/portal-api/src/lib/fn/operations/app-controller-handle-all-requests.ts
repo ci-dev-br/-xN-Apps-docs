@@ -25,4 +25,4 @@ export function appControllerHandleAllRequests(http: HttpClient, rootUrl: string
   );
 }
 
-appControllerHandleAllRequests.PATH = '/';
+appControllerHandleAllRequests.PATH = '/*';
