@@ -25,6 +25,12 @@ export interface Application {
   authors?: Array<string> | null;
 
   /**
+   * Conteúdo JSON da construção de telas em blocos e mapeamento de rotas da aplicação.
+   */
+  blocksContent?: {
+} | null;
+
+  /**
    * A categoria à qual a aplicação pertence. Isso ajuda na organização e filtragem das aplicações.
    */
   categoria?: string | null;

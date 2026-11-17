@@ -37,6 +37,7 @@ export { ConversationService } from './services/conversation.service';
 export { MessagerService } from './services/messager.service';
 export { ProductService } from './services/product.service';
 export { CodexService } from './services/codex.service';
+export { BlockService } from './services/block.service';
 export { PranchetaService } from './services/prancheta.service';
 export { UserService } from './services/user.service';
 export { SocialService } from './services/social.service';
