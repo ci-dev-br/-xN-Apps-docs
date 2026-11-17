@@ -211,6 +211,18 @@ export class Application {
     @ApiProperty({
         nullable: true,
         required: false,
+        title: 'Conteúdo em Blocos',
+        description: 'Conteúdo JSON da construção de telas em blocos e mapeamento de rotas da aplicação.',
+    })
+    @Column({
+        type: 'jsonb',
+        nullable: true,
+    })
+    blocksContent?: Record<string, any>;
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
         title: 'Módulos Integrados',
         description: 'Lista de módulos ou aplicações padrão contidos e combinados nesta aplicação.',
         type: 'string',

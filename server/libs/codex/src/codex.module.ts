@@ -7,11 +7,15 @@ import { CodigoFonte } from "./models/codigo-fonte.entity";
 import { File } from "./models/file.entity";
 import { TerminalService } from './service/terminal.service';
 import { Action } from "./models/action.entity";
+import { Block } from "./models/block.entity";
+import { BlockService } from "./service/block.service";
+import { BlockController } from "./controller/block.controller";
 
 export const CodeXEntities = [
     CodigoFonte,
     File,
     Action,
+    Block,
 ];
 
 @Module({
@@ -23,14 +27,17 @@ export const CodeXEntities = [
     ],
     controllers: [
         CodexController,
+        BlockController,
     ],
     providers: [
         CodexService,
         TerminalService,
+        BlockService,
     ],
     exports: [
         CodexService,
         TerminalService,
+        BlockService,
     ]
 })
 export class CodexModule { }
