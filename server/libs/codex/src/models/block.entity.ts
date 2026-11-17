@@ -2,6 +2,10 @@ import { Column, Entity } from "typeorm";
 import { schema } from "./schema";
 import { FullAuditedEntity } from "@ci/manager";
 import { ApiProperty } from "@nestjs/swagger";
+export interface BlockSpecification {
+    version: string;
+    name: string;
+}
 /**
  * Bloco de Construção
  */
@@ -14,6 +18,6 @@ export class Block extends FullAuditedEntity {
     @Column({ nullable: true })
     lang?: string;
     @ApiProperty({})
-    @Column({ nullable: true })
-    code?: string;
+    @Column({ nullable: true, type: 'jsonb' })
+    code?: BlockSpecification;
 }

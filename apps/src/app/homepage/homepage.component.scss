@@ -6,6 +6,12 @@
     height: 100%;
     min-height: 0;
     overflow: hidden; // Previne barras de rolagem duplicadas no host da página
+    font-family: 'Times New Roman', Times, serif;
+
+    ::ng-deep * {
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 14px !important;
+    }
 }
 
 // Barras de navegação e tickers fixos no topo

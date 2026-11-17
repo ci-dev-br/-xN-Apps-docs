@@ -76,7 +76,7 @@ O projeto deve atualizar sozinho corretamente. Porém pode ser que ocorram falha
     2.2.4. Habilitando Banco do nó como arquivo SQL Server.
     3. Habilitando Servço SMTP na sua aplicação;
 
-
+http://refreegames.bol.com.br/http://refreegames.bol.com.br/
 
 ---
 ## Referências externas

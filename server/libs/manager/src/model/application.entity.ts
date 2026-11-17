@@ -19,7 +19,6 @@ import {
 import {
     User
 } from "@ci/auth/models/user.entity";
-
 /**
  *  * Entidade de Aplicação
  *

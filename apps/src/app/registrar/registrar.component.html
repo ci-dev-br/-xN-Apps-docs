@@ -45,7 +45,8 @@
 
         <mat-form-field appearance="outline">
             <mat-label>E-mail do Convidado</mat-label>
-            <input matInput type="email" placeholder="seu.email@dominio.com" formControlName="email" [readonly]="!!inviteData?.email" required>
+            <input matInput type="email" placeholder="seu.email@dominio.com" formControlName="email"
+                [readonly]="!!inviteData?.email" required>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -75,7 +76,8 @@
 
         <mat-form-field appearance="outline">
             <mat-label>Confirmar Senha</mat-label>
-            <input matInput type="password" placeholder="Repita a senha" formControlName="passwordConfirmation" required>
+            <input matInput type="password" placeholder="Repita a senha" formControlName="passwordConfirmation"
+                required>
         </mat-form-field>
 
         @if(passwordsMismatch){
@@ -83,7 +85,8 @@
         }
 
         <mat-checkbox formControlName="acceptTerms">
-            Concordo em concluir meu cadastro na plataforma com perfil <strong>USER</strong> e acesso imediato à <strong>Loja de Aplicativos</strong>.
+            Concordo em concluir meu cadastro na plataforma com perfil <strong>USER</strong> e acesso imediato à
+            <strong>Loja de Aplicativos</strong>.
         </mat-checkbox>
 
         <button mat-raised-button color="accent" type="submit"
@@ -99,7 +102,8 @@
             Sua conta foi configurada com o papel padrão <strong>USER</strong>.
         </p>
         <p>
-            O aplicativo da <strong>Loja</strong> já está ativo em sua conta e todos os aplicativos correspondentes ao seu papel (<strong>USER</strong>) estão liberados para assinar.
+            O aplicativo da <strong>Loja</strong> já está ativo em sua conta e todos os aplicativos correspondentes ao
+            seu papel (<strong>USER</strong>) estão liberados para assinar.
         </p>
         <button mat-raised-button color="primary" type="button" (click)="irParaLoja()">
             Abrir Loja de Aplicativos
@@ -121,7 +125,7 @@
             Caso já possua uma conta ci.dev.br, <a routerLink="/acessar" href="/acessar">acesse aqui.</a>
         </small>
         }@else if(stage==='checking_email'){
-        Verifique seu e-mail
+        {{mensagemConclusao}}
         }@else{
         Preparando sua conta, isso pode levar até 1 minuto...
         }

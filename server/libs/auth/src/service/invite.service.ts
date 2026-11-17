@@ -127,21 +127,21 @@ export class InviteService {
     /**
      * Sincroniza (cadastra/atualiza) a entidade Invite diretamente e envia o invite-hash por e-mail.
      */
-    async sync(data: Partial<Invite>, req?: any) {
-        if (!data) {
+    async sync(convite: Partial<Invite>, req?: any) {
+        if (!convite) {
             throw new BadRequestException('Dados do convite não informados.');
         }
         const originUrl = req?.headers?.origin || (req?.headers?.referer ? new URL(req.headers.referer).origin : undefined);
         const chaveAcesso = req?.chaveAcesso;
 
-        if (!data.internalId) {
+        if (!convite.internalId) {
             return await this.sendInvitation(
                 {
-                    email: data.email!,
-                    friendlyName: data.friendlyName,
-                    mensagem: data.mensagem,
-                    phoneSMS: data.phoneSMS,
-                    roles: data.roles,
+                    email: convite.email!,
+                    friendlyName: convite.friendlyName,
+                    mensagem: convite.mensagem,
+                    phoneSMS: convite.phoneSMS,
+                    roles: convite.roles,
                 },
                 req?.user,
                 originUrl,
@@ -149,15 +149,15 @@ export class InviteService {
             );
         }
 
-        let existing = await this.repository.findOne({ where: { internalId: data.internalId } });
+        let existing = await this.repository.findOne({ where: { internalId: convite.internalId } });
         if (!existing) {
             return await this.sendInvitation(
                 {
-                    email: data.email!,
-                    friendlyName: data.friendlyName,
-                    mensagem: data.mensagem,
-                    phoneSMS: data.phoneSMS,
-                    roles: data.roles,
+                    email: convite.email!,
+                    friendlyName: convite.friendlyName,
+                    mensagem: convite.mensagem,
+                    phoneSMS: convite.phoneSMS,
+                    roles: convite.roles,
                 },
                 req?.user,
                 originUrl,
@@ -166,12 +166,12 @@ export class InviteService {
         }
 
         Object.assign(existing, {
-            email: data.email ?? existing.email,
-            friendlyName: data.friendlyName ?? existing.friendlyName,
-            mensagem: data.mensagem ?? existing.mensagem,
-            phoneSMS: data.phoneSMS ?? existing.phoneSMS,
-            phoneWhatsApp: data.phoneWhatsApp ?? existing.phoneWhatsApp,
-            roles: data.roles && data.roles.length > 0 ? data.roles : (existing.roles || ['USER']),
+            email: convite.email ?? existing.email,
+            friendlyName: convite.friendlyName ?? existing.friendlyName,
+            mensagem: convite.mensagem ?? existing.mensagem,
+            phoneSMS: convite.phoneSMS ?? existing.phoneSMS,
+            phoneWhatsApp: convite.phoneWhatsApp ?? existing.phoneWhatsApp,
+            roles: convite.roles && convite.roles.length > 0 ? convite.roles : (existing.roles || ['USER']),
         });
         if (!existing.inviteHash && existing.email) {
             existing.inviteHash = this.generateHash(existing.email, existing.createdAt);

@@ -3,7 +3,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { EditarDetailComponent, EditarDetailModule } from '@ci/components/editar-detail';
 import { ApplicationService } from '@ci/portal-api';
-
+/**
+ * 
+ */
 @Component({
     selector: 'ci-home',
     imports: [
@@ -21,7 +23,6 @@ export class HomeComponent {
     ) { }
     async novo() {
         const new_application = {};
-        // this.applicationService.sync({})
         this.dialog.open(EditarDetailComponent, {
             data: {
                 schemaName: 'Application',
@@ -29,4 +30,5 @@ export class HomeComponent {
             }
         });
     }
+    // TODO: implementar construtor de interfaces
 }

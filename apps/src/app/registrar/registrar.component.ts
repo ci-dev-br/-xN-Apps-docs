@@ -161,7 +161,7 @@ export class RegistrarComponent implements OnInit {
         this.inviteService.get({
           body: {
             convite: hash,
-            ...( { invite: hash, inviteHash: hash } as any )
+            ...({ invite: hash, inviteHash: hash } as any)
           }
         })
       );
@@ -223,7 +223,7 @@ export class RegistrarComponent implements OnInit {
             password: val.password || undefined,
             emailAuthorization: true,
             phoneAuthorization: Boolean(val.phone),
-            ...( { invite: this.inviteHash, convite: this.inviteHash } as any ),
+            ...({ invite: this.inviteHash, convite: this.inviteHash } as any),
           }
         })
       );
@@ -237,7 +237,7 @@ export class RegistrarComponent implements OnInit {
           }
         });
         await this.userService.identificarUsuario(this.registeredUser);
-        this.catalogService?.refreshMyActivations().subscribe({ error: () => {} });
+        this.catalogService?.refreshMyActivations().subscribe({ error: () => { } });
       }
 
       if (typeof document !== 'undefined') {
@@ -275,6 +275,7 @@ export class RegistrarComponent implements OnInit {
     );
     if (values.emailAuthorization) {
       this.stage = 'checking_email';
+      this.mensagemConclusao = 'Verifique seu ' + (IsEmail(contact) ? 'e-mail' : 'telefone') + '. ';
     } else {
       this.stage = 'waiting_register';
     }
@@ -286,5 +287,7 @@ export class RegistrarComponent implements OnInit {
   async continue() {
     return this.next();
   }
+
+  mensagemConclusao?: string;
 }
 

@@ -44,6 +44,7 @@ export class RegisterController {
                     }
                     this.mails.requestSendMessageToMail({
                         template_html: 'bem-vindo',
+                        // TODO: alterar para o e-mail cadastrado na aplicação do domínio.
                         from: 'apps@ci.dev.br',
                         to: input.email,
                     })
