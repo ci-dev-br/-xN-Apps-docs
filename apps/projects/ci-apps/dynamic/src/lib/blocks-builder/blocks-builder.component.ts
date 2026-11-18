@@ -6,13 +6,21 @@ import {
     OnChanges,
     Output,
     SimpleChanges,
+    ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+    CdkDragDrop,
+    DragDropModule,
+    moveItemInArray,
+    transferArrayItem,
+} from '@angular/cdk/drag-drop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -24,6 +32,13 @@ import {
     DynamicComponentDefinition,
 } from './blocks-builder.models';
 
+export interface BlockContextMenuContext {
+    block: DynamicBlockNode;
+    list: DynamicBlockNode[];
+    index: number;
+    isChild: boolean;
+}
+
 @Component({
     selector: 'ci-blocks-builder',
     standalone: true,
@@ -32,9 +47,11 @@ import {
         FormsModule,
         DragDropModule,
         MatButtonModule,
+        MatDividerModule,
         MatIconModule,
         MatFormFieldModule,
         MatInputModule,
+        MatMenuModule,
         MatSelectModule,
         MatSlideToggleModule,
         MatTabsModule,
@@ -56,6 +73,9 @@ export class BlocksBuilderComponent implements OnChanges {
     /** Emite quando o usuário aciona explicitamente o salvamento */
     @Output() saveRequested = new EventEmitter<DynamicBlockSpecification>();
 
+    @ViewChild('blockContextTrigger') blockContextTrigger?: MatMenuTrigger;
+    @ViewChild('canvasContextTrigger') canvasContextTrigger?: MatMenuTrigger;
+
     protected spec: DynamicBlockSpecification = this.createEmptySpec();
     protected selectedBlockId: string | null = null;
     protected paletteSearch = '';
@@ -63,6 +83,9 @@ export class BlocksBuilderComponent implements OnChanges {
     protected jsonDraft = '';
     protected jsonError: string | null = null;
     protected jsonDraftMap: Record<string, string> = {};
+
+    protected contextMenuPosition = { x: '0px', y: '0px' };
+    protected contextMenuData: BlockContextMenuContext | null = null;
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['value']) {
@@ -101,7 +124,7 @@ export class BlocksBuilderComponent implements OnChanges {
         return (this.availableComponents || []).find(c => c.name === componentName);
     }
 
-    addBlock(component: DynamicComponentDefinition, parentBlock?: DynamicBlockNode): void {
+    createBlockFromDefinition(component: DynamicComponentDefinition): DynamicBlockNode {
         const inputs: Record<string, any> = {};
         for (const inputDef of component.inputs || []) {
             if (inputDef.defaultValue !== undefined) {
@@ -109,18 +132,34 @@ export class BlocksBuilderComponent implements OnChanges {
             }
         }
 
-        const newBlock: DynamicBlockNode = {
+        return {
             id: this.generateId(),
             componentName: component.name,
             label: component.title,
             inputs,
             children: component.allowChildren ? [] : undefined,
         };
+    }
+
+    addBlock(component: DynamicComponentDefinition, parentBlock?: DynamicBlockNode, insertIndex?: number): void {
+        const newBlock = this.createBlockFromDefinition(component);
 
         if (parentBlock && this.getComponentDefinition(parentBlock.componentName)?.allowChildren) {
-            parentBlock.children = [...(parentBlock.children || []), newBlock];
+            const children = [...(parentBlock.children || [])];
+            if (insertIndex !== undefined && insertIndex >= 0 && insertIndex <= children.length) {
+                children.splice(insertIndex, 0, newBlock);
+            } else {
+                children.push(newBlock);
+            }
+            parentBlock.children = children;
         } else {
-            this.spec.blocks = [...(this.spec.blocks || []), newBlock];
+            const rootBlocks = [...(this.spec.blocks || [])];
+            if (insertIndex !== undefined && insertIndex >= 0 && insertIndex <= rootBlocks.length) {
+                rootBlocks.splice(insertIndex, 0, newBlock);
+            } else {
+                rootBlocks.push(newBlock);
+            }
+            this.spec.blocks = rootBlocks;
         }
 
         this.selectedBlockId = newBlock.id;
@@ -173,10 +212,98 @@ export class BlocksBuilderComponent implements OnChanges {
         this.emitChange();
     }
 
-    onDropBlock(event: CdkDragDrop<DynamicBlockNode[]>, list: DynamicBlockNode[]): void {
-        if (event.previousIndex === event.currentIndex) return;
-        moveItemInArray(list, event.previousIndex, event.currentIndex);
+    moveBlockToRoot(ctx: BlockContextMenuContext): void {
+        if (!ctx.isChild) return;
+        const rootBlocks = this.spec.blocks || (this.spec.blocks = []);
+        const idx = ctx.list.findIndex(b => b.id === ctx.block.id);
+        if (idx >= 0) {
+            transferArrayItem(ctx.list, rootBlocks, idx, rootBlocks.length);
+            this.selectedBlockId = ctx.block.id;
+            this.emitChange();
+        }
+    }
+
+    copyBlockJson(block: DynamicBlockNode): void {
+        if (typeof navigator !== 'undefined' && navigator.clipboard) {
+            navigator.clipboard.writeText(JSON.stringify(block, null, 2)).catch(() => {});
+        }
+    }
+
+    clearAllBlocks(): void {
+        this.spec.blocks = [];
+        this.selectedBlockId = null;
         this.emitChange();
+    }
+
+    onDropBlock(event: CdkDragDrop<DynamicBlockNode[]>, targetList: DynamicBlockNode[], targetParent?: DynamicBlockNode): void {
+        // Caso 1: Arrastado da paleta de componentes para o canvas ou container
+        if (event.previousContainer.id === 'palette-drop-list') {
+            const comp = event.item.data as DynamicComponentDefinition | undefined;
+            if (!comp) return;
+            const newBlock = this.createBlockFromDefinition(comp);
+            if (targetParent && !targetParent.children) {
+                targetParent.children = [];
+            }
+            targetList.splice(event.currentIndex, 0, newBlock);
+            this.selectedBlockId = newBlock.id;
+            this.syncBlockInputJsonDrafts();
+            this.emitChange();
+            return;
+        }
+
+        // Caso 2: Reordenação dentro da mesma lista
+        if (event.previousContainer === event.container) {
+            if (event.previousIndex === event.currentIndex) return;
+            moveItemInArray(targetList, event.previousIndex, event.currentIndex);
+            this.emitChange();
+            return;
+        }
+
+        // Caso 3: Transferência entre listas (raiz <-> container ou entre containers)
+        const draggedBlock = event.item.data as DynamicBlockNode | undefined;
+        if (targetParent && draggedBlock) {
+            if (draggedBlock.id === targetParent.id || this.findBlockById(draggedBlock.children || [], targetParent.id)) {
+                return;
+            }
+        }
+
+        transferArrayItem(
+            event.previousContainer.data,
+            targetList,
+            event.previousIndex,
+            event.currentIndex
+        );
+        this.emitChange();
+    }
+
+    openBlockContextMenu(
+        event: MouseEvent,
+        block: DynamicBlockNode,
+        list: DynamicBlockNode[],
+        index: number,
+        isChild = false
+    ): void {
+        event.preventDefault();
+        event.stopPropagation();
+        this.selectBlock(block);
+        this.contextMenuData = { block, list, index, isChild };
+        this.contextMenuPosition = {
+            x: `${event.clientX}px`,
+            y: `${event.clientY}px`,
+        };
+        this.canvasContextTrigger?.closeMenu();
+        this.blockContextTrigger?.openMenu();
+    }
+
+    openCanvasContextMenu(event: MouseEvent): void {
+        event.preventDefault();
+        event.stopPropagation();
+        this.contextMenuPosition = {
+            x: `${event.clientX}px`,
+            y: `${event.clientY}px`,
+        };
+        this.blockContextTrigger?.closeMenu();
+        this.canvasContextTrigger?.openMenu();
     }
 
     onSpecFieldChange(): void {

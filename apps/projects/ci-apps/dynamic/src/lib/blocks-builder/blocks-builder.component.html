@@ -1,5 +1,5 @@
-<div class="builder-shell">
-    <!-- Painel Esquerdo: Paleta de Componentes -->
+<div class="builder-shell" cdkDropListGroup>
+    <!-- Painel Esquerdo: Paleta de Componentes (Arrastável + Clique) -->
     <aside class="palette-pane">
         <div class="pane-header">
             <div class="pane-title">
@@ -15,11 +15,18 @@
             <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
 
-        <div class="palette-list">
+        <div
+            class="palette-list"
+            id="palette-drop-list"
+            cdkDropList
+            [cdkDropListData]="filteredComponents"
+            [cdkDropListSortingDisabled]="true">
             <button
                 type="button"
                 class="palette-item"
                 *ngFor="let comp of filteredComponents; trackBy: trackByName"
+                cdkDrag
+                [cdkDragData]="comp"
                 (click)="addToSelectedOrRoot(comp)"
                 [matTooltip]="comp.description || comp.title">
                 <div class="palette-icon">
@@ -32,7 +39,12 @@
                         <span>{{ comp.inputs.length }} input(s)</span>
                     </div>
                 </div>
-                <mat-icon class="add-icon">add_circle_outline</mat-icon>
+                <mat-icon class="add-icon">drag_indicator</mat-icon>
+
+                <div *cdkDragPreview class="drag-preview-chip">
+                    <mat-icon>{{ comp.icon || 'extension' }}</mat-icon>
+                    <span>{{ comp.title }}</span>
+                </div>
             </button>
 
             <div class="empty-hint" *ngIf="filteredComponents.length === 0">
@@ -74,7 +86,7 @@
         <mat-tab-group [(selectedIndex)]="activeTabIndex" class="canvas-tabs">
             <!-- Aba 1: Estrutura em Blocos -->
             <mat-tab label="Estrutura ({{ spec.blocks?.length || 0 }})">
-                <div class="canvas-scroll">
+                <div class="canvas-scroll" (contextmenu)="openCanvasContextMenu($event)">
                     <div
                         cdkDropList
                         [cdkDropListData]="spec.blocks || []"
@@ -86,13 +98,17 @@
                         <div
                             *ngFor="let block of spec.blocks; let i = index; trackBy: trackById"
                             cdkDrag
+                            [cdkDragData]="block"
                             class="block-card"
                             [class.selected]="block.id === selectedBlockId"
-                            (click)="selectBlock(block, $event)">
+                            (click)="selectBlock(block, $event)"
+                            (contextmenu)="openBlockContextMenu($event, block, spec.blocks!, i, false)">
+
+                            <div class="block-drag-placeholder" *cdkDragPlaceholder></div>
 
                             <div class="block-card-header">
                                 <div class="block-title-group">
-                                    <mat-icon cdkDragHandle class="drag-handle" matTooltip="Arrastar para reordenar">drag_indicator</mat-icon>
+                                    <mat-icon cdkDragHandle class="drag-handle" matTooltip="Arrastar para reordenar ou mover">drag_indicator</mat-icon>
                                     <mat-icon class="comp-icon">{{ getComponentDefinition(block.componentName)?.icon || 'view_module' }}</mat-icon>
                                     <span class="block-label">{{ block.label || block.componentName }}</span>
                                     <code class="block-type">{{ block.componentName }}</code>
@@ -111,6 +127,9 @@
                                     <button mat-icon-button color="warn" (click)="removeBlock(block.id, spec.blocks!, $event)" matTooltip="Remover bloco">
                                         <mat-icon>delete</mat-icon>
                                     </button>
+                                    <button mat-icon-button (click)="openBlockContextMenu($any($event), block, spec.blocks!, i, false)" matTooltip="Ações rápidas">
+                                        <mat-icon>more_vert</mat-icon>
+                                    </button>
                                 </div>
                             </div>
 
@@ -128,14 +147,17 @@
                                 <div
                                     cdkDropList
                                     [cdkDropListData]="block.children || []"
-                                    (cdkDropListDropped)="onDropBlock($event, block.children || [])"
+                                    (cdkDropListDropped)="onDropBlock($event, block.children || [], block)"
                                     class="children-dropzone">
                                     <div
                                         *ngFor="let child of block.children; let ci = index; trackBy: trackById"
                                         cdkDrag
+                                        [cdkDragData]="child"
                                         class="child-block-card"
                                         [class.selected]="child.id === selectedBlockId"
-                                        (click)="selectBlock(child, $event)">
+                                        (click)="selectBlock(child, $event)"
+                                        (contextmenu)="openBlockContextMenu($event, child, block.children!, ci, true)">
+                                        <div class="block-drag-placeholder" *cdkDragPlaceholder></div>
                                         <div class="block-card-header">
                                             <div class="block-title-group">
                                                 <mat-icon cdkDragHandle class="drag-handle">drag_indicator</mat-icon>
@@ -150,11 +172,14 @@
                                                 <button mat-icon-button color="warn" (click)="removeBlock(child.id, block.children!, $event)" matTooltip="Remover">
                                                     <mat-icon>delete</mat-icon>
                                                 </button>
+                                                <button mat-icon-button (click)="openBlockContextMenu($any($event), child, block.children!, ci, true)" matTooltip="Ações rápidas">
+                                                    <mat-icon>more_vert</mat-icon>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="empty-children" *ngIf="!block.children || block.children.length === 0">
-                                        Selecione este container e clique em um componente à esquerda para adicioná-lo aqui.
+                                        Arraste componentes ou blocos para dentro deste container.
                                     </div>
                                 </div>
                             </div>
@@ -163,7 +188,7 @@
                         <div class="empty-canvas" *ngIf="!spec.blocks || spec.blocks.length === 0">
                             <mat-icon>dashboard_customize</mat-icon>
                             <p>Nenhum bloco adicionado ainda.</p>
-                            <span>Clique em um componente na paleta à esquerda para iniciar a construção da tela.</span>
+                            <span>Arraste ou clique em um componente à esquerda (ou use o botão direito aqui) para iniciar a construção da tela.</span>
                         </div>
                     </div>
                 </div>
@@ -315,6 +340,92 @@
         </ng-template>
     </aside>
 </div>
+
+<!-- Triggers posicionáveis para Context Menu (Material MatMenu) -->
+<div
+    class="context-menu-anchor"
+    [style.left]="contextMenuPosition.x"
+    [style.top]="contextMenuPosition.y"
+    #blockContextTrigger="matMenuTrigger"
+    [matMenuTriggerFor]="blockContextMenu">
+</div>
+<div
+    class="context-menu-anchor"
+    [style.left]="contextMenuPosition.x"
+    [style.top]="contextMenuPosition.y"
+    #canvasContextTrigger="matMenuTrigger"
+    [matMenuTriggerFor]="canvasContextMenu">
+</div>
+
+<!-- Context Menu de Ações Rápidas para Bloco -->
+<mat-menu #blockContextMenu="matMenu">
+    <ng-container *ngIf="contextMenuData as ctx">
+        <button mat-menu-item (click)="selectBlock(ctx.block)">
+            <mat-icon>tune</mat-icon>
+            <span>Editar Inputs</span>
+        </button>
+        <button mat-menu-item (click)="moveBlock(ctx.list, ctx.index, -1)" [disabled]="ctx.index === 0">
+            <mat-icon>arrow_upward</mat-icon>
+            <span>Mover para cima</span>
+        </button>
+        <button mat-menu-item (click)="moveBlock(ctx.list, ctx.index, 1)" [disabled]="ctx.index === ctx.list.length - 1">
+            <mat-icon>arrow_downward</mat-icon>
+            <span>Mover para baixo</span>
+        </button>
+        <button mat-menu-item *ngIf="ctx.isChild" (click)="moveBlockToRoot(ctx)">
+            <mat-icon>drive_file_move_rtl</mat-icon>
+            <span>Mover para raiz</span>
+        </button>
+        <button mat-menu-item (click)="duplicateBlock(ctx.block, ctx.list)">
+            <mat-icon>content_copy</mat-icon>
+            <span>Duplicar bloco</span>
+        </button>
+        <button mat-menu-item (click)="copyBlockJson(ctx.block)">
+            <mat-icon>data_object</mat-icon>
+            <span>Copiar JSON do bloco</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="removeBlock(ctx.block.id, ctx.list)">
+            <mat-icon color="warn">delete</mat-icon>
+            <span>Remover bloco</span>
+        </button>
+    </ng-container>
+</mat-menu>
+
+<!-- Context Menu de Ações Rápidas para o Canvas -->
+<mat-menu #canvasContextMenu="matMenu">
+    <button mat-menu-item [matMenuTriggerFor]="addComponentSubmenu">
+        <mat-icon>add_box</mat-icon>
+        <span>Adicionar componente</span>
+    </button>
+    <button mat-menu-item (click)="activeTabIndex = 1">
+        <mat-icon>visibility</mat-icon>
+        <span>Pré-visualizar tela</span>
+    </button>
+    <button mat-menu-item (click)="activeTabIndex = 2">
+        <mat-icon>code</mat-icon>
+        <span>Ver / Editar JSON</span>
+    </button>
+    <button mat-menu-item (click)="requestSave()">
+        <mat-icon>save</mat-icon>
+        <span>Salvar tela</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="clearAllBlocks()" [disabled]="!spec.blocks?.length">
+        <mat-icon color="warn">delete_sweep</mat-icon>
+        <span>Limpar todos os blocos</span>
+    </button>
+</mat-menu>
+
+<mat-menu #addComponentSubmenu="matMenu">
+    <button
+        mat-menu-item
+        *ngFor="let comp of availableComponents; trackBy: trackByName"
+        (click)="addBlock(comp)">
+        <mat-icon>{{ comp.icon || 'extension' }}</mat-icon>
+        <span>{{ comp.title }}</span>
+    </button>
+</mat-menu>
 
 <!-- Template recursivo para pré-visualização de blocos -->
 <ng-template #previewNode let-block>

@@ -76,4 +76,38 @@ describe('BlocksBuilderComponent', () => {
         expect(emitted.blocks[0].componentName).toBe('custom-card');
         expect(emitted.blocks[0].inputs).toEqual({ titulo: 'Olá', ativo: true });
     });
+
+    it('deve criar bloco ao soltar componente da paleta via drag-and-drop', () => {
+        const targetList: any[] = [];
+        builder.onDropBlock(
+            {
+                previousContainer: { id: 'palette-drop-list', data: sampleComponents } as any,
+                container: { id: 'canvas-list', data: targetList } as any,
+                previousIndex: 0,
+                currentIndex: 0,
+                item: { data: sampleComponents[0] } as any,
+                isPointerOverContainer: true,
+                distance: { x: 0, y: 0 },
+                dropPoint: { x: 0, y: 0 },
+                event: new MouseEvent('mouseup'),
+            },
+            targetList
+        );
+
+        expect(targetList.length).toBe(1);
+        expect(targetList[0].componentName).toBe('custom-card');
+        expect(targetList[0].inputs).toEqual({ titulo: 'Olá', ativo: true });
+    });
+
+    it('deve abrir o context menu do bloco com dados da posição e contexto', () => {
+        builder.addBlock(sampleComponents[0]);
+        const blocks = (builder as any).spec.blocks;
+        const mouseEvent = new MouseEvent('contextmenu', { clientX: 140, clientY: 220 });
+
+        builder.openBlockContextMenu(mouseEvent, blocks[0], blocks, 0, false);
+
+        expect((builder as any).contextMenuPosition).toEqual({ x: '140px', y: '220px' });
+        expect((builder as any).contextMenuData?.block.id).toBe(blocks[0].id);
+        expect((builder as any).contextMenuData?.isChild).toBeFalse();
+    });
 });
