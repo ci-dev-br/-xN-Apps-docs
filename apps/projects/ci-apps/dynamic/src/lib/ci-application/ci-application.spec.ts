@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -297,7 +297,11 @@ describe('ComponentPreviewComponent', () => {
 });
 
 @Component({ selector: 'ci-mock-codex', standalone: true, template: '<div class="mock-codex">CodeX Mock</div>' })
-class MockCodexEditorComponent { }
+class MockCodexEditorComponent {
+    @Input() language?: string;
+    @Input() value?: string;
+    @Input() originalValue?: string;
+}
 
 describe('BlockHistoryDialogComponent', () => {
     it('deve carregar snapshots e injetar o CodeX indiretamente via metadados (Apps)', async () => {

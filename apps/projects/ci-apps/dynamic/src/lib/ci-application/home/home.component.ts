@@ -11,7 +11,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavbarContextAction, NavbarService } from '@ci/components';
-import { EditarDetailComponent, EditarDetailModule } from '@ci/components/editar-detail';
+import { EditarDetailComponent } from '@ci/components/editar-detail';
 import { Application, ApplicationService, Block, BlockService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
 import { BlocksBuilderComponent } from '../../blocks-builder/blocks-builder.component';
@@ -43,7 +43,6 @@ import { BlockHistoryDialogComponent } from '../../block-history/block-history-d
         MatSelectModule,
         MatSnackBarModule,
         MatTooltipModule,
-        EditarDetailModule,
         BlocksBuilderComponent,
     ],
     templateUrl: './home.component.html',
