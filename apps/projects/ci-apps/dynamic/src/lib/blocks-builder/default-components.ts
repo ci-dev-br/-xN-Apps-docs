@@ -1,9 +1,13 @@
 import { DynamicComponentDefinition } from './blocks-builder.models';
 
 /**
- * Catálogo padrão de componentes disponíveis para construção de telas em blocos no Dynamic.
+ * Catálogo padrão de componentes disponíveis para construção de telas em blocos no Dynamic,
+ * incluindo blocos base do Dynamic e os componentes implementados em `@ci/components`.
  */
 export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
+    // =========================================================================
+    // Blocos Base do Dynamic
+    // =========================================================================
     {
         name: 'container',
         title: 'Container / Seção',
@@ -148,5 +152,324 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
             { name: 'pageSize', label: 'Itens por Página', type: 'number', defaultValue: 10 },
             { name: 'sortable', label: 'Permitir Ordenação', type: 'boolean', defaultValue: true },
         ],
+    },
+
+    // =========================================================================
+    // Componentes de @ci/components (apps/projects/ci/components/src/lib)
+    // =========================================================================
+    {
+        name: 'ci-master-detail',
+        title: 'Master Detail (CRUD)',
+        description: 'Listagem e CRUD completo orientado a schema (@ci/components/master-detail).',
+        icon: 'dataset',
+        category: '@ci/components',
+        inputs: [
+            { name: 'schemaName', label: 'Schema da Entidade', type: 'string', defaultValue: '', required: true },
+            { name: 'visualizacao', label: 'Visualização', type: 'select', defaultValue: 'table', options: [
+                { label: 'Tabela', value: 'table' },
+                { label: 'Lista', value: 'list' },
+                { label: 'Miniaturas', value: 'thumbnails' },
+            ]},
+            { name: 'gridOptions', label: 'Opções da Grade (JSON)', type: 'json', defaultValue: { columns: [] } },
+        ],
+    },
+    {
+        name: 'ci-editar-detail',
+        title: 'Editar Detail',
+        description: 'Formulário de edição automática de entidade por schema (@ci/components/editar-detail).',
+        icon: 'edit_note',
+        category: '@ci/components',
+        inputs: [
+            { name: 'schemaName', label: 'Schema da Entidade', type: 'string', defaultValue: '', required: true },
+        ],
+    },
+    {
+        name: 'ci-data-grid',
+        title: 'Data Grid',
+        description: 'Grade de dados com filtros por coluna e seleção (@ci/components/data-grid).',
+        icon: 'grid_on',
+        category: '@ci/components',
+        inputs: [
+            { name: 'enableColumnFilters', label: 'Filtros por Coluna', type: 'boolean', defaultValue: false },
+            { name: 'selectionMode', label: 'Modo de Seleção', type: 'select', defaultValue: 'row', options: [
+                { label: 'Linha', value: 'row' },
+                { label: 'Múltiplas Linhas', value: 'multi-row' },
+                { label: 'Célula', value: 'cell' },
+                { label: 'Múltiplas Células', value: 'multi-cell' },
+                { label: 'Múltiplo', value: 'multi' },
+            ]},
+            { name: 'filters', label: 'Filtros (JSON)', type: 'json', defaultValue: {} },
+            { name: 'source', label: 'Dados (JSON)', type: 'json', defaultValue: [] },
+        ],
+    },
+    {
+        name: 'ci-data-list',
+        title: 'Data List',
+        description: 'Lista dinâmica de itens com seleção (@ci/components).',
+        icon: 'list_alt',
+        category: '@ci/components',
+        inputs: [
+            { name: 'source', label: 'Itens (JSON)', type: 'json', defaultValue: [] },
+            { name: 'options', label: 'Opções da Lista (JSON)', type: 'json', defaultValue: {} },
+        ],
+    },
+    {
+        name: 'ci-data-detail-view',
+        title: 'Data Detail View',
+        description: 'Visualização detalhada de registro por schema (@ci/components).',
+        icon: 'pageview',
+        category: '@ci/components',
+        inputs: [
+            { name: 'schemaName', label: 'Schema da Entidade', type: 'string', defaultValue: '' },
+        ],
+    },
+    {
+        name: 'ci-dyn-form',
+        title: 'Dyn Form',
+        description: 'Formulário dinâmico baseado em schema (@ci/components/dyn-form).',
+        icon: 'assignment',
+        category: '@ci/components',
+        inputs: [
+            { name: 'schemaName', label: 'Schema da Entidade', type: 'string', defaultValue: '' },
+        ],
+    },
+    {
+        name: 'ci-dyn-input',
+        title: 'Dyn Input',
+        description: 'Campo de entrada dinâmico (@ci/components/dyn-form).',
+        icon: 'input',
+        category: '@ci/components',
+        inputs: [
+            { name: 'label', label: 'Rótulo', type: 'string', defaultValue: 'Campo' },
+            { name: 'placeholder', label: 'Placeholder', type: 'string', defaultValue: '' },
+            { name: 'hint', label: 'Dica (Hint)', type: 'string', defaultValue: '' },
+            { name: 'description', label: 'Descrição', type: 'string', defaultValue: '' },
+            { name: 'format', label: 'Formato', type: 'string', defaultValue: '' },
+            { name: 'isArray', label: 'Múltiplos Valores (Array)', type: 'boolean', defaultValue: false },
+            { name: 'enumOptions', label: 'Opções Enum (JSON)', type: 'json', defaultValue: [] },
+        ],
+    },
+    {
+        name: 'ci-input',
+        title: 'CI Input / Texto Editável',
+        description: 'Campo de entrada ou conteúdo editável inline (@ci/components).',
+        icon: 'text_fields',
+        category: '@ci/components',
+        inputs: [
+            { name: 'mode', label: 'Modo', type: 'select', defaultValue: 'input', options: [
+                { label: 'Input', value: 'input' },
+                { label: 'Conteúdo Editável', value: 'content-editable' },
+            ]},
+            { name: 'stage', label: 'Estágio', type: 'select', defaultValue: 'view', options: [
+                { label: 'Visualização', value: 'view' },
+                { label: 'Edição', value: 'edit' },
+            ]},
+            { name: 'fieldName', label: 'Nome do Campo', type: 'string', defaultValue: '' },
+            { name: 'label', label: 'Rótulo', type: 'string', defaultValue: 'Campo' },
+            { name: 'placeholder', label: 'Placeholder', type: 'string', defaultValue: '' },
+            { name: 'el', label: 'Elemento HTML', type: 'select', defaultValue: 'p', options: [
+                { label: 'Parágrafo (p)', value: 'p' },
+                { label: 'H1', value: 'h1' },
+                { label: 'H2', value: 'h2' },
+                { label: 'H3', value: 'h3' },
+                { label: 'Div', value: 'div' },
+                { label: 'HTML', value: 'html' },
+            ]},
+        ],
+    },
+    {
+        name: 'ci-board',
+        title: 'Board (Dashboard em Cards)',
+        description: 'Prancheta de dashboard modular com cards arrastáveis (@ci/components).',
+        icon: 'dashboard',
+        category: '@ci/components',
+        inputs: [
+            { name: 'default', label: 'Prancheta Padrão', type: 'string', defaultValue: '' },
+            { name: 'scope', label: 'Escopo', type: 'select', defaultValue: 'USER', options: [
+                { label: 'Usuário (USER)', value: 'USER' },
+                { label: 'Tenant (TENANT)', value: 'TENANT' },
+            ]},
+            { name: 'allowCustomization', label: 'Permitir Customização', type: 'boolean', defaultValue: true },
+            { name: 'customTitle', label: 'Título Customizado', type: 'string', defaultValue: '' },
+        ],
+    },
+    {
+        name: 'ci-app-quick-card',
+        title: 'App Quick Card',
+        description: 'Cartão de atalho rápido para aplicativo (@ci/components).',
+        icon: 'apps',
+        category: '@ci/components',
+        inputs: [
+            { name: 'appName', label: 'Nome do App', type: 'string', defaultValue: 'Aplicativo' },
+            { name: 'appUrl', label: 'URL de Destino', type: 'string', defaultValue: '/painel' },
+            { name: 'appIcon', label: 'Ícone Material', type: 'string', defaultValue: 'apps' },
+            { name: 'appColor', label: 'Cor', type: 'color', defaultValue: '#3f51b5' },
+            { name: 'appCategory', label: 'Categoria', type: 'string', defaultValue: 'Geral' },
+            { name: 'appDescription', label: 'Descrição', type: 'textarea', defaultValue: '' },
+        ],
+    },
+    {
+        name: 'ci-cardboard',
+        title: 'Cardboard',
+        description: 'Container de cartão dinâmico (@ci/components/cardboard).',
+        icon: 'crop_square',
+        category: '@ci/components',
+        allowChildren: true,
+        inputs: [
+            { name: 'componentRef', label: 'Componente Referenciado', type: 'string', defaultValue: '' },
+        ],
+    },
+    {
+        name: 'ci-calendar',
+        title: 'Calendar',
+        description: 'Calendário com modos dia, mês e ano (@ci/components/calendar).',
+        icon: 'calendar_month',
+        category: '@ci/components',
+        inputs: [
+            { name: 'viewMode', label: 'Modo de Visão', type: 'select', defaultValue: 'month', options: [
+                { label: 'Dia', value: 'day' },
+                { label: 'Mês', value: 'month' },
+                { label: 'Ano', value: 'year' },
+            ]},
+        ],
+    },
+    {
+        name: 'ci-action',
+        title: 'Action Button',
+        description: 'Botão de ação com ícone e rótulo (@ci/components/action).',
+        icon: 'touch_app',
+        category: '@ci/components',
+        inputs: [
+            { name: 'label', label: 'Rótulo', type: 'string', defaultValue: 'Ação' },
+            { name: 'icon', label: 'Ícone Material', type: 'string', defaultValue: 'bolt' },
+        ],
+    },
+    {
+        name: 'ci-icon',
+        title: 'CI Icon',
+        description: 'Exibição de ícone Material, SVG ou Imagem (@ci/components).',
+        icon: 'interests',
+        category: '@ci/components',
+        inputs: [
+            { name: 'mode', label: 'Modo', type: 'select', defaultValue: 'material', options: [
+                { label: 'Material Icon', value: 'material' },
+                { label: 'SVG', value: 'svg' },
+                { label: 'Imagem', value: 'img' },
+            ]},
+            { name: 'icon', label: 'Nome / Caminho do Ícone', type: 'string', defaultValue: 'star' },
+        ],
+    },
+    {
+        name: 'ci-file',
+        title: 'File Card',
+        description: 'Visualização de arquivo/mídia com miniatura e descrição (@ci/components).',
+        icon: 'insert_drive_file',
+        category: '@ci/components',
+        inputs: [
+            { name: 'title', label: 'Título', type: 'string', defaultValue: 'Arquivo' },
+            { name: 'icon', label: 'Ícone', type: 'string', defaultValue: 'description' },
+            { name: 'image', label: 'URL da Imagem', type: 'string', defaultValue: '' },
+            { name: 'view', label: 'Modo de Visão', type: 'string', defaultValue: 'card' },
+            { name: 'description', label: 'Descrição', type: 'textarea', defaultValue: '' },
+        ],
+    },
+    {
+        name: 'ci-navbar',
+        title: 'Navbar',
+        description: 'Barra de navegação superior com menus e perfil (@ci/components).',
+        icon: 'web_asset',
+        category: '@ci/components',
+        inputs: [
+            { name: 'menuItens', label: 'Itens de Menu (JSON)', type: 'json', defaultValue: [] },
+            { name: 'userMenuList', label: 'Menu do Usuário (JSON)', type: 'json', defaultValue: [] },
+            { name: 'endMenu', label: 'Menu Direita (JSON)', type: 'json', defaultValue: [] },
+        ],
+    },
+    {
+        name: 'ci-l-nav',
+        title: 'Left Nav (Menu Lateral)',
+        description: 'Navegação lateral retrátil (@ci/components).',
+        icon: 'menu_open',
+        category: '@ci/components',
+        allowChildren: true,
+        inputs: [],
+    },
+    {
+        name: 'ci-footer',
+        title: 'Footer',
+        description: 'Rodapé padrão da aplicação (@ci/components).',
+        icon: 'call_to_action',
+        category: '@ci/components',
+        inputs: [],
+    },
+    {
+        name: 'ci-status-bar',
+        title: 'Status Bar',
+        description: 'Barra de status inferior (@ci/components).',
+        icon: 'horizontal_rule',
+        category: '@ci/components',
+        inputs: [],
+    },
+    {
+        name: 'ci-logo',
+        title: 'Logo',
+        description: 'Logotipo clicável com link (@ci/components).',
+        icon: 'verified',
+        category: '@ci/components',
+        inputs: [
+            { name: 'link', label: 'Link de Destino', type: 'string', defaultValue: '/' },
+        ],
+    },
+    {
+        name: 'ci-pesquisar',
+        title: 'Pesquisar',
+        description: 'Componente de busca rápida (@ci/components).',
+        icon: 'search',
+        category: '@ci/components',
+        inputs: [],
+    },
+    {
+        name: 'ci-settings',
+        title: 'Settings',
+        description: 'Painel de configurações dinâmicas (@ci/components/settings).',
+        icon: 'settings',
+        category: '@ci/components',
+        inputs: [],
+    },
+    {
+        name: 'ci-window',
+        title: 'Window',
+        description: 'Janela flutuante com suporte a conteúdo interno (@ci/components/window).',
+        icon: 'picture_in_picture',
+        category: '@ci/components',
+        allowChildren: true,
+        inputs: [],
+    },
+    {
+        name: 'ci-terminal',
+        title: 'Terminal',
+        description: 'Emulador de terminal integrado (@ci/components/terminal).',
+        icon: 'terminal',
+        category: '@ci/components',
+        inputs: [
+            { name: 'options', label: 'Opções xterm (JSON)', type: 'json', defaultValue: { theme: { background: '#000000' } } },
+            { name: 'dataStream', label: 'Stream Inicial', type: 'textarea', defaultValue: '' },
+        ],
+    },
+    {
+        name: 'ci-keyboard',
+        title: 'Keyboard (Sintetizador)',
+        description: 'Teclado musical interativo (@ci/components/keyboard).',
+        icon: 'piano',
+        category: '@ci/components',
+        inputs: [],
+    },
+    {
+        name: 'aio-chat',
+        title: 'AIO Chat Ultrassônico',
+        description: 'Comunicação via áudio ultrassônico (@ci/components/aio).',
+        icon: 'graphic_eq',
+        category: '@ci/components',
+        inputs: [],
     },
 ];

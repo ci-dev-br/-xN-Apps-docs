@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-18T00:30:16" id="0" hostname="plhx33" tests="7" errors="0" failures="0" time="1.485">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="Àpps Dynamic, Início Componente criado com sucesso" time="0.948" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps Dynamic, Início"/>
+  <testcase name="BlocksBuilderComponent deve abrir o context menu do bloco com dados da posição e contexto" time="0.093" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve criar bloco ao soltar componente da paleta via drag-and-drop" time="0.187" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve inserir bloco e atualizar o JSON ao soltar componente na aba JSON" time="0.057" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve inserir bloco interno ao soltar componente da paleta dentro de um container" time="0.083" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve adicionar bloco com inputs padrão a partir da lista de componentes" time="0.059" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve permitir arrastar e reordenar blocos internamente em componentes com children aninhados" time="0.058" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>
