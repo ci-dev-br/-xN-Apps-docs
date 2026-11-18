@@ -88,8 +88,8 @@ export class BlocksBuilderComponent implements OnChanges {
     protected contextMenuData: BlockContextMenuContext | null = null;
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['value']) {
-            this.spec = this.normalizeSpec(this.value);
+        if (changes['value'] || changes['availableComponents']) {
+            this.spec = this.normalizeSpec(this.value ?? this.spec);
             if (this.selectedBlockId && !this.findBlockById(this.spec.blocks || [], this.selectedBlockId)) {
                 this.selectedBlockId = null;
             }
@@ -236,15 +236,16 @@ export class BlocksBuilderComponent implements OnChanges {
     }
 
     onDropBlock(event: CdkDragDrop<DynamicBlockNode[]>, targetList: DynamicBlockNode[], targetParent?: DynamicBlockNode): void {
+        const destinationList = targetParent
+            ? (targetParent.children ??= [])
+            : (this.spec.blocks ??= []);
+
         // Caso 1: Arrastado da paleta de componentes para o canvas ou container
         if (event.previousContainer.id === 'palette-drop-list') {
             const comp = event.item.data as DynamicComponentDefinition | undefined;
             if (!comp) return;
             const newBlock = this.createBlockFromDefinition(comp);
-            if (targetParent && !targetParent.children) {
-                targetParent.children = [];
-            }
-            targetList.splice(event.currentIndex, 0, newBlock);
+            destinationList.splice(event.currentIndex, 0, newBlock);
             this.selectedBlockId = newBlock.id;
             this.syncBlockInputJsonDrafts();
             this.emitChange();
@@ -254,7 +255,7 @@ export class BlocksBuilderComponent implements OnChanges {
         // Caso 2: Reordenação dentro da mesma lista
         if (event.previousContainer === event.container) {
             if (event.previousIndex === event.currentIndex) return;
-            moveItemInArray(targetList, event.previousIndex, event.currentIndex);
+            moveItemInArray(destinationList, event.previousIndex, event.currentIndex);
             this.emitChange();
             return;
         }
@@ -269,11 +270,18 @@ export class BlocksBuilderComponent implements OnChanges {
 
         transferArrayItem(
             event.previousContainer.data,
-            targetList,
+            destinationList,
             event.previousIndex,
             event.currentIndex
         );
         this.emitChange();
+    }
+
+    onDropJsonPalette(event: CdkDragDrop<DynamicBlockNode[]>): void {
+        if (event.previousContainer.id !== 'palette-drop-list') return;
+        const comp = event.item.data as DynamicComponentDefinition | undefined;
+        if (!comp) return;
+        this.addToSelectedOrRoot(comp);
     }
 
     openBlockContextMenu(
@@ -454,9 +462,21 @@ export class BlocksBuilderComponent implements OnChanges {
             name: input.name || 'Nova Tela',
             route: input.route || '',
             layout: input.layout || 'vertical',
-            blocks: Array.isArray(input.blocks) ? this.deepClone(input.blocks) : [],
+            blocks: Array.isArray(input.blocks) ? this.normalizeBlocks(this.deepClone(input.blocks)) : [],
             metadata: input.metadata ? this.deepClone(input.metadata) : {},
         };
+    }
+
+    private normalizeBlocks(blocks: DynamicBlockNode[]): DynamicBlockNode[] {
+        return blocks.map(block => {
+            const def = this.getComponentDefinition(block.componentName);
+            const hasChildren = def?.allowChildren || Array.isArray(block.children);
+            return {
+                ...block,
+                inputs: block.inputs || {},
+                children: hasChildren ? this.normalizeBlocks(block.children || []) : undefined,
+            };
+        });
     }
 
     private createEmptySpec(): DynamicBlockSpecification {
