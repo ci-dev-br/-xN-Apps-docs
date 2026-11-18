@@ -26,6 +26,7 @@
     <ci-blocks-builder
         [availableComponents]="availableComponents"
         [(value)]="currentSpec"
-        (saveRequested)="salvarBloco($event)">
+        (saveRequested)="salvarBloco($event)"
+        (previewBlockRequested)="abrirPreviewComponente($event)">
     </ci-blocks-builder>
 </main>

@@ -212,6 +212,14 @@
                 <mat-icon>tune</mat-icon>
                 <span>Propriedades / Inputs</span>
             </div>
+            <button
+                *ngIf="selectedBlock as sb"
+                mat-icon-button
+                color="primary"
+                (click)="previewBlock(sb, $event)"
+                matTooltip="Visualizar apenas este componente em rota isolada">
+                <mat-icon>open_in_new</mat-icon>
+            </button>
         </div>
 
         <div class="inspector-body" *ngIf="selectedBlock as block; else noSelection">
@@ -339,6 +347,10 @@
             <mat-icon>tune</mat-icon>
             <span>Editar Inputs</span>
         </button>
+        <button mat-menu-item (click)="previewBlock(ctx.block)">
+            <mat-icon>open_in_new</mat-icon>
+            <span>Visualizar isolado</span>
+        </button>
         <button mat-menu-item (click)="moveBlock(ctx.list, ctx.index, -1)" [disabled]="ctx.index === 0">
             <mat-icon>arrow_upward</mat-icon>
             <span>Mover para cima</span>
@@ -429,6 +441,9 @@
                 </button>
                 <button mat-icon-button (click)="moveBlock(list, index, 1, $event)" [disabled]="index === list.length - 1" matTooltip="Mover para baixo">
                     <mat-icon>arrow_downward</mat-icon>
+                </button>
+                <button mat-icon-button (click)="previewBlock(block, $event)" matTooltip="Visualizar componente em rota isolada">
+                    <mat-icon>open_in_new</mat-icon>
                 </button>
                 <button mat-icon-button (click)="duplicateBlock(block, list, $event)" matTooltip="Duplicar bloco">
                     <mat-icon>content_copy</mat-icon>

@@ -73,6 +73,9 @@ export class BlocksBuilderComponent implements OnChanges {
     /** Emite quando o usuário aciona explicitamente o salvamento */
     @Output() saveRequested = new EventEmitter<DynamicBlockSpecification>();
 
+    /** Emite quando o usuário solicita visualizar apenas este componente em rota isolada */
+    @Output() previewBlockRequested = new EventEmitter<DynamicBlockNode>();
+
     @ViewChild('blockContextTrigger') blockContextTrigger?: MatMenuTrigger;
     @ViewChild('canvasContextTrigger') canvasContextTrigger?: MatMenuTrigger;
 
@@ -389,6 +392,11 @@ export class BlocksBuilderComponent implements OnChanges {
 
     requestSave(): void {
         this.saveRequested.emit(this.deepClone(this.spec));
+    }
+
+    previewBlock(block: DynamicBlockNode, event?: Event): void {
+        event?.stopPropagation();
+        this.previewBlockRequested.emit(this.deepClone(block));
     }
 
     trackById(_index: number, item: DynamicBlockNode): string {

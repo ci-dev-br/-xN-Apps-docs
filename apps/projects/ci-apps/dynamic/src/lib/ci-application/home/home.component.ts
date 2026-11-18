@@ -9,16 +9,19 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NavbarContextAction, NavbarService } from '@ci/components';
 import { EditarDetailComponent, EditarDetailModule } from '@ci/components/editar-detail';
 import { Application, ApplicationService, Block, BlockService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
 import { BlocksBuilderComponent } from '../../blocks-builder/blocks-builder.component';
 import {
+    DynamicBlockNode,
     DynamicBlockSpecification,
     DynamicComponentDefinition,
 } from '../../blocks-builder/blocks-builder.models';
 import { DYNAMIC_DEFAULT_COMPONENTS } from '../../blocks-builder/default-components';
+import { DYNAMIC_PREVIEW_STORAGE_KEY } from '../../component-preview/component-preview.component';
 
 /**
  * Tela principal do módulo Dynamic (/Dynamic).
@@ -65,6 +68,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         @Optional() private blockService?: BlockService,
         @Optional() private snackBar?: MatSnackBar,
         @Optional() private navbarService?: NavbarService,
+        @Optional() private router?: Router,
+        @Optional() private route?: ActivatedRoute,
     ) { }
 
     async ngOnInit(): Promise<void> {
@@ -310,6 +315,22 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.notify('Permissão insuficiente ou erro ao atualizar Application.');
         } finally {
             this.saving = false;
+        }
+    }
+
+    abrirPreviewComponente(block: DynamicBlockNode): void {
+        if (typeof sessionStorage !== 'undefined') {
+            try {
+                sessionStorage.setItem(DYNAMIC_PREVIEW_STORAGE_KEY, JSON.stringify(block));
+            } catch { }
+        }
+        if (this.router && this.route) {
+            this.router.navigate(['preview'], {
+                relativeTo: this.route,
+                state: { block },
+            });
+        } else {
+            this.router?.navigate(['/Dynamic/preview'], { state: { block } });
         }
     }
 

@@ -250,6 +250,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Visualização detalhada de registro por schema (@ci/components).',
         icon: 'pageview',
         category: '@ci/components',
+        componentRef: DataDetailViewComponent,
         inputs: [
             { name: 'schemaName', label: 'Schema da Entidade', type: 'string', defaultValue: '' },
         ],
@@ -405,6 +406,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Visualização de arquivo/mídia com miniatura e descrição (@ci/components).',
         icon: 'insert_drive_file',
         category: '@ci/components',
+        componentRef: FileComponent,
         inputs: [
             { name: 'title', label: 'Título', type: 'string', defaultValue: 'Arquivo' },
             { name: 'icon', label: 'Ícone', type: 'string', defaultValue: 'description' },
@@ -419,6 +421,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Barra de navegação superior com menus e perfil (@ci/components).',
         icon: 'web_asset',
         category: '@ci/components',
+        componentRef: NavbarComponent,
         inputs: [
             { name: 'menuItens', label: 'Itens de Menu (JSON)', type: 'json', defaultValue: [] },
             { name: 'userMenuList', label: 'Menu do Usuário (JSON)', type: 'json', defaultValue: [] },
@@ -431,6 +434,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Navegação lateral retrátil (@ci/components).',
         icon: 'menu_open',
         category: '@ci/components',
+        componentRef: LNavComponent,
         allowChildren: true,
         inputs: [],
     },
@@ -440,6 +444,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Rodapé padrão da aplicação (@ci/components).',
         icon: 'call_to_action',
         category: '@ci/components',
+        componentRef: FooterComponent,
         inputs: [],
     },
     {
@@ -448,6 +453,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Barra de status inferior (@ci/components).',
         icon: 'horizontal_rule',
         category: '@ci/components',
+        componentRef: StatusBarComponent,
         inputs: [],
     },
     {
@@ -456,6 +462,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Logotipo clicável com link (@ci/components).',
         icon: 'verified',
         category: '@ci/components',
+        componentRef: LogoComponent,
         inputs: [
             { name: 'link', label: 'Link de Destino', type: 'string', defaultValue: '/' },
         ],
@@ -466,6 +473,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Componente de busca rápida (@ci/components).',
         icon: 'search',
         category: '@ci/components',
+        componentRef: PesquisarComponent,
         inputs: [],
     },
     {
@@ -474,6 +482,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Painel de configurações dinâmicas (@ci/components/settings).',
         icon: 'settings',
         category: '@ci/components',
+        componentRef: SettingsComponent,
         inputs: [],
     },
     {
@@ -482,6 +491,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Janela flutuante com suporte a conteúdo interno (@ci/components/window).',
         icon: 'picture_in_picture',
         category: '@ci/components',
+        componentRef: WindowComponent,
         allowChildren: true,
         inputs: [],
     },
@@ -491,6 +501,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Emulador de terminal integrado (@ci/components/terminal).',
         icon: 'terminal',
         category: '@ci/components',
+        componentRef: TerminalComponent,
         inputs: [
             { name: 'options', label: 'Opções xterm (JSON)', type: 'json', defaultValue: { theme: { background: '#000000' } } },
             { name: 'dataStream', label: 'Stream Inicial', type: 'textarea', defaultValue: '' },
@@ -502,6 +513,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Teclado musical interativo (@ci/components/keyboard).',
         icon: 'piano',
         category: '@ci/components',
+        componentRef: KeyboardComponent,
         inputs: [],
     },
     {
@@ -509,7 +521,8 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         title: 'AIO Chat Ultrassônico',
         description: 'Comunicação via áudio ultrassônico (@ci/components/aio).',
         icon: 'graphic_eq',
-        category: '@ci/components',
+        category: '@ci/components/aio',
+        componentRef: AIOChatComponent,
         inputs: [],
     },
 ];
