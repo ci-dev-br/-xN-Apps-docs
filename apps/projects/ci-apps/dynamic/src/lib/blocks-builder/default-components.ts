@@ -1,3 +1,30 @@
+import {
+    AppQuickCardComponent,
+    BoardComponent,
+    DataDetailViewComponent,
+    DataListComponent,
+    FileComponent,
+    FooterComponent,
+    IconComponent,
+    InputComponent,
+    LNavComponent,
+    LogoComponent,
+    NavbarComponent,
+    PesquisarComponent,
+    StatusBarComponent,
+} from '@ci/components';
+import { ActionComponent } from '@ci/components/action';
+import { AIOChatComponent } from '@ci/components/aio';
+import { CalendarComponent } from '@ci/components/calendar';
+import { CardboardComponent } from '@ci/components/cardboard';
+import { DataGridComponent } from '@ci/components/data-grid';
+import { DynFormComponent, DynInputComponent } from '@ci/components/dyn-form';
+import { EditarDetailComponent } from '@ci/components/editar-detail';
+import { KeyboardComponent } from '@ci/components/keyboard';
+import { MasterDetailComponent } from '@ci/components/master-detail';
+import { SettingsComponent } from '@ci/components/settings';
+import { TerminalComponent } from '@ci/components/terminal';
+import { WindowComponent } from '@ci/components/window';
 import { DynamicComponentDefinition } from './blocks-builder.models';
 
 /**
@@ -163,6 +190,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Listagem e CRUD completo orientado a schema (@ci/components/master-detail).',
         icon: 'dataset',
         category: '@ci/components',
+        componentRef: MasterDetailComponent,
         inputs: [
             { name: 'schemaName', label: 'Schema da Entidade', type: 'string', defaultValue: '', required: true },
             { name: 'visualizacao', label: 'Visualização', type: 'select', defaultValue: 'table', options: [
@@ -179,6 +207,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Formulário de edição automática de entidade por schema (@ci/components/editar-detail).',
         icon: 'edit_note',
         category: '@ci/components',
+        componentRef: EditarDetailComponent,
         inputs: [
             { name: 'schemaName', label: 'Schema da Entidade', type: 'string', defaultValue: '', required: true },
         ],
