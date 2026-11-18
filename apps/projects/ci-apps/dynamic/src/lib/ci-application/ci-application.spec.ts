@@ -78,7 +78,7 @@ describe('BlocksBuilderComponent', () => {
     });
 
     it('deve criar bloco ao soltar componente da paleta via drag-and-drop', () => {
-        const targetList: any[] = [];
+        const targetList = (builder as any).spec.blocks;
         builder.onDropBlock(
             {
                 previousContainer: { id: 'palette-drop-list', data: sampleComponents } as any,
@@ -109,5 +109,55 @@ describe('BlocksBuilderComponent', () => {
         expect((builder as any).contextMenuPosition).toEqual({ x: '140px', y: '220px' });
         expect((builder as any).contextMenuData?.block.id).toBe(blocks[0].id);
         expect((builder as any).contextMenuData?.isChild).toBeFalse();
+    });
+
+    it('deve inserir bloco interno ao soltar componente da paleta dentro de um container', () => {
+        const containerDef: DynamicComponentDefinition = {
+            name: 'container',
+            title: 'Container',
+            allowChildren: true,
+            inputs: [],
+        };
+        builder.availableComponents = [containerDef, ...sampleComponents];
+        builder.addBlock(containerDef);
+        const containerBlock = (builder as any).spec.blocks[0];
+        delete containerBlock.children;
+
+        builder.onDropBlock(
+            {
+                previousContainer: { id: 'palette-drop-list', data: builder.availableComponents } as any,
+                container: { id: 'child-list', data: [] } as any,
+                previousIndex: 1,
+                currentIndex: 0,
+                item: { data: sampleComponents[0] } as any,
+                isPointerOverContainer: true,
+                distance: { x: 0, y: 0 },
+                dropPoint: { x: 0, y: 0 },
+                event: new MouseEvent('mouseup'),
+            },
+            [],
+            containerBlock
+        );
+
+        expect(containerBlock.children.length).toBe(1);
+        expect(containerBlock.children[0].componentName).toBe('custom-card');
+    });
+
+    it('deve inserir bloco e atualizar o JSON ao soltar componente na aba JSON', () => {
+        builder.onDropJsonPalette({
+            previousContainer: { id: 'palette-drop-list', data: sampleComponents } as any,
+            container: { id: 'json-drop-list', data: [] } as any,
+            previousIndex: 0,
+            currentIndex: 0,
+            item: { data: sampleComponents[0] } as any,
+            isPointerOverContainer: true,
+            distance: { x: 0, y: 0 },
+            dropPoint: { x: 0, y: 0 },
+            event: new MouseEvent('mouseup'),
+        });
+
+        const parsed = JSON.parse((builder as any).jsonDraft);
+        expect(parsed.blocks.length).toBe(1);
+        expect(parsed.blocks[0].componentName).toBe('custom-card');
     });
 });

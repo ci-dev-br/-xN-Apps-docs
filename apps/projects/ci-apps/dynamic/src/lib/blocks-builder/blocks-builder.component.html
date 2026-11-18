@@ -146,8 +146,8 @@
                                 </div>
                                 <div
                                     cdkDropList
-                                    [cdkDropListData]="block.children || []"
-                                    (cdkDropListDropped)="onDropBlock($event, block.children || [], block)"
+                                    [cdkDropListData]="block.children!"
+                                    (cdkDropListDropped)="onDropBlock($event, block.children!, block)"
                                     class="children-dropzone">
                                     <div
                                         *ngFor="let child of block.children; let ci = index; trackBy: trackById"
@@ -194,34 +194,64 @@
                 </div>
             </mat-tab>
 
-            <!-- Aba 2: Pré-visualização ao Vivo -->
+            <!-- Aba 2: Pré-visualização ao Vivo (com Drag-and-Drop e Context Menu) -->
             <mat-tab label="Pré-visualização">
-                <div class="canvas-scroll preview-surface"
-                     [class.layout-horizontal]="spec.layout === 'horizontal'"
-                     [class.layout-grid]="spec.layout === 'grid'">
-                    <ng-container *ngFor="let block of spec.blocks; trackBy: trackById">
-                        <ng-container *ngTemplateOutlet="previewNode; context: { $implicit: block }"></ng-container>
-                    </ng-container>
+                <div class="canvas-scroll" (contextmenu)="openCanvasContextMenu($event)">
+                    <div
+                        cdkDropList
+                        [cdkDropListData]="spec.blocks!"
+                        (cdkDropListDropped)="onDropBlock($event, spec.blocks!)"
+                        class="preview-surface"
+                        [class.layout-horizontal]="spec.layout === 'horizontal'"
+                        [class.layout-grid]="spec.layout === 'grid'">
 
-                    <div class="empty-canvas" *ngIf="!spec.blocks || spec.blocks.length === 0">
-                        <mat-icon>visibility_off</mat-icon>
-                        <p>Adicione blocos para visualizar a tela.</p>
+                        <div
+                            *ngFor="let block of spec.blocks; let i = index; trackBy: trackById"
+                            cdkDrag
+                            [cdkDragData]="block"
+                            class="preview-drag-item"
+                            [class.selected]="block.id === selectedBlockId"
+                            (click)="selectBlock(block, $event)"
+                            (contextmenu)="openBlockContextMenu($event, block, spec.blocks!, i, false)">
+                            <div class="block-drag-placeholder" *cdkDragPlaceholder></div>
+                            <span class="preview-drag-handle" cdkDragHandle matTooltip="Arrastar bloco">
+                                <mat-icon>drag_indicator</mat-icon>
+                                {{ block.label || block.componentName }}
+                            </span>
+                            <ng-container *ngTemplateOutlet="previewNode; context: { $implicit: block }"></ng-container>
+                        </div>
+
+                        <div class="empty-canvas" *ngIf="!spec.blocks || spec.blocks.length === 0">
+                            <mat-icon>visibility_off</mat-icon>
+                            <p>Adicione ou arraste blocos para visualizar a tela.</p>
+                        </div>
                     </div>
                 </div>
             </mat-tab>
 
-            <!-- Aba 3: JSON -->
+            <!-- Aba 3: JSON (com Drag-and-Drop da paleta) -->
             <mat-tab label="JSON">
-                <div class="json-editor-pane">
+                <div
+                    class="json-editor-pane"
+                    cdkDropList
+                    [cdkDropListData]="spec.blocks!"
+                    [cdkDropListSortingDisabled]="true"
+                    (cdkDropListDropped)="onDropJsonPalette($event)">
                     <div class="json-actions">
-                        <button mat-stroked-button (click)="copyJson()">
-                            <mat-icon>content_copy</mat-icon>
-                            Copiar JSON
-                        </button>
-                        <button mat-flat-button color="primary" (click)="applyRawJson()">
-                            <mat-icon>check</mat-icon>
-                            Aplicar JSON
-                        </button>
+                        <span class="json-drop-hint">
+                            <mat-icon>drag_indicator</mat-icon>
+                            Arraste componentes da paleta para inserir no JSON
+                        </span>
+                        <div class="json-buttons">
+                            <button mat-stroked-button (click)="copyJson()">
+                                <mat-icon>content_copy</mat-icon>
+                                Copiar JSON
+                            </button>
+                            <button mat-flat-button color="primary" (click)="applyRawJson()">
+                                <mat-icon>check</mat-icon>
+                                Aplicar JSON
+                            </button>
+                        </div>
                     </div>
                     <div class="json-error" *ngIf="jsonError">{{ jsonError }}</div>
                     <textarea class="json-textarea" [(ngModel)]="jsonDraft" spellcheck="false"></textarea>
@@ -437,15 +467,30 @@
         <div class="preview-block" [ngSwitch]="block.componentName">
             <!-- Container -->
             <div *ngSwitchCase="'container'"
+                 cdkDropList
+                 [cdkDropListData]="block.children!"
+                 (cdkDropListDropped)="onDropBlock($event, block.children!, block)"
                  class="pv-container"
                  [style.flexDirection]="block.inputs?.['direction'] || 'column'"
                  [style.gap.px]="block.inputs?.['gap'] ?? 12"
                  [style.padding.px]="block.inputs?.['padding'] ?? 16"
                  [style.background]="block.inputs?.['background'] || '#ffffff'">
-                <ng-container *ngFor="let child of block.children; trackBy: trackById">
+                <div
+                    *ngFor="let child of block.children; let ci = index; trackBy: trackById"
+                    cdkDrag
+                    [cdkDragData]="child"
+                    class="preview-drag-item preview-child-item"
+                    [class.selected]="child.id === selectedBlockId"
+                    (click)="selectBlock(child, $event)"
+                    (contextmenu)="openBlockContextMenu($event, child, block.children!, ci, true)">
+                    <div class="block-drag-placeholder" *cdkDragPlaceholder></div>
+                    <span class="preview-drag-handle" cdkDragHandle matTooltip="Arrastar bloco interno">
+                        <mat-icon>drag_indicator</mat-icon>
+                        {{ child.label || child.componentName }}
+                    </span>
                     <ng-container *ngTemplateOutlet="previewNode; context: { $implicit: child }"></ng-container>
-                </ng-container>
-                <div class="pv-empty-container" *ngIf="!block.children?.length">Container vazio</div>
+                </div>
+                <div class="pv-empty-container" *ngIf="!block.children?.length">Container vazio — arraste blocos aqui</div>
             </div>
 
             <!-- Heading -->
@@ -493,10 +538,27 @@
                     <strong>{{ block.inputs?.['title'] || 'Dialog' }}</strong>
                     <mat-icon *ngIf="block.inputs?.['showClose'] !== false">close</mat-icon>
                 </div>
-                <div class="pv-dialog-body">
-                    <ng-container *ngFor="let child of block.children; trackBy: trackById">
+                <div
+                    class="pv-dialog-body"
+                    cdkDropList
+                    [cdkDropListData]="block.children!"
+                    (cdkDropListDropped)="onDropBlock($event, block.children!, block)">
+                    <div
+                        *ngFor="let child of block.children; let ci = index; trackBy: trackById"
+                        cdkDrag
+                        [cdkDragData]="child"
+                        class="preview-drag-item preview-child-item"
+                        [class.selected]="child.id === selectedBlockId"
+                        (click)="selectBlock(child, $event)"
+                        (contextmenu)="openBlockContextMenu($event, child, block.children!, ci, true)">
+                        <div class="block-drag-placeholder" *cdkDragPlaceholder></div>
+                        <span class="preview-drag-handle" cdkDragHandle matTooltip="Arrastar bloco interno">
+                            <mat-icon>drag_indicator</mat-icon>
+                            {{ child.label || child.componentName }}
+                        </span>
                         <ng-container *ngTemplateOutlet="previewNode; context: { $implicit: child }"></ng-container>
-                    </ng-container>
+                    </div>
+                    <div class="pv-empty-container" *ngIf="!block.children?.length">Arraste blocos para dentro do Dialog</div>
                 </div>
             </div>
 
