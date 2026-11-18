@@ -16,6 +16,8 @@ import { GruposModalComponent } from "../grupos-modal/grupos-modal.component";
 
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatDividerModule } from "@angular/material/divider";
+import { MatSelectModule } from "@angular/material/select";
+import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { NavbarService } from "./navbar.service";
 
@@ -25,6 +27,7 @@ import { NavbarService } from "./navbar.service";
     ],
     imports: [
         CommonModule,
+        FormsModule,
         CoreModule,
         IconModule,
         LogoComponent,
@@ -34,6 +37,7 @@ import { NavbarService } from "./navbar.service";
         MatIconModule,
         MatInputModule,
         MatMenuModule,
+        MatSelectModule,
         RouterModule,
         MatTooltipModule,
         MatDialogModule,
@@ -53,3 +57,4 @@ export {
     LogoComponent,
     NavbarService,
 }
+export type { NavbarContextAction, NavbarContextSelectOption } from "./navbar.service";

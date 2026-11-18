@@ -11,18 +11,52 @@
  mat-toolbar.ci-navbar-toolbar {
      display: flex;
      align-items: center;
-     // height: 60px !important;
-     // min-height: 60px !important;
-     // max-height: 60px !important;
-     padding: 0 16px;
+     min-height: 56px;
+     height: auto;
+     padding: 6px 16px;
      gap: 8px;
      background: var(--mat-sys-surface-container-low, var(--mat-sys-surface, #ffffff));
      color: var(--mat-sys-on-surface, #1e293b);
      border-bottom: 1px solid var(--mat-sys-outline-variant, rgba(128, 128, 128, 0.14));
      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 4px 12px rgba(0, 0, 0, 0.02);
      box-sizing: border-box;
-     flex-wrap: nowrap;
+     flex-wrap: wrap;
      overflow: visible;
+ }
+
+ .navbar-context-actions {
+     flex: 1 1 280px;
+     display: flex;
+     flex-wrap: wrap;
+     align-items: center;
+     gap: 6px 8px;
+     min-width: 0;
+     padding: 2px 8px;
+
+     .context-title-badge {
+         font-size: 12px;
+         font-weight: 600;
+         padding: 3px 10px;
+         border-radius: 999px;
+         background: var(--mat-sys-primary-container, rgba(25, 118, 210, 0.12));
+         color: var(--mat-sys-on-primary-container, #1d4ed8);
+         white-space: nowrap;
+     }
+
+     .navbar-context-select {
+         min-width: 200px;
+         max-width: 280px;
+         font-size: 12px;
+         margin-bottom: -18px;
+     }
+
+     button {
+         white-space: nowrap;
+     }
+
+     .context-action-active {
+         background: var(--mat-sys-primary-container, rgba(25, 118, 210, 0.14));
+     }
  }
 
  /* Bloco da Marca / Logotipo */

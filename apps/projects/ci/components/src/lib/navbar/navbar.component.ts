@@ -8,6 +8,7 @@ import { lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { GruposModalComponent } from "../grupos-modal/grupos-modal.component";
+import { NavbarContextAction, NavbarContextSelectOption, NavbarService } from "./navbar.service";
 @Component({
     selector: 'ci-navbar',
     standalone: false,
@@ -74,6 +75,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         // TODO: mover!
         @Optional() public readonly notificationService?: InternalNotificationService,
         @Optional() private readonly router?: Router,
+        @Optional() public readonly navbarService?: NavbarService,
     ) {
         menuService?.userMenu?.subscribe(menu => {
             this.userMenuList = menu;
@@ -82,6 +84,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
 
 
+
+    isContextActionDisabled(action: NavbarContextAction): boolean {
+        return typeof action.disabled === 'function' ? action.disabled() : !!action.disabled;
+    }
+
+    isContextActionActive(action: NavbarContextAction): boolean {
+        return typeof action.active === 'function' ? action.active() : !!action.active;
+    }
+
+    getContextSelectValue(action: NavbarContextAction): any {
+        return typeof action.value === 'function' ? action.value() : action.value;
+    }
+
+    getContextSelectOptions(action: NavbarContextAction): NavbarContextSelectOption[] {
+        return typeof action.options === 'function' ? action.options() : (action.options || []);
+    }
 
     get displayMode$() {
         return this.notificationService?.displayMode$;
