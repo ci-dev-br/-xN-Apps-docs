@@ -413,7 +413,7 @@
             </div>
         </div>
 
-        <div class="block-inputs-summary" *ngIf="block.inputs && (block.inputs | keyvalue).length > 0">
+        <div class="block-inputs-summary" *ngIf="block.inputs && ((block.inputs | keyvalue)?.length || 0) > 0">
             <span class="input-chip" *ngFor="let kv of block.inputs | keyvalue">
                 <strong>{{ kv.key }}:</strong> {{ kv.value | json }}
             </span>
