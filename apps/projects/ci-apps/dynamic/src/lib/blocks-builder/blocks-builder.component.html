@@ -95,95 +95,11 @@
                         [class.layout-horizontal]="spec.layout === 'horizontal'"
                         [class.layout-grid]="spec.layout === 'grid'">
 
-                        <div
-                            *ngFor="let block of spec.blocks; let i = index; trackBy: trackById"
-                            cdkDrag
-                            [cdkDragData]="block"
-                            class="block-card"
-                            [class.selected]="block.id === selectedBlockId"
-                            (click)="selectBlock(block, $event)"
-                            (contextmenu)="openBlockContextMenu($event, block, spec.blocks!, i, false)">
-
-                            <div class="block-drag-placeholder" *cdkDragPlaceholder></div>
-
-                            <div class="block-card-header">
-                                <div class="block-title-group">
-                                    <mat-icon cdkDragHandle class="drag-handle" matTooltip="Arrastar para reordenar ou mover">drag_indicator</mat-icon>
-                                    <mat-icon class="comp-icon">{{ getComponentDefinition(block.componentName)?.icon || 'view_module' }}</mat-icon>
-                                    <span class="block-label">{{ block.label || block.componentName }}</span>
-                                    <code class="block-type">{{ block.componentName }}</code>
-                                </div>
-
-                                <div class="block-actions">
-                                    <button mat-icon-button (click)="moveBlock(spec.blocks!, i, -1, $event)" [disabled]="i === 0" matTooltip="Mover para cima">
-                                        <mat-icon>arrow_upward</mat-icon>
-                                    </button>
-                                    <button mat-icon-button (click)="moveBlock(spec.blocks!, i, 1, $event)" [disabled]="i === (spec.blocks?.length || 0) - 1" matTooltip="Mover para baixo">
-                                        <mat-icon>arrow_downward</mat-icon>
-                                    </button>
-                                    <button mat-icon-button (click)="duplicateBlock(block, spec.blocks!, $event)" matTooltip="Duplicar bloco">
-                                        <mat-icon>content_copy</mat-icon>
-                                    </button>
-                                    <button mat-icon-button color="warn" (click)="removeBlock(block.id, spec.blocks!, $event)" matTooltip="Remover bloco">
-                                        <mat-icon>delete</mat-icon>
-                                    </button>
-                                    <button mat-icon-button (click)="openBlockContextMenu($any($event), block, spec.blocks!, i, false)" matTooltip="Ações rápidas">
-                                        <mat-icon>more_vert</mat-icon>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="block-inputs-summary" *ngIf="block.inputs && (block.inputs | keyvalue).length > 0">
-                                <span class="input-chip" *ngFor="let kv of block.inputs | keyvalue">
-                                    <strong>{{ kv.key }}:</strong> {{ kv.value | json }}
-                                </span>
-                            </div>
-
-                            <!-- Sub-blocos caso o componente aceite filhos -->
-                            <div class="children-container" *ngIf="getComponentDefinition(block.componentName)?.allowChildren">
-                                <div class="children-header">
-                                    <span>Blocos internos ({{ block.children?.length || 0 }})</span>
-                                </div>
-                                <div
-                                    cdkDropList
-                                    [cdkDropListData]="block.children!"
-                                    (cdkDropListDropped)="onDropBlock($event, block.children!, block)"
-                                    class="children-dropzone">
-                                    <div
-                                        *ngFor="let child of block.children; let ci = index; trackBy: trackById"
-                                        cdkDrag
-                                        [cdkDragData]="child"
-                                        class="child-block-card"
-                                        [class.selected]="child.id === selectedBlockId"
-                                        (click)="selectBlock(child, $event)"
-                                        (contextmenu)="openBlockContextMenu($event, child, block.children!, ci, true)">
-                                        <div class="block-drag-placeholder" *cdkDragPlaceholder></div>
-                                        <div class="block-card-header">
-                                            <div class="block-title-group">
-                                                <mat-icon cdkDragHandle class="drag-handle">drag_indicator</mat-icon>
-                                                <mat-icon class="comp-icon">{{ getComponentDefinition(child.componentName)?.icon || 'view_module' }}</mat-icon>
-                                                <span class="block-label">{{ child.label || child.componentName }}</span>
-                                                <code class="block-type">{{ child.componentName }}</code>
-                                            </div>
-                                            <div class="block-actions">
-                                                <button mat-icon-button (click)="duplicateBlock(child, block.children!, $event)" matTooltip="Duplicar">
-                                                    <mat-icon>content_copy</mat-icon>
-                                                </button>
-                                                <button mat-icon-button color="warn" (click)="removeBlock(child.id, block.children!, $event)" matTooltip="Remover">
-                                                    <mat-icon>delete</mat-icon>
-                                                </button>
-                                                <button mat-icon-button (click)="openBlockContextMenu($any($event), child, block.children!, ci, true)" matTooltip="Ações rápidas">
-                                                    <mat-icon>more_vert</mat-icon>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="empty-children" *ngIf="!block.children || block.children.length === 0">
-                                        Arraste componentes ou blocos para dentro deste container.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <ng-container *ngFor="let block of spec.blocks; let i = index; trackBy: trackById">
+                            <ng-container
+                                *ngTemplateOutlet="structureNode; context: { $implicit: block, list: spec.blocks!, index: i, depth: 0 }">
+                            </ng-container>
+                        </ng-container>
 
                         <div class="empty-canvas" *ngIf="!spec.blocks || spec.blocks.length === 0">
                             <mat-icon>dashboard_customize</mat-icon>
@@ -456,6 +372,75 @@
         <span>{{ comp.title }}</span>
     </button>
 </mat-menu>
+
+<!-- Template recursivo para estrutura de blocos (suporta arraste interno em qualquer nível) -->
+<ng-template #structureNode let-block let-list="list" let-index="index" let-depth="depth">
+    <div
+        cdkDrag
+        [cdkDragData]="block"
+        [class.block-card]="depth === 0"
+        [class.child-block-card]="depth > 0"
+        [class.selected]="block.id === selectedBlockId"
+        (click)="selectBlock(block, $event)"
+        (contextmenu)="openBlockContextMenu($event, block, list, index, depth > 0)">
+
+        <div class="block-drag-placeholder" *cdkDragPlaceholder></div>
+
+        <div class="block-card-header">
+            <div class="block-title-group">
+                <mat-icon cdkDragHandle class="drag-handle" matTooltip="Arrastar para reordenar ou mover">drag_indicator</mat-icon>
+                <mat-icon class="comp-icon">{{ getComponentDefinition(block.componentName)?.icon || 'view_module' }}</mat-icon>
+                <span class="block-label">{{ block.label || block.componentName }}</span>
+                <code class="block-type">{{ block.componentName }}</code>
+            </div>
+
+            <div class="block-actions">
+                <button mat-icon-button (click)="moveBlock(list, index, -1, $event)" [disabled]="index === 0" matTooltip="Mover para cima">
+                    <mat-icon>arrow_upward</mat-icon>
+                </button>
+                <button mat-icon-button (click)="moveBlock(list, index, 1, $event)" [disabled]="index === list.length - 1" matTooltip="Mover para baixo">
+                    <mat-icon>arrow_downward</mat-icon>
+                </button>
+                <button mat-icon-button (click)="duplicateBlock(block, list, $event)" matTooltip="Duplicar bloco">
+                    <mat-icon>content_copy</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="removeBlock(block.id, list, $event)" matTooltip="Remover bloco">
+                    <mat-icon>delete</mat-icon>
+                </button>
+                <button mat-icon-button (click)="openBlockContextMenu($any($event), block, list, index, depth > 0)" matTooltip="Ações rápidas">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <div class="block-inputs-summary" *ngIf="block.inputs && (block.inputs | keyvalue).length > 0">
+            <span class="input-chip" *ngFor="let kv of block.inputs | keyvalue">
+                <strong>{{ kv.key }}:</strong> {{ kv.value | json }}
+            </span>
+        </div>
+
+        <!-- Sub-blocos recursivos caso o componente aceite children -->
+        <div class="children-container" *ngIf="getComponentDefinition(block.componentName)?.allowChildren">
+            <div class="children-header">
+                <span>Blocos internos ({{ block.children?.length || 0 }})</span>
+            </div>
+            <div
+                cdkDropList
+                [cdkDropListData]="block.children!"
+                (cdkDropListDropped)="onDropBlock($event, block.children!, block)"
+                class="children-dropzone">
+                <ng-container *ngFor="let child of block.children; let ci = index; trackBy: trackById">
+                    <ng-container
+                        *ngTemplateOutlet="structureNode; context: { $implicit: child, list: block.children!, index: ci, depth: depth + 1 }">
+                    </ng-container>
+                </ng-container>
+                <div class="empty-children" *ngIf="!block.children || block.children.length === 0">
+                    Arraste componentes ou blocos para dentro deste container.
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
 
 <!-- Template recursivo para pré-visualização de blocos -->
 <ng-template #previewNode let-block>

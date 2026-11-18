@@ -160,4 +160,66 @@ describe('BlocksBuilderComponent', () => {
         expect(parsed.blocks.length).toBe(1);
         expect(parsed.blocks[0].componentName).toBe('custom-card');
     });
+
+    it('deve permitir arrastar e reordenar blocos internamente em componentes com children aninhados', () => {
+        const containerDef: DynamicComponentDefinition = {
+            name: 'container',
+            title: 'Container',
+            allowChildren: true,
+            inputs: [],
+        };
+        builder.availableComponents = [containerDef, ...sampleComponents];
+        builder.addBlock(containerDef);
+        const outerContainer = (builder as any).spec.blocks[0];
+
+        // Adiciona um container interno dentro do container externo
+        builder.addBlock(containerDef, outerContainer);
+        const innerContainer = outerContainer.children[0];
+
+        // Adiciona dois blocos dentro do container interno
+        builder.addBlock(sampleComponents[0], innerContainer);
+        builder.addBlock(sampleComponents[0], innerContainer);
+        const firstId = innerContainer.children[0].id;
+        const secondId = innerContainer.children[1].id;
+
+        // Reordena internamente via drag-and-drop no container interno
+        builder.onDropBlock(
+            {
+                previousContainer: { id: 'inner-list', data: innerContainer.children } as any,
+                container: { id: 'inner-list', data: innerContainer.children } as any,
+                previousIndex: 0,
+                currentIndex: 1,
+                item: { data: innerContainer.children[0] } as any,
+                isPointerOverContainer: true,
+                distance: { x: 0, y: 0 },
+                dropPoint: { x: 0, y: 0 },
+                event: new MouseEvent('mouseup'),
+            },
+            innerContainer.children,
+            innerContainer
+        );
+
+        // Nota: no mock, previousContainer === container verifica referência de objeto
+        // Vamos testar com a mesma referência de container:
+        const sameContainer = { id: 'inner-list', data: innerContainer.children } as any;
+        builder.onDropBlock(
+            {
+                previousContainer: sameContainer,
+                container: sameContainer,
+                previousIndex: 0,
+                currentIndex: 1,
+                item: { data: innerContainer.children[0] } as any,
+                isPointerOverContainer: true,
+                distance: { x: 0, y: 0 },
+                dropPoint: { x: 0, y: 0 },
+                event: new MouseEvent('mouseup'),
+            },
+            innerContainer.children,
+            innerContainer
+        );
+
+        expect(innerContainer.children.length).toBe(2);
+        expect(innerContainer.children[0].id).toBe(secondId);
+        expect(innerContainer.children[1].id).toBe(firstId);
+    });
 });
