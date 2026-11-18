@@ -218,6 +218,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Grade de dados com filtros por coluna e seleção (@ci/components/data-grid).',
         icon: 'grid_on',
         category: '@ci/components',
+        componentRef: DataGridComponent,
         inputs: [
             { name: 'enableColumnFilters', label: 'Filtros por Coluna', type: 'boolean', defaultValue: false },
             { name: 'selectionMode', label: 'Modo de Seleção', type: 'select', defaultValue: 'row', options: [
@@ -237,6 +238,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Lista dinâmica de itens com seleção (@ci/components).',
         icon: 'list_alt',
         category: '@ci/components',
+        componentRef: DataListComponent,
         inputs: [
             { name: 'source', label: 'Itens (JSON)', type: 'json', defaultValue: [] },
             { name: 'options', label: 'Opções da Lista (JSON)', type: 'json', defaultValue: {} },
@@ -258,6 +260,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Formulário dinâmico baseado em schema (@ci/components/dyn-form).',
         icon: 'assignment',
         category: '@ci/components',
+        componentRef: DynFormComponent,
         inputs: [
             { name: 'schemaName', label: 'Schema da Entidade', type: 'string', defaultValue: '' },
         ],
@@ -268,6 +271,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Campo de entrada dinâmico (@ci/components/dyn-form).',
         icon: 'input',
         category: '@ci/components',
+        componentRef: DynInputComponent,
         inputs: [
             { name: 'label', label: 'Rótulo', type: 'string', defaultValue: 'Campo' },
             { name: 'placeholder', label: 'Placeholder', type: 'string', defaultValue: '' },
@@ -284,6 +288,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Campo de entrada ou conteúdo editável inline (@ci/components).',
         icon: 'text_fields',
         category: '@ci/components',
+        componentRef: InputComponent,
         inputs: [
             { name: 'mode', label: 'Modo', type: 'select', defaultValue: 'input', options: [
                 { label: 'Input', value: 'input' },
@@ -312,6 +317,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Prancheta de dashboard modular com cards arrastáveis (@ci/components).',
         icon: 'dashboard',
         category: '@ci/components',
+        componentRef: BoardComponent,
         inputs: [
             { name: 'default', label: 'Prancheta Padrão', type: 'string', defaultValue: '' },
             { name: 'scope', label: 'Escopo', type: 'select', defaultValue: 'USER', options: [
@@ -328,6 +334,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Cartão de atalho rápido para aplicativo (@ci/components).',
         icon: 'apps',
         category: '@ci/components',
+        componentRef: AppQuickCardComponent,
         inputs: [
             { name: 'appName', label: 'Nome do App', type: 'string', defaultValue: 'Aplicativo' },
             { name: 'appUrl', label: 'URL de Destino', type: 'string', defaultValue: '/painel' },
@@ -343,6 +350,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Container de cartão dinâmico (@ci/components/cardboard).',
         icon: 'crop_square',
         category: '@ci/components',
+        componentRef: CardboardComponent,
         allowChildren: true,
         inputs: [
             { name: 'componentRef', label: 'Componente Referenciado', type: 'string', defaultValue: '' },
@@ -354,6 +362,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Calendário com modos dia, mês e ano (@ci/components/calendar).',
         icon: 'calendar_month',
         category: '@ci/components',
+        componentRef: CalendarComponent,
         inputs: [
             { name: 'viewMode', label: 'Modo de Visão', type: 'select', defaultValue: 'month', options: [
                 { label: 'Dia', value: 'day' },
@@ -368,6 +377,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Botão de ação com ícone e rótulo (@ci/components/action).',
         icon: 'touch_app',
         category: '@ci/components',
+        componentRef: ActionComponent,
         inputs: [
             { name: 'label', label: 'Rótulo', type: 'string', defaultValue: 'Ação' },
             { name: 'icon', label: 'Ícone Material', type: 'string', defaultValue: 'bolt' },
@@ -379,6 +389,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Exibição de ícone Material, SVG ou Imagem (@ci/components).',
         icon: 'interests',
         category: '@ci/components',
+        componentRef: IconComponent,
         inputs: [
             { name: 'mode', label: 'Modo', type: 'select', defaultValue: 'material', options: [
                 { label: 'Material Icon', value: 'material' },
