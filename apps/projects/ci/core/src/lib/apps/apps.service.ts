@@ -1,6 +1,5 @@
 import { createNgModule, Injectable, Injector, Optional } from "@angular/core";
 import { Route, Router, ROUTES } from "@angular/router";
-import { UserAuthenticationService } from "@ci/auth";
 import { ApplicationService } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 
@@ -64,7 +63,6 @@ export class Apps {
 
     constructor(
         private injector: Injector,
-        @Optional() private readonly uas?: UserAuthenticationService,
         @Optional() private readonly router?: Router,
         @Optional() private readonly apps?: ApplicationService,
     ) { }

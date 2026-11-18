@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-18T04:20:02" id="0" hostname="plhx33" tests="13" errors="0" failures="0" time="1.783">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="BlockHistoryDialogComponent deve carregar snapshots e injetar o CodeX indiretamente via metadados (Apps)" time="0.794" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlockHistoryDialogComponent"/>
+  <testcase name="Àpps Dynamic, Início deve registrar ações de contexto na NavbarService e limpar ao destruir" time="0.416" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps Dynamic, Início"/>
+  <testcase name="Àpps Dynamic, Início Componente criado com sucesso" time="0.109" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps Dynamic, Início"/>
+  <testcase name="ComponentPreviewComponent deve renderizar o componente catalogado via ngComponentOutlet com os inputs injetados" time="0.022" classname="Chrome_Headless_158_0_0_0_(Windows_10).ComponentPreviewComponent"/>
+  <testcase name="BlocksBuilderComponent deve serializar e parsear 1:1 entre blocos e XML/HTML5 preservando children e inputs" time="0.058" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve emitir previewBlockRequested ao acionar visualização isolada do bloco" time="0.053" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve inserir bloco interno ao soltar componente da paleta dentro de um container" time="0.044" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve inserir bloco e atualizar o JSON ao soltar componente na aba JSON" time="0.054" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve permitir arrastar e reordenar blocos internamente em componentes com children aninhados" time="0.049" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve adicionar bloco com inputs padrão a partir da lista de componentes" time="0.068" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve criar bloco ao soltar componente da paleta via drag-and-drop" time="0.041" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve possuir componentRef configurado nos componentes catalogados de @ci/components" time="0.032" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve abrir o context menu do bloco com dados da posição e contexto" time="0.043" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>
