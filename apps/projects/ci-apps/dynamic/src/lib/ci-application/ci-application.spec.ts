@@ -183,24 +183,6 @@ describe('BlocksBuilderComponent', () => {
         const secondId = innerContainer.children[1].id;
 
         // Reordena internamente via drag-and-drop no container interno
-        builder.onDropBlock(
-            {
-                previousContainer: { id: 'inner-list', data: innerContainer.children } as any,
-                container: { id: 'inner-list', data: innerContainer.children } as any,
-                previousIndex: 0,
-                currentIndex: 1,
-                item: { data: innerContainer.children[0] } as any,
-                isPointerOverContainer: true,
-                distance: { x: 0, y: 0 },
-                dropPoint: { x: 0, y: 0 },
-                event: new MouseEvent('mouseup'),
-            },
-            innerContainer.children,
-            innerContainer
-        );
-
-        // Nota: no mock, previousContainer === container verifica referência de objeto
-        // Vamos testar com a mesma referência de container:
         const sameContainer = { id: 'inner-list', data: innerContainer.children } as any;
         builder.onDropBlock(
             {
