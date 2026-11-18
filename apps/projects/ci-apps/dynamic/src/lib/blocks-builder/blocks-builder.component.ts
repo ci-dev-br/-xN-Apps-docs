@@ -82,6 +82,8 @@ export class BlocksBuilderComponent implements OnChanges {
     protected activeTabIndex = 0;
     protected jsonDraft = '';
     protected jsonError: string | null = null;
+    protected xmlDraft = '';
+    protected xmlError: string | null = null;
     protected jsonDraftMap: Record<string, string> = {};
 
     protected contextMenuPosition = { x: '0px', y: '0px' };
@@ -352,6 +354,7 @@ export class BlocksBuilderComponent implements OnChanges {
             const parsed = JSON.parse(this.jsonDraft);
             this.spec = this.normalizeSpec(parsed);
             this.jsonError = null;
+            this.syncXmlDraft();
             this.syncBlockInputJsonDrafts();
             this.emitChange(false);
         } catch {
@@ -362,6 +365,25 @@ export class BlocksBuilderComponent implements OnChanges {
     copyJson(): void {
         if (typeof navigator !== 'undefined' && navigator.clipboard) {
             navigator.clipboard.writeText(this.jsonDraft).catch(() => {});
+        }
+    }
+
+    applyRawXml(): void {
+        try {
+            const parsed = this.parseXmlToSpec(this.xmlDraft);
+            this.spec = this.normalizeSpec(parsed);
+            this.xmlError = null;
+            this.syncJsonDraft();
+            this.syncBlockInputJsonDrafts();
+            this.emitChange(false);
+        } catch (err: any) {
+            this.xmlError = err?.message || 'O XML/HTML5 informado é inválido. Verifique a sintaxe antes de aplicar.';
+        }
+    }
+
+    copyXml(): void {
+        if (typeof navigator !== 'undefined' && navigator.clipboard) {
+            navigator.clipboard.writeText(this.xmlDraft).catch(() => {});
         }
     }
 
@@ -405,12 +427,168 @@ export class BlocksBuilderComponent implements OnChanges {
         this.updateOrders(this.spec.blocks || []);
         if (updateJson) {
             this.syncJsonDraft();
+            this.syncXmlDraft();
         }
         this.valueChange.emit(this.deepClone(this.spec));
     }
 
     private syncJsonDraft(): void {
         this.jsonDraft = JSON.stringify(this.spec, null, 2);
+        this.syncXmlDraft();
+    }
+
+    private syncXmlDraft(): void {
+        this.xmlDraft = this.serializeSpecToXml(this.spec);
+    }
+
+    serializeSpecToXml(spec: DynamicBlockSpecification): string {
+        const attrs: string[] = [];
+        if (spec.name) attrs.push(`name="${this.escapeXmlAttr(spec.name)}"`);
+        if (spec.route) attrs.push(`route="${this.escapeXmlAttr(spec.route)}"`);
+        if (spec.layout) attrs.push(`layout="${this.escapeXmlAttr(spec.layout)}"`);
+        if (spec.version) attrs.push(`version="${this.escapeXmlAttr(spec.version)}"`);
+
+        const openTag = attrs.length ? `<dynamic-screen ${attrs.join(' ')}>` : '<dynamic-screen>';
+        const childrenXml = (spec.blocks || [])
+            .map(block => this.serializeBlockToXml(block, 1))
+            .join('\n');
+
+        return childrenXml
+            ? `${openTag}\n${childrenXml}\n</dynamic-screen>`
+            : `${openTag}\n</dynamic-screen>`;
+    }
+
+    private serializeBlockToXml(block: DynamicBlockNode, indentLevel: number): string {
+        const indent = '  '.repeat(indentLevel);
+        const tag = this.sanitizeTagName(block.componentName);
+        const attrs: string[] = [`data-id="${this.escapeXmlAttr(block.id)}"`];
+        if (block.label) {
+            attrs.push(`data-label="${this.escapeXmlAttr(block.label)}"`);
+        }
+
+        const inputs = block.inputs || {};
+        for (const [key, val] of Object.entries(inputs)) {
+            if (val === undefined) continue;
+            const safeAttr = this.sanitizeAttrName(key);
+            const serialized = typeof val === 'string' ? val : JSON.stringify(val);
+            attrs.push(`${safeAttr}="${this.escapeXmlAttr(serialized)}"`);
+        }
+
+        const openTag = `${indent}<${tag} ${attrs.join(' ')}>`;
+        if (block.children && block.children.length > 0) {
+            const inner = block.children
+                .map(child => this.serializeBlockToXml(child, indentLevel + 1))
+                .join('\n');
+            return `${openTag}\n${inner}\n${indent}</${tag}>`;
+        }
+        return `${openTag}</${tag}>`;
+    }
+
+    parseXmlToSpec(xmlText: string): DynamicBlockSpecification {
+        const trimmed = (xmlText || '').trim();
+        if (!trimmed) {
+            return this.createEmptySpec();
+        }
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(trimmed, 'application/xml');
+        const parseError = doc.querySelector('parsererror');
+        if (parseError) {
+            throw new Error('XML/HTML5 inválido: verifique fechamento de tags e aspas de atributos.');
+        }
+
+        const root = doc.documentElement;
+        if (!root) {
+            throw new Error('Elemento raiz não encontrado no XML.');
+        }
+
+        const isWrapper = root.tagName.toLowerCase() === 'dynamic-screen';
+        const elements = isWrapper ? Array.from(root.children) : [root];
+
+        return {
+            version: (isWrapper ? root.getAttribute('version') : null) || this.spec.version || '1.0.0',
+            name: (isWrapper ? root.getAttribute('name') : null) || this.spec.name || 'Nova Tela',
+            route: (isWrapper ? root.getAttribute('route') : null) || '',
+            layout: (isWrapper ? root.getAttribute('layout') : null) || 'vertical',
+            blocks: elements.map((el, idx) => this.parseElementToBlock(el, idx)),
+            metadata: this.spec.metadata ? this.deepClone(this.spec.metadata) : {},
+        };
+    }
+
+    private parseElementToBlock(el: Element, order: number): DynamicBlockNode {
+        const componentName = el.tagName.toLowerCase();
+        const def = this.getComponentDefinition(componentName);
+        const id = el.getAttribute('data-id') || el.getAttribute('id') || this.generateId();
+        const label = el.getAttribute('data-label') || def?.title || componentName;
+        const inputs: Record<string, any> = {};
+
+        for (const attr of Array.from(el.attributes)) {
+            if (attr.name === 'data-id' || attr.name === 'id' || attr.name === 'data-label') {
+                continue;
+            }
+            const inputDef = def?.inputs?.find(i => i.name === attr.name);
+            inputs[attr.name] = this.coerceXmlAttributeValue(attr.value, inputDef?.type);
+        }
+
+        const childElements = Array.from(el.children);
+        const allowChildren = def?.allowChildren || childElements.length > 0;
+
+        return {
+            id,
+            componentName,
+            label,
+            order,
+            inputs,
+            children: allowChildren
+                ? childElements.map((childEl, ci) => this.parseElementToBlock(childEl, ci))
+                : undefined,
+        };
+    }
+
+    private coerceXmlAttributeValue(raw: string, type?: string): any {
+        if (type === 'number') {
+            const n = Number(raw);
+            return Number.isNaN(n) ? raw : n;
+        }
+        if (type === 'boolean') {
+            return raw === 'true' || raw === '';
+        }
+        if (type === 'json') {
+            try {
+                return JSON.parse(raw);
+            } catch {
+                return raw;
+            }
+        }
+        if (!type) {
+            if (raw === 'true') return true;
+            if (raw === 'false') return false;
+            if ((raw.startsWith('{') && raw.endsWith('}')) || (raw.startsWith('[') && raw.endsWith(']'))) {
+                try {
+                    return JSON.parse(raw);
+                } catch {
+                    return raw;
+                }
+            }
+        }
+        return raw;
+    }
+
+    private sanitizeTagName(name: string): string {
+        const cleaned = (name || 'block').toLowerCase().replace(/[^a-z0-9_-]/g, '-');
+        return /^[a-z]/.test(cleaned) ? cleaned : `ci-${cleaned}`;
+    }
+
+    private sanitizeAttrName(name: string): string {
+        const cleaned = (name || 'attr').replace(/[^a-zA-Z0-9_:-]/g, '-');
+        return /^[a-zA-Z_]/.test(cleaned) ? cleaned : `data-${cleaned}`;
+    }
+
+    private escapeXmlAttr(value: string): string {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
     }
 
     private syncBlockInputJsonDrafts(): void {

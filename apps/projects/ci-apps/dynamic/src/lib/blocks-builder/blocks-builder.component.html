@@ -173,6 +173,35 @@
                     <textarea class="json-textarea" [(ngModel)]="jsonDraft" spellcheck="false"></textarea>
                 </div>
             </mat-tab>
+
+            <!-- Aba 4: XML / HTML5 (1:1 com Drag-and-Drop da paleta) -->
+            <mat-tab label="XML / HTML5">
+                <div
+                    class="json-editor-pane"
+                    cdkDropList
+                    [cdkDropListData]="spec.blocks!"
+                    [cdkDropListSortingDisabled]="true"
+                    (cdkDropListDropped)="onDropJsonPalette($event)">
+                    <div class="json-actions">
+                        <span class="json-drop-hint">
+                            <mat-icon>drag_indicator</mat-icon>
+                            Arraste componentes da paleta para inserir no XML / HTML5
+                        </span>
+                        <div class="json-buttons">
+                            <button mat-stroked-button (click)="copyXml()">
+                                <mat-icon>content_copy</mat-icon>
+                                Copiar XML/HTML5
+                            </button>
+                            <button mat-flat-button color="primary" (click)="applyRawXml()">
+                                <mat-icon>check</mat-icon>
+                                Aplicar XML/HTML5
+                            </button>
+                        </div>
+                    </div>
+                    <div class="json-error" *ngIf="xmlError">{{ xmlError }}</div>
+                    <textarea class="json-textarea" [(ngModel)]="xmlDraft" spellcheck="false"></textarea>
+                </div>
+            </mat-tab>
         </mat-tab-group>
     </section>
 

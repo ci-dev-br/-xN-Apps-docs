@@ -214,4 +214,34 @@ describe('BlocksBuilderComponent', () => {
         expect(innerContainer.children[0].id).toBe(secondId);
         expect(innerContainer.children[1].id).toBe(firstId);
     });
+
+    it('deve serializar e parsear 1:1 entre blocos e XML/HTML5 preservando children e inputs', () => {
+        const containerDef: DynamicComponentDefinition = {
+            name: 'container',
+            title: 'Container',
+            allowChildren: true,
+            inputs: [
+                { name: 'gap', label: 'Gap', type: 'number', defaultValue: 16 },
+            ],
+        };
+        builder.availableComponents = [containerDef, ...sampleComponents];
+        builder.addBlock(containerDef);
+        const outer = (builder as any).spec.blocks[0];
+        builder.addBlock(sampleComponents[0], outer);
+
+        const xml = builder.serializeSpecToXml((builder as any).spec);
+        expect(xml).toContain('<dynamic-screen');
+        expect(xml).toContain('<container');
+        expect(xml).toContain('gap="16"');
+        expect(xml).toContain('<custom-card');
+        expect(xml).toContain('ativo="true"');
+
+        const parsed = builder.parseXmlToSpec(xml);
+        expect(parsed.blocks?.length).toBe(1);
+        expect(parsed.blocks![0].componentName).toBe('container');
+        expect(parsed.blocks![0].inputs?.['gap']).toBe(16);
+        expect(parsed.blocks![0].children?.length).toBe(1);
+        expect(parsed.blocks![0].children![0].componentName).toBe('custom-card');
+        expect(parsed.blocks![0].children![0].inputs).toEqual({ titulo: 'Olá', ativo: true });
+    });
 });
