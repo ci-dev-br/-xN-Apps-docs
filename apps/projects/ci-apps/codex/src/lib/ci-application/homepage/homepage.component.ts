@@ -17,7 +17,7 @@ import { CoreModule } from "@ci/core";
         FormsModule,
         ReactiveFormsModule
     ],
-    selector: 'ci-homepage',
+selector: 'ci-homepage',
     templateUrl: 'homepage.component.html',
     styleUrl: 'homepage.component.scss'
 })
