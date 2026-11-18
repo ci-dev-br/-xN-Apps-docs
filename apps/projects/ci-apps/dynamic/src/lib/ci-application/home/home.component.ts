@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Optional } from '@angular/core';
+import { Component, OnDestroy, OnInit, Optional } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NavbarContextAction, NavbarService } from '@ci/components';
 import { EditarDetailComponent, EditarDetailModule } from '@ci/components/editar-detail';
 import { Application, ApplicationService, Block, BlockService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
@@ -44,7 +45,7 @@ import { DYNAMIC_DEFAULT_COMPONENTS } from '../../blocks-builder/default-compone
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss',
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
     protected applications: Application[] = [];
     protected blocks: Block[] = [];
     protected selectedApplicationId: string | null = null;
@@ -63,10 +64,16 @@ export class HomeComponent implements OnInit {
         @Optional() private applicationService?: ApplicationService,
         @Optional() private blockService?: BlockService,
         @Optional() private snackBar?: MatSnackBar,
+        @Optional() private navbarService?: NavbarService,
     ) { }
 
     async ngOnInit(): Promise<void> {
+        this.registrarAcoesNavbar();
         await this.carregarDados();
+    }
+
+    ngOnDestroy(): void {
+        this.navbarService?.clearContextActions();
     }
 
     async carregarDados(): Promise<void> {
@@ -90,9 +97,70 @@ export class HomeComponent implements OnInit {
             if (!this.selectedApplicationId && this.applications.length > 0) {
                 this.selectedApplicationId = this.applications[0].id || null;
             }
+            this.registrarAcoesNavbar();
         } finally {
             this.loading = false;
         }
+    }
+
+    private registrarAcoesNavbar(): void {
+        if (!this.navbarService) return;
+        const actions: NavbarContextAction[] = [
+            {
+                id: 'dynamic-app-select',
+                label: 'Aplicação Relacionada',
+                variant: 'select',
+                value: () => this.selectedApplicationId,
+                options: () => [
+                    { label: 'Todas / Independente', value: null },
+                    ...this.applications.map(app => ({
+                        label: `${app.name || app.appKey || app.routePath} (${app.routePath || '/'})`,
+                        value: app.id,
+                    })),
+                ],
+                onChange: (val: string | null) => {
+                    this.selectedApplicationId = val;
+                },
+            },
+            {
+                id: 'dynamic-nova-tela',
+                label: 'Nova Tela',
+                icon: 'add',
+                variant: 'stroked',
+                tooltip: 'Criar uma nova tela em blocos',
+                onClick: () => this.novaTela(),
+            },
+            {
+                id: 'dynamic-salvar-tela',
+                label: 'Salvar Tela',
+                icon: 'save',
+                variant: 'flat',
+                color: 'primary',
+                tooltip: 'Salvar tela atual em blocos',
+                disabled: () => this.saving,
+                onClick: () => this.salvarBloco(this.currentSpec),
+            },
+            {
+                id: 'dynamic-sincronizar-app',
+                label: 'Sincronizar na Aplicação',
+                icon: 'sync',
+                variant: 'stroked',
+                color: 'primary',
+                tooltip: 'Grava o mapa JSON de rotas e blocos em Application.blocksContent',
+                disabled: () => !this.selectedApplicationId || this.saving,
+                onClick: () => this.sincronizarNaAplicacao(),
+            },
+            {
+                id: 'dynamic-nova-aplicacao',
+                label: 'Nova Aplicação',
+                icon: 'apps',
+                variant: 'raised',
+                color: 'primary',
+                tooltip: 'Cadastrar nova aplicação',
+                onClick: () => this.novo(),
+            },
+        ];
+        this.navbarService.setContextActions(actions, 'Dynamic XD');
     }
 
     get selectedApplication(): Application | undefined {

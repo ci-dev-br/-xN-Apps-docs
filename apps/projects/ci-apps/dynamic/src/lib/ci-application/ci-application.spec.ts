@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
 import { ApplicationService, BlockService } from '@ci/portal-api';
+import { NavbarService } from '@ci/components';
 import { BlocksBuilderComponent } from '../blocks-builder/blocks-builder.component';
 import { DynamicComponentDefinition } from '../blocks-builder/blocks-builder.models';
 import { HomeComponent } from './home/home.component';
@@ -37,6 +38,15 @@ describe('Àpps Dynamic, Início', () => {
 
     it('Componente criado com sucesso', () => {
         expect(component).toBeTruthy();
+    });
+
+    it('deve registrar ações de contexto na NavbarService e limpar ao destruir', () => {
+        const navbarService = TestBed.inject(NavbarService);
+        expect(navbarService.contextTitle()).toBe('Dynamic XD');
+        expect(navbarService.contextActions().length).toBe(5);
+
+        fixture.destroy();
+        expect(navbarService.contextActions().length).toBe(0);
     });
 });
 
