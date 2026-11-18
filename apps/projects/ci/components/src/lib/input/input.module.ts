@@ -25,3 +25,4 @@ import { PitchControlsComponent } from './pitch-controls.component';
   ]
 })
 export class InputModule { }
+export { InputComponent };

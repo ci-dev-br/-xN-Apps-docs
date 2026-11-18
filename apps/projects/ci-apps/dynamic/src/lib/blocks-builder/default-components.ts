@@ -4,7 +4,7 @@ import {
     DataDetailViewComponent,
     DataListComponent,
     FileComponent,
-    FooterComponent,
+    Footer,
     IconComponent,
     InputComponent,
     LNavComponent,
@@ -444,7 +444,7 @@ export const DYNAMIC_DEFAULT_COMPONENTS: DynamicComponentDefinition[] = [
         description: 'Rodapé padrão da aplicação (@ci/components).',
         icon: 'call_to_action',
         category: '@ci/components',
-        componentRef: FooterComponent,
+        componentRef: Footer,
         inputs: [],
     },
     {
