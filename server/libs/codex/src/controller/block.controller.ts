@@ -22,6 +22,20 @@ export class ObterListaBlock {
     where?: FindOptionsWhere<Block>[] | FindOptionsWhere<Block>;
 }
 
+export class BlockSnapshotDto {
+    @ApiProperty({ required: false, nullable: true })
+    internalId?: string;
+
+    @ApiProperty({ required: false, nullable: true })
+    hash?: string;
+
+    @ApiProperty({ required: false, nullable: true })
+    snap?: Record<string, any>;
+
+    @ApiProperty({ required: false, nullable: true })
+    createdAt?: Date;
+}
+
 /**
  * Controller para gerenciamento de blocos de telas dinâmicas (Block).
  */
@@ -58,5 +72,12 @@ export class BlockController extends ControllerDaoBase<BlockService, Block> {
     @ApiOperation({ operationId: 'DeleteBlock' })
     override async Delete(@Body() body: Block, @Req() req?: any) {
         return await super.Delete(body, req);
+    }
+
+    @Post('GetSnapshots')
+    @ApiResponse({ type: BlockSnapshotDto, isArray: true })
+    @ApiOperation({ operationId: 'GetSnapshotsBlock' })
+    async GetSnapshots(@Body() input: GetByInternalIdInputDto, @Req() req?: any) {
+        return await this.service.getSnapshots(input?.internalId, req);
     }
 }
