@@ -45,6 +45,8 @@ export class DynFormComponent implements OnInit, OnChanges {
     if (formOptions) {
       this.source = formOptions;
       this.hasInjectedOptions = true;
+    }else{
+      console.trace('[off]')
     }
   }
 
