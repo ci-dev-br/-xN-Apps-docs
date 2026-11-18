@@ -10,12 +10,15 @@ import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
 import { Block } from '../models/block';
+import { BlockSnapshotDto } from '../models/block-snapshot-dto';
 import { deleteBlock } from '../fn/block/delete-block';
 import { DeleteBlock$Params } from '../fn/block/delete-block';
 import { getByInternalIdBlock } from '../fn/block/get-by-internal-id-block';
 import { GetByInternalIdBlock$Params } from '../fn/block/get-by-internal-id-block';
 import { getListBlock } from '../fn/block/get-list-block';
 import { GetListBlock$Params } from '../fn/block/get-list-block';
+import { getSnapshotsBlock } from '../fn/block/get-snapshots-block';
+import { GetSnapshotsBlock$Params } from '../fn/block/get-snapshots-block';
 import { syncBlock } from '../fn/block/sync-block';
 import { SyncBlock$Params } from '../fn/block/sync-block';
 import { SyncPayloadDaoBlock } from '../models/sync-payload-dao-block';
@@ -123,6 +126,31 @@ export class BlockService extends BaseService {
   delete(params: DeleteBlock$Params, context?: HttpContext): Observable<Block> {
     return this.deleteBlock$Response(params, context).pipe(
       map((r: StrictHttpResponse<Block>): Block => r.body)
+    );
+  }
+
+  /** Path part for operation `getSnapshotsBlock()` */
+  static readonly GetSnapshotsBlockPath = '/Block/GetSnapshots';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getSnapshotsBlock()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getSnapshotsBlock$Response(params: GetSnapshotsBlock$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<BlockSnapshotDto>>> {
+    return getSnapshotsBlock(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getSnapshotsBlock$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getSnapshots(params: GetSnapshotsBlock$Params, context?: HttpContext): Observable<Array<BlockSnapshotDto>> {
+    return this.getSnapshotsBlock$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<BlockSnapshotDto>>): Array<BlockSnapshotDto> => r.body)
     );
   }
 

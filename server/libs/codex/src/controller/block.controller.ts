@@ -42,8 +42,8 @@ export class BlockSnapshotDto {
 @ApiTags('Block')
 @Controller('Block')
 export class BlockController extends ControllerDaoBase<BlockService, Block> {
-    constructor(service: BlockService) {
-        super(service);
+    constructor(private readonly blockService: BlockService) {
+        super(blockService);
     }
 
     @Post('Sync')
@@ -78,6 +78,6 @@ export class BlockController extends ControllerDaoBase<BlockService, Block> {
     @ApiResponse({ type: BlockSnapshotDto, isArray: true })
     @ApiOperation({ operationId: 'GetSnapshotsBlock' })
     async GetSnapshots(@Body() input: GetByInternalIdInputDto, @Req() req?: any) {
-        return await this.service.getSnapshots(input?.internalId, req);
+        return await this.blockService.getSnapshots(input?.internalId, req);
     }
 }

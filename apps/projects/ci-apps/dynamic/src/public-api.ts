@@ -5,6 +5,7 @@ export { CiApplicationModule } from './lib/ci-application/ci-application.module'
 export { HomeComponent } from './lib/ci-application/home/home.component';
 export { BlocksBuilderComponent } from './lib/blocks-builder/blocks-builder.component';
 export { ComponentPreviewComponent } from './lib/component-preview/component-preview.component';
+export { BlockHistoryDialogComponent } from './lib/block-history/block-history-dialog.component';
 export type {
     BlockInputType,
     BlockComponentInputOption,

@@ -1,0 +1,16 @@
+/* tslint:disable */
+/* eslint-disable */
+import { Credential } from '../models/credential';
+export interface UnidadeMedida {
+  createdAt?: Date | null;
+  createdBy?: Credential | null;
+  deleted?: boolean | null;
+  description?: string | null;
+  externalReferenceUrl?: Array<string> | null;
+  internalId?: string | null;
+  internationalCode?: string | null;
+  lastModifiedAt?: Date | null;
+  lastModifiedBy?: Credential | null;
+  name?: string | null;
+  tenants?: Array<string> | null;
+}

@@ -11,6 +11,7 @@ export * from './models/author-dto';
 export * from './models/authorization-output';
 export * from './models/available-version-info-dto';
 export * from './models/block';
+export * from './models/block-snapshot-dto';
 export * from './models/buffer';
 export * from './models/can-load-app-dto';
 export * from './models/card';

@@ -1,8 +1,12 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
+import { Apps } from '@ci/core';
 import { ApplicationService, BlockService } from '@ci/portal-api';
 import { NavbarService } from '@ci/components';
+import { BlockHistoryDialogComponent } from '../block-history/block-history-dialog.component';
 import { BlocksBuilderComponent } from '../blocks-builder/blocks-builder.component';
 import { DynamicComponentDefinition } from '../blocks-builder/blocks-builder.models';
 import { DYNAMIC_DEFAULT_COMPONENTS } from '../blocks-builder/default-components';
@@ -45,7 +49,7 @@ describe('Àpps Dynamic, Início', () => {
     it('deve registrar ações de contexto na NavbarService e limpar ao destruir', () => {
         const navbarService = TestBed.inject(NavbarService);
         expect(navbarService.contextTitle()).toBe('Dynamic XD');
-        expect(navbarService.contextActions().length).toBe(5);
+        expect(navbarService.contextActions().length).toBe(6);
 
         fixture.destroy();
         expect(navbarService.contextActions().length).toBe(0);
@@ -289,5 +293,63 @@ describe('ComponentPreviewComponent', () => {
         expect((fixture.componentInstance as any).definition?.componentRef).toBeDefined();
         expect(fixture.nativeElement.textContent).toContain('Ação Isolada');
         sessionStorage.removeItem(DYNAMIC_PREVIEW_STORAGE_KEY);
+    });
+});
+
+@Component({ selector: 'ci-mock-codex', standalone: true, template: '<div class="mock-codex">CodeX Mock</div>' })
+class MockCodexEditorComponent { }
+
+describe('BlockHistoryDialogComponent', () => {
+    it('deve carregar snapshots e injetar o CodeX indiretamente via metadados (Apps)', async () => {
+        const mockApps = {
+            findCompatibleApps: jasmine.createSpy('findCompatibleApps').and.resolveTo([
+                {
+                    id: 'codex-editor',
+                    fullPath: '/Codex/editor',
+                    appName: 'Codex',
+                    title: 'Editor de Código (Codex)',
+                    label: 'Editar JSON no Codex',
+                    icon: 'code',
+                    queryParam: 'file',
+                    matchedPattern: '*.json',
+                    component: MockCodexEditorComponent,
+                    isFallback: false,
+                    isPreferred: true,
+                },
+            ]),
+        };
+
+        const mockBlockSvc = {
+            getSnapshots: jasmine.createSpy('getSnapshots').and.returnValue(
+                of([
+                    {
+                        internalId: 'snap-1',
+                        hash: 'abc123def456',
+                        createdAt: new Date().toISOString(),
+                        snap: { code: { version: '1.0.0', name: 'Versão Anterior', blocks: [] } },
+                    },
+                ])
+            ),
+        };
+
+        await TestBed.configureTestingModule({
+            imports: [BlockHistoryDialogComponent, NoopAnimationsModule],
+            providers: [
+                { provide: MAT_DIALOG_DATA, useValue: { block: { internalId: 'blk-1', name: 'Tela Teste' } } },
+                { provide: MatDialogRef, useValue: { close: jasmine.createSpy('close') } },
+                { provide: BlockService, useValue: mockBlockSvc },
+                { provide: Apps, useValue: mockApps },
+            ],
+        }).compileComponents();
+
+        const fixture = TestBed.createComponent(BlockHistoryDialogComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        expect(mockApps.findCompatibleApps).toHaveBeenCalled();
+        expect(mockBlockSvc.getSnapshots).toHaveBeenCalledWith({ body: { internalId: 'blk-1' } });
+        expect(fixture.componentInstance.codexComponent).toBe(MockCodexEditorComponent);
+        expect(fixture.nativeElement.textContent).toContain('CodeX Mock');
     });
 });

@@ -22,6 +22,7 @@ import {
 } from '../../blocks-builder/blocks-builder.models';
 import { DYNAMIC_DEFAULT_COMPONENTS } from '../../blocks-builder/default-components';
 import { DYNAMIC_PREVIEW_STORAGE_KEY } from '../../component-preview/component-preview.component';
+import { BlockHistoryDialogComponent } from '../../block-history/block-history-dialog.component';
 
 /**
  * Tela principal do módulo Dynamic (/Dynamic).
@@ -144,6 +145,15 @@ export class HomeComponent implements OnInit, OnDestroy {
                 tooltip: 'Salvar tela atual em blocos',
                 disabled: () => this.saving,
                 onClick: () => this.salvarBloco(this.currentSpec),
+            },
+            {
+                id: 'dynamic-historico',
+                label: 'Histórico',
+                icon: 'history',
+                variant: 'stroked',
+                tooltip: 'Visualizar versões anteriores (Snapshots) do bloco',
+                disabled: () => !this.activeBlock?.internalId,
+                onClick: () => this.abrirHistorico(),
             },
             {
                 id: 'dynamic-sincronizar-app',
@@ -316,6 +326,33 @@ export class HomeComponent implements OnInit, OnDestroy {
         } finally {
             this.saving = false;
         }
+    }
+
+    abrirHistorico(): void {
+        if (!this.dialog || !this.activeBlock?.internalId) return;
+        const ref = this.dialog.open(BlockHistoryDialogComponent, {
+            width: '980px',
+            maxWidth: '95vw',
+            data: {
+                block: this.activeBlock,
+                currentSpec: this.currentSpec,
+            },
+        });
+        ref.afterClosed().subscribe((restoredSpec?: DynamicBlockSpecification) => {
+            if (restoredSpec && typeof restoredSpec === 'object') {
+                this.currentSpec = {
+                    version: restoredSpec.version || '1.0.0',
+                    name: restoredSpec.name || this.currentSpec.name || 'Tela Restaurada',
+                    route: restoredSpec.route ?? this.currentSpec.route ?? '',
+                    layout: restoredSpec.layout || 'vertical',
+                    blocks: Array.isArray(restoredSpec.blocks)
+                        ? JSON.parse(JSON.stringify(restoredSpec.blocks))
+                        : [],
+                    metadata: restoredSpec.metadata || {},
+                };
+                this.notify('Versão restaurada no construtor. Clique em "Salvar Tela" para confirmar.');
+            }
+        });
     }
 
     abrirPreviewComponente(block: DynamicBlockNode): void {
