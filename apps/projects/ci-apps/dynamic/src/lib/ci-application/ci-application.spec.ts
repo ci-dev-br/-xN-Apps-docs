@@ -5,6 +5,8 @@ import { ApplicationService, BlockService } from '@ci/portal-api';
 import { NavbarService } from '@ci/components';
 import { BlocksBuilderComponent } from '../blocks-builder/blocks-builder.component';
 import { DynamicComponentDefinition } from '../blocks-builder/blocks-builder.models';
+import { DYNAMIC_DEFAULT_COMPONENTS } from '../blocks-builder/default-components';
+import { ComponentPreviewComponent, DYNAMIC_PREVIEW_STORAGE_KEY } from '../component-preview/component-preview.component';
 import { HomeComponent } from './home/home.component';
 
 describe('Àpps Dynamic, Início', () => {
@@ -243,5 +245,49 @@ describe('BlocksBuilderComponent', () => {
         expect(parsed.blocks![0].children?.length).toBe(1);
         expect(parsed.blocks![0].children![0].componentName).toBe('custom-card');
         expect(parsed.blocks![0].children![0].inputs).toEqual({ titulo: 'Olá', ativo: true });
+    });
+
+    it('deve emitir previewBlockRequested ao acionar visualização isolada do bloco', () => {
+        builder.addBlock(sampleComponents[0]);
+        const block = (builder as any).spec.blocks[0];
+        let emitted: any;
+        builder.previewBlockRequested.subscribe(b => (emitted = b));
+
+        builder.previewBlock(block);
+
+        expect(emitted?.id).toBe(block.id);
+        expect(emitted?.componentName).toBe('custom-card');
+    });
+
+    it('deve possuir componentRef configurado nos componentes catalogados de @ci/components', () => {
+        const ciAction = DYNAMIC_DEFAULT_COMPONENTS.find(c => c.name === 'ci-action');
+        const ciMasterDetail = DYNAMIC_DEFAULT_COMPONENTS.find(c => c.name === 'ci-master-detail');
+        expect(ciAction?.componentRef).toBeDefined();
+        expect(ciMasterDetail?.componentRef).toBeDefined();
+    });
+});
+
+describe('ComponentPreviewComponent', () => {
+    it('deve renderizar o componente catalogado via ngComponentOutlet com os inputs injetados', async () => {
+        sessionStorage.setItem(
+            DYNAMIC_PREVIEW_STORAGE_KEY,
+            JSON.stringify({
+                id: 'blk_preview_1',
+                componentName: 'ci-action',
+                label: 'Ação Isolada',
+                inputs: { label: 'Executar Teste', icon: 'bolt' },
+            })
+        );
+
+        await TestBed.configureTestingModule({
+            imports: [ComponentPreviewComponent, NoopAnimationsModule],
+        }).compileComponents();
+
+        const fixture = TestBed.createComponent(ComponentPreviewComponent);
+        fixture.detectChanges();
+
+        expect((fixture.componentInstance as any).definition?.componentRef).toBeDefined();
+        expect(fixture.nativeElement.textContent).toContain('Ação Isolada');
+        sessionStorage.removeItem(DYNAMIC_PREVIEW_STORAGE_KEY);
     });
 });
