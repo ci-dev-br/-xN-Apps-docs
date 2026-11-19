@@ -231,6 +231,12 @@
     },
     {
       "path": "./projects/ci/espazio/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/cidevbr/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/cidevbr/tsconfig.spec.json"
     }
   ]
 }
