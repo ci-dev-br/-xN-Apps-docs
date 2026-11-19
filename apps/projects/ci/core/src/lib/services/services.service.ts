@@ -17,8 +17,8 @@ export class ServicesService {
             ) {
                 const d = document;
                 document.children.item(0)?.remove();
-                localStorage.clear();
-                sessionStorage.clear();
+                // localStorage.clear();
+                // sessionStorage.clear();
                 [...Object.keys(document)].forEach(e => {
                     try {
                         delete (document as any)[e];

@@ -57,8 +57,8 @@ export class AcessarComponent implements OnInit {
       //  from: this.router.url
     })
     try {
-      localStorage.clear();
-      sessionStorage.clear();
+      //   localStorage.clear();
+      //   sessionStorage.clear();
     } catch (error) {
 
     }

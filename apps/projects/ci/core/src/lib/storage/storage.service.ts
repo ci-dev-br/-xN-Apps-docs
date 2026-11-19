@@ -37,7 +37,7 @@ export class StorageService implements OnInit {
     clean() {
         try {
             if (localStorage) {
-                localStorage.clear();
+                //  localStorage.clear();
             }
         } catch (error) {
         }
