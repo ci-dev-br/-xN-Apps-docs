@@ -6,7 +6,7 @@ import { LogLevel, LogStatus } from './logger/log.entity';
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-        const TIMEOUT_MS = 30000;
+        const TIMEOUT_MS = 1000;
         const request = context.switchToHttp()?.getRequest();
         const now = Date.now();
 
@@ -23,7 +23,13 @@ export class LoggingInterceptor implements NestInterceptor {
                             const isServerError = status >= 500 || !err?.status;
                             const message = `[HTTP ${status}] ${request.method} ${request.url} - ${err?.message || 'Erro de execução'}`;
                             setTimeout(() => (async () => {
-                                /**Registra log assincrono */
+                                /**
+                                 * Registra o evento no log assincronamente, desta forma, não interfere na saída.
+                                 *  (DDos só funciona no Node, se a requisição é segurada por saída de console
+                                 * pois há concorrencia de core)
+                                 * 
+                                 * ** Desligar o log o sistema vira uma caixa preta
+                                */
                                 loggerService.registerServerLog({
                                     message,
                                     log: {
@@ -45,7 +51,12 @@ export class LoggingInterceptor implements NestInterceptor {
                                         durationMs: Date.now() - now,
                                     },
                                 }, request).catch(() => { });
-                            })());
+                            })()); /// pode ocorrer stack de setimeout ? si, mais de 4 mi, deve travar 
+                            /// adicionei na camada 492 a exigencia de mais de um no com gerenciamento da porta
+                            // se o no trava outro vai derrubar e assumir a porta?
+                            //  essa e a intenção ...
+                            // quem revisou ?
+                            // ninguém
                         }
                     } catch { }
 

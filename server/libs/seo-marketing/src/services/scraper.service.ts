@@ -109,10 +109,10 @@ export class ScraperService implements OnModuleInit {
         await this.runScrapeCycle();
         // Pequena pausa entre ciclos completos caso a base de dados esteja vazia, para não fritar a CPU.
         // Se houver tarefas, o ciclo volta imediatamente após processar todas.
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        await new Promise(resolve => setTimeout(resolve, 100));
       } catch (error) {
         this.logger.error('Erro no ciclo principal de raspagem. Reiniciando em 10s...', error);
-        await new Promise(resolve => setTimeout(resolve, 10000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
   }
@@ -439,9 +439,9 @@ export class ScraperService implements OnModuleInit {
       source.consecutiveErrors = 0;
     } else {
       source.consecutiveErrors += 1;
-      if (source.consecutiveErrors >= 5) {
+      if (source.consecutiveErrors >= 10) {
         source.status = SourceStatus.SUSPENDED;
-        this.logger.warn(`⚠️ Fonte "${source.name}" foi SUSPENSA devido a 5 erros consecutivos.`);
+        this.logger.warn(`⚠️ Fonte "${source.name}" foi SUSPENSA devido a 10 erros consecutivos.`);
       }
     }
     await this.sourceRepository.save(source);

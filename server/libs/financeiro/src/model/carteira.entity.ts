@@ -29,7 +29,7 @@ export class Carteira extends FullAuditedEntity {
     numeroCarteira?: string;
 
     @ApiProperty({ title: 'Saldo', description: 'Saldo / posição disponível na carteira' })
-    @Column({ type: 'numeric', precision: 18, scale: 4, default: 0.00 })
+    @Column({ type: 'numeric', precision: 18, scale: 8, default: 0.00 })
     saldo: number;
 
     @ApiProperty({ title: 'Tipo de Lastro', enum: ['MOEDA_REAL', 'PARAMETRIZADA'], description: 'Indica se a carteira é lastreada em moeda fiduciária/real ou moeda/ativo parametrizado', default: 'MOEDA_REAL' })

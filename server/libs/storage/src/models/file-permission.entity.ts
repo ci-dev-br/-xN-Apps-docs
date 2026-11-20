@@ -8,7 +8,7 @@ import { FullAuditedEntity } from "@ci/manager";
 })
 export class FilePermission extends FullAuditedEntity {
     @Column({ enum: ['GRANT', 'DANY'] })
-    type: 'GRANT' | 'DANY';
+    role: 'GRANT' | 'DANY';
     @Column({ nullable: true })
     path?: string;
 }

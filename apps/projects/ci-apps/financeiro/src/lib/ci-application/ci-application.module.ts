@@ -21,3 +21,6 @@ import { LancamentoFinanceiroService } from '@ci/portal-api';
   ]
 })
 export class CiApplicationModule { }
+
+export{
+}

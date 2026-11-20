@@ -8,6 +8,7 @@ import {
     PeriodoDashboardCarteira,
     PontoSerieTemporalCarteiraDto
 } from '@ci/portal-api';
+import { CurvaEvolucao } from '@ci-apps/Financeiro';
 
 export interface PontoRenderGraficoCard {
     indice: number;
@@ -24,7 +25,13 @@ export interface PontoRenderGraficoCard {
 @Component({
     selector: 'ci-card--carteira-evolucao-temporal',
     standalone: true,
-    imports: [CommonModule, MatIconModule, MatButtonModule, CurrencyPipe],
+    imports: [
+        CommonModule,
+        MatIconModule,
+        MatButtonModule,
+        CurrencyPipe,
+        CurvaEvolucao,
+    ],
     styles: [`
         :host {
             display: block;
@@ -227,6 +234,7 @@ export interface PontoRenderGraficoCard {
     `],
     template: `
     <div class="timeseries-chart-card">
+       <!-- TODO: Curva de evolução aqui -->
         <div class="chart-card-header">
             <div>
                 <h4>Curva de Evolução Patrimonial & Ganhos vs. Perdas</h4>
@@ -246,7 +254,9 @@ export interface PontoRenderGraficoCard {
                     </div>
                 }
             </div>
-        </div>
+        </div>       
+
+        <!-- <ci-curva-evolucao [periodo]="periodo" [dashboard]="dashboard" [periodos]="periodos" (trocar)="trocarPeriodo($event)" ></ci-curva-evolucao> -->
 
         @if (pontoInspecionado(); as ptInfo) {
             <div class="chart-inspector-bar">

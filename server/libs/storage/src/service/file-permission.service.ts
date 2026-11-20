@@ -40,7 +40,7 @@ export class FilePermissionService {
                         if (!permission?.path) continue;
                         const permission_path = this.resolveTargetPath(permission.path);
                         if (
-                            permission.type === 'GRANT' &&
+                            permission.role === 'GRANT' &&
                             (file_path === permission_path || file_path.startsWith(permission_path + '/'))
                         ) {
                             return true;
