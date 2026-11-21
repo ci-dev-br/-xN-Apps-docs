@@ -1,0 +1,24 @@
+<div class="quick-read-card" role="tooltip">
+    <div class="quick-read-meta">
+        <span class="category-chip">{{ categoryLabel }}</span>
+        <span class="source-chip">
+            <mat-icon class="meta-icon">public</mat-icon>
+            <span>{{ sourceLabel }}</span>
+        </span>
+        @if (dateLabel) {
+            <span class="time-chip">
+                <mat-icon class="meta-icon">schedule</mat-icon>
+                <span>{{ dateLabel }}</span>
+            </span>
+        }
+    </div>
+
+    <h4 class="quick-read-title">{{ titleText }}</h4>
+
+    <p class="quick-read-content">{{ contentText }}</p>
+
+    <div class="quick-read-footer">
+        <mat-icon class="footer-icon">visibility</mat-icon>
+        <span>Leitura rápida • Clique no link para ver detalhes</span>
+    </div>
+</div>
