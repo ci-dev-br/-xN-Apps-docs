@@ -10,7 +10,9 @@ export class PlayerService {
     ) { }
 
     async create(id: string) {
-        const novo = this.repo.create({ publicPlayerName: id });
+        const novo = this.repo.create({
+            publicPlayerName: id
+        });
 
         return await this.repo.save(novo);
     }

@@ -38,70 +38,7 @@
     </div>
 
     <!-- Ações Contextuais da Tela Ativa (com quebra em múltiplas linhas se não couber) -->
-    @if(navbarService?.contextActions()?.length){
-    <div class="navbar-context-actions">
-        @if(navbarService?.contextTitle(); as ctxTitle){
-        <span class="context-title-badge">{{ ctxTitle }}</span>
-        }
-        @for(action of navbarService!.contextActions(); track action.id){
-            @if(action.variant === 'select'){
-            <mat-form-field appearance="outline" class="navbar-context-select">
-                <mat-label>{{ action.label }}</mat-label>
-                <mat-select
-                    [value]="getContextSelectValue(action)"
-                    [disabled]="isContextActionDisabled(action)"
-                    (selectionChange)="action.onChange?.($event.value)">
-                    @for(opt of getContextSelectOptions(action); track opt.value){
-                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
-                    }
-                </mat-select>
-            </mat-form-field>
-            } @else if(action.variant === 'flat'){
-            <button mat-flat-button
-                [color]="action.color"
-                [disabled]="isContextActionDisabled(action)"
-                [class.context-action-active]="isContextActionActive(action)"
-                [matTooltip]="action.tooltip || action.label"
-                (click)="action.onClick?.($event)">
-                @if(action.icon){ <mat-icon>{{ action.icon }}</mat-icon> }
-                <span>{{ action.label }}</span>
-            </button>
-            } @else if(action.variant === 'raised'){
-            <button mat-raised-button
-                [color]="action.color"
-                [disabled]="isContextActionDisabled(action)"
-                [class.context-action-active]="isContextActionActive(action)"
-                [matTooltip]="action.tooltip || action.label"
-                (click)="action.onClick?.($event)">
-                @if(action.icon){ <mat-icon>{{ action.icon }}</mat-icon> }
-                <span>{{ action.label }}</span>
-            </button>
-            } @else if(action.variant === 'stroked'){
-            <button mat-stroked-button
-                [color]="action.color"
-                [disabled]="isContextActionDisabled(action)"
-                [class.context-action-active]="isContextActionActive(action)"
-                [matTooltip]="action.tooltip || action.label"
-                (click)="action.onClick?.($event)">
-                @if(action.icon){ <mat-icon>{{ action.icon }}</mat-icon> }
-                <span>{{ action.label }}</span>
-            </button>
-            } @else {
-            <button mat-button
-                [color]="action.color"
-                [disabled]="isContextActionDisabled(action)"
-                [class.context-action-active]="isContextActionActive(action)"
-                [matTooltip]="action.tooltip || action.label"
-                (click)="action.onClick?.($event)">
-                @if(action.icon){ <mat-icon>{{ action.icon }}</mat-icon> }
-                <span>{{ action.label }}</span>
-            </button>
-            }
-        }
-    </div>
-    } @else {
-    <span style="flex: auto"></span>
-    }
+    <span style="flex:auto"></span>
     @if(!!user()){
     <button mat-icon-button [matMenuTriggerFor]="notificationsMenu" class="nav-icon-btn notif-btn"
         matTooltip="Notificações">
@@ -214,9 +151,55 @@
             <span>Statusbar Inferior</span>
         </button>
     </mat-menu>
-
-
 </mat-toolbar>
+@if(navbarService?.contextActions()?.length){
+<mat-toolbar>
+    @if(navbarService?.contextTitle(); as ctxTitle){
+    <span class="context-title-badge">{{ ctxTitle }}</span>
+    }
+    @for(action of navbarService!.contextActions(); track action.id){
+    @if(action.variant === 'select'){
+    <mat-form-field appearance="outline" class="navbar-context-select">
+        <mat-label>{{ action.label }}</mat-label>
+        <mat-select [value]="getContextSelectValue(action)" [disabled]="isContextActionDisabled(action)"
+            (selectionChange)="action.onChange?.($event.value)">
+            @for(opt of getContextSelectOptions(action); track opt.value){
+            <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+            }
+        </mat-select>
+    </mat-form-field>
+    } @else if(action.variant === 'flat'){
+    <button mat-flat-button [color]="action.color" [disabled]="isContextActionDisabled(action)"
+        [class.context-action-active]="isContextActionActive(action)" [matTooltip]="action.tooltip || action.label"
+        (click)="action.onClick?.($event)">
+        @if(action.icon){ <mat-icon>{{ action.icon }}</mat-icon> }
+        <span>{{ action.label }}</span>
+    </button>
+    } @else if(action.variant === 'raised'){
+    <button mat-raised-button [color]="action.color" [disabled]="isContextActionDisabled(action)"
+        [class.context-action-active]="isContextActionActive(action)" [matTooltip]="action.tooltip || action.label"
+        (click)="action.onClick?.($event)">
+        @if(action.icon){ <mat-icon>{{ action.icon }}</mat-icon> }
+        <span>{{ action.label }}</span>
+    </button>
+    } @else if(action.variant === 'stroked'){
+    <button mat-stroked-button [color]="action.color" [disabled]="isContextActionDisabled(action)"
+        [class.context-action-active]="isContextActionActive(action)" [matTooltip]="action.tooltip || action.label"
+        (click)="action.onClick?.($event)">
+        @if(action.icon){ <mat-icon>{{ action.icon }}</mat-icon> }
+        <span>{{ action.label }}</span>
+    </button>
+    } @else {
+    <button mat-button [color]="action.color" [disabled]="isContextActionDisabled(action)"
+        [class.context-action-active]="isContextActionActive(action)" [matTooltip]="action.tooltip || action.label"
+        (click)="action.onClick?.($event)">
+        @if(action.icon){ <mat-icon>{{ action.icon }}</mat-icon> }
+        <span>{{ action.label }}</span>
+    </button>
+    }
+    }
+</mat-toolbar>
+}
 <!-- Template Compartilhado da Lista de Notificações -->
 <ng-template #notificationsListContent>
     <div class="notifications-box" (click)="$event.stopPropagation()">
