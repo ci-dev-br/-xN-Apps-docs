@@ -13,6 +13,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { News, NewsService } from '@ci/portal-api';
 import { UserAuthenticationService } from '@ci/auth';
 import { ComentariosComponent } from '../comentarios/comentarios';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { NewsTooltipDirective } from '../news-quick-read-tooltip/news-tooltip.directive';
 
 export interface MarketCategoryFilter {
     label: string;
@@ -35,6 +37,8 @@ export interface MarketCategoryFilter {
         MatInputModule,
         MatSnackBarModule,
         ComentariosComponent,
+        OverlayModule,
+        NewsTooltipDirective,
     ],
     templateUrl: './market-news-feed.component.html',
     styleUrls: ['./market-news-feed.component.scss']

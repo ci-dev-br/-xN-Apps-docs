@@ -81,7 +81,7 @@
                                 <span class="source-info" (click)="$event.stopPropagation()">
                                     <mat-icon class="meta-icon">public</mat-icon>
                                     @if (item.sourceInfo?.domain) {
-                                        <a [href]="'https://' + item.sourceInfo?.domain" target="_blank" rel="noopener">
+                                        <a [href]="'https://' + item.sourceInfo?.domain" target="_blank" rel="noopener" [ciNewsTooltip]="item">
                                             {{ item.sourceInfo?.name || item.sourceInfo?.domain }}
                                         </a>
                                     } @else {
@@ -98,7 +98,7 @@
                             </div>
 
                             <!-- Título da Notícia -->
-                            <h3 class="card-title" [innerHtml]="item.title"></h3>
+                            <h3 class="card-title" [innerHtml]="item.title" [ciNewsTooltip]="item"></h3>
 
                             <!-- Resumo / Conteúdo da Base -->
                             @if (item.content) {
@@ -146,7 +146,7 @@
                                 <!-- Abrir na Fonte Oficial -->
                                 <button mat-icon-button color="primary" class="icon-action open-btn" 
                                     (click)="abrirFonte(item, $event)" 
-                                    matTooltip="Abrir publicação original">
+                                    [ciNewsTooltip]="item">
                                     <mat-icon>open_in_new</mat-icon>
                                 </button>
                             </div>

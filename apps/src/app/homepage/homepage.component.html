@@ -118,11 +118,12 @@
                             <article class="feed-item" [class.in-focus]="highlightedFeed() === feed"
                                 (click)="focarNoticia(feed)">
                                 @if(!!feed.title){
-                                <h4 class="feed-title" [innerHtml]="feed.title"></h4>
+                                <h4 class="feed-title" [innerHtml]="feed.title" [ciNewsTooltip]="feed"></h4>
                                 }
                                 <div class="feed-source">
                                     Fonte: <a target="_blank" (click)="$event.stopPropagation()"
-                                        [href]="'https://' + feed?.sourceInfo?.domain">{{feed?.sourceInfo?.name ||
+                                        [href]="'https://' + feed?.sourceInfo?.domain"
+                                        [ciNewsTooltip]="feed">{{feed?.sourceInfo?.name ||
                                         feed?.sourceInfo?.domain || 'Origem'}}
                                     </a>
                                 </div>
@@ -191,7 +192,7 @@
 
                                     <button mat-icon-button color="primary"
                                         (click)="interacao(feed, 'open'); $event.stopPropagation()"
-                                        matTooltip="Abrir na Origem"><mat-icon>open_in_new</mat-icon></button>
+                                        [ciNewsTooltip]="feed"><mat-icon>open_in_new</mat-icon></button>
                                 </div>
                             </article>
                             }
@@ -237,7 +238,7 @@
                                     <mat-icon class="source-icon">public</mat-icon>
                                     @if(activeNews?.sourceInfo?.domain) {
                                     <a [href]="'https://' + activeNews.sourceInfo.domain" target="_blank"
-                                        rel="noopener">
+                                        rel="noopener" [ciNewsTooltip]="activeNews">
                                         {{ activeNews.sourceInfo.name || activeNews.sourceInfo.domain }}
                                     </a>
                                     } @else {
@@ -305,7 +306,7 @@
                                 </div>
                                 <div class="correlated-list">
                                     @for (item of correlacionadas; track item.id || item.url || $index) {
-                                    <div class="correlated-item-card" (click)="focarNoticia(item)">
+                                    <div class="correlated-item-card" [ciNewsTooltip]="item" (click)="focarNoticia(item)">
                                         <div class="correlated-item-meta">
                                             <span class="correl-tag">{{ item.categoria || 'Mercado' }}</span>
                                             <span class="correl-source">{{ item?.sourceInfo?.name ||

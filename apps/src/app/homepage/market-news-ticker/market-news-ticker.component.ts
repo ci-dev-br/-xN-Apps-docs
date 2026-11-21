@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { OverlayModule } from '@angular/cdk/overlay';
 import { News, NewsService } from '@ci/portal-api';
+import { NewsTooltipDirective } from '../news-quick-read-tooltip/news-tooltip.directive';
 
 @Component({
     selector: 'ci-market-news-ticker',
@@ -13,6 +15,8 @@ import { News, NewsService } from '@ci/portal-api';
         MatIconModule,
         MatButtonModule,
         MatTooltipModule,
+        OverlayModule,
+        NewsTooltipDirective,
     ],
     templateUrl: './market-news-ticker.component.html',
     styleUrls: ['./market-news-ticker.component.scss']

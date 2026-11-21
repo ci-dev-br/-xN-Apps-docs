@@ -43,6 +43,8 @@ import { MarketNewsTickerComponent } from './market-news-ticker/market-news-tick
 import { MarketNewsFeedComponent } from './market-news-feed/market-news-feed.component';
 import { UserBoardComponent } from './user-board/user-board.component';
 import { ApplicationCatalogService } from '@ci/core';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { NewsTooltipDirective } from './news-quick-read-tooltip/news-tooltip.directive';
 
 const STOP_WORDS_SUBSTANTIVOS = new Set([
     'a', 'o', 'as', 'os', 'um', 'uma', 'uns', 'umas',
@@ -100,6 +102,8 @@ const TERMOS_BLOQUEADOS = [
         UserBoardComponent,
         MatMenuModule,
         MatProgressSpinnerModule,
+        OverlayModule,
+        NewsTooltipDirective,
     ],
     templateUrl: './homepage.component.html',
     standalone: true,

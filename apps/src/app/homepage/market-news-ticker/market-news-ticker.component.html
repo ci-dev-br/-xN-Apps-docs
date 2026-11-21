@@ -17,7 +17,7 @@
         <div class="ticker-track" [class.is-paused]="isPaused">
             <!-- Primeiro ciclo de notícias -->
             @for (item of items; track item.id || item.url || $index) {
-            <div class="news-ticker-item" (click)="onItemClick(item)" matTooltip="Clique para ver no Radar de Mercado">
+            <div class="news-ticker-item" (click)="onItemClick(item)" [ciNewsTooltip]="item">
                 <!-- <span class="item-tag">{{ item.categoria || 'Mercado' }}</span> -->
                 <span class="item-title" [innerHtml]="item.title"></span>
                 <span class="item-source">
@@ -34,7 +34,7 @@
             <!-- Ciclo duplicado para loop infinito suave -->
             @for (item of items; track ('dup_' + (item.id || item.url || $index))) {
             <div class="news-ticker-item" (click)="onItemClick(item)" aria-hidden="true"
-                matTooltip="Clique para ver no Radar de Mercado">
+                [ciNewsTooltip]="item">
                 <!-- <span class="item-tag">{{ item.categoria || 'Mercado' }}</span> -->
                 <span class="item-title" [innerHtml]="item.title"></span>
                 <span class="item-source">
