@@ -227,6 +227,9 @@ declare module '../lib/models/news' {
     downVotes?: number;
     commentsCount?: number;
     userVote?: 'UP' | 'DOWN' | null;
+    correlationScore?: number;
+    matchedTerm?: string;
+    matchedSnippet?: string;
   }
 }
 
@@ -254,6 +257,7 @@ declare module '../lib/services/news.service' {
       user: { id: string; username: string; fullName: string; surname: string; roles: string[] } | null;
     }>;
     getMarketNews(params?: { search?: string; category?: string; limit?: number; offset?: number } | GetMarketNews$Params, context?: HttpContext): Observable<Array<News>>;
+    getCorrelatedNews(params: { newsId?: string; phrase?: string; title?: string; content?: string; limit?: number }, context?: HttpContext): Observable<Array<News>>;
     vote(newsId: string, vote: 'UP' | 'DOWN', context?: HttpContext): Observable<NewsVoteStats>;
     getVoteStats(newsId: string, context?: HttpContext): Observable<NewsVoteStats>;
     comment(newsId: string, content: string, authorName?: string, context?: HttpContext): Observable<NewsCommentItem>;
@@ -408,6 +412,19 @@ NewsService.prototype.getMarketNews = function (
     headers: { 'x-anonymous-id': anonymousId },
     context
   });
+};
+
+NewsService.prototype.getCorrelatedNews = function (
+  this: ServiceCtx,
+  params: { newsId?: string; phrase?: string; title?: string; content?: string; limit?: number },
+  context?: HttpContext
+): Observable<Array<News>> {
+  const anonymousId = NewsService.prototype.getOrCreateAnonymousId.call(this);
+  return this.http.post<Array<News>>(
+    `${this.rootUrl}/News/Correlated`,
+    params || {},
+    { headers: { 'x-anonymous-id': anonymousId }, context }
+  );
 };
 
 NewsService.prototype.vote = function (this: ServiceCtx, newsId: string, vote: 'UP' | 'DOWN', context?: HttpContext): Observable<NewsVoteStats> {

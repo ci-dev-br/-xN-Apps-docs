@@ -1,7 +1,7 @@
-import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Query, Req } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Logger, NotFoundException, Param, Post, Query, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { createHash } from 'crypto';
 import { News } from '../models/news.entity';
 import { Category } from '../models/category.entity';
@@ -36,11 +36,39 @@ export class AnonymousSessionInputDto {
     authorName?: string;
 }
 
+export class CorrelatedSearchInputDto {
+    newsId?: string;
+    phrase?: string;
+    title?: string;
+    content?: string;
+    limit?: number;
+}
+
+const PT_STOP_WORDS = new Set([
+    'para', 'como', 'mais', 'menos', 'muito', 'muita', 'muitos', 'muitas', 'sobre', 'entre',
+    'apos', 'após', 'antes', 'depois', 'durante', 'contra', 'desde', 'ate', 'até', 'sem',
+    'com', 'por', 'pelo', 'pela', 'pelos', 'pelas', 'num', 'numa', 'nos', 'nas', 'dos', 'das',
+    'que', 'quem', 'qual', 'quais', 'quando', 'onde', 'porque', 'pois', 'mas', 'porem', 'porém',
+    'ainda', 'tambem', 'também', 'apenas', 'mesmo', 'mesma', 'mesmos', 'mesmas', 'outro', 'outra',
+    'outros', 'outras', 'todo', 'toda', 'todos', 'todas', 'cada', 'esse', 'essa', 'esses', 'essas',
+    'este', 'esta', 'estes', 'estas', 'isso', 'isto', 'aquele', 'aquela', 'aquilo', 'seu', 'sua',
+    'seus', 'suas', 'nosso', 'nossa', 'nossos', 'nossas', 'eles', 'elas', 'voce', 'você', 'voces',
+    'vocês', 'foi', 'sao', 'são', 'era', 'eram', 'ser', 'estar', 'esta', 'está', 'estao', 'estão',
+    'tem', 'têm', 'tinha', 'ter', 'teve', 'pode', 'podem', 'podia', 'poder', 'faz', 'fazer', 'fez',
+    'disse', 'afirmou', 'segundo', 'conforme', 'brasil', 'hoje', 'ontem', 'amanha', 'amanhã',
+    'ano', 'anos', 'mes', 'mês', 'meses', 'dia', 'dias', 'hora', 'horas', 'novo', 'nova', 'novos',
+    'novas', 'grande', 'grandes', 'maior', 'menor', 'primeiro', 'primeira', 'ultimo', 'último',
+    'ultima', 'última', 'http', 'https', 'www', 'com', 'html', 'leia', 'veja', 'confira', 'saiba',
+    'nao', 'não', 'sim', 'uma', 'uns', 'umas', 'ele', 'ela', 'aqui', 'ali', 'entao', 'então'
+]);
+
 @ApiTags('News')
 @Controller('News')
 export class NewsController {
+    private readonly logger = new Logger(NewsController.name);
     private readonly feedCache = new Map<string, CacheEntry<News[]>>();
     private readonly marketCache = new Map<string, CacheEntry<News[]>>();
+    private readonly correlatedCache = new Map<string, CacheEntry<any[]>>();
     private readonly CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
     private financialCatIdsCache: string[] = [];
     private lastFinancialCatIdsFetch = 0;
@@ -645,5 +673,288 @@ export class NewsController {
         );
 
         return result;
+    }
+
+    /**
+     * Pesquisa correlata usando PostgreSQL Full-Text Search (tsvector / to_tsquery / ts_rank_cd / ts_headline)
+     * cruzando título, conteúdo, categoria e frase selecionada com outras matérias no banco.
+     */
+    @Public()
+    @Get('Correlated/:newsId')
+    @ApiOperation({
+        operationId: 'getCorrelatedNewsById',
+        summary: 'Pesquisa matérias correlatas via PostgreSQL Full-Text Search',
+    })
+    @ApiQuery({ name: 'phrase', type: String, required: false })
+    @ApiQuery({ name: 'limit', type: Number, required: false })
+    @ApiResponse({ status: 200, type: [News] })
+    async getCorrelatedById(
+        @Param('newsId') newsId: string,
+        @Query('phrase') phrase?: string,
+        @Query('limit') limitStr?: string,
+        @Req() request?: any,
+    ) {
+        const limit = limitStr ? parseInt(limitStr, 10) : 6;
+        return this.findCorrelatedInternal({ newsId, phrase, limit }, request);
+    }
+
+    @Public()
+    @Post('Correlated')
+    @ApiOperation({
+        operationId: 'getCorrelatedNews',
+        summary: 'Cruza conteúdo ou frase selecionada com outras matérias usando PostgreSQL + TypeORM',
+    })
+    @ApiResponse({ status: 200, type: [News] })
+    async getCorrelated(
+        @Body() input: CorrelatedSearchInputDto,
+        @Req() request?: any,
+    ) {
+        return this.findCorrelatedInternal(input || {}, request);
+    }
+
+    private extractCorrelationTokens(text: string, maxTokens = 12): string[] {
+        if (!text) return [];
+        const clean = text
+            .replace(/<[^>]*>/g, ' ')
+            .replace(/&[a-z0-9#]+;/gi, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+        const rawMatches = clean.match(/[A-Za-zÀ-ÖØ-öø-ÿ0-9]{3,}/g) || [];
+        const freq = new Map<string, { score: number; token: string }>();
+
+        for (const word of rawMatches) {
+            const sanitized = word
+                .toLowerCase()
+                .replace(/[^a-zà-öø-ÿ0-9]/g, '');
+            if (sanitized.length < 3 || /^\d+$/.test(sanitized) || PT_STOP_WORDS.has(sanitized)) {
+                continue;
+            }
+            const isCapitalized = /^[A-ZÀ-ÖØ-Þ]/.test(word);
+            const weight = isCapitalized ? 2.5 : 1;
+            const current = freq.get(sanitized);
+            if (current) {
+                current.score += weight;
+            } else {
+                freq.set(sanitized, { score: weight, token: sanitized });
+            }
+        }
+
+        return Array.from(freq.values())
+            .sort((a, b) => b.score - a.score)
+            .slice(0, maxTokens)
+            .map(item => item.token);
+    }
+
+    private buildPostgresTsQuery(phrase?: string, title?: string, content?: string): {
+        tsQuery: string;
+        tokens: string[];
+        phraseTokens: string[];
+    } {
+        const phraseTokens = this.extractCorrelationTokens(phrase || '', 6);
+        const titleTokens = this.extractCorrelationTokens(title || '', 8);
+        const contentTokens = this.extractCorrelationTokens((content || '').slice(0, 2500), 10);
+
+        const merged: string[] = [];
+        const seen = new Set<string>();
+        for (const t of [...phraseTokens, ...titleTokens, ...contentTokens]) {
+            if (!seen.has(t)) {
+                seen.add(t);
+                merged.push(t);
+            }
+            if (merged.length >= 14) break;
+        }
+
+        if (merged.length === 0) {
+            return { tsQuery: '', tokens: [], phraseTokens: [] };
+        }
+
+        const clauses: string[] = [];
+        if (phraseTokens.length >= 2) {
+            clauses.push(`(${phraseTokens.join(' <-> ')})`);
+        }
+        for (const token of merged) {
+            clauses.push(`${token}:*`);
+        }
+
+        return {
+            tsQuery: clauses.join(' | '),
+            tokens: merged,
+            phraseTokens,
+        };
+    }
+
+    private async findCorrelatedInternal(input: CorrelatedSearchInputDto, request?: any) {
+        const limit = Math.min(Math.max(Number(input?.limit) || 6, 1), 20);
+        let sourceNews: News | null = null;
+
+        if (input?.newsId) {
+            sourceNews = await this.newsRepo.findOne({
+                where: this.isUuid(input.newsId.trim())
+                    ? { id: input.newsId.trim() }
+                    : { url: input.newsId.trim() },
+                relations: ['category', 'sourceInfo'],
+            });
+        }
+
+        const effectiveTitle = input?.title || sourceNews?.title || '';
+        const effectiveContent = input?.content || sourceNews?.content || '';
+        const effectivePhrase = (input?.phrase || '').trim();
+
+        const { tsQuery, tokens, phraseTokens } = this.buildPostgresTsQuery(
+            effectivePhrase,
+            effectiveTitle,
+            effectiveContent,
+        );
+
+        if (!tsQuery || tokens.length === 0) {
+            return [];
+        }
+
+        const cacheKey = `${sourceNews?.id || ''}|${effectivePhrase.toLowerCase()}|${tokens.slice(0, 6).join(',')}|${limit}`;
+        const now = Date.now();
+        const cached = this.correlatedCache.get(cacheKey);
+        let items: any[] | null = cached && cached.expiresAt > now ? cached.data : null;
+
+        if (!items) {
+            const sourceId = sourceNews?.id || null;
+            const sourceUrl = sourceNews?.url || null;
+            const sourceCategoryId = sourceNews?.category?.id || null;
+
+            const docVector = `(setweight(to_tsvector('portuguese', coalesce(news.title, '')), 'A') || setweight(to_tsvector('portuguese', coalesce(news.content, '')), 'B'))`;
+            const queryExpr = `to_tsquery('portuguese', :tsQuery)`;
+            const categoryBoostExpr = sourceCategoryId
+                ? `CASE WHEN category.id = :sourceCategoryId THEN 0.15 ELSE 0 END`
+                : `0`;
+
+            try {
+                let qb = this.newsRepo.createQueryBuilder('news')
+                    .leftJoinAndSelect('news.sourceInfo', 'source')
+                    .leftJoinAndSelect('news.category', 'category')
+                    .where(`news.title IS NOT NULL AND length(news.title) > 20`)
+                    .andWhere(`${docVector} @@ ${queryExpr}`, { tsQuery });
+
+                if (sourceId) {
+                    qb = qb.andWhere('news.id != :sourceId', { sourceId });
+                }
+                if (sourceUrl) {
+                    qb = qb.andWhere('news.url != :sourceUrl', { sourceUrl });
+                }
+                if (sourceCategoryId) {
+                    qb = qb.setParameter('sourceCategoryId', sourceCategoryId);
+                }
+
+                qb = qb
+                    .addSelect(`(ts_rank_cd(${docVector}, ${queryExpr}) + ${categoryBoostExpr})`, 'pg_rank')
+                    .addSelect(
+                        `ts_headline('portuguese', coalesce(nullif(news.content, ''), news.title), ${queryExpr}, 'MaxWords=26, MinWords=10, ShortWord=3, HighlightAll=false, StartSel=[[HL]], StopSel=[[/HL]]')`,
+                        'pg_headline',
+                    )
+                    .orderBy('pg_rank', 'DESC')
+                    .addOrderBy('news.scrapedAt', 'DESC')
+                    .limit(limit);
+
+                const { entities, raw } = await qb.getRawAndEntities();
+                const rawById = new Map<string, any>();
+                for (const row of raw) {
+                    const id = row['news_id'] || row['id'];
+                    if (id && !rawById.has(id)) {
+                        rawById.set(id, row);
+                    }
+                }
+
+                items = entities.map(entity => {
+                    const row = rawById.get(entity.id) || {};
+                    const rawHeadline = String(row['pg_headline'] || '');
+                    const hlMatch = rawHeadline.match(/\[\[HL\]\]([\s\S]*?)\[\[\/HL\]\]/);
+                    const matchedTerm =
+                        (hlMatch?.[1] || '').trim() ||
+                        phraseTokens[0] ||
+                        tokens.find(t =>
+                            `${entity.title || ''} ${entity.content || ''}`.toLowerCase().includes(t),
+                        ) ||
+                        tokens[0];
+                    const matchedSnippet = rawHeadline
+                        .replace(/\[\[HL\]\]|\[\[\/HL\]\]/g, '')
+                        .replace(/\s+/g, ' ')
+                        .trim();
+
+                    return {
+                        entity,
+                        correlationScore: Number(Number(row['pg_rank'] || 0).toFixed(4)),
+                        matchedTerm,
+                        matchedSnippet,
+                    };
+                });
+            } catch (err: any) {
+                this.logger.warn(`Fallback ILIKE na pesquisa correlata: ${err?.message || err}`);
+                items = [];
+            }
+
+            // Fallback via ILIKE (caso FTS retorne vazio para siglas raras ou termos muito específicos)
+            if (items.length === 0) {
+                const searchTerms = (phraseTokens.length > 0 ? phraseTokens : tokens).slice(0, 5);
+                let qbFallback = this.newsRepo.createQueryBuilder('news')
+                    .leftJoinAndSelect('news.sourceInfo', 'source')
+                    .leftJoinAndSelect('news.category', 'category')
+                    .where('news.title IS NOT NULL AND length(news.title) > 20');
+
+                if (sourceId) {
+                    qbFallback = qbFallback.andWhere('news.id != :sourceId', { sourceId });
+                }
+                if (sourceUrl) {
+                    qbFallback = qbFallback.andWhere('news.url != :sourceUrl', { sourceUrl });
+                }
+
+                qbFallback = qbFallback.andWhere(
+                    new Brackets(sub => {
+                        searchTerms.forEach((term, idx) => {
+                            const key = `fb_${idx}`;
+                            const param = { [key]: `%${term}%` };
+                            if (idx === 0) {
+                                sub.where(`(news.title ILIKE :${key} OR news.content ILIKE :${key})`, param);
+                            } else {
+                                sub.orWhere(`(news.title ILIKE :${key} OR news.content ILIKE :${key})`, param);
+                            }
+                        });
+                    }),
+                )
+                    .orderBy('news.scrapedAt', 'DESC')
+                    .limit(limit);
+
+                const fallbackEntities = await qbFallback.getMany();
+                items = fallbackEntities.map(entity => {
+                    const matchedTerm =
+                        searchTerms.find(t =>
+                            `${entity.title || ''} ${entity.content || ''}`.toLowerCase().includes(t),
+                        ) || searchTerms[0];
+                    return {
+                        entity,
+                        correlationScore: 0.1,
+                        matchedTerm,
+                        matchedSnippet: (entity.content || entity.title || '').slice(0, 180).trim(),
+                    };
+                });
+            }
+
+            this.correlatedCache.set(cacheKey, {
+                data: items,
+                expiresAt: now + this.CACHE_TTL_MS,
+            });
+        }
+
+        return items.map(({ entity, correlationScore, matchedTerm, matchedSnippet }) => ({
+            ...entity,
+            categoria: this.inferirCategoriaMercado(entity),
+            correlationScore,
+            matchedTerm,
+            matchedSnippet,
+            content: Policy(
+                { reading: entity.content },
+                request,
+                'READER',
+                r => (r ? r.substring(0, 170) + ' \n\n[...]' : ''),
+            ).reading,
+        }));
     }
 }
