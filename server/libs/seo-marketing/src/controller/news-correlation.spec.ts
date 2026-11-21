@@ -1,3 +1,10 @@
+jest.mock('../services/scraper.service', () => ({
+    ScraperService: class ScraperService {},
+}));
+jest.mock('@ci/user/service/social.service', () => ({
+    SocialService: class SocialService {},
+}));
+
 import { NewsController } from './news.controller';
 
 describe('NewsController Correlated Search (Postgres + TypeORM)', () => {
