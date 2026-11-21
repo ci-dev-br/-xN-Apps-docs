@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Asset } from '../model/asset.entity';
 import { DailyQuote } from '../model/daily-quote.entity';
+import { ScraperService } from './scraper.service';
 
 @Injectable()
 export class QuotesService {
@@ -11,13 +12,17 @@ export class QuotesService {
         private readonly assetRepository: Repository<Asset>,
         @InjectRepository(DailyQuote)
         private readonly quoteRepository: Repository<DailyQuote>,
+        private readonly scraperService: ScraperService,
     ) { }
 
     async getRecentQuotes(ticker: string, daysLimit: number = 5) {
-        const asset = await this.assetRepository.findOne({ where: { ticker } });
+        const normalizedTicker = ticker.trim().toUpperCase();
+        await this.scraperService.ensureFreshQuote(normalizedTicker);
+
+        const asset = await this.assetRepository.findOne({ where: { ticker: normalizedTicker } });
 
         if (!asset) {
-            throw new NotFoundException(`Ativo ${ticker} não encontrado.`);
+            throw new NotFoundException(`Ativo ${normalizedTicker} não encontrado.`);
         }
 
         // Busca N + 1 cotações para conseguirmos calcular a variação do dia mais antigo solicitado
@@ -33,17 +38,16 @@ export class QuotesService {
 
         const result = [];
 
-        // O array está decrescente: [0] = hoje, [1] = ontem, [2] = anteontem...
+        // O array está decrescente: [0] = mais recente, [1] = dia anterior...
         for (let i = 0; i < Math.min(daysLimit, quotes.length); i++) {
             const currentDay = quotes[i];
-            const previousDay = quotes[i + 1]; // Pode ser undefined no último loop se a ação só tiver 5 dias de histórico (ex: IPO)
+            const previousDay = quotes[i + 1];
 
             let variation = 0;
 
-            if (previousDay) {
+            if (previousDay && Number(previousDay.close) > 0) {
                 const currentClose = Number(currentDay.close);
                 const previousClose = Number(previousDay.close);
-                // Fórmula de variação percentual: ((Atual - Anterior) / Anterior) * 100
                 variation = ((currentClose - previousClose) / previousClose) * 100;
             }
 
@@ -51,11 +55,11 @@ export class QuotesService {
                 date: currentDay.date,
                 close: Number(currentDay.close),
                 variation: Number(variation.toFixed(2)),
+                source: currentDay.source || 'Yahoo Finance (v8)',
+                extractedAt: currentDay.extractedAt || null,
             });
         }
 
-        // Opcional: Se quiser que no Angular exiba do mais antigo pro mais novo (de cima para baixo),
-        // basta dar um result.reverse() aqui. Manteremos original (mais novo no topo).
         return result;
     }
 }

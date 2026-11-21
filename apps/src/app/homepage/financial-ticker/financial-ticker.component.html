@@ -19,7 +19,9 @@
         <div class="ticker-track" [class.is-paused]="isPaused">
             <!-- Primeiro ciclo de itens -->
             @for (item of items; track item.id) {
-                <div class="ticker-item" [attr.data-type]="item.type">
+                <div class="ticker-item" [attr.data-type]="item.type"
+                    [matTooltip]="getItemTooltip(item)"
+                    matTooltipPosition="above">
                     <div class="ticker-item-header">
                         <span class="ticker-label">{{ item.label }}</span>
                         @if(item.code) {
@@ -48,7 +50,10 @@
 
             <!-- Ciclo duplicado para loop infinito contínuo e sem emendas -->
             @for (item of items; track ('dup_' + item.id)) {
-                <div class="ticker-item" [attr.data-type]="item.type" aria-hidden="true">
+                <div class="ticker-item" [attr.data-type]="item.type"
+                    [matTooltip]="getItemTooltip(item)"
+                    matTooltipPosition="above"
+                    aria-hidden="true">
                     <div class="ticker-item-header">
                         <span class="ticker-label">{{ item.label }}</span>
                         @if(item.code) {
