@@ -40,6 +40,39 @@ describe('Financeiro Scrapers & Services', () => {
         const todayBr = `${d}/${m}/${y}`;
 
         global.fetch = jest.fn().mockImplementation(async (url: string) => {
+            if (url.includes('coingecko.com/api/v3/simple/price')) {
+                return {
+                    ok: true,
+                    json: async () => ({
+                        bitcoin: { brl: 346112, brl_24h_change: -4.92, last_updated_at: 1795246674 },
+                        ethereum: { brl: 9723.25, brl_24h_change: -5.52, last_updated_at: 1795246674 },
+                    }),
+                } as any;
+            }
+            if (url.includes('coingecko.com/api/v3/global')) {
+                return {
+                    ok: true,
+                    json: async () => ({
+                        data: {
+                            total_market_cap: { usd: 2016515628876 },
+                            market_cap_change_percentage_24h_usd: -8.16,
+                            market_cap_percentage: { btc: 57.61 },
+                            updated_at: 1795246260,
+                        },
+                    }),
+                } as any;
+            }
+            if (url.includes('alternative.me/fng')) {
+                return {
+                    ok: true,
+                    json: async () => ({
+                        data: [
+                            { value: '12', value_classification: 'Extreme Fear', timestamp: '1795219200' },
+                            { value: '14', value_classification: 'Extreme Fear', timestamp: '1795132800' },
+                        ],
+                    }),
+                } as any;
+            }
             if (url.includes('awesomeapi.com.br')) {
                 return {
                     ok: true,
@@ -89,6 +122,21 @@ describe('Financeiro Scrapers & Services', () => {
         expect(dolar.variation).toBe(0.22);
         expect(dolar.source).toBe('AwesomeAPI (Câmbio)');
         expect(dolar.extractedAt).toBeInstanceOf(Date);
+
+        const btc = savedMacro.find(r => r.name === 'BTC');
+        expect(btc.value).toBe(346112);
+        expect(btc.variation).toBe(-4.92);
+        expect(btc.source).toBe('CoinGecko (Crypto)');
+        expect(btc.extractedAt).toBeInstanceOf(Date);
+
+        const fng = savedMacro.find(r => r.name === 'CRYPTO_FEAR_GREED');
+        expect(fng.value).toBe(12);
+        expect(fng.variation).toBe(-2);
+        expect(fng.source).toBe('Alternative.me (Extreme Fear)');
+
+        const btcDom = savedMacro.find(r => r.name === 'BTC_DOMINANCE');
+        expect(btcDom.value).toBe(57.61);
+        expect(btcDom.source).toBe('CoinGecko Global');
     });
 
     it('ScraperService and QuotesService should fetch via Yahoo v8 Chart, upsert quotes with extractedAt, and return newest first', async () => {
@@ -203,5 +251,6 @@ describe('Financeiro Scrapers & Services', () => {
         expect(bcbScraper.ensureFreshData).toHaveBeenCalledTimes(1);
         expect(result).toHaveLength(1);
         expect(result[0].value).toBe(5.9493);
+        expect(result[0].queriedAt).toBeDefined();
     });
 });

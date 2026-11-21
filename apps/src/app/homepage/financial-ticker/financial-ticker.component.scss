@@ -119,6 +119,15 @@
         transform: translateY(-1px);
     }
 
+    &[data-type='crypto'] {
+        border-color: rgba(247, 147, 26, 0.3);
+
+        .ticker-code {
+            color: #f7931a;
+            font-weight: 700;
+        }
+    }
+
     .ticker-item-header {
         display: flex;
         align-items: baseline;

@@ -1,6 +1,6 @@
 <div class="ci-ticker-container" [class.paused]="isPaused">
     <!-- Badge Ao Vivo / Mercado -->
-    <div class="ticker-badge" matTooltip="Indicadores do Banco Central e B3 atualizados em tempo real">
+    <div class="ticker-badge" [matTooltip]="getBadgeTooltip()">
         <span class="live-dot"></span>
         <mat-icon class="badge-icon">trending_up</mat-icon>
         <span class="badge-text">MERCADO</span>
@@ -87,14 +87,18 @@
         <mat-icon>chevron_right</mat-icon>
     </button>
 
-    <!-- Ações: Pausar/Retomar e Atualizar -->
+    <!-- Ações: Escolher Índices, Pausar/Retomar e Consultar Base -->
     <div class="ticker-actions">
+        <button mat-icon-button class="action-btn" (click)="openWatchlistDialog()"
+            [matTooltip]="'Escolher índices para assistir (' + selectedCount + ')'">
+            <mat-icon>tune</mat-icon>
+        </button>
         <button mat-icon-button class="action-btn" (click)="togglePause()" 
             [matTooltip]="isPaused ? 'Retomar animação' : 'Pausar animação'">
             <mat-icon>{{ isPaused ? 'play_arrow' : 'pause' }}</mat-icon>
         </button>
         <button mat-icon-button class="action-btn" (click)="loadTickerData(true)" 
-            [disabled]="isLoading" matTooltip="Atualizar cotações do BCB e B3">
+            [disabled]="isLoading" matTooltip="Consultar base e atualizar índices">
             <mat-icon [class.spinning]="isLoading">sync</mat-icon>
         </button>
     </div>

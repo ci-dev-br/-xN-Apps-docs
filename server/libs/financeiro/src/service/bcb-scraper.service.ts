@@ -24,19 +24,35 @@ interface ParsedMacroRecord {
     extractedAt: Date;
 }
 
+export const CRYPTO_INDICATOR_NAMES = [
+    'BTC',
+    'ETH',
+    'SOL',
+    'BNB',
+    'XRP',
+    'ADA',
+    'DOGE',
+    'CRYPTO_FEAR_GREED',
+    'BTC_DOMINANCE',
+    'CRYPTO_MCAP',
+] as const;
+
 @Injectable()
 export class BcbScraperService implements OnModuleInit {
     private readonly logger = new Logger(BcbScraperService.name);
 
     private readonly FX_TTL_MS = 5 * 60 * 1000;       // 5 minutos para câmbio em tempo real
+    private readonly CRYPTO_TTL_MS = 5 * 60 * 1000;   // 5 minutos para índices de cripto
     private readonly BCB_TTL_MS = 60 * 60 * 1000;     // 1 hora para séries do BCB
     private readonly REQUEST_TIMEOUT_MS = 8000;
     private readonly ON_DEMAND_WAIT_MS = 6000;
 
     private bcbSyncPromise: Promise<void> | null = null;
     private fxSyncPromise: Promise<void> | null = null;
+    private cryptoSyncPromise: Promise<void> | null = null;
     private lastBcbSyncAt = 0;
     private lastFxSyncAt = 0;
+    private lastCryptoSyncAt = 0;
 
     // Séries SGS anualizadas (% a.a.) e mensais (% a.m.) do Banco Central
     private readonly BCB_INDICATORS: BcbIndicatorDef[] = [
@@ -58,6 +74,16 @@ export class BcbScraperService implements OnModuleInit {
         { name: 'EURO', code: 21619, source: 'Banco Central (PTAX SGS 21619)' },
     ];
 
+    private readonly COINGECKO_COINS: Array<{ id: string; name: string; awesomeKey?: string; binanceSymbol?: string }> = [
+        { id: 'bitcoin', name: 'BTC', awesomeKey: 'BTCBRL', binanceSymbol: 'BTCBRL' },
+        { id: 'ethereum', name: 'ETH', awesomeKey: 'ETHBRL', binanceSymbol: 'ETHBRL' },
+        { id: 'solana', name: 'SOL', awesomeKey: 'SOLBRL', binanceSymbol: 'SOLBRL' },
+        { id: 'binancecoin', name: 'BNB' },
+        { id: 'ripple', name: 'XRP', awesomeKey: 'XRPBRL', binanceSymbol: 'XRPBRL' },
+        { id: 'cardano', name: 'ADA', binanceSymbol: 'ADABRL' },
+        { id: 'dogecoin', name: 'DOGE', awesomeKey: 'DOGEBRL', binanceSymbol: 'DOGEBRL' },
+    ];
+
     constructor(
         @InjectRepository(MacroIndicator)
         private readonly macroIndicatorRepository: Repository<MacroIndicator>,
@@ -66,7 +92,7 @@ export class BcbScraperService implements OnModuleInit {
     ) { }
 
     async onModuleInit() {
-        this.logger.log('Verificando carga inicial de dados macroeconômicos...');
+        this.logger.log('Verificando carga inicial de dados macroeconômicos e cripto...');
         const count = await this.macroIndicatorRepository.count();
 
         if (count === 0) {
@@ -83,7 +109,7 @@ export class BcbScraperService implements OnModuleInit {
     /**
      * Garante que os dados armazenados estejam atualizados antes de servir leituras.
      */
-    async ensureFreshData(): Promise<void> {
+    async ensureFreshData(includeCrypto = false): Promise<void> {
         const now = Date.now();
         const latestFx = await this.macroIndicatorRepository.findOne({
             where: { name: 'DOLAR' },
@@ -108,6 +134,27 @@ export class BcbScraperService implements OnModuleInit {
         if (fxMissingOrStale) tasks.push(this.fetchRealtimeCurrencies(false));
         if (bcbMissingOrStale) tasks.push(this.fetchBcbIndicators(false));
 
+        if (includeCrypto) {
+            const latestBtc = await this.macroIndicatorRepository.findOne({
+                where: { name: 'BTC' },
+                order: { date: 'DESC' },
+            });
+            const latestFng = await this.macroIndicatorRepository.findOne({
+                where: { name: 'CRYPTO_FEAR_GREED' },
+                order: { date: 'DESC' },
+            });
+            const cryptoMissingOrStale =
+                !latestBtc ||
+                !latestBtc.extractedAt ||
+                !latestFng ||
+                !latestFng.extractedAt ||
+                now - new Date(latestBtc.extractedAt).getTime() > this.CRYPTO_TTL_MS;
+
+            if (cryptoMissingOrStale) {
+                tasks.push(this.fetchCryptoIndicators(false));
+            }
+        }
+
         if (tasks.length === 0) return;
 
         await Promise.race([
@@ -117,12 +164,13 @@ export class BcbScraperService implements OnModuleInit {
     }
 
     /**
-     * Atualiza todos os macroindicadores (BCB + Câmbio em tempo real).
+     * Atualiza todos os macroindicadores (BCB + Câmbio + Índices Cripto).
      */
     async fetchMacroIndicators(force = false): Promise<void> {
         await Promise.allSettled([
             this.fetchBcbIndicators(force),
             this.fetchRealtimeCurrencies(force),
+            this.fetchCryptoIndicators(force),
         ]);
     }
 
@@ -182,6 +230,88 @@ export class BcbScraperService implements OnModuleInit {
     }
 
     /**
+     * Atualiza cotações e índices públicos de criptomoedas a cada 5 minutos
+     * (CoinGecko, Alternative.me Fear & Greed, com fallbacks AwesomeAPI e Binance).
+     */
+    @Cron('*/5 * * * *')
+    async fetchCryptoIndicators(force = false): Promise<void> {
+        if (this.cryptoSyncPromise) return this.cryptoSyncPromise;
+        if (!force && Date.now() - this.lastCryptoSyncAt < 60_000) return;
+
+        this.cryptoSyncPromise = (async () => {
+            this.logger.debug('Atualizando índices e cotações públicas de criptomoedas...');
+            const syncedCoins = new Set<string>();
+
+            // 1. Preços de cripto em BRL via CoinGecko (fonte primária)
+            try {
+                const cgRecords = await this.fetchCryptoPricesFromCoinGecko();
+                for (const [name, record] of Object.entries(cgRecords)) {
+                    await this.upsertRecords(name, [record]);
+                    syncedCoins.add(name);
+                }
+            } catch (error) {
+                this.logger.warn(`CoinGecko simple/price indisponível: ${error.message}`);
+            }
+
+            // 2. Fallback para criptos faltantes via AwesomeAPI / Binance
+            const missingCoins = this.COINGECKO_COINS.filter(c => !syncedCoins.has(c.name));
+            if (missingCoins.length > 0) {
+                try {
+                    const awesomeCrypto = await this.fetchCryptoFromAwesomeApi();
+                    for (const coin of missingCoins) {
+                        const rec = awesomeCrypto[coin.name];
+                        if (rec) {
+                            await this.upsertRecords(coin.name, [rec]);
+                            syncedCoins.add(coin.name);
+                        }
+                    }
+                } catch (error) {
+                    this.logger.debug(`AwesomeAPI cripto fallback falhou: ${error.message}`);
+                }
+            }
+
+            const stillMissing = this.COINGECKO_COINS.filter(c => !syncedCoins.has(c.name) && c.binanceSymbol);
+            if (stillMissing.length > 0) {
+                try {
+                    const binanceRecords = await this.fetchCryptoFromBinance(stillMissing);
+                    for (const [name, rec] of Object.entries(binanceRecords)) {
+                        await this.upsertRecords(name, [rec]);
+                        syncedCoins.add(name);
+                    }
+                } catch (error) {
+                    this.logger.debug(`Binance cripto fallback falhou: ${error.message}`);
+                }
+            }
+
+            // 3. Índices globais de mercado cripto (BTC Dominance + Market Cap USD) via CoinGecko Global
+            try {
+                const globalIndices = await this.fetchCryptoGlobalFromCoinGecko();
+                for (const [name, record] of Object.entries(globalIndices)) {
+                    await this.upsertRecords(name, [record]);
+                }
+            } catch (error) {
+                this.logger.warn(`CoinGecko global indisponível: ${error.message}`);
+            }
+
+            // 4. Crypto Fear & Greed Index via Alternative.me
+            try {
+                const fngRecord = await this.fetchCryptoFearAndGreed();
+                if (fngRecord) {
+                    await this.upsertRecords('CRYPTO_FEAR_GREED', [fngRecord]);
+                }
+            } catch (error) {
+                this.logger.warn(`Alternative.me Fear & Greed indisponível: ${error.message}`);
+            }
+
+            this.lastCryptoSyncAt = Date.now();
+        })().finally(() => {
+            this.cryptoSyncPromise = null;
+        });
+
+        return this.cryptoSyncPromise;
+    }
+
+    /**
      * Atualiza séries macroeconômicas do Banco Central a cada 1 hora.
      */
     @Cron(CronExpression.EVERY_HOUR)
@@ -202,6 +332,7 @@ export class BcbScraperService implements OnModuleInit {
                     ...indicators.map(i => i.name.toUpperCase()),
                     'DOLAR',
                     'EURO',
+                    ...CRYPTO_INDICATOR_NAMES,
                 ]);
                 for (const cfg of activeConfigs) {
                     if (!knownNames.has(cfg.name.toUpperCase())) {
@@ -227,6 +358,222 @@ export class BcbScraperService implements OnModuleInit {
         });
 
         return this.bcbSyncPromise;
+    }
+
+    private async fetchCryptoPricesFromCoinGecko(): Promise<Record<string, ParsedMacroRecord>> {
+        const ids = this.COINGECKO_COINS.map(c => c.id).join(',');
+        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=brl&include_24hr_change=true&include_last_updated_at=true`;
+        const response = await fetch(url, {
+            headers: { Accept: 'application/json', 'User-Agent': 'ci-apps-financeiro/1.0' },
+            signal: AbortSignal.timeout(this.REQUEST_TIMEOUT_MS),
+        });
+        if (!response.ok) {
+            throw new Error(`CoinGecko HTTP ${response.status}`);
+        }
+
+        const payload: Record<string, any> = await response.json();
+        const extractedAt = new Date();
+        const result: Record<string, ParsedMacroRecord> = {};
+
+        for (const coin of this.COINGECKO_COINS) {
+            const entry = payload?.[coin.id];
+            if (!entry || typeof entry.brl !== 'number' || Number.isNaN(entry.brl)) continue;
+
+            const updatedDate = entry.last_updated_at
+                ? new Date(entry.last_updated_at * 1000)
+                : extractedAt;
+
+            const variation =
+                typeof entry.brl_24h_change === 'number' && !Number.isNaN(entry.brl_24h_change)
+                    ? Number(entry.brl_24h_change.toFixed(4))
+                    : null;
+
+            result[coin.name] = {
+                dateStr: this.getSaoPauloDateString(updatedDate),
+                value: Number(entry.brl.toFixed(4)),
+                variation,
+                source: 'CoinGecko (Crypto)',
+                extractedAt,
+            };
+        }
+
+        if (Object.keys(result).length === 0) {
+            throw new Error('CoinGecko retornou payload vazio');
+        }
+
+        return result;
+    }
+
+    private async fetchCryptoFromAwesomeApi(): Promise<Record<string, ParsedMacroRecord>> {
+        const pairs = this.COINGECKO_COINS.filter(c => c.awesomeKey).map(c => `${c.name}-BRL`);
+        const url = `https://economia.awesomeapi.com.br/last/${pairs.join(',')}`;
+        const response = await fetch(url, {
+            headers: { Accept: 'application/json', 'User-Agent': 'ci-apps-financeiro/1.0' },
+            signal: AbortSignal.timeout(this.REQUEST_TIMEOUT_MS),
+        });
+        if (!response.ok) {
+            throw new Error(`AwesomeAPI Crypto HTTP ${response.status}`);
+        }
+
+        const data: Record<string, any> = await response.json();
+        const extractedAt = new Date();
+        const result: Record<string, ParsedMacroRecord> = {};
+
+        for (const coin of this.COINGECKO_COINS) {
+            if (!coin.awesomeKey) continue;
+            const entry = data?.[coin.awesomeKey];
+            if (!entry) continue;
+
+            const value = parseFloat(entry.ask || entry.bid);
+            if (Number.isNaN(value)) continue;
+
+            const pct = parseFloat(entry.pctChange);
+            const dateStr =
+                typeof entry.create_date === 'string' && /^\d{4}-\d{2}-\d{2}/.test(entry.create_date)
+                    ? entry.create_date.slice(0, 10)
+                    : this.getSaoPauloDateString(extractedAt);
+
+            result[coin.name] = {
+                dateStr,
+                value: Number(value.toFixed(4)),
+                variation: Number.isNaN(pct) ? null : Number(pct.toFixed(4)),
+                source: 'AwesomeAPI (Crypto)',
+                extractedAt,
+            };
+        }
+
+        return result;
+    }
+
+    private async fetchCryptoFromBinance(
+        coins: Array<{ name: string; binanceSymbol?: string }>,
+    ): Promise<Record<string, ParsedMacroRecord>> {
+        const symbols = coins.map(c => c.binanceSymbol).filter(Boolean) as string[];
+        if (symbols.length === 0) return {};
+
+        const url = `https://api.binance.com/api/v3/ticker/24hr?symbols=${encodeURIComponent(JSON.stringify(symbols))}`;
+        const response = await fetch(url, {
+            headers: { Accept: 'application/json', 'User-Agent': 'ci-apps-financeiro/1.0' },
+            signal: AbortSignal.timeout(this.REQUEST_TIMEOUT_MS),
+        });
+        if (!response.ok) {
+            throw new Error(`Binance HTTP ${response.status}`);
+        }
+
+        const list: Array<any> = await response.json();
+        const extractedAt = new Date();
+        const dateStr = this.getSaoPauloDateString(extractedAt);
+        const result: Record<string, ParsedMacroRecord> = {};
+
+        for (const coin of coins) {
+            const item = Array.isArray(list)
+                ? list.find(x => x.symbol === coin.binanceSymbol)
+                : null;
+            if (!item) continue;
+
+            const value = parseFloat(item.lastPrice);
+            const pct = parseFloat(item.priceChangePercent);
+            if (Number.isNaN(value)) continue;
+
+            result[coin.name] = {
+                dateStr,
+                value: Number(value.toFixed(4)),
+                variation: Number.isNaN(pct) ? null : Number(pct.toFixed(4)),
+                source: 'Binance (Crypto)',
+                extractedAt,
+            };
+        }
+
+        return result;
+    }
+
+    private async fetchCryptoGlobalFromCoinGecko(): Promise<Record<string, ParsedMacroRecord>> {
+        const url = 'https://api.coingecko.com/api/v3/global';
+        const response = await fetch(url, {
+            headers: { Accept: 'application/json', 'User-Agent': 'ci-apps-financeiro/1.0' },
+            signal: AbortSignal.timeout(this.REQUEST_TIMEOUT_MS),
+        });
+        if (!response.ok) {
+            throw new Error(`CoinGecko Global HTTP ${response.status}`);
+        }
+
+        const json = await response.json();
+        const data = json?.data;
+        if (!data) throw new Error('CoinGecko Global retornou payload vazio');
+
+        const extractedAt = new Date();
+        const updatedDate = data.updated_at ? new Date(data.updated_at * 1000) : extractedAt;
+        const dateStr = this.getSaoPauloDateString(updatedDate);
+        const result: Record<string, ParsedMacroRecord> = {};
+
+        const btcDominance = data?.market_cap_percentage?.btc;
+        if (typeof btcDominance === 'number' && !Number.isNaN(btcDominance)) {
+            result['BTC_DOMINANCE'] = {
+                dateStr,
+                value: Number(btcDominance.toFixed(2)),
+                variation: null,
+                source: 'CoinGecko Global',
+                extractedAt,
+            };
+        }
+
+        const totalMcapUsd = data?.total_market_cap?.usd;
+        if (typeof totalMcapUsd === 'number' && !Number.isNaN(totalMcapUsd)) {
+            const change24h = data?.market_cap_change_percentage_24h_usd;
+            // Armazenado em trilhões de USD (ex.: 2.0165 = US$ 2,02 tri)
+            result['CRYPTO_MCAP'] = {
+                dateStr,
+                value: Number((totalMcapUsd / 1e12).toFixed(4)),
+                variation:
+                    typeof change24h === 'number' && !Number.isNaN(change24h)
+                        ? Number(change24h.toFixed(4))
+                        : null,
+                source: 'CoinGecko Global',
+                extractedAt,
+            };
+        }
+
+        return result;
+    }
+
+    private async fetchCryptoFearAndGreed(): Promise<ParsedMacroRecord | null> {
+        const url = 'https://api.alternative.me/fng/?limit=2';
+        const response = await fetch(url, {
+            headers: { Accept: 'application/json', 'User-Agent': 'ci-apps-financeiro/1.0' },
+            signal: AbortSignal.timeout(this.REQUEST_TIMEOUT_MS),
+        });
+        if (!response.ok) {
+            throw new Error(`Alternative.me HTTP ${response.status}`);
+        }
+
+        const json = await response.json();
+        const list: Array<any> = json?.data;
+        if (!Array.isArray(list) || list.length === 0) return null;
+
+        const latest = list[0];
+        const prev = list[1];
+        const value = parseFloat(latest?.value);
+        if (Number.isNaN(value)) return null;
+
+        const prevVal = prev ? parseFloat(prev.value) : NaN;
+        const variation = !Number.isNaN(prevVal) ? Number((value - prevVal).toFixed(2)) : null;
+
+        const extractedAt = new Date();
+        const refDate = latest?.timestamp
+            ? new Date(Number(latest.timestamp) * 1000)
+            : extractedAt;
+
+        const classification = latest?.value_classification
+            ? `Alternative.me (${latest.value_classification})`
+            : 'Alternative.me (Fear & Greed)';
+
+        return {
+            dateStr: this.getSaoPauloDateString(refDate),
+            value,
+            variation,
+            source: classification,
+            extractedAt,
+        };
     }
 
     private async fetchSingleBcbIndicator(indicator: BcbIndicatorDef): Promise<void> {
@@ -274,7 +621,6 @@ export class BcbScraperService implements OnModuleInit {
                 };
             });
 
-            // Mantém histórico recente (últimos 10 registros retornados) e garante o registro mais recente com extractedAt atual
             await this.upsertRecords(indicator.name, records.slice(-10));
         } catch (error) {
             this.logger.error(`Erro ao buscar ${indicator.name} (SGS ${indicator.code}): ${error.message}`);

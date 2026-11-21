@@ -37,6 +37,7 @@ export class QuotesService {
         }
 
         const result = [];
+        const queriedAt = new Date().toISOString();
 
         // O array está decrescente: [0] = mais recente, [1] = dia anterior...
         for (let i = 0; i < Math.min(daysLimit, quotes.length); i++) {
@@ -57,6 +58,7 @@ export class QuotesService {
                 variation: Number(variation.toFixed(2)),
                 source: currentDay.source || 'Yahoo Finance (v8)',
                 extractedAt: currentDay.extractedAt || null,
+                queriedAt,
             });
         }
 

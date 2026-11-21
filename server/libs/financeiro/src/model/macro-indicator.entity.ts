@@ -16,7 +16,7 @@ export class MacroIndicator {
     date: Date;
 
     @ApiProperty({ example: 10.50, description: 'Valor do indicador na data' })
-    @Column('decimal', { precision: 14, scale: 4 })
+    @Column('decimal', { precision: 18, scale: 4 })
     value: number;
 
     @ApiProperty({ example: 0.22, description: 'Variação percentual ou em pontos em relação à leitura anterior', required: false })
