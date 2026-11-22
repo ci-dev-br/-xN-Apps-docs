@@ -11,6 +11,9 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
+/**
+ * Visualização em lista com estilo
+ */
 @Component({
     selector: 'ci-apps-lista',
     templateUrl: 'lista.html',

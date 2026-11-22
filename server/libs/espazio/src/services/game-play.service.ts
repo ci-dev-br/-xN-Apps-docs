@@ -73,7 +73,7 @@ export class GamePlayService {
             minUsers?: number,
             teams: string[],
             team: string,
-        }a
+        }
     ) {
         const gameplay = await this.gameplayrepository.create();
 

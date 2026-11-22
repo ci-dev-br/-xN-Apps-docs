@@ -7,36 +7,38 @@
         </figure>
         <p>Crie aplicativos incríveis.</p>
     </div>
-    <main class="col">
-        <form [formGroup]="form" (ngSubmit)="submit()">
-            @if(stage === 'identification'){
-            <h1>Entrar</h1>
-            <!-- <p>Acesse a partir de sua identificação dentro da Plataforma. Caso não se lembre, tente seu e-mail de
+    <mat-card class="col">
+        <mat-card-content>
+            <form [formGroup]="form" (ngSubmit)="submit()">
+                @if(stage === 'identification'){
+                <h1>Entrar</h1>
+                <!-- <p>Acesse a partir de sua identificação dentro da Plataforma. Caso não se lembre, tente seu e-mail de
                 cadastramento.
             </p> -->
-            <mat-form-field appearance="outline">
-                <mat-label>Identificação</mat-label>
-                <input #first matInput type="text" placeholder="Apelido ou E-mail" formControlName="identification">
-            </mat-form-field>
-            }
-            @else if(stage === 'authentication'){
-            Olá,
-            <p>Precisamos da sua senha para prosseguir</p>
-            <mat-form-field appearance="outline">
-                <mat-label>Senha</mat-label>
-                <input #first matInput type="password" placeholder="Senha" formControlName="password">
-                <!-- <button mat-icon-button matSuffix (click)="passwordVisibility = !passwordVisibility">
+                <mat-form-field appearance="outline">
+                    <mat-label>Identificação</mat-label>
+                    <input #first matInput type="text" placeholder="Apelido ou E-mail" formControlName="identification">
+                </mat-form-field>
+                }
+                @else if(stage === 'authentication'){
+                Olá,
+                <p>Precisamos da sua senha para prosseguir</p>
+                <mat-form-field appearance="outline">
+                    <mat-label>Senha</mat-label>
+                    <input #first matInput type="password" placeholder="Senha" formControlName="password">
+                    <!-- <button mat-icon-button matSuffix (click)="passwordVisibility = !passwordVisibility">
                     <mat-icon>@if(passwordVisibility){visibility_off}@else{visibility_on}</mat-icon>
                 </button> -->
-            </mat-form-field>
-            }
-            <button mat-raised-button type="submit">Entrar</button>
-            <!--  <button mat-raised-button type="button" color="second">Entrar com conta ci.dev.br</button> -->
-            <small style="margin-top: 12px;">
-                Ainda não possui uma conta ci.dev.br? <a routerLink="/registrar" href="#">Criar conta</a>
-            </small>
-        </form>
-    </main>
+                </mat-form-field>
+                }
+                <button mat-raised-button type="submit">Entrar</button>
+                <!--  <button mat-raised-button type="button" color="second">Entrar com conta ci.dev.br</button> -->
+                <small style="margin-top: 12px;">
+                    Ainda não possui uma conta ci.dev.br? <a routerLink="/registrar" href="#">Criar conta</a>
+                </small>
+            </form>
+        </mat-card-content>
+    </mat-card>
     }
 </header>
 <footer>

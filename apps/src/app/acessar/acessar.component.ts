@@ -11,6 +11,7 @@ import { Router, RouterModule } from '@angular/router';
 import { CoreModule, StorageService } from '@ci/core';
 import { AuthModule, UserAuthenticationService } from '@ci/auth';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 @Component({
   selector: 'ci-acessar',
   imports: [
@@ -18,6 +19,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatCardModule,
     ReactiveFormsModule,
     RouterModule,
     AuthModule,
