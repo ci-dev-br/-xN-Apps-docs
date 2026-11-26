@@ -45,8 +45,8 @@
         </div>
 
         @if (error) {
-        <div class="error-overlay" [matTooltip]="error">
-            <mat-icon class="error-icon">info</mat-icon>
+        <div class="error-overlay" [class.warning]="errorSeverity === 'warning'" [matTooltip]="error">
+            <mat-icon class="error-icon">{{ errorSeverity === 'warning' ? 'warning_amber' : 'info' }}</mat-icon>
             <span class="error-text">{{ error }}</span>
         </div>
         }

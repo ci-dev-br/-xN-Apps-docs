@@ -1963,16 +1963,35 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
         this.bindSvgInteractions();
     }
 
-    private async generateMermaidClassDiagram(code: string): Promise<string> {
+    public async generateMermaidClassDiagram(code: string): Promise<string> {
+        const { fullSyntax } = await this.buildMermaidDiagrams(code);
+        return fullSyntax;
+    }
+
+    private registerEntityMermaidId(rawName: string): string {
+        const mermaidId = toMermaidId(rawName);
+        if (!this.mermaidIdToClassName.has(mermaidId)) {
+            this.mermaidIdToClassName.set(mermaidId, rawName);
+        }
+        this.classNameToMermaidId.set(rawName, mermaidId);
+        return mermaidId;
+    }
+
+    public async buildMermaidDiagrams(code: string): Promise<{
+        fullSyntax: string;
+        fallbackSyntax: string;
+        astErrors: any[];
+    }> {
+        let astErrors: any[] = [];
         try {
-            const ast = babelParser.parse(code, {
-                sourceType: 'module',
-                plugins: ['typescript', 'decorators-legacy', 'jsx', 'moduleBlocks'],
-                errorRecovery: true,
-            });
+            const parsed = parseTypeScriptSafely(code);
+            const ast = parsed.ast;
+            astErrors = parsed.errors || [];
 
             this.classesByName.clear();
             this.packagesBySource.clear();
+            this.mermaidIdToClassName.clear();
+            this.classNameToMermaidId.clear();
             this.lastParsedClassBlocks.clear();
             this.lastParsedRelationships = [];
             this.lastParsedNotes.clear();
@@ -2020,32 +2039,43 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
 
             let moduleNoteBlock = '';
             if (architectureIdeas.length > 0) {
-                const ideas = architectureIdeas.slice(0, 3).map(i => `• ${this.sanitizeMermaidNote(i, 110)}`).join('<br>');
-                moduleNoteBlock = `  note "ARQUITETURA & DIRETRIZES DO MÓDULO:<br>${ideas}"\n`;
+                const ideas = architectureIdeas
+                    .slice(0, 3)
+                    .map(i => `• ${this.sanitizeMermaidNote(i, 110)}`)
+                    .filter(Boolean)
+                    .join('<br>');
+                if (ideas) {
+                    moduleNoteBlock = `  note "ARQUITETURA & DIRETRIZES DO MÓDULO:<br>${ideas}"\n`;
+                }
             }
 
             let classBlocks = '';
+            let simplifiedClassBlocks = '';
             let relationships = '';
-            let hasClassesOrInterfaces = false;
+            let simplifiedRelationships = '';
+            const seenRelationships = new Set<string>();
+            const declaredLocalNames = new Set<string>();
+            let hasEntities = false;
 
             const fileImports = new Map<string, { source: string, line: number, column: number, importedName?: string }>();
             const usedImports = new Map<string, string>();
 
-            const body = ast.program.body;
+            const body = ast?.program?.body || [];
 
             for (const node of body) {
-                if (node.type === 'ImportDeclaration') {
-                    const source = node.source.value;
-                    const line = node.loc?.start.line || 1;
-                    const column = node.loc?.start.column || 1;
+                if (node?.type === 'ImportDeclaration') {
+                    const source = node.source?.value;
+                    if (!source) continue;
+                    const line = node.loc?.start?.line || 1;
+                    const column = node.loc?.start?.column || 1;
 
-                    for (const specifier of node.specifiers) {
-                        if (specifier.local && specifier.local.name) {
+                    for (const specifier of node.specifiers || []) {
+                        if (specifier?.local?.name) {
                             const importedName = (specifier as any).imported?.name || specifier.local.name;
                             fileImports.set(specifier.local.name, {
                                 source,
-                                line: specifier.loc?.start.line || line,
-                                column: specifier.loc?.start.column || column,
+                                line: specifier.loc?.start?.line || line,
+                                column: specifier.loc?.start?.column || column,
                                 importedName
                             });
                         }
@@ -2053,40 +2083,24 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                 }
             }
 
-            const getType = (typeNode: any): string => {
-                if (!typeNode) return '';
-                const t = typeNode.typeAnnotation || typeNode;
+            const pushRelation = (sourceName: string, targetName: string, arrow: string, label?: string) => {
+                const sourceId = this.registerEntityMermaidId(sourceName);
+                const targetId = this.registerEntityMermaidId(targetName);
+                if (!sourceId || !targetId || sourceId === targetId) return;
 
-                switch (t.type) {
-                    case 'TSStringKeyword': return 'String';
-                    case 'TSNumberKeyword': return 'Number';
-                    case 'TSBooleanKeyword': return 'Boolean';
-                    case 'TSAnyKeyword': return 'Any';
-                    case 'TSVoidKeyword': return 'Void';
-                    case 'TSTypeReference': {
-                        let name = t.typeName?.name || 'Unknown';
-                        if (t.typeParameters && t.typeParameters.params) {
-                            const params = t.typeParameters.params.map(getType).join(', ');
-                            name += `~${params}~`;
-                        }
-                        return name;
-                    }
-                    case 'TSArrayType': return `${getType(t.elementType)}[]`;
-                    case 'TSUnionType': return t.types.map(getType).join('|');
-                    default: return '';
+                const cleanLabel = sanitizeMermaidRelationLabel(label);
+                const dedupeKey = `${sourceId}|${arrow}|${targetId}|${cleanLabel}`;
+                if (seenRelationships.has(dedupeKey)) return;
+                seenRelationships.add(dedupeKey);
+
+                const rawRel = cleanLabel
+                    ? `${sourceId} ${arrow} ${targetId} : ${cleanLabel}`
+                    : `${sourceId} ${arrow} ${targetId}`;
+                relationships += `  ${rawRel}\n`;
+                if (arrow === '<|--' || arrow === '<|..' || arrow === '-->' || arrow === '..>') {
+                    simplifiedRelationships += `  ${sourceId} ${arrow} ${targetId}\n`;
                 }
-            };
-
-            const getVisibility = (acc: string): 'public' | 'private' | 'protected' => {
-                if (acc === 'private') return 'private';
-                if (acc === 'protected') return 'protected';
-                return 'public';
-            };
-
-            const getVisibilitySymbol = (acc: 'public' | 'private' | 'protected'): string => {
-                if (acc === 'private') return '-';
-                if (acc === 'protected') return '#';
-                return '+';
+                this.lastParsedRelationships.push({ source: sourceName, target: targetName, raw: rawRel });
             };
 
             const findIdentifiers = (node: any, found: Set<string>) => {
@@ -2148,47 +2162,77 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                 return { description, tags };
             };
 
-            for (const node of body) {
-                const classNode =
-                    node.type === 'ExportNamedDeclaration' || node.type === 'ExportDefaultDeclaration'
-                        ? (node.declaration as any)
-                        : node;
+            const buildEntityBlock = (
+                entityNode: any,
+                parentComments: any[] | undefined,
+                opts: { isImported: boolean; importSource?: string; indent?: string }
+            ): {
+                className: string;
+                mermaidId: string;
+                classInfo: UmlClassInfo;
+                fullBlock: string;
+                simplifiedBlock: string;
+                connections: Set<string>;
+                noteLine: string;
+            } | null => {
+                if (!entityNode) return null;
+                const isClass = entityNode.type === 'ClassDeclaration';
+                const isInterface = entityNode.type === 'TSInterfaceDeclaration';
+                const isEnum = entityNode.type === 'TSEnumDeclaration';
+                const isObjectTypeAlias =
+                    entityNode.type === 'TSTypeAliasDeclaration' &&
+                    entityNode.typeAnnotation?.type === 'TSTypeLiteral';
 
-                if (!classNode) continue;
+                if (!isClass && !isInterface && !isEnum && !isObjectTypeAlias) {
+                    return null;
+                }
 
-                const isClass = classNode.type === 'ClassDeclaration';
-                const isInterface = classNode.type === 'TSInterfaceDeclaration';
+                const className = entityNode.id?.name || 'AnonymousEntity';
+                const mermaidId = this.registerEntityMermaidId(className);
+                const indent = opts.indent ?? '  ';
+                const innerIndent = `${indent}  `;
+                const classLoc = entityNode.loc || { start: { line: 1, column: 1 }, end: { line: 1, column: 1 } };
+                const classComments = (parentComments && parentComments.length ? parentComments : entityNode.leadingComments);
+                const classJsDoc = !opts.isImported ? parseJsDoc(classComments) : undefined;
 
-                if (isClass || isInterface) {
-                    hasClassesOrInterfaces = true;
-                    const className = classNode.id?.name || 'AnonymousEntity';
-                    const classLoc = classNode.loc || { start: { line: 1, column: 1 }, end: { line: 1, column: 1 } };
-                    const classComments = (node.leadingComments && node.leadingComments.length ? node.leadingComments : classNode.leadingComments);
-                    const classJsDoc = parseJsDoc(classComments);
+                const classInfo: UmlClassInfo = {
+                    name: className,
+                    kind: (isInterface || isEnum || isObjectTypeAlias) ? 'interface' : 'class',
+                    isAbstract: !!entityNode.abstract,
+                    isImported: opts.isImported,
+                    importSource: opts.importSource,
+                    startLine: classLoc.start?.line || 1,
+                    startColumn: classLoc.start?.column || 1,
+                    endLine: classLoc.end?.line || 1,
+                    endColumn: classLoc.end?.column || 1,
+                    members: new Map(),
+                    jsdoc: classJsDoc,
+                };
 
-                    const classInfo: UmlClassInfo = {
-                        name: className,
-                        kind: isInterface ? 'interface' : 'class',
-                        isAbstract: !!classNode.abstract,
-                        isImported: false,
-                        startLine: classLoc.start.line,
-                        startColumn: classLoc.start.column,
-                        endLine: classLoc.end.line,
-                        endColumn: classLoc.end.column,
-                        members: new Map(),
-                        jsdoc: classJsDoc
-                    };
+                let fullBlock = `${indent}class ${mermaidId} {\n`;
+                let simplifiedBlock = `${indent}class ${mermaidId} {\n`;
+                const connections = new Set<string>();
 
-                    let classBlock = `  class ${className} {\n`;
-                    const classConnections = new Set<string>();
+                if (isEnum) {
+                    fullBlock += `${innerIndent}<<Enumeration>>\n`;
+                    simplifiedBlock += `${innerIndent}<<Enumeration>>\n`;
+                } else if (isObjectTypeAlias) {
+                    fullBlock += `${innerIndent}<<Type>>\n`;
+                    simplifiedBlock += `${innerIndent}<<Type>>\n`;
+                } else if (isInterface) {
+                    fullBlock += `${innerIndent}<<Interface>>\n`;
+                    simplifiedBlock += `${innerIndent}<<Interface>>\n`;
+                } else if (entityNode.abstract) {
+                    fullBlock += `${innerIndent}<<Abstract>>\n`;
+                    simplifiedBlock += `${innerIndent}<<Abstract>>\n`;
+                }
 
-                    if (isInterface) {
-                        classBlock += `    <<Interface>>\n`;
-                    } else if (classNode.abstract) {
-                        classBlock += `    <<Abstract>>\n`;
-                    }
+                if (classJsDoc?.tags.some(t => t.tag === 'deprecated')) {
+                    fullBlock += `${innerIndent}<<Deprecated>>\n`;
+                }
 
-                    // Extrai ideias da classe (JSDoc ou comentários precedentes) e anexa nota no diagrama
+                let noteLine = '';
+                if (!opts.isImported) {
                     let classCommentsText = '';
                     if (classJsDoc?.description) {
                         classCommentsText = classJsDoc.description;
@@ -2200,192 +2244,259 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                             classCommentsText = lines.join(' ');
                         }
                     }
-
                     if (classCommentsText) {
                         const cleanDesc = this.sanitizeMermaidNote(classCommentsText, 130);
-                        relationships += `  note for ${className} "Ideia/Conceito:<br>${cleanDesc}"\n`;
-                        this.lastParsedNotes.set(className, cleanDesc);
+                        if (cleanDesc) {
+                            noteLine = `  note for ${mermaidId} "Ideia/Conceito:<br>${cleanDesc}"\n`;
+                            this.lastParsedNotes.set(className, cleanDesc);
+                        }
                     }
 
-                    if (classJsDoc?.tags.some(t => t.tag === 'deprecated')) {
-                        classBlock += `    <<Deprecated>>\n`;
+                    if (isClass && entityNode.superClass) {
+                        const superName = extractQualifiedName(entityNode.superClass);
+                        if (superName) {
+                            pushRelation(superName, className, '<|--');
+                            connections.add(superName);
+                        }
                     }
 
-                    if (isClass && classNode.superClass && classNode.superClass.type === 'Identifier') {
-                        const superName = classNode.superClass.name;
-                        const relLine = `${superName} <|-- ${className}`;
-                        relationships += `  ${relLine}\n`;
-                        this.lastParsedRelationships.push({ source: className, target: superName, raw: relLine });
-                        classConnections.add(superName);
-                    }
-
-                    if (isInterface && classNode.extends) {
-                        for (const ext of classNode.extends) {
-                            if (ext.expression && ext.expression.type === 'Identifier') {
-                                const superName = ext.expression.name;
-                                const relLine = `${superName} <|-- ${className}`;
-                                relationships += `  ${relLine}\n`;
-                                this.lastParsedRelationships.push({ source: className, target: superName, raw: relLine });
-                                classConnections.add(superName);
+                    if (isInterface && Array.isArray(entityNode.extends)) {
+                        for (const ext of entityNode.extends) {
+                            const superName = extractQualifiedName(ext?.expression);
+                            if (superName) {
+                                pushRelation(superName, className, '<|--');
+                                connections.add(superName);
                             }
                         }
                     }
 
-                    if (isClass && classNode.implements) {
-                        for (const impl of classNode.implements) {
-                            if (impl.type === 'TSExpressionWithTypeArguments' && impl.expression.type === 'Identifier') {
-                                const interfaceName = impl.expression.name;
-                                const relLine = `${interfaceName} <|.. ${className}`;
-                                relationships += `  ${relLine}\n`;
-                                this.lastParsedRelationships.push({ source: className, target: interfaceName, raw: relLine });
-                                classConnections.add(interfaceName);
+                    if (isClass && Array.isArray(entityNode.implements)) {
+                        for (const impl of entityNode.implements) {
+                            const interfaceName = extractQualifiedName(impl?.expression);
+                            if (interfaceName) {
+                                pushRelation(interfaceName, className, '<|..');
+                                connections.add(interfaceName);
                             }
                         }
                     }
+                }
 
-                    const members = classNode.body?.body || [];
+                if (isEnum) {
+                    const enumMembers = entityNode.members || [];
+                    for (const em of enumMembers) {
+                        const memberName = em?.id?.name || (em?.id?.value !== undefined ? String(em.id.value) : '');
+                        const safeEnumName = memberName.replace(/[^a-zA-Z0-9_$]/g, '_');
+                        if (!safeEnumName) continue;
+                        fullBlock += `${innerIndent}+${safeEnumName}\n`;
+                        simplifiedBlock += `${innerIndent}+${safeEnumName}\n`;
+                        if (em?.loc) {
+                            classInfo.members.set(memberName, {
+                                name: memberName,
+                                kind: 'property',
+                                type: className,
+                                visibility: 'public',
+                                isStatic: true,
+                                startLine: em.loc.start?.line || classInfo.startLine,
+                                startColumn: em.loc.start?.column || 1,
+                                endLine: em.loc.end?.line || classInfo.startLine,
+                                endColumn: em.loc.end?.column || 1,
+                            });
+                        }
+                    }
+                } else {
+                    const members = isObjectTypeAlias
+                        ? (entityNode.typeAnnotation?.members || [])
+                        : (entityNode.body?.body || []);
 
                     for (const member of members) {
-                        const visibility = getVisibility(member.accessibility);
-                        const visSymbol = getVisibilitySymbol(visibility);
-                        const modifier = member.static ? '$' : (member.abstract ? '*' : '');
-
-                        const isProperty = member.type === 'ClassProperty' || member.type === 'TSPropertySignature';
-                        const isMethod = member.type === 'ClassMethod' || member.type === 'TSMethodSignature';
-                        const memberLoc = member.loc;
-
-                        if (isProperty && member.key.type === 'Identifier') {
-                            const propName = member.key.name;
-                            const typeStr = getType(member.typeAnnotation);
-                            const typePrefix = typeStr ? `${typeStr} ` : '';
-
-                            const propJsDoc = parseJsDoc(member.leadingComments);
-
-                            if (memberLoc) {
-                                classInfo.members.set(propName, {
-                                    name: propName,
-                                    kind: 'property',
-                                    type: typeStr || 'any',
-                                    visibility,
-                                    isStatic: !!member.static,
-                                    startLine: memberLoc.start.line,
-                                    startColumn: memberLoc.start.column,
-                                    endLine: memberLoc.end.line,
-                                    endColumn: memberLoc.end.column,
-                                    jsdoc: propJsDoc
-                                });
-                            }
-
-                            classBlock += `    ${visSymbol}${typePrefix}${propName}${modifier}\n`;
-
-                            if (typeStr && /^[A-Z]/.test(typeStr) && !['String', 'Number', 'Boolean', 'Any', 'Void'].includes(typeStr)) {
-                                const cleanType = typeStr.replace(/\[\]/g, '').replace(/~.*~/g, '');
-                                if (cleanType && cleanType !== className) {
-                                    const relLine = `${className} --> ${cleanType} : ${propName}`;
-                                    relationships += `  ${relLine}\n`;
-                                    this.lastParsedRelationships.push({ source: className, target: cleanType, raw: relLine });
-                                    classConnections.add(cleanType);
-                                }
-                            }
-                        } else if (isMethod) {
+                        if (!member || typeof member !== 'object') continue;
+                        try {
+                            const keyInfo = extractMemberName(member);
+                            const isProperty =
+                                member.type === 'ClassProperty' ||
+                                member.type === 'PropertyDefinition' ||
+                                member.type === 'ClassPrivateProperty' ||
+                                member.type === 'TSPropertySignature';
+                            const isMethod =
+                                member.type === 'ClassMethod' ||
+                                member.type === 'ClassPrivateMethod' ||
+                                member.type === 'TSMethodSignature';
                             const isConstructor = member.kind === 'constructor';
-                            const methodName = isConstructor ? 'constructor' : (member.key.name || 'method');
+                            const memberLoc = member.loc;
 
-                            const rawReturnType = member.returnType || member.typeAnnotation;
-                            const returnType = isConstructor ? '' : getType(rawReturnType);
-                            const returnSuffix = returnType ? ` ${returnType}` : '';
+                            const rawAcc = keyInfo?.isPrivateName ? 'private' : member.accessibility;
+                            const visibility: 'public' | 'private' | 'protected' =
+                                rawAcc === 'private' ? 'private' : rawAcc === 'protected' ? 'protected' : 'public';
+                            const visSymbol = visibility === 'private' ? '-' : visibility === 'protected' ? '#' : '+';
+                            const modifier = member.static ? '$' : (member.abstract ? '*' : '');
 
-                            const methodParams = member.params || member.parameters || [];
+                            if (isProperty && keyInfo) {
+                                const typeStr = formatTsTypeToMermaid(member.typeAnnotation, 0, false);
+                                const typePrefix = typeStr ? `${typeStr} ` : '';
+                                const propJsDoc = !opts.isImported ? parseJsDoc(member.leadingComments) : undefined;
 
-                            const paramStrings: string[] = [];
-                            const params = methodParams.map((p: any) => {
-                                let pName = 'param';
-                                let pType = '';
-
-                                if (p.type === 'TSParameterProperty') {
-                                    pName = p.parameter.name;
-                                    pType = getType(p.parameter.typeAnnotation);
-                                } else if (p.type === 'Identifier') {
-                                    pName = p.name;
-                                    pType = getType(p.typeAnnotation);
-                                } else if (p.type === 'AssignmentPattern' && p.left.type === 'Identifier') {
-                                    pName = p.left.name;
-                                    pType = getType(p.left.typeAnnotation);
+                                if (memberLoc) {
+                                    classInfo.members.set(keyInfo.safeName, {
+                                        name: keyInfo.rawName,
+                                        kind: 'property',
+                                        type: typeStr || 'any',
+                                        visibility,
+                                        isStatic: !!member.static,
+                                        startLine: memberLoc.start?.line || classInfo.startLine,
+                                        startColumn: memberLoc.start?.column || 1,
+                                        endLine: memberLoc.end?.line || classInfo.startLine,
+                                        endColumn: memberLoc.end?.column || 1,
+                                        jsdoc: propJsDoc,
+                                    });
                                 }
 
-                                const fullParam = pType ? `${pName}: ${pType}` : pName;
-                                paramStrings.push(fullParam);
+                                fullBlock += `${innerIndent}${visSymbol}${typePrefix}${keyInfo.safeName}${modifier}\n`;
+                                simplifiedBlock += `${innerIndent}${visSymbol}${keyInfo.safeName}\n`;
 
-                                if (isConstructor && pType && /^[A-Z]/.test(pType)) {
-                                    const cleanType = pType.replace(/\[\]/g, '').replace(/~.*~/g, '');
-                                    if (cleanType && cleanType !== className) {
-                                        const relLine = `${className} ..> ${cleanType} : injects`;
-                                        relationships += `  ${relLine}\n`;
-                                        this.lastParsedRelationships.push({ source: className, target: cleanType, raw: relLine });
-                                        classConnections.add(cleanType);
+                                if (!opts.isImported) {
+                                    const referenced = extractReferencedTypeNames(member.typeAnnotation);
+                                    for (const refName of referenced) {
+                                        if (refName !== className) {
+                                            pushRelation(className, refName, '-->', keyInfo.rawName);
+                                            connections.add(refName);
+                                        }
                                     }
                                 }
+                            } else if (isMethod && (isConstructor || keyInfo)) {
+                                const methodName = isConstructor ? 'constructor' : keyInfo!.safeName;
+                                const rawMethodName = isConstructor ? 'constructor' : keyInfo!.rawName;
+                                const rawReturnType = member.returnType || member.typeAnnotation;
+                                const returnType = isConstructor ? '' : formatTsTypeToMermaid(rawReturnType, 0, false);
+                                const returnSuffix = returnType ? ` ${returnType}` : '';
 
-                                return pType ? `${pType} ${pName}` : pName;
-                            }).join(', ');
+                                const methodParams = member.params || member.parameters || [];
+                                const paramStrings: string[] = [];
+                                const formattedParams: string[] = [];
 
-                            const methodJsDoc = parseJsDoc(member.leadingComments);
+                                methodParams.forEach((p: any, idx: number) => {
+                                    const extractedParam = extractMethodParam(p, idx);
+                                    const fullParam = extractedParam.typeStr
+                                        ? `${extractedParam.displayName}: ${extractedParam.typeStr}`
+                                        : extractedParam.displayName;
+                                    paramStrings.push(fullParam);
+                                    formattedParams.push(
+                                        extractedParam.typeStr
+                                            ? `${extractedParam.typeStr} ${extractedParam.safeName}`
+                                            : extractedParam.safeName
+                                    );
 
-                            if (memberLoc) {
-                                classInfo.members.set(methodName, {
-                                    name: methodName,
-                                    kind: 'method',
-                                    type: returnType || 'void',
-                                    visibility,
-                                    isStatic: !!member.static,
-                                    params: paramStrings.join(', '),
-                                    startLine: memberLoc.start.line,
-                                    startColumn: memberLoc.start.column,
-                                    endLine: memberLoc.end.line,
-                                    endColumn: memberLoc.end.column,
-                                    jsdoc: methodJsDoc
+                                    if (!opts.isImported && isConstructor) {
+                                        for (const refName of extractedParam.referencedTypes) {
+                                            if (refName !== className) {
+                                                pushRelation(className, refName, '..>', 'injects');
+                                                connections.add(refName);
+                                            }
+                                        }
+                                    }
                                 });
-                            }
 
-                            classBlock += `    ${visSymbol}${methodName}(${params})${modifier}${returnSuffix}\n`;
+                                const methodJsDoc = !opts.isImported ? parseJsDoc(member.leadingComments) : undefined;
+                                if (memberLoc) {
+                                    classInfo.members.set(methodName, {
+                                        name: rawMethodName,
+                                        kind: 'method',
+                                        type: returnType || 'void',
+                                        visibility,
+                                        isStatic: !!member.static,
+                                        params: paramStrings.join(', '),
+                                        startLine: memberLoc.start?.line || classInfo.startLine,
+                                        startColumn: memberLoc.start?.column || 1,
+                                        endLine: memberLoc.end?.line || classInfo.startLine,
+                                        endColumn: memberLoc.end?.column || 1,
+                                        jsdoc: methodJsDoc,
+                                    });
+                                }
+
+                                fullBlock += `${innerIndent}${visSymbol}${methodName}(${formattedParams.join(', ')})${modifier}${returnSuffix}\n`;
+                                simplifiedBlock += `${innerIndent}${visSymbol}${methodName}()\n`;
+                            }
+                        } catch (memberErr) {
+                            console.warn('Membro ignorado na transcrição UML:', memberErr);
                         }
                     }
-
-                    classBlock += `  }\n`;
-                    classBlocks += classBlock;
-
-                    this.classesByName.set(className, classInfo);
-                    this.lastParsedClassBlocks.set(className, classBlock);
-
-                    const identifiersInClass = new Set<string>();
-                    findIdentifiers(classNode, identifiersInClass);
-
-                    fileImports.forEach((meta, importName) => {
-                        try {
-                            if (identifiersInClass.has(importName)) {
-                                usedImports.set(importName, meta.source);
-                                if (!classConnections.has(importName)) {
-                                    const relLine = `${className} ..> ${importName} : use`;
-                                    relationships += `  ${relLine}\n`;
-                                    this.lastParsedRelationships.push({ source: className, target: importName, raw: relLine });
-                                    classConnections.add(importName);
-                                }
-                            }
-                        } catch (error) {
-                            console.trace(error);
-                        }
-                    });
                 }
+
+                fullBlock += `${indent}}\n`;
+                simplifiedBlock += `${indent}}\n`;
+
+                return {
+                    className,
+                    mermaidId,
+                    classInfo,
+                    fullBlock,
+                    simplifiedBlock,
+                    connections,
+                    noteLine,
+                };
+            };
+
+            for (const node of body) {
+                const entityNode =
+                    node?.type === 'ExportNamedDeclaration' || node?.type === 'ExportDefaultDeclaration'
+                        ? (node.declaration as any)
+                        : node;
+
+                if (!entityNode) continue;
+
+                const entityName = entityNode.id?.name;
+                if (entityName && declaredLocalNames.has(entityName)) continue;
+
+                const built = buildEntityBlock(entityNode, node?.leadingComments, {
+                    isImported: false,
+                    indent: '  ',
+                });
+                if (!built) continue;
+
+                hasEntities = true;
+                declaredLocalNames.add(built.className);
+                classBlocks += built.fullBlock;
+                simplifiedClassBlocks += built.simplifiedBlock;
+                if (built.noteLine) {
+                    relationships += built.noteLine;
+                }
+
+                this.classesByName.set(built.className, built.classInfo);
+                this.lastParsedClassBlocks.set(built.className, built.fullBlock);
+
+                const identifiersInClass = new Set<string>();
+                findIdentifiers(entityNode, identifiersInClass);
+
+                fileImports.forEach((meta, importName) => {
+                    try {
+                        if (
+                            identifiersInClass.has(importName) &&
+                            !declaredLocalNames.has(importName) &&
+                            /^[A-Z]/.test(importName)
+                        ) {
+                            usedImports.set(importName, meta.source);
+                            if (!built.connections.has(importName)) {
+                                pushRelation(built.className, importName, '..>', 'use');
+                                built.connections.add(importName);
+                            }
+                        }
+                    } catch (error) {
+                        console.trace(error);
+                    }
+                });
             }
 
-            if (!hasClassesOrInterfaces) {
+            if (!hasEntities) {
+                if (astErrors.length > 0) {
+                    throw new Error(formatUmlTranscriptionError(null, astErrors));
+                }
                 throw new Error('Nenhuma classe ou interface TypeScript encontrada no arquivo.');
             }
 
-            // Agrupa imports utilizados por pacote/namespace
+            // Agrupa imports utilizados por pacote/namespace (ignorando símbolos já declarados localmente)
             const packages = new Map<string, string[]>();
 
             usedImports.forEach((source, importName) => {
+                if (declaredLocalNames.has(importName)) return;
                 try {
                     const isRelative = source.startsWith('.');
                     const packageName = isRelative ? 'Main' : source;
@@ -2401,8 +2512,7 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
             });
 
             // Metadados carregados de arquivos TS locais (Visão Geral com tsconfig)
-            const loadedModulesCache = new Map<string, string>();
-            const externalParsedClasses = new Map<string, { block: string, info: UmlClassInfo }>();
+            const externalParsedClasses = new Map<string, { block: string; simplifiedBlock: string; info: UmlClassInfo }>();
 
             if (this.showGeneralDiagram && this.workspaceService) {
                 const uniqueSources = new Set(Array.from(usedImports.values()));
@@ -2411,122 +2521,31 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                     try {
                         const moduleData = await this.workspaceService.loadTsModuleContent(source, this.filePath || undefined);
                         if (moduleData && moduleData.content) {
-                            loadedModulesCache.set(source, moduleData.content);
+                            const depParsed = parseTypeScriptSafely(moduleData.content);
 
-                            const depAst = babelParser.parse(moduleData.content, {
-                                sourceType: 'module',
-                                plugins: ['typescript', 'decorators-legacy', 'jsx', 'moduleBlocks'],
-                                errorRecovery: true,
-                            });
-
-                            for (const node of depAst.program.body) {
-                                const classNode =
-                                    node.type === 'ExportNamedDeclaration' || node.type === 'ExportDefaultDeclaration'
+                            for (const node of depParsed.ast?.program?.body || []) {
+                                const entityNode =
+                                    node?.type === 'ExportNamedDeclaration' || node?.type === 'ExportDefaultDeclaration'
                                         ? (node.declaration as any)
                                         : node;
 
-                                if (!classNode) continue;
-                                const isClass = classNode.type === 'ClassDeclaration';
-                                const isInterface = classNode.type === 'TSInterfaceDeclaration';
+                                const depName = entityNode?.id?.name;
+                                if (!depName || !usedImports.has(depName) || declaredLocalNames.has(depName)) continue;
+                                if (externalParsedClasses.has(depName)) continue;
 
-                                if (isClass || isInterface) {
-                                    const depClassName = classNode.id?.name;
-                                    if (!depClassName || !usedImports.has(depClassName)) continue;
+                                const depBuilt = buildEntityBlock(entityNode, node?.leadingComments, {
+                                    isImported: true,
+                                    importSource: moduleData.path,
+                                    indent: '    ',
+                                });
+                                if (!depBuilt) continue;
 
-                                    const classLoc = classNode.loc || { start: { line: 1, column: 1 }, end: { line: 1, column: 1 } };
-                                    const depClassInfo: UmlClassInfo = {
-                                        name: depClassName,
-                                        kind: isInterface ? 'interface' : 'class',
-                                        isAbstract: !!classNode.abstract,
-                                        isImported: true,
-                                        importSource: moduleData.path,
-                                        startLine: classLoc.start.line,
-                                        startColumn: classLoc.start.column,
-                                        endLine: classLoc.end.line,
-                                        endColumn: classLoc.end.column,
-                                        members: new Map()
-                                    };
-
-                                    let depBlock = `    class ${depClassName} {\n`;
-                                    if (isInterface) {
-                                        depBlock += `      <<Interface>>\n`;
-                                    } else if (classNode.abstract) {
-                                        depBlock += `      <<Abstract>>\n`;
-                                    }
-
-                                    const members = classNode.body?.body || [];
-                                    for (const member of members) {
-                                        const visibility = getVisibility(member.accessibility);
-                                        const visSymbol = getVisibilitySymbol(visibility);
-                                        const modifier = member.static ? '$' : (member.abstract ? '*' : '');
-                                        const isProperty = member.type === 'ClassProperty' || member.type === 'TSPropertySignature';
-                                        const isMethod = member.type === 'ClassMethod' || member.type === 'TSMethodSignature';
-                                        const memberLoc = member.loc;
-
-                                        if (isProperty && member.key?.type === 'Identifier') {
-                                            const propName = member.key.name;
-                                            const typeStr = getType(member.typeAnnotation);
-                                            const typePrefix = typeStr ? `${typeStr} ` : '';
-
-                                            if (memberLoc) {
-                                                depClassInfo.members.set(propName, {
-                                                    name: propName,
-                                                    kind: 'property',
-                                                    type: typeStr || 'any',
-                                                    visibility,
-                                                    isStatic: !!member.static,
-                                                    startLine: memberLoc.start.line,
-                                                    startColumn: memberLoc.start.column,
-                                                    endLine: memberLoc.end.line,
-                                                    endColumn: memberLoc.end.column
-                                                });
-                                            }
-                                            depBlock += `      ${visSymbol}${typePrefix}${propName}${modifier}\n`;
-                                        } else if (isMethod) {
-                                            const isConstructor = member.kind === 'constructor';
-                                            const methodName = isConstructor ? 'constructor' : (member.key?.name || 'method');
-                                            const rawReturnType = member.returnType || member.typeAnnotation;
-                                            const returnType = isConstructor ? '' : getType(rawReturnType);
-                                            const returnSuffix = returnType ? ` ${returnType}` : '';
-
-                                            const methodParams = member.params || member.parameters || [];
-                                            const paramStrings: string[] = [];
-                                            const params = methodParams.map((p: any) => {
-                                                let pName = 'param';
-                                                let pType = '';
-                                                if (p.type === 'TSParameterProperty') {
-                                                    pName = p.parameter.name;
-                                                    pType = getType(p.parameter.typeAnnotation);
-                                                } else if (p.type === 'Identifier') {
-                                                    pName = p.name;
-                                                    pType = getType(p.typeAnnotation);
-                                                }
-                                                paramStrings.push(pType ? `${pName}: ${pType}` : pName);
-                                                return pType ? `${pType} ${pName}` : pName;
-                                            }).join(', ');
-
-                                            if (memberLoc) {
-                                                depClassInfo.members.set(methodName, {
-                                                    name: methodName,
-                                                    kind: 'method',
-                                                    type: returnType || 'void',
-                                                    visibility,
-                                                    isStatic: !!member.static,
-                                                    params: paramStrings.join(', '),
-                                                    startLine: memberLoc.start.line,
-                                                    startColumn: memberLoc.start.column,
-                                                    endLine: memberLoc.end.line,
-                                                    endColumn: memberLoc.end.column
-                                                });
-                                            }
-                                            depBlock += `      ${visSymbol}${methodName}(${params})${modifier}${returnSuffix}\n`;
-                                        }
-                                    }
-
-                                    depBlock += `    }\n`;
-                                    externalParsedClasses.set(depClassName, { block: depBlock, info: depClassInfo });
-                                    this.lastParsedClassBlocks.set(depClassName, depBlock);
-                                }
+                                externalParsedClasses.set(depName, {
+                                    block: depBuilt.fullBlock,
+                                    simplifiedBlock: depBuilt.simplifiedBlock,
+                                    info: depBuilt.classInfo,
+                                });
+                                this.lastParsedClassBlocks.set(depName, depBuilt.fullBlock);
                             }
                         }
                     } catch (e) {
@@ -2536,20 +2555,25 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
             }
 
             let importBlocks = '';
+            const emittedImportIds = new Set<string>();
 
             packages.forEach((classes, pkgName) => {
                 try {
-                    const safePkgName = pkgName.replace(/[^a-zA-Z0-9_]/g, '_');
+                    const safePkgName = toMermaidNamespace(pkgName);
+                    let pkgBody = '';
 
-                    importBlocks += `  namespace ${safePkgName} {\n`;
                     classes.forEach(className => {
+                        const mermaidId = this.registerEntityMermaidId(className);
+                        if (emittedImportIds.has(mermaidId)) return;
+                        emittedImportIds.add(mermaidId);
+
                         const parsedExt = externalParsedClasses.get(className);
                         if (parsedExt) {
-                            importBlocks += parsedExt.block;
+                            pkgBody += parsedExt.block;
                             this.classesByName.set(className, parsedExt.info);
                         } else {
-                            const stubBlock = `    class ${className} {\n  }\n`;
-                            importBlocks += stubBlock;
+                            const stubBlock = `    class ${mermaidId} {\n    }\n`;
+                            pkgBody += stubBlock;
                             this.lastParsedClassBlocks.set(className, stubBlock);
 
                             const importMeta = fileImports.get(className);
@@ -2566,7 +2590,10 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                             });
                         }
                     });
-                    importBlocks += `  }\n`;
+
+                    if (pkgBody) {
+                        importBlocks += `  namespace ${safePkgName} {\n${pkgBody}  }\n`;
+                    }
                 } catch (error) {
                     console.trace(error);
                 }
@@ -2574,13 +2601,23 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
 
             const mermaidConfig = `%%{init: {"useMaxWidth": false, "theme": "base", "themeVariables": ${JSON.stringify(BLUEPRINT_GLASS_THEME_VARIABLES)}}}%%`;
 
-            return `${mermaidConfig}\nclassDiagram\n${moduleNoteBlock}${classBlocks}\n${importBlocks}\n${relationships}`;
+            const fullSyntax = `${mermaidConfig}\nclassDiagram\n${moduleNoteBlock}${classBlocks}\n${importBlocks}\n${relationships}`;
+            const fallbackSyntax = `${mermaidConfig}\nclassDiagram\n${simplifiedClassBlocks}\n${simplifiedRelationships}`;
+
+            return {
+                fullSyntax,
+                fallbackSyntax,
+                astErrors,
+            };
         } catch (error: any) {
-            if (error?.message?.includes('Nenhuma classe ou interface')) {
+            if (
+                error?.message?.includes('Nenhuma classe ou interface') ||
+                error?.message?.includes('Erro de sintaxe TypeScript')
+            ) {
                 throw error;
             }
             console.trace('Falha ao gerar diagrama:', error);
-            throw new Error('Falha ao converter código em UML.');
+            throw new Error(formatUmlTranscriptionError(error, astErrors));
         }
     }
 }

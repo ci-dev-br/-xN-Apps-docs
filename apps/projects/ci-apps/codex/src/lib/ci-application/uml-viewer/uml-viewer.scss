@@ -156,6 +156,11 @@
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+
+    &.warning {
+        border-color: rgba(251, 191, 36, 0.55);
+        color: #fbbf24;
+    }
 }
 
 /* Barra de Ações Flutuante da Classe Selecionada */
