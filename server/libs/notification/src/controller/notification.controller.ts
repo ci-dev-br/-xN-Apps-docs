@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Req, UnauthorizedException } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
-import { NotificationService } from "../services/notification.service";
+import { NotificationService, NotificationUserPreferences } from "../services/notification.service";
 
 @ApiTags('Notification')
 @Controller('Notification')
@@ -10,7 +10,7 @@ export class NotificationController {
     ) {}
 
     /**
-     * Retorna a lista de notificações internas do usuário autenticado e total não lidas
+     * Retorna a lista de notificações internas do usuário autenticado, total não lidas e preferências
      */
     @Get('My')
     @ApiOperation({ operationId: 'NotificationGetMy' })
@@ -20,15 +20,43 @@ export class NotificationController {
             throw new UnauthorizedException('É necessário estar autenticado para acessar as notificações.');
         }
 
-        const [notifications, unreadCount] = await Promise.all([
+        const [notifications, unreadCount, preferences] = await Promise.all([
             this.notificationService.listarNotificacoes(userId, 30),
             this.notificationService.contarNaoLidas(userId),
+            this.notificationService.obterPreferenciasUsuario(userId),
         ]);
 
         return {
             unreadCount,
             notifications,
+            preferences,
         };
+    }
+
+    /**
+     * Consulta as preferências de notificação do usuário autenticado
+     */
+    @Get('Preferences')
+    @ApiOperation({ operationId: 'NotificationGetPreferences' })
+    async getPreferences(@Req() req: any): Promise<NotificationUserPreferences> {
+        const userId = req.user?.id;
+        if (!userId) {
+            throw new UnauthorizedException('É necessário estar autenticado para consultar preferências.');
+        }
+        return await this.notificationService.obterPreferenciasUsuario(userId);
+    }
+
+    /**
+     * Atualiza as preferências de notificação do usuário autenticado
+     */
+    @Post('Preferences')
+    @ApiOperation({ operationId: 'NotificationSetPreferences' })
+    async setPreferences(@Body() body: Partial<NotificationUserPreferences>, @Req() req: any): Promise<NotificationUserPreferences> {
+        const userId = req.user?.id;
+        if (!userId) {
+            throw new UnauthorizedException('É necessário estar autenticado para salvar preferências.');
+        }
+        return await this.notificationService.atualizarPreferenciasUsuario(userId, body || {});
     }
 
     /**
@@ -101,7 +129,8 @@ export class NotificationController {
         });
 
         return {
-            success: true,
+            success: Boolean(notif),
+            blockedByPreferences: !notif,
             notification: notif,
         };
     }
