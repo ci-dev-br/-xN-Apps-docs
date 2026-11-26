@@ -64,7 +64,13 @@ export class WindowService {
             WindowService.setup();
         });
     }
-    async open(component: Type<any>, data: any, title?: string, event?: Event): Promise<any> {
+    async open(
+        component: Type<any>,
+        data: any,
+        title?: string,
+        event?: Event,
+        dialogConfig?: Record<string, any>
+    ): Promise<any> {
         return await new Promise<any>(async (result, reject) => {
             try {
                 if (event instanceof MouseEvent && event?.ctrlKey) {
@@ -73,12 +79,16 @@ export class WindowService {
                         window.open(location.href, 'PopupWindow' + (data?.internalId || data?.id || data?.data?.internalId || data?.data?.id || ''), "width=600,height=700,resizable=yes,top=100,left=200,");
                     })
                 } else {
+                    const customConfig = (data && typeof data === 'object' ? data.__windowConfig : undefined) || {};
                     const dialog = await this.dialog?.open(WindowComponent, {
                         data: {
                             component: component,
                             data: data
                         },
-                        maxWidth: '90vw',
+                        maxWidth: '94vw',
+                        maxHeight: '92vh',
+                        ...customConfig,
+                        ...(dialogConfig || {}),
                     });
                     if (dialog && dialog.componentInstance) {
                         dialog.componentInstance.title = title;

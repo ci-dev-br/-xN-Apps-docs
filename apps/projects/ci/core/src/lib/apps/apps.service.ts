@@ -11,7 +11,51 @@ export interface IAppManifestEntry {
     icon?: string;
     queryParam?: string;
     fallback?: boolean;
+    /** Permite que uma entrada de manifesto também declare um tipo dinâmico de schema/formulário */
+    dynamicType?: string | Partial<IDynamicSchemaType>;
+    schemaType?: string | Partial<IDynamicSchemaType>;
+    openInWindow?: boolean;
+    windowTitle?: string;
     [key: string]: any;
+}
+
+export interface IDynamicSchemaTypeContext {
+    fieldName?: string;
+    label?: string;
+    description?: string;
+    type?: string;
+    format?: string;
+    value?: any;
+    schemaName?: string;
+    schemaProperty?: any;
+    formGroup?: any;
+    formControl?: any;
+    data?: any;
+}
+
+export interface IDynamicSchemaType {
+    /** Nome identificador do tipo dinâmico (ex: 'ts', 'typescript', 'code', 'map', 'dynamic') */
+    type: string;
+    /** Formato associado opcional (ex: 'ts', 'code', 'map') */
+    format?: string;
+    /** Extensões ou padrões associados (ex: ['*.ts', '*.map']) */
+    filePatterns?: string[];
+    /** Rótulo de apresentação */
+    label?: string;
+    description?: string;
+    icon?: string;
+    /** Componente Angular injetado pelo módulo `ci-application` */
+    component?: any;
+    /** Quando verdadeiro, abre o componente em janela via `WindowService` */
+    openInWindow?: boolean;
+    /** Título padrão exibido na janela */
+    windowTitle?: string;
+    queryParam?: string;
+    inputs?: Record<string, any>;
+    appName?: string;
+    fullPath?: string;
+    buildWindowData?: (ctx: IDynamicSchemaTypeContext) => any;
+    extractResultValue?: (result: any, ctx: IDynamicSchemaTypeContext) => any;
 }
 
 export interface RouteMetadata {
@@ -29,6 +73,10 @@ export interface RouteMetadata {
     endMenu?: any;
     userMenu?: any;
     manifest?: Record<string, IAppManifestEntry>;
+    dynamicType?: Partial<IDynamicSchemaType>;
+    dynamicTypes?: Array<Partial<IDynamicSchemaType>> | Record<string, Partial<IDynamicSchemaType>>;
+    dynTypes?: Array<Partial<IDynamicSchemaType>> | Record<string, Partial<IDynamicSchemaType>>;
+    schemaTypes?: Array<Partial<IDynamicSchemaType>> | Record<string, Partial<IDynamicSchemaType>>;
     files?: Array<{ format: string; label?: string; queryParam?: string }>;
     data?: any;
     routeConfig?: Route;
@@ -66,12 +114,194 @@ const PREFERRED_APPS_STORAGE_KEY = 'CI.PreferredAppsByFormat';
 export class Apps {
     private cachedRoutesMetadata?: RouteMetadata[];
     private extractingPromise?: Promise<RouteMetadata[]>;
+    private registeredDynamicTypes: IDynamicSchemaType[] = [];
+    private cachedDynamicTypes?: IDynamicSchemaType[];
 
     constructor(
         private injector: Injector,
         @Optional() private readonly router?: Router,
         @Optional() private readonly apps?: ApplicationService,
     ) { }
+
+    /**
+     * Registra programaticamente um tipo dinâmico de schema/formulário em tempo de execução.
+     */
+    registerDynamicType(config: IDynamicSchemaType): void {
+        if (!config?.type) return;
+        const normType = config.type.trim().toLowerCase();
+        const existingIdx = this.registeredDynamicTypes.findIndex(
+            t => t.type.toLowerCase() === normType && (t.format || '').toLowerCase() === (config.format || '').toLowerCase()
+        );
+        const normalized: IDynamicSchemaType = {
+            ...config,
+            type: config.type.trim(),
+        };
+        if (existingIdx > -1) {
+            this.registeredDynamicTypes[existingIdx] = normalized;
+        } else {
+            this.registeredDynamicTypes.push(normalized);
+        }
+        this.cachedDynamicTypes = undefined;
+    }
+
+    /**
+     * Retorna os tipos dinâmicos atualmente em cache ou registrados diretamente.
+     */
+    getDynamicTypesSync(): IDynamicSchemaType[] {
+        return [...this.registeredDynamicTypes, ...(this.cachedDynamicTypes || [])];
+    }
+
+    /**
+     * Extrai e consolida todos os tipos dinâmicos declarados via `data` nas rotas de módulos `ci-application`.
+     */
+    async getDynamicTypes(forceRefresh = false): Promise<IDynamicSchemaType[]> {
+        if (!forceRefresh && this.cachedDynamicTypes) {
+            return [...this.registeredDynamicTypes, ...this.cachedDynamicTypes];
+        }
+
+        const routesMeta = await this.getRoutesMetadata(forceRefresh);
+        const collected: IDynamicSchemaType[] = [];
+        const seen = new Set<string>();
+
+        const pushType = (raw: Partial<IDynamicSchemaType> | undefined, fallbackKey: string | undefined, meta: RouteMetadata) => {
+            if (!raw || typeof raw !== 'object') return;
+            const resolvedType = (raw.type || fallbackKey || '').trim();
+            if (!resolvedType) return;
+            const appName = raw.appName || meta['appName'] || this.inferAppNameFromPath(meta.fullPath);
+            const dedupKey = `${resolvedType.toLowerCase()}::${(raw.format || '').toLowerCase()}::${meta.fullPath}`;
+            if (seen.has(dedupKey)) return;
+            seen.add(dedupKey);
+
+            collected.push({
+                ...raw,
+                type: resolvedType,
+                format: raw.format || resolvedType,
+                label: raw.label || meta.title || resolvedType,
+                icon: raw.icon || meta['icon'] || 'extension',
+                component: raw.component || (meta.routeConfig?.component),
+                queryParam: raw.queryParam || meta['queryParam'] || 'file',
+                appName,
+                fullPath: raw.fullPath || meta.fullPath,
+            });
+        };
+
+        for (const meta of routesMeta) {
+            if (!meta) continue;
+            if (meta.dynamicType && typeof meta.dynamicType === 'object') {
+                pushType(meta.dynamicType, meta.dynamicType.type, meta);
+            }
+
+            const sources = [meta.dynamicTypes, meta.dynTypes, meta.schemaTypes];
+            for (const src of sources) {
+                if (!src) continue;
+                if (Array.isArray(src)) {
+                    for (const item of src) {
+                        pushType(item, item?.type, meta);
+                    }
+                } else if (typeof src === 'object') {
+                    for (const [key, item] of Object.entries(src)) {
+                        pushType(item, key, meta);
+                    }
+                }
+            }
+
+            if (meta.manifest && typeof meta.manifest === 'object') {
+                for (const [manifestKey, entry] of Object.entries(meta.manifest)) {
+                    if (!entry || (!entry.dynamicType && !entry.schemaType)) continue;
+                    const dynMeta = typeof entry.dynamicType === 'object'
+                        ? entry.dynamicType
+                        : typeof entry.schemaType === 'object'
+                            ? entry.schemaType
+                            : { type: String(entry.dynamicType || entry.schemaType) };
+                    const patterns = manifestKey.split(':').slice(2).join(':')
+                        .split(/[,|]/)
+                        .map(s => s.trim())
+                        .filter(Boolean);
+                    pushType({
+                        ...dynMeta,
+                        label: dynMeta.label || entry.label || entry.title,
+                        icon: dynMeta.icon || entry.icon,
+                        component: dynMeta.component || entry.component,
+                        openInWindow: dynMeta.openInWindow ?? entry.openInWindow,
+                        windowTitle: dynMeta.windowTitle || entry.windowTitle,
+                        queryParam: dynMeta.queryParam || entry.queryParam,
+                        filePatterns: dynMeta.filePatterns || (patterns.length ? patterns : undefined),
+                    }, dynMeta.type, meta);
+                }
+            }
+        }
+
+        this.cachedDynamicTypes = collected;
+        return [...this.registeredDynamicTypes, ...collected];
+    }
+
+    /**
+     * Resolve qual tipo dinâmico injetado atende a um campo de schema pelo tipo, formato ou extensão.
+     */
+    async resolveDynamicType(criteria: {
+        type?: string;
+        format?: string;
+        fieldName?: string;
+        value?: any;
+    }): Promise<IDynamicSchemaType | undefined> {
+        const list = await this.getDynamicTypes();
+        return this.matchDynamicTypeFromList(list, criteria);
+    }
+
+    resolveDynamicTypeSync(criteria: {
+        type?: string;
+        format?: string;
+        fieldName?: string;
+        value?: any;
+    }): IDynamicSchemaType | undefined {
+        return this.matchDynamicTypeFromList(this.getDynamicTypesSync(), criteria);
+    }
+
+    private matchDynamicTypeFromList(
+        list: IDynamicSchemaType[],
+        criteria: { type?: string; format?: string; fieldName?: string; value?: any }
+    ): IDynamicSchemaType | undefined {
+        if (!list || list.length === 0) return undefined;
+
+        const normType = (criteria.type || '').trim().toLowerCase();
+        const normFormat = (criteria.format || '').trim().toLowerCase().replace(/^\./, '');
+        const strValue = typeof criteria.value === 'string' ? criteria.value.trim().toLowerCase() : '';
+        const valueExt = strValue.includes('.') ? strValue.substring(strValue.lastIndexOf('.')).toLowerCase() : '';
+
+        // 1. Match exato por type diferente de 'dynamic'
+        if (normType && normType !== 'dynamic') {
+            const byType = list.find(d => d.type.toLowerCase() === normType);
+            if (byType) return byType;
+        }
+
+        // 2. Match por format (ex: format: 'ts', 'typescript', 'map', 'code')
+        if (normFormat) {
+            const byFormat = list.find(d =>
+                d.type.toLowerCase() === normFormat ||
+                (d.format || '').toLowerCase().replace(/^\./, '') === normFormat ||
+                (d.filePatterns || []).some(p => p.toLowerCase().replace(/^\*?\./, '') === normFormat)
+            );
+            if (byFormat) return byFormat;
+        }
+
+        // 3. Match por extensão presente no valor (ex: arquivo .ts ou .map)
+        if (valueExt) {
+            const byExt = list.find(d =>
+                (d.filePatterns || []).some(p => {
+                    const cleanP = p.trim().toLowerCase();
+                    return cleanP === `*${valueExt}` || cleanP === valueExt;
+                })
+            );
+            if (byExt) return byExt;
+        }
+
+        // 4. Quando o campo declarar explicitamente type === 'dynamic', usa o primeiro tipo dinâmico compatível ou padrão
+        if (normType === 'dynamic') {
+            return list[0];
+        }
+
+        return undefined;
+    }
 
     /**
      * Resolve uma intenção de interação (ex: abrir um arquivo de determinado formato)

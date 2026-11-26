@@ -1,7 +1,8 @@
-import { Component, Input, OnChanges, OnDestroy, SimpleChanges, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnChanges, OnDestroy, Optional, Output, SimpleChanges, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CoreModule } from '@ci/core';
 import { FileDto, FileExplorerService, ReadDirectoryOutput } from '@ci/portal-api';
 import { NuMonacoEditorEvent, NuMonacoEditorModel, NuMonacoEditorModule, NuMonacoEditorDiffModel } from '@ng-util/monaco-editor';
@@ -64,13 +65,21 @@ export class CodeEditorComponent implements OnChanges, OnDestroy {
     carregando = true;
     oppenedFile?: FileDto;
     commitDescription = '';
+    resolvedFromMapPath?: string;
+    mapSources: string[] = [];
 
+    @Input() filePath?: string;
     @Input() language?: string;
     @Input() value?: string;
     @Input() originalValue?: string;
+    @Output() valueChange = new EventEmitter<string>();
+    @Output() saved = new EventEmitter<{ path?: string; value?: string; resolvedFromMap?: string }>();
     isDirty = false;
 
     ngOnChanges(changes: SimpleChanges): void {
+        if (changes['filePath'] && this.filePath && this.filePath !== this.oppenedFile?.path) {
+            this.abrirArquivo(this.filePath);
+        }
         if (changes['value'] && this.value !== undefined) {
             this.carregando = false;
             if (this.editorInstance && this.editorInstance.getValue() !== this.value) {
