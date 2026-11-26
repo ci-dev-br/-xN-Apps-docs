@@ -64,7 +64,7 @@ export class CompositorComponent implements OnInit, OnDestroy {
   };
 
   // Plugins disponíveis
-  availablePlugins = [
+  availablePlugins: Array<{ id: string; name: string; instance: MusicPlugin; enabled: boolean }> = [
   //  { id: 'delay', name: 'Efeito: Delay Espacial', instance: new DelayPlugin(), enabled: true },
   //  { id: 'metro', name: 'Instrumento: Metrônomo', instance: new MetronomePlugin(), enabled: false },
   //  { id: 'vis', name: 'Analisador de Volume', instance: new ConsoleVisualizerPlugin(), enabled: false }
