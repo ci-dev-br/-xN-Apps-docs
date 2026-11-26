@@ -1,0 +1,83 @@
+<html>
+
+<body>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        * {
+            color: rgba(0, 0, 0, .75);
+        }
+
+        td {
+            padding: 15px 12px;
+        }
+
+        .footer {
+            margin: 0 auto;
+            width: 80vw;
+            max-width: 400px;
+            text-align: justify;
+        }
+
+        small {
+            line-height: 24px;
+        }
+    </style>
+    <div
+        style="background: linear-gradient(33deg, #ababab 0%, #ffffff 50%); font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; text-align: center; padding: 50px;">
+        <div class="logo"
+            style="margin: 0 auto; width: 240px; height: 80px; display: block; background-position: center; background-repeat: no-repeat; background-size: contain;">
+            <img src="{{logo_base64}}">
+        </div>
+        <table
+            style="width: 80vw; max-width: 550px; margin: 0 auto; background: white; border-radius: 10px; padding-bottom: 48px; box-shadow: 0 10px 20px -10px rgba(0, 0, 0, .5); margin-bottom: 40px; margin-top: 32px;">
+            <tbody>
+                <tr>
+                    <td>
+                        <h1>Solicitação de Permissão de Pasta</h1>
+                        <h4>Acesso solicitado ao File Explorer (SYSADMIN)</h4>
+
+                        <p>
+                            Olá {{sysadmin_nome}},
+                        </p>
+                        <p>
+                            O usuário <strong>{{solicitante_nome}}</strong> ({{solicitante_email}}) solicitou permissão de acesso à pasta abaixo através do File Explorer Service:
+                        </p>
+                        <p>
+                            Pasta solicitada:<br>
+                            <code style="display: inline-block; padding: 8px 14px; background: #f1f5f9; border-radius: 6px; font-weight: bold;">{{pasta_caminho}}</code>
+                        </p>
+                        <p style="font-style: italic; color: #334155;">
+                            Motivo: {{motivo}}
+                        </p>
+                        <p style="font-size: 12px; color: #64748b;">
+                            Data da solicitação: {{data_solicitacao}}<br>
+                            Código de autorização: <strong>{{request_token}}</strong>
+                        </p>
+                        <p>
+                            Para revisar e autorizar o acesso a esta pasta, clique no link abaixo:<br><br>
+                            <a href="{{link_autorizar_pasta}}"
+                                style="display: inline-block; padding: 12px 24px; background: #2563eb; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold;">Autorizar Acesso à Pasta</a>
+                        </p>
+                        <p style="font-size: 12px; color: #64748b;">
+                            Ou acesse diretamente: <a href="{{link_autorizar_pasta}}">{{link_autorizar_pasta}}</a>
+                        </p>
+                        <p>
+                            Se você não reconhece esta solicitação, ignore este e-mail ou negue o pedido na página de autorização.
+                        </p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="footer">
+            <small>Este e-mail foi enviado a {{sysadmin_nome}}</small><br>
+            <small>{{mail_sender_status}}</small><br>
+            <small>© {{ano}} {{footer_assinatura}}</small><br>
+            <small>{{footer_message}}</small><br>
+        </div>
+    </div>
+</body>
+
+</html>

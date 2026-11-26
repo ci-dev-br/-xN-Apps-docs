@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-26T00:30:43" id="0" hostname="plhx33" tests="3" errors="0" failures="0" time="0.338">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="CardTerminalComponent deve permitir solicitar permissão quando a pasta não está autorizada" time="0.241" classname="Chrome_Headless_158_0_0_0_(Windows_10).CardTerminalComponent"/>
+  <testcase name="CardTerminalComponent deve liberar terminal para usuário SYSADMIN com pasta autorizada no FileExplorerService" time="0.082" classname="Chrome_Headless_158_0_0_0_(Windows_10).CardTerminalComponent"/>
+  <testcase name="CardTerminalComponent deve bloquear acesso para usuário sem role SYSADMIN" time="0.015" classname="Chrome_Headless_158_0_0_0_(Windows_10).CardTerminalComponent"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

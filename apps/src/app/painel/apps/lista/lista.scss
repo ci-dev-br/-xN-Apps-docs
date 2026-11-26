@@ -41,7 +41,7 @@
     overflow: auto;
 }
 
-@mixin app($size: 220px) {
+@mixin app($size: 200pt) {
     .app {
         @include word-wrap-limit(7);
         flex: 1;
@@ -121,7 +121,7 @@
             padding: 0;
             margin: 0;
 
-            @include app(30%);
+            @include app(40%);
             font-size: .7rem;
         }
     }

@@ -10,6 +10,8 @@ import { ProjectMaster, Track, TrackType } from './music-models';
 import { DelayPlugin } from './delay.component';
 import { MetronomePlugin } from './metronome.plugin';
 import { UserAuthenticationService } from '@ci/auth';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'ci-compositor',
@@ -19,6 +21,8 @@ import { UserAuthenticationService } from '@ci/auth';
     FormsModule,
     MatIconModule,
     MatButtonModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatTooltipModule,
   ],
   templateUrl: './compositor.component.html',
@@ -50,23 +54,25 @@ export class CompositorComponent implements OnInit, OnDestroy {
     description: 'Composição modular procedural criada no Composite-se',
     bpm: 120,
     tracks: [
-      { id: '1', name: 'Kick (Bumbo)', type: 'kick', frequency: 150, volume: 0.9, muted: false, solo: false, color: '#ef4444', steps: [true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false] },
-      { id: '2', name: 'Snare (Caixa)', type: 'snare', frequency: 220, volume: 0.8, muted: false, solo: false, color: '#f59e0b', steps: [false, false, false, false, true, false, false, false, false, false, false, false, true, false, false, false] },
-      { id: '3', name: 'Hi-Hat (Prato)', type: 'hihat', frequency: 1200, volume: 0.7, muted: false, solo: false, color: '#10b981', steps: [true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false] },
-      { id: '4', name: 'Synth Bass', type: 'bass', frequency: 110, volume: 0.85, muted: false, solo: false, color: '#8b5cf6', steps: [true, false, false, true, false, false, true, false, true, false, false, true, false, false, true, false] },
-      { id: '5', name: 'Lead Melody', type: 'lead', frequency: 440, volume: 0.75, muted: false, solo: false, color: '#06b6d4', steps: [false, false, true, false, false, true, false, false, false, false, true, false, false, true, false, true] },
-      { id: '6', name: 'Ambient Pad', type: 'pad', frequency: 330, volume: 0.65, muted: false, solo: false, color: '#ec4899', steps: [true, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false] }
+      // { id: '1', name: 'Kick (Bumbo)', type: 'kick', frequency: 150, volume: 0.9, muted: false, solo: false, color: '#ef4444', steps: [true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false] },
+      // { id: '2', name: 'Snare (Caixa)', type: 'snare', frequency: 220, volume: 0.8, muted: false, solo: false, color: '#f59e0b', steps: [false, false, false, false, true, false, false, false, false, false, false, false, true, false, false, false] },
+      // { id: '3', name: 'Hi-Hat (Prato)', type: 'hihat', frequency: 1200, volume: 0.7, muted: false, solo: false, color: '#10b981', steps: [true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false] },
+      // { id: '4', name: 'Synth Bass', type: 'bass', frequency: 110, volume: 0.85, muted: false, solo: false, color: '#8b5cf6', steps: [true, false, false, true, false, false, true, false, true, false, false, true, false, false, true, false] },
+      // { id: '5', name: 'Lead Melody', type: 'lead', frequency: 440, volume: 0.75, muted: false, solo: false, color: '#06b6d4', steps: [false, false, true, false, false, true, false, false, false, false, true, false, false, true, false, true] },
+      // { id: '6', name: 'Ambient Pad', type: 'pad', frequency: 330, volume: 0.65, muted: false, solo: false, color: '#ec4899', steps: [true, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false] }
     ]
   };
 
   // Plugins disponíveis
   availablePlugins = [
-    { id: 'delay', name: 'Efeito: Delay Espacial', instance: new DelayPlugin(), enabled: true },
-    { id: 'metro', name: 'Instrumento: Metrônomo', instance: new MetronomePlugin(), enabled: false },
-    { id: 'vis', name: 'Analisador de Volume', instance: new ConsoleVisualizerPlugin(), enabled: false }
+  //  { id: 'delay', name: 'Efeito: Delay Espacial', instance: new DelayPlugin(), enabled: true },
+  //  { id: 'metro', name: 'Instrumento: Metrônomo', instance: new MetronomePlugin(), enabled: false },
+  //  { id: 'vis', name: 'Analisador de Volume', instance: new ConsoleVisualizerPlugin(), enabled: false }
   ];
   activePlugins: MusicPlugin[] = [];
+  addLine(frz: number) {
 
+  }
   ngOnInit() {
     this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     this.masterBus = this.audioContext.createGain();
@@ -75,10 +81,10 @@ export class CompositorComponent implements OnInit, OnDestroy {
 
     // Inicia os plugins que já vierem marcados
     this.availablePlugins.forEach(p => {
-      if (p.enabled) {
-        p.instance.init(this.audioContext);
-        this.activePlugins.push(p.instance);
-      }
+      // if (p.enabled) {
+      //   p.instance.init(this.audioContext);
+      //   this.activePlugins.push(p.instance);
+      // }
     });
 
     this.rebuildAudioChain();

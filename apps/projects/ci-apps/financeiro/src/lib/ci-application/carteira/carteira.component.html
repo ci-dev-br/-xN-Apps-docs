@@ -350,12 +350,12 @@
                                 <div class="param-fields-grid">
                                     <mat-form-field appearance="outline">
                                         <mat-label>Nova Posição Consolidada ({{ carteiraAlvoLancamento()?.simboloMoeda || carteiraAlvoLancamento()?.moeda }})</mat-label>
-                                        <input matInput type="number" [(ngModel)]="lancamentoNovaPosicao" step="0.01" placeholder="Ex: 5000.00" />
+                                        <input matInput type="number" [(ngModel)]="lancamentoNovaPosicao" step="0.0000001" placeholder="Ex: 5000.00" />
                                     </mat-form-field>
 
                                     <mat-form-field appearance="outline">
                                         <mat-label>Cotação / Paridade em R$ (1 {{ carteiraAlvoLancamento()?.moeda }} = R$)</mat-label>
-                                        <input matInput type="number" [(ngModel)]="lancamentoNovaCotacaoBrl" step="0.00000000000001" min="0.0001" />
+                                        <input matInput type="number" [(ngModel)]="lancamentoNovaCotacaoBrl" step="0.0001" min="0.0001" />
                                     </mat-form-field>
 
                                     <mat-form-field appearance="outline">

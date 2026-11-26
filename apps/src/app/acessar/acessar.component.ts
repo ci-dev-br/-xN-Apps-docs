@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { lastValueFrom } from 'rxjs';
 import { AcessoPayload, AuthService } from '@ci/portal-api';
 import { SHA512 } from 'crypto-js';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CoreModule, StorageService } from '@ci/core';
 import { AuthModule, UserAuthenticationService } from '@ci/auth';
 import { MatIconModule } from '@angular/material/icon';
@@ -50,14 +50,20 @@ export class AcessarComponent implements OnInit {
     private readonly snack: MatSnackBar,
     private readonly fb: FormBuilder,
     private readonly router: Router,
+    private readonly route: ActivatedRoute,
   ) {
     if (this.stage) this.criarFormulario(this.stage)
   }
+  private getPostLoginRedirectUrl(): string {
+    const raw = this.route?.snapshot?.queryParams?.['redirect'];
+    if (typeof raw === 'string' && raw.startsWith('/') && !raw.startsWith('//')) {
+      return raw;
+    }
+    return '/';
+  }
   async ngOnInit() {
 
-    if (!!this.userService?.user?.value) this.router.navigate(['/'], {
-      //  from: this.router.url
-    })
+    if (!!this.userService?.user?.value) this.router.navigateByUrl(this.getPostLoginRedirectUrl())
     try {
       //   localStorage.clear();
       //   sessionStorage.clear();
@@ -153,7 +159,7 @@ export class AcessarComponent implements OnInit {
             }
           });
           await this.userService.identificarUsuario(this.acesso_payload?.user);
-          setTimeout(() => this.router.navigate(['/'])); // TODO: para que serve isto?
+          setTimeout(() => this.router.navigateByUrl(this.getPostLoginRedirectUrl())); // TODO: para que serve isto?
         } else {
           this.snack.open('Acesso negado!', 'Ok');
         }

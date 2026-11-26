@@ -11,6 +11,7 @@ import { FilePermissionService } from "./service/file-permission.service";
 import { TenantModule } from "@ci/tenant";
 import { AuthModule } from "@ci/auth/auth.module";
 import { ManagerModule } from "@ci/manager";
+import { NotificacaoModule } from "@ci/notification";
 import { File } from "./models/file.entity";
 import { FileService } from "./service/file.service";
 import { FileController } from "./controller/file.controller";
@@ -30,6 +31,7 @@ export const StorageEntities = [
         forwardRef(() => TenantModule),
         forwardRef(() => ManagerModule),
         forwardRef(() => AuthModule),
+        forwardRef(() => NotificacaoModule),
     ],
     controllers: [
         PhotoController,
@@ -47,6 +49,7 @@ export const StorageEntities = [
     exports: [
         PhotoService,
         FilePermissionService,
+        FileExplorerService,
         GitService,
     ]
 })

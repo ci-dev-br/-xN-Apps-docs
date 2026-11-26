@@ -4,6 +4,7 @@ import { join, resolve } from "path";
 export function templateHtml(template_name: string, data: any) {
     const candidates = [
         join(process.cwd(), 'templates', `${template_name}.html`),
+        join(process.cwd(), 'server', 'templates', `${template_name}.html`),
         join(__dirname, '..', 'templates', `${template_name}.html`),
         join(__dirname, '..', '..', '..', '..', 'templates', `${template_name}.html`),
         resolve(__dirname, '..', '..', '..', '..', '..', 'templates', `${template_name}.html`),

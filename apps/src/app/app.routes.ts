@@ -39,6 +39,14 @@ export const routes: Routes = [
         loadChildren: () => import('./registrar/registrar.module').then(m => m.RegistrarModule)
     },
     {
+        path: 'autorizar-pasta',
+        loadComponent: () => import('./autorizar-pasta/autorizar-pasta.component').then(m => m.AutorizarPastaComponent)
+    },
+    {
+        path: 'autorizar-pasta/:token',
+        loadComponent: () => import('./autorizar-pasta/autorizar-pasta.component').then(m => m.AutorizarPastaComponent)
+    },
+    {
         path: '',
         canMatch: [authGuard],
         canActivate: [inviteQueryRedirectGuard],

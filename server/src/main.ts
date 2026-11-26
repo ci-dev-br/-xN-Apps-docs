@@ -32,7 +32,7 @@ const IMMEDIATE_MIGRATION_MS = 15;       // Intervalo imediato (15ms) cravado no
 const PORT_86_ROTATION_MS = 10 * 1000;   // Cada nó assume a porta 86 por 10 segundos (se houver outros prontos)
 const OLD_PROCESS_PURGE_MS = 60 * 1000;  // Limpa processos inativos há mais de 1 minuto do arquivo STATUS
 const ZOMBIE_TIMEOUT_MS = 5 * 1000;      // Tolerância para considerar zombie caso trave sem morrer no SO
-const HTTP_WARMUP_TIMEOUT_MS = 1200;     // Timeout do teste HTTP na porta da candidata antes de liberar a 86
+const HTTP_WARMUP_TIMEOUT_MS = 30000;     // Timeout do teste HTTP na porta da candidata antes de liberar a 86
 const HEALTH_ENDPOINT = '/__orchestration/health';
 
 /**

@@ -108,7 +108,13 @@ export class FilesComponent implements OnInit, OnDestroy {
   /** Pilha de navegação (voltar/avançar) e ponteiro atual */
   navegacao: string[] = [];
   indiceNavegacao = -1;
-
+  /**
+   * As ações complementares 
+   */
+  acoesComplementares?: { label: string; action: () => void; disabled?: boolean }[];
+  lastAttemptedPath?: string;
+  requestingPermission = false;
+  permissionRequestFeedback?: string;
   /** Abas abertas no explorador */
   tabs: IExplorerTab[] = [
     { id: 'tab-1', title: 'Raiz (./)', path: './' }
@@ -206,18 +212,14 @@ export class FilesComponent implements OnInit, OnDestroy {
       'i8-file': { url: '/icons8/icons8-file.svg' },
     });
   }
-
   ngOnInit() {
     this.restaurarPreferencias();
     // Pré-aquece o catálogo de metadados de rotas dos aplicativos disponíveis
     this.appsService?.getRoutesMetadata();
-
     const queryPath = this.activatedRoute?.snapshot?.queryParams?.['path']
       || this.activatedRoute?.snapshot?.queryParams?.['dir'];
-
     const inicial = queryPath || this.endereco || './';
     this.ir(inicial);
-
     this.activatedRoute?.queryParams.subscribe(async (query: any) => {
       if (query?.path && query.path !== this.endereco) {
         await this.ir(query.path);
@@ -227,11 +229,9 @@ export class FilesComponent implements OnInit, OnDestroy {
       }
     });
   }
-
   ngOnDestroy() {
     this.salvarPreferencias();
   }
-
   private restaurarPreferencias() {
     try {
       const savedHistory = localStorage.getItem(STORAGE_KEYS.HISTORY);
@@ -241,7 +241,6 @@ export class FilesComponent implements OnInit, OnDestroy {
           this.historico = Array.from(new Set(parsed.filter(Boolean))).slice(-30);
         }
       }
-
       const savedAddress = localStorage.getItem(STORAGE_KEYS.ADDRESS);
       if (savedAddress) {
         const parsedAddr = JSON.parse(savedAddress);
@@ -250,12 +249,10 @@ export class FilesComponent implements OnInit, OnDestroy {
           this.enderecoInput = this.endereco;
         }
       }
-
       const savedView = localStorage.getItem(STORAGE_KEYS.VIEW_MODE) as ArquivoViewMode | null;
       if (savedView && this.viewModes.some(v => v.mode === savedView)) {
         this._viewMode = savedView;
       }
-
       const savedFavs = localStorage.getItem(STORAGE_KEYS.FAVORITES);
       if (savedFavs) {
         const parsedFavs = JSON.parse(savedFavs);
@@ -263,12 +260,10 @@ export class FilesComponent implements OnInit, OnDestroy {
           this.favoritos = parsedFavs;
         }
       }
-
       const savedGroup = localStorage.getItem(STORAGE_KEYS.GROUP_BY_TYPE);
       if (savedGroup !== null) {
         this.groupByType = savedGroup === 'true';
       }
-
       const savedSidebar = localStorage.getItem(STORAGE_KEYS.SIDEBAR_OPEN);
       if (savedSidebar !== null) {
         this.showSidebar = savedSidebar === 'true';
@@ -277,7 +272,6 @@ export class FilesComponent implements OnInit, OnDestroy {
       console.trace(e);
     }
   }
-
   private salvarPreferencias() {
     try {
       if (this.endereco) {
@@ -294,7 +288,6 @@ export class FilesComponent implements OnInit, OnDestroy {
       console.trace(e);
     }
   }
-
   private _filtrar?: string;
   public get filtrar(): string | undefined {
     return this._filtrar;
@@ -304,20 +297,16 @@ export class FilesComponent implements OnInit, OnDestroy {
     this._filtrar = value;
     this.atualizarListaExibida();
   }
-
   get canGoBack(): boolean {
     return this.indiceNavegacao > 0;
   }
-
   get canGoForward(): boolean {
     return this.indiceNavegacao >= 0 && this.indiceNavegacao < this.navegacao.length - 1;
   }
-
   get isFavoritoAtual(): boolean {
     const norm = this.normalizarCaminho(this.endereco);
     return this.favoritos.some(f => this.normalizarCaminho(f.path) === norm);
   }
-
   get breadcrumbs(): IBreadcrumbSegment[] {
     const raw = (this.endereco || './').replace(/\\/g, '/').replace(/\/+$/, '');
     if (!raw || raw === '.' || raw === './') {
@@ -463,6 +452,9 @@ export class FilesComponent implements OnInit, OnDestroy {
     const alvo = this.normalizarCaminho(enderecoDestino);
     this.isLoading = true;
     this.errorMessage = undefined;
+    this.permissionRequestFeedback = undefined;
+    this.acoesComplementares = undefined;
+    this.lastAttemptedPath = alvo;
     const enderecoAnterior = this.endereco;
 
     try {
@@ -504,12 +496,43 @@ export class FilesComponent implements OnInit, OnDestroy {
     } catch (error: any) {
       console.trace(error);
       this.errorMessage = error?.message || `Falha ao explorar o caminho "${alvo}".`;
+      this.acoesComplementares = [
+        {
+          label: 'Solicitar Permissão (SYSADMIN)',
+          action: () => this.solicitarPermissaoPasta(alvo),
+        }
+      ];
       if (enderecoAnterior && enderecoAnterior !== alvo) {
         this.endereco = enderecoAnterior;
         this.enderecoInput = enderecoAnterior;
       }
     } finally {
       this.isLoading = false;
+    }
+  }
+
+  async solicitarPermissaoPasta(caminho?: string) {
+    const targetPath = (caminho || this.lastAttemptedPath || this.endereco || './').trim();
+    if (this.requestingPermission || typeof this.fileExplorer.requestPermission !== 'function') return;
+    this.requestingPermission = true;
+    this.permissionRequestFeedback = undefined;
+    try {
+      const res = await lastValueFrom(
+        this.fileExplorer.requestPermission({
+          path: targetPath,
+          reason: 'Solicitação de acesso via Gerenciador de Arquivos',
+        })
+      );
+      if (res?.alreadyAuthorized) {
+        this.permissionRequestFeedback = res.message || `Pasta "${targetPath}" já autorizada.`;
+        await this.ir(targetPath);
+        return;
+      }
+      this.permissionRequestFeedback = res?.message || `Solicitação enviada aos usuários SYSADMIN para "${targetPath}".`;
+    } catch (err: any) {
+      this.permissionRequestFeedback = err?.error?.message || err?.message || 'Erro ao enviar solicitação de permissão.';
+    } finally {
+      this.requestingPermission = false;
     }
   }
 
@@ -967,6 +990,7 @@ export class FilesComponent implements OnInit, OnDestroy {
       this.atualizarListaExibida();
     }
   }
+
 
   @HostListener('keydown', ['$event'])
   handleKeyboardNavigation(event: KeyboardEvent) {

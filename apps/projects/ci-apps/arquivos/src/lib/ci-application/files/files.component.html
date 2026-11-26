@@ -39,8 +39,7 @@
             <mat-icon>{{ showSidebar ? 'menu_open' : 'menu' }}</mat-icon>
         </button>
 
-        <button mat-icon-button (click)="back()" [disabled]="!canGoBack"
-            matTooltip="Voltar (Alt + Seta Esquerda)">
+        <button mat-icon-button (click)="back()" [disabled]="!canGoBack" matTooltip="Voltar (Alt + Seta Esquerda)">
             <mat-icon>arrow_back</mat-icon>
         </button>
 
@@ -105,8 +104,8 @@
             </div>
             <span class="breadcrumb-spacer" (click)="ativarEdicaoEndereco()"
                 matTooltip="Clique para digitar o caminho manualmente"></span>
-            <button mat-icon-button class="address-action-btn"
-                (click)="$event.stopPropagation(); copiarCaminho()" matTooltip="Copiar endereço atual">
+            <button mat-icon-button class="address-action-btn" (click)="$event.stopPropagation(); copiarCaminho()"
+                matTooltip="Copiar endereço atual">
                 <mat-icon>content_copy</mat-icon>
             </button>
             <button mat-icon-button class="address-action-btn"
@@ -174,10 +173,10 @@
 
     <!-- Ordenação e Agrupamento -->
     <div class="subbar-group">
-        <button mat-stroked-button [matMenuTriggerFor]="sortMenu" class="subbar-btn"
-            matTooltip="Critério de ordenação">
+        <button mat-stroked-button [matMenuTriggerFor]="sortMenu" class="subbar-btn" matTooltip="Critério de ordenação">
             <mat-icon>sort</mat-icon>
-            <span>Ordenar: {{ sortBy === 'name' ? 'Nome' : sortBy === 'tipo' ? 'Tipo' : sortBy === 'extensao' ? 'Extensão' : sortBy === 'itensCount' ? 'Subitens' : 'Caminho' }}</span>
+            <span>Ordenar: {{ sortBy === 'name' ? 'Nome' : sortBy === 'tipo' ? 'Tipo' : sortBy === 'extensao' ?
+                'Extensão' : sortBy === 'itensCount' ? 'Subitens' : 'Caminho' }}</span>
         </button>
         <mat-menu #sortMenu="matMenu">
             <button mat-menu-item (click)="definirOrdenacao('name')">
@@ -213,8 +212,7 @@
         </button>
 
         @if (viewMode !== 'grid') {
-        <button mat-icon-button (click)="alternarAgrupamento()"
-            [class.active-toggle-btn]="groupByType"
+        <button mat-icon-button (click)="alternarAgrupamento()" [class.active-toggle-btn]="groupByType"
             [matTooltip]="groupByType ? 'Agrupado entre Pastas e Arquivos (clique para unificar)' : 'Lista unificada (clique para agrupar Pastas e Arquivos)'">
             <mat-icon>{{ groupByType ? 'workspaces' : 'view_stream' }}</mat-icon>
         </button>
@@ -249,8 +247,7 @@
                     <small class="app-sub">{{ app.label }} ({{ app.fullPath }})</small>
                 </div>
             </button>
-            <button mat-icon-button class="prefer-star-btn"
-                (click)="definirAppPreferido(app, selectedFile, $event)"
+            <button mat-icon-button class="prefer-star-btn" (click)="definirAppPreferido(app, selectedFile, $event)"
                 [matTooltip]="app.isPreferred ? 'Remover como padrão para ' + (selectedFile?.extensao || 'formato') : 'Definir como aplicativo preferido para ' + (selectedFile?.extensao || 'formato')">
                 <mat-icon [class.favorited-star]="app.isPreferred">
                     {{ app.isPreferred ? 'star' : 'star_border' }}
@@ -318,8 +315,8 @@
             </div>
             @for (loc of quickLocations; track loc.path) {
             <button type="button" class="sidebar-item"
-                [class.active]="normalizarCaminho(endereco) === normalizarCaminho(loc.path)"
-                (click)="ir(loc.path)" [matTooltip]="loc.path">
+                [class.active]="normalizarCaminho(endereco) === normalizarCaminho(loc.path)" (click)="ir(loc.path)"
+                [matTooltip]="loc.path">
                 <mat-icon>{{ loc.icon }}</mat-icon>
                 <span class="sidebar-item-label">{{ loc.label }}</span>
             </button>
@@ -334,8 +331,7 @@
                 <span>Favoritos</span>
             </div>
             @for (fav of favoritos; track fav.path) {
-            <div class="sidebar-item-row"
-                [class.active]="normalizarCaminho(endereco) === normalizarCaminho(fav.path)">
+            <div class="sidebar-item-row" [class.active]="normalizarCaminho(endereco) === normalizarCaminho(fav.path)">
                 <button type="button" class="sidebar-item" (click)="ir(fav.path)" [matTooltip]="fav.path">
                     <mat-icon class="favorited-star">star</mat-icon>
                     <span class="sidebar-item-label">{{ fav.label }}</span>
@@ -362,8 +358,7 @@
             <div class="tree-node">
                 <div class="tree-node-row">
                     @if (getSubfolders(folder).length > 0) {
-                    <button mat-icon-button class="tree-expand-btn"
-                        (click)="toggleTreeFolder(folder.caminho, $event)">
+                    <button mat-icon-button class="tree-expand-btn" (click)="toggleTreeFolder(folder.caminho, $event)">
                         <mat-icon>
                             {{ isTreeExpanded(folder.caminho) ? 'expand_more' : 'chevron_right' }}
                         </mat-icon>
@@ -381,8 +376,8 @@
                 @if (isTreeExpanded(folder.caminho)) {
                 <div class="tree-children">
                     @for (sub of getSubfolders(folder); track sub.path) {
-                    <button type="button" class="sidebar-item tree-child-item"
-                        (click)="sub.path && ir(sub.path)" [matTooltip]="sub.path || sub.name || ''">
+                    <button type="button" class="sidebar-item tree-child-item" (click)="sub.path && ir(sub.path)"
+                        [matTooltip]="sub.path || sub.name || ''">
                         <mat-icon svgIcon="i8-folder"></mat-icon>
                         <span class="sidebar-item-label">{{ sub.name }}</span>
                     </button>
@@ -407,6 +402,17 @@
             </div>
             <button mat-stroked-button (click)="recarregar()">Tentar novamente</button>
             <button mat-flat-button color="primary" (click)="ir('./')">Ir para Raiz (./)</button>
+            @if (!!acoesComplementares && acoesComplementares.length > 0) {
+                @for (acao of acoesComplementares; track acao.label) {
+                <button mat-raised-button color="accent" (click)="acao.action()" [disabled]="requestingPermission || acao.disabled">
+                    <mat-icon>mail</mat-icon>
+                    {{ requestingPermission ? 'Enviando solicitação...' : acao.label }}
+                </button>
+                }
+            }
+            @if (permissionRequestFeedback) {
+            <span class="permission-feedback">{{ permissionRequestFeedback }}</span>
+            }
         </div>
         }
 
@@ -439,12 +445,11 @@
             <ng-template #fileItemTemplate let-file="file" let-idx="idx">
                 <div [tabIndex]="idx + 1" class="explorer-item" [class.folder]="file.isDirectory"
                     [class.file]="!file.isDirectory" [class.selected]="selectedFile === file"
-                    [class.view-extra-large]="viewMode === 'extra-large'"
-                    [class.view-large]="viewMode === 'large'" [class.view-medium]="viewMode === 'medium'"
-                    [class.view-small]="viewMode === 'small'" [class.view-list]="viewMode === 'list'"
-                    [class.view-tiles]="viewMode === 'tiles'" [class.view-content]="viewMode === 'content'"
-                    (click)="clicarItem(file, $event)" (dblclick)="abrir(file, $event)"
-                    (keydown.enter)="abrir(file, $event)"
+                    [class.view-extra-large]="viewMode === 'extra-large'" [class.view-large]="viewMode === 'large'"
+                    [class.view-medium]="viewMode === 'medium'" [class.view-small]="viewMode === 'small'"
+                    [class.view-list]="viewMode === 'list'" [class.view-tiles]="viewMode === 'tiles'"
+                    [class.view-content]="viewMode === 'content'" (click)="clicarItem(file, $event)"
+                    (dblclick)="abrir(file, $event)" (keydown.enter)="abrir(file, $event)"
                     [matTooltip]="(file.name || '') + ' — ' + (file.tipo || '') + ' (' + (file.caminho || '') + ')'">
 
                     <div class="item-icon-wrapper">
@@ -453,7 +458,8 @@
                         } @else {
                         <mat-icon>{{ file.icon }}</mat-icon>
                         }
-                        @if (!file.isDirectory && file.extensao && file.extensao !== '-' && (viewMode === 'extra-large' || viewMode === 'large')) {
+                        @if (!file.isDirectory && file.extensao && file.extensao !== '-' && (viewMode === 'extra-large'
+                        || viewMode === 'large')) {
                         <span class="ext-badge">{{ file.extensao }}</span>
                         }
                     </div>
@@ -498,14 +504,12 @@
                             <mat-icon>star_border</mat-icon>
                         </button>
                         } @else {
-                        <button mat-icon-button [matMenuTriggerFor]="openWithMenu"
-                            (click)="selecionar(file, $event)"
+                        <button mat-icon-button [matMenuTriggerFor]="openWithMenu" (click)="selecionar(file, $event)"
                             matTooltip="Abrir com... / Escolher aplicativo preferido">
                             <mat-icon>apps</mat-icon>
                         </button>
                         }
-                        <button mat-icon-button (click)="copiarCaminho(file, $event)"
-                            matTooltip="Copiar caminho">
+                        <button mat-icon-button (click)="copiarCaminho(file, $event)" matTooltip="Copiar caminho">
                             <mat-icon>content_copy</mat-icon>
                         </button>
                         }
@@ -609,13 +613,13 @@
             <div class="compatible-apps-section">
                 <div class="compatible-apps-header">
                     <mat-icon>apps</mat-icon>
-                    <span>Abrir com ({{ compatibleApps.length }} {{ compatibleApps.length === 1 ? 'app compatível' : 'apps compatíveis' }})</span>
+                    <span>Abrir com ({{ compatibleApps.length }} {{ compatibleApps.length === 1 ? 'app compatível' :
+                        'apps compatíveis' }})</span>
                 </div>
                 <div class="compatible-apps-list">
                     @for (app of compatibleApps; track app.id) {
                     <div class="compatible-app-card" [class.preferred]="app.isPreferred">
-                        <button type="button" class="compatible-app-open"
-                            (click)="abrirComAplicativo(app, sel, $event)"
+                        <button type="button" class="compatible-app-open" (click)="abrirComAplicativo(app, sel, $event)"
                             [matTooltip]="'Abrir em ' + app.fullPath">
                             <mat-icon>{{ app.icon }}</mat-icon>
                             <div class="compatible-app-text">
@@ -682,7 +686,8 @@
         } @else {
         <div class="details-empty">
             <mat-icon>touch_app</mat-icon>
-            <p>Selecione uma pasta ou arquivo para ver os aplicativos compatíveis, definir seu aplicativo preferido ou pré-visualizar seu conteúdo.</p>
+            <p>Selecione uma pasta ou arquivo para ver os aplicativos compatíveis, definir seu aplicativo preferido ou
+                pré-visualizar seu conteúdo.</p>
         </div>
         }
     </aside>
@@ -723,4 +728,4 @@
             {{ currentViewInfo.label }}
         </span>
     </div>
-</footer>
+</footer>

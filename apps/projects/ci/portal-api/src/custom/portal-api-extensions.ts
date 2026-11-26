@@ -7,6 +7,7 @@ import { News } from '../lib/models/news';
 import { AuthService } from '../lib/services/auth.service';
 import { NewsService } from '../lib/services/news.service';
 import { CarteiraService } from '../lib/services/carteira.service';
+import { FileExplorerService } from '../lib/services/file-explorer.service';
 import { GetMarketNews$Params } from '../lib/fn/news/get-market-news';
 
 export interface ConnectedDevice {
@@ -265,6 +266,68 @@ declare module '../lib/services/news.service' {
     followUser(userId: string, context?: HttpContext): Observable<any>;
     unfollowUser(userId: string, context?: HttpContext): Observable<{ success: boolean }>;
     getSocialStatus(userId: string, context?: HttpContext): Observable<{ isFollowing: boolean; isFollower: boolean; isConhecido: boolean; tipo: string }>;
+  }
+}
+
+export interface RequestFilePermissionInput {
+  path: string;
+  reason?: string;
+  originUrl?: string;
+}
+
+export interface RequestFilePermissionOutput {
+  requested: boolean;
+  alreadyAuthorized?: boolean;
+  path: string;
+  status?: string;
+  requestToken?: string;
+  emailsSent?: number;
+  sysadminCount?: number;
+  authorizeLink?: string;
+  message?: string;
+}
+
+export interface AuthorizeFilePermissionInput {
+  token?: string;
+  internalId?: string;
+  decision?: 'GRANT' | 'DENY';
+}
+
+export interface AuthorizeFilePermissionOutput {
+  authorized: boolean;
+  denied?: boolean;
+  path?: string;
+  status?: string;
+  requestedByUserId?: string;
+  requestedByEmail?: string;
+  message?: string;
+}
+
+export interface FilePermissionItem {
+  internalId?: string;
+  role?: string;
+  status?: string;
+  path?: string;
+  requestedByUserId?: string;
+  requestedByEmail?: string;
+  requestedByName?: string;
+  reason?: string;
+  authorizedAt?: string | Date;
+  createdAt?: string | Date;
+}
+
+export interface MyFilePermissionsOutput {
+  authorizedPaths: string[];
+  permissions: FilePermissionItem[];
+  pendingRequests: FilePermissionItem[];
+}
+
+declare module '../lib/services/file-explorer.service' {
+  export interface FileExplorerService {
+    requestPermission(body: RequestFilePermissionInput, context?: HttpContext): Observable<RequestFilePermissionOutput>;
+    authorizePermission(body: AuthorizeFilePermissionInput, context?: HttpContext): Observable<AuthorizeFilePermissionOutput>;
+    getPermissionRequest(token: string, context?: HttpContext): Observable<FilePermissionItem>;
+    myPermissions(context?: HttpContext): Observable<MyFilePermissionsOutput>;
   }
 }
 
@@ -589,6 +652,55 @@ CarteiraService.prototype.avaliarRoleDeveloper = function (this: ServiceCtx): Ob
     user?: { id: string; email: string; roles: string[]; emailVerificado: boolean };
     saldoAtual?: number;
   }>(`${this.rootUrl}/Financeiro/Carteira/AvaliarRoleDeveloper`, {});
+};
+
+// Runtime prototype augmentations for FileExplorerService
+FileExplorerService.prototype.requestPermission = function (
+  this: ServiceCtx,
+  body: RequestFilePermissionInput,
+  context?: HttpContext
+): Observable<RequestFilePermissionOutput> {
+  const originUrl = body?.originUrl || (typeof window !== 'undefined' ? window.location.origin : undefined);
+  return this.http.post<RequestFilePermissionOutput>(
+    `${this.rootUrl}/FileExplorer/RequestPermission`,
+    { ...body, originUrl },
+    { context }
+  );
+};
+
+FileExplorerService.prototype.authorizePermission = function (
+  this: ServiceCtx,
+  body: AuthorizeFilePermissionInput,
+  context?: HttpContext
+): Observable<AuthorizeFilePermissionOutput> {
+  return this.http.post<AuthorizeFilePermissionOutput>(
+    `${this.rootUrl}/FileExplorer/AuthorizePermission`,
+    body || {},
+    { context }
+  );
+};
+
+FileExplorerService.prototype.getPermissionRequest = function (
+  this: ServiceCtx,
+  token: string,
+  context?: HttpContext
+): Observable<FilePermissionItem> {
+  return this.http.post<FilePermissionItem>(
+    `${this.rootUrl}/FileExplorer/GetPermissionRequest`,
+    { token },
+    { context }
+  );
+};
+
+FileExplorerService.prototype.myPermissions = function (
+  this: ServiceCtx,
+  context?: HttpContext
+): Observable<MyFilePermissionsOutput> {
+  return this.http.post<MyFilePermissionsOutput>(
+    `${this.rootUrl}/FileExplorer/MyPermissions`,
+    {},
+    { context }
+  );
 };
 
 export const PORTAL_API_EXTENSIONS_LOADED = true;
