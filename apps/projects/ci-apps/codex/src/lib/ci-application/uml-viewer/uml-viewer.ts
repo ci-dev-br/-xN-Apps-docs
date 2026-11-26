@@ -19,9 +19,21 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import mermaid, { MermaidConfig } from 'mermaid';
-import * as babelParser from '@babel/parser';
 import { CiCdkModule, JsonToTsService } from '@ci/cdk';
 import { MonacoWorkspaceService } from '../code-editor/monaco-workspace.service';
+import {
+    extractMemberName,
+    extractMethodParam,
+    extractQualifiedName,
+    extractReferencedTypeNames,
+    formatTsTypeToMermaid,
+    formatUmlTranscriptionError,
+    parseTypeScriptSafely,
+    sanitizeMermaidNote as sanitizeNoteHelper,
+    sanitizeMermaidRelationLabel,
+    toMermaidId,
+    toMermaidNamespace,
+} from './ts-to-mermaid';
 
 export interface UmlNodeSelectEvent {
     type: 'class' | 'interface' | 'property' | 'method' | 'import' | 'package';
@@ -125,6 +137,7 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
     @ViewChild('mermaidContainer', { static: true }) mermaidContainerRef!: ElementRef<HTMLDivElement>;
 
     error: string | null = null;
+    errorSeverity: 'error' | 'warning' = 'error';
     scale = 1;
     translateX = 0;
     translateY = 0;
@@ -132,6 +145,9 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
     // Metadados extraídos do AST
     public classesByName = new Map<string, UmlClassInfo>();
     public packagesBySource = new Map<string, string>();
+    private mermaidIdToClassName = new Map<string, string>();
+    private classNameToMermaidId = new Map<string, string>();
+    private hasRenderedValidSvg = false;
     private svgNodesByClassName = new Map<string, SVGElement>();
     private currentActiveClassName: string | null = null;
     public selectedClassInfo: UmlClassInfo | null = null;
@@ -253,7 +269,12 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['filePath'] && !changes['filePath'].firstChange) {
             this.shouldAutoFit = true;
+            this.hasRenderedValidSvg = false;
+            this.error = null;
+            this.errorSeverity = 'error';
             this.classesByName.clear();
+            this.mermaidIdToClassName.clear();
+            this.classNameToMermaidId.clear();
             this.svgNodesByClassName.clear();
             this.currentActiveClassName = null;
             this.selectedClassInfo = null;
@@ -389,7 +410,7 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
             if (classAttr.includes('cluster') || id.includes('cluster')) {
                 const titleText = g.querySelector('text')?.textContent?.trim() || '';
                 for (const [source, pkgName] of this.packagesBySource.entries()) {
-                    const safePkg = pkgName.replace(/[^a-zA-Z0-9_]/g, '_');
+                    const safePkg = toMermaidNamespace(pkgName);
                     if (titleText.includes(safePkg) || id.includes(safePkg)) {
                         g.classList.add('uml-package-interactive');
                         g.setAttribute('data-package-source', source);
@@ -414,7 +435,13 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
             let matchedClassName: string | null = null;
 
             for (const className of this.classesByName.keys()) {
-                if (id.includes(`classId-${className}`) || id === className) {
+                const mermaidId = this.classNameToMermaidId.get(className) || className;
+                if (
+                    id.includes(`classId-${mermaidId}`) ||
+                    id.includes(`classId-${className}`) ||
+                    id === mermaidId ||
+                    id === className
+                ) {
                     matchedClassName = className;
                     break;
                 }
@@ -423,8 +450,12 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
             if (!matchedClassName) {
                 const titleElement = g.querySelector('.title, .classTitle, tspan.title, span.nodeLabel, text');
                 const titleText = titleElement?.textContent?.trim();
-                if (titleText && this.classesByName.has(titleText)) {
-                    matchedClassName = titleText;
+                if (titleText) {
+                    if (this.classesByName.has(titleText)) {
+                        matchedClassName = titleText;
+                    } else if (this.mermaidIdToClassName.has(titleText)) {
+                        matchedClassName = this.mermaidIdToClassName.get(titleText)!;
+                    }
                 }
             }
 
@@ -984,16 +1015,7 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
     }
 
     public sanitizeMermaidNote(text: string, maxLen: number = 140): string {
-        if (!text) return '';
-        let clean = text
-            .replace(/"/g, "'")
-            .replace(/\r?\n/g, '<br>')
-            .replace(/<br>\s*<br>/g, '<br>')
-            .trim();
-        if (clean.length > maxLen) {
-            clean = clean.slice(0, maxLen - 3) + '...';
-        }
-        return clean;
+        return sanitizeNoteHelper(text, maxLen);
     }
 
     public generateSubDiagramSyntax(clusterClassNames: Set<string>): string {
@@ -1008,7 +1030,8 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
             }
             const note = this.lastParsedNotes.get(className);
             if (note) {
-                relationships += `  note for ${className} "Ideia/Conceito:<br>${this.sanitizeMermaidNote(note, 120)}"\n`;
+                const targetId = this.classNameToMermaidId.get(className) || toMermaidId(className);
+                relationships += `  note for ${targetId} "Ideia/Conceito:<br>${this.sanitizeMermaidNote(note, 120)}"\n`;
             }
         }
 
@@ -1029,8 +1052,9 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
 
         for (const stub of referencedStubs) {
             const stubInfo = this.classesByName.get(stub);
+            const stubId = this.classNameToMermaidId.get(stub) || toMermaidId(stub);
             const kindStereotype = stubInfo?.kind === 'interface' ? '    <<Interface Externa>>\n' : '    <<Referência Externa>>\n';
-            classBlocks += `  class ${stub} {\n${kindStereotype}  }\n`;
+            classBlocks += `  class ${stubId} {\n${kindStereotype}  }\n`;
         }
 
         const mermaidConfig = `%%{init: {"useMaxWidth": false, "theme": "base", "themeVariables": ${JSON.stringify(BLUEPRINT_GLASS_THEME_VARIABLES)}}}%%`;
@@ -1798,8 +1822,12 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                 this.mermaidContainerRef.nativeElement.innerHTML = '';
             }
             this.error = null;
+            this.errorSeverity = 'error';
+            this.hasRenderedValidSvg = false;
             this.lastRenderedCode = null;
             this.classesByName.clear();
+            this.mermaidIdToClassName.clear();
+            this.classNameToMermaidId.clear();
             this.svgNodesByClassName.clear();
             this.selectedClassInfo = null;
             this.cdr.markForCheck();
@@ -1808,6 +1836,7 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
 
         const currentSeq = ++this.renderSeq;
         const codeToRender = this.javascriptCode;
+        let astErrors: any[] = [];
 
         try {
             let code_for_generate_diagram = codeToRender;
@@ -1822,60 +1851,52 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
                 } catch { }
             }
 
-            const mermaidSyntax = await this.generateMermaidClassDiagram(code_for_generate_diagram);
+            const built = await this.buildMermaidDiagrams(code_for_generate_diagram);
+            astErrors = built.astErrors;
 
-            const id = `mermaid_svg_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-            const { svg } = await mermaid.render(id, mermaidSyntax);
+            let svgResult: string | null = null;
+            let usedFallback = false;
+            let mermaidErr: any = null;
+
+            const makeId = () => `mermaid_svg_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+
+            try {
+                const rendered = await mermaid.render(makeId(), built.fullSyntax);
+                svgResult = rendered.svg;
+            } catch (primaryErr: any) {
+                mermaidErr = primaryErr;
+                if (built.fallbackSyntax && built.fallbackSyntax !== built.fullSyntax) {
+                    try {
+                        const fallbackRendered = await mermaid.render(makeId(), built.fallbackSyntax);
+                        svgResult = fallbackRendered.svg;
+                        usedFallback = true;
+                    } catch (fallbackErr: any) {
+                        mermaidErr = fallbackErr || primaryErr;
+                    }
+                }
+            }
 
             if (this.renderSeq !== currentSeq) {
                 return;
             }
 
-            this.error = null;
+            if (!svgResult) {
+                throw mermaidErr || new Error('Falha ao renderizar sintaxe Mermaid gerada.');
+            }
+
+            this.mountRenderedSvg(svgResult);
+            this.hasRenderedValidSvg = true;
             this.lastRenderedCode = codeToRender;
 
-            if (this.mermaidContainerRef?.nativeElement) {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(svg, 'image/svg+xml');
-                const svgEl = doc.querySelector('svg');
-
-                if (svgEl) {
-                    const viewBoxAttr = svgEl.getAttribute('viewBox');
-                    if (viewBoxAttr) {
-                        const parts = viewBoxAttr.split(/\s+/).map(Number);
-                        if (parts.length === 4) {
-                            this.diagramNaturalWidth = parts[2];
-                            this.diagramNaturalHeight = parts[3];
-                        }
-                    }
-
-                    // Remove viewBox e preserveAspectRatio da raiz SVG para garantir
-                    // que 1 unidade no zoomGroup seja exatamente 1 pixel CSS na viewport,
-                    // permitindo centralização matemática absoluta sem deslocamentos.
-                    svgEl.removeAttribute('viewBox');
-                    svgEl.removeAttribute('preserveAspectRatio');
-                    svgEl.setAttribute('width', '100%');
-                    svgEl.setAttribute('height', '100%');
-                    svgEl.style.width = '100%';
-                    svgEl.style.height = '100%';
-                    svgEl.style.overflow = 'hidden';
-
-                    const zoomGroup = doc.createElementNS('http://www.w3.org/2000/svg', 'g');
-                    zoomGroup.setAttribute('class', 'mermaid-vector-root');
-
-                    const children = Array.from(svgEl.childNodes);
-                    for (const child of children) {
-                        const tag = child.nodeName.toLowerCase();
-                        if (tag !== 'defs' && tag !== 'style') {
-                            zoomGroup.appendChild(child);
-                        }
-                    }
-                    svgEl.appendChild(zoomGroup);
-
-                    this.mermaidContainerRef.nativeElement.innerHTML = svgEl.outerHTML;
-                    this.applyTransform();
-                    this.bindSvgInteractions();
-                }
+            if (usedFallback) {
+                this.errorSeverity = 'warning';
+                this.error = `Modo simplificado exibido: ${formatUmlTranscriptionError(mermaidErr, astErrors)}`;
+            } else if (astErrors.length > 0) {
+                this.errorSeverity = 'warning';
+                this.error = `${formatUmlTranscriptionError(null, astErrors)} — exibindo diagrama recuperado.`;
+            } else {
+                this.error = null;
+                this.errorSeverity = 'error';
             }
 
             this.cdr.markForCheck();
@@ -1890,10 +1911,56 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
         } catch (err: any) {
             if (this.renderSeq !== currentSeq) return;
 
-            const errorMsg = err?.message || 'Falha ao converter código em UML.';
-            this.error = errorMsg;
+            this.errorSeverity = this.hasRenderedValidSvg ? 'warning' : 'error';
+            const friendly = formatUmlTranscriptionError(err, astErrors);
+            this.error = this.hasRenderedValidSvg
+                ? `${friendly} (mantendo último diagrama válido)`
+                : friendly;
             this.cdr.markForCheck();
         }
+    }
+
+    private mountRenderedSvg(svg: string): void {
+        if (!this.mermaidContainerRef?.nativeElement) return;
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(svg, 'image/svg+xml');
+        const svgEl = doc.querySelector('svg');
+        if (!svgEl) return;
+
+        const viewBoxAttr = svgEl.getAttribute('viewBox');
+        if (viewBoxAttr) {
+            const parts = viewBoxAttr.split(/\s+/).map(Number);
+            if (parts.length === 4) {
+                this.diagramNaturalWidth = parts[2];
+                this.diagramNaturalHeight = parts[3];
+            }
+        }
+
+        // Remove viewBox e preserveAspectRatio da raiz SVG para garantir
+        // que 1 unidade no zoomGroup seja exatamente 1 pixel CSS na viewport.
+        svgEl.removeAttribute('viewBox');
+        svgEl.removeAttribute('preserveAspectRatio');
+        svgEl.setAttribute('width', '100%');
+        svgEl.setAttribute('height', '100%');
+        svgEl.style.width = '100%';
+        svgEl.style.height = '100%';
+        svgEl.style.overflow = 'hidden';
+
+        const zoomGroup = doc.createElementNS('http://www.w3.org/2000/svg', 'g');
+        zoomGroup.setAttribute('class', 'mermaid-vector-root');
+
+        const children = Array.from(svgEl.childNodes);
+        for (const child of children) {
+            const tag = child.nodeName.toLowerCase();
+            if (tag !== 'defs' && tag !== 'style') {
+                zoomGroup.appendChild(child);
+            }
+        }
+        svgEl.appendChild(zoomGroup);
+
+        this.mermaidContainerRef.nativeElement.innerHTML = svgEl.outerHTML;
+        this.applyTransform();
+        this.bindSvgInteractions();
     }
 
     private async generateMermaidClassDiagram(code: string): Promise<string> {
