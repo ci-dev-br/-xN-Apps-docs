@@ -19,6 +19,11 @@ import { NewsController } from './controller/news.controller';
 import { NewsVote } from './models/news-vote.entity';
 import { NewsComment } from './models/news-comment.entity';
 import { UsersModule } from '@ci/user/users.module';
+import { User } from '@ci/auth/models/user.entity';
+import { SeoDomain } from './models/seo-domain.entity';
+import { SeoTarefa } from './models/seo-tarefa.entity';
+import { SEOController } from './controller/seo.controller';
+import { SeoAuditService } from './services/seo-audit.service';
 
 export const SeoMarketingEntities = [
   SeoKeyWord,
@@ -31,6 +36,8 @@ export const SeoMarketingEntities = [
   CategoryEvent,
   NewsVote,
   NewsComment,
+  SeoDomain,
+  SeoTarefa,
 ];
 @Module({
   imports: [
@@ -39,7 +46,8 @@ export const SeoMarketingEntities = [
     CoreModule,
     UsersModule,
     TypeOrmModule.forFeature([
-      ...SeoMarketingEntities
+      ...SeoMarketingEntities,
+      User,
     ]),
   ],
   providers: [
@@ -47,9 +55,11 @@ export const SeoMarketingEntities = [
     SearchService,
     ScraperService,
     DiscoveryService,
+    SeoAuditService,
   ],
   controllers: [
     NewsController,
+    SEOController,
   ],
   exports: [SeoMarketingService],
 })

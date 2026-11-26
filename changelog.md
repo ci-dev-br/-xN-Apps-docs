@@ -1,8 +1,11 @@
 # Changelog
 ---
+ - [ ] Melhorar implementação de Meus Apps;
+ - [ ] Resolver queda constante do Acesso;
+ - [ ] Rotacionar Chaves de Acesso;
+---
 este arquivo é enviado periodicamente
  - [ ]: Compartilhar em App/Formulários, permitir criar link público ou privado para compartilhamento do formulário para apresentação ou edição;
-
 
  ### TASK [2025/2] Implementações no Acesso e Registro da Aplicação
  - [✔️]: Refresh Token deve ser validado com argon2 ... este processo foi obfuscado;

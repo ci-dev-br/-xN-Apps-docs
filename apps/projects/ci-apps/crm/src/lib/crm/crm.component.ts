@@ -7,7 +7,11 @@ import { BoardModule } from '@ci/components';
 import { CoreModule } from '@ci/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDividerModule } from '@angular/material/divider';
 import { models } from '../models';
+
 @Component({
   selector: 'ci-crm',
   standalone: true,
@@ -20,6 +24,9 @@ import { models } from '../models';
     MatIconModule,
     MatSidenavModule,
     MatMenuModule,
+    MatListModule,
+    MatTooltipModule,
+    MatDividerModule,
   ],
   templateUrl: 'crm.component.html',
   styleUrls: ['crm.component.scss']
@@ -27,9 +34,12 @@ import { models } from '../models';
 export class CrmComponent implements OnInit, OnDestroy {
   cadastros = models;
   private t?: string;
+
   ngOnInit(): void {
-    document.title = `${this.t} :: CRM`;
+    this.t = document.title;
+    document.title = `CRM & Vendas :: Portal`;
   }
+
   ngOnDestroy(): void {
     if (this.t) document.title = this.t;
   }

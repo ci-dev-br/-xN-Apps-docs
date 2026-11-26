@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-18T00:25:16" id="0" hostname="plhx33" tests="7" errors="0" failures="1" time="1.483">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="BlocksBuilderComponent deve abrir o context menu do bloco com dados da posição e contexto" time="0.748" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve adicionar bloco com inputs padrão a partir da lista de componentes" time="0.093" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve inserir bloco interno ao soltar componente da paleta dentro de um container" time="0.075" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve criar bloco ao soltar componente da paleta via drag-and-drop" time="0.088" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve inserir bloco e atualizar o JSON ao soltar componente na aba JSON" time="0.067" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve permitir arrastar e reordenar blocos internamente em componentes com children aninhados" time="0.049" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent">
+    <failure type="">Expected 'blk_mwldqrb8_643t1' to be 'blk_mwldqrb8_nf4pp'.
+    at &lt;Jasmine&gt;
+    at UserContext.&lt;anonymous&gt; (projects/ci-apps/dynamic/src/lib/ci-application/ci-application.spec.ts:222:47)
+    at _ZoneDelegate.invoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone.js:398:28)
+    at _ProxyZoneSpec.onInvoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone-testing.js:2132:39)
+    at _ZoneDelegate.invoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone.js:397:34)
+</failure>
+    <failure type="">Expected 'blk_mwldqrb8_nf4pp' to be 'blk_mwldqrb8_643t1'.
+    at &lt;Jasmine&gt;
+    at UserContext.&lt;anonymous&gt; (projects/ci-apps/dynamic/src/lib/ci-application/ci-application.spec.ts:223:47)
+    at _ZoneDelegate.invoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone.js:398:28)
+    at _ProxyZoneSpec.onInvoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone-testing.js:2132:39)
+    at _ZoneDelegate.invoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone.js:397:34)
+</failure>
+  </testcase>
+  <testcase name="Àpps Dynamic, Início Componente criado com sucesso" time="0.363" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps Dynamic, Início"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

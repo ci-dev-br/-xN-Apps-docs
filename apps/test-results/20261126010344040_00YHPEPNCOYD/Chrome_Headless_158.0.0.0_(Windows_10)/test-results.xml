@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-26T01:04:15" id="0" hostname="plhx33" tests="2" errors="0" failures="0" time="0.685">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="Organizacao Principal deve criar organização, criar role ORG e compartilhar via Tenant" time="0.654" classname="Chrome_Headless_158_0_0_0_(Windows_10).Organizacao Principal"/>
+  <testcase name="Organizacao Principal deve carregar organizações e gerar preview de role com prefixo ORG" time="0.031" classname="Chrome_Headless_158_0_0_0_(Windows_10).Organizacao Principal"/>
+  <system-out>
+    <![CDATA[Chrome Headless 158.0.0.0 (Windows 10) WARN: 'Falha ao carregar /api-json em DaoService:', HttpErrorResponse{headers: _HttpHeaders{headers: undefined, normalizedNames: Map{}, lazyInit: () => { ... }, lazyUpdate: null}, status: 404, statusText: 'Not Found', url: 'http://localhost:9876/api-json', ok: false, type: undefined, redirected: undefined, responseType: undefined, name: 'HttpErrorResponse', message: 'Http failure response for http://localhost:9876/api-json: 404 Not Found', error: 'NOT FOUND'}
+,Chrome Headless 158.0.0.0 (Windows 10) WARN: 'Falha ao carregar /api-json em DaoService:', HttpErrorResponse{headers: _HttpHeaders{headers: undefined, normalizedNames: Map{}, lazyInit: () => { ... }, lazyUpdate: null}, status: 404, statusText: 'Not Found', url: 'http://localhost:9876/api-json', ok: false, type: undefined, redirected: undefined, responseType: undefined, name: 'HttpErrorResponse', message: 'Http failure response for http://localhost:9876/api-json: 404 Not Found', error: 'NOT FOUND'}
+
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

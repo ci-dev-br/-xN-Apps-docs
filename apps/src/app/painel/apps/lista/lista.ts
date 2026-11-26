@@ -11,6 +11,9 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
+/**
+ * Visualização em lista com estilo
+ */
 @Component({
     selector: 'ci-apps-lista',
     templateUrl: 'lista.html',
@@ -55,9 +58,16 @@ export class Lista {
                 this.apps = [];
                 return;
             }
+            const userRoles = (user.roles && user.roles.length > 0) ? user.roles : ['USER'];
             this.apps = CI_STATIC_APPS.filter(app => {
                 const appKey = app.name || app.url?.replace(/^\//, '');
-                return Boolean(appKey && activeSet.has(appKey));
+                const cleanUrl = app.url?.replace(/^\//, '');
+                const hasRole = !app.roles || app.roles.length === 0 || app.roles.some(r => userRoles.includes(r));
+                const isActive = appKey === 'Loja' ||
+                    cleanUrl === 'Loja' ||
+                    Boolean(appKey && activeSet.has(appKey)) ||
+                    Boolean(cleanUrl && activeSet.has(cleanUrl));
+                return hasRole && isActive;
             });
             this.applySearchFilter(this.searchControl.value);
         });

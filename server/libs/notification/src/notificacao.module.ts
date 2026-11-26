@@ -9,7 +9,7 @@ import { DeviceController } from "./controller/device.controller";
 import { DeviceService } from "./services/device.service";
 import { MessageController } from "./controller/message.controller";
 import { MessageService } from "./services/message.service";
-import { NotificationService } from "./services/notification.service";
+import { NotificationService, NotificationUserPreferences, NotificationDisplayMode, NOTIFICATION_PREF_CODES } from "./services/notification.service";
 import { NotificationController } from "./controller/notification.controller";
 import { MailService } from "./services/mail.service";
 import { CoreModule } from "@ci/core";
@@ -54,4 +54,9 @@ export {
     NotificacaoInterna,
     WebPushSubscription,
     NotificationService,
+    NOTIFICATION_PREF_CODES,
+}
+export type {
+    NotificationUserPreferences,
+    NotificationDisplayMode,
 }

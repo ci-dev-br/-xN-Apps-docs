@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { FullAuditedEntity } from "@ci/core";
+import { FullAuditedEntity } from "@ci/manager/dao/entities";
 import { Column, Entity } from "typeorm";
 import { schema } from "../norms";
 /**
@@ -26,6 +26,7 @@ export class LancamentoFinanceiro extends FullAuditedEntity {
     valor?: number;
     @ApiProperty({
         title: 'Descrição',
+        description: 'Descrição do lançamento',
         nullable: true,
         required: false
     })
@@ -42,4 +43,30 @@ export class LancamentoFinanceiro extends FullAuditedEntity {
         nullable: true
     })
     categoria?: string;
+    @ApiProperty({
+        title: 'Status',
+        nullable: true,
+        required: false
+    })
+    @Column({ nullable: true })
+    status?: string;
+    @ApiProperty({
+        title: 'Mês de Referência',
+        nullable: true,
+        required: false,
+        type: 'Date'
+    })
+    @Column({ nullable: true })
+    mesReferencia?: Date;
+    @ApiProperty({
+        title: 'Código de Barras',
+        description: 'Código interno do sistema gerador do Documento',
+        nullable: true,
+        required: false,
+        ...{
+            component: 'ci-codigo-barras'
+        }
+    })
+    @Column({ nullable: true })
+    codigoBarras?: string;
 }

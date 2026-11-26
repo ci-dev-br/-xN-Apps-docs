@@ -58,10 +58,22 @@ export class UserAuthenticationService {
     async init() {
         this.carregarContasDoStorage();
 
+        // Atualiza perfil e foto da conta ativa em segundo plano a partir do servidor
+        if (this.authService && this.activeAccount?.authentication?.bearer) {
+            this.authService.profile().subscribe({
+                next: (profile) => {
+                    if (profile && profile.id) {
+                        this.atualizarPerfilConta(profile);
+                    }
+                },
+                error: () => { }
+            });
+        }
+
         // Inscreve para persistir e atualizar preferências sempre que o usuário ativo mudar
         this.$user.subscribe(user => {
             try {
-                if (user) {
+                if (!!user) {
                     const { ...user_info } = user;
                     if (typeof localStorage !== 'undefined') {
                         try {
@@ -72,25 +84,16 @@ export class UserAuthenticationService {
                             localStorage.setItem('CIUSR', btoa(JSON.stringify(user_info)));
                         }
                     }
-                    this.SetupUserPreferences(user);
-                    this.notification?.requestPermission();
+                    if (!!user) {
+                        this.SetupUserPreferences(user);
+                        this.notification?.requestPermission();
+                    }
                 }
             } catch (error) {
                 console.trace(error);
             }
         });
 
-        // Atualiza perfil e foto da conta ativa em segundo plano a partir do servidor
-        if (this.authService && this.activeAccount?.authentication?.bearer) {
-            this.authService.profile().subscribe({
-                next: (profile) => {
-                    if (profile && profile.id) {
-                        this.atualizarPerfilConta(profile);
-                    }
-                },
-                error: () => {}
-            });
-        }
     }
 
     /** 
@@ -497,11 +500,11 @@ export class UserAuthenticationService {
     async desconectarDispositivo(chaveAcesso: string): Promise<boolean> {
         if (!this.authService) return false;
         try {
-            const res = await lastValueFrom(this.authService.desconectarDispositivo(chaveAcesso));
-            if (res.isCurrent) {
+            const res: any = await lastValueFrom(this.authService.desconectarDispositivo(chaveAcesso as any));
+            if (res?.isCurrent) {
                 await this.sair();
             }
-            return !!res.success;
+            return !!res?.success;
         } catch (error) {
             console.error('Erro ao desconectar dispositivo:', error);
             return false;
@@ -514,8 +517,8 @@ export class UserAuthenticationService {
     async desconectarOutrosDispositivos(): Promise<boolean> {
         if (!this.authService) return false;
         try {
-            const res = await lastValueFrom(this.authService.desconectarOutrosDispositivos());
-            return !!res.success;
+            const res: any = await lastValueFrom(this.authService.desconectarOutrosDispositivos());
+            return !!res?.success;
         } catch (error) {
             console.error('Erro ao desconectar outros dispositivos:', error);
             return false;

@@ -18,7 +18,7 @@ export class Source {
     @Column({ nullable: true })
     domain?: string; // ex: techtudo.com.br
     @Index({})
-    @Column({ type: 'varchar', default: SourceStatus.DISCOVERED })
+    @Column({ type: 'varchar', default: SourceStatus.ACTIVE })
     status?: SourceStatus;
     @Column({ default: true })
     supportsSearch: boolean; // Se false, o robô vai baixar o feed todo e filtrar no código

@@ -6,7 +6,9 @@ import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom, from, lastValueFrom, mergeMap, of, throwError, toArray } from 'rxjs';
 import * as Parser from 'rss-parser';
 import * as cheerio from 'cheerio';
+//
 // Entidades (Certifique-se de que os caminhos refletem a sua estrutura de pastas)
+//
 import { News } from '../models/news.entity';
 import { Category } from '../models/category.entity';
 import { Source, SourceStatus } from '../models/source.entity';
@@ -107,10 +109,10 @@ export class ScraperService implements OnModuleInit {
         await this.runScrapeCycle();
         // Pequena pausa entre ciclos completos caso a base de dados esteja vazia, para não fritar a CPU.
         // Se houver tarefas, o ciclo volta imediatamente após processar todas.
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        await new Promise(resolve => setTimeout(resolve, 100));
       } catch (error) {
         this.logger.error('Erro no ciclo principal de raspagem. Reiniciando em 10s...', error);
-        await new Promise(resolve => setTimeout(resolve, 10000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
   }
@@ -161,7 +163,7 @@ export class ScraperService implements OnModuleInit {
             // Este método também depende de rede, agregando ao "tempo de espera natural"
             const extractedText = await this.scrapePageContent(item.link);
             const news = this.newsRepository.create({
-              title: item.title,
+              title: item.title || `Sem título (${(extractedText || '').substring(0, 80)}) `,
               url: item.link,
               sourceName: item.creator || item['source'] || source.name,
               content: extractedText,
@@ -170,8 +172,8 @@ export class ScraperService implements OnModuleInit {
             });
             await this.newsRepository.save(news);
           }
-        } catch (itemError) {
-          if (itemError.code === '23505') {
+        } catch (itemError: any) {
+          if ('code' in itemError && itemError.code === '23505') {
             // Silencia URL duplicada, é um comportamento normal
           } else {
             this.logger.error(`Erro ao salvar a notícia "${item.title}"`, itemError.message);
@@ -437,9 +439,9 @@ export class ScraperService implements OnModuleInit {
       source.consecutiveErrors = 0;
     } else {
       source.consecutiveErrors += 1;
-      if (source.consecutiveErrors >= 5) {
+      if (source.consecutiveErrors >= 10) {
         source.status = SourceStatus.SUSPENDED;
-        this.logger.warn(`⚠️ Fonte "${source.name}" foi SUSPENSA devido a 5 erros consecutivos.`);
+        this.logger.warn(`⚠️ Fonte "${source.name}" foi SUSPENSA devido a 10 erros consecutivos.`);
       }
     }
     await this.sourceRepository.save(source);

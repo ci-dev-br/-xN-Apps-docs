@@ -6,7 +6,7 @@
     align-items: stretch;
     flex: auto;
     gap: 8px;
-    padding: 8px;
+   // padding: 8px;
     color: var(--mat-sys-on-surface, var(--mat-app-text-color));
     background: var(--mat-sys-surface, var(--mat-app-background-color));
 }
@@ -34,7 +34,7 @@ mat-toolbar.master-toolbar {
     justify-content: space-between;
     height: auto;
     min-height: 56px;
-    padding: 8px 12px;
+   // padding: 8px 12px;
     gap: 8px 12px;
     overflow: visible;
     border: 1px solid var(--mat-sys-outline-variant, var(--mat-divider-color));
@@ -68,7 +68,7 @@ mat-toolbar.master-toolbar {
         line-height: 1.4;
         background: var(--mat-sys-primary-container, var(--mat-standard-button-toggle-selected-state-background-color));
         color: var(--mat-sys-on-primary-container, var(--mat-standard-button-toggle-selected-state-text-color));
-        padding: 2px 8px;
+       // padding: 2px 8px;
         border-radius: 12px;
         font-weight: 600;
         flex-shrink: 0;
@@ -114,7 +114,7 @@ mat-toolbar.master-toolbar {
                 display: inline-flex;
                 align-items: center;
                 gap: 6px;
-                padding: 0 10px;
+               // padding: 0 10px;
                 line-height: 36px;
             }
         } */
@@ -138,7 +138,7 @@ mat-toolbar.master-toolbar {
 
 @media (max-width: 680px) {
     mat-toolbar.master-toolbar {
-        padding: 8px;
+       // padding: 8px;
         gap: 8px;
     }
 
@@ -158,10 +158,10 @@ mat-toolbar.master-toolbar {
 
         button {
             min-width: 40px;
-            padding: 0 10px;
+           // padding: 0 10px;
 
             mat-icon {
-                margin: 0;
+               //// margin: 0;
             }
         }
     }
@@ -171,7 +171,7 @@ mat-toolbar.master-toolbar {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 10px;
-    padding: 10px 12px;
+   // padding: 10px 12px;
     border-radius: 10px;
     border: 1px solid var(--mat-sys-outline-variant, var(--mat-divider-color));
     background: var(--mat-sys-surface-container-low, var(--mat-toolbar-container-background-color));
@@ -197,7 +197,7 @@ ci-data-grid {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 32px;
+   // padding: 32px;
     color: var(--mat-sys-on-surface-variant, var(--mat-table-header-headline-color));
 
     mat-icon {
@@ -216,7 +216,7 @@ ci-data-grid {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 4px 2px;
+   // padding: 4px 2px;
 }
 
 mat-card.list-row-card {
@@ -224,7 +224,7 @@ mat-card.list-row-card {
     flex-direction: row;
     align-items: center;
     gap: 14px;
-    padding: 12px 16px;
+   // padding: 12px 16px;
     border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.15s ease, border-color 0.15s ease;
@@ -294,7 +294,7 @@ mat-card.list-row-card {
     flex: auto;
     min-height: 0;
     overflow: auto;
-    padding: 4px 2px;
+   // padding: 4px 2px;
 }
 
 .thumbnails-grid {
@@ -322,7 +322,7 @@ mat-card.thumbnail-card {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 12px 14px;
+   // padding: 12px 14px;
     border-bottom: 1px solid var(--mat-sys-outline-variant, var(--mat-table-row-item-outline-color, var(--mat-divider-color)));
     background: var(--mat-sys-surface-container, var(--mat-toolbar-container-background-color));
 
@@ -345,7 +345,7 @@ mat-card.thumbnail-card {
         flex-direction: column;
 
         .thumbnail-title {
-            margin: 0;
+           //// margin: 0;
             font-size: 14px;
             font-weight: 600;
             white-space: nowrap;
@@ -368,7 +368,7 @@ mat-card.thumbnail-card {
 }
 
 .thumbnail-card-body {
-    padding: 12px 14px;
+   // padding: 12px 14px;
     display: flex;
     flex-direction: column;
     gap: 6px;

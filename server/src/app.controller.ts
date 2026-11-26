@@ -24,32 +24,46 @@ export class AppController {
     @Optional() private readonly domain?: DomainService,
   ) { }
 
-  @Get(['/', '/*\w'])
+  @Get(['*'])
   @Public()
   async handleAllRequests(@Req() request: Request, @Res() response: Response, @Next() next: NextFunction) {
     const reqPath = (request.path || '').toLowerCase();
     const isApiRoute = [
+      // TODO: remover daqui
       '/tenant', '/news', '/auth', '/users', '/system', '/logger', '/device',
       '/message', '/messager', '/directmessage', '/conversation', '/notification',
       '/storage', '/fiscal', '/financeiro', '/organizacao', '/produto',
       '/payment', '/cms', '/projetos', '/codex', '/notificacao', '/inpi', '/crm',
-      '/dym', '/espazio', '/tasking', '/forms', '/api', '/__orchestration'
+      '/dym', '/espazio', '/tasking', '/forms', '/api', '/indicators', '/__orchestration'
     ].some(prefix => reqPath === prefix || reqPath.startsWith(prefix + '/'));
 
     if (isApiRoute) {
+      const acceptsHtml = request.headers.accept?.includes('text/html') &&
+        !request.headers.accept?.includes('application/json');
+      if (acceptsHtml) {
+        const absolutePath = resolve(__dirname, '../public/index.csr.html');
+        return response.sendFile(absolutePath);
+      }
       return next();
     }
-
     try {
       if (request.url.indexOf('manifest.webmanifest') > -1) {
         const host: string = this.appService.getHost(request);
         return response.send(this.getManifestApplication(host, ''));
       }
-      // 0.1 Assina convite para registro
-      if (!!request.query?.invite) {
-        const redirectUrl = 'https://apps.ci.dev.br/';
-        response.setHeader('set-cookies', String(request.query!.invite!));
-        response.redirect(redirectUrl);
+      // 0.1 Redireciona links de convite (inclusive links antigos com ?invite= ou /registro/:invite) para a rota esperada /registrar/:invite
+      const queryInvite = String(
+        request.query?.invite || request.query?.inviteHash || request.query?.convite || ''
+      ).trim();
+      if (queryInvite && !reqPath.startsWith('/registrar/')) {
+        response.setHeader('Set-Cookie', `invite=${encodeURIComponent(queryInvite)}; Path=/; SameSite=Lax`);
+        return response.redirect(`/registrar/${encodeURIComponent(queryInvite)}?invite=${encodeURIComponent(queryInvite)}`);
+      }
+      const legacyRegistroMatch = request.path.match(/^\/registro\/([^\/?#]+)/i);
+      if (legacyRegistroMatch?.[1]) {
+        const legacyInvite = legacyRegistroMatch[1].trim();
+        response.setHeader('Set-Cookie', `invite=${encodeURIComponent(legacyInvite)}; Path=/; SameSite=Lax`);
+        return response.redirect(`/registrar/${encodeURIComponent(legacyInvite)}?invite=${encodeURIComponent(legacyInvite)}`);
       }
       // 1. Tenta servir dinamicamente via CMS (SitePageService)
       if (this.sitePage) {
@@ -67,11 +81,13 @@ export class AppController {
     } catch (error) {
       console.error(error);
       if (!response.headersSent) {
-        return response.status(404).send('Não existe');
+        // return this.serveStaticWithCache(request, response, next);
+        // old: response.status(404).send('Não existe');
       }
     }
+    const absolutePath = resolve(__dirname, '../public/index.csr.html');
+    return response.sendFile(absolutePath);
   }
-
   /**
    * Lida com arquivos do disco, cache em memória e headers do Cloudflare
    */
@@ -82,7 +98,6 @@ export class AppController {
 
     let isIndex = reqPath.endsWith('index.csr.html');
     let absolutePath = resolve(__dirname, `../public${reqPath}`);
-
     try {
       // Verifica de forma assíncrona se o arquivo existe (não bloqueia a thread como existsSync)
       await fs.access(absolutePath, constants.R_OK);
@@ -95,7 +110,6 @@ export class AppController {
       absolutePath = resolve('public/index.csr.html');
       isIndex = true;
     }
-
     try {
       const stats = await fs.stat(absolutePath);
 

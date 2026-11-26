@@ -45,13 +45,15 @@ export class DynFormComponent implements OnInit, OnChanges {
     if (formOptions) {
       this.source = formOptions;
       this.hasInjectedOptions = true;
+    }else{
+      console.trace('[off]')
     }
   }
 
   async ngOnInit() {
     if (!this.hasInjectedOptions) {
-      await this.rebuildFormOptions();
     }
+    await this.rebuildFormOptions();
   }
 
   async ngOnChanges(changes: SimpleChanges) {

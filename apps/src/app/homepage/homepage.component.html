@@ -1,131 +1,448 @@
-<ci-navbar [apps]="apps"></ci-navbar>
+<ci-navbar [apps]="apps" [endMenu]="endMenu()"></ci-navbar>
 @if(userService && !!(userService.user | async)){
 <!-- Informações do Usuário -->
 }
 <ci-financial-ticker></ci-financial-ticker>
-<mat-tab-group animationDuration="200ms" class="homepage-tabs">
-    <mat-tab>
-        <ng-template mat-tab-label>
-            <mat-icon style="margin-right: 8px;">newspaper</mat-icon>
-            <span>Noticiário Diário</span>
-        </ng-template>
-        <div class="page--wrapper">
-            <div class="news-experience-layout">
-                <!-- Coluna de Notícias (Feed Stream) -->
-                <div class="feed-column">
-                    @if(!!feeds()){
-                    <div class="feed" #feedContainer>
-                        @for(feed of feeds(); track feed.id || feed.url || $index) {
-                        <article class="feed-item" 
-                            [class.in-focus]="highlightedFeed() === feed"
-                            (click)="focarNoticia(feed)">
-                            
-                            @if(feed.title){
-                                <h4 class="feed-title" [innerHtml]="feed.title"></h4>
-                            }
-                            <div [innerHtml]="feed.content" class="feed-content"></div>
-                            
-                            <div class="feed-source">
-                                Fonte: <a target="_blank" (click)="$event.stopPropagation()"
-                                    [href]="'https://' + feed?.sourceInfo?.domain">{{feed?.sourceInfo?.name || feed?.sourceInfo?.domain || 'Origem'}}
-                                </a>
+<ci-market-news-ticker (newsSelected)="focarNoticiaMercado($event)"></ci-market-news-ticker>
+<div class="content">
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex" animationDuration="200ms" class="homepage-tabs">
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon style="margin-right: 8px;">newspaper</mat-icon>
+                <span>Noticiário Diário</span>
+            </ng-template>
+            <div class="page--wrapper">
+                <div class="news-experience-layout" [class.reader-open]="showCommentsPane()" [class.reader-expanded]="isCommentsExpanded()">
+                    <!-- Coluna de Manchetes à Esquerda -->
+                    <section class="feed-column">
+                        <!-- Barra Integrada de Pesquisa de Substantivos Próprios (TikTok, Wikipedia, Google) -->
+                        <div class="proper-noun-search-bar">
+                            <div class="search-field-container">
+                                <mat-icon class="search-prefix-icon">travel_explore</mat-icon>
+                                <input type="text" [formControl]="pesquisaSubstantivoControl"
+                                    (keyup.enter)="pesquisarSubstantivoManual()"
+                                    placeholder="Pesquisar substantivo próprio (empresa, entidade, pessoa, ativo)..."
+                                    class="proper-noun-search-input" />
+                                @if (pesquisaSubstantivoControl.value) {
+                                <button mat-icon-button class="clear-search-btn"
+                                    (click)="pesquisaSubstantivoControl.setValue('')" matTooltip="Limpar busca">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                                }
                             </div>
-
-                            <div class="interactions">
-                                <!-- Voto UP -->
-                                <button mat-button class="btn-vote" [class.voted-up]="feed.userVote === 'UP'"
-                                    (click)="votar(feed, 'UP', $event)"
-                                    [matTooltip]="isLoggedIn ? (feed.userVote === 'UP' ? 'Remover voto positivo' : 'Voto positivo') : 'Faça login para votar'">
-                                    <mat-icon>thumb_up</mat-icon>
-                                    <span class="vote-count">{{ feed.upVotes || 0 }}</span>
+                            <div class="search-platform-buttons">
+                                <button mat-stroked-button class="platform-btn wiki-platform-btn"
+                                    (click)="pesquisarWikipedia(pesquisaSubstantivoControl.value)"
+                                    [disabled]="!pesquisaSubstantivoControl.value?.trim()"
+                                    matTooltip="Consultar API da Wikipedia para este substantivo próprio">
+                                    <mat-icon>menu_book</mat-icon>
+                                    <span>Wikipedia</span>
                                 </button>
-
-                                <!-- Voto DOWN -->
-                                <button mat-button class="btn-vote" [class.voted-down]="feed.userVote === 'DOWN'"
-                                    (click)="votar(feed, 'DOWN', $event)"
-                                    [matTooltip]="isLoggedIn ? (feed.userVote === 'DOWN' ? 'Remover voto negativo' : 'Voto negativo') : 'Faça login para votar'">
-                                    <mat-icon>thumb_down</mat-icon>
-                                    <span class="vote-count">{{ feed.downVotes || 0 }}</span>
+                                <button mat-stroked-button class="platform-btn google-platform-btn"
+                                    (click)="pesquisarGoogle(pesquisaSubstantivoControl.value)"
+                                    [disabled]="!pesquisaSubstantivoControl.value?.trim()"
+                                    matTooltip="Pesquisar no Google em nova aba">
+                                    <mat-icon>search</mat-icon>
+                                    <span>Google</span>
                                 </button>
-
-                                <!-- Botão de focar/abrir comentários da notícia -->
-                                <button mat-button class="btn-comments-toggle" 
-                                    [class.active]="highlightedFeed() === feed && showCommentsPane()"
-                                    (click)="focarComentarios(feed, $event)"
-                                    [matTooltip]="'Ver comentários desta notícia'">
-                                    <mat-icon>chat_bubble_outline</mat-icon>
-                                    <span class="comments-count">{{ feed.commentsCount || 0 }}</span>
+                                <button mat-stroked-button class="platform-btn tiktok-platform-btn"
+                                    (click)="pesquisarTikTok(pesquisaSubstantivoControl.value)"
+                                    [disabled]="!pesquisaSubstantivoControl.value?.trim()"
+                                    matTooltip="Pesquisar vídeos e tendências no TikTok">
+                                    <mat-icon>play_circle</mat-icon>
+                                    <span>TikTok</span>
                                 </button>
-
-                                <span class="spacer"></span>
-
-                                <button mat-icon-button color="primary" (click)="interacao(feed, 'open'); $event.stopPropagation()"
-                                    [matTooltip]="'Abrir na Origem'"><mat-icon>open_in_new</mat-icon></button>
                             </div>
-
-                            <div class="feed-category">{{feed.categoria}}</div>
-                        </article>
-                        }
-                    </div>
-                    }
-                </div>
-
-                <!-- Painel Lateral Moderno de Comentários (Assume a notícia em destaque) -->
-                @if(showCommentsPane()) {
-                <aside class="comments-stage" [class.visible]="showCommentsPane()">
-                    <div class="comments-stage-header">
-                        <div class="stage-badge">
-                            <mat-icon>forum</mat-icon>
-                            <span>Comentários em Foco</span>
                         </div>
-                        <button mat-icon-button (click)="toggleCommentsPane()" matTooltip="Fechar painel de comentários" class="btn-close-comments">
-                            <mat-icon>close</mat-icon>
-                        </button>
-                    </div>
 
-                    @if(highlightedFeed(); as activeNews) {
-                        <div class="active-news-context">
-                            <span class="context-label">Notícia Selecionada</span>
-                            <h5 class="active-news-title" [innerHtml]="activeNews.title || 'Notícia sem título'"></h5>
-                            <div class="active-news-meta">
-                                <span>{{ activeNews?.sourceInfo?.name || 'Noticiário' }}</span>
+                        <!-- Card de Resumo Instantâneo da Wikipedia -->
+                        @if (activeWikipediaSummary(); as wiki) {
+                        <div class="wiki-summary-card" [class.is-loading]="wiki.loading">
+                            <div class="wiki-summary-header">
+                                <div class="wiki-title-group">
+                                    <mat-icon class="wiki-icon">menu_book</mat-icon>
+                                    <span class="wiki-source-tag">Wikipedia API</span>
+                                    <h4 class="wiki-entry-title">{{ wiki.title }}</h4>
+                                </div>
+                                <button mat-icon-button (click)="fecharResumoWikipedia()" matTooltip="Fechar resumo"
+                                    class="btn-close-wiki">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            </div>
+
+                            @if (wiki.loading) {
+                            <div class="wiki-loading-spinner">
+                                <mat-progress-spinner mode="indeterminate" diameter="24"></mat-progress-spinner>
+                                <span>Consultando Wikipedia API para "{{ wiki.termo }}"...</span>
+                            </div>
+                            } @else {
+                            <div class="wiki-summary-body">
+                                @if (wiki.thumbnail) {
+                                <img [src]="wiki.thumbnail" [alt]="wiki.title" class="wiki-thumb" />
+                                }
+                                <div class="wiki-text-block">
+                                    @if (wiki.description) {
+                                    <p class="wiki-description">{{ wiki.description }}</p>
+                                    }
+                                    @if (wiki.extract) {
+                                    <p class="wiki-extract">{{ wiki.extract }}</p>
+                                    }
+                                </div>
+                            </div>
+                            <div class="wiki-summary-actions">
+                                @if (wiki.url) {
+                                <a [href]="wiki.url" target="_blank" rel="noopener noreferrer" mat-stroked-button
+                                    color="primary" class="wiki-link-btn">
+                                    <mat-icon>open_in_new</mat-icon>
+                                    <span>Artigo Completo</span>
+                                </a>
+                                }
+                                <button mat-stroked-button (click)="pesquisarGoogle(wiki.title || wiki.termo)"
+                                    class="wiki-action-btn">
+                                    <mat-icon>search</mat-icon>
+                                    <span>Google</span>
+                                </button>
+                                <button mat-stroked-button (click)="pesquisarTikTok(wiki.title || wiki.termo)"
+                                    class="wiki-action-btn">
+                                    <mat-icon>play_circle</mat-icon>
+                                    <span>TikTok</span>
+                                </button>
+                            </div>
+                            }
+                        </div>
+                        }
+
+                        @if(!!feeds()){
+                        <div class="feed" #feedContainer>
+                            @for(feed of feeds(); track feed.id || feed.url || $index) {
+                            <article class="feed-item" [class.in-focus]="highlightedFeed() === feed"
+                                (click)="focarNoticia(feed, undefined, $event)">
+                                @if(!!feed.title){
+                                <h4 class="feed-title" [innerHtml]="feed.title" [ciNewsTooltip]="feed"></h4>
+                                }
+                                @if (obterResumoManchete(feed); as resumo) {
+                                <p class="feed-snippet">{{ resumo }}</p>
+                                }
+                                <div class="feed-source">
+                                    Fonte: <a target="_blank" (click)="$event.stopPropagation()"
+                                        [href]="'https://' + feed?.sourceInfo?.domain"
+                                        [ciNewsTooltip]="feed">{{feed?.sourceInfo?.name ||
+                                        feed?.sourceInfo?.domain || 'Origem'}}
+                                    </a>
+                                </div>
+
+                                <!-- Substantivos Próprios identificados na Notícia -->
+                                @if (obterSubstantivosProprios(feed); as substantivos) {
+                                @if (substantivos.length > 0) {
+                                <div class="feed-proper-nouns" (click)="$event.stopPropagation()">
+                                    <span class="proper-nouns-caption">
+                                        <mat-icon>label</mat-icon>
+                                        Substantivos próprios:
+                                    </span>
+                                    <div class="proper-nouns-list">
+                                        @for (substantivo of substantivos; track substantivo) {
+                                        <button mat-stroked-button class="noun-chip" [matMenuTriggerFor]="feedNounMenu">
+                                            <span>{{ substantivo }}</span>
+                                            <mat-icon class="chip-dropdown-icon">arrow_drop_down</mat-icon>
+                                        </button>
+                                        <mat-menu #feedNounMenu="matMenu" class="noun-integration-menu">
+                                            <div class="menu-header-noun">
+                                                <mat-icon>travel_explore</mat-icon>
+                                                <span>{{ substantivo }}</span>
+                                            </div>
+                                            <button mat-menu-item (click)="pesquisarWikipedia(substantivo, $event)">
+                                                <mat-icon>menu_book</mat-icon>
+                                                <span>Wikipedia (Resumo & Artigo)</span>
+                                            </button>
+                                            <button mat-menu-item (click)="pesquisarGoogle(substantivo, $event)">
+                                                <mat-icon>search</mat-icon>
+                                                <span>Pesquisar no Google</span>
+                                            </button>
+                                            <button mat-menu-item (click)="pesquisarTikTok(substantivo, $event)">
+                                                <mat-icon>play_circle</mat-icon>
+                                                <span>Pesquisar no TikTok</span>
+                                            </button>
+                                        </mat-menu>
+                                        }
+                                    </div>
+                                </div>
+                                }}
+                                <!-- Barra de interações do card -->
+                                <div class="interactions">
+                                    <button mat-button class="btn-vote" [class.voted-up]="feed.userVote === 'UP'"
+                                        (click)="votar(feed, 'UP', $event)"
+                                        [matTooltip]="feed.userVote === 'UP' ? 'Remover voto positivo' : 'Voto positivo'">
+                                        <mat-icon>thumb_up</mat-icon>
+                                        <span class="vote-count">{{ feed.upVotes || 0 }}</span>
+                                    </button>
+
+                                    <button mat-button class="btn-vote" [class.voted-down]="feed.userVote === 'DOWN'"
+                                        (click)="votar(feed, 'DOWN', $event)"
+                                        [matTooltip]="feed.userVote === 'DOWN' ? 'Remover voto negativo' : 'Voto negativo'">
+                                        <mat-icon>thumb_down</mat-icon>
+                                        <span class="vote-count">{{ feed.downVotes || 0 }}</span>
+                                    </button>
+
+                                    <button mat-button class="btn-comments-toggle"
+                                        [class.active]="highlightedFeed() === feed && showCommentsPane()"
+                                        (click)="focarComentarios(feed, $event)"
+                                        matTooltip="Ver comentários desta notícia">
+                                        <mat-icon>chat_bubble_outline</mat-icon>
+                                        <span class="comments-count">{{ feed.commentsCount || 0 }}</span>
+                                    </button>
+
+                                    <span class="spacer"></span>
+
+                                    <button mat-icon-button color="primary"
+                                        (click)="interacao(feed, 'open'); $event.stopPropagation()"
+                                        [ciNewsTooltip]="feed"><mat-icon>open_in_new</mat-icon></button>
+                                </div>
+                            </article>
+                            }
+                        </div>
+                        }
+                    </section>
+
+                    <!-- Painel Principal de Leitura, Pesquisa Correlata & Comentários -->
+                    @if(showCommentsPane()) {
+                    <aside class="comments-stage" #commentsStage [class.visible]="showCommentsPane()"
+                        [class.expanded]="isCommentsExpanded()">
+                        <div class="comments-stage-header">
+                            <div class="stage-badge">
+                                <button mat-button class="btn-back-headlines" (click)="toggleCommentsPane()"
+                                    matTooltip="Voltar para a lista de manchetes">
+                                    <mat-icon>arrow_back</mat-icon>
+                                    <span>Manchetes</span>
+                                </button>
+                                <mat-icon class="stage-icon">article</mat-icon>
+                                <span>Leitura &amp; Comentários</span>
+                                @if (highlightedFeed(); as hFeed) {
+                                @if (hFeed.commentsCount !== undefined) {
+                                <span class="header-comments-count">({{ hFeed.commentsCount }})</span>
+                                }
+                                }
+                            </div>
+                            <div class="stage-header-actions">
+                                <button mat-icon-button (click)="toggleExpandComments()"
+                                    [matTooltip]="isCommentsExpanded() ? 'Restaurar largura padrão' : 'Ampliar área de leitura'"
+                                    class="btn-expand-comments">
+                                    <mat-icon>{{ isCommentsExpanded() ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+                                </button>
+                                <button mat-icon-button (click)="toggleCommentsPane()"
+                                    matTooltip="Fechar painel de leitura" class="btn-close-comments">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+
+                        @if(highlightedFeed(); as activeNews) {
+                        <div class="reader-reading-container">
+                        <div class="active-news-context" #activeNewsStart>
+                            <div class="active-news-header-meta">
+                                <span class="context-label">Matéria em Leitura</span>
                                 @if(activeNews.categoria) {
-                                    <span class="tag">{{ activeNews.categoria }}</span>
+                                <span class="tag-category">{{ activeNews.categoria }}</span>
+                                }
+                                <span class="news-source">
+                                    <mat-icon class="source-icon">public</mat-icon>
+                                    @if(activeNews?.sourceInfo?.domain) {
+                                    <a [href]="'https://' + activeNews.sourceInfo.domain" target="_blank"
+                                        rel="noopener" [ciNewsTooltip]="activeNews">
+                                        {{ activeNews.sourceInfo.name || activeNews.sourceInfo.domain }}
+                                    </a>
+                                    } @else {
+                                    {{ activeNews?.sourceInfo?.name || 'Noticiário' }}
+                                    }
+                                </span>
+                                @if (activeFocusPhrase(); as focusTerm) {
+                                <span class="focus-phrase-badge">
+                                    <mat-icon>center_focus_strong</mat-icon>
+                                    <span>Trecho: "{{ focusTerm }}"</span>
+                                    <button mat-icon-button class="btn-clear-focus"
+                                        (click)="focarNoticia(activeNews, '')"
+                                        matTooltip="Ir para o início da matéria">
+                                        <mat-icon>vertical_align_top</mat-icon>
+                                    </button>
+                                </span>
+                                }
+                            </div>
+
+                            <h3 class="active-news-title" [innerHtml]="activeNews.title || 'Notícia sem título'"></h3>
+
+                            <!-- Corpo do Texto com links em substantivos próprios e frases-chave correlacionadas -->
+                            <div class="news-content-wrapper">
+                                <div class="news-content" #activeNewsContent
+                                    [innerHtml]="obterConteudoComLinks(activeNews)"
+                                    (click)="onConteudoClick($event)"
+                                    (mouseup)="capturarFraseSelecionada()">
+                                </div>
+
+                                @if (selectedReadingPhrase(); as selectedPhrase) {
+                                <div class="selection-correlation-bar">
+                                    <div class="selection-info">
+                                        <mat-icon>format_quote</mat-icon>
+                                        <span>Frase selecionada: <strong>"{{ selectedPhrase }}"</strong></span>
+                                    </div>
+                                    <div class="selection-actions">
+                                        <button mat-stroked-button color="primary" class="btn-correlate-phrase"
+                                            (click)="pesquisarCorrelatasPorFrase(selectedPhrase)">
+                                            <mat-icon>hub</mat-icon>
+                                            <span>Cruzar no acervo</span>
+                                        </button>
+                                        <button mat-stroked-button class="btn-correlate-wiki"
+                                            (click)="pesquisarWikipedia(selectedPhrase, $event)">
+                                            <mat-icon>menu_book</mat-icon>
+                                            <span>Wikipedia</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                }
+
+                                <div class="content-hint">
+                                    <mat-icon>touch_app</mat-icon>
+                                    <span>Selecione qualquer frase do texto ou toque nos termos destacados para cruzar com outras matérias do acervo.</span>
+                                </div>
+                            </div>
+
+                            <!-- Seção de Substantivos Próprios da Notícia em Destaque -->
+                            @if (obterSubstantivosProprios(activeNews); as activeNouns) {
+                            @if (activeNouns.length > 0) {
+                            <div class="active-news-nouns-section">
+                                <div class="nouns-section-title">
+                                    <mat-icon>psychology</mat-icon>
+                                    <span>Substantivos próprios identificados:</span>
+                                </div>
+                                <div class="active-nouns-chips">
+                                    @for (substantivo of activeNouns; track substantivo) {
+                                    <div class="active-noun-badge">
+                                        <span class="noun-name"
+                                            (click)="selecionarSubstantivoParaPesquisa(substantivo)">{{ substantivo
+                                            }}</span>
+                                        <div class="noun-quick-actions">
+                                            <button mat-icon-button (click)="pesquisarCorrelatasPorFrase(substantivo)"
+                                                matTooltip="Cruzar termo com outras matérias" class="mini-platform-btn correl">
+                                                <mat-icon>hub</mat-icon>
+                                            </button>
+                                            <button mat-icon-button (click)="pesquisarWikipedia(substantivo, $event)"
+                                                matTooltip="Consultar Wikipedia API" class="mini-platform-btn wiki">
+                                                <mat-icon>menu_book</mat-icon>
+                                            </button>
+                                            <button mat-icon-button (click)="pesquisarGoogle(substantivo, $event)"
+                                                matTooltip="Pesquisar no Google" class="mini-platform-btn google">
+                                                <mat-icon>search</mat-icon>
+                                            </button>
+                                            <button mat-icon-button (click)="pesquisarTikTok(substantivo, $event)"
+                                                matTooltip="Pesquisar no TikTok" class="mini-platform-btn tiktok">
+                                                <mat-icon>play_circle</mat-icon>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    }
+                                </div>
+                            </div>
+                            }
+                            }
+
+                            <!-- Pesquisa Correlata via PostgreSQL + TypeORM -->
+                            <div class="correlated-news-container" #correlatedSection>
+                                <div class="correlated-header-row">
+                                    <div class="correlated-header">
+                                        <mat-icon>hub</mat-icon>
+                                        <span>Pesquisa Correlata no Acervo ({{ correlatedNews().length }})</span>
+                                        @if (correlatedPhrase(); as cPhrase) {
+                                        <span class="correlated-phrase-tag">
+                                            "{{ cPhrase }}"
+                                            <button mat-icon-button class="btn-reset-correl" (click)="limparFiltroCorrelato()" matTooltip="Voltar à correlação da matéria completa">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </span>
+                                        }
+                                    </div>
+                                    <div class="correlated-search-inline">
+                                        <input type="text"
+                                            class="correlated-search-input"
+                                            [formControl]="correlatedSearchControl"
+                                            (keyup.enter)="pesquisarCorrelatasPorFrase()"
+                                            placeholder="Cruzar frase ou termo no PostgreSQL..." />
+                                        <button mat-icon-button class="btn-run-correl"
+                                            (click)="pesquisarCorrelatasPorFrase()"
+                                            [disabled]="!correlatedSearchControl.value.trim()"
+                                            matTooltip="Pesquisar correlações">
+                                            <mat-icon>search</mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                @if (correlatedLoading()) {
+                                <div class="correlated-loading">
+                                    <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner>
+                                    <span>Cruzando conteúdo com outras matérias no PostgreSQL...</span>
+                                </div>
+                                } @else if (correlatedNews().length > 0) {
+                                <div class="correlated-list">
+                                    @for (item of correlatedNews(); track item.id || item.url || $index) {
+                                    <div class="correlated-item-card" [ciNewsTooltip]="item"
+                                        (click)="focarNoticia(item, item.matchedTerm || correlatedPhrase() || undefined)">
+                                        <div class="correlated-item-meta">
+                                            <span class="correl-tag">{{ item.categoria || 'Mercado' }}</span>
+                                            <span class="correl-source">{{ item?.sourceInfo?.name ||
+                                                item?.sourceInfo?.domain || item?.sourceName || 'Origem' }}</span>
+                                            @if (item.matchedTerm) {
+                                            <span class="correl-match-badge">{{ item.matchedTerm }}</span>
+                                            }
+                                        </div>
+                                        <h5 class="correl-title" [innerHtml]="item.title"></h5>
+                                        @if (item.matchedSnippet) {
+                                        <p class="correl-snippet">{{ item.matchedSnippet }}</p>
+                                        }
+                                    </div>
+                                    }
+                                </div>
+                                } @else {
+                                <p class="correlated-empty">Nenhuma matéria correlata encontrada para este recorte. Tente pesquisar outro termo acima.</p>
                                 }
                             </div>
                         </div>
-
+                        <!-- :Comentários -->
                         <div class="comments-body">
-                            <ci-post-coments 
-                                [newsId]="activeNews.id || activeNews.url" 
-                                [feed]="activeNews" 
+                            <ci-post-coments [newsId]="activeNews.id || activeNews.url" [feed]="activeNews"
                                 (commentCountChange)="activeNews.commentsCount = $event">
                             </ci-post-coments>
                         </div>
-                    } @else {
+                        </div>
+                        } @else {
                         <div class="no-selection-placeholder">
                             <mat-icon>article</mat-icon>
                             <p>Role a página ou clique em uma notícia para visualizar e participar dos comentários.</p>
                         </div>
+                        }
+                    </aside>
                     }
-                </aside>
-                }
-
-                @if(!showCommentsPane()) {
-                <button mat-fab extended class="btn-floating-comments-toggle" (click)="toggleCommentsPane()" matTooltip="Abrir comentários da notícia em destaque">
-                    <mat-icon>forum</mat-icon>
-                    <span>Comentários</span>
-                </button>
-                }
+                    @if(!showCommentsPane()) {
+                    <button mat-fab extended class="btn-floating-comments-toggle" (click)="toggleCommentsPane()"
+                        matTooltip="Abrir comentários da notícia em destaque">
+                        <mat-icon>forum</mat-icon>
+                        <span>Comentários</span>
+                    </button>
+                    }
+                </div>
             </div>
-        </div>
-    </mat-tab>
+        </mat-tab>
 
-    <mat-tab>
-        <ng-template mat-tab-label>
-            <mat-icon style="margin-right: 8px;">space_dashboard</mat-icon>
-            <span>Meu Board</span>
-        </ng-template>
-        <ci-user-board></ci-user-board>
-    </mat-tab>
-</mat-tab-group>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon style="margin-right: 8px;">query_stats</mat-icon>
+                <span>Radar de Mercado</span>
+            </ng-template>
+            <ci-market-news-feed></ci-market-news-feed>
+        </mat-tab>
+
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon style="margin-right: 8px;">space_dashboard</mat-icon>
+                <span>Meu Board</span>
+            </ng-template>
+            <ci-user-board></ci-user-board>
+        </mat-tab>
+    </mat-tab-group>
+</div>

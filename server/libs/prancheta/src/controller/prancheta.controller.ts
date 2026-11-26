@@ -3,14 +3,24 @@ import { PranchetaService } from "../service/prancheta.service";
 import { ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Prancheta } from "../models/prancheta.entity";
 import { AudtService } from "@ci/core";
+
 export class PranchetaSyncPayloadDto {
     @ApiProperty({ type: Prancheta, nullable: true, required: false })
     prancheta?: Prancheta;
+
     @ApiProperty({
         required: false,
     })
     defaultGlobalCode?: string;
+
+    @ApiProperty({
+        required: false,
+        enum: ['USER', 'TENANT'],
+        description: 'Escopo do Board: USER ou TENANT'
+    })
+    scope?: 'USER' | 'TENANT';
 }
+
 @ApiTags('Prancheta')
 @Controller('Prancheta')
 export class PranchetaController {
@@ -18,6 +28,7 @@ export class PranchetaController {
         private readonly service: PranchetaService,
         private readonly audt: AudtService,
     ) { }
+
     @ApiResponse({
         type: Prancheta
     })
@@ -26,27 +37,34 @@ export class PranchetaController {
         @Req() req: any,
         @Body() input: PranchetaSyncPayloadDto
     ) {
+        const tenant = req.user?.tenants?.[0]?.id || req.user?.tenantId || req.headers?.['x-tenant-id'];
         return await this.service.sincronize(
             this.audt.doSync(input.prancheta, req, !!input?.prancheta?.internalId),
-            { req });
+            { req, tenant }
+        );
     }
+
     @ApiResponse({
         type: Prancheta,
-        // isArray: true
     })
     @Post('Get')
     async Get(
         @Req() req: any,
-        @Body() input: PranchetaSyncPayloadDto) {
-        if (!!input.defaultGlobalCode) {
+        @Body() input: PranchetaSyncPayloadDto
+    ) {
+        const tenant = req.user?.tenants?.[0]?.id || req.user?.tenantId || req.headers?.['x-tenant-id'];
+        if (input.defaultGlobalCode) {
             return await this.service.Get({
-                globalCode: input.defaultGlobalCode
-            })
+                globalCode: input.defaultGlobalCode,
+                tenant,
+                scope: input.scope,
+            });
         } else {
             return await this.service.Get({
-                userId: req.user.id,
-            })
+                userId: req.user?.id,
+                tenant,
+                scope: input.scope,
+            });
         }
     }
-
 }

@@ -1,14 +1,12 @@
-import { Component, Input, OnDestroy, OnInit, Optional, signal } from "@angular/core";
+import { Component, computed, Input, OnDestroy, OnInit, Optional, signal } from "@angular/core";
 import { formatUserPhotoUrl, UserAuthenticationService } from "@ci/auth";
 import { INavbarItemMenu } from "./i-menu-item";
 import { IItemMenu } from "@ci/components/window";
 import { MenuService } from "@ci/core";
-import { AvailableVersionInfoDto, DeployerService, User, InternalNotificationService, InternalNotification, NotificationDisplayMode } from "@ci/portal-api";
-import { lastValueFrom } from "rxjs";
+import { User, InternalNotificationService, InternalNotification, NotificationDisplayMode } from "@ci/portal-api";
 import { Router } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
-import { GruposModalComponent } from "../grupos-modal/grupos-modal.component";
-
+import { NavbarContextAction, NavbarContextSelectOption, NavbarOrganizationAccessInfo, NavbarService } from "./navbar.service";
 @Component({
     selector: 'ci-navbar',
     standalone: false,
@@ -26,20 +24,52 @@ export class NavbarComponent implements OnInit, OnDestroy {
     public set apps(value: undefined | any[]) {
         if (this._apps() === value) return;
         this._apps.set(value);
+        this.navbarService?.syncAvailableApps(value);
     }
     user = signal<undefined | User>(this.userService.user.value);
-    @Input() menuItens?: INavbarItemMenu[];
-    @Input() userMenuList?: IItemMenu[];
+
+    private readonly _menuItens = signal<INavbarItemMenu[] | undefined>(undefined);
+    @Input()
+    public get menuItens(): INavbarItemMenu[] | undefined {
+        return this._menuItens();
+    }
+    public set menuItens(value: INavbarItemMenu[] | undefined) {
+        this._menuItens.set(value);
+    }
+
+    private readonly _userMenuList = signal<IItemMenu[] | undefined>(undefined);
+    @Input()
+    public get userMenuList(): IItemMenu[] | undefined {
+        return this._userMenuList();
+    }
+    public set userMenuList(value: IItemMenu[] | undefined) {
+        this._userMenuList.set(value);
+    }
+
+    private readonly _endMenu = signal<(IItemMenu | INavbarItemMenu)[] | undefined>(undefined);
+    @Input()
+    public get endMenu(): (IItemMenu | INavbarItemMenu)[] | undefined {
+        return this._endMenu();
+    }
+    public set endMenu(value: (IItemMenu | INavbarItemMenu)[] | undefined) {
+        this._endMenu.set(value);
+    }
+
     @Input() recentes?: any[];
 
-    versionInfo = signal<AvailableVersionInfoDto | undefined>(undefined);
-    loadingVersion = signal<boolean>(false);
-    publishing = signal<boolean>(false);
-    lastActionMessage = signal<string | undefined>(undefined);
     photoError = signal<boolean>(false);
     latestNotification = signal<InternalNotification | undefined>(undefined);
     private notifSub: any = null;
-    private pollTimer: any = null;
+
+    resolvedStartMenuItems = computed<INavbarItemMenu[]>(() =>
+        this.mergeMenuItems(this._menuItens(), this.navbarService?.resolvedStartMenu())
+    );
+    resolvedEndMenuItems = computed<INavbarItemMenu[]>(() =>
+        this.mergeMenuItems(this._endMenu() as INavbarItemMenu[] | undefined, this.navbarService?.resolvedEndMenu())
+    );
+    resolvedUserMenuItems = computed<INavbarItemMenu[]>(() =>
+        this.mergeMenuItems(this._userMenuList() as INavbarItemMenu[] | undefined, this.navbarService?.resolvedUserMenu())
+    );
 
     /**
      * Retorna a URL tratada da foto do usuário para exibição na navbar
@@ -57,25 +87,64 @@ export class NavbarComponent implements OnInit, OnDestroy {
         return formatUserPhotoUrl(photo) || undefined;
     }
 
-    /**
-     * Visível exclusivamente para usuários que possuem a ROLE 'DEVELOPER'
-     */
-    get isDeveloper(): boolean {
-        const roles = this.user()?.roles;
-        return Array.isArray(roles) && roles.includes('DEVELOPER');
-    }
-
     constructor(
         private readonly userService: UserAuthenticationService,
         @Optional() menuService?: MenuService,
-        @Optional() private readonly deployerService?: DeployerService,
         @Optional() private readonly dialog?: MatDialog,
         @Optional() public readonly notificationService?: InternalNotificationService,
         @Optional() private readonly router?: Router,
+        @Optional() public readonly navbarService?: NavbarService,
     ) {
         menuService?.userMenu?.subscribe(menu => {
             this.userMenuList = menu;
         });
+    }
+
+
+
+
+    isContextActionDisabled(action: NavbarContextAction): boolean {
+        return typeof action.disabled === 'function' ? action.disabled() : !!action.disabled;
+    }
+
+    isContextActionActive(action: NavbarContextAction): boolean {
+        return typeof action.active === 'function' ? action.active() : !!action.active;
+    }
+
+    getContextSelectValue(action: NavbarContextAction): any {
+        return typeof action.value === 'function' ? action.value() : action.value;
+    }
+
+    getContextSelectOptions(action: NavbarContextAction): NavbarContextSelectOption[] {
+        return typeof action.options === 'function' ? action.options() : (action.options || []);
+    }
+
+    get organizationAccess(): NavbarOrganizationAccessInfo | null {
+        return this.navbarService?.organizationAccess() || null;
+    }
+
+    getOrganizationAccessTooltip(): string {
+        const info = this.organizationAccess;
+        if (!info) return 'Acesso à Organização';
+        if (!info.organizationName) return 'Nenhuma organização selecionada — clique para gerenciar';
+        const tipo = info.isOwner ? 'Criador' : 'Tenant compartilhado';
+        const roles = info.roles?.length ? ` • Roles: ${info.roles.join(', ')}` : '';
+        return `${info.organizationName} (${tipo}${roles})`;
+    }
+
+    selectOrganizationFromNavbar(orgId?: string | null, event?: Event): void {
+        event?.stopPropagation();
+        if (!orgId) return;
+        this.navbarService?.selectActiveOrganization(orgId);
+    }
+
+    refreshOrganizationFromNavbar(event?: Event): void {
+        event?.stopPropagation();
+        this.navbarService?.refreshOrganizationAccess();
+    }
+
+    abrirOrganizacoes(): void {
+        this.router?.navigate(['/Organizacao']);
     }
 
     get displayMode$() {
@@ -142,10 +211,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
         });
     }
 
-    abrirAcaoNotificacao(notificacao: InternalNotification, event?: Event) {
+    abrirAcaoNotificacao(notificacao: InternalNotification | any, event?: Event) {
         event?.stopPropagation();
-        this.marcarNotificacaoComoLida(notificacao);
-        if (notificacao.actionUrl) {
+        if (notificacao && !notificacao.read && this.notificationService) {
+            this.marcarNotificacaoComoLida(notificacao);
+        }
+        if (notificacao?.actionUrl) {
             if (notificacao.actionUrl.startsWith('http')) {
                 window.open(notificacao.actionUrl, '_blank');
             } else {
@@ -164,28 +235,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
         }
     }
 
-    /**
-     * Abre a modal de Grupos e Comunidades na aba solicitada (0: Encontrar, 1: Criar, 2: Meus Grupos).
-     */
-    abrirGrupos(initialTab: number = 0) {
-        this.dialog?.open(GruposModalComponent, {
-            data: { initialTab },
-            width: '880px',
-            maxWidth: '96vw',
-            panelClass: 'ci-grupos-dialog-panel',
-            disableClose: false,
-        });
-    }
-
     ngOnInit(): void {
         try {
             this.userService.user.subscribe(u => {
                 this.photoError.set(false);
                 this.user.set(u);
-                if (!!this.apps)
+                if (!!this.apps) {
                     this.recentes = localStorage.getItem('NAV(RECENTES)')?.split(',').map(x => this.apps?.find(a => a?.name === x));
+                    this.navbarService?.syncAvailableApps(this.apps);
+                }
             });
-            this.notifSub = this.notificationService?.notifications$.subscribe(notifs => {
+            this.notifSub = this.notificationService?.notifications$?.subscribe((notifs: InternalNotification[]) => {
                 this.latestNotification.set(notifs && notifs.length > 0 ? notifs[0] : undefined);
             });
         } catch (error) {
@@ -198,72 +258,75 @@ export class NavbarComponent implements OnInit, OnDestroy {
             this.notifSub.unsubscribe();
             this.notifSub = null;
         }
-        if (this.pollTimer) {
-            clearTimeout(this.pollTimer);
-            this.pollTimer = null;
-        }
-    }
-
-    async carregarVersaoDisponivel(event?: Event) {
-        if (event) {
-            event.stopPropagation();
-        }
-        if (!this.isDeveloper || !this.deployerService) return;
-
-        this.loadingVersion.set(true);
-        try {
-            const info = await lastValueFrom(this.deployerService.getVersion());
-            this.versionInfo.set(info);
-
-            if (this.pollTimer) {
-                clearTimeout(this.pollTimer);
-                this.pollTimer = null;
-            }
-            if (info?.publishStatus === 'running') {
-                this.pollTimer = setTimeout(() => this.carregarVersaoDisponivel(), 2500);
-            }
-        } catch (error) {
-            console.trace(error);
-        } finally {
-            this.loadingVersion.set(false);
-        }
-    }
-
-    async publicarVersao(
-        action: 'gulp' | 'server-build' | 'full-publish' | 'sync-git' = 'gulp',
-        event?: Event
-    ) {
-        if (event) {
-            event.stopPropagation();
-        }
-        if (!this.isDeveloper || !this.deployerService) return;
-
-        this.publishing.set(true);
-        try {
-            const res = await lastValueFrom(
-                this.deployerService.publish({ body: { action } })
-            );
-            this.lastActionMessage.set(res?.mensagem || 'Ação de publicação enviada.');
-            await this.carregarVersaoDisponivel();
-        } catch (error: any) {
-            console.trace(error);
-            this.lastActionMessage.set(error?.error?.message || error?.message || 'Erro ao acionar publicação.');
-        } finally {
-            this.publishing.set(false);
-        }
     }
 
     async sair() {
         this.userService?.sair();
     }
-    protected async itemMenuActionHandler(itemMenu: IItemMenu, event: Event) {
-        if (itemMenu.onClick) itemMenu.onClick(this, event);
+
+    isMenuItemVisible(item: INavbarItemMenu | IItemMenu | any): boolean {
+        if (!item) return false;
+        if (typeof item.visible === 'function') return Boolean(item.visible());
+        return item.visible !== false;
     }
+
+    isMenuItemDisabled(item: INavbarItemMenu | any): boolean {
+        if (!item) return false;
+        return typeof item.disabled === 'function' ? Boolean(item.disabled()) : Boolean(item.disabled);
+    }
+
+    getMenuItemTooltip(item: INavbarItemMenu | any): string {
+        return item?.tooltip || item?.label || item?.title || '';
+    }
+
+    private mergeMenuItems(
+        inputItems?: INavbarItemMenu[],
+        serviceItems?: INavbarItemMenu[]
+    ): INavbarItemMenu[] {
+        const merged = [...(inputItems || []), ...(serviceItems || [])];
+        const map = new Map<string, INavbarItemMenu>();
+        for (const item of merged) {
+            if (!item || !this.isMenuItemVisible(item)) continue;
+            const key = item.id || `${typeof item.routerLink === 'string' ? item.routerLink : ''}::${item.label || ''}::${item.icon || ''}::${item.component ? item.component.name : ''}::${item.menuComponent ? item.menuComponent.name : ''}`;
+            if (!map.has(key)) {
+                map.set(key, item);
+            }
+        }
+        return Array.from(map.values()).sort((a, b) => (a.order ?? 100) - (b.order ?? 100));
+    }
+
+    protected async itemMenuActionHandler(itemMenu: INavbarItemMenu | IItemMenu | any, event: Event) {
+        if (!itemMenu || this.isMenuItemDisabled(itemMenu)) return;
+        if (typeof itemMenu.onClick === 'function') {
+            itemMenu.onClick(this, event);
+        }
+        if (itemMenu.dialogComponent) {
+            event?.stopPropagation();
+            this.dialog?.open(itemMenu.dialogComponent, {
+                data: itemMenu.dialogData,
+                width: '880px',
+                maxWidth: '96vw',
+                disableClose: false,
+                ...(itemMenu.dialogConfig || {}),
+            });
+            return;
+        }
+        if (itemMenu.href && typeof window !== 'undefined') {
+            window.open(itemMenu.href, itemMenu.target || '_blank');
+            return;
+        }
+        if (itemMenu.routerLink && !itemMenu.children?.length && !itemMenu.menuComponent) {
+            const commands = Array.isArray(itemMenu.routerLink)
+                ? itemMenu.routerLink
+                : [itemMenu.routerLink];
+            await this.router?.navigate(commands, { queryParams: itemMenu.queryParams });
+        }
+    }
+
     async appClickHandler(event: MouseEvent, app: any) {
-        if (event.ctrlKey) {
-            // window.open(location.href + '/' + app.url, '')
-        } else {
-            // this.router./*  */navigate(['/' + app.url], { relativeTo: this.route.root })
+        if (event.ctrlKey && app?.url && typeof window !== 'undefined') {
+            const cleanUrl = String(app.url).replace(/^\/+/, '');
+            window.open(`/${cleanUrl}`, '_blank');
         }
         setTimeout(() => document.body.click(), 300);
         if (app.__cta_hndlred === undefined) app.__cta_hndlred = 0;

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-26T01:55:39" id="0" hostname="plhx33" tests="5" errors="0" failures="0" time="0.547">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="NavbarService e NavbarComponent (Organização) NavbarService deve ativar e carregar informações de acesso quando Organização estiver em activatedApps$" time="0.29" classname="Chrome_Headless_158_0_0_0_(Windows_10).NavbarService e NavbarComponent (Organização) NavbarService"/>
+  <testcase name="NavbarService e NavbarComponent (Organização) NavbarService deve permanecer inativo e sem acesso enquanto o app Organização não estiver ativo" time="0.005" classname="Chrome_Headless_158_0_0_0_(Windows_10).NavbarService e NavbarComponent (Organização) NavbarService"/>
+  <testcase name="NavbarService e NavbarComponent (Organização) NavbarService deve ativar via syncAvailableApps() e alternar organização ativa persistindo CI_ACTIVE_TENANT_ID" time="0.005" classname="Chrome_Headless_158_0_0_0_(Windows_10).NavbarService e NavbarComponent (Organização) NavbarService"/>
+  <testcase name="NavbarService e NavbarComponent (Organização) NavbarComponent deve exibir o indicador de acesso à organização quando organizationAppActive() for true" time="0.173" classname="Chrome_Headless_158_0_0_0_(Windows_10).NavbarService e NavbarComponent (Organização) NavbarComponent"/>
+  <testcase name="NavbarService e NavbarComponent (Organização) NavbarComponent deve ocultar o indicador de organização quando organizationAppActive() for false" time="0.074" classname="Chrome_Headless_158_0_0_0_(Windows_10).NavbarService e NavbarComponent (Organização) NavbarComponent"/>
+  <system-out>
+    <![CDATA[Chrome Headless 158.0.0.0 (Windows 10) WARN: 'Detected a matBadge on an "aria-hidden" "<mat-icon>". Consider setting aria-hidden="false" in order to surface the information assistive technology.
+<mat-icon _ngcontent-a-c48308822="" role="img" matbadgecolor="warn" matbadgesize="small" class="mat-icon notranslate mat-badge mat-badge-warn material-icons mat-ligature-font mat-icon-no-color mat-badge-overlap mat-badge-above mat-badge-after mat-badge-small mat-badge-hidden" aria-hidden="true" data-mat-icon-type="font"> notifications <span id="mat-badge-content-a1" aria-hidden="true" class="mat-badge-content _mat-animation-noopable mat-badge-active">0</span></mat-icon>'
+,Chrome Headless 158.0.0.0 (Windows 10) WARN: 'Detected a matBadge on an "aria-hidden" "<mat-icon>". Consider setting aria-hidden="false" in order to surface the information assistive technology.
+<mat-icon _ngcontent-a-c48308822="" role="img" matbadgecolor="warn" matbadgesize="small" class="mat-icon notranslate mat-badge mat-badge-warn material-icons mat-ligature-font mat-icon-no-color mat-badge-overlap mat-badge-above mat-badge-after mat-badge-small mat-badge-hidden" aria-hidden="true" data-mat-icon-type="font"> notifications <span id="mat-badge-content-a0" aria-hidden="true" class="mat-badge-content _mat-animation-noopable mat-badge-active">0</span></mat-icon>'
+,Chrome Headless 158.0.0.0 (Windows 10) WARN: 'Detected a matBadge on an "aria-hidden" "<mat-icon>". Consider setting aria-hidden="false" in order to surface the information assistive technology.
+<mat-icon _ngcontent-a-c48308822="" role="img" matbadgecolor="warn" matbadgesize="small" class="mat-icon notranslate mat-badge mat-badge-warn material-icons mat-ligature-font mat-icon-no-color mat-badge-overlap mat-badge-above mat-badge-after mat-badge-small mat-badge-hidden" aria-hidden="true" data-mat-icon-type="font"> notifications <span id="mat-badge-content-a3" aria-hidden="true" class="mat-badge-content _mat-animation-noopable mat-badge-active">0</span></mat-icon>'
+,Chrome Headless 158.0.0.0 (Windows 10) WARN: 'Detected a matBadge on an "aria-hidden" "<mat-icon>". Consider setting aria-hidden="false" in order to surface the information assistive technology.
+<mat-icon _ngcontent-a-c48308822="" role="img" matbadgecolor="warn" matbadgesize="small" class="mat-icon notranslate mat-badge mat-badge-warn material-icons mat-ligature-font mat-icon-no-color mat-badge-overlap mat-badge-above mat-badge-after mat-badge-small mat-badge-hidden" aria-hidden="true" data-mat-icon-type="font"> notifications <span id="mat-badge-content-a2" aria-hidden="true" class="mat-badge-content _mat-animation-noopable mat-badge-active">0</span></mat-icon>'
+
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

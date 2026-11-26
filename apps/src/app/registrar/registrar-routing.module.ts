@@ -5,6 +5,7 @@ import { RegistrarComponent } from './registrar.component';
 const routes: Routes = [
   { path: '', component: RegistrarComponent, },
   { path: ':invite', component: RegistrarComponent, },
+  { path: ':invite/plano-inicial', component: RegistrarComponent, },
 ];
 /**
  * # Rotas para o módulo de registro.

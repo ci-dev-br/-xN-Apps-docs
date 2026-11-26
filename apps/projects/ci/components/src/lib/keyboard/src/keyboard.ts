@@ -15,6 +15,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ActionsMenuComponent } from './actions-menu.component';
 import { lastValueFrom } from 'rxjs';
 import { UserAuthenticationService } from '@ci/auth';
+import { AudioTrackComponent, AudioVisualizerComponent } from './audio-visualizer/audio-visualizer.component';
 interface AndroidBridge {
   onKey(character: string): void;
   onAction(action: string): void;
@@ -35,6 +36,7 @@ const REFERENCE_TEXT = TEXTOBASE;
     MatButtonModule,
     MatIconModule,
     MatDialogModule,
+    AudioTrackComponent,
   ],
   providers: [
     {

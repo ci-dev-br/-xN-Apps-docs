@@ -47,9 +47,19 @@
                         <p>
                             Olá {{nome}}, você recebeu um convite para participar da plataforma de aplicativos.
                         </p>
+                        <p style="font-style: italic; color: #334155;">
+                            {{mensagem_personalizada}}
+                        </p>
                         <p>
-                            Para aceitar o convite, por favor clique no link abaixo:
-                            <a href="{{link_aceitar_convite}}">"link abaixo"</a>
+                            Código do seu convite (Invite Hash):<br>
+                            <code style="display: inline-block; padding: 6px 12px; background: #f1f5f9; border-radius: 6px; font-weight: bold;">{{invite_hash}}</code>
+                        </p>
+                        <p>
+                            Para aceitar o convite e prosseguir com seu cadastro de usuário, clique no link abaixo:<br><br>
+                            <a href="{{link_aceitar_convite}}" style="display: inline-block; padding: 12px 24px; background: #2563eb; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold;">Prosseguir com meu Cadastro</a>
+                        </p>
+                        <p style="font-size: 12px; color: #64748b;">
+                            Ou acesse diretamente: <a href="{{link_aceitar_convite}}">{{link_aceitar_convite}}</a>
                         </p>
                         <p>
                             Se você não solicitou este convite, por favor ignore este e-mail.

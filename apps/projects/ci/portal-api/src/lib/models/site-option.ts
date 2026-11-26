@@ -1,13 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
+import { Credential } from '../models/credential';
 export interface SiteOption {
   createdAt?: Date | null;
-  createdBy?: {
-} | null;
+  createdBy?: Credential | null;
   deleted?: boolean | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
-  lastModifiedBy?: {
-} | null;
+  lastModifiedBy?: Credential | null;
   tenants?: Array<string> | null;
 }

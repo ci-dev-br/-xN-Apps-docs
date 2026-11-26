@@ -15,9 +15,13 @@ export class RegistrarInputDto {
     @ApiProperty({ required: false, nullable: true })
     phone?: string;
     @ApiProperty({ required: false, nullable: true })
-    emailAuthorization: boolean;
+    emailAuthorization?: boolean;
     @ApiProperty({ required: false, nullable: true })
-    phoneAuthorization: boolean;
+    phoneAuthorization?: boolean;
+    @ApiProperty({ required: false, nullable: true, description: 'Invite hash recebido por e-mail' })
+    invite?: string;
+    @ApiProperty({ required: false, nullable: true, description: 'Alias para invite hash' })
+    convite?: string;
 }
 export class AcessoPayload {
     @ApiProperty({ required: false, nullable: true })

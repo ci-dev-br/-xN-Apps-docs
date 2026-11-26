@@ -30,6 +30,31 @@ export class Organizacao extends FullAuditedEntity {
         nullable: true
     })
     organizatioName?: string;
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        title: 'Descrição da Organização',
+    })
+    @Column({ nullable: true, type: 'text' })
+    description?: string;
+
+    @ApiProperty({ nullable: true, required: false, title: 'CNPJ' })
+    @Column({ nullable: true })
+    cnpj?: string;
+
+    @ApiProperty({ nullable: true, required: false, title: 'Website' })
+    @Column({ nullable: true })
+    website?: string;
+
+    @ApiProperty({ nullable: true, required: false, title: 'ID do Usuário Criador' })
+    @Column({ nullable: true })
+    ownerUserId?: string;
+
+    @ApiProperty({ nullable: true, required: false, title: 'ID do Tenant Associado' })
+    @Column({ nullable: true })
+    tenantId?: string;
+
     /**
      * Logo of Organization
      */

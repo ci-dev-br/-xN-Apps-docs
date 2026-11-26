@@ -32,7 +32,7 @@ const IMMEDIATE_MIGRATION_MS = 15;       // Intervalo imediato (15ms) cravado no
 const PORT_86_ROTATION_MS = 10 * 1000;   // Cada nó assume a porta 86 por 10 segundos (se houver outros prontos)
 const OLD_PROCESS_PURGE_MS = 60 * 1000;  // Limpa processos inativos há mais de 1 minuto do arquivo STATUS
 const ZOMBIE_TIMEOUT_MS = 5 * 1000;      // Tolerância para considerar zombie caso trave sem morrer no SO
-const HTTP_WARMUP_TIMEOUT_MS = 1200;     // Timeout do teste HTTP na porta da candidata antes de liberar a 86
+const HTTP_WARMUP_TIMEOUT_MS = 30000;     // Timeout do teste HTTP na porta da candidata antes de liberar a 86
 const HEALTH_ENDPOINT = '/__orchestration/health';
 
 /**
@@ -46,7 +46,7 @@ const IS_DEBUG_INSTANCE = Boolean(
   process.argv.some((arg) => arg === '--debug' || arg.startsWith('--debug=') || arg.startsWith('--inspect')) ||
   process.execArgv.some((arg) => arg.startsWith('--inspect') || arg.startsWith('--debug')) ||
   (ENV_DEBUG_BEFORE_DOTENV && ENV_DEBUG_BEFORE_DOTENV !== 'false' && ENV_DEBUG_BEFORE_DOTENV !== '0') ||
-  (process.env.DEBUG === 'true' || process.env.DEBUG === '1')
+(process.env.DEBUG === 'true' || process.env.DEBUG === '1')
 );
 
 interface ProcessInfo {
@@ -75,6 +75,7 @@ let isChangingPort = false;
 let isOrchestrating = false;
 let isWarmAndReady = false;
 let currentPort86SessionStartMs = 0;
+let currentInstancePort: number | undefined;
 
 /**
  * Pausa assíncrona auxiliar.
@@ -375,6 +376,7 @@ function savePidStatus(
     ? { nextIso: undefined, delayMs: CHECK_DISTANCE_MS }
     : calculateNextCheckTime(statusMap, nowMs, forceImmediateCheck);
 
+  if (data.port) currentInstancePort = data.port;
   const existing = statusMap[pid];
 
   if (startNewProcess || !existing) {
@@ -383,6 +385,7 @@ function savePidStatus(
       status: 'running',
       debug: IS_DEBUG_INSTANCE,
       warmedUp: isWarmAndReady,
+      port: data.port ?? currentInstancePort,
       ...data,
       lastHeartbeat: isStopping ? existing?.lastHeartbeat : nowIso,
       nextStatusCheckAt: nextIso,
@@ -393,6 +396,7 @@ function savePidStatus(
       ...existing,
       debug: IS_DEBUG_INSTANCE,
       warmedUp: isWarmAndReady,
+      port: data.port ?? currentInstancePort,
       ...data,
       ...(isStopping ? { nextStatusCheckAt: undefined } : { lastHeartbeat: nowIso, nextStatusCheckAt: nextIso }),
       updatedAt: nowIso,
@@ -581,7 +585,7 @@ async function shouldThisInstanceClaimPort86(statusMap: StatusMap, nowMs = Date.
   const currentPid = String(process.pid);
   const myInfo = statusMap[currentPid];
 
-  if (!myInfo || myInfo.status !== 'online' || !myInfo.port || myInfo.port === 86) {
+  if (!myInfo || (myInfo.status !== 'online' && myInfo.status !== 'running') || !myInfo.port || myInfo.port === 86) {
     return false;
   }
 
@@ -609,7 +613,7 @@ async function shouldThisInstanceClaimPort86(statusMap: StatusMap, nowMs = Date.
     }
 
     const aliveDebugCandidates = Object.entries(statusMap)
-      .filter(([pid, info]) => info.status === 'online' && Boolean(info.debug) && isProcessTrulyAlive(info, nowMs, pid))
+      .filter(([pid, info]) => (info.status === 'online' || info.status === 'running') && Boolean(info.port) && Boolean(info.debug) && isProcessTrulyAlive(info, nowMs, pid))
       .sort(compareProcessPriority);
 
     return aliveDebugCandidates.length > 0 && aliveDebugCandidates[0][0] === currentPid;
@@ -631,7 +635,7 @@ async function shouldThisInstanceClaimPort86(statusMap: StatusMap, nowMs = Date.
 
   // 3. Eleição entre nós normais: vence o nó online que está há mais tempo sem assumir a porta 86
   const aliveCandidates = Object.entries(statusMap)
-    .filter(([pid, info]) => info.status === 'online' && isProcessTrulyAlive(info, nowMs, pid))
+    .filter(([pid, info]) => (info.status === 'online' || info.status === 'running') && Boolean(info.port) && isProcessTrulyAlive(info, nowMs, pid))
     .sort(compareProcessPriority);
 
   if (aliveCandidates.length === 0 || aliveCandidates[0][0] !== currentPid) {

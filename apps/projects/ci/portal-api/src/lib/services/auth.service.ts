@@ -13,6 +13,12 @@ import { acessarAuth } from '../fn/auth/acessar-auth';
 import { AcessarAuth$Params } from '../fn/auth/acessar-auth';
 import { AcessoPayload } from '../models/acesso-payload';
 import { AuthorizationOutput } from '../models/authorization-output';
+import { desconectarDispositivoAuth } from '../fn/auth/desconectar-dispositivo-auth';
+import { DesconectarDispositivoAuth$Params } from '../fn/auth/desconectar-dispositivo-auth';
+import { desconectarOutrosDispositivosAuth } from '../fn/auth/desconectar-outros-dispositivos-auth';
+import { DesconectarOutrosDispositivosAuth$Params } from '../fn/auth/desconectar-outros-dispositivos-auth';
+import { getDispositivosAuth } from '../fn/auth/get-dispositivos-auth';
+import { GetDispositivosAuth$Params } from '../fn/auth/get-dispositivos-auth';
 import { logoutAuth } from '../fn/auth/logout-auth';
 import { LogoutAuth$Params } from '../fn/auth/logout-auth';
 import { profileAuth } from '../fn/auth/profile-auth';
@@ -104,6 +110,81 @@ export class AuthService extends BaseService {
     );
   }
 
+  /** Path part for operation `getDispositivosAuth()` */
+  static readonly GetDispositivosAuthPath = '/auth/Dispositivos';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getDispositivosAuth()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getDispositivosAuth$Response(params?: GetDispositivosAuth$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return getDispositivosAuth(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getDispositivosAuth$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getDispositivos(params?: GetDispositivosAuth$Params, context?: HttpContext): Observable<void> {
+    return this.getDispositivosAuth$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `desconectarDispositivoAuth()` */
+  static readonly DesconectarDispositivoAuthPath = '/auth/DesconectarDispositivo';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `desconectarDispositivoAuth()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  desconectarDispositivoAuth$Response(params?: DesconectarDispositivoAuth$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return desconectarDispositivoAuth(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `desconectarDispositivoAuth$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  desconectarDispositivo(params?: DesconectarDispositivoAuth$Params, context?: HttpContext): Observable<void> {
+    return this.desconectarDispositivoAuth$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `desconectarOutrosDispositivosAuth()` */
+  static readonly DesconectarOutrosDispositivosAuthPath = '/auth/DesconectarOutrosDispositivos';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `desconectarOutrosDispositivosAuth()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  desconectarOutrosDispositivosAuth$Response(params?: DesconectarOutrosDispositivosAuth$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return desconectarOutrosDispositivosAuth(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `desconectarOutrosDispositivosAuth$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  desconectarOutrosDispositivos(params?: DesconectarOutrosDispositivosAuth$Params, context?: HttpContext): Observable<void> {
+    return this.desconectarOutrosDispositivosAuth$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
   /** Path part for operation `logoutAuth()` */
   static readonly LogoutAuthPath = '/auth/Logout';
 
@@ -154,36 +235,4 @@ export class AuthService extends BaseService {
     );
   }
 
-  /**
-   * Obtém os dispositivos vinculados ao usuário logado
-   */
-  dispositivos(context?: HttpContext): Observable<ConnectedDevice[]> {
-    return this.http.post<ConnectedDevice[]>(`${this.rootUrl}/auth/Dispositivos`, {}, { context });
-  }
-
-  /**
-   * Desconecta um dispositivo vinculado pelo seu id (chaveAcesso)
-   */
-  desconectarDispositivo(chaveAcesso: string, context?: HttpContext): Observable<{ success: boolean; isCurrent?: boolean }> {
-    return this.http.post<{ success: boolean; isCurrent?: boolean }>(`${this.rootUrl}/auth/DesconectarDispositivo`, { chaveAcesso }, { context });
-  }
-
-  /**
-   * Desconecta todos os outros dispositivos vinculados
-   */
-  desconectarOutrosDispositivos(context?: HttpContext): Observable<{ success: boolean }> {
-    return this.http.post<{ success: boolean }>(`${this.rootUrl}/auth/DesconectarOutrosDispositivos`, {}, { context });
-  }
-
-}
-
-export interface ConnectedDevice {
-  id: string;
-  ip?: string;
-  browser?: string;
-  os?: string;
-  deviceType?: 'mobile' | 'tablet' | 'desktop';
-  createdAt?: string | Date;
-  isCurrent?: boolean;
-  isOnline?: boolean;
 }

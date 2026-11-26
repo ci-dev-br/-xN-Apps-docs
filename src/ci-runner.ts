@@ -84,12 +84,24 @@ export class CiRunner extends RunnerX {
     }
     async services() {
         setTimeout(() => {
+            console.log('[Start ubuntu WSL em background]');
+            const wslProcess = spawn('wsl.exe', ['-d', 'Ubuntu'], {
+                cwd: 'C:\\projetos\\br.dev.ci.apps\\server\\',
+                env: process.env,
+                detached: true,
+                stdio: 'ignore',
+                shell: true
+            });
+
+            wslProcess.unref();
+        }, 0);
+        setTimeout(() => {
             console.log('[Start AutoRun Apps Ci Dev Br]');
             spawn('powershell.exe', ['-ExecutionPolicy', 'Bypass', '-File', 'run.ps1'], {
                 cwd: 'C:\\projetos\\br.dev.ci.apps\\server\\',
                 env: process.env,
                 stdio: 'inherit',
             });
-        },)
+        }, 0)
     }
 }

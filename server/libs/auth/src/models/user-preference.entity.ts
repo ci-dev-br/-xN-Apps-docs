@@ -23,8 +23,7 @@ export class UserPreference {
     })
     user?: User;
     @PrimaryColumn()
-    @ApiProperty({ nullable: true, required: false })
-    @Column({ nullable: true })
+    @ApiProperty({ nullable: false, required: true })
     code?: string;
     @ApiProperty({ nullable: true, required: false })
     @Column({ nullable: true })

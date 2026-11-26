@@ -10,7 +10,12 @@ import { randomUUID } from 'crypto';
 import { AuthService } from '../service/auth.service';
 import { Request, Response } from 'express';
 import { TwoFactorAuthenticationService } from '../service/two-factors.service';
+import { InviteService } from '../service/invite.service';
 import { BusService } from '@ci/core';
+import * as argon2 from 'argon2';
+import { BadRequestException } from '@nestjs/common';
+const sharp = require('sharp');
+
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -20,6 +25,7 @@ export class AuthController {
     private readonly jwtService: JwtService,
     private readonly authService: AuthService,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
+    private readonly inviteService: InviteService,
   ) { }
   @Public()
   @Post('Registrar')
@@ -28,40 +34,116 @@ export class AuthController {
     type: User
   })
   async registrar(
+    @Ip() ip: string,
     @Req() req: Request,
     @Body() input?: RegistrarInputDto,
   ) {
-    /***
-     * 
-     * 1 . solicita e-mail / numero celular 
-     * 2 . envia mensagem de confirmação com link para continuação do cadastro
-     * 3 . permite o usuário criar uma senha para acesso rápido ou outra forma de autenticação
-     * 
-     */
-    // console.info(req.headers);
     try {
-      if ((!!input.email || !!input.phone) && !input.identificacao) {
-        // TODO: solicitar verificação do e-mail de contato do usuário cadastrante (Cliente ou Desenvolvedor).        
-      } else {
-        throw new Error('Erro temporário, tente novamente mais tarde.');
+      if (!input) {
+        throw new BadRequestException('Dados de cadastro não fornecidos.');
       }
-      /* const created_user = await this.userService.registrar({
-         email: input.email,
-         fullName: input.fullName,
-         emailVerificado: false,
-         surname: input.surname,
-         password: await argon2.hash(input.password),
-         username: input.identificacao,
-         phone: input.phone,
-         passwordMode: 'argon2',
-       });
-       return created_user; */
-    } catch (error) {
-      console.trace(error);
+
+      const inviteCode = (input.invite || input.convite || '').trim();
+      let inviteData: any = null;
+      if (inviteCode) {
+        inviteData = await this.inviteService.getInvite(inviteCode);
+        if (inviteData?.accepted) {
+          throw new BadRequestException('Este convite já foi utilizado para cadastro.');
+        }
+      }
+
+      const email = (input.email || inviteData?.email || '').trim().toLowerCase();
+      const phone = (input.phone || '').trim() || undefined;
+      if (!email && !phone) {
+        throw new BadRequestException('Informe um e-mail ou telefone válido para o cadastro.');
+      }
+
+      const fullName = (input.fullName || inviteData?.friendlyName || email.split('@')[0] || 'Usuário').trim();
+      const surname = (input.surname || fullName.split(' ')[0] || fullName).trim();
+      const rawUsername = (input.identificacao || email.split('@')[0] || `user_${Date.now()}`)
+        .trim()
+        .replace(/\s+/g, '.');
+
+      const assignedRoles: string[] = Array.isArray(inviteData?.roles) && inviteData.roles.length > 0
+        ? Array.from(new Set(['USER', ...inviteData.roles]))
+        : ['USER'];
+
+      const rawPassword = input.password || randomUUID();
+      const hashedPassword = await argon2.hash(rawPassword);
+
+      const created_user = await this.userService.registrar({
+        email: email || undefined,
+        fullName,
+        emailVerificado: Boolean(inviteData),
+        surname,
+        password: hashedPassword,
+        username: rawUsername,
+        phone,
+        passwordMode: 'argon2',
+        roles: assignedRoles,
+      });
+
+      // Marca o convite como aceito
+      if (inviteCode || email) {
+        await this.inviteService.markInviteAccepted(inviteCode, email);
+      }
+
+      // Cria sessão autenticada para login imediato após conclusão do cadastro
+      let authSession: any = {};
+      try {
+        let chave = await this.credencialService.solicitarCredencial({
+          ip: ip || req.ip,
+          headers: req.headers as any,
+        });
+        if (chave && created_user?.id) {
+          chave.identifiedUser = created_user.id;
+          chave.valid = true;
+          chave.alive = true;
+          chave = await this.credencialService.atualizar(chave);
+
+          const permission_uuid = randomUUID();
+          const refresh_token = await this.jwtService.signAsync(
+            {
+              userId: created_user.id,
+              chaveAcesso: chave.id,
+              permission: permission_uuid,
+              try: btoa(JSON.stringify({
+                permission: permission_uuid,
+                chaveAcesso: chave.id,
+                userId: created_user.id
+              }, null, 2))
+            },
+            { expiresIn: '1d' },
+          );
+          await this.userService.updateRefreshToken(created_user.id, permission_uuid);
+
+          const bearer = await this.jwtService.signAsync({
+            id: created_user.id,
+            roles: created_user.roles || ['USER'],
+            permission: permission_uuid,
+            chaveAcesso: chave.id,
+          });
+
+          authSession = {
+            chaveAcesso: chave.id,
+            bearer,
+            refreshToken: refresh_token,
+          };
+        }
+      } catch (sessionErr) {
+        console.warn('[AuthController.registrar] Aviso ao criar sessão automática:', sessionErr);
+      }
+
+      const { password, refreshToken, ...safeUser } = created_user as any;
       return {
-        status: 500,
-        message: error,
-      }
+        ...safeUser,
+        user: safeUser,
+        ...authSession,
+        activeApps: ['Loja'],
+      };
+    } catch (error: any) {
+      console.trace(error);
+      throw error;
     }
   }
   @Post('Profile')
@@ -74,7 +156,18 @@ export class AuthController {
   ) {
     try {
       let { refreshToken, password, ...user } = await this.userService.findById((req as any)?.user?.id);
-      return user;
+      return {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        fullName: user.fullName,
+        surname: user.surname || user.fullName || user.username || user.email,
+        photo: {
+          /*   originalFile: user.photo.originalFile,
+            format: user.photo.format */
+        },
+        roles: (user.roles && user.roles.length > 0) ? user.roles : ['USER'],
+      };
     } catch (error) {
       console.trace(error);
       return {
@@ -83,6 +176,14 @@ export class AuthController {
       }
     }
   }
+  /**
+   * Solicitação de Acesso
+   * 
+   * @param ip 
+   * @param payload 
+   * @param req 
+   * @param res 
+   */
   @Public()
   @Post('Acessar')
   @ApiOperation({ operationId: 'AcessarAuth' })
@@ -119,13 +220,13 @@ export class AuthController {
               }, null, 2))
             },
             {
-              expiresIn: '90d',
+              expiresIn: '1d',
             },
           );
           const refreshTokenArg2 = await this.userService.updateRefreshToken(authenticated_user.id, permission_uuid);
           chave.valid = true;
           chave.alive = true;
-          chave.refreshToken = refreshTokenArg2;
+          // chave.refreshToken = refreshTokenArg2;
           await this.credencialService.atualizar(chave);
           const { /* photo, */ ...user_payload } = authenticated_user;
           res.json({
@@ -164,11 +265,12 @@ export class AuthController {
         });
       }
     } catch (error) {
-      console.trace(error);
-      res.status(error?.status || 500).json({
-        status: 500,
-        message: 'Falha'
-      } as any);
+      if (!!error && typeof (error as any).status === 'number')
+        res.status(((error as any)?.status) || 500).json({
+          status: 500,
+          message: 'Falha'
+        })
+      else console.trace(error);
     }
   }
   @Post('Dispositivos')
@@ -191,7 +293,6 @@ export class AuthController {
       return [];
     }
   }
-
   @Post('DesconectarDispositivo')
   @ApiOperation({ operationId: 'DesconectarDispositivoAuth' })
   async desconectarDispositivo(@Req() req: any, @Body() body: { chaveAcesso: string }) {
@@ -235,7 +336,6 @@ export class AuthController {
       return { success: false, error: (error as any)?.message };
     }
   }
-
   @Post('Logout')
   @ApiOperation({ operationId: 'LogoutAuth' })
   async logout(@Req() req) {
@@ -244,7 +344,8 @@ export class AuthController {
     } catch (error) {
       console.trace(error);
       return {
-        status: error.status || 500,
+        status: typeof error === 'object' && typeof (error as any).status === 'number' ?
+          (error as { status: number }).status || 500 : 509,
         message: 'Falha'
       } as any
     }
@@ -266,12 +367,11 @@ export class AuthController {
       )));
     } catch (error) {
       console.trace(error);
-      const return_message = {
-        status: error.status || 500,
-        error,
-        message: error?.message || 'Ocorreu um erro não identificado relaizar a operação de refresh do token de acesso'
-      } as any;
-      res.status(return_message.status).json(return_message);
+      return {
+        status: typeof error === 'object' && typeof (error as any).status === 'number' ?
+          (error as { status: number }).status || 500 : 509,
+        message: 'Falha'
+      } as any
     }
   }
 }

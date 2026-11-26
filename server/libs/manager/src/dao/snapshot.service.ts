@@ -20,7 +20,7 @@ export class SnapshotService {
     }
     async carregarUltimoHash() {
         try {
-            const hash = await this.snapRepo.findOne({ order: { createdAt: 'ASC' } });
+            const hash = await this.snapRepo.findOne({ where: {}, order: { createdAt: 'ASC' } });
             if (!!hash && !!hash.hash)
                 this.lastSnapshotHash = hash.hash;
         } catch (error) {

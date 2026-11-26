@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query, Req, UnauthorizedException } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { MessageService } from "../service/message.service";
+import { ConversationResponseDto, SendMessageDto, StartConversationDto } from "./dto/messager.dto";
 
 @ApiTags('Messager')
 @Controller('Messager')
@@ -14,6 +15,11 @@ export class MessagerController {
      */
     @Get('Conversations')
     @ApiOperation({ operationId: 'MessagerGetConversations' })
+    @ApiResponse({
+        type: ConversationResponseDto,
+        isArray: true,
+        description: 'Lista de conversas do usuário autenticado',
+    })
     async getConversations(@Req() req: any) {
         const userId = req.user?.id;
         if (!userId) {
@@ -27,12 +33,16 @@ export class MessagerController {
      */
     @Post('Conversations')
     @ApiOperation({ operationId: 'MessagerStartConversation' })
-    async startConversation(@Body() body: { targetUserId: string }, @Req() req: any) {
+    @ApiResponse({
+        type: ConversationResponseDto,
+        description: 'Conversa criada ou obtida com sucesso',
+    })
+    async startConversation(@Body() body: StartConversationDto, @Req() req: any) {
         const userId = req.user?.id;
         if (!userId) {
             throw new UnauthorizedException('É necessário estar autenticado para iniciar conversa.');
         }
-        return await this.messageService.obterOuCriarConversa(userId, body.targetUserId, req.user);
+        return await this.messageService.obterOuCriarConversa(userId, body?.targetUserId, req.user);
     }
 
     /**
@@ -55,11 +65,7 @@ export class MessagerController {
     @ApiOperation({ operationId: 'MessagerSendMessage' })
     async sendMessage(
         @Param('id') conversationId: string,
-        @Body() body: {
-            encryptedContent: string;
-            attachments?: any[];
-            iv?: string;
-        },
+        @Body() body: SendMessageDto,
         @Req() req: any,
     ) {
         const user = req.user;

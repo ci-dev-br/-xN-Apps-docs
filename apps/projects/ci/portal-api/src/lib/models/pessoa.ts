@@ -1,12 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
+import { Credential } from '../models/credential';
 import { DocumentoIdentificacao } from '../models/documento-identificacao';
 import { Endereco } from '../models/endereco';
 import { InformacaoContato } from '../models/informacao-contato';
 export interface Pessoa {
   createdAt?: Date | null;
-  createdBy?: {
-} | null;
+  createdBy?: Credential | null;
   deleted?: boolean | null;
   documentos?: Array<DocumentoIdentificacao> | null;
   emailPessoal?: string | null;
@@ -15,8 +15,7 @@ export interface Pessoa {
   informacoesContato?: Array<InformacaoContato> | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
-  lastModifiedBy?: {
-} | null;
+  lastModifiedBy?: Credential | null;
 
   /**
    * Nome

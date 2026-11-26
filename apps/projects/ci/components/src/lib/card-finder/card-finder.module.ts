@@ -1,4 +1,4 @@
-import { Inject, ModuleWithProviders, NgModule, Optional, Pipe, PipeTransform } from "@angular/core";
+import { ModuleWithProviders, NgModule } from "@angular/core";
 import { CoreModule } from "@ci/core";
 import { InputModule } from "../input/input.module";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -10,6 +10,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { WindowModule } from "../window/src/window.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatChipsModule } from "@angular/material/chips";
 import { RouterModule } from "@angular/router";
 import { CardFinderComponent } from "./card-finder.component";
 
@@ -23,6 +24,7 @@ import { CardFinderComponent } from "./card-finder.component";
         MatDialogModule,
         MatInputModule,
         MatFormFieldModule,
+        MatChipsModule,
         FormsModule,
         DragDropModule,
         WindowModule,

@@ -14,7 +14,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { AuthModule, UserAuthenticationService } from '@ci/auth';
-import { CoreModule, DaoService } from '@ci/core';
+import { CoreModule, DaoService, ApplicationCatalogService } from '@ci/core';
 import { Application, ApplicationService, User, UserService } from '@ci/portal-api';
 import { lastValueFrom, Subscription } from 'rxjs';
 
@@ -119,6 +119,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         @Optional() private readonly userService?: UserService,
         @Optional() private readonly authUserService?: UserAuthenticationService,
         @Optional() private readonly applicationService?: ApplicationService,
+        @Optional() private readonly catalogService?: ApplicationCatalogService,
     ) { }
 
     ngOnInit(): void {
@@ -171,6 +172,15 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         this.updateUserSubscriptions(user);
         this.filterApps();
+
+        this.isDeveloper = Boolean(
+            user.roles?.includes('DEVELOPER') ||
+            user.roles?.includes('ADMIN') ||
+            user.roles?.includes('MASTER')
+        );
+        if (this.isDeveloper) {
+            this.loadGratitudeSummary();
+        }
     }
 
     /**
@@ -793,5 +803,83 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.feedbackMessage = undefined;
             }
         }, 6000);
+    }
+
+    // ==========================================
+    // Gratidão de Desenvolvedor (ROLE DEVELOPER)
+    // ==========================================
+    protected isDeveloper = false;
+    protected gratitudeSummary: any = null;
+    protected gratitudeUnitValue: number = 0.10;
+    protected gratitudeAutoConvert: boolean = false;
+    protected isSavingGratitude = false;
+    protected isConvertingGratitude = false;
+    protected loadingGratitude = false;
+
+    public loadGratitudeSummary() {
+        if (!this.catalogService) return;
+        this.loadingGratitude = true;
+        this.catalogService.getDeveloperGratitudeSummary().subscribe({
+            next: (res) => {
+                this.loadingGratitude = false;
+                this.gratitudeSummary = res;
+                if (res) {
+                    this.gratitudeUnitValue = Number(res.unitValue) || 0.10;
+                    this.gratitudeAutoConvert = Boolean(res.autoConvert);
+                }
+            },
+            error: (err) => {
+                this.loadingGratitude = false;
+                console.warn('[Profile] Falha ao carregar resumo de gratidão:', err?.message || err);
+            }
+        });
+    }
+
+    public saveGratitudeConfig() {
+        if (!this.catalogService) return;
+        if (this.gratitudeUnitValue < 0 || isNaN(this.gratitudeUnitValue)) {
+            this.showFeedback('O valor unitário da gratidão deve ser um número válido maior ou igual a zero.', 'error');
+            return;
+        }
+
+        this.isSavingGratitude = true;
+        this.catalogService.setDeveloperGratitudeConfig(Number(this.gratitudeUnitValue), this.gratitudeAutoConvert).subscribe({
+            next: (res) => {
+                this.isSavingGratitude = false;
+                this.showFeedback('Configuração de gratidão atualizada com sucesso no seu perfil!', 'success');
+                this.loadGratitudeSummary();
+            },
+            error: (err) => {
+                this.isSavingGratitude = false;
+                this.showFeedback(`Erro ao salvar configuração: ${err?.error?.message || err?.message || 'Tente novamente.'}`, 'error');
+            }
+        });
+    }
+
+    public convertGratitude() {
+        if (!this.catalogService) return;
+        if (!this.gratitudeSummary?.unconvertedCredits || this.gratitudeSummary.unconvertedCredits <= 0) {
+            this.showFeedback('Você não possui créditos de gratidão pendentes para conversão.', 'info');
+            return;
+        }
+
+        this.isConvertingGratitude = true;
+        this.catalogService.convertGratitudeToBalance().subscribe({
+            next: (res) => {
+                this.isConvertingGratitude = false;
+                this.showFeedback(
+                    `Sucesso! ${res.convertedCredits} crédito(s) convertidos em R$ ${res.creditedValor?.toFixed(2)} de saldo financeiro na sua Carteira!`,
+                    'success'
+                );
+                this.loadGratitudeSummary();
+            },
+            error: (err) => {
+                this.isConvertingGratitude = false;
+                this.showFeedback(
+                    `Erro ao converter gratidão: ${err?.error?.message || err?.message || 'Tente novamente.'}`,
+                    'error'
+                );
+            }
+        });
     }
 }

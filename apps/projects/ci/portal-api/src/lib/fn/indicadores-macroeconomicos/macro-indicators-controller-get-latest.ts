@@ -12,7 +12,7 @@ export interface MacroIndicatorsControllerGetLatest$Params {
 }
 
 export function macroIndicatorsControllerGetLatest(http: HttpClient, rootUrl: string, params?: MacroIndicatorsControllerGetLatest$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<MacroIndicator>>> {
-  const rb = new RequestBuilder(rootUrl, macroIndicatorsControllerGetLatest.PATH, 'post');
+  const rb = new RequestBuilder(rootUrl, macroIndicatorsControllerGetLatest.PATH, 'get');
   if (params) {
   }
 

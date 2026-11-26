@@ -16,6 +16,7 @@ import { NgxMaskConfig, NgxMaskDirective, provideEnvironmentNgxMask, provideNgxM
 import { IItemMenu } from '@ci/components/window';
 import { AuthModule, ProfileMenu, USER_MENU } from '@ci/auth';
 import { PainelComponent } from './painel/painel.component';
+import { MyEndMenu } from './app.menu';
 
 const maskConfig: Partial<NgxMaskConfig> = {
   validation: false,
@@ -24,15 +25,6 @@ const maskConfig: Partial<NgxMaskConfig> = {
 const SETUP = {
   API_URL_GATEWAY: 'https://apps.ci.dev.br',
   ALTERN_GATEWAYS: [
-    // 'https://lorelei.ci.dev.br',
-    // 'https://srv33.internals.ci.dev.br:446',
-    // 'https://srv33.internals.ci.dev.br:664',
-    // 'wss://srv33.internals.ci.dev.br:664',
-    // 'ws://srv33.internals.ci.dev.br:87',
-    // 'wss://apps.ci.dev.br:446',
-    // 'ws://apps.ci.dev.br:87',
-
-    //  'https://paulorettamozo.com.br/dry'
   ],
   UNSATLY_WS_COMMON: 'wss://apps.ci.dev.br',
 }
@@ -68,38 +60,8 @@ export const appConfig: ApplicationConfig = {
       ]
     }),
     { provide: CardSetting, useValue: Cards },
-    {
-      provide: USER_MENU, useValue: [
-        {
-          component: ProfileMenu,
-          /* 
-          {{ (user | async)?.fullName || (user | async)?.username}}
-          */
-          label: 'Username'
-        },
-        /* {
-          label: 'Minha Conta',
-          onClick: (painel?: HomepageComponent) => {
-            painel?.profile();
-          }
-        },
-        {
-          label: 'Ajustar Visibilidade',
-          icon: 'visibility',
-          onClick: (painel?: PainelComponent) => {
-          }
-        },*/
-        {
-          label: 'Sair',
-          onClick: (painel?: PainelComponent) => {
-            painel?.sair();
-          }
-        },
-      ] as IItemMenu
-    },
+    { provide: USER_MENU, useValue: MyEndMenu },
     provideEnvironmentNgxMask(maskConfig),
     ...(AuthModule.forRoot().providers || []),
-
-
   ],
 };

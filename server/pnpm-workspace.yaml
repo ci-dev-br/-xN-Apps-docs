@@ -1,0 +1,9 @@
+allowBuilds:
+  '@nestjs/core': true
+  '@tensorflow/tfjs-node': true
+  argon2: true
+  canvas: false
+  core-js: false
+  node-pty: false
+  protobufjs: false
+  vlc-static: false

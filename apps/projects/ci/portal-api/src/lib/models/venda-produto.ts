@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+import { Credential } from '../models/credential';
 import { Pagamento } from '../models/pagamento';
 import { Produto } from '../models/produto';
 export interface VendaProduto {
@@ -10,13 +11,11 @@ export interface VendaProduto {
 };
   clienteId: number;
   createdAt?: Date | null;
-  createdBy?: {
-} | null;
+  createdBy?: Credential | null;
   deleted?: boolean | null;
   internalId?: string | null;
   lastModifiedAt?: Date | null;
-  lastModifiedBy?: {
-} | null;
+  lastModifiedBy?: Credential | null;
   pagamento: Pagamento;
   precoUnitario: number;
   produto: Produto;

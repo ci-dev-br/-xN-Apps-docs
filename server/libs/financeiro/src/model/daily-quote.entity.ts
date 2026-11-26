@@ -31,6 +31,14 @@ import { schema } from '../norms';
     @Column('bigint')
     volume: number;
 
+    @ApiProperty({ example: 'Yahoo Finance (v8)', description: 'Fonte da extração da cotação', required: false })
+    @Column({ length: 120, nullable: true })
+    source?: string;
+
+    @ApiProperty({ example: '2026-11-21T07:00:00.000Z', description: 'Data e hora em que a cotação foi extraída', required: false })
+    @Column({ name: 'extracted_at', type: 'timestamp', nullable: true })
+    extractedAt?: Date;
+
     @ManyToOne(() => Asset, (asset) => asset.quotes)
     @JoinColumn({ name: 'asset_id' })
     asset: Asset;

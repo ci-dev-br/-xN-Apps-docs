@@ -1,15 +1,21 @@
-import { Component } from '@angular/core';
-import { CoreModule } from '@ci/core';
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'ci-logo',
     imports: [
-        CoreModule,
+        CommonModule,
+        RouterModule,
     ],
     standalone: true,
     templateUrl: './logo.component.html',
     styleUrl: './logo.component.scss'
 })
 export class LogoComponent {
-    link = undefined; // location.origin;
+    @Input() link?: string = '/';
+
+    isExternalLink(url?: string): boolean {
+        return !!url && (url.startsWith('http://') || url.startsWith('https://'));
+    }
 }

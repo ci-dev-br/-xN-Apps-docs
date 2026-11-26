@@ -7,13 +7,16 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import { Application } from '../../models/application';
+import { SyncPayloadDao } from '../../models/sync-payload-dao';
 
 export interface SyncApplication$Params {
+      body: SyncPayloadDao
 }
 
-export function syncApplication(http: HttpClient, rootUrl: string, params?: SyncApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
+export function syncApplication(http: HttpClient, rootUrl: string, params: SyncApplication$Params, context?: HttpContext): Observable<StrictHttpResponse<Application>> {
   const rb = new RequestBuilder(rootUrl, syncApplication.PATH, 'post');
   if (params) {
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(

@@ -1,11 +1,11 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { LancamentoFinanceiro } from "./model/lancamento-financeiro.entity";
 import { BillingType } from "./model/billing-type.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { FaturamentoController } from "./controller/faturamento.controller";
 import { Transacao } from "./model/transacao.entity";
 import { I11nModule } from "@ci/i11n";
-import { CasdastroModule } from "@ci/cadastro";
+import { CadastroModule } from "@ci/cadastro";
 import { ContaFinanceira } from "./model/conta-financeira.entity";
 import { ClienteFinanceiro } from "./model/cliente-financeiro.entity";
 import { LancamentoFinanceiroController } from "./controller/lancamento-financeiro.controller";
@@ -27,11 +27,18 @@ import { InflationController } from "./controller/inflation.controller";
 import { InflationService } from "./service/inflation.service";
 import { MacroIndicatorsService } from "./service/macro-indicators.service";
 import { MacroIndicatorsController } from "./controller/macro-indicators.controller";
+import { QuotesController } from "./controller/quote.controller";
+import { QuotesService } from "./service/quotes.services";
 import { FinancialsService } from "./service/financials.service";
 import { FinancialsController } from "./controller/financials.controller";
 import { IndicatorConfig } from "./model/indicator-config.entity";
 import { IndicatorConfigService } from "./service/indicator-config.service";
 import { CategoryEvent } from "@ci/seo-marketing/models/category-event.entity";
+import { Carteira } from "./model/carteira.entity";
+import { TransacaoCarteira } from "./model/transacao-carteira.entity";
+import { CarteiraService } from "./service/carteira.service";
+import { CarteiraController } from "./controller/carteira.controller";
+
 export const FinanceiroEntities = [
     LancamentoFinanceiro,
     BillingType,
@@ -47,8 +54,10 @@ export const FinanceiroEntities = [
     IndicatorConfig,
 
     CategoryEvent,
-
+    Carteira,
+    TransacaoCarteira,
 ];
+
 @Module({
     imports: [
         CoreModule,
@@ -57,12 +66,14 @@ export const FinanceiroEntities = [
         ]),
         I11nModule,
         TenantModule,
-        ManagerModule,
-        CasdastroModule,
+        forwardRef(() => ManagerModule),
+        CadastroModule,
         ScheduleModule.forRoot(),
     ],
     exports: [
         LancamentoFinanceiroService,
+        CarteiraService,
+        QuotesService,
     ],
     controllers: [
         LancamentoFinanceiroController,
@@ -71,6 +82,8 @@ export const FinanceiroEntities = [
         InflationController,
         MacroIndicatorsController,
         FinancialsController,
+        CarteiraController,
+        QuotesController,
     ],
     providers: [
         LancamentoFinanceiroService,
@@ -81,9 +94,12 @@ export const FinanceiroEntities = [
         MacroIndicatorsService,
         FinancialsService,
         IndicatorConfigService,
+        CarteiraService,
+        QuotesService,
     ],
 })
 export class FinanceiroModule { }
+
 export {
     LancamentoFinanceiro,
     BillingType,
@@ -94,4 +110,8 @@ export {
     DailyQuote,
     FinancialStatement,
     IndicatorConfig,
+    Carteira,
+    TransacaoCarteira,
+    CarteiraService,
+    CarteiraController,
 }

@@ -13,4 +13,6 @@ export class EzPlayer extends FullAuditedEntity {
     @OneToMany(() => User, 'player') user?: User;
     @ManyToOne(() => EzGamePlay, gameplay => gameplay.players, { nullable: true })
     gameplay?: EzGamePlay;
+    @Column({ nullable: true, type: 'jsonb' })
+    skin?: any;
 }

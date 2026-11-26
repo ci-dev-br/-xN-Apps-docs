@@ -1,17 +1,45 @@
 :host {
-    position: relative;
-    align-self: stretch;
-    self-align: center;
-    flex: auto;
-    height: 48px;
-    min-width: 96px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    vertical-align: middle;
+    flex-shrink: 0;
 }
 
-img {
-    position: absolute;
-    inset: 0 0 0 0;
+.logo-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     height: 100%;
-    width: 100%;
+    text-decoration: none;
+    outline: none;
+    border-radius: 8px;
+    padding: 2px 4px;
+    transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), filter 0.2s ease;
+
+    &:hover {
+        transform: scale(1.03);
+        filter: brightness(1.06) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.12));
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--mat-sys-primary, #1976d2);
+        outline-offset: 2px;
+    }
+}
+
+img,
+.logo-img {
+    display: block;
+    height: 38px;
+    max-height: 100%;
+    width: auto;
     object-fit: contain;
-    object-position: center;
+    user-select: none;
+    pointer-events: none;
 }

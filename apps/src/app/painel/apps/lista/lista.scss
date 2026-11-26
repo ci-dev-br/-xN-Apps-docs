@@ -41,7 +41,7 @@
     overflow: auto;
 }
 
-@mixin app($size: 150px) {
+@mixin app($size: 200pt) {
     .app {
         @include word-wrap-limit(7);
         flex: 1;
@@ -121,7 +121,7 @@
             padding: 0;
             margin: 0;
 
-            @include app(30%);
+            @include app(40%);
             font-size: .7rem;
         }
     }
@@ -129,4 +129,11 @@
 
 @mixin card($size : 12vw) {
     box-shadow: 3px 3px 6px rgba(0, 0, 0, .9);
+}
+
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
 }

@@ -7,34 +7,47 @@
         </div>
     </div>
 
-    <!-- Caixa de Envio de Comentário para Quem Está Logado -->
-    @if(isLoggedIn) {
-        <div class="comment-input-box">
-            <div class="user-avatar-mini">
-                <span class="avatar-initials">{{ getAuthorInitials(currentUser) }}</span>
-            </div>
-            <div class="input-form">
-                <mat-form-field appearance="outline" class="comment-field">
-                    <mat-label>Participe da conversa...</mat-label>
-                    <textarea matInput [(ngModel)]="newCommentText" rows="2" placeholder="Deixe sua opinião sobre esta notícia..." [disabled]="sending" (keydown.enter)="onEnterPressed($event)"></textarea>
-                    <mat-hint>Pressione Ctrl+Enter para enviar</mat-hint>
-                </mat-form-field>
-                <div class="input-actions">
-                    <button mat-flat-button color="primary" [disabled]="!newCommentText.trim() || sending" (click)="enviarComentario()">
-                        @if(!sending) {
-                            <mat-icon>send</mat-icon>
-                        }
-                        <span>{{ sending ? 'Enviando...' : 'Comentar' }}</span>
-                    </button>
+    <!-- Caixa de Envio de Comentário (Usuários Autenticados e Visitantes Anônimos Conectados) -->
+    @if(!isLoggedIn) {
+        <div class="anon-identity-banner">
+            <div class="anon-identity-left">
+                <mat-icon class="anon-icon">person_pin</mat-icon>
+                <div class="anon-identity-text">
+                    <strong>Modo Visitante Temporário: {{ anonymousUser?.surname || 'Anônimo Conectado' }}</strong>
+                    <small>Um perfil temporário exclusivo foi criado para sua conexão. <a routerLink="/acessar">Entrar na conta</a></small>
                 </div>
             </div>
-        </div>
-    } @else {
-        <div class="login-prompt-banner">
-            <mat-icon>lock_outline</mat-icon>
-            <span>Deseja participar da discussão? <a routerLink="/acessar">Entre na sua conta</a> para comentar e seguir outros leitores.</span>
+            <div class="anon-nickname-box">
+                <input
+                    type="text"
+                    class="anon-nickname-input"
+                    [(ngModel)]="anonymousNickname"
+                    placeholder="Seu apelido (opcional)"
+                    maxlength="28" />
+            </div>
         </div>
     }
+
+    <div class="comment-input-box">
+        <div class="user-avatar-mini" [class.anon-avatar]="!isLoggedIn">
+            <span class="avatar-initials">{{ getAuthorInitials(getActiveActor()) }}</span>
+        </div>
+        <div class="input-form">
+            <mat-form-field appearance="outline" class="comment-field">
+                <mat-label>{{ isLoggedIn ? 'Participe da conversa...' : 'Comentar como ' + (anonymousNickname || anonymousUser?.surname || 'Visitante Anônimo') + '...' }}</mat-label>
+                <textarea matInput [(ngModel)]="newCommentText" rows="2" placeholder="Deixe sua opinião sobre esta notícia..." [disabled]="sending" (keydown.enter)="onEnterPressed($event)"></textarea>
+                <mat-hint>Pressione Ctrl+Enter para enviar</mat-hint>
+            </mat-form-field>
+            <div class="input-actions">
+                <button mat-flat-button color="primary" [disabled]="!newCommentText.trim() || sending" (click)="enviarComentario()">
+                    @if(!sending) {
+                        <mat-icon>send</mat-icon>
+                    }
+                    <span>{{ sending ? 'Enviando...' : 'Comentar' }}</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Lista de Comentários -->
     <div class="comments-list">
@@ -62,8 +75,11 @@
                             <span class="author-name">
                                 {{ c.user?.surname || c.user?.fullName || c.user?.username || 'Anônimo' }}
                             </span>
-                            @if(c.user?.username) {
+                            @if(c.user?.username && !isAnonymousAuthor(c.user)) {
                                 <span class="author-handle">&#64;{{ c.user?.username }}</span>
+                            }
+                            @if(isAnonymousAuthor(c.user)) {
+                                <span class="badge badge-anon" title="Usuário temporário conectado anonimamente">Visitante</span>
                             }
 
                             <!-- Vínculo Social (Seguidor / Conhecido / Você) -->

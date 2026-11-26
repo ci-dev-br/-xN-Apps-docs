@@ -1,26 +1,49 @@
+@if (!inviteResult) {
 <form [formGroup]="form">
     <p>
-        Insira o endereço de email do usuário que você deseja convidar para a plataforma.
+        Insira o endereço de e-mail do convidado para gerar o <strong>invite-hash</strong> e enviar o link de cadastro por e-mail.
     </p>
     <p>
-        Você também pode adicionar uma mensagem personalizada que será incluída no convite.
+        Ao acessar o link, o convidado concluirá seu cadastro recebendo a <strong>ROLE 'USER'</strong> por padrão, com o aplicativo da <strong>Loja</strong> ativo e os aplicativos correspondentes permitidos para assinar.
     </p>
     <mat-form-field>
-        <mat-label>Endereço de Email</mat-label>
-        <input matInput placeholder=" Digite o email do usuário" formControlName="email" required>
-        <!--   <mat-error *ngIf="emailControl.invalid && (emailControl.dirty || emailControl.touched)"> -->
-        <!--   <mat-error *ngIf="emailControl.invalid && (emailControl.dirty || emailControl.touched)"> -->
-        <!--   Por favor, insira um endereço de email válido.
-        </mat-error> -->
+        <mat-label>Endereço de E-mail</mat-label>
+        <input matInput placeholder="Digite o e-mail do convidado" formControlName="email" required>
     </mat-form-field>
     <mat-form-field>
-        <mat-label>Nome do Usuário</mat-label>
-        <input matInput placeholder="Digite o nome do usuário" formControlName="friendlyName" required>
+        <mat-label>Nome do Convidado</mat-label>
+        <input matInput placeholder="Digite o nome do convidado" formControlName="friendlyName">
     </mat-form-field>
     <mat-form-field>
         <mat-label>Mensagem Personalizada</mat-label>
         <textarea matInput placeholder="Digite uma mensagem personalizada (opcional)" formControlName="mensagem"
             rows="4"></textarea>
     </mat-form-field>
-    <button mat-raised-button color="primary" (click)="enviarConvite()">Enviar Convite</button>
+    <button mat-raised-button color="primary" type="button" [disabled]="isSending" (click)="enviarConvite()">
+        {{ isSending ? 'Gerando convite e enviando e-mail...' : 'Enviar Convite' }}
+    </button>
 </form>
+} @else {
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 12px 4px;">
+    <h3 style="margin: 0; color: #16a34a;">Convite registrado e enviado com sucesso!</h3>
+    <p style="margin: 0;">
+        O convidado <strong>{{ inviteResult.friendlyName || inviteResult.email }}</strong> ({{ inviteResult.email }}) recebeu o <code>invite-hash</code> por e-mail.
+    </p>
+    <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px;">
+        <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">Invite Hash gerado:</div>
+        <code style="word-break: break-all; font-weight: 600;">{{ inviteResult.inviteHash }}</code>
+        @if (inviteResult.registrationLink) {
+        <div style="font-size: 12px; color: #64748b; margin-top: 10px; margin-bottom: 4px;">Link direto de cadastro:</div>
+        <a [href]="inviteResult.registrationLink" target="_blank" style="word-break: break-all; font-size: 13px;">{{ inviteResult.registrationLink }}</a>
+        }
+    </div>
+    <div style="display: flex; gap: 8px; justify-content: flex-end;">
+        @if (inviteResult.registrationLink) {
+        <button mat-stroked-button type="button" (click)="copiarLink()">
+            {{ copied ? 'Link Copiado!' : 'Copiar Link' }}
+        </button>
+        }
+        <button mat-raised-button color="primary" type="button" (click)="fechar()">Concluir</button>
+    </div>
+</div>
+}

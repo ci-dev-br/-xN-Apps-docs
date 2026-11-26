@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, SimpleChanges, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -39,7 +39,7 @@ declare const monaco: any;
     templateUrl: './code-editor.component.html',
     styleUrl: './code-editor.component.scss'
 })
-export class CodeEditorComponent implements OnDestroy {
+export class CodeEditorComponent implements OnChanges, OnDestroy {
     @ViewChild('editorContainer') editorContainerRef?: ElementRef<HTMLDivElement>;
 
     fullscreen = false;
@@ -66,9 +66,21 @@ export class CodeEditorComponent implements OnDestroy {
     commitDescription = '';
 
     @Input() language?: string;
-    value?: string;
-    originalValue?: string;
+    @Input() value?: string;
+    @Input() originalValue?: string;
     isDirty = false;
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['value'] && this.value !== undefined) {
+            this.carregando = false;
+            if (this.editorInstance && this.editorInstance.getValue() !== this.value) {
+                this.editorInstance.setValue(this.value);
+            }
+        }
+        if (changes['language'] && this.language && this.editorInstance) {
+            this.selectLanguage(this.language);
+        }
+    }
 
     // Métricas da barra de status
     cursorLine = 1;

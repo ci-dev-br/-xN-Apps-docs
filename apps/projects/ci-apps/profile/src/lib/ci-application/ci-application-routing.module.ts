@@ -5,26 +5,54 @@ const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
+    title: 'Meu Perfil',
     data: {
+      appName: 'Profile',
+      icon: 'account_box',
       group: 'user-menu',
+      navbar: {
+        id: 'profile-home',
+        slot: 'user-menu',
+        label: 'Meu Perfil',
+        icon: 'account_box',
+        order: 10,
+      },
     },
-    children: [
-      /* {
-        path: 'seguranca',
-        title: 'Segurança',
-        data: {
-        },
-        children: [
-          {
-            title: 'Configurações',
-            path: 'settings', data: {
-
-            }
-          }
-        ]
-      } */
-    ]
-  }
+  },
+  {
+    path: 'seguranca',
+    component: HomeComponent,
+    title: 'Segurança',
+    data: {
+      appName: 'Profile',
+      icon: 'security',
+      group: 'user-menu',
+      navbar: {
+        id: 'profile-seguranca',
+        slot: 'user-menu',
+        label: 'Segurança',
+        icon: 'security',
+        order: 20,
+      },
+    },
+  },
+  {
+    path: 'settings',
+    component: HomeComponent,
+    title: 'Configurações',
+    data: {
+      appName: 'Profile',
+      icon: 'settings',
+      group: 'user-menu',
+      navbar: {
+        id: 'profile-settings',
+        slot: 'user-menu',
+        label: 'Configurações',
+        icon: 'settings',
+        order: 30,
+      },
+    },
+  },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

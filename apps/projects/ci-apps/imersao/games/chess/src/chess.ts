@@ -91,7 +91,7 @@ export class ChessGameComponent implements OnInit {
     private resetGame() {
         this.stage = 'play';
         this.game.reset();
-        this.updateBoard();
+
         if (this.renderMode === '3d') {
             setTimeout(() => this.updateBoard3D(), 0);
         }

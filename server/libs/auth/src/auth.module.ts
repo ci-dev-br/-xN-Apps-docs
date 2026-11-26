@@ -27,6 +27,8 @@ import { InviteService } from "./service/invite.service";
 import { InviteController } from "./controller/invite.controller";
 import { StorageModule } from "@ci/storage";
 import { UserPreference } from "./models/user-preference.entity";
+import { UserPreferencesController } from "./controller/user-preferences.controller";
+import { UserPreferencesService } from "./service/user-preferences.service";
 import { FaceAuthController } from "./controller/face-auth.controller";
 import { FaceAuthService } from "./service/face-auth.service";
 import { UserInteraction } from "./models/user-interaction.entity";
@@ -68,6 +70,7 @@ export const AuthEntities = [
         RegisterController,
         InviteController,
         FaceAuthController,
+        UserPreferencesController,
     ],
     providers: [
         UserService,
@@ -78,6 +81,7 @@ export const AuthEntities = [
         RegisterService,
         TwoFactorAuthenticationService,
         FaceAuthService,
+        UserPreferencesService,
         {
             provide: APP_GUARD,
             useClass: AuthGuard,
@@ -88,6 +92,7 @@ export const AuthEntities = [
         UserService,
         AuthService,
         CredencialService,
+        UserPreferencesService,
     ]
 })
 export class AuthModule { }
@@ -96,4 +101,5 @@ export {
     CredencialService,
     AuthService,
     InviteService,
+    UserPreferencesService,
 }

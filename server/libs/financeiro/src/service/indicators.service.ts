@@ -4,6 +4,7 @@ import { Repository, LessThanOrEqual } from 'typeorm';
 import { Asset } from '../model/asset.entity';
 import { DailyQuote } from '../model/daily-quote.entity';
 import { FinancialStatement } from '../model/financial-statement.entity';
+import { ScraperService } from './scraper.service';
 
 @Injectable()
 export class IndicatorsService {
@@ -14,12 +15,15 @@ export class IndicatorsService {
         private readonly quoteRepository: Repository<DailyQuote>,
         @InjectRepository(FinancialStatement)
         private readonly statementRepository: Repository<FinancialStatement>,
+        private readonly scraperService: ScraperService,
     ) { }
 
     /**
      * Calcula P/L e P/VP de um ativo para uma data específica.
      */
     async getFundamentalIndicators(ticker: string, targetDate: Date) {
+        await this.scraperService.ensureFreshQuote(ticker);
+
         // 1. Busca o Ativo e sua Empresa correspondente
         const asset = await this.assetRepository.findOne({
             where: { ticker },
@@ -28,6 +32,10 @@ export class IndicatorsService {
 
         if (!asset) {
             throw new NotFoundException(`Ativo com ticker ${ticker} não encontrado.`);
+        }
+
+        if (!asset.company) {
+            throw new NotFoundException(`Empresa vinculada ao ativo ${ticker} não encontrada.`);
         }
 
         // 2. Busca a última cotação de fechamento disponível até a data alvo
@@ -73,12 +81,14 @@ export class IndicatorsService {
 
         // Cálculo Final
         // Se a empresa der prejuízo, o P/L fica negativo ou não se aplica (depende da regra de negócio, aqui mantemos negativo)
-        const pl = price / lpa;
-        const pvp = price / vpa;
+        const pl = lpa !== 0 ? price / lpa : 0;
+        const pvp = vpa !== 0 ? price / vpa : 0;
 
         return {
             ticker,
             date: lastQuote.date,
+            source: lastQuote.source || 'Yahoo Finance (v8)',
+            extractedAt: lastQuote.extractedAt || null,
             price,
             company: asset.company.name,
             statementReferenceDate: latestStatement.referenceDate,

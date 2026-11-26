@@ -1,10 +1,10 @@
-<img src="https://apps.ci.dev.br/logo-colorida.svg">
+<img width="350" src="https://apps.ci.dev.br/logo-colorida.svg" style="margin:0 auto;" >
 
 # Plataforma Universal para Aplicativos | ci.dev.br
-[Colaboradores](./docs/colaboradores.md) | [Documentação e Especificação de Manutenção](./docs/especificacao-manutencao.md) | [Sobre]()
+[Colaboradores](./docs/colaboradores.md) | [Guia de Referências e Autoria](./docs/guia-boas-praticas-referencias.md) | [Documentação e Especificação de Manutenção](./docs/especificacao-manutencao.md) | [Sobre](./docs/about.md)
 
 
- [Portal](https://apps.ci.dev.br:446/) | [git](https://101.ci.dev.br:444/git/Repository/Detail/94e95210-26d3-4884-a691-0fb9ddbfccda) | [jira]() | [Bibliotecas](docs/bibliotecas.md) | [Recursos Adicionais]() | [Serviços]()
+ [Portal](https://apps.ci.dev.br) | [Bibliotecas](docs/bibliotecas.md)
 
 Portal Manager Applications é uma solução simples para construção de sistemas integrados multi-plataforma e de infra-estrutura híbrida pronta para atender qualquer projeto de aplicativo ou sistema. Podendo ser instalado na web ou em sua intranet de forma simples e descomplicada. 
 
@@ -76,7 +76,16 @@ O projeto deve atualizar sozinho corretamente. Porém pode ser que ocorram falha
     2.2.4. Habilitando Banco do nó como arquivo SQL Server.
     3. Habilitando Servço SMTP na sua aplicação;
 
-
+http://refreegames.bol.com.br/http://refreegames.bol.com.br/
 
 ---
-CiDevBr - Todos os Direitos Reservados - 1993 - 2025
+## Referências externas
+
+
+
+*Adicione acima os links externos para viincular à documentação*
+
+---
+---
+---
+ci.dev.br - Todos os direitos reservados - 1993 até 2026 [Licença](./LICENSE)

@@ -69,4 +69,7 @@ export class Product extends FullAuditedEntity {
     @ManyToOne(type => UnidadeMedida)
     @JoinTable()
     unidadeMedida?: UnidadeMedida;
+    @ApiProperty({ title: 'Posição Estoque', nullable: true, required: false, description: 'Posição Estoque' })
+    @Column({ nullable: true })
+    posicaoEstoque?: number;
 }

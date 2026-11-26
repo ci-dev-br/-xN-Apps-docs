@@ -854,3 +854,284 @@
         }
     }
 }
+
+// ==========================================
+// Estilos da Gratidão de Desenvolvedor
+// ==========================================
+.gratitude-header-card {
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.08), rgba(156, 39, 176, 0.08));
+    border: 1px solid rgba(33, 150, 243, 0.2);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+
+    .gratitude-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #1a237e;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        margin-bottom: 12px;
+
+        mat-icon {
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+        }
+    }
+
+    h2 {
+        margin: 0 0 8px 0;
+        font-size: 22px;
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .section-description {
+        margin: 0;
+        font-size: 14px;
+        color: #64748b;
+        line-height: 1.6;
+    }
+}
+
+.gratitude-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+
+    .metric-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+        &.highlight-card {
+            border-color: #3b82f6;
+            background: linear-gradient(to bottom right, #ffffff, #eff6ff);
+
+            .metric-value {
+                color: #2563eb;
+            }
+        }
+
+        .metric-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            &.credits-icon {
+                background: #fef3c7;
+                color: #d97706;
+            }
+
+            &.balance-icon {
+                background: #dbeafe;
+                color: #2563eb;
+            }
+
+            &.converted-icon {
+                background: #dcfce7;
+                color: #16a34a;
+            }
+        }
+
+        .metric-content {
+            display: flex;
+            flex-direction: column;
+
+            .metric-label {
+                font-size: 13px;
+                color: #64748b;
+                font-weight: 600;
+            }
+
+            .metric-value {
+                font-size: 24px;
+                font-weight: 800;
+                color: #1e293b;
+                margin: 2px 0;
+            }
+
+            .metric-subtext {
+                font-size: 11px;
+                color: #94a3b8;
+            }
+        }
+    }
+}
+
+.gratitude-config-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+    .card-title-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+
+        mat-icon {
+            color: #3b82f6;
+        }
+
+        h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+    }
+
+    .config-hint {
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 20px;
+    }
+
+    .config-form-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 20px;
+
+        .unit-value-field {
+            max-width: 320px;
+            width: 100%;
+        }
+
+        .auto-convert-toggle {
+            .checkbox-label {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                font-size: 14px;
+                color: #334155;
+                font-weight: 500;
+
+                input[type="checkbox"] {
+                    width: 18px;
+                    height: 18px;
+                    accent-color: #2563eb;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+
+    .config-actions-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+
+        button {
+            border-radius: 10px;
+            padding: 8px 20px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+    }
+}
+
+.gratitude-apps-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+    .card-title-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+
+        mat-icon {
+            color: #8b5cf6;
+        }
+
+        h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+    }
+
+    .app-breakdown-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        .app-breakdown-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+
+            .app-info-col {
+                display: flex;
+                flex-direction: column;
+
+                .app-name {
+                    font-size: 15px;
+                    font-weight: 700;
+                    color: #1e293b;
+                }
+
+                .app-credits-total {
+                    font-size: 12px;
+                    color: #64748b;
+                }
+            }
+
+            .app-badges-col {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .badge {
+                    padding: 4px 10px;
+                    border-radius: 12px;
+                    font-size: 12px;
+                    font-weight: 600;
+
+                    &.pending-badge {
+                        background: #fef3c7;
+                        color: #92400e;
+                    }
+
+                    &.converted-badge {
+                        background: #dcfce7;
+                        color: #166534;
+                    }
+                }
+            }
+        }
+    }
+}

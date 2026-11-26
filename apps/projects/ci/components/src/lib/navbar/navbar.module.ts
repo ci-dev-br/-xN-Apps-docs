@@ -12,11 +12,13 @@ import { LogoComponent } from "../logo/logo.component";
 import { NavbarComponent } from "./navbar.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatDialogModule } from "@angular/material/dialog";
-import { GruposModalComponent } from "../grupos-modal/grupos-modal.component";
 
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatDividerModule } from "@angular/material/divider";
+import { MatSelectModule } from "@angular/material/select";
+import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { NavbarService } from "./navbar.service";
 
 @NgModule({
     declarations: [
@@ -24,6 +26,7 @@ import { CommonModule } from "@angular/common";
     ],
     imports: [
         CommonModule,
+        FormsModule,
         CoreModule,
         IconModule,
         LogoComponent,
@@ -33,12 +36,12 @@ import { CommonModule } from "@angular/common";
         MatIconModule,
         MatInputModule,
         MatMenuModule,
+        MatSelectModule,
         RouterModule,
         MatTooltipModule,
         MatDialogModule,
         MatBadgeModule,
         MatDividerModule,
-        GruposModalComponent,
     ],
     exports: [
         NavbarComponent,
@@ -50,4 +53,12 @@ export {
     NavbarComponent,
     IconModule,
     LogoComponent,
+    NavbarService,
 }
+export type {
+    NavbarContextAction,
+    NavbarContextSelectOption,
+    NavbarOrganizationAccessInfo,
+    NavbarRouteResourceConfig,
+} from "./navbar.service";
+export type { INavbarItemMenu, NavbarMenuSlot } from "./i-menu-item";

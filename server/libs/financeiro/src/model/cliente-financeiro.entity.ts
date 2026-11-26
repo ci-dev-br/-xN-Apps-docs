@@ -1,7 +1,7 @@
 import { Pessoa } from "@ci/cadastro";
 import { Column, Entity, ManyToMany, OneToMany } from "typeorm";
 import { schema } from "../norms";
-import { FullAuditedEntity } from "@ci/manager";
+import { FullAuditedEntity } from "@ci/manager/dao/entities";
 import { ApiProperty } from "@nestjs/swagger";
 /**
  * Represents a financial client entity in the system.

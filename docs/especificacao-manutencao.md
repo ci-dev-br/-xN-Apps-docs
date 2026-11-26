@@ -1,5 +1,7 @@
 # Especificação Técnica e Guia de Manutenção — Plataforma **Apps**
 
+[voltar](../readme.md)
+
 > **Apps** — *Application Manager Boilerplate, Build And Blocks PWAs*  
 > Plataforma universal modular para construção, gerenciamento e entrega de aplicações web progressivas (PWAs), sistemas corporativos multi-tenant e blocos dinâmicos de interface com **Angular** (`/apps`) e **NestJS** (`/server`).
 
@@ -32,6 +34,13 @@
    - [6.2. Criar um Novo Módulo de Domínio no Backend (`/server/libs`)](#62-criar-um-novo-módulo-de-domínio-no-backend-serverlibs)
    - [6.3. Criar um Novo Aplicativo Modular no Cliente (`@ci-apps/*`)](#63-criar-um-novo-aplicativo-modular-no-cliente-ci-apps)
    - [6.4. Criar um Novo Bloco Visual (`ImplCard`)](#64-criar-um-novo-bloco-visual-implcard)
+   - [6.5. Menu Deployer (`ROLE 'DEVELOPER'`), Build de Produção (`/gulp`) e Troca Automática Debug/Produção](#65-menu-deployer-role-developer-build-de-produção-gulp-e-troca-automática-debugprodução)
+   - [6.6. Explorador de Arquivos (`@ci-apps/Arquivos`) e Integração com `@ci/components/data-grid`](#66-explorador-de-arquivos-ci-appsarquivos-e-integração-com-cicomponentsdata-grid)
+   - [6.7. Interações Desacopladas entre Aplicativos via Metadados de Rota (`data.manifest`) e Preferências do Usuário (`Apps`)](#67-interações-desacopladas-entre-aplicativos-via-metadados-de-rota-datamanifest-e-preferências-do-usuário-apps)
+   - [6.8. Construtor de Telas Dinâmicas (`@ci-apps/dynamic` e `BlocksBuilderComponent`)](#68-construtor-de-telas-dinâmicas-ci-appsdynamic-e-blocksbuildercomponent)
+   - [6.9. Ações Contextuais na Barra de Navegação (`NavbarService`) e Notificações](#69-ações-contextuais-na-barra-de-navegação-navbarservice-e-notificações)
+   - [6.10. Módulo Financeiro — Carteira Digital Multi-Carteira e `ci-cards`](#610-módulo-financeiro--carteira-digital-multi-carteira-e-ci-cards)
+   - [6.11. Fluxo de Convites, Aplicativo Sistêmico `Loja` e Sessões Anônimas (`seo-marketing`)](#611-fluxo-de-convites-aplicativo-sistêmico-loja-e-sessões-anônimas-seo-marketing)
 7. [Comandos de Build, Desenvolvimento e Deploy](#7-comandos-de-build-desenvolvimento-e-deploy)
 8. [Boas Práticas e Troubleshooting](#8-boas-práticas-e-troubleshooting)
 
@@ -375,18 +384,19 @@ Mapeadas sob o escopo `@ci/*` no `apps/tsconfig.json`:
   - `DaoService` & `DaoBuilder`: Carregam `/api-json` em memória, constroem `FormGroup` a partir do JSON Schema da entidade, monitoram alterações em objetos (`getChanges`, `prepareToEdit`, `read`), gerenciam confirmações e propagam mudanças via `WsService`.
   - `AuthorizationHttpInterceptor` & `authGuard`: Injetam tokens de autorização nas requisições HTTP e protegem rotas autenticadas.
   - `IconLoaderSerices` & `LoadIconsModule`: Carregamento sob demanda de ícones SVG customizados.
-- **`@ci/auth`**: Gerenciamento de sessão do usuário (`UserAuthenticationService`), telas/componentes de perfil (`ProfileMenu`) e token de injeção `USER_MENU`.
+- **`@ci/auth`**: Gerenciamento de sessão do usuário (`UserAuthenticationService`), telas/componentes de perfil (`ProfileMenu`) e token de injeção `USER_MENU`. Mantém baixo acoplamento em relação ao `@ci/core` (`AuthModule` importa `CommonModule` diretamente e o serviço `Apps` em `@ci/core` não injeta `UserAuthenticationService`, evitando dependências cíclicas).
 - **`@ci/components`** (e sub-entrypoints `@ci/components/*`):
   - `@ci/components/master-detail`: `MasterDetailComponent` — componente universal de listagem e CRUD baseado em `schemaName`.
   - `@ci/components/editar-detail`: Modal/view de edição automática de entidades.
   - `@ci/components/data-grid`: `GridBuilder` e componentes de tabela orientados a schema.
   - `@ci/components/dyn-form`: Renderização dinâmica de formulários.
   - `@ci/components/window`: Gerenciador de janelas modais/flutuantes e menus (`WindowService`, `IItemMenu`).
-  - `@ci/components` (`BoardModule` / `@ci/components/cardboard`): Motor de dashboards baseados em *Blocks/Cards* (`BoardComponent`, `CardSetting`, `ImplCard`) com suporte a drag-and-drop.
-- **`@ci/Launcher`**: Tela inicial do painel que exibe os aplicativos disponíveis para o usuário.
+  - `@ci/components/navbar`: Barra de navegação (`NavbarComponent`) e serviço `NavbarService` para ações contextuais dinâmicas (`NavbarContextAction`) e painel de notificações (`matBadge`).
+  - `@ci/components` (`BoardModule` / `@ci/components/cardboard`): Motor de dashboards baseados em *Blocks/Cards* (`BoardComponent`, `CardSetting`, `ImplCard` e registro de metadados `KNOWN_CARD_METADATA` em `cards.registry.ts`) com suporte a drag-and-drop.
+- **`@ci/Launcher`**: Tela inicial do painel que exibe os aplicativos disponíveis para o usuário (utilizando Angular `signal` para estado reativo).
 
 ### 5.2. Camada de Aplicativos Modulares (`projects/ci-apps/*`)
-Cada funcionalidade de negócio é isolada como uma biblioteca em `apps/projects/ci-apps/<nome>` e mapeada sob `@ci-apps/<Nome>` (ex.: `@ci-apps/Arquivos`, `@ci-apps/Cadastros`, `@ci-apps/Codex`, `@ci-apps/crm`, `@ci-apps/cms`, `@ci-apps/Financeiro`, `@ci-apps/Formularios`, `@ci-apps/Gerencial`, `@ci-apps/Infra`, `@ci-apps/LowCode`, `@ci-apps/Mensagens`, `@ci-apps/Organizacao`, `@ci-apps/Produtos`, `@ci-apps/Projetos`, `@ci-apps/SEO`, `@ci-apps/Threejs`, `@ci-apps/Treinamento`, `@ci-apps/Vendas`).
+Cada funcionalidade de negócio é isolada como uma biblioteca em `apps/projects/ci-apps/<nome>` e mapeada sob `@ci-apps/<Nome>` (ex.: `@ci-apps/Arquivos`, `@ci-apps/Cadastros`, `@ci-apps/Codex`, `@ci-apps/crm`, `@ci-apps/cms`, `@ci-apps/dynamic`, `@ci-apps/Financeiro`, `@ci-apps/Formularios`, `@ci-apps/Gerencial`, `@ci-apps/Infra`, `@ci-apps/LowCode`, `@ci-apps/Mensagens`, `@ci-apps/Organizacao`, `@ci-apps/Produtos`, `@ci-apps/Projetos`, `@ci-apps/SEO`, `@ci-apps/Threejs`, `@ci-apps/Treinamento`, `@ci-apps/Vendas`).
 
 **Convenção de estrutura de um pacote `@ci-apps/*`:**
 1. **`src/public-api.ts`**: Deve exportar obrigatoriamente `CiApplicationModule` (e opcionalmente `export * as Cards from './lib/cards'` quando fornecer blocos de dashboard).
@@ -533,6 +543,18 @@ Sempre que precisar criar uma nova entidade ou adicionar campos/endpoints a uma 
    - O backend compilado (`server/dist/main.js`) já constitui a versão de produção.
    - A orquestração via arquivo `server/STATUS` permite que uma instância iniciada em **Debug Mode** (`--debug` / `--inspect` / `npm run start:debug`) assuma automaticamente a porta principal (`86`) após aquecer em uma porta secundária (`3001`–`3100`), deslocando ou substituindo a instância de produção de forma transparente e sem afetar ambos os ambientes. Quando o processo de debug é encerrado, a instância de produção reassume a porta `86` automaticamente.
 
+5. **Concessão da `ROLE 'DEVELOPER'` como Cortesia por Contribuição e Saldo**:
+   - **Regra de Negócio e Elegibilidade:**
+     - O usuário deve possuir **e-mail verificado** na plataforma (`emailVerificado === true`).
+     - O usuário deve possuir **autoria comprovada** no projeto vinculada ao mesmo e-mail (via Pull Request aceito e mergeado na branch `development`, conforme diretrizes de [Colaboradores](./colaboradores.md) e [Guia de Autoria](./guia-boas-praticas-referencias.md)).
+     - O usuário deve alcançar um **saldo mínimo de 50** na plataforma (`carteira.saldo >= 50.00`), gerado por suas contribuições ou depósitos.
+   - **Concessão Automática e Desbloqueio:**
+     - Atendidos os três critérios, o backend (`CarteiraService.verificarEConcederRoleDeveloper`) adiciona a role `'DEVELOPER'` ao perfil do usuário em `user.roles`.
+     - O colaborador passa a usufruir de imediato de todos os privilégios de desenvolvedor (Menu Deployer, alternância para `development.ci.dev.br`, catalogação de novas aplicações Git, execução de rotas restritas).
+   - **Mecanismos de Gatilho e API:**
+     - Disparo automático durante a consulta da carteira (`obterVisaoGeralCarteira`) e após acréscimos de saldo (`registrarDeposito`).
+     - Endpoint dedicado: `POST /Financeiro/Carteira/AvaliarRoleDeveloper` exposto via `CarteiraController` para reavaliação pontual a pedido do cliente.
+
 ---
 
 ### 6.6. Explorador de Arquivos (`@ci-apps/Arquivos`) e Integração com `@ci/components/data-grid`
@@ -603,6 +625,57 @@ Os aplicativos (`@ci-apps/*`) **não devem possuir acoplamento direto (hardcoded
 3. **Escolha e Persistência do Aplicativo Preferido pelo Usuário**:
    - `appsService.setPreferredApp(extensionOrKey, fullPath)` persiste a escolha do usuário em `localStorage` (`CI.PreferredAppsByFormat`).
    - `appsService.RequireOpen(intention)` abre automaticamente o arquivo ou diretório utilizando o aplicativo preferido do usuário (ou o mais específico disponível).
+
+---
+
+### 6.8. Construtor de Telas Dinâmicas (`@ci-apps/dynamic` e `BlocksBuilderComponent`)
+
+Localizado em `apps/projects/ci-apps/dynamic/`, o módulo provê um construtor visual e declarativo de telas dinâmicas baseadas em árvore de blocos (`DynamicBlockNode` e `DynamicBlockSpecification`):
+
+1. **Catálogo de Componentes Padrão (`DYNAMIC_DEFAULT_COMPONENTS`)**:
+   - Definido em [`default-components.ts`](file:///c:/projetos/br.dev.ci.apps/apps/projects/ci-apps/dynamic/src/lib/blocks-builder/default-components.ts), mapeia componentes nativos de `@ci/components` (como `MasterDetailComponent`, `EditarDetailComponent`, `Footer`, `InputComponent`) utilizando a propriedade `componentRef` (`Type<any>`) para instanciação dinâmica em tempo de execução.
+   - Cada `DynamicComponentDefinition` descreve `name`, `title`, `icon`, `category`, `componentRef`, `allowChildren` e os `inputs` configuráveis (`BlockComponentInputSchema`).
+
+2. **Editor Visual, Drag-and-Drop Aninhado e Editor XML/HTML5**:
+   - [`BlocksBuilderComponent`](file:///c:/projetos/br.dev.ci.apps/apps/projects/ci-apps/dynamic/src/lib/blocks-builder/blocks-builder.component.ts) suporta renderização recursiva de blocos com drag-and-drop aninhado, menus de contexto, edição em JSON e editor XML/HTML5 para manipulação direta da estrutura da tela.
+
+3. **Pré-visualização Isolada (`ComponentPreviewComponent`)**:
+   - [`ComponentPreviewComponent`](file:///c:/projetos/br.dev.ci.apps/apps/projects/ci-apps/dynamic/src/lib/component-preview/component-preview.component.ts) permite testar um bloco isoladamente fora do construtor.
+   - Os dados e `inputs` do bloco são transferidos via `sessionStorage` utilizando a chave `DYNAMIC_PREVIEW_STORAGE_KEY` (`'ci-dynamic-preview-block'`) e renderizados dinamicamente via `*ngComponentOutlet="compRef; inputs: block.inputs || {}"`.
+
+4. **Histórico de Versões / Snapshots (`BlockHistoryDialogComponent`)**:
+   - [`BlockHistoryDialogComponent`](file:///c:/projetos/br.dev.ci.apps/apps/projects/ci-apps/dynamic/src/lib/block-history/block-history-dialog.component.ts) consulta o histórico de snapshots do bloco através do endpoint `POST /Block/GetSnapshots` (`operationId: 'GetSnapshotsBlock'` em `BlockController`), permitindo inspecionar versões anteriores e integrar opcionalmente o editor CodeX descoberto de forma desacoplada via serviço `Apps`.
+
+---
+
+### 6.9. Ações Contextuais na Barra de Navegação (`NavbarService`) e Notificações
+
+1. **Ações Contextuais (`NavbarService`)**:
+   - O serviço [`NavbarService`](file:///c:/projetos/br.dev.ci.apps/apps/projects/ci/components/src/lib/navbar/navbar.service.ts) (`providedIn: 'root'`) expõe os signals `contextActions` (`NavbarContextAction[]`) e `contextTitle` para que qualquer tela ativa injete botões ou seletores (`variant: 'basic' | 'stroked' | 'flat' | 'raised' | 'select'`) diretamente na barra superior.
+   - Ao entrar na tela, chame `navbarService.setContextActions(actions, title)`; ao sair (`ngOnDestroy`), chame `navbarService.clearContextActions()`.
+
+2. **Sistema de Notificações na `NavbarComponent`**:
+   - A `NavbarComponent` integra um botão de notificações com contador (`matBadge`), painel de menu dedicado (`#notificationsListContent`), ações para marcar alertas como lidos e solicitação de permissão para *push notifications* do navegador.
+
+---
+
+### 6.10. Módulo Financeiro — Carteira Digital Multi-Carteira e `ci-cards`
+
+- **Gestão Multi-Carteira e Lastro Parametrizado**: O módulo `@ci-apps/Financeiro` (e `@ci/financeiro` no backend) suporta múltiplas carteiras por usuário, lastro parametrizado (moedas reais e parametrizadas), controle de posição (`POST /Financeiro/Carteira/LancamentoPosicao`), depósitos, faturas e dashboard consolidado de performance (`POST /Financeiro/Carteira/GetDashboard`).
+- **Modularização em `ci-cards`**: O dashboard da carteira utiliza cards autônomos localizados em `apps/projects/ci-apps/financeiro/src/lib/ci-cards/` (`CarteiraPatrimonioKpiCard`, `CarteiraGanhosKpiCard`, `CarteiraPerdasKpiCard`, `CarteiraResultadoLiquidoKpiCard`, `CarteiraEvolucaoTemporalCard`, `CarteiraAlocacaoLastroCard`, `CarteiraDesempenhoComparativoCard`), todos catalogados em `KNOWN_CARD_METADATA` no arquivo [`cards.registry.ts`](file:///c:/projetos/br.dev.ci.apps/apps/projects/ci/components/src/lib/board/cards.registry.ts) de `@ci/components`.
+- **Acesso**: A aplicação `Financeiro` está liberada também para usuários com a role `'USER'`.
+
+---
+
+### 6.11. Fluxo de Convites, Aplicativo Sistêmico `Loja` e Sessões Anônimas (`seo-marketing`)
+
+1. **Cadastro por Convite e App Sistêmico `Loja`**:
+   - O fluxo de registro (`RegistrarComponent` e `InviteController`) unifica o cadastro de novos usuários por meio de convites (`POST /Invite/SendInvitation`, `GetInvite`, `GetListInvite`, `SyncInvite`) com templates de e-mail dedicados (`server/templates/convite-plataforma-template.html`).
+   - O aplicativo **`Loja`** é gerenciado como aplicativo sistêmico no catálogo da plataforma (`ApplicationService` / `CI_STATIC_APPS`).
+
+2. **Sessões Anônimas em Notícias de Mercado (`seo-marketing`)**:
+   - Em [`NewsController`](file:///c:/projetos/br.dev.ci.apps/server/libs/seo-marketing/src/controller/news.controller.ts), o endpoint público `POST /news/AnonymousSession` inicializa ou recupera uma sessão temporária para visitantes não autenticados, permitindo votos e comentários anônimos com rastreabilidade.
+   - A identificação utiliza `anonymousId` explícito (DTO, cabeçalho `x-anonymous-id` ou query string) ou fallback determinístico via hash SHA256 de IP + User-Agent, resolvendo/criando uma entidade `User` temporária (`anon_<hash>`) com as roles `ANONYMOUS` e `READER`.
 
 ---
 

@@ -4,17 +4,19 @@ import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { PlayerService } from "./player.service";
 import { EventsGateway } from "@ci/core";
-
+/**
+ * Gameplay services para partidas multiplayer
+ * Implementação Sockets Web 
+ * 
+ */
 @Injectable()
 export class GamePlayService {
     private hallList: any[];
     constructor(
         @InjectRepository(EzGamePlay)
         private gameplayrepository: Repository<EzGamePlay>,
-        // @Optional()
         @Inject(EventsGateway)
         private events?: EventsGateway,
-        // @Optional()
         private playerService?: PlayerService,
     ) { }
     async createNewGamePlay(request: any) {

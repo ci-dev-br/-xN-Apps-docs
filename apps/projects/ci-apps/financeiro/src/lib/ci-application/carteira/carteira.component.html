@@ -1,0 +1,984 @@
+<div class="carteira-page-container">
+    <!-- CABEÇALHO DA CARTEIRA -->
+    <header class="carteira-header">
+        <div class="header-title-group">
+            <div class="wallet-badge-icon">
+                <mat-icon>account_balance_wallet</mat-icon>
+            </div>
+            <div>
+                <h2>Carteiras Digitais & Posição</h2>
+                <p class="subtitle">Gestão multi-carteira com lastro em moedas reais ou parametrizadas e controle de posição</p>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            @if (possuiCarteira) {
+                <div class="patrimonio-consolidado-pill" matTooltip="Soma equivalente em Reais (BRL) de todas as suas carteiras">
+                    <span class="patrimonio-label">Patrimônio Consolidado:</span>
+                    <strong class="patrimonio-value">
+                        @if (mostrarSaldo) {
+                            {{ patrimonioTotalBrl | currency:'BRL':'symbol':'1.2-2' }}
+                        } @else {
+                            R$ ••••••••
+                        }
+                    </strong>
+                </div>
+
+                <div class="view-switcher-pills">
+                    <button type="button" class="switcher-btn" [class.active]="abaAtiva === 'VISAO_GERAL'" (click)="alternarAba('VISAO_GERAL')">
+                        <mat-icon>dashboard</mat-icon>
+                        <span>Visão Geral</span>
+                    </button>
+                    <button type="button" class="switcher-btn" [class.active]="abaAtiva === 'LANCAMENTO_POSICAO'" (click)="alternarAba('LANCAMENTO_POSICAO')">
+                        <mat-icon>trending_up</mat-icon>
+                        <span>Lançar / Atualizar Posição</span>
+                    </button>
+                </div>
+
+                <button mat-flat-button color="primary" class="btn-header-new-wallet" (click)="abrirModal('NOVA_CARTEIRA')">
+                    <mat-icon>add</mat-icon>
+                    <span>Nova Carteira</span>
+                </button>
+            }
+
+            <button mat-icon-button (click)="carregarDadosCarteira()" [disabled]="loading" matTooltip="Atualizar dados">
+                <mat-icon [class.spin]="loading">refresh</mat-icon>
+            </button>
+        </div>
+    </header>
+
+    @if (loading && !possuiCarteira) {
+        <div class="loading-state">
+            <mat-spinner diameter="44"></mat-spinner>
+            <span>Carregando dados da sua carteira...</span>
+        </div>
+    } @else if (!possuiCarteira) {
+        <!-- TELA DE BOAS-VINDAS PARA NOVO USUÁRIO / CRIAÇÃO DA PRIMEIRA CARTEIRA -->
+        <section class="welcome-screen">
+            <div class="welcome-hero-banner">
+                <div class="welcome-badge">
+                    <mat-icon>celebration</mat-icon>
+                    <span>Boas-vindas ao Módulo Financeiro</span>
+                </div>
+                <h1 class="welcome-title">Ative sua Carteira Digital CI</h1>
+                <p class="welcome-description">
+                    Crie quantas carteiras desejar — com lastro em moedas reais (BRL, USD, EUR, BTC) ou ativos parametrizados — e acompanhe sua posição consolidada em tempo real.
+                </p>
+            </div>
+
+            <div class="welcome-main-layout">
+                <div class="virtual-card-showcase">
+                    <div class="digital-card-preview" [attr.data-theme]="corTemaNovaCarteira">
+                        <div class="card-glass-glow"></div>
+                        <div class="card-header">
+                            <div class="card-logo-group">
+                                <mat-icon class="card-brand-icon">account_balance_wallet</mat-icon>
+                                <span class="card-brand-name">{{ nomeNovaCarteira || 'CI WALLET' }}</span>
+                            </div>
+                            <span class="card-backing-pill">
+                                {{ tipoLastroNovaCarteira === 'PARAMETRIZADA' ? 'PARAMETRIZADA' : 'MOEDA REAL' }}
+                            </span>
+                        </div>
+
+                        <div class="card-chip-row">
+                            <div class="card-emv-chip"></div>
+                            <span class="card-currency-tag">{{ simboloNovaCarteira }} · {{ moedaNovaCarteira }}</span>
+                        </div>
+
+                        <div class="card-number-row">
+                            <span class="card-masked-number">
+                                {{ simboloNovaCarteira }} {{ (saldoInicialNovaCarteira || 0) | number:'1.2-2' }}
+                            </span>
+                            <small class="card-parity-hint">
+                                Paridade: 1 {{ moedaNovaCarteira }} = {{ fatorConversaoNovaCarteira | currency:'BRL':'symbol':'1.2-4' }}
+                            </small>
+                        </div>
+
+                        <div class="card-footer">
+                            <div class="card-holder-info">
+                                <span class="card-label">LASTRO / ATIVO</span>
+                                <strong class="card-holder-name">{{ nomeMoedaNovaCarteira }}</strong>
+                            </div>
+                            <div class="card-status-badge">
+                                <span class="status-pulse-dot"></span>
+                                <span>PRONTA P/ ATIVAR</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-trust-badges">
+                        <div class="trust-item">
+                            <mat-icon>layers</mat-icon>
+                            <span>Múltiplas Carteiras</span>
+                        </div>
+                        <div class="trust-item">
+                            <mat-icon>tune</mat-icon>
+                            <span>Lastro Real ou Parametrizado</span>
+                        </div>
+                        <div class="trust-item">
+                            <mat-icon>trending_up</mat-icon>
+                            <span>Controle de Posição</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FORMULÁRIO DE ATIVAÇÃO DA PRIMEIRA CARTEIRA -->
+                <div class="welcome-action-column">
+                    <div class="activation-card">
+                        <div class="activation-header">
+                            <div class="activation-icon-box">
+                                <mat-icon>add_card</mat-icon>
+                            </div>
+                            <div>
+                                <h3>Configurar Primeira Carteira</h3>
+                                <p>Escolha entre lastro em moeda real ou ativo parametrizado e defina sua posição inicial.</p>
+                            </div>
+                        </div>
+
+                        <div class="activation-form">
+                            <!-- Seletor de Tipo de Lastro -->
+                            <div class="form-group-field">
+                                <label class="field-label">Tipo de Lastro da Carteira</label>
+                                <div class="backing-type-selector">
+                                    <button type="button" class="backing-btn" [class.selected]="tipoLastroNovaCarteira === 'MOEDA_REAL'" (click)="selecionarTipoLastro('MOEDA_REAL')">
+                                        <mat-icon>currency_exchange</mat-icon>
+                                        <div>
+                                            <strong>Moeda Real</strong>
+                                            <span>BRL, USD, EUR, GBP, BTC</span>
+                                        </div>
+                                    </button>
+                                    <button type="button" class="backing-btn" [class.selected]="tipoLastroNovaCarteira === 'PARAMETRIZADA'" (click)="selecionarTipoLastro('PARAMETRIZADA')">
+                                        <mat-icon>settings_suggest</mat-icon>
+                                        <div>
+                                            <strong>Parametrizada</strong>
+                                            <span>Créditos, Cotas, Horas, Índices</span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            @if (tipoLastroNovaCarteira === 'MOEDA_REAL') {
+                                <div class="form-group-field">
+                                    <label class="field-label">Selecione a Moeda Real</label>
+                                    <div class="currency-pills-selector">
+                                        @for (m of moedasReaisPreset; track m.codigo) {
+                                            <button type="button" class="currency-pill" [class.selected]="moedaNovaCarteira === m.codigo" (click)="selecionarMoedaRealPreset(m)">
+                                                <strong>{{ m.simbolo }} {{ m.codigo }}</strong>
+                                                <span>{{ m.nome }}</span>
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            } @else {
+                                <div class="form-group-field">
+                                    <label class="field-label">Modelo de Lastro Parametrizado</label>
+                                    <div class="currency-pills-selector">
+                                        @for (p of moedasParametrizadasPreset; track p.codigo) {
+                                            <button type="button" class="currency-pill" [class.selected]="presetParametrizadoSelecionado === p.codigo" (click)="selecionarPresetParametrizado(p)">
+                                                <strong>{{ p.simbolo }} ({{ p.codigo }})</strong>
+                                                <span>{{ p.nome }}</span>
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="param-fields-grid">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Código / Ticker</mat-label>
+                                        <input matInput [(ngModel)]="moedaNovaCarteira" placeholder="Ex: CRD-IA" />
+                                    </mat-form-field>
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Símbolo</mat-label>
+                                        <input matInput [(ngModel)]="simboloNovaCarteira" placeholder="Ex: TK" />
+                                    </mat-form-field>
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Paridade em R$ (1 un = R$)</mat-label>
+                                        <input matInput type="number" [(ngModel)]="fatorConversaoNovaCarteira" step="0.01" min="0.0001" />
+                                    </mat-form-field>
+                                </div>
+                            }
+
+                            <div class="param-fields-grid two-cols">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Nome da Carteira</mat-label>
+                                    <input matInput [(ngModel)]="nomeNovaCarteira" placeholder="Ex: Carteira Principal" />
+                                </mat-form-field>
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Posição Inicial ({{ simboloNovaCarteira }})</mat-label>
+                                    <input matInput type="number" [(ngModel)]="saldoInicialNovaCarteira" step="0.01" />
+                                </mat-form-field>
+                            </div>
+
+                            <div class="terms-acceptance-block">
+                                <mat-checkbox [(ngModel)]="termosAceitos" color="primary">
+                                    Li e concordo com os <strong>Termos de Custódia e Gestão Financeira da Carteira Digital CI</strong>.
+                                </mat-checkbox>
+                            </div>
+
+                            <button mat-flat-button color="primary" class="btn-create-wallet-cta" (click)="criarNovaCarteira()" [disabled]="criandoCarteira || !termosAceitos">
+                                @if (criandoCarteira) {
+                                    <mat-spinner diameter="20"></mat-spinner>
+                                    <span>Ativando Carteira Digital...</span>
+                                } @else {
+                                    <mat-icon>arrow_forward</mat-icon>
+                                    <span>Criar Minha Carteira Digital Agora</span>
+                                }
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    } @else {
+        <!-- BARRA SELETORA DE MÚLTIPLAS CARTEIRAS -->
+        <section class="multi-wallets-strip">
+            <div class="strip-header">
+                <span class="strip-title">
+                    <mat-icon>account_balance_wallet</mat-icon>
+                    Minhas Carteiras ({{ carteiras.length }})
+                </span>
+                <button mat-stroked-button color="primary" class="btn-strip-add" (click)="abrirModal('NOVA_CARTEIRA')">
+                    <mat-icon>add_circle_outline</mat-icon>
+                    <span>Adicionar Carteira</span>
+                </button>
+            </div>
+
+            <div class="wallets-carousel">
+                @for (item of carteiras; track item.internalId || item.numeroCarteira) {
+                    <div class="wallet-mini-card"
+                         [class.active]="item.internalId === carteira?.internalId"
+                         [attr.data-theme]="item.corTema || 'indigo'"
+                         (click)="selecionarCarteira(item)">
+                        <div class="mini-card-top">
+                            <span class="mini-wallet-name">
+                                @if (item.principal) {
+                                    <mat-icon class="star-icon" matTooltip="Carteira Principal">star</mat-icon>
+                                }
+                                {{ item.nome || ('Carteira ' + item.moeda) }}
+                            </span>
+                            <span class="mini-backing-tag" [class.parametrizada]="item.tipoLastro === 'PARAMETRIZADA'">
+                                {{ item.tipoLastro === 'PARAMETRIZADA' ? 'PARAM' : 'REAL' }} · {{ item.moeda }}
+                            </span>
+                        </div>
+
+                        <div class="mini-card-balance">
+                            <strong>
+                                @if (mostrarSaldo) {
+                                    {{ item.simboloMoeda || item.moeda }} {{ (item.saldo || 0) | number:'1.2-2' }}
+                                } @else {
+                                    {{ item.simboloMoeda || item.moeda }} ••••••
+                                }
+                            </strong>
+                            @if (item.moeda !== 'BRL') {
+                                <small class="mini-brl-equiv">
+                                    ≈ {{ equivalenteBrlCarteira(item) | currency:'BRL':'symbol':'1.2-2' }}
+                                </small>
+                            }
+                        </div>
+
+                        <div class="mini-card-footer">
+                            <span class="mini-number">{{ item.numeroCarteira }}</span>
+                            <span class="mini-parity">1 {{ item.moeda }} = R$ {{ (item.fatorConversaoBrl || 1) | number:'1.2-2' }}</span>
+                        </div>
+                    </div>
+                }
+
+                <button type="button" class="wallet-mini-card add-new-card" (click)="abrirModal('NOVA_CARTEIRA')">
+                    <mat-icon>add_card</mat-icon>
+                    <strong>Nova Carteira</strong>
+                    <span>Moeda Real ou Parametrizada</span>
+                </button>
+            </div>
+        </section>
+
+        @if (abaAtiva === 'LANCAMENTO_POSICAO') {
+            <!-- TELA DE LANÇAMENTO E ATUALIZAÇÃO DE POSIÇÃO DA CARTEIRA -->
+            <section class="position-entry-screen">
+                <div class="position-screen-header">
+                    <div>
+                        <span class="screen-kicker">Controle de Posição & Conciliação</span>
+                        <h3>Tela de Lançamento e Atualização de Posição</h3>
+                        <p>Atualize diretamente o saldo/posição consolidada de qualquer carteira, ajuste a cotação de referência do lastro ou registre entradas e saídas.</p>
+                    </div>
+                    <button mat-stroked-button (click)="alternarAba('VISAO_GERAL')">
+                        <mat-icon>arrow_back</mat-icon>
+                        <span>Voltar à Visão Geral</span>
+                    </button>
+                </div>
+
+                <div class="position-entry-grid">
+                    <!-- COLUNA ESQUERDA: FORMULÁRIO DE LANÇAMENTO -->
+                    <div class="position-form-card">
+                        <div class="form-section-block">
+                            <label class="block-label">1. Carteira Alvo do Lançamento</label>
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>Selecione a Carteira</mat-label>
+                                <mat-select [(ngModel)]="lancamentoCarteiraId" (selectionChange)="onChangeCarteiraLancamento($event.value)">
+                                    @for (c of carteiras; track c.internalId) {
+                                        <mat-option [value]="c.internalId">
+                                            {{ c.nome }} ({{ c.moeda }} — Posição Atual: {{ c.simboloMoeda || c.moeda }} {{ (c.saldo || 0) | number:'1.2-2' }})
+                                        </mat-option>
+                                    }
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="form-section-block">
+                            <label class="block-label">2. Modo de Atualização da Posição</label>
+                            <div class="entry-mode-selector">
+                                <button type="button" class="mode-card-btn" [class.selected]="lancamentoModo === 'DEFINIR_POSICAO'" (click)="selecionarModoLancamento('DEFINIR_POSICAO')">
+                                    <mat-icon>pin</mat-icon>
+                                    <div>
+                                        <strong>Definir Nova Posição Consolidada</strong>
+                                        <span>Informe o novo saldo total da carteira; o sistema calcula e registra o ajuste automaticamente.</span>
+                                    </div>
+                                </button>
+
+                                <button type="button" class="mode-card-btn" [class.selected]="lancamentoModo === 'MOVIMENTACAO'" (click)="selecionarModoLancamento('MOVIMENTACAO')">
+                                    <mat-icon>swap_vert</mat-icon>
+                                    <div>
+                                        <strong>Lançar Movimentação (+/-)</strong>
+                                        <span>Adicione uma entrada (aporte, rendimento) ou saída (retirada, baixa) sobre a posição atual.</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        @if (lancamentoModo === 'DEFINIR_POSICAO') {
+                            <div class="form-section-block">
+                                <label class="block-label">3. Valores da Nova Posição e Paridade do Lastro</label>
+                                <div class="param-fields-grid">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Nova Posição Consolidada ({{ carteiraAlvoLancamento()?.simboloMoeda || carteiraAlvoLancamento()?.moeda }})</mat-label>
+                                        <input matInput type="number" [(ngModel)]="lancamentoNovaPosicao" step="0.0000001" placeholder="Ex: 5000.00" />
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Cotação / Paridade em R$ (1 {{ carteiraAlvoLancamento()?.moeda }} = R$)</mat-label>
+                                        <input matInput type="number" [(ngModel)]="lancamentoNovaCotacaoBrl" step="0.0001" min="0.0001" />
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Meta de Posição (Opcional)</mat-label>
+                                        <input matInput type="number" [(ngModel)]="lancamentoNovaMetaPosicao" step="0.01" placeholder="Ex: 10000.00" />
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        } @else {
+                            <div class="form-section-block">
+                                <label class="block-label">3. Natureza, Categoria e Valor do Lançamento</label>
+                                <div class="movement-type-pills">
+                                    <button type="button" class="mov-pill inflow" [class.selected]="lancamentoTipo === 'ENTRADA'" (click)="lancamentoTipo = 'ENTRADA'; lancamentoCategoria = 'APORTE'">
+                                        <mat-icon>arrow_downward</mat-icon>
+                                        <span>Entrada / Aporte (+)</span>
+                                    </button>
+                                    <button type="button" class="mov-pill outflow" [class.selected]="lancamentoTipo === 'SAIDA'" (click)="lancamentoTipo = 'SAIDA'; lancamentoCategoria = 'RETIRADA'">
+                                        <mat-icon>arrow_upward</mat-icon>
+                                        <span>Saída / Baixa (-)</span>
+                                    </button>
+                                </div>
+
+                                <div class="param-fields-grid">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Valor do Lançamento ({{ carteiraAlvoLancamento()?.simboloMoeda || carteiraAlvoLancamento()?.moeda }})</mat-label>
+                                        <input matInput type="number" [(ngModel)]="lancamentoValor" min="0.0001" step="0.01" placeholder="Ex: 250.00" />
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Categoria do Lançamento</mat-label>
+                                        <mat-select [(ngModel)]="lancamentoCategoria">
+                                            <mat-option value="APORTE">Aporte de Posição</mat-option>
+                                            <mat-option value="RENDIMENTO">Rendimento / Provento</mat-option>
+                                            <mat-option value="VALORIZACAO">Valorização / Ajuste Cambial</mat-option>
+                                            <mat-option value="AJUSTE_POSICAO">Ajuste / Conciliação de Posição</mat-option>
+                                            <mat-option value="DEPOSITO">Depósito Identificado</mat-option>
+                                            <mat-option value="RETIRADA">Retirada / Resgate</mat-option>
+                                            <mat-option value="PAGAMENTO_FATURA">Liquidação de Fatura</mat-option>
+                                            <mat-option value="ESTORNO">Estorno</mat-option>
+                                            <mat-option value="OUTROS">Outros</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Atualizar Paridade R$ (Opcional)</mat-label>
+                                        <input matInput type="number" [(ngModel)]="lancamentoNovaCotacaoBrl" step="0.0001" min="0.0001" />
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="form-section-block">
+                            <label class="block-label">4. Identificação e Histórico Auditável</label>
+                            <div class="param-fields-grid two-cols">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Documento / Código Identificador</mat-label>
+                                    <input matInput [(ngModel)]="lancamentoIdentificador" placeholder="Ex: POS-2026-001" />
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Descrição / Justificativa da Posição</mat-label>
+                                    <input matInput [(ngModel)]="lancamentoDescricao" placeholder="Ex: Atualização mensal de posição da carteira" />
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                        <div class="position-form-actions">
+                            <button mat-flat-button color="primary" class="btn-confirm-position" (click)="executarLancamentoPosicao()" [disabled]="processando">
+                                @if (processando) {
+                                    <mat-spinner diameter="20"></mat-spinner>
+                                    <span>Processando Lançamento...</span>
+                                } @else {
+                                    <mat-icon>check_circle</mat-icon>
+                                    <span>Confirmar e Atualizar Posição da Carteira</span>
+                                }
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- COLUNA DIREITA: SIMULADOR DE IMPACTO NA POSIÇÃO EM TEMPO REAL -->
+                    <div class="position-preview-column">
+                        <div class="position-simulator-card">
+                            <div class="sim-header">
+                                <mat-icon>analytics</mat-icon>
+                                <div>
+                                    <h4>Simulação de Impacto na Posição</h4>
+                                    <span>{{ carteiraAlvoLancamento()?.nome }} ({{ carteiraAlvoLancamento()?.moeda }})</span>
+                                </div>
+                            </div>
+
+                            <div class="sim-rows">
+                                <div class="sim-row">
+                                    <span>Tipo de Lastro</span>
+                                    <strong>{{ carteiraAlvoLancamento()?.tipoLastro === 'PARAMETRIZADA' ? 'Moeda Parametrizada' : 'Moeda Real' }} ({{ carteiraAlvoLancamento()?.nomeMoeda || carteiraAlvoLancamento()?.moeda }})</strong>
+                                </div>
+
+                                <div class="sim-row">
+                                    <span>Posição Atual</span>
+                                    <strong>{{ carteiraAlvoLancamento()?.simboloMoeda || carteiraAlvoLancamento()?.moeda }} {{ posicaoAtualAlvo() | number:'1.2-4' }}</strong>
+                                </div>
+
+                                <div class="sim-row" [class.positive]="variacaoProjetadaAlvo() > 0" [class.negative]="variacaoProjetadaAlvo() < 0">
+                                    <span>Variação do Lançamento (Delta)</span>
+                                    <strong>
+                                        {{ variacaoProjetadaAlvo() >= 0 ? '+' : '' }}{{ carteiraAlvoLancamento()?.simboloMoeda || carteiraAlvoLancamento()?.moeda }} {{ variacaoProjetadaAlvo() | number:'1.2-4' }}
+                                    </strong>
+                                </div>
+
+                                <div class="sim-row highlight">
+                                    <span>Nova Posição Projetada</span>
+                                    <strong>{{ carteiraAlvoLancamento()?.simboloMoeda || carteiraAlvoLancamento()?.moeda }} {{ posicaoProjetadaAlvo() | number:'1.2-4' }}</strong>
+                                </div>
+
+                                <div class="sim-row">
+                                    <span>Paridade de Referência</span>
+                                    <strong>1 {{ carteiraAlvoLancamento()?.moeda }} = {{ cotacaoProjetadaAlvo() | currency:'BRL':'symbol':'1.2-4' }}</strong>
+                                </div>
+
+                                <div class="sim-row total-brl">
+                                    <span>Valor Equivalente em BRL</span>
+                                    <strong>{{ equivalenteBrlProjetado() | currency:'BRL':'symbol':'1.2-2' }}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="recent-position-updates-card">
+                            <h4>Últimos Lançamentos desta Carteira</h4>
+                            @if (transacoes.length === 0) {
+                                <p class="empty-mini-note">Nenhum lançamento registrado ainda nesta carteira.</p>
+                            } @else {
+                                <div class="mini-updates-list">
+                                    @for (tx of transacoes.slice(0, 5); track tx.internalId || $index) {
+                                        <div class="mini-update-item">
+                                            <div>
+                                                <strong>{{ tx.descricao || tx.categoria }}</strong>
+                                                <small>{{ tx.createdAt | date:'dd/MM/yyyy HH:mm' }} · Posição: {{ carteira?.simboloMoeda }} {{ (tx.saldoPosterior || 0) | number:'1.2-2' }}</small>
+                                            </div>
+                                            <span class="mini-tx-val" [class.in]="tx.tipo === 'ENTRADA'" [class.out]="tx.tipo === 'SAIDA'">
+                                                {{ tx.tipo === 'ENTRADA' ? '+' : '-' }}{{ carteira?.simboloMoeda }} {{ (tx.valor || 0) | number:'1.2-2' }}
+                                            </span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </section>
+        } @else {
+            <!-- DASHBOARD CONSOLIDADO DE VISÃO GERAL DAS CARTEIRAS E GANHOS / PERDAS AO LONGO DO TEMPO -->
+            @if (dashboard) {
+                <section class="wallets-overview-dashboard">
+                    <div class="dashboard-toolbar">
+                        <div class="toolbar-title-block">
+                            <span class="dashboard-kicker">
+                                <mat-icon>insights</mat-icon>
+                                Performance & Evolução Temporal
+                            </span>
+                            <h3>Visão Geral das Carteiras — Ganhos e Perdas</h3>
+                        </div>
+
+                        <div class="toolbar-filters">
+                            <!-- Filtro de Escopo (Consolidado vs Carteira Específica) -->
+                            <div class="scope-filter-pills">
+                                <button type="button"
+                                        class="scope-pill"
+                                        [class.active]="escopoDashboard === 'TODAS'"
+                                        (click)="selecionarEscopoDashboard('TODAS')">
+                                    <mat-icon>layers</mat-icon>
+                                    <span>Consolidado ({{ carteiras.length }})</span>
+                                </button>
+                                @for (c of carteiras; track c.internalId) {
+                                    <button type="button"
+                                            class="scope-pill"
+                                            [class.active]="escopoDashboard === c.internalId"
+                                            (click)="selecionarEscopoDashboard(c.internalId!)">
+                                        <span>{{ c.moeda }}</span>
+                                    </button>
+                                }
+                            </div>
+
+                            <!-- Filtro de Período -->
+                            <div class="period-filter-pills">
+                                <button type="button" class="period-pill" [class.active]="periodoDashboard === '7D'" (click)="selecionarPeriodoDashboard('7D')">7D</button>
+                                <button type="button" class="period-pill" [class.active]="periodoDashboard === '30D'" (click)="selecionarPeriodoDashboard('30D')">30D</button>
+                                <button type="button" class="period-pill" [class.active]="periodoDashboard === '90D'" (click)="selecionarPeriodoDashboard('90D')">90D</button>
+                                <button type="button" class="period-pill" [class.active]="periodoDashboard === '12M'" (click)="selecionarPeriodoDashboard('12M')">12M</button>
+                                <button type="button" class="period-pill" [class.active]="periodoDashboard === 'TUDO'" (click)="selecionarPeriodoDashboard('TUDO')">Tudo</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4 CARDS DE KPI EXTRAÍDOS EM COMPONENTES DE BOARD PERSONALIZADO (ci-card) -->
+                    <div class="dashboard-kpi-grid">
+                        <ci-card--carteira-patrimonio-kpi
+                            [dashboard]="dashboard"
+                            [mostrarSaldo]="mostrarSaldo">
+                        </ci-card--carteira-patrimonio-kpi>
+
+                        <ci-card--carteira-ganhos-kpi
+                            [dashboard]="dashboard"
+                            [mostrarSaldo]="mostrarSaldo">
+                        </ci-card--carteira-ganhos-kpi>
+
+                        <ci-card--carteira-perdas-kpi
+                            [dashboard]="dashboard"
+                            [mostrarSaldo]="mostrarSaldo">
+                        </ci-card--carteira-perdas-kpi>
+
+                        <ci-card--carteira-resultado-liquido-kpi
+                            [dashboard]="dashboard"
+                            [mostrarSaldo]="mostrarSaldo">
+                        </ci-card--carteira-resultado-liquido-kpi>
+                    </div>
+
+                    <!-- CARDS DE EVOLUÇÃO TEMPORAL E ALOCAÇÃO POR CARTEIRA / LASTRO (ci-card) -->
+                    <div class="dashboard-charts-grid">
+                        <ci-card--carteira-evolucao-temporal
+                            [dashboard]="dashboard">
+                        </ci-card--carteira-evolucao-temporal>
+
+                        <ci-card--carteira-alocacao-lastro
+                            [dashboard]="dashboard"
+                            (selecionarCarteira)="focarExtratoCarteira($event)">
+                        </ci-card--carteira-alocacao-lastro>
+                    </div>
+
+                    <!-- CARD DE DESEMPENHO COMPARATIVO POR CARTEIRA (ci-card) -->
+                    <ci-card--carteira-desempenho-comparativo
+                        [dashboard]="dashboard"
+                        [carteiraSelecionadaId]="carteira?.internalId"
+                        (focarExtrato)="focarExtratoCarteira($event)"
+                        (atualizarPosicao)="irParaLancamentoDaCarteira($event)">
+                    </ci-card--carteira-desempenho-comparativo>
+                </section>
+            }
+
+            <!-- HERO CARD DE SALDO E AÇÕES PRINCIPAIS DA CARTEIRA SELECIONADA -->
+            <section class="wallet-hero-card" [attr.data-theme]="carteira?.corTema || 'indigo'">
+                <div class="wallet-info-top">
+                    <div class="wallet-id-block">
+                        <span class="label">
+                            {{ carteira?.nome || 'Carteira Digital' }} · {{ carteira?.tipoLastro === 'PARAMETRIZADA' ? 'Lastro Parametrizado' : 'Moeda Real' }} ({{ carteira?.nomeMoeda || carteira?.moeda }})
+                        </span>
+                        <div class="id-row">
+                            <strong class="wallet-number">{{ carteira?.numeroCarteira || 'CI-WAL' }}</strong>
+                            <button mat-icon-button (click)="copiarIdentificador()" matTooltip="Copiar código para depósito" class="btn-copy">
+                                <mat-icon>content_copy</mat-icon>
+                            </button>
+                            <span class="parity-badge">
+                                1 {{ carteira?.moeda }} = {{ (carteira?.fatorConversaoBrl || 1) | currency:'BRL':'symbol':'1.2-4' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="wallet-status-badge">
+                        <span class="status-dot"></span>
+                        <span>Carteira {{ carteira?.status || 'ATIVA' }}</span>
+                    </div>
+                </div>
+
+                <div class="wallet-balance-row">
+                    <div class="balance-container">
+                        <span class="balance-label">Posição / Saldo Disponível ({{ carteira?.moeda }})</span>
+                        <div class="balance-value-group">
+                            <h1 class="balance-amount">
+                                @if (mostrarSaldo) {
+                                    {{ simboloCarteiraAtiva() }} {{ (carteira?.saldo || 0) | number:'1.2-2' }}
+                                } @else {
+                                    {{ simboloCarteiraAtiva() }} ••••••••
+                                }
+                            </h1>
+                            <button mat-icon-button (click)="toggleMostrarSaldo()" [matTooltip]="mostrarSaldo ? 'Ocultar saldo' : 'Exibir saldo'" class="btn-toggle-eye">
+                                <mat-icon>{{ mostrarSaldo ? 'visibility' : 'visibility_off' }}</mat-icon>
+                            </button>
+                        </div>
+                        @if (carteira?.moeda !== 'BRL' && mostrarSaldo) {
+                            <span class="balance-brl-equivalent">
+                                Equivalente a {{ equivalenteBrlCarteira(carteira) | currency:'BRL':'symbol':'1.2-2' }}
+                            </span>
+                        }
+                    </div>
+
+                    <!-- BARRINHA DE RESUMO FINANCEIRO -->
+                    <div class="balance-metrics">
+                        <div class="metric-item inflow">
+                            <span class="metric-label">
+                                <mat-icon>arrow_downward</mat-icon> Entradas ({{ carteira?.moeda }})
+                            </span>
+                            <strong class="metric-val">{{ simboloCarteiraAtiva() }} {{ totalEntradas() | number:'1.2-2' }}</strong>
+                        </div>
+                        <div class="metric-item outflow">
+                            <span class="metric-label">
+                                <mat-icon>arrow_upward</mat-icon> Saídas ({{ carteira?.moeda }})
+                            </span>
+                            <strong class="metric-val">{{ simboloCarteiraAtiva() }} {{ totalSaidas() | number:'1.2-2' }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTÕES DE AÇÕES OPERACIONAIS -->
+                <div class="wallet-actions-bar">
+                    <button mat-flat-button color="primary" class="btn-action deposit" (click)="alternarAba('LANCAMENTO_POSICAO')">
+                        <mat-icon>trending_up</mat-icon>
+                        <span>Lançar / Atualizar Posição</span>
+                    </button>
+
+                    <button mat-flat-button class="btn-action pay-invoice" (click)="abrirModal('DEPOSITO')">
+                        <mat-icon>add_card</mat-icon>
+                        <span>Receber Depósito</span>
+                    </button>
+
+                    <button mat-flat-button class="btn-action pay-invoice" (click)="abrirModal('FATURA')">
+                        <mat-icon>receipt_long</mat-icon>
+                        <span>Pagar Fatura</span>
+                    </button>
+
+                    <button mat-stroked-button class="btn-action operations" (click)="abrirModal('NOVA_CARTEIRA')">
+                        <mat-icon>add_circle_outline</mat-icon>
+                        <span>Adicionar Outra Carteira</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- SEÇÃO DO EXTRATO DE MOVIMENTAÇÕES -->
+            <section class="transactions-section">
+                <div class="section-top">
+                    <div class="title-and-count">
+                        <h3>Extrato de Movimentações e Posição ({{ carteira?.nome }})</h3>
+                        <span class="count-tag">{{ transacoesFiltradas.length }} registros</span>
+                    </div>
+
+                    <!-- Chips de Filtro -->
+                    <div class="filter-chips">
+                        <button class="chip-filter" [class.active]="filtroTipo === 'TODOS'" (click)="aplicarFiltro('TODOS')">
+                            Todas
+                        </button>
+                        <button class="chip-filter" [class.active]="filtroTipo === 'ENTRADA'" (click)="aplicarFiltro('ENTRADA')">
+                            <mat-icon class="chip-icon inflow">arrow_downward</mat-icon> Entradas / Aportes
+                        </button>
+                        <button class="chip-filter" [class.active]="filtroTipo === 'SAIDA'" (click)="aplicarFiltro('SAIDA')">
+                            <mat-icon class="chip-icon outflow">arrow_upward</mat-icon> Saídas / Baixas
+                        </button>
+                    </div>
+                </div>
+
+                @if (transacoesFiltradas.length === 0) {
+                    <div class="empty-transactions">
+                        <mat-icon>receipt</mat-icon>
+                        <p>Nenhuma movimentação encontrada para esta carteira.</p>
+                        <button mat-stroked-button color="primary" (click)="alternarAba('LANCAMENTO_POSICAO')">
+                            <mat-icon>trending_up</mat-icon> Lançar Posição Inicial
+                        </button>
+                    </div>
+                } @else {
+                    <div class="transactions-list">
+                        @for (t of transacoesFiltradas; track t.internalId || $index) {
+                            <div class="transaction-row" [class.is-inflow]="t.tipo === 'ENTRADA'" [class.is-outflow]="t.tipo === 'SAIDA'">
+                                <div class="tx-icon-box">
+                                    <mat-icon>{{ t.tipo === 'ENTRADA' ? 'call_received' : 'call_made' }}</mat-icon>
+                                </div>
+
+                                <div class="tx-info-col">
+                                    <div class="tx-top-line">
+                                        <span class="tx-category-badge">{{ t.categoria }}</span>
+                                        @if (t.referenciaFaturaId) {
+                                            <span class="tx-invoice-badge">Fatura #{{ t.referenciaFaturaId }}</span>
+                                        }
+                                        <strong class="tx-title">{{ t.descricao || (t.tipo === 'ENTRADA' ? 'Entrada' : 'Saída') }}</strong>
+                                    </div>
+                                    <div class="tx-bottom-line">
+                                        <span class="tx-date">{{ t.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                                        @if (t.identificador) {
+                                            <span class="tx-identifier">Ref: {{ t.identificador }}</span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="tx-amount-col">
+                                    <strong class="tx-val" [class.val-in]="t.tipo === 'ENTRADA'" [class.val-out]="t.tipo === 'SAIDA'">
+                                        {{ t.tipo === 'ENTRADA' ? '+' : '-' }} {{ simboloCarteiraAtiva() }} {{ (t.valor || 0) | number:'1.2-2' }}
+                                    </strong>
+                                    @if (t.saldoPosterior !== undefined && t.saldoPosterior !== null) {
+                                        <small class="tx-resulting-balance">Posição: {{ simboloCarteiraAtiva() }} {{ t.saldoPosterior | number:'1.2-2' }}</small>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </section>
+        }
+    }
+
+    <!-- MODAL PARA ADICIONAR NOVA CARTEIRA (MOEDA REAL OU PARAMETRIZADA) -->
+    @if (modalAberto === 'NOVA_CARTEIRA') {
+        <div class="custom-modal-backdrop" (click)="fecharModal()">
+            <div class="custom-modal-content modal-lg" (click)="$event.stopPropagation()">
+                <div class="modal-header">
+                    <div class="modal-title-group">
+                        <mat-icon class="icon-deposit">add_card</mat-icon>
+                        <div>
+                            <h3>Adicionar Nova Carteira Digital</h3>
+                            <p>Configure o lastro em moeda real ou ativo parametrizado e a posição inicial</p>
+                        </div>
+                    </div>
+                    <button mat-icon-button (click)="fecharModal()"><mat-icon>close</mat-icon></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group-field">
+                        <label class="field-label">Tipo de Lastro</label>
+                        <div class="backing-type-selector">
+                            <button type="button" class="backing-btn" [class.selected]="tipoLastroNovaCarteira === 'MOEDA_REAL'" (click)="selecionarTipoLastro('MOEDA_REAL')">
+                                <mat-icon>currency_exchange</mat-icon>
+                                <div>
+                                    <strong>Moeda Real</strong>
+                                    <span>BRL, USD, EUR, GBP, BTC</span>
+                                </div>
+                            </button>
+                            <button type="button" class="backing-btn" [class.selected]="tipoLastroNovaCarteira === 'PARAMETRIZADA'" (click)="selecionarTipoLastro('PARAMETRIZADA')">
+                                <mat-icon>settings_suggest</mat-icon>
+                                <div>
+                                    <strong>Moeda / Ativo Parametrizado</strong>
+                                    <span>Créditos, Horas, Cotas, Pontos ou Índice</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    @if (tipoLastroNovaCarteira === 'MOEDA_REAL') {
+                        <div class="form-group-field">
+                            <label class="field-label">Moeda Real de Lastro</label>
+                            <div class="currency-pills-selector">
+                                @for (m of moedasReaisPreset; track m.codigo) {
+                                    <button type="button" class="currency-pill" [class.selected]="moedaNovaCarteira === m.codigo" (click)="selecionarMoedaRealPreset(m)">
+                                        <strong>{{ m.simbolo }} {{ m.codigo }}</strong>
+                                        <span>{{ m.nome }}</span>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    } @else {
+                        <div class="form-group-field">
+                            <label class="field-label">Modelo de Lastro Parametrizado</label>
+                            <div class="currency-pills-selector">
+                                @for (p of moedasParametrizadasPreset; track p.codigo) {
+                                    <button type="button" class="currency-pill" [class.selected]="presetParametrizadoSelecionado === p.codigo" (click)="selecionarPresetParametrizado(p)">
+                                        <strong>{{ p.simbolo }} ({{ p.codigo }})</strong>
+                                        <span>{{ p.nome }}</span>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <div class="param-fields-grid">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Código / Ticker da Moeda</mat-label>
+                            <input matInput [(ngModel)]="moedaNovaCarteira" placeholder="Ex: USD, CRD-IA" />
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Símbolo da Unidade</mat-label>
+                            <input matInput [(ngModel)]="simboloNovaCarteira" placeholder="Ex: US$, TK, h" />
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Paridade em R$ (1 un = R$)</mat-label>
+                            <input matInput type="number" [(ngModel)]="fatorConversaoNovaCarteira" step="0.01" min="0.0001" />
+                        </mat-form-field>
+                    </div>
+
+                    <div class="param-fields-grid two-cols">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Nome de Identificação da Carteira</mat-label>
+                            <input matInput [(ngModel)]="nomeNovaCarteira" placeholder="Ex: Reserva Cambial Dólar" />
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Nome Descritivo do Lastro</mat-label>
+                            <input matInput [(ngModel)]="nomeMoedaNovaCarteira" placeholder="Ex: Dólar Americano / Créditos IA" />
+                        </mat-form-field>
+                    </div>
+
+                    <div class="param-fields-grid">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Posição Inicial ({{ simboloNovaCarteira }})</mat-label>
+                            <input matInput type="number" [(ngModel)]="saldoInicialNovaCarteira" step="0.01" />
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Meta de Posição (Opcional)</mat-label>
+                            <input matInput type="number" [(ngModel)]="metaPosicaoNovaCarteira" step="0.01" />
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Limite Diário ({{ simboloNovaCarteira }})</mat-label>
+                            <input matInput type="number" [(ngModel)]="limiteDiarioSugerido" step="100" />
+                        </mat-form-field>
+                    </div>
+
+                    <div class="wallet-options-row">
+                        <mat-checkbox [(ngModel)]="principalNovaCarteira" color="primary">
+                            Definir como minha carteira principal
+                        </mat-checkbox>
+                        <mat-checkbox [(ngModel)]="permiteSaldoNegativoNovaCarteira" color="primary">
+                            Permitir posição negativa (margem / passivo)
+                        </mat-checkbox>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button mat-stroked-button (click)="fecharModal()" [disabled]="criandoCarteira">Cancelar</button>
+                    <button mat-flat-button color="primary" (click)="criarNovaCarteira()" [disabled]="criandoCarteira || !moedaNovaCarteira">
+                        @if (criandoCarteira) {
+                            <mat-spinner diameter="18"></mat-spinner>
+                        } @else {
+                            <span>Criar Carteira ({{ moedaNovaCarteira }})</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- MODAL DE DEPÓSITO IDENTIFICADO -->
+    @if (modalAberto === 'DEPOSITO') {
+        <div class="custom-modal-backdrop" (click)="fecharModal()">
+            <div class="custom-modal-content" (click)="$event.stopPropagation()">
+                <div class="modal-header">
+                    <div class="modal-title-group">
+                        <mat-icon class="icon-deposit">add_card</mat-icon>
+                        <div>
+                            <h3>Receber Depósito Identificado</h3>
+                            <p>Adicione saldo para {{ carteira?.nome }} ({{ carteira?.numeroCarteira }})</p>
+                        </div>
+                    </div>
+                    <button mat-icon-button (click)="fecharModal()"><mat-icon>close</mat-icon></button>
+                </div>
+
+                <div class="modal-body">
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Valor do Depósito ({{ simboloCarteiraAtiva() }})</mat-label>
+                        <input matInput type="number" [(ngModel)]="depositoValor" placeholder="Ex: 250.00" min="0.01" step="0.01" />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Código Identificador Bancário / Pix</mat-label>
+                        <input matInput [(ngModel)]="depositoIdentificador" placeholder="Ex: PIX-984210" />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Descrição / Observações (Opcional)</mat-label>
+                        <input matInput [(ngModel)]="depositoDescricao" placeholder="Ex: Aporte para pagamento de faturas da equipe" />
+                    </mat-form-field>
+                </div>
+
+                <div class="modal-footer">
+                    <button mat-stroked-button (click)="fecharModal()" [disabled]="processando">Cancelar</button>
+                    <button mat-flat-button color="primary" (click)="executarDeposito()" [disabled]="processando || !depositoValor">
+                        @if (processando) {
+                            <mat-spinner diameter="18"></mat-spinner>
+                        } @else {
+                            <span>Confirmar Depósito</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- MODAL DE PAGAMENTO DE FATURA -->
+    @if (modalAberto === 'FATURA') {
+        <div class="custom-modal-backdrop" (click)="fecharModal()">
+            <div class="custom-modal-content" (click)="$event.stopPropagation()">
+                <div class="modal-header">
+                    <div class="modal-title-group">
+                        <mat-icon class="icon-invoice">receipt_long</mat-icon>
+                        <div>
+                            <h3>Pagar Fatura com {{ carteira?.nome }}</h3>
+                            <p>Posição disponível: {{ simboloCarteiraAtiva() }} {{ (carteira?.saldo || 0) | number:'1.2-2' }}</p>
+                        </div>
+                    </div>
+                    <button mat-icon-button (click)="fecharModal()"><mat-icon>close</mat-icon></button>
+                </div>
+
+                <div class="modal-body">
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Número ou Código da Fatura</mat-label>
+                        <input matInput [(ngModel)]="faturaId" placeholder="Ex: FAT-2026-0042" />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Valor da Fatura ({{ simboloCarteiraAtiva() }})</mat-label>
+                        <input matInput type="number" [(ngModel)]="faturaValor" placeholder="Ex: 89.90" min="0.01" step="0.01" />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Descrição do Pagamento (Opcional)</mat-label>
+                        <input matInput [(ngModel)]="faturaDescricao" placeholder="Ex: Mensalidade de Infraestrutura Cloud" />
+                    </mat-form-field>
+
+                    @if (faturaValor && faturaValor > (carteira?.saldo || 0) && !carteira?.parametrosLastro?.permiteSaldoNegativo) {
+                        <div class="alert-callout">
+                            <mat-icon>warning</mat-icon>
+                            <span>Saldo insuficiente nesta carteira para liquidar a fatura.</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="modal-footer">
+                    <button mat-stroked-button (click)="fecharModal()" [disabled]="processando">Cancelar</button>
+                    <button mat-flat-button color="primary" (click)="executarPagamentoFatura()"
+                        [disabled]="processando || !faturaId || !faturaValor || (faturaValor > (carteira?.saldo || 0) && !carteira?.parametrosLastro?.permiteSaldoNegativo)">
+                        @if (processando) {
+                            <mat-spinner diameter="18"></mat-spinner>
+                        } @else {
+                            <span>Liquidar Fatura</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>

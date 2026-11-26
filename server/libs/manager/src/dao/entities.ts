@@ -1,7 +1,7 @@
 import { ApiHideProperty, ApiProperty } from "@nestjs/swagger";
 import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Tenant } from "@ci/tenant";
-import { Credential } from "@ci/core";
+import { Credential } from "@ci/core/audt/credential.entity";
 import { Exclude } from "class-transformer";
 /**
  * Basic Entity catalog

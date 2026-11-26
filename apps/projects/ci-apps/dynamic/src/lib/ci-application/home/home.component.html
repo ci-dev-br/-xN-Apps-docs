@@ -1,11 +1,32 @@
-<h5>Crie. Prototipe. Compartilhe.</h5>
-<header class="row">
-    <button mat-raised-button (click)="novo()" >
-        Novo
-    </button>
-</header>
-<h4>Projetos Recentes</h4>
-<div class="c recentes">
-    <div class="row wrap scroller">
+<section class="recentes-bar" *ngIf="filteredBlocks.length > 0">
+    <div class="recentes-title">
+        <h4>Telas / Blocos Salvos</h4>
+        <span class="count">{{ filteredBlocks.length }}</span>
     </div>
-</div>
+
+    <div class="recentes-list">
+        <div
+            *ngFor="let block of filteredBlocks"
+            class="block-pill"
+            [class.active]="activeBlock?.internalId === block.internalId"
+            (click)="selecionarBloco(block)">
+            <mat-icon>layers</mat-icon>
+            <div class="pill-info">
+                <strong>{{ block.name || 'Sem nome' }}</strong>
+                <span>{{ block.route || '/sem-rota' }}</span>
+            </div>
+            <button mat-icon-button color="warn" (click)="excluirBloco(block, $event)" matTooltip="Excluir tela">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+    </div>
+</section>
+
+<main class="builder-workspace">
+    <ci-blocks-builder
+        [availableComponents]="availableComponents"
+        [(value)]="currentSpec"
+        (saveRequested)="salvarBloco($event)"
+        (previewBlockRequested)="abrirPreviewComponente($event)">
+    </ci-blocks-builder>
+</main>

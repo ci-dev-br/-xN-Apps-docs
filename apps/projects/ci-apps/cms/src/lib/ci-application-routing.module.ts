@@ -1,14 +1,20 @@
 import { NgModule } from '@angular/core';
 import { Route, RouterModule, Routes } from '@angular/router';
 import { CMSComponent } from './cms/cms.component';
+import { CmsDashboardComponent } from './dashboard/cms-dashboard.component';
 import { MasterDetailComponent } from '@ci/components/master-detail';
 import { models } from './models';
 import { BoardComponent } from '@ci/components';
+
 const routes: Routes = [
   {
     path: '', component: CMSComponent, children: [
       {
         path: '',
+        component: CmsDashboardComponent
+      },
+      {
+        path: 'board',
         component: BoardComponent, data: {
           appName: 'CMS',
           title: 'CMS — Gestor de Conteúdo',
@@ -35,9 +41,9 @@ const routes: Routes = [
     ]
   }
 ];
+
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes)],
+  imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
 export class CiApplicationRoutingModule { }

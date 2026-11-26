@@ -1,0 +1,628 @@
+<div class="builder-shell" cdkDropListGroup>
+    <!-- Painel Esquerdo: Paleta de Componentes (Arrastável + Clique) -->
+    <aside class="palette-pane">
+        <div class="pane-header">
+            <div class="pane-title">
+                <mat-icon>widgets</mat-icon>
+                <span>Componentes</span>
+            </div>
+            <span class="badge">{{ availableComponents.length }}</span>
+        </div>
+
+        <mat-form-field appearance="outline" class="compact-field search-field">
+            <mat-label>Filtrar componentes</mat-label>
+            <input matInput [(ngModel)]="paletteSearch" placeholder="Ex: button, form, alert..." />
+            <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <div
+            class="palette-list"
+            id="palette-drop-list"
+            cdkDropList
+            [cdkDropListData]="filteredComponents"
+            [cdkDropListSortingDisabled]="true">
+            <button
+                type="button"
+                class="palette-item"
+                *ngFor="let comp of filteredComponents; trackBy: trackByName"
+                cdkDrag
+                [cdkDragData]="comp"
+                (click)="addToSelectedOrRoot(comp)"
+                [matTooltip]="comp.description || comp.title">
+                <div class="palette-icon">
+                    <mat-icon>{{ comp.icon || 'extension' }}</mat-icon>
+                </div>
+                <div class="palette-info">
+                    <div class="palette-name">{{ comp.title }}</div>
+                    <div class="palette-meta">
+                        <span class="cat" *ngIf="comp.category">{{ comp.category }}</span>
+                        <span>{{ comp.inputs.length }} input(s)</span>
+                    </div>
+                </div>
+                <mat-icon class="add-icon">drag_indicator</mat-icon>
+
+                <div *cdkDragPreview class="drag-preview-chip">
+                    <mat-icon>{{ comp.icon || 'extension' }}</mat-icon>
+                    <span>{{ comp.title }}</span>
+                </div>
+            </button>
+
+            <div class="empty-hint" *ngIf="filteredComponents.length === 0">
+                Nenhum componente encontrado.
+            </div>
+        </div>
+    </aside>
+
+    <!-- Painel Central: Canvas de Blocos / Preview / JSON -->
+    <section class="canvas-pane">
+        <div class="canvas-toolbar">
+            <div class="spec-meta">
+                <mat-form-field appearance="outline" class="compact-field meta-name">
+                    <mat-label>Nome da Tela</mat-label>
+                    <input matInput [(ngModel)]="spec.name" (ngModelChange)="onSpecFieldChange()" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="compact-field meta-route">
+                    <mat-label>Rota</mat-label>
+                    <input matInput [(ngModel)]="spec.route" (ngModelChange)="onSpecFieldChange()" placeholder="/minha-rota" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="compact-field meta-layout">
+                    <mat-label>Layout</mat-label>
+                    <mat-select [(ngModel)]="spec.layout" (ngModelChange)="onSpecFieldChange()">
+                        <mat-option value="vertical">Vertical</mat-option>
+                        <mat-option value="horizontal">Horizontal</mat-option>
+                        <mat-option value="grid">Grade</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <button mat-flat-button color="primary" (click)="requestSave()" class="save-btn">
+                <mat-icon>save</mat-icon>
+                Salvar Tela
+            </button>
+        </div>
+
+        <mat-tab-group [(selectedIndex)]="activeTabIndex" class="canvas-tabs">
+            <!-- Aba 1: Estrutura em Blocos -->
+            <mat-tab label="Estrutura ({{ spec.blocks?.length || 0 }})">
+                <div class="canvas-scroll" (contextmenu)="openCanvasContextMenu($event)">
+                    <div
+                        cdkDropList
+                        [cdkDropListData]="spec.blocks || []"
+                        (cdkDropListDropped)="onDropBlock($event, spec.blocks || [])"
+                        class="blocks-dropzone"
+                        [class.layout-horizontal]="spec.layout === 'horizontal'"
+                        [class.layout-grid]="spec.layout === 'grid'">
+
+                        <ng-container *ngFor="let block of spec.blocks; let i = index; trackBy: trackById">
+                            <ng-container
+                                *ngTemplateOutlet="structureNode; context: { $implicit: block, list: spec.blocks!, index: i, depth: 0 }">
+                            </ng-container>
+                        </ng-container>
+
+                        <div class="empty-canvas" *ngIf="!spec.blocks || spec.blocks.length === 0">
+                            <mat-icon>dashboard_customize</mat-icon>
+                            <p>Nenhum bloco adicionado ainda.</p>
+                            <span>Arraste ou clique em um componente à esquerda (ou use o botão direito aqui) para iniciar a construção da tela.</span>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <!-- Aba 2: Pré-visualização ao Vivo (com Drag-and-Drop e Context Menu) -->
+            <mat-tab label="Pré-visualização">
+                <div class="canvas-scroll" (contextmenu)="openCanvasContextMenu($event)">
+                    <div
+                        cdkDropList
+                        [cdkDropListData]="spec.blocks!"
+                        (cdkDropListDropped)="onDropBlock($event, spec.blocks!)"
+                        class="preview-surface"
+                        [class.layout-horizontal]="spec.layout === 'horizontal'"
+                        [class.layout-grid]="spec.layout === 'grid'">
+
+                        <div
+                            *ngFor="let block of spec.blocks; let i = index; trackBy: trackById"
+                            cdkDrag
+                            [cdkDragData]="block"
+                            class="preview-drag-item"
+                            [class.selected]="block.id === selectedBlockId"
+                            (click)="selectBlock(block, $event)"
+                            (contextmenu)="openBlockContextMenu($event, block, spec.blocks!, i, false)">
+                            <div class="block-drag-placeholder" *cdkDragPlaceholder></div>
+                            <span class="preview-drag-handle" cdkDragHandle matTooltip="Arrastar bloco">
+                                <mat-icon>drag_indicator</mat-icon>
+                                {{ block.label || block.componentName }}
+                            </span>
+                            <ng-container *ngTemplateOutlet="previewNode; context: { $implicit: block }"></ng-container>
+                        </div>
+
+                        <div class="empty-canvas" *ngIf="!spec.blocks || spec.blocks.length === 0">
+                            <mat-icon>visibility_off</mat-icon>
+                            <p>Adicione ou arraste blocos para visualizar a tela.</p>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <!-- Aba 3: JSON (com Drag-and-Drop da paleta) -->
+            <mat-tab label="JSON">
+                <div
+                    class="json-editor-pane"
+                    cdkDropList
+                    [cdkDropListData]="spec.blocks!"
+                    [cdkDropListSortingDisabled]="true"
+                    (cdkDropListDropped)="onDropJsonPalette($event)">
+                    <div class="json-actions">
+                        <span class="json-drop-hint">
+                            <mat-icon>drag_indicator</mat-icon>
+                            Arraste componentes da paleta para inserir no JSON
+                        </span>
+                        <div class="json-buttons">
+                            <button mat-stroked-button (click)="copyJson()">
+                                <mat-icon>content_copy</mat-icon>
+                                Copiar JSON
+                            </button>
+                            <button mat-flat-button color="primary" (click)="applyRawJson()">
+                                <mat-icon>check</mat-icon>
+                                Aplicar JSON
+                            </button>
+                        </div>
+                    </div>
+                    <div class="json-error" *ngIf="jsonError">{{ jsonError }}</div>
+                    <textarea class="json-textarea" [(ngModel)]="jsonDraft" spellcheck="false"></textarea>
+                </div>
+            </mat-tab>
+
+            <!-- Aba 4: XML / HTML5 (1:1 com Drag-and-Drop da paleta) -->
+            <mat-tab label="XML / HTML5">
+                <div
+                    class="json-editor-pane"
+                    cdkDropList
+                    [cdkDropListData]="spec.blocks!"
+                    [cdkDropListSortingDisabled]="true"
+                    (cdkDropListDropped)="onDropJsonPalette($event)">
+                    <div class="json-actions">
+                        <span class="json-drop-hint">
+                            <mat-icon>drag_indicator</mat-icon>
+                            Arraste componentes da paleta para inserir no XML / HTML5
+                        </span>
+                        <div class="json-buttons">
+                            <button mat-stroked-button (click)="copyXml()">
+                                <mat-icon>content_copy</mat-icon>
+                                Copiar XML/HTML5
+                            </button>
+                            <button mat-flat-button color="primary" (click)="applyRawXml()">
+                                <mat-icon>check</mat-icon>
+                                Aplicar XML/HTML5
+                            </button>
+                        </div>
+                    </div>
+                    <div class="json-error" *ngIf="xmlError">{{ xmlError }}</div>
+                    <textarea class="json-textarea" [(ngModel)]="xmlDraft" spellcheck="false"></textarea>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </section>
+
+    <!-- Painel Direito: Inspetor de Inputs do Bloco Selecionado -->
+    <aside class="inspector-pane">
+        <div class="pane-header">
+            <div class="pane-title">
+                <mat-icon>tune</mat-icon>
+                <span>Propriedades / Inputs</span>
+            </div>
+            <button
+                *ngIf="selectedBlock as sb"
+                mat-icon-button
+                color="primary"
+                (click)="previewBlock(sb, $event)"
+                matTooltip="Visualizar apenas este componente em rota isolada">
+                <mat-icon>open_in_new</mat-icon>
+            </button>
+        </div>
+
+        <div class="inspector-body" *ngIf="selectedBlock as block; else noSelection">
+            <div class="selected-badge">
+                <mat-icon>{{ selectedComponentDefinition?.icon || 'view_module' }}</mat-icon>
+                <div>
+                    <div class="sel-title">{{ selectedComponentDefinition?.title || block.componentName }}</div>
+                    <div class="sel-id">{{ block.id }}</div>
+                </div>
+            </div>
+
+            <mat-form-field appearance="outline" class="compact-field full-width">
+                <mat-label>Rótulo do Bloco</mat-label>
+                <input matInput [ngModel]="block.label" (ngModelChange)="onBlockLabelChange(block, $event)" />
+            </mat-form-field>
+
+            <div class="inputs-section-title" *ngIf="selectedComponentDefinition?.inputs?.length">
+                Inputs do Componente
+            </div>
+
+            <ng-container *ngFor="let inputDef of selectedComponentDefinition?.inputs; trackBy: trackByName">
+                <!-- string / color -->
+                <mat-form-field appearance="outline" class="compact-field full-width"
+                                *ngIf="inputDef.type === 'string' || inputDef.type === 'color'">
+                    <mat-label>{{ inputDef.label || inputDef.name }}</mat-label>
+                    <input
+                        matInput
+                        [type]="inputDef.type === 'color' ? 'color' : 'text'"
+                        [ngModel]="block.inputs?.[inputDef.name] ?? ''"
+                        (ngModelChange)="onInputValueChange(block, inputDef, $event)" />
+                    <mat-hint *ngIf="inputDef.description">{{ inputDef.description }}</mat-hint>
+                </mat-form-field>
+
+                <!-- textarea -->
+                <mat-form-field appearance="outline" class="compact-field full-width"
+                                *ngIf="inputDef.type === 'textarea'">
+                    <mat-label>{{ inputDef.label || inputDef.name }}</mat-label>
+                    <textarea
+                        matInput
+                        rows="3"
+                        [ngModel]="block.inputs?.[inputDef.name] ?? ''"
+                        (ngModelChange)="onInputValueChange(block, inputDef, $event)"></textarea>
+                </mat-form-field>
+
+                <!-- number -->
+                <mat-form-field appearance="outline" class="compact-field full-width"
+                                *ngIf="inputDef.type === 'number'">
+                    <mat-label>{{ inputDef.label || inputDef.name }}</mat-label>
+                    <input
+                        matInput
+                        type="number"
+                        [ngModel]="block.inputs?.[inputDef.name]"
+                        (ngModelChange)="onInputValueChange(block, inputDef, $event)" />
+                </mat-form-field>
+
+                <!-- select -->
+                <mat-form-field appearance="outline" class="compact-field full-width"
+                                *ngIf="inputDef.type === 'select'">
+                    <mat-label>{{ inputDef.label || inputDef.name }}</mat-label>
+                    <mat-select
+                        [ngModel]="block.inputs?.[inputDef.name]"
+                        (ngModelChange)="onInputValueChange(block, inputDef, $event)">
+                        <mat-option *ngFor="let opt of inputDef.options" [value]="opt.value">
+                            {{ opt.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <!-- boolean -->
+                <div class="toggle-field" *ngIf="inputDef.type === 'boolean'">
+                    <mat-slide-toggle
+                        [ngModel]="!!block.inputs?.[inputDef.name]"
+                        (ngModelChange)="onInputValueChange(block, inputDef, $event)">
+                        {{ inputDef.label || inputDef.name }}
+                    </mat-slide-toggle>
+                </div>
+
+                <!-- json -->
+                <mat-form-field appearance="outline" class="compact-field full-width"
+                                *ngIf="inputDef.type === 'json'">
+                    <mat-label>{{ inputDef.label || inputDef.name }} (JSON)</mat-label>
+                    <textarea
+                        matInput
+                        rows="4"
+                        class="mono-input"
+                        [ngModel]="getJsonInputText(block, inputDef.name)"
+                        (ngModelChange)="onJsonInputChange(block, inputDef, $event)"></textarea>
+                </mat-form-field>
+            </ng-container>
+
+            <div class="empty-hint" *ngIf="!selectedComponentDefinition?.inputs?.length">
+                Este componente não possui inputs configuráveis declarados.
+            </div>
+        </div>
+
+        <ng-template #noSelection>
+            <div class="inspector-empty">
+                <mat-icon>touch_app</mat-icon>
+                <p>Selecione um bloco na área central para editar seus inputs e propriedades.</p>
+            </div>
+        </ng-template>
+    </aside>
+</div>
+
+<!-- Triggers posicionáveis para Context Menu (Material MatMenu) -->
+<div
+    class="context-menu-anchor"
+    [style.left]="contextMenuPosition.x"
+    [style.top]="contextMenuPosition.y"
+    #blockContextTrigger="matMenuTrigger"
+    [matMenuTriggerFor]="blockContextMenu">
+</div>
+<div
+    class="context-menu-anchor"
+    [style.left]="contextMenuPosition.x"
+    [style.top]="contextMenuPosition.y"
+    #canvasContextTrigger="matMenuTrigger"
+    [matMenuTriggerFor]="canvasContextMenu">
+</div>
+
+<!-- Context Menu de Ações Rápidas para Bloco -->
+<mat-menu #blockContextMenu="matMenu">
+    <ng-container *ngIf="contextMenuData as ctx">
+        <button mat-menu-item (click)="selectBlock(ctx.block)">
+            <mat-icon>tune</mat-icon>
+            <span>Editar Inputs</span>
+        </button>
+        <button mat-menu-item (click)="previewBlock(ctx.block)">
+            <mat-icon>open_in_new</mat-icon>
+            <span>Visualizar isolado</span>
+        </button>
+        <button mat-menu-item (click)="moveBlock(ctx.list, ctx.index, -1)" [disabled]="ctx.index === 0">
+            <mat-icon>arrow_upward</mat-icon>
+            <span>Mover para cima</span>
+        </button>
+        <button mat-menu-item (click)="moveBlock(ctx.list, ctx.index, 1)" [disabled]="ctx.index === ctx.list.length - 1">
+            <mat-icon>arrow_downward</mat-icon>
+            <span>Mover para baixo</span>
+        </button>
+        <button mat-menu-item *ngIf="ctx.isChild" (click)="moveBlockToRoot(ctx)">
+            <mat-icon>drive_file_move_rtl</mat-icon>
+            <span>Mover para raiz</span>
+        </button>
+        <button mat-menu-item (click)="duplicateBlock(ctx.block, ctx.list)">
+            <mat-icon>content_copy</mat-icon>
+            <span>Duplicar bloco</span>
+        </button>
+        <button mat-menu-item (click)="copyBlockJson(ctx.block)">
+            <mat-icon>data_object</mat-icon>
+            <span>Copiar JSON do bloco</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="removeBlock(ctx.block.id, ctx.list)">
+            <mat-icon color="warn">delete</mat-icon>
+            <span>Remover bloco</span>
+        </button>
+    </ng-container>
+</mat-menu>
+
+<!-- Context Menu de Ações Rápidas para o Canvas -->
+<mat-menu #canvasContextMenu="matMenu">
+    <button mat-menu-item [matMenuTriggerFor]="addComponentSubmenu">
+        <mat-icon>add_box</mat-icon>
+        <span>Adicionar componente</span>
+    </button>
+    <button mat-menu-item (click)="activeTabIndex = 1">
+        <mat-icon>visibility</mat-icon>
+        <span>Pré-visualizar tela</span>
+    </button>
+    <button mat-menu-item (click)="activeTabIndex = 2">
+        <mat-icon>code</mat-icon>
+        <span>Ver / Editar JSON</span>
+    </button>
+    <button mat-menu-item (click)="requestSave()">
+        <mat-icon>save</mat-icon>
+        <span>Salvar tela</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="clearAllBlocks()" [disabled]="!spec.blocks?.length">
+        <mat-icon color="warn">delete_sweep</mat-icon>
+        <span>Limpar todos os blocos</span>
+    </button>
+</mat-menu>
+
+<mat-menu #addComponentSubmenu="matMenu">
+    <button
+        mat-menu-item
+        *ngFor="let comp of availableComponents; trackBy: trackByName"
+        (click)="addBlock(comp)">
+        <mat-icon>{{ comp.icon || 'extension' }}</mat-icon>
+        <span>{{ comp.title }}</span>
+    </button>
+</mat-menu>
+
+<!-- Template recursivo para estrutura de blocos (suporta arraste interno em qualquer nível) -->
+<ng-template #structureNode let-block let-list="list" let-index="index" let-depth="depth">
+    <div
+        cdkDrag
+        [cdkDragData]="block"
+        [class.block-card]="depth === 0"
+        [class.child-block-card]="depth > 0"
+        [class.selected]="block.id === selectedBlockId"
+        (click)="selectBlock(block, $event)"
+        (contextmenu)="openBlockContextMenu($event, block, list, index, depth > 0)">
+
+        <div class="block-drag-placeholder" *cdkDragPlaceholder></div>
+
+        <div class="block-card-header">
+            <div class="block-title-group">
+                <mat-icon cdkDragHandle class="drag-handle" matTooltip="Arrastar para reordenar ou mover">drag_indicator</mat-icon>
+                <mat-icon class="comp-icon">{{ getComponentDefinition(block.componentName)?.icon || 'view_module' }}</mat-icon>
+                <span class="block-label">{{ block.label || block.componentName }}</span>
+                <code class="block-type">{{ block.componentName }}</code>
+            </div>
+
+            <div class="block-actions">
+                <button mat-icon-button (click)="moveBlock(list, index, -1, $event)" [disabled]="index === 0" matTooltip="Mover para cima">
+                    <mat-icon>arrow_upward</mat-icon>
+                </button>
+                <button mat-icon-button (click)="moveBlock(list, index, 1, $event)" [disabled]="index === list.length - 1" matTooltip="Mover para baixo">
+                    <mat-icon>arrow_downward</mat-icon>
+                </button>
+                <button mat-icon-button (click)="previewBlock(block, $event)" matTooltip="Visualizar componente em rota isolada">
+                    <mat-icon>open_in_new</mat-icon>
+                </button>
+                <button mat-icon-button (click)="duplicateBlock(block, list, $event)" matTooltip="Duplicar bloco">
+                    <mat-icon>content_copy</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="removeBlock(block.id, list, $event)" matTooltip="Remover bloco">
+                    <mat-icon>delete</mat-icon>
+                </button>
+                <button mat-icon-button (click)="openBlockContextMenu($any($event), block, list, index, depth > 0)" matTooltip="Ações rápidas">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <div class="block-inputs-summary" *ngIf="block.inputs && ((block.inputs | keyvalue)?.length || 0) > 0">
+            <span class="input-chip" *ngFor="let kv of block.inputs | keyvalue">
+                <strong>{{ kv.key }}:</strong> {{ kv.value | json }}
+            </span>
+        </div>
+
+        <!-- Sub-blocos recursivos caso o componente aceite children -->
+        <div class="children-container" *ngIf="getComponentDefinition(block.componentName)?.allowChildren">
+            <div class="children-header">
+                <span>Blocos internos ({{ block.children?.length || 0 }})</span>
+            </div>
+            <div
+                cdkDropList
+                [cdkDropListData]="block.children!"
+                (cdkDropListDropped)="onDropBlock($event, block.children!, block)"
+                class="children-dropzone">
+                <ng-container *ngFor="let child of block.children; let ci = index; trackBy: trackById">
+                    <ng-container
+                        *ngTemplateOutlet="structureNode; context: { $implicit: child, list: block.children!, index: ci, depth: depth + 1 }">
+                    </ng-container>
+                </ng-container>
+                <div class="empty-children" *ngIf="!block.children || block.children.length === 0">
+                    Arraste componentes ou blocos para dentro deste container.
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Template recursivo para pré-visualização de blocos -->
+<ng-template #previewNode let-block>
+    <ng-container *ngIf="getComponentDefinition(block.componentName)?.componentRef as compRef; else builtinPreview">
+        <ng-container *ngComponentOutlet="compRef; inputs: block.inputs || {}"></ng-container>
+    </ng-container>
+
+    <ng-template #builtinPreview>
+        <div class="preview-block" [ngSwitch]="block.componentName">
+            <!-- Container -->
+            <div *ngSwitchCase="'container'"
+                 cdkDropList
+                 [cdkDropListData]="block.children!"
+                 (cdkDropListDropped)="onDropBlock($event, block.children!, block)"
+                 class="pv-container"
+                 [style.flexDirection]="block.inputs?.['direction'] || 'column'"
+                 [style.gap.px]="block.inputs?.['gap'] ?? 12"
+                 [style.padding.px]="block.inputs?.['padding'] ?? 16"
+                 [style.background]="block.inputs?.['background'] || '#ffffff'">
+                <div
+                    *ngFor="let child of block.children; let ci = index; trackBy: trackById"
+                    cdkDrag
+                    [cdkDragData]="child"
+                    class="preview-drag-item preview-child-item"
+                    [class.selected]="child.id === selectedBlockId"
+                    (click)="selectBlock(child, $event)"
+                    (contextmenu)="openBlockContextMenu($event, child, block.children!, ci, true)">
+                    <div class="block-drag-placeholder" *cdkDragPlaceholder></div>
+                    <span class="preview-drag-handle" cdkDragHandle matTooltip="Arrastar bloco interno">
+                        <mat-icon>drag_indicator</mat-icon>
+                        {{ child.label || child.componentName }}
+                    </span>
+                    <ng-container *ngTemplateOutlet="previewNode; context: { $implicit: child }"></ng-container>
+                </div>
+                <div class="pv-empty-container" *ngIf="!block.children?.length">Container vazio — arraste blocos aqui</div>
+            </div>
+
+            <!-- Heading -->
+            <div *ngSwitchCase="'heading'" [style.color]="block.inputs?.['color'] || '#1f2937'">
+                <h1 *ngIf="block.inputs?.['level'] === 'h1'">{{ block.inputs?.['text'] }}</h1>
+                <h2 *ngIf="!block.inputs?.['level'] || block.inputs?.['level'] === 'h2'">{{ block.inputs?.['text'] }}</h2>
+                <h3 *ngIf="block.inputs?.['level'] === 'h3'">{{ block.inputs?.['text'] }}</h3>
+                <p *ngIf="block.inputs?.['level'] === 'p'">{{ block.inputs?.['text'] }}</p>
+            </div>
+
+            <!-- Button -->
+            <div *ngSwitchCase="'button'">
+                <button mat-raised-button
+                        [color]="block.inputs?.['color'] || 'primary'"
+                        [disabled]="!!block.inputs?.['disabled']">
+                    {{ block.inputs?.['label'] || 'Botão' }}
+                </button>
+            </div>
+
+            <!-- Alert -->
+            <div *ngSwitchCase="'alert'" class="pv-alert" [attr.data-severity]="block.inputs?.['severity'] || 'info'">
+                <strong>{{ block.inputs?.['title'] }}</strong>
+                <p>{{ block.inputs?.['message'] }}</p>
+            </div>
+
+            <!-- Snackbar -->
+            <div *ngSwitchCase="'snackbar'" class="pv-snackbar">
+                <span>{{ block.inputs?.['message'] }}</span>
+                <button mat-button color="accent" *ngIf="block.inputs?.['actionLabel']">{{ block.inputs?.['actionLabel'] }}</button>
+            </div>
+
+            <!-- Form -->
+            <div *ngSwitchCase="'form'" class="pv-form">
+                <div class="pv-form-title" *ngIf="block.inputs?.['schemaName']">Formulário: {{ block.inputs?.['schemaName'] }}</div>
+                <div class="pv-form-field" *ngFor="let f of getPreviewFormFields(block)">
+                    <label>{{ f['label'] || f['name'] }}</label>
+                    <input type="text" [placeholder]="f['name']" disabled />
+                </div>
+                <button mat-flat-button color="primary">{{ block.inputs?.['submitLabel'] || 'Enviar' }}</button>
+            </div>
+
+            <!-- Dialog -->
+            <div *ngSwitchCase="'dialog'" class="pv-dialog" [style.maxWidth]="block.inputs?.['width'] || '520px'">
+                <div class="pv-dialog-header">
+                    <strong>{{ block.inputs?.['title'] || 'Dialog' }}</strong>
+                    <mat-icon *ngIf="block.inputs?.['showClose'] !== false">close</mat-icon>
+                </div>
+                <div
+                    class="pv-dialog-body"
+                    cdkDropList
+                    [cdkDropListData]="block.children!"
+                    (cdkDropListDropped)="onDropBlock($event, block.children!, block)">
+                    <div
+                        *ngFor="let child of block.children; let ci = index; trackBy: trackById"
+                        cdkDrag
+                        [cdkDragData]="child"
+                        class="preview-drag-item preview-child-item"
+                        [class.selected]="child.id === selectedBlockId"
+                        (click)="selectBlock(child, $event)"
+                        (contextmenu)="openBlockContextMenu($event, child, block.children!, ci, true)">
+                        <div class="block-drag-placeholder" *cdkDragPlaceholder></div>
+                        <span class="preview-drag-handle" cdkDragHandle matTooltip="Arrastar bloco interno">
+                            <mat-icon>drag_indicator</mat-icon>
+                            {{ child.label || child.componentName }}
+                        </span>
+                        <ng-container *ngTemplateOutlet="previewNode; context: { $implicit: child }"></ng-container>
+                    </div>
+                    <div class="pv-empty-container" *ngIf="!block.children?.length">Arraste blocos para dentro do Dialog</div>
+                </div>
+            </div>
+
+            <!-- Pivot List -->
+            <div *ngSwitchCase="'pivot-list'" class="pv-list">
+                <div class="pv-list-item" *ngFor="let item of getPreviewListItems(block)">
+                    <strong>{{ item[block.inputs?.['titleField'] || 'name'] || 'Item' }}</strong>
+                    <span>{{ item[block.inputs?.['subtitleField'] || 'description'] || '' }}</span>
+                </div>
+            </div>
+
+            <!-- Pivot Table -->
+            <div *ngSwitchCase="'pivot-table'" class="pv-table-wrap">
+                <table class="pv-table">
+                    <thead>
+                        <tr>
+                            <th *ngFor="let col of getPreviewTableColumns(block)">{{ col }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td *ngFor="let col of getPreviewTableColumns(block)">—</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Fallback genérico para componentes customizados sem componentRef -->
+            <div *ngSwitchDefault class="pv-generic">
+                <div class="pv-generic-head">
+                    <mat-icon>{{ getComponentDefinition(block.componentName)?.icon || 'extension' }}</mat-icon>
+                    <strong>{{ block.label || block.componentName }}</strong>
+                </div>
+                <pre>{{ block.inputs | json }}</pre>
+            </div>
+        </div>
+    </ng-template>
+</ng-template>

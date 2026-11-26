@@ -4,7 +4,7 @@ import { Application } from "../model/application.entity";
 import { ApplicationService } from "../service/application.service";
 import { User } from "@ci/auth/models/user.entity";
 import { GetInputDtos } from "../dto/input-dto";
-import { CatalogAppDto, CanLoadAppDto, CheckVersionDto, ReconcileCatalogDto, ToggleUserActivationDto, GetStoreDto, ToggleGlobalAppDto, InstallGitModuleDto } from "../dto/catalog-app.dto";
+import { CatalogAppDto, CanLoadAppDto, CheckVersionDto, ReconcileCatalogDto, ToggleUserActivationDto, GetStoreDto, ToggleGlobalAppDto, InstallGitModuleDto, RecordUsageDto, DeveloperGratitudeConfigDto, ConvertGratitudeDto } from "../dto/catalog-app.dto";
 import { Role } from "@ci/auth/decorators/role.decorator";
 import { Public } from "@ci/auth/decorators/public.decorator";
 import { SyncPayloadDao } from "@ci/core";
@@ -251,5 +251,90 @@ export class ApplicationController {
         @Body() application: Application
     ) {
         return await this.service.delete(application.id);
+    }
+
+    /**
+     * Registra o consumo de uma aplicação quando ela é utilizada.
+     * Sempre que o aplicativo é usado, registra um consumo e credita para cada autor
+     * e co-autor um crédito de gratidão que pode ou não ser convertido em saldo no financeiro.
+     */
+    @Public()
+    @Post('RecordUsage')
+    @ApiResponse({
+        description: 'Registrar consumo da aplicação e creditar gratidão aos autores'
+    })
+    @ApiOperation({
+        operationId: 'RecordApplicationUsage',
+    })
+    async recordUsage(
+        @Body() dto: RecordUsageDto,
+        @Request() req: Request,
+        @Headers('x-origin-application') originApp?: string,
+        @Headers('x-application-git-hash') gitHash?: string,
+    ) {
+        const user: User = (req as any).user;
+        const tenantId = (req as any).headers?.['x-tenant-id'] || (req as any).headers?.['tenant-id'];
+        const appKey = dto.appKey || originApp;
+        const hash = dto.gitVersionHash || gitHash;
+        return await this.service.recordConsumption(appKey, user, hash, tenantId, dto.metadata);
+    }
+
+    /**
+     * Resumo dos créditos de gratidão do desenvolvedor autenticado (ROLE DEVELOPER).
+     * Retorna créditos acumulados, créditos convertidos, valor configurado e saldo calculado.
+     */
+    @Role('DEVELOPER')
+    @Post('Gratitude/Summary')
+    @ApiResponse({
+        description: 'Obter resumo de créditos de gratidão e saldo calculado para o desenvolvedor'
+    })
+    @ApiOperation({
+        operationId: 'GetDeveloperGratitudeSummary',
+    })
+    async getGratitudeSummary(
+        @Request() req: Request
+    ) {
+        const user: User = (req as any).user;
+        return await this.service.getDeveloperGratitudeSummary(user);
+    }
+
+    /**
+     * Configura quanto vale a gratidão no perfil do desenvolvedor (ROLE DEVELOPER).
+     * Cada usuário ROLE DEVELOPER pode configurar quanto vale sua gratidão em seu perfil,
+     * e essa é considerada para calcular o saldo.
+     */
+    @Role('DEVELOPER')
+    @Post('Gratitude/Configure')
+    @ApiResponse({
+        description: 'Configurar valor unitário da gratidão e preferência de autoconversão do desenvolvedor'
+    })
+    @ApiOperation({
+        operationId: 'SetDeveloperGratitudeConfig',
+    })
+    async configureGratitude(
+        @Body() dto: DeveloperGratitudeConfigDto,
+        @Request() req: Request
+    ) {
+        const user: User = (req as any).user;
+        return await this.service.setDeveloperGratitudeConfig(user, dto);
+    }
+
+    /**
+     * Converte os créditos de gratidão pendentes em saldo na carteira do Financeiro.
+     */
+    @Role('DEVELOPER')
+    @Post('Gratitude/Convert')
+    @ApiResponse({
+        description: 'Converter créditos de gratidão acumulados em saldo financeiro na carteira'
+    })
+    @ApiOperation({
+        operationId: 'ConvertDeveloperGratitudeToBalance',
+    })
+    async convertGratitude(
+        @Body() dto: ConvertGratitudeDto,
+        @Request() req: Request
+    ) {
+        const user: User = (req as any).user;
+        return await this.service.convertGratitudeToBalance(user, dto?.credits);
     }
 }

@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude } from "class-transformer";
-import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Policy } from "./policy.entity";
 import { Tenant } from "@ci/tenant/models/tenant.entity";
 import { Photo } from "@ci/storage/models/photo.entity";
@@ -97,7 +97,7 @@ export class User {
     @ApiProperty({
         title: 'Token de atualização',
         nullable: true,
-        required: false
+        required: false,
     })
     @Column({ nullable: true })
     refreshToken?: string;
@@ -150,9 +150,14 @@ export class User {
         isArray: true,
         type: UserPreference,
     })
+    @OneToMany(() => UserPreference, pref => pref.user, {
+        nullable: true,
+        cascade: true,
+    })
     preferences?: UserPreference[];
 
     // Armazena o vetor de 128 dimensões gerado pelo face-api.js
     @Column({ type: 'jsonb', nullable: true })
     faceDescriptor?: number[];
+
 }

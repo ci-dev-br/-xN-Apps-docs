@@ -1,48 +1,141 @@
-@if(!!form){<div class="board-wrap" [formGroup]="form">
-    <ci-input mode="content-editable" fieldName="title" label="Título" el="h1" placeholder=""></ci-input>
-    <div class="inner-content" [ngClass]="classes">
-        @if(!!prancheta && !!prancheta.cards && prancheta.cards.length > 0) {
-        @for(item of prancheta.cards; track $index) {
-        <ci-cardboard [cardInfo]="item" [board]="this">
-        </ci-cardboard>}
-        }@else{
-        <article class="empty-board">
-            <p>Customize sua prancheta adicionando cards. Clique no botão <mat-icon>widgets</mat-icon> para adicionar
-                cards.
-            </p>
-            <p>Os cards são elementos que você pode adicionar à sua prancheta para organizar suas ideias, tarefas ou
-                informações de forma visual e interativa. Você pode criar cards com diferentes conteúdos, como texto,
-                imagens,
-                listas e muito mais.
-            </p>
-            <p>uma prancheta personalizada, você adapta o espaço de trabalho às suas necessidades, tornando-o mais
-                eficiente e produtivo. Adicione, mova e organize os cards conforme necessário para manter suas ideias e
-                projetos
-                bem estruturados.
-            </p>
-            <p> Crie paranchetas com diferentes categorias, cores e estilos para facilitar a identificação e o acesso
-                rápido
-                às
-                informações importantes. A personalização da prancheta permite que você tenha um ambiente de trabalho
-                mais
-                agradável e funcional.
-            </p>
-            <p>
+<div class="ci-board-container" [class.customizing-active]="isCustomizingLayout">
+    <!-- BARRA SUPERIOR DE CONTROLE E CUSTOMIZAÇÃO DO BOARD -->
+    <header class="board-topbar">
+        <div class="board-left-meta">
+            <div class="board-title-group">
+                <mat-icon class="board-main-icon">space_dashboard</mat-icon>
+                <div class="title-and-subtitle">
+                    <h2 class="board-title-text">{{ prancheta?.title || customTitle || 'Meu Board' }}</h2>
+                    <span class="board-subtitle">Painel operacional customizável com cartões integrados</span>
+                </div>
+            </div>
 
-                Ative a colaboração em equipe compartilhando sua prancheta com colegas, permitindo que todos contribuam
-                e
-                acompanhem o progresso das tarefas. A prancheta personalizada é uma ferramenta poderosa para melhorar a
-                comunicação e a organização dentro de um grupo.
-            </p>
-        </article>
+            <!-- Badges de Status e Escopo de Compartilhamento -->
+            <div class="board-badges-group">
+                <!-- Badge Interativo de Escopo: Privado vs Tenant -->
+                <button mat-button class="scope-pill-btn" [class.tenant-scope]="boardScope === 'TENANT'"
+                    (click)="toggleScope()"
+                    [matTooltip]="boardScope === 'TENANT' 
+                        ? 'Compartilhado por Tenant: visível para todos os membros da sua organização. Clique para tornar Privado.' 
+                        : 'Privado: visível apenas para o seu usuário. Clique para compartilhar com a organização (Tenant).'">
+                    <mat-icon>{{ boardScope === 'TENANT' ? 'corporate_fare' : 'lock' }}</mat-icon>
+                    <span>{{ boardScope === 'TENANT' ? 'Compartilhado no Tenant' : 'Privado (Apenas Eu)' }}</span>
+                </button>
+
+                <span class="stat-pill">
+                    <mat-icon>widgets</mat-icon>
+                    <span>{{ prancheta?.cards?.length || 0 }} cards</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Botões de Ações e Ferramentas -->
+        <div class="board-right-actions">
+            @if (allowCustomization) {
+                <button mat-stroked-button class="btn-toggle-custom" [class.active]="isCustomizingLayout"
+                    (click)="toggleCustomizingLayout()" matTooltip="Personalizar colunas, espaçamentos e organização">
+                    <mat-icon>view_quilt</mat-icon>
+                    <span class="btn-text">Layout</span>
+                </button>
+
+                <button mat-flat-button color="primary" class="btn-add-card" (click)="findCardToAdd()"
+                    matTooltip="Adicionar novo componente ao painel">
+                    <mat-icon>add</mat-icon>
+                    <span class="btn-text">Adicionar Card</span>
+                </button>
+            }
+
+            <button mat-icon-button class="btn-settings" (click)="openSettings()" matTooltip="Configurações da prancheta">
+                <mat-icon>settings</mat-icon>
+            </button>
+        </div>
+    </header>
+
+    <!-- BARRA RETRÁTIL DE CUSTOMIZAÇÃO DO LAYOUT DO BOARD -->
+    @if (isCustomizingLayout) {
+        <section class="layout-customization-panel">
+            <div class="panel-section">
+                <span class="panel-label">Colunas do Grid:</span>
+                <div class="btn-group-toggle">
+                    <button mat-button [class.selected]="layoutColumns === 1" (click)="setColumns(1)">1</button>
+                    <button mat-button [class.selected]="layoutColumns === 2" (click)="setColumns(2)">2</button>
+                    <button mat-button [class.selected]="layoutColumns === 3" (click)="setColumns(3)">3</button>
+                    <button mat-button [class.selected]="layoutColumns === 4" (click)="setColumns(4)">4</button>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <span class="panel-label">Espaçamento:</span>
+                <div class="btn-group-toggle">
+                    <button mat-button [class.selected]="layoutGap === 'compact'" (click)="setGap('compact')">Compacto</button>
+                    <button mat-button [class.selected]="layoutGap === 'normal'" (click)="setGap('normal')">Padrão</button>
+                    <button mat-button [class.selected]="layoutGap === 'spacious'" (click)="setGap('spacious')">Amplo</button>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <span class="panel-label">Compartilhamento:</span>
+                <button mat-stroked-button class="btn-scope-switch" (click)="toggleScope()">
+                    <mat-icon>{{ boardScope === 'TENANT' ? 'corporate_fare' : 'lock' }}</mat-icon>
+                    <span>{{ boardScope === 'TENANT' ? 'Tenant (Organização)' : 'Apenas Meu Usuário' }}</span>
+                </button>
+            </div>
+
+            <div class="panel-section-end">
+                <button mat-button class="btn-reset-layout" (click)="resetDefaultBoard()" matTooltip="Restaurar layout inicial">
+                    <mat-icon>restart_alt</mat-icon> Restaurar Padrão
+                </button>
+                <button mat-icon-button (click)="isCustomizingLayout = false" matTooltip="Fechar customização">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+        </section>
+    }
+
+    <!-- ÁREA PRINCIPAL DOS CARDS DO BOARD -->
+    <main class="board-body" [class.gap-compact]="layoutGap === 'compact'"
+        [class.gap-normal]="layoutGap === 'normal'" [class.gap-spacious]="layoutGap === 'spacious'">
+        
+        @if (!!prancheta && !!prancheta.cards && prancheta.cards.length > 0) {
+            <div 
+                class="board-grid"
+                [attr.data-columns]="layoutColumns"
+                cdkDropList
+                [cdkDropListData]="prancheta.cards"
+                (cdkDropListDropped)="drop($event)">
+
+                @for (item of prancheta.cards; track item.componentName || $index) {
+                    <div class="card-drag-container" cdkDrag [attr.data-cols]="item.cols || 1">
+                        <!-- Custom Drag Placeholder -->
+                        <div class="board-drag-placeholder" *cdkDragPlaceholder>
+                            <mat-icon>open_with</mat-icon>
+                            <span>Solte para reposicionar o card</span>
+                        </div>
+
+                        <!-- Cardboard Component que renderiza o componente Angular correspondente -->
+                        <ci-cardboard [cardInfo]="item" [board]="this"></ci-cardboard>
+                    </div>
+                }
+            </div>
+        } @else {
+            <!-- ESTADO VAZIO DO BOARD -->
+            <div class="empty-board-state">
+                <div class="empty-illustration">
+                    <mat-icon class="huge-board-icon">dashboard_customize</mat-icon>
+                </div>
+                <h3>Personalize o seu Board Operacional</h3>
+                <p>
+                    Seu painel está pronto para receber cards de finanças (Selic, Cotações B3, DRE), CRM, ferramentas de produtividade, terminal e atalhos rápidos de aplicativos.
+                </p>
+                <div class="empty-actions">
+                    <button mat-flat-button color="primary" class="btn-start-add" (click)="findCardToAdd()">
+                        <mat-icon>add</mat-icon> Adicionar Primeiro Card
+                    </button>
+                    <button mat-stroked-button (click)="resetDefaultBoard()">
+                        <mat-icon>restart_alt</mat-icon> Carregar Sugestões
+                    </button>
+                </div>
+            </div>
         }
-    </div>
-</div>}
-<div class="after-setting">
-    <button mat-icon-button (click)="findCardToAdd()">
-        <mat-icon>widgets</mat-icon>
-    </button>
-    <button mat-icon-button (click)="openSettings()">
-        <mat-icon>settings</mat-icon>
-    </button>
+    </main>
 </div>

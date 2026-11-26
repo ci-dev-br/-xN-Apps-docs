@@ -33,10 +33,7 @@ export class AppComponent implements OnInit, OnDestroy {
     protected readonly ws: WsService,
     @Optional() private readonly matIconReg?: MatIconRegistry,
     @Optional() private readonly core?: CoreService,
-    // @Optional() private readonly router: Router, 
-    // // TODO: mover controle ativo de rota para camapra Core Init;
-    // @Optional() private readonly websocket: WsService,
-    //  // TODO: mover Web websocket para Core Init;
+    @Optional() private readonly router?: Router,
     @Optional() private readonly window?: WindowService,
     @Optional() private readonly snack?: MatSnackBar,
     @Optional() @Inject(USER_MENU) private readonly userMenu?: IItemMenu[],
@@ -69,6 +66,14 @@ export class AppComponent implements OnInit, OnDestroy {
     let deferredPrompt;
     if (typeof window !== 'undefined') {
       this.load.next(false);
+      const urlParams = new URLSearchParams(window.location.search);
+      const inviteParam = (urlParams.get('invite') || urlParams.get('inviteHash') || urlParams.get('convite') || '').trim();
+      if (inviteParam && !window.location.pathname.startsWith('/registrar')) {
+        this.router?.navigate(['/registrar', inviteParam], {
+          queryParams: { invite: inviteParam },
+          replaceUrl: true,
+        });
+      }
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
@@ -81,7 +86,7 @@ export class AppComponent implements OnInit, OnDestroy {
         // showInAppInstallPromotion();
       });
     }
-    // this.worker();
+    this.worker();
     this.window?.addEventListener('log', (...args) => {
       this.snack?.open(String(args), 'Visto')
     })
@@ -100,7 +105,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   private worker() {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register("https://apps.ci.dev.br/sw.js");
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
     }
   }
   @HostListener('window:keydown', ['$event'])

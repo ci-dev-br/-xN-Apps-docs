@@ -1,6 +1,6 @@
 import { Column, Entity } from "typeorm";
 import { schema } from "../norms";
-import { FullAuditedEntity } from "@ci/manager";
+import { FullAuditedEntity } from "@ci/manager/dao/entities";
 import { ApiProperty } from "@nestjs/swagger";
 
 /**

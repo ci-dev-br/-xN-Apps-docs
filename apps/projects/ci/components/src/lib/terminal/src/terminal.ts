@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from "@angular/common";
 import { Component, ElementRef, EventEmitter, Inject, Input, Output, PLATFORM_ID, SimpleChanges, ViewChild, ViewEncapsulation } from "@angular/core";
 import { CoreModule } from "@ci/core";
-import { Terminal, ITerminalOptions, ITheme } from 'xterm';
+import { Terminal, ITerminalOptions } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 @Component({
     selector: "ci-terminal",
@@ -28,10 +28,12 @@ export class TerminalComponent {
     @Input() dataStream: string | null = null;
     @Output() userInput = new EventEmitter<string>();
     @Output() resize = new EventEmitter<{ cols: number, rows: number }>();
+    @Output() ready = new EventEmitter<void>();
     private terminal!: Terminal;
     private fitAddon!: FitAddon;
     private resizeObserver!: ResizeObserver;
     private isBrowser: boolean;
+    private pendingWrites: string[] = [];
     constructor(@Inject(PLATFORM_ID) private platformId: Object) {
         this.isBrowser = isPlatformBrowser(this.platformId);
     }
@@ -61,18 +63,29 @@ export class TerminalComponent {
             this.fitAddon = new FitAddonClass();
             this.terminal.loadAddon(this.fitAddon);
             this.terminal.open(this.terminalContainer.nativeElement);
+            if (this.pendingWrites.length > 0) {
+                for (const chunk of this.pendingWrites) {
+                    this.terminal.write(chunk);
+                }
+                this.pendingWrites = [];
+            }
             setTimeout(() => {
-                this.fitAddon.fit();
-                this.emitResize();
+                try {
+                    this.fitAddon.fit();
+                    this.emitResize();
+                } catch { }
             }, 100);
             this.terminal.onData((data) => {
                 this.userInput.emit(data);
             });
             this.resizeObserver = new ResizeObserver(() => {
-                this.fitAddon.fit();
-                this.emitResize();
+                try {
+                    this.fitAddon.fit();
+                    this.emitResize();
+                } catch { }
             });
             this.resizeObserver.observe(this.terminalContainer.nativeElement);
+            this.ready.emit();
         } catch (error) {
 
         }
@@ -80,11 +93,23 @@ export class TerminalComponent {
     public write(data: string) {
         if (this.terminal) {
             this.terminal.write(data);
+        } else if (data) {
+            this.pendingWrites.push(data);
+        }
+    }
+    public writeln(data: string) {
+        this.write(`${data}\r\n`);
+    }
+    public focus() {
+        if (this.terminal) {
+            this.terminal.focus();
         }
     }
     public clear() {
         if (this.terminal) {
             this.terminal.clear();
+        } else {
+            this.pendingWrites = [];
         }
     }
     private emitResize() {

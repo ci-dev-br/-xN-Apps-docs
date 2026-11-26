@@ -20,7 +20,7 @@
 .files-sidebar {
     width: 320px;
     flex: none;
-    background: rgba(20, 25, 34, 0.85);
+  //  background: rgba(20, 25, 34, 0.85);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 10px;
     display: flex;
@@ -33,13 +33,13 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    background: rgba(15, 20, 28, 0.7);
+   // background: rgba(15, 20, 28, 0.7);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
     .search-box {
         display: flex;
         align-items: center;
-        background: rgba(0, 0, 0, 0.4);
+      //  background: rgba(0, 0, 0, 0.4);
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 6px;
         padding: 4px 10px;
@@ -54,7 +54,7 @@
 
         input {
             flex: 1;
-            background: transparent;
+          //  background: transparent;
             border: none;
             outline: none;
             color: #f8fafc;
@@ -69,7 +69,7 @@
 
     .f-chip {
         flex: 1;
-        background: rgba(255, 255, 255, 0.05);
+      //  background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 4px;
         color: #94a3b8;
@@ -80,28 +80,28 @@
         transition: all 0.15s;
 
         &:hover {
-            background: rgba(255, 255, 255, 0.1);
+           // background: rgba(255, 255, 255, 0.1);
             color: #fff;
         }
 
         &.active {
-            background: #0ea5e9;
+          // background: #0ea5e9;
             color: #fff;
             border-color: #0ea5e9;
             font-weight: 600;
 
             &.chip-trace {
-                background: #ef4444;
+             //   background: #ef4444;
                 border-color: #ef4444;
             }
 
             &.chip-log {
-                background: #0ea5e9;
+              //  background: #0ea5e9;
                 border-color: #0ea5e9;
             }
 
             &.chip-info {
-                background: #10b981;
+               // background: #10b981;
                 border-color: #10b981;
             }
         }

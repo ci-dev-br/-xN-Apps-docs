@@ -19,6 +19,7 @@ import { WindowModule, WindowService } from '@ci/components/window';
 import { CoreModule, DaoService, IAmSchematization } from '@ci/core';
 import { LancamentoFinanceiro, LancamentoFinanceiroService } from '@ci/portal-api';
 import { lastValueFrom } from 'rxjs';
+
 @Component({
     selector: 'ci-home',
     standalone: true,
@@ -61,6 +62,15 @@ export class HomeComponent implements IAmSchematization {
             icon: 'home',
             onClick: () => {
                 this.router?.navigate(['/Financeiro/'])
+            }
+        },
+        {
+            description: 'Minha Carteira',
+            icon: 'account_balance_wallet',
+            onClick: () => {
+                this.router?.navigate(['Carteira'], {
+                    relativeTo: this.route
+                });
             }
         },
         {

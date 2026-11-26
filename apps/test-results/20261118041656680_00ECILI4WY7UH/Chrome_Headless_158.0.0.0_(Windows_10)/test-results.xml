@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-18T04:17:05" id="0" hostname="plhx33" tests="13" errors="0" failures="1" time="2.588">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="BlocksBuilderComponent deve possuir componentRef configurado nos componentes catalogados de @ci/components" time="1.499" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent">
+    <failure type="">TypeError: Cannot read properties of undefined (reading 'ngModule')
+    at isModuleWithProviders (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:7531:16)
+    at expandModuleWithProviders (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:17734:7)
+    at Array.map (&lt;anonymous&gt;)
+    at AuthModule2.get (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:17449:84)
+    at getNgModuleDef (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:478:10)
+    at isNgModule (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:7534:12)
+    at transitiveScopesFor (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:17694:7)
+    at setScopeOnDeclaredComponents (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:17675:28)
+    at flushModuleScopingQueueAsMuchAsPossible (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:17407:11)
+    at _TestBedImpl.checkGlobalCompilationFinished (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/testing.mjs:1503:7)
+</failure>
+  </testcase>
+  <testcase name="BlocksBuilderComponent deve inserir bloco e atualizar o JSON ao soltar componente na aba JSON" time="0.41" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve permitir arrastar e reordenar blocos internamente em componentes com children aninhados" time="0.076" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve serializar e parsear 1:1 entre blocos e XML/HTML5 preservando children e inputs" time="0.065" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve emitir previewBlockRequested ao acionar visualização isolada do bloco" time="0.049" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve adicionar bloco com inputs padrão a partir da lista de componentes" time="0.054" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve criar bloco ao soltar componente da paleta via drag-and-drop" time="0.049" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve abrir o context menu do bloco com dados da posição e contexto" time="0.052" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="BlocksBuilderComponent deve inserir bloco interno ao soltar componente da paleta dentro de um container" time="0.063" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlocksBuilderComponent"/>
+  <testcase name="Àpps Dynamic, Início Componente criado com sucesso" time="0.133" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps Dynamic, Início"/>
+  <testcase name="Àpps Dynamic, Início deve registrar ações de contexto na NavbarService e limpar ao destruir" time="0.084" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps Dynamic, Início"/>
+  <testcase name="BlockHistoryDialogComponent deve carregar snapshots e injetar o CodeX indiretamente via metadados (Apps)" time="0.035" classname="Chrome_Headless_158_0_0_0_(Windows_10).BlockHistoryDialogComponent"/>
+  <testcase name="ComponentPreviewComponent deve renderizar o componente catalogado via ngComponentOutlet com os inputs injetados" time="0.019" classname="Chrome_Headless_158_0_0_0_(Windows_10).ComponentPreviewComponent"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

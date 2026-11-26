@@ -19,7 +19,6 @@ import {
 import {
     User
 } from "@ci/auth/models/user.entity";
-
 /**
  *  * Entidade de Aplicação
  *
@@ -126,6 +125,68 @@ export class Application {
     @ApiProperty({
         nullable: true,
         required: false,
+        title: 'Caminho da Pasta do Código',
+        description: 'Localização da pasta do repositório onde reside o código da aplicação.',
+    })
+    @Column({
+        nullable: true,
+    })
+    folderPath?: string;
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        title: 'Autores dos Commits',
+        description: 'Lista de autores que realizaram commits dentro da pasta da aplicação.',
+    })
+    @Column({
+        nullable: true,
+        type: 'varchar',
+        array: true,
+    })
+    authors?: string[];
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        title: 'Co-autores dos Commits',
+        description: 'Lista de co-autores identificados nas mensagens dos commits da pasta da aplicação.',
+    })
+    @Column({
+        nullable: true,
+        type: 'varchar',
+        array: true,
+    })
+    coAuthors?: string[];
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        title: 'Quantidade de Commits na Pasta',
+        description: 'Total de commits registrados para a pasta desta aplicação.',
+    })
+    @Column({
+        nullable: true,
+        type: 'int',
+        default: 0,
+    })
+    commitCount?: number;
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        title: 'Data do Último Commit',
+        description: 'Data do último commit registrado na pasta da aplicação.',
+    })
+    @Column({
+        type: 'timestamp',
+        nullable: true,
+    })
+    lastCommitDate?: Date;
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
         title: 'Trava do Catálogo',
         description: 'Quando verdadeiro, impede que a catalogação automática sobrescreva customizações manuais feitas por administradores.',
         default: false,
@@ -146,6 +207,18 @@ export class Application {
         nullable: true,
     })
     contextPolicies?: Record<string, any>;
+
+    @ApiProperty({
+        nullable: true,
+        required: false,
+        title: 'Conteúdo em Blocos',
+        description: 'Conteúdo JSON da construção de telas em blocos e mapeamento de rotas da aplicação.',
+    })
+    @Column({
+        type: 'jsonb',
+        nullable: true,
+    })
+    blocksContent?: Record<string, any>;
 
     @ApiProperty({
         nullable: true,

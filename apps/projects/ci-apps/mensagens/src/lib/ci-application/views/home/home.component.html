@@ -153,6 +153,10 @@
                     <mat-icon>lock</mat-icon>
                     <span class="enc-label">AES-256</span>
                   </div>
+                  <div class="hash-chain-indicator" matTooltip="Hash Chain ativa: cada mensagem é encadeada à anterior por hash criptográfico SHA-256 e as identidades dos participantes são protegidas por hashes no banco.">
+                    <mat-icon>link</mat-icon>
+                    <span class="chain-label">Hash Chain</span>
+                  </div>
                   <div class="anti-print-indicator" matTooltip="Multiplexação temporal ativa: caracteres alternam em alta frequência imperceptível ao olho humano para inviabilizar capturas de tela (prints).">
                     <mat-icon>visibility_off</mat-icon>
                     <span class="anti-print-label">Anti-Print Ativo</span>
@@ -248,7 +252,10 @@
 
                         <!-- Rodapé do Balão: Horário e Status -->
                         <div class="bubble-footer">
-                          <mat-icon class="lock-indicator" matTooltip="Armazenado cifrado no servidor com chave do cliente">lock</mat-icon>
+                          @if (m.messageHash) {
+                            <mat-icon class="hash-indicator" [matTooltip]="'Elo criptográfico: ' + m.messageHash.substring(0, 16) + '... (conecta à mensagem anterior)'">link</mat-icon>
+                          }
+                          <mat-icon class="lock-indicator" matTooltip="Armazenado cifrado no servidor com chave do cliente e identidades protegidas">lock</mat-icon>
                           <span class="timestamp">{{ m.createdAt | date:'HH:mm' }}</span>
                           @if (m.isMyMessage) {
                             <mat-icon class="read-status">{{ m.read ? 'done_all' : 'done' }}</mat-icon>
