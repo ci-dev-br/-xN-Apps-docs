@@ -5,7 +5,13 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { BehaviorSubject, of } from 'rxjs';
 import { UserAuthenticationService } from '@ci/auth';
 import { ApplicationCatalogService, Apps, RouteMetadata } from '@ci/core';
-import { OrganizacaoResumoDto, OrganizacaoService, User } from '@ci/portal-api';
+import {
+    InternalNotificationService,
+    NotificationDisplayMode,
+    OrganizacaoResumoDto,
+    OrganizacaoService,
+    User,
+} from '@ci/portal-api';
 import { NavbarComponent } from './navbar.component';
 import { NavbarModule } from './navbar.module';
 import { NavbarService } from './navbar.service';
@@ -266,6 +272,111 @@ describe('NavbarService e NavbarComponent (Organização e Rotas ci-application)
             fixture.detectChanges();
 
             expect(endMenuContainer!.querySelectorAll('.nav-dynamic-btn').length).toBe(3);
+        });
+    });
+
+    describe('NavbarComponent (Preferências de Notificações)', () => {
+        let fixture: ComponentFixture<NavbarComponent>;
+        let component: NavbarComponent;
+        let displayMode$: BehaviorSubject<NotificationDisplayMode>;
+        let notificationsEnabled$: BehaviorSubject<boolean>;
+        let pushEnabled$: BehaviorSubject<boolean>;
+        let soundEnabled$: BehaviorSubject<boolean>;
+        let notifications$: BehaviorSubject<any[]>;
+        let unreadCount$: BehaviorSubject<number>;
+        let isSidebarOpen$: BehaviorSubject<boolean>;
+        let isStatusbarExpanded$: BehaviorSubject<boolean>;
+        let pushPermissionStatus$: BehaviorSubject<NotificationPermission>;
+        let notifSpy: any;
+
+        beforeEach(async () => {
+            displayMode$ = new BehaviorSubject<NotificationDisplayMode>('menu');
+            notificationsEnabled$ = new BehaviorSubject<boolean>(true);
+            pushEnabled$ = new BehaviorSubject<boolean>(true);
+            soundEnabled$ = new BehaviorSubject<boolean>(true);
+            notifications$ = new BehaviorSubject<any[]>([
+                { id: 'n1', title: 'Alerta', message: 'Teste', type: 'SISTEMA', read: false, createdAt: new Date().toISOString() },
+            ]);
+            unreadCount$ = new BehaviorSubject<number>(1);
+            isSidebarOpen$ = new BehaviorSubject<boolean>(false);
+            isStatusbarExpanded$ = new BehaviorSubject<boolean>(false);
+            pushPermissionStatus$ = new BehaviorSubject<NotificationPermission>('default');
+
+            notifSpy = {
+                displayMode$,
+                get displayMode() { return displayMode$.value; },
+                notificationsEnabled$,
+                pushEnabled$,
+                soundEnabled$,
+                notifications$,
+                unreadCount$,
+                isSidebarOpen$,
+                isStatusbarExpanded$,
+                pushPermissionStatus: pushPermissionStatus$,
+                get preferences() {
+                    return {
+                        enabled: notificationsEnabled$.value,
+                        displayMode: displayMode$.value,
+                        pushEnabled: pushEnabled$.value,
+                        soundEnabled: soundEnabled$.value,
+                        mutedTypes: [],
+                    };
+                },
+                setDisplayMode: jasmine.createSpy('setDisplayMode').and.callFake((m: NotificationDisplayMode) => displayMode$.next(m)),
+                setNotificationsEnabled: jasmine.createSpy('setNotificationsEnabled').and.callFake((v: boolean) => notificationsEnabled$.next(v)),
+                setPushEnabled: jasmine.createSpy('setPushEnabled').and.callFake((v: boolean) => pushEnabled$.next(v)),
+                setSoundEnabled: jasmine.createSpy('setSoundEnabled').and.callFake((v: boolean) => soundEnabled$.next(v)),
+                toggleMutedType: jasmine.createSpy('toggleMutedType'),
+                isTypeMuted: jasmine.createSpy('isTypeMuted').and.returnValue(false),
+                toggleSidebar: jasmine.createSpy('toggleSidebar').and.callFake((v?: boolean) => isSidebarOpen$.next(v ?? !isSidebarOpen$.value)),
+                toggleStatusbar: jasmine.createSpy('toggleStatusbar').and.callFake((v?: boolean) => isStatusbarExpanded$.next(v ?? !isStatusbarExpanded$.value)),
+                marcarComoLida: jasmine.createSpy('marcarComoLida').and.returnValue(of({ success: true })),
+            };
+
+            await TestBed.configureTestingModule({
+                imports: [NavbarModule, NoopAnimationsModule, RouterTestingModule],
+                providers: [
+                    NavbarService,
+                    { provide: UserAuthenticationService, useValue: { user: user$, sair: jasmine.createSpy('sair') } },
+                    { provide: ApplicationCatalogService, useValue: { activatedApps$, currentApp$ } },
+                    { provide: OrganizacaoService, useValue: orgApiSpy },
+                    { provide: Apps, useValue: appsServiceSpy },
+                    { provide: InternalNotificationService, useValue: notifSpy },
+                ],
+            }).compileComponents();
+
+            fixture = TestBed.createComponent(NavbarComponent);
+            component = fixture.componentInstance;
+            fixture.detectChanges();
+        });
+
+        it('deve renderizar aba lateral no modo sidebar e statusbar inferior no modo statusbar conforme preferência', () => {
+            expect(fixture.nativeElement.querySelector('.ci-notif-lateral-tab')).toBeNull();
+            expect(fixture.nativeElement.querySelector('.ci-notif-bottom-statusbar')).toBeNull();
+
+            displayMode$.next('sidebar');
+            fixture.detectChanges();
+            expect(fixture.nativeElement.querySelector('.ci-notif-lateral-tab')).not.toBeNull();
+            expect(fixture.nativeElement.querySelector('.ci-notif-bottom-statusbar')).toBeNull();
+
+            displayMode$.next('statusbar');
+            fixture.detectChanges();
+            expect(fixture.nativeElement.querySelector('.ci-notif-lateral-tab')).toBeNull();
+            const footer: HTMLElement | null = fixture.nativeElement.querySelector('.ci-notif-bottom-statusbar');
+            expect(footer).not.toBeNull();
+            expect(footer?.textContent).toContain('Alerta');
+        });
+
+        it('deve ocultar os controles de notificação quando notificationsEnabled$ for false', () => {
+            expect(fixture.nativeElement.querySelector('.notif-btn')).not.toBeNull();
+
+            notificationsEnabled$.next(false);
+            displayMode$.next('sidebar');
+            fixture.detectChanges();
+
+            expect(fixture.nativeElement.querySelector('.notif-btn')).toBeNull();
+            expect(fixture.nativeElement.querySelector('.ci-notif-lateral-tab')).toBeNull();
+            expect(component.isNotificationTypeMuted('MENSAGEM')).toBeFalse();
         });
     });
 });
