@@ -471,9 +471,6 @@ export function parseTypeScriptSafely(code: string): { ast: any; errors: any[] }
                 'decorators-legacy',
                 'jsx',
                 'moduleBlocks',
-                'classProperties',
-                'classPrivateProperties',
-                'classPrivateMethods',
             ],
             errorRecovery: true,
         });

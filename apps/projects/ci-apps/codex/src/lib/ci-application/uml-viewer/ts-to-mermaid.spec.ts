@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import mermaid from 'mermaid';
 import { JsonToTsService } from '@ci/cdk';
+import { MonacoWorkspaceService } from '../code-editor/monaco-workspace.service';
 import {
     extractMethodParam,
     extractReferencedTypeNames,
@@ -78,6 +79,7 @@ describe('UmlViewer e Transcrição TypeScript -> Mermaid', () => {
                 imports: [UmlViewer, NoopAnimationsModule],
                 providers: [
                     { provide: JsonToTsService, useValue: { convert: (s: string) => s } },
+                    { provide: MonacoWorkspaceService, useValue: { loadTsModuleContent: async () => null } },
                 ],
             }).compileComponents();
 
@@ -104,7 +106,7 @@ describe('UmlViewer e Transcrição TypeScript -> Mermaid', () => {
                 };
 
                 export class link extends BaseEntity implements IProcessor {
-                    private readonly #secretKey: string = '';
+                    #secretKey: string = '';
                     public items$: Observable<Map<string, OrderItem[]>>;
                     public 'kebab-prop'?: { nested: boolean };
 

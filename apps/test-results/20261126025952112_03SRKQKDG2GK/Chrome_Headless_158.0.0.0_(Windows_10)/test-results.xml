@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-26T03:00:10" id="0" hostname="plhx33" tests="5" errors="0" failures="3" time="1.686">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="UmlViewer e Transcrição TypeScript -> Mermaid deve extrair parâmetros com default assignment, destructuring e rest sem quebrar" time="0.037" classname="Chrome_Headless_158_0_0_0_(Windows_10).UmlViewer e Transcrição TypeScript -> Mermaid"/>
+  <testcase name="UmlViewer e Transcrição TypeScript -> Mermaid UmlViewer deve usar modo simplificado (fallback) automaticamente quando mermaid.render falhar na sintaxe completa" time="1.623" classname="Chrome_Headless_158_0_0_0_(Windows_10).UmlViewer e Transcrição TypeScript -> Mermaid UmlViewer">
+    <failure type="">ɵNotFound: NG0201: No provider found for `FileExplorerService2`. Source: Standalone[UmlViewer2]. Path: MonacoWorkspaceService2 -&gt; FileExplorerService2. Find more at https://v21.angular.dev/errors/NG0201
+error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `FileExplorerService2`.', ngTokenPath: [ 'MonacoWorkspaceService2', 'FileExplorerService2' ] })
+ɵNotFound: NG0201: No provider found for `FileExplorerService2`. Source: Standalone[UmlViewer2]. Path: MonacoWorkspaceService2 -&gt; FileExplorerService2. Find more at https://v21.angular.dev/errors/NG0201
+    at createRuntimeError (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:602:17)
+    at NullInjector.get (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:883:21)
+    at R3Injector.get (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:1208:27)
+    at R3Injector.get (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:1208:27)
+    at R3Injector.retrieve (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:1118:19)
+    at injectInjectorOnly (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:672:35)
+    at ɵɵinject (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:684:40)
+    at Object.MonacoWorkspaceService2_Factory [as factory] (ng:///MonacoWorkspaceService2/ɵfac.js:4:67)
+    at node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:1316:35
+    at runInInjectorProfilerContext (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:444:5)
+</failure>
+  </testcase>
+  <testcase name="UmlViewer e Transcrição TypeScript -> Mermaid UmlViewer deve gerar sintaxe Mermaid válida para TS complexo (generics aninhados, unions, getters, enums e types)" time="0.011" classname="Chrome_Headless_158_0_0_0_(Windows_10).UmlViewer e Transcrição TypeScript -> Mermaid UmlViewer">
+    <failure type="">ɵNotFound: NG0201: No provider found for `FileExplorerService2`. Source: Standalone[UmlViewer2]. Path: MonacoWorkspaceService2 -&gt; FileExplorerService2. Find more at https://v21.angular.dev/errors/NG0201
+error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `FileExplorerService2`.', ngTokenPath: [ 'MonacoWorkspaceService2', 'FileExplorerService2' ] })
+ɵNotFound: NG0201: No provider found for `FileExplorerService2`. Source: Standalone[UmlViewer2]. Path: MonacoWorkspaceService2 -&gt; FileExplorerService2. Find more at https://v21.angular.dev/errors/NG0201
+    at createRuntimeError (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:602:17)
+    at NullInjector.get (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:883:21)
+    at R3Injector.get (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:1208:27)
+    at R3Injector.get (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:1208:27)
+    at R3Injector.retrieve (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:1118:19)
+    at injectInjectorOnly (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:672:35)
+    at ɵɵinject (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:684:40)
+    at Object.MonacoWorkspaceService2_Factory [as factory] (ng:///MonacoWorkspaceService2/ɵfac.js:4:67)
+    at node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:1316:35
+    at runInInjectorProfilerContext (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:444:5)
+</failure>
+  </testcase>
+  <testcase name="UmlViewer e Transcrição TypeScript -> Mermaid UmlViewer deve recuperar diagrama válido mesmo com erro de sintaxe parcial durante edição no CodeX" time="0.008" classname="Chrome_Headless_158_0_0_0_(Windows_10).UmlViewer e Transcrição TypeScript -> Mermaid UmlViewer">
+    <failure type="">ɵNotFound: NG0201: No provider found for `FileExplorerService2`. Source: Standalone[UmlViewer2]. Path: MonacoWorkspaceService2 -&gt; FileExplorerService2. Find more at https://v21.angular.dev/errors/NG0201
+error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `FileExplorerService2`.', ngTokenPath: [ 'MonacoWorkspaceService2', 'FileExplorerService2' ] })
+ɵNotFound: NG0201: No provider found for `FileExplorerService2`. Source: Standalone[UmlViewer2]. Path: MonacoWorkspaceService2 -&gt; FileExplorerService2. Find more at https://v21.angular.dev/errors/NG0201
+    at createRuntimeError (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:602:17)
+    at NullInjector.get (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:883:21)
+    at R3Injector.get (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:1208:27)
+    at R3Injector.get (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:1208:27)
+    at R3Injector.retrieve (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:1118:19)
+    at injectInjectorOnly (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:672:35)
+    at ɵɵinject (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:684:40)
+    at Object.MonacoWorkspaceService2_Factory [as factory] (ng:///MonacoWorkspaceService2/ɵfac.js:4:67)
+    at node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:1316:35
+    at runInInjectorProfilerContext (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:444:5)
+</failure>
+  </testcase>
+  <testcase name="UmlViewer e Transcrição TypeScript -> Mermaid deve sanitizar identificadores reservados, notas e tipos complexos sem aninhar ~...~" time="0.007" classname="Chrome_Headless_158_0_0_0_(Windows_10).UmlViewer e Transcrição TypeScript -> Mermaid"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

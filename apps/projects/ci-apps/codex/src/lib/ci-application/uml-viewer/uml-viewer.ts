@@ -1923,8 +1923,12 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
     private mountRenderedSvg(svg: string): void {
         if (!this.mermaidContainerRef?.nativeElement) return;
         const parser = new DOMParser();
-        const doc = parser.parseFromString(svg, 'image/svg+xml');
-        const svgEl = doc.querySelector('svg');
+        let doc = parser.parseFromString(svg, 'image/svg+xml');
+        let svgEl = doc.querySelector('svg');
+        if (!svgEl || doc.querySelector('parsererror')) {
+            doc = parser.parseFromString(svg, 'text/html');
+            svgEl = doc.querySelector('svg');
+        }
         if (!svgEl) return;
 
         const viewBoxAttr = svgEl.getAttribute('viewBox');
@@ -1942,9 +1946,11 @@ export class UmlViewer implements OnChanges, AfterViewInit, OnDestroy {
         svgEl.removeAttribute('preserveAspectRatio');
         svgEl.setAttribute('width', '100%');
         svgEl.setAttribute('height', '100%');
-        svgEl.style.width = '100%';
-        svgEl.style.height = '100%';
-        svgEl.style.overflow = 'hidden';
+        if (svgEl.style) {
+            svgEl.style.width = '100%';
+            svgEl.style.height = '100%';
+            svgEl.style.overflow = 'hidden';
+        }
 
         const zoomGroup = doc.createElementNS('http://www.w3.org/2000/svg', 'g');
         zoomGroup.setAttribute('class', 'mermaid-vector-root');

@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-26T03:01:47" id="0" hostname="plhx33" tests="5" errors="0" failures="2" time="0.666">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="UmlViewer e Transcrição TypeScript -> Mermaid deve sanitizar identificadores reservados, notas e tipos complexos sem aninhar ~...~" time="0.033" classname="Chrome_Headless_158_0_0_0_(Windows_10).UmlViewer e Transcrição TypeScript -> Mermaid"/>
+  <testcase name="UmlViewer e Transcrição TypeScript -> Mermaid UmlViewer deve usar modo simplificado (fallback) automaticamente quando mermaid.render falhar na sintaxe completa" time="0.261" classname="Chrome_Headless_158_0_0_0_(Windows_10).UmlViewer e Transcrição TypeScript -> Mermaid UmlViewer">
+    <failure type="">Expected 'error' to be 'warning'.
+    at &lt;Jasmine&gt;
+    at projects/ci-apps/codex/src/lib/ci-application/uml-viewer/ts-to-mermaid.spec.ts:190:45
+    at Generator.next (&lt;anonymous&gt;)
+    at fulfilled (chunk-E2HRLCPE.js:124:24)
+    at _ZoneDelegate.invoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone.js:398:28)
+</failure>
+    <failure type="">Expected 'Cannot set properties of undefined (setting 'width')' to contain 'Modo simplificado exibido'.
+    at &lt;Jasmine&gt;
+    at projects/ci-apps/codex/src/lib/ci-application/uml-viewer/ts-to-mermaid.spec.ts:191:37
+    at Generator.next (&lt;anonymous&gt;)
+    at fulfilled (chunk-E2HRLCPE.js:124:24)
+    at _ZoneDelegate.invoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone.js:398:28)
+</failure>
+    <failure type="">Expected null not to be null.
+    at &lt;Jasmine&gt;
+    at projects/ci-apps/codex/src/lib/ci-application/uml-viewer/ts-to-mermaid.spec.ts:192:90
+    at Generator.next (&lt;anonymous&gt;)
+    at fulfilled (chunk-E2HRLCPE.js:124:24)
+    at _ZoneDelegate.invoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone.js:398:28)
+</failure>
+  </testcase>
+  <testcase name="UmlViewer e Transcrição TypeScript -> Mermaid UmlViewer deve gerar sintaxe Mermaid válida para TS complexo (generics aninhados, unions, getters, enums e types)" time="0.302" classname="Chrome_Headless_158_0_0_0_(Windows_10).UmlViewer e Transcrição TypeScript -> Mermaid UmlViewer">
+    <failure type="">Expected 1 to be 0.
+    at &lt;Jasmine&gt;
+    at projects/ci-apps/codex/src/lib/ci-application/uml-viewer/ts-to-mermaid.spec.ts:129:38
+    at Generator.next (&lt;anonymous&gt;)
+    at fulfilled (chunk-E2HRLCPE.js:124:24)
+    at _ZoneDelegate.invoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone.js:398:28)
+</failure>
+  </testcase>
+  <testcase name="UmlViewer e Transcrição TypeScript -> Mermaid UmlViewer deve recuperar diagrama válido mesmo com erro de sintaxe parcial durante edição no CodeX" time="0.068" classname="Chrome_Headless_158_0_0_0_(Windows_10).UmlViewer e Transcrição TypeScript -> Mermaid UmlViewer"/>
+  <testcase name="UmlViewer e Transcrição TypeScript -> Mermaid deve extrair parâmetros com default assignment, destructuring e rest sem quebrar" time="0.002" classname="Chrome_Headless_158_0_0_0_(Windows_10).UmlViewer e Transcrição TypeScript -> Mermaid"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>
