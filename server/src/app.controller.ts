@@ -1,28 +1,57 @@
-import { Controller, Get, Next, Optional, Req, Res } from '@nestjs/common';
+import { Controller, Get, Next, OnModuleDestroy, Optional, Req, Res } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { resolve, extname } from 'path';
 import * as fs from 'fs/promises';
 import { constants } from 'fs';
 import { CiApplicationService } from './app.service';
 import { SitePageService } from '@ci/cms/services/site-page.service';
-import { DomainService } from '@ci/manager';
+import {
+  DomainService,
+} from '@ci/manager';
+import {
+  registerStaticFileCacheHandler,
+  unregisterStaticFileCacheHandler,
+} from '@ci/core';
 import { Public } from '../libs/auth/src/decorators/public.decorator';
 
 // @gema: https://gemini.google.com/app/3d9e20ddbe794317
 @Controller()
-export class AppController {
+export class AppController implements OnModuleDestroy {
   // Configurações do nosso Cache em Memória
   private readonly MAX_CACHE_FILES = 40;
-  private readonly MAX_FILE_SIZE = 300 * 1024; // 200KB
+  private readonly MAX_FILE_SIZE = 300 * 1024; // 300KB
+  private readonly cacheHandlerId = `AppController:${Math.random().toString(36).slice(2)}`;
 
   // O Map preserva a ordem de inserção, funcionando como um FIFO perfeito.
-  private fileCache = new Map<string, { content: Buffer; contentType: string; mtimeMs: number }>();
+  private fileCache = new Map<string, { content: Buffer; contentType: string; mtimeMs: number; size: number }>();
 
   constructor(
     private readonly appService: CiApplicationService,
     @Optional() private readonly sitePage?: SitePageService,
     @Optional() private readonly domain?: DomainService,
-  ) { }
+  ) {
+    registerStaticFileCacheHandler(this.cacheHandlerId, {
+      clearCache: () => this.clearCache(),
+      getCacheStats: () => this.getCacheStats(),
+    });
+  }
+
+  onModuleDestroy(): void {
+    unregisterStaticFileCacheHandler(this.cacheHandlerId);
+  }
+
+  clearCache(): { clearedEntries: number } {
+    const clearedEntries = this.fileCache.size;
+    this.fileCache.clear();
+    return { clearedEntries };
+  }
+
+  getCacheStats(): { cachedFiles: number; keys: string[] } {
+    return {
+      cachedFiles: this.fileCache.size,
+      keys: Array.from(this.fileCache.keys()),
+    };
+  }
 
   @Get(['*'])
   @Public()
@@ -34,7 +63,7 @@ export class AppController {
       '/message', '/messager', '/directmessage', '/conversation', '/notification',
       '/storage', '/fiscal', '/financeiro', '/organizacao', '/produto',
       '/payment', '/cms', '/projetos', '/codex', '/notificacao', '/inpi', '/crm',
-      '/dym', '/espazio', '/tasking', '/forms', '/api', '/indicators', '/__orchestration'
+      '/dym', '/deployer', '/espazio', '/tasking', '/forms', '/api', '/indicators', '/__orchestration'
     ].some(prefix => reqPath === prefix || reqPath.startsWith(prefix + '/'));
 
     if (isApiRoute) {
@@ -107,7 +136,7 @@ export class AppController {
         return next();
       }
       // Se der erro (não existe), fazemos o fallback para o index
-      absolutePath = resolve('public/index.csr.html');
+      absolutePath = resolve(__dirname, '../public/index.csr.html');
       isIndex = true;
     }
     try {
@@ -116,7 +145,7 @@ export class AppController {
       // --- Configuração Cloudflare ---
       if (isIndex) {
         // Força a Cloudflare e o navegador a sempre revalidar o Index
-        response.setHeader('Cache-Control', 'public, max-age=60000');
+        response.setHeader('Cache-Control', 'no-cache, must-revalidate');
       } else {
         // Cache na Cloudflare de 10 dias (864000 segundos) para os outros arquivos
         response.setHeader('Cache-Control', 'public, max-age=864000');
@@ -126,8 +155,8 @@ export class AppController {
       const cachedFile = this.fileCache.get(absolutePath);
 
       if (cachedFile) {
-        if (isIndex && cachedFile.mtimeMs !== stats.mtimeMs) {
-          // O arquivo Index foi atualizado no disco! Invalidamos o cache.
+        if (cachedFile.mtimeMs !== stats.mtimeMs || cachedFile.size !== stats.size) {
+          // Arquivo atualizado no disco! Invalidamos o cache em memória.
           this.fileCache.delete(absolutePath);
         } else {
           // Retorna direto da memória
@@ -138,23 +167,28 @@ export class AppController {
 
       // --- Carregando o arquivo para Memória ou via Stream ---
       if (stats.size <= this.MAX_FILE_SIZE) {
-        // Menor que 200kb: Lê do disco, guarda em memória e envia
+        // Menor que MAX_FILE_SIZE: Lê do disco, guarda em memória e envia
         const content = await fs.readFile(absolutePath);
         const contentType = this.getContentType(absolutePath);
 
-        // Se batermos 40 arquivos, removemos o mais antigo (primeira chave do Map)
+        // Se batermos MAX_CACHE_FILES arquivos, removemos o mais antigo (primeira chave do Map)
         if (this.fileCache.size >= this.MAX_CACHE_FILES) {
           const oldestKey = this.fileCache.keys().next().value;
           this.fileCache.delete(oldestKey);
         }
 
-        // Salva no cache com a data de modificação
-        this.fileCache.set(absolutePath, { content, contentType, mtimeMs: stats.mtimeMs });
+        // Salva no cache com a data de modificação e tamanho
+        this.fileCache.set(absolutePath, {
+          content,
+          contentType,
+          mtimeMs: stats.mtimeMs,
+          size: stats.size,
+        });
 
         response.contentType(contentType);
         return response.send(content);
       } else {
-        // Maior que 200kb: Deixa o Express fazer o stream direto do disco
+        // Maior que MAX_FILE_SIZE: Deixa o Express fazer o stream direto do disco
         return response.sendFile(absolutePath);
       }
 
@@ -174,12 +208,24 @@ export class AppController {
     const mimeTypes: Record<string, string> = {
       '.html': 'text/html',
       '.js': 'application/javascript',
+      '.mjs': 'application/javascript',
       '.css': 'text/css',
       '.json': 'application/json',
+      '.webmanifest': 'application/manifest+json',
+      '.map': 'application/json',
       '.png': 'image/png',
       '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.webp': 'image/webp',
       '.ico': 'image/x-icon',
       '.svg': 'image/svg+xml',
+      '.woff': 'font/woff',
+      '.woff2': 'font/woff2',
+      '.ttf': 'font/ttf',
+      '.wasm': 'application/wasm',
+      '.mp4': 'video/mp4',
+      '.webm': 'video/webm',
+      '.txt': 'text/plain',
     };
     return mimeTypes[ext] || 'application/octet-stream';
   }

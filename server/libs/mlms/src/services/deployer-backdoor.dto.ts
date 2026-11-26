@@ -21,13 +21,23 @@ export class StartAppDto {
   port?: number;
 }
 
+export type DeployerPublishAction =
+  | 'gulp'
+  | 'sync-public'
+  | 'server-build'
+  | 'full-publish'
+  | 'restart'
+  | 'reload-cache'
+  | 'sync-git';
+
 export class PublishActionInputDto {
   @ApiPropertyOptional({
-    description: 'Ação de publicação: gulp (nova versão cliente produção), server-build (compilar backend produção), full-publish (cliente + backend) ou sync-git',
-    enum: ['gulp', 'server-build', 'full-publish', 'sync-git'],
+    description:
+      'Ação de publicação: gulp (compila e publica cliente em server/public), sync-public (atualiza apps/dist/apps/browser em server/public e limpa cache), server-build (compila backend e reinicia serviço), full-publish (cliente + backend + cache + restart), restart (reinicia serviço e limpa caches), reload-cache (limpa cache de AppController) ou sync-git',
+    enum: ['gulp', 'sync-public', 'server-build', 'full-publish', 'restart', 'reload-cache', 'sync-git'],
     default: 'gulp',
   })
-  action?: 'gulp' | 'server-build' | 'full-publish' | 'sync-git';
+  action?: DeployerPublishAction;
 }
 
 // --- SAÍDAS (Responses) ---
@@ -135,4 +145,7 @@ export class AvailableVersionInfoDto {
 
   @ApiProperty({ type: [String], description: 'Últimos logs da publicação' })
   publishLogs: string[];
+
+  @ApiPropertyOptional({ description: 'Quantidade de arquivos atualmente em cache de memória no AppController' })
+  staticCacheFilesCount?: number;
 }

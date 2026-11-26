@@ -28,12 +28,21 @@
             {{v.serverCompiledAt ? (v.serverCompiledAt | date:'dd/MM/yyyy HH:mm:ss') : 'Compilado'}}
         </div>
         <div>
+            <strong>Cache Estático (AppController):</strong>
+            {{v.staticCacheFilesCount ?? 0}} arquivo(s) em memória
+        </div>
+        <div>
             <strong>Status Publicação:</strong>
             <code>{{v.publishStatus}}</code>
             @if(v.dirtyFilesCount > 0){
             <span>({{v.dirtyFilesCount}} arq. alterados)</span>
             }
         </div>
+        @if(!canPublishProduction){
+        <div class="deployer-feedback">
+            Ações de publicação e reinício requerem papéis <code>DEVELOPER + SYSADMIN</code>.
+        </div>
+        }
         @if(lastActionMessage()){
         <div class="deployer-feedback">{{lastActionMessage()}}</div>
         }
@@ -52,22 +61,37 @@
     }
 </div>
 <button mat-menu-item (click)="publicarVersao('gulp', $event)"
-    [disabled]="publishing() || versionInfo()?.publishStatus === 'running'">
+    [disabled]="!canPublishProduction || publishing() || versionInfo()?.publishStatus === 'running'">
     <mat-icon>rocket_launch</mat-icon>
-    <span>Publicar Cliente Produção (Gulp)</span>
+    <span>Publicar Cliente Produção (apps -> server/public)</span>
+</button>
+<button mat-menu-item (click)="publicarVersao('sync-public', $event)"
+    [disabled]="!canPublishProduction || publishing() || versionInfo()?.publishStatus === 'running'">
+    <mat-icon>folder_copy</mat-icon>
+    <span>Atualizar server/public (apps/dist/apps/browser)</span>
 </button>
 <button mat-menu-item (click)="publicarVersao('server-build', $event)"
-    [disabled]="publishing() || versionInfo()?.publishStatus === 'running'">
+    [disabled]="!canPublishProduction || publishing() || versionInfo()?.publishStatus === 'running'">
     <mat-icon>memory</mat-icon>
-    <span>Compilar Backend Produção</span>
+    <span>Compilar Backend + Reiniciar</span>
 </button>
 <button mat-menu-item (click)="publicarVersao('full-publish', $event)"
-    [disabled]="publishing() || versionInfo()?.publishStatus === 'running'">
+    [disabled]="!canPublishProduction || publishing() || versionInfo()?.publishStatus === 'running'">
     <mat-icon>publish</mat-icon>
-    <span>Publicação Completa (Gulp + Backend)</span>
+    <span>Publicação Completa (Cliente + Backend + Restart)</span>
+</button>
+<button mat-menu-item (click)="publicarVersao('reload-cache', $event)"
+    [disabled]="!canPublishProduction || publishing()">
+    <mat-icon>cached</mat-icon>
+    <span>Limpar Cache (AppController)</span>
+</button>
+<button mat-menu-item (click)="publicarVersao('restart', $event)"
+    [disabled]="!canPublishProduction || publishing()">
+    <mat-icon>restart_alt</mat-icon>
+    <span>Reiniciar Serviço Backend</span>
 </button>
 <button mat-menu-item (click)="publicarVersao('sync-git', $event)"
-    [disabled]="publishing() || versionInfo()?.publishStatus === 'running'">
+    [disabled]="!canPublishProduction || publishing() || versionInfo()?.publishStatus === 'running'">
     <mat-icon>sync</mat-icon>
     <span>Sincronizar Git (Pull / Push)</span>
 </button>

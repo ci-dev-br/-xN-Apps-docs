@@ -8,7 +8,7 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { IS_PUBLIC_KEY } from './decorators/public.decorator';
-import { ROLE_KEY } from './decorators/role.decorator';
+import { ALL_ROLES_KEY, ROLE_KEY } from './decorators/role.decorator';
 import { CredencialService } from './service/credencial.service';
 import { UserService } from './auth.module';
 import { IncomingMessage } from 'http';
@@ -27,7 +27,11 @@ export class AuthGuard implements CanActivate {
       context.getClass(),
     ]);
     const by_pass = isPublic ? true : false;
-    const role = this.reflector?.getAllAndOverride<string>(ROLE_KEY, [
+    const role = this.reflector?.getAllAndOverride<string | string[]>(ROLE_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    const requiredAllRoles = this.reflector?.getAllAndOverride<string[]>(ALL_ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
@@ -97,14 +101,25 @@ export class AuthGuard implements CanActivate {
         }
         const allRoles = Array.from(combinedRoles);
         request['combinedRoles'] = allRoles;
-        ((async () => {
-          if (request['user']) {
-            request['user']['roles'] = allRoles;
-          }
-        })());
+        if (request['user']) {
+          request['user']['roles'] = allRoles;
+        }
         if (!!role) {
-          if (!combinedRoles.has(role)) {
+          const allowed = Array.isArray(role)
+            ? role.some((r) => combinedRoles.has(r))
+            : combinedRoles.has(role);
+          if (!allowed) {
             if (!by_pass) throw new UnauthorizedException('Acesso negado. Não corresponde ao nível de acesso necessário.');
+          }
+        }
+        if (Array.isArray(requiredAllRoles) && requiredAllRoles.length > 0) {
+          const hasAllRequired = requiredAllRoles.every((r) => combinedRoles.has(r));
+          if (!hasAllRequired) {
+            if (!by_pass) {
+              throw new UnauthorizedException(
+                `Acesso negado. Requer os papéis: ${requiredAllRoles.join(' + ')}.`,
+              );
+            }
           }
         }
       } catch (err) {

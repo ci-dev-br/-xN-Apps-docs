@@ -4,7 +4,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { AvailableVersionInfoDto, DeployerService } from "@ci/portal-api";
+import { UserAuthenticationService } from "@ci/auth";
+import { AvailableVersionInfoDto, DeployerService, PublishActionInputDto } from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 
 @Component({
@@ -83,7 +84,20 @@ export class DeployerMenu implements OnInit, OnDestroy {
 
     constructor(
         @Optional() private readonly deployerService?: DeployerService,
+        @Optional() private readonly userAuth?: UserAuthenticationService,
     ) { }
+
+    get hasDeveloperRole(): boolean {
+        return Boolean(this.userAuth?.user?.value?.roles?.includes('DEVELOPER'));
+    }
+
+    get hasSysAdminRole(): boolean {
+        return Boolean(this.userAuth?.user?.value?.roles?.includes('SYSADMIN'));
+    }
+
+    get canPublishProduction(): boolean {
+        return this.hasDeveloperRole && this.hasSysAdminRole;
+    }
 
     ngOnInit(): void {
         this.carregarVersaoDisponivel();
@@ -122,13 +136,18 @@ export class DeployerMenu implements OnInit, OnDestroy {
     }
 
     async publicarVersao(
-        action: 'gulp' | 'server-build' | 'full-publish' | 'sync-git' = 'gulp',
+        action: NonNullable<PublishActionInputDto['action']> = 'gulp',
         event?: Event
     ) {
         if (event) {
             event.stopPropagation();
         }
         if (!this.deployerService) return;
+
+        if (!this.canPublishProduction) {
+            this.lastActionMessage.set('Acesso negado: requer papéis DEVELOPER + SYSADMIN.');
+            return;
+        }
 
         this.publishing.set(true);
         try {

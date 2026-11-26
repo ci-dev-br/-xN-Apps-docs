@@ -18,7 +18,7 @@ const routes: Routes = [
         slot: 'end',
         icon: 'deployed_code',
         tooltip: 'Deployer — Versão e Publicação',
-        roles: ['DEVELOPER'],
+        roles: ['DEVELOPER', 'SYSADMIN'],
         order: 10,
         menuComponent: DeployerMenu,
       },

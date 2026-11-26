@@ -9,6 +9,8 @@ import { NewsService } from '../lib/services/news.service';
 import { CarteiraService } from '../lib/services/carteira.service';
 import { FileExplorerService } from '../lib/services/file-explorer.service';
 import { OrganizacaoService } from '../lib/services/organizacao.service';
+import { DeployerService } from '../lib/services/deployer.service';
+import { ActionResponseDto } from '../lib/models/action-response-dto';
 import { Organizacao } from '../lib/models/organizacao';
 import { GetMarketNews$Params } from '../lib/fn/news/get-market-news';
 
@@ -456,6 +458,14 @@ declare module '../lib/services/carteira.service' {
       user?: { id: string; email: string; roles: string[]; emailVerificado: boolean };
       saldoAtual?: number;
     }>;
+  }
+}
+
+declare module '../lib/services/deployer.service' {
+  export interface DeployerService {
+    syncPublic(context?: HttpContext): Observable<ActionResponseDto>;
+    clearCache(context?: HttpContext): Observable<ActionResponseDto>;
+    restartService(context?: HttpContext): Observable<ActionResponseDto>;
   }
 }
 
@@ -917,6 +927,27 @@ OrganizacaoService.prototype.removerMembro = function (
     {},
     { context }
   );
+};
+
+DeployerService.prototype.syncPublic = function (
+  this: ServiceCtx,
+  context?: HttpContext
+): Observable<ActionResponseDto> {
+  return this.http.post<ActionResponseDto>(`${this.rootUrl}/Deployer/sync-public`, {}, { context });
+};
+
+DeployerService.prototype.clearCache = function (
+  this: ServiceCtx,
+  context?: HttpContext
+): Observable<ActionResponseDto> {
+  return this.http.post<ActionResponseDto>(`${this.rootUrl}/Deployer/cache/clear`, {}, { context });
+};
+
+DeployerService.prototype.restartService = function (
+  this: ServiceCtx,
+  context?: HttpContext
+): Observable<ActionResponseDto> {
+  return this.http.post<ActionResponseDto>(`${this.rootUrl}/Deployer/restart`, {}, { context });
 };
 
 export const PORTAL_API_EXTENSIONS_LOADED = true;

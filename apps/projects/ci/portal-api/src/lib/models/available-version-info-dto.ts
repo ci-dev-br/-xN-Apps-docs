@@ -97,4 +97,9 @@ export interface AvailableVersionInfoDto {
    * Versão atual da aplicação definida no package.json
    */
   version: string;
+
+  /**
+   * Quantidade de arquivos atualmente em cache de memória no AppController
+   */
+  staticCacheFilesCount?: number;
 }

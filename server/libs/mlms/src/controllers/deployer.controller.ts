@@ -14,7 +14,7 @@ import {
     PublishActionInputDto,
     StartAppDto,
 } from "../services/deployer-backdoor.dto";
-import { Role } from "@ci/auth/decorators/role.decorator";
+import { Role, RequireAllRoles } from "@ci/auth/decorators/role.decorator";
 
 @ApiTags('Deployer')
 @Controller('Deployer')
@@ -107,7 +107,13 @@ export class DeployerController {
         });
     }
 
-    @Role('DEVELOPER')
+    private extractUserRoles(req: any): string[] {
+        const combined = Array.isArray(req?.combinedRoles) ? req.combinedRoles : [];
+        const userRoles = Array.isArray(req?.user?.roles) ? req.user.roles : [];
+        return Array.from(new Set([...combined, ...userRoles].filter(Boolean)));
+    }
+
+    @Role('DEVELOPER', 'SYSADMIN')
     @Post('version')
     @ApiOperation({
         operationId: 'GetVersionDeployer',
@@ -122,19 +128,70 @@ export class DeployerController {
         return this.backdoorService.getVersionInfo();
     }
 
-    @Role('DEVELOPER')
+    @Role('DEVELOPER', 'SYSADMIN')
+    @RequireAllRoles('DEVELOPER', 'SYSADMIN')
     @Post('publish')
     @ApiOperation({
         operationId: 'PublishDeployer',
-        summary: 'Executa ações de publicação (geração de versão em produção do cliente via Gulp em /gulp e/ou compilação do backend)',
+        summary: 'Executa ações de publicação para DEVELOPER + SYSADMIN (atualização de apps/dist/apps/browser em server/public, build de produção, cache de AppController e reinício do serviço)',
     })
     @ApiResponse({
         status: 201,
         description: 'Ação de publicação acionada com sucesso',
         type: ActionResponseDto,
     })
-    async publish(@Body() dto: PublishActionInputDto): Promise<ActionResponseDto> {
-        return this.backdoorService.publishVersion(dto);
+    async publish(@Body() dto: PublishActionInputDto, @Request() req?: any): Promise<ActionResponseDto> {
+        return this.backdoorService.publishVersion(dto, this.extractUserRoles(req));
+    }
+
+    @Role('DEVELOPER', 'SYSADMIN')
+    @RequireAllRoles('DEVELOPER', 'SYSADMIN')
+    @Post('sync-public')
+    @ApiOperation({
+        operationId: 'SyncPublicDeployer',
+        summary: 'Atualiza server/public a partir de apps/dist/apps/browser e limpa caches do AppController (DEVELOPER + SYSADMIN)',
+    })
+    @ApiResponse({
+        status: 201,
+        description: 'Arquivos de produção sincronizados em server/public e cache limpo',
+        type: ActionResponseDto,
+    })
+    async syncPublic(@Request() req?: any): Promise<ActionResponseDto> {
+        return this.backdoorService.publishVersion({ action: 'sync-public' }, this.extractUserRoles(req));
+    }
+
+    @Role('DEVELOPER', 'SYSADMIN')
+    @RequireAllRoles('DEVELOPER', 'SYSADMIN')
+    @Post('cache/clear')
+    @ApiOperation({
+        operationId: 'ClearCacheDeployer',
+        summary: 'Limpa os caches de arquivos estáticos em memória no AppController (DEVELOPER + SYSADMIN)',
+    })
+    @ApiResponse({
+        status: 201,
+        description: 'Cache do AppController limpo com sucesso',
+        type: ActionResponseDto,
+    })
+    async clearCache(@Request() req?: any): Promise<ActionResponseDto> {
+        this.backdoorService.assertDeveloperAndSysAdmin(this.extractUserRoles(req));
+        return this.backdoorService.clearStaticCaches();
+    }
+
+    @Role('DEVELOPER', 'SYSADMIN')
+    @RequireAllRoles('DEVELOPER', 'SYSADMIN')
+    @Post('restart')
+    @ApiOperation({
+        operationId: 'RestartServiceDeployer',
+        summary: 'Limpa o cache do AppController e reinicia o serviço backend em produção (DEVELOPER + SYSADMIN)',
+    })
+    @ApiResponse({
+        status: 201,
+        description: 'Serviço reiniciado e caches atualizados',
+        type: ActionResponseDto,
+    })
+    async restartService(@Request() req?: any): Promise<ActionResponseDto> {
+        this.backdoorService.assertDeveloperAndSysAdmin(this.extractUserRoles(req));
+        return this.backdoorService.restartService();
     }
 
     @Role('DEVELOPER')

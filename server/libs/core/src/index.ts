@@ -3,6 +3,7 @@ export * from './i18n';
 export * from './audt';
 export * from './auth';
 export * from './infra';
+export * from './infra/static-cache.registry';
 export * from './logging.interceptor';
 export * from './system';
 export * from './webhook';

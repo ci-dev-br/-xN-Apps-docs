@@ -19,8 +19,23 @@ const {
 const path = require('path');
 const fs = require('fs');
 
-// Clean old files
+// Clean old hashed build files in server/public
 function CleanOldFiles(cb) {
+    if (R348) {
+        const targetPublicPath = path.resolve(__dirname, R348);
+        if (fs.existsSync(targetPublicPath)) {
+            const staleBundlePattern = /^(chunk|main|polyfills|scripts|styles)-[A-Za-z0-9_-]+\.(js|css|map)$/i;
+            for (const entry of fs.readdirSync(targetPublicPath)) {
+                if (staleBundlePattern.test(entry)) {
+                    try {
+                        fs.unlinkSync(path.join(targetPublicPath, entry));
+                    } catch (err) {
+                        console.warn(`[Gulp] Aviso ao remover arquivo antigo ${entry}:`, err.message);
+                    }
+                }
+            }
+        }
+    }
     cb();
 }
 
@@ -31,7 +46,20 @@ function BuildPClientApplication(cb) {
         ? appsDir
         : (R734 ? path.resolve(__dirname, R734) : appsDir);
 
-    execSync(C101, { cwd: buildCwd, stdio: 'inherit' });
+    const gitVersionScript = path.resolve(__dirname, '../scripts/generate-git-version.js');
+    if (fs.existsSync(gitVersionScript)) {
+        try {
+            execSync(`node "${gitVersionScript}"`, { cwd: buildCwd, stdio: 'inherit' });
+        } catch (err) {
+            console.warn('[Gulp] Aviso ao gerar versão Git:', err.message);
+        }
+    }
+
+    const localNgCli = path.join(buildCwd, 'node_modules', '@angular', 'cli', 'bin', 'ng.js');
+    const buildCmd = fs.existsSync(localNgCli)
+        ? `node "${localNgCli}" build --configuration production`
+        : C101;
+    execSync(buildCmd, { cwd: buildCwd, stdio: 'inherit' });
 
     try {
         const rootDir = path.resolve(__dirname, '..');
@@ -186,8 +214,8 @@ exports.DeployLocalClient = DeployLocalClient;
 exports.DeployFTPApplications = DeployFTPApplications;
 exports.DeployPipeline = DeployPipeline;
 exports.default = series(
-    CleanOldFiles,
     BuildPClientApplication,
+    CleanOldFiles,
     DeployLocalClient,
     // DeployFTPApplications,
 );
