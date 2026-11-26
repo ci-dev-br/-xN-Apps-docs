@@ -166,12 +166,12 @@ export const CI_STATIC_APPS: IApp[] = [
         type: 'svg'
     },
     {
-        shortDescription: 'Ferramentas para maximizar a produtividade pessoal e profissional. Agendas, listas de tarefas e anotações integradas para manter o foco no que realmente importa.',
-        description: 'O módulo Organização é uma suíte de produtividade desenhada para otimizar a gestão do tempo e das atividades diárias. Ele combina funcionalidades de calendário compartilhado, listas de tarefas (to-do lists) hierárquicas e um sistema de anotações ricas. Usuários podem agendar reuniões verificando a disponibilidade dos colegas, definir lembretes para prazos importantes e categorizar suas demandas por prioridade ou projeto. A integração com outros módulos permite transformar pendências de projetos ou vendas diretamente em tarefas pessoais. Focado na eficiência, este módulo ajuda a reduzir a carga cognitiva, garantindo que profissionais e equipes mantenham o foco na execução e nos resultados.',
+        shortDescription: 'Gestão de Organizações, compartilhamento via Tenant e atribuição de roles ORG personalizados.',
+        description: 'Crie e administre suas Organizações com isolamento dedicado via Tenant. Compartilhe o acesso com outros usuários da plataforma e atribua roles específicos com prefixo ORG + nome personalizado para controle granular de equipes e responsabilidades.',
         color: getColor(),
         url: '/Organizacao',
         name: 'Organizacao',
-        roles: ['MASTER'],
+        roles: ['USER', 'ADMIN', 'MASTER'],
         icon: 'organizacao',
         type: 'svg'
     },

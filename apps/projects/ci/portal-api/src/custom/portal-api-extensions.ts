@@ -8,6 +8,8 @@ import { AuthService } from '../lib/services/auth.service';
 import { NewsService } from '../lib/services/news.service';
 import { CarteiraService } from '../lib/services/carteira.service';
 import { FileExplorerService } from '../lib/services/file-explorer.service';
+import { OrganizacaoService } from '../lib/services/organizacao.service';
+import { Organizacao } from '../lib/models/organizacao';
 import { GetMarketNews$Params } from '../lib/fn/news/get-market-news';
 
 export interface ConnectedDevice {
@@ -328,6 +330,83 @@ declare module '../lib/services/file-explorer.service' {
     authorizePermission(body: AuthorizeFilePermissionInput, context?: HttpContext): Observable<AuthorizeFilePermissionOutput>;
     getPermissionRequest(token: string, context?: HttpContext): Observable<FilePermissionItem>;
     myPermissions(context?: HttpContext): Observable<MyFilePermissionsOutput>;
+  }
+}
+
+export interface OrganizacaoRoleDto {
+  internalId?: string;
+  organizacaoId: string;
+  code: string;
+  customName: string;
+  description?: string;
+  createdAt?: string | Date;
+}
+
+export interface OrganizacaoMembroDto {
+  internalId?: string;
+  organizacaoId: string;
+  tenantId: string;
+  userId: string;
+  userEmail?: string;
+  userName?: string;
+  isOwner?: boolean;
+  roles: string[];
+  status: 'ACTIVE' | 'INVITED' | 'REMOVED';
+  createdAt?: string | Date;
+}
+
+export interface OrganizacaoResumoDto extends Organizacao {
+  description?: string | null;
+  cnpj?: string | null;
+  website?: string | null;
+  ownerUserId?: string | null;
+  tenantId?: string | null;
+  isOwner?: boolean;
+  myRoles?: string[];
+  membersCount?: number;
+  rolesCount?: number;
+}
+
+export interface OrganizacaoDetalhesDto extends OrganizacaoResumoDto {
+  members?: OrganizacaoMembroDto[];
+  orgRoles?: OrganizacaoRoleDto[];
+}
+
+export interface OrganizacaoUsuarioBuscaDto {
+  id: string;
+  username?: string;
+  fullName?: string;
+  surname?: string;
+  email?: string;
+}
+
+export interface CriarOrganizacaoPayloadDto {
+  organizatioName: string;
+  description?: string;
+  cnpj?: string;
+  website?: string;
+}
+
+export interface CompartilharOrganizacaoPayloadDto {
+  userId?: string;
+  emailOrUsername?: string;
+  roles?: string[];
+}
+
+declare module '../lib/services/organizacao.service' {
+  export interface OrganizacaoService {
+    minhasOrganizacoes(context?: HttpContext): Observable<OrganizacaoResumoDto[]>;
+    criarOrganizacao(body: CriarOrganizacaoPayloadDto, context?: HttpContext): Observable<OrganizacaoDetalhesDto>;
+    atualizarOrganizacao(id: string, body: Partial<CriarOrganizacaoPayloadDto>, context?: HttpContext): Observable<OrganizacaoDetalhesDto>;
+    obterDetalhes(id: string, context?: HttpContext): Observable<OrganizacaoDetalhesDto>;
+    buscarUsuarios(search?: string, context?: HttpContext): Observable<OrganizacaoUsuarioBuscaDto[]>;
+    listarRoles(id: string, context?: HttpContext): Observable<OrganizacaoRoleDto[]>;
+    criarRole(id: string, body: { name: string; description?: string }, context?: HttpContext): Observable<OrganizacaoRoleDto>;
+    removerRole(id: string, roleId: string, context?: HttpContext): Observable<{ removed: boolean; code?: string }>;
+    listarMembros(id: string, context?: HttpContext): Observable<OrganizacaoMembroDto[]>;
+    compartilharComUsuario(id: string, body: CompartilharOrganizacaoPayloadDto, context?: HttpContext): Observable<OrganizacaoMembroDto>;
+    atribuirRolesMembro(id: string, memberId: string, roles: string[], context?: HttpContext): Observable<OrganizacaoMembroDto>;
+    removerMembro(id: string, memberId: string, context?: HttpContext): Observable<{ removed: boolean }>;
   }
 }
 
@@ -698,6 +777,143 @@ FileExplorerService.prototype.myPermissions = function (
 ): Observable<MyFilePermissionsOutput> {
   return this.http.post<MyFilePermissionsOutput>(
     `${this.rootUrl}/FileExplorer/MyPermissions`,
+    {},
+    { context }
+  );
+};
+
+// Runtime prototype augmentations for OrganizacaoService
+OrganizacaoService.prototype.minhasOrganizacoes = function (
+  this: ServiceCtx,
+  context?: HttpContext
+): Observable<OrganizacaoResumoDto[]> {
+  return this.http.get<OrganizacaoResumoDto[]>(`${this.rootUrl}/Organizacao/My`, { context });
+};
+
+OrganizacaoService.prototype.criarOrganizacao = function (
+  this: ServiceCtx,
+  body: CriarOrganizacaoPayloadDto,
+  context?: HttpContext
+): Observable<OrganizacaoDetalhesDto> {
+  return this.http.post<OrganizacaoDetalhesDto>(`${this.rootUrl}/Organizacao/Create`, body, { context });
+};
+
+OrganizacaoService.prototype.atualizarOrganizacao = function (
+  this: ServiceCtx,
+  id: string,
+  body: Partial<CriarOrganizacaoPayloadDto>,
+  context?: HttpContext
+): Observable<OrganizacaoDetalhesDto> {
+  return this.http.post<OrganizacaoDetalhesDto>(
+    `${this.rootUrl}/Organizacao/${encodeURIComponent(id)}/Update`,
+    body,
+    { context }
+  );
+};
+
+OrganizacaoService.prototype.obterDetalhes = function (
+  this: ServiceCtx,
+  id: string,
+  context?: HttpContext
+): Observable<OrganizacaoDetalhesDto> {
+  return this.http.get<OrganizacaoDetalhesDto>(
+    `${this.rootUrl}/Organizacao/${encodeURIComponent(id)}/Details`,
+    { context }
+  );
+};
+
+OrganizacaoService.prototype.buscarUsuarios = function (
+  this: ServiceCtx,
+  search?: string,
+  context?: HttpContext
+): Observable<OrganizacaoUsuarioBuscaDto[]> {
+  const qs = search && search.trim() ? `?search=${encodeURIComponent(search.trim())}` : '';
+  return this.http.get<OrganizacaoUsuarioBuscaDto[]>(`${this.rootUrl}/Organizacao/Users${qs}`, { context });
+};
+
+OrganizacaoService.prototype.listarRoles = function (
+  this: ServiceCtx,
+  id: string,
+  context?: HttpContext
+): Observable<OrganizacaoRoleDto[]> {
+  return this.http.get<OrganizacaoRoleDto[]>(
+    `${this.rootUrl}/Organizacao/${encodeURIComponent(id)}/Roles`,
+    { context }
+  );
+};
+
+OrganizacaoService.prototype.criarRole = function (
+  this: ServiceCtx,
+  id: string,
+  body: { name: string; description?: string },
+  context?: HttpContext
+): Observable<OrganizacaoRoleDto> {
+  return this.http.post<OrganizacaoRoleDto>(
+    `${this.rootUrl}/Organizacao/${encodeURIComponent(id)}/Roles`,
+    body,
+    { context }
+  );
+};
+
+OrganizacaoService.prototype.removerRole = function (
+  this: ServiceCtx,
+  id: string,
+  roleId: string,
+  context?: HttpContext
+): Observable<{ removed: boolean; code?: string }> {
+  return this.http.post<{ removed: boolean; code?: string }>(
+    `${this.rootUrl}/Organizacao/${encodeURIComponent(id)}/Roles/${encodeURIComponent(roleId)}/Delete`,
+    {},
+    { context }
+  );
+};
+
+OrganizacaoService.prototype.listarMembros = function (
+  this: ServiceCtx,
+  id: string,
+  context?: HttpContext
+): Observable<OrganizacaoMembroDto[]> {
+  return this.http.get<OrganizacaoMembroDto[]>(
+    `${this.rootUrl}/Organizacao/${encodeURIComponent(id)}/Members`,
+    { context }
+  );
+};
+
+OrganizacaoService.prototype.compartilharComUsuario = function (
+  this: ServiceCtx,
+  id: string,
+  body: CompartilharOrganizacaoPayloadDto,
+  context?: HttpContext
+): Observable<OrganizacaoMembroDto> {
+  return this.http.post<OrganizacaoMembroDto>(
+    `${this.rootUrl}/Organizacao/${encodeURIComponent(id)}/Share`,
+    body,
+    { context }
+  );
+};
+
+OrganizacaoService.prototype.atribuirRolesMembro = function (
+  this: ServiceCtx,
+  id: string,
+  memberId: string,
+  roles: string[],
+  context?: HttpContext
+): Observable<OrganizacaoMembroDto> {
+  return this.http.post<OrganizacaoMembroDto>(
+    `${this.rootUrl}/Organizacao/${encodeURIComponent(id)}/Members/${encodeURIComponent(memberId)}/Roles`,
+    { roles },
+    { context }
+  );
+};
+
+OrganizacaoService.prototype.removerMembro = function (
+  this: ServiceCtx,
+  id: string,
+  memberId: string,
+  context?: HttpContext
+): Observable<{ removed: boolean }> {
+  return this.http.post<{ removed: boolean }>(
+    `${this.rootUrl}/Organizacao/${encodeURIComponent(id)}/Members/${encodeURIComponent(memberId)}/Remove`,
     {},
     { context }
   );
