@@ -23,9 +23,15 @@ export interface RouteMetadata {
     queryParam?: string;
     role?: string;
     roles?: string[];
+    group?: string;
+    navbar?: any;
+    startMenu?: any;
+    endMenu?: any;
+    userMenu?: any;
     manifest?: Record<string, IAppManifestEntry>;
     files?: Array<{ format: string; label?: string; queryParam?: string }>;
     data?: any;
+    routeConfig?: Route;
     [key: string]: any;
 }
 
@@ -370,11 +376,13 @@ export class Apps {
             if (!fullPath || fullPath === '') {
                 fullPath = '/';
             }
-            // 2. Extrai os dados se o objeto 'data' existir
-            if (route.data) {
+            // 2. Extrai os dados se o objeto 'data' ou 'title' existir
+            if (route.data || typeof route.title === 'string') {
                 extracted.push({
                     fullPath,
-                    ...route.data
+                    ...(typeof route.title === 'string' ? { title: route.title } : {}),
+                    ...(route.data || {}),
+                    routeConfig: route,
                 });
             }
             // 3. Sub-rotas estáticas (children não-lazy)

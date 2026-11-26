@@ -1,19 +1,69 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BehaviorSubject, of } from 'rxjs';
 import { UserAuthenticationService } from '@ci/auth';
-import { ApplicationCatalogService } from '@ci/core';
+import { ApplicationCatalogService, Apps, RouteMetadata } from '@ci/core';
 import { OrganizacaoResumoDto, OrganizacaoService, User } from '@ci/portal-api';
 import { NavbarComponent } from './navbar.component';
 import { NavbarModule } from './navbar.module';
 import { NavbarService } from './navbar.service';
 
-describe('NavbarService e NavbarComponent (Organização)', () => {
+@Component({
+    standalone: true,
+    template: `<span class="mock-deployer-panel">Deployer Mock</span>`,
+})
+class MockDeployerMenuComponent { }
+
+describe('NavbarService e NavbarComponent (Organização e Rotas ci-application)', () => {
     let user$: BehaviorSubject<User | undefined>;
     let activatedApps$: BehaviorSubject<Set<string>>;
     let currentApp$: BehaviorSubject<string | null>;
     let orgApiSpy: jasmine.SpyObj<Pick<OrganizacaoService, 'minhasOrganizacoes'>>;
+    let appsServiceSpy: jasmine.SpyObj<Pick<Apps, 'getRoutesMetadata'>>;
+
+    const mockRoutesMetadata: RouteMetadata[] = [
+        {
+            fullPath: '/DevTools',
+            appName: 'DevTools',
+            title: 'DevTools Inspector',
+            icon: 'terminal',
+            navbar: {
+                id: 'devtools-deployer',
+                slot: 'end',
+                icon: 'deployed_code',
+                tooltip: 'Deployer — Versão e Publicação',
+                roles: ['DEVELOPER'],
+                order: 10,
+                menuComponent: MockDeployerMenuComponent,
+            },
+        },
+        {
+            fullPath: '/Grupos',
+            appName: 'Grupos',
+            title: 'Grupos e Comunidades',
+            icon: 'groups',
+            navbar: {
+                id: 'grupos-comunidades',
+                slot: 'end',
+                icon: 'groups',
+                tooltip: 'Grupos e Comunidades',
+                roles: ['USER', 'ADMIN', 'MASTER'],
+                order: 20,
+                children: [
+                    { id: 'grupos-encontrar', label: 'Encontrar grupos', icon: 'search', routerLink: '/Grupos' },
+                ],
+            },
+        },
+        {
+            fullPath: '/Profile/seguranca',
+            appName: 'Profile',
+            title: 'Segurança',
+            icon: 'security',
+            group: 'user-menu',
+        },
+    ];
 
     const mockOrgs: OrganizacaoResumoDto[] = [
         {
@@ -53,6 +103,9 @@ describe('NavbarService e NavbarComponent (Organização)', () => {
 
         orgApiSpy = jasmine.createSpyObj('OrganizacaoService', ['minhasOrganizacoes']);
         orgApiSpy.minhasOrganizacoes.and.returnValue(of(mockOrgs));
+
+        appsServiceSpy = jasmine.createSpyObj('Apps', ['getRoutesMetadata']);
+        appsServiceSpy.getRoutesMetadata.and.returnValue(Promise.resolve(mockRoutesMetadata));
     });
 
     afterEach(() => {
@@ -74,6 +127,7 @@ describe('NavbarService e NavbarComponent (Organização)', () => {
                         useValue: { activatedApps$, currentApp$ },
                     },
                     { provide: OrganizacaoService, useValue: orgApiSpy },
+                    { provide: Apps, useValue: appsServiceSpy },
                 ],
             });
             service = TestBed.inject(NavbarService);
@@ -118,6 +172,28 @@ describe('NavbarService e NavbarComponent (Organização)', () => {
             expect(localStorage.getItem('CI_ACTIVE_ORG_ID')).toBe('org-2');
             expect(localStorage.getItem('CI_ACTIVE_TENANT_ID')).toBe('tenant-2');
         });
+
+        it('deve injetar recursos na navbar a partir das configurações das rotas da ci-application respeitando roles', async () => {
+            await service.syncRouteResources(true);
+
+            // Usuário padrão (sem DEVELOPER) recebe Grupos em endMenu e Segurança em user-menu, mas NÃO Deployer
+            expect(service.resolvedEndMenu().map(i => i.id)).toEqual(['grupos-comunidades']);
+            expect(service.resolvedUserMenu().some(i => i.routerLink === '/Profile/seguranca')).toBeTrue();
+
+            // Usuário com DEVELOPER passa a receber também o Deployer configurado em DevTools
+            user$.next({
+                id: 'user-dev',
+                username: 'dev',
+                roles: ['USER', 'DEVELOPER'],
+            } as User);
+
+            expect(service.resolvedEndMenu().map(i => i.id)).toEqual(['devtools-deployer', 'grupos-comunidades']);
+
+            // Ao remover a rota ou deslogar, os recursos deixam de ser injetados
+            user$.next(undefined);
+            expect(service.resolvedEndMenu()).toEqual([]);
+            expect(service.resolvedUserMenu()).toEqual([]);
+        });
     });
 
     describe('NavbarComponent', () => {
@@ -139,6 +215,7 @@ describe('NavbarService e NavbarComponent (Organização)', () => {
                         useValue: { activatedApps$, currentApp$ },
                     },
                     { provide: OrganizacaoService, useValue: orgApiSpy },
+                    { provide: Apps, useValue: appsServiceSpy },
                 ],
             }).compileComponents();
 
@@ -165,6 +242,30 @@ describe('NavbarService e NavbarComponent (Organização)', () => {
             expect(trigger?.textContent).toContain('CI Labs');
             expect(trigger?.textContent).toContain('Criador');
             expect(trigger?.textContent).toContain('ORG_ADMIN');
+        });
+
+        it('deve renderizar em endMenu os recursos injetados pelas configurações das rotas e pelo Input endMenu', async () => {
+            await navbarService.syncRouteResources(true);
+            component.endMenu = [
+                { id: 'manual-end-item', label: 'Ajuda', icon: 'help' },
+            ];
+            fixture.detectChanges();
+
+            const endMenuContainer: HTMLElement | null = fixture.nativeElement.querySelector('.navbar-end-menu');
+            expect(endMenuContainer).not.toBeNull();
+            const dynamicButtons = endMenuContainer!.querySelectorAll('.nav-dynamic-btn');
+            expect(dynamicButtons.length).toBe(2);
+            expect(endMenuContainer?.textContent).toContain('Ajuda');
+
+            // Ao conceder role DEVELOPER, o item de Deployer configurado em DevTools também é renderizado
+            user$.next({
+                id: 'user-dev',
+                username: 'dev',
+                roles: ['USER', 'DEVELOPER'],
+            } as User);
+            fixture.detectChanges();
+
+            expect(endMenuContainer!.querySelectorAll('.nav-dynamic-btn').length).toBe(3);
         });
     });
 });

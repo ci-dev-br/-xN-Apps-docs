@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnDestroy, Optional, signal } from "@angular/core";
+import { Component, OnDestroy, OnInit, Optional, signal } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
@@ -15,9 +15,66 @@ import { lastValueFrom } from "rxjs";
         MatMenuModule,
         MatTooltipModule,
     ],
-    templateUrl: 'deployer-menu.html'
+    templateUrl: 'deployer-menu.html',
+    styles: [`
+        .deployer-panel {
+            padding: 8px 14px;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+            font-size: 12px;
+            line-height: 1.45;
+            min-width: 280px;
+            max-width: 360px;
+        }
+        .deployer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .deployer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .deployer-msg {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .deployer-sub {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+        .env-badge {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 11px;
+            background: rgba(46, 125, 50, 0.2);
+        }
+        .env-badge.debug {
+            background: rgba(245, 124, 0, 0.25);
+        }
+        .deployer-feedback {
+            margin-top: 4px;
+            padding: 4px 6px;
+            border-radius: 4px;
+            background: rgba(33, 150, 243, 0.15);
+            font-size: 11px;
+        }
+        .deployer-logs {
+            margin: 4px 0 0;
+            padding: 6px;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.25);
+            font-size: 10px;
+            overflow: auto;
+            white-space: pre-wrap;
+        }
+    `],
 })
-export class DeployerMenu implements OnDestroy {
+export class DeployerMenu implements OnInit, OnDestroy {
     versionInfo = signal<AvailableVersionInfoDto | undefined>(undefined);
     loadingVersion = signal<boolean>(false);
     publishing = signal<boolean>(false);
@@ -27,6 +84,10 @@ export class DeployerMenu implements OnDestroy {
     constructor(
         @Optional() private readonly deployerService?: DeployerService,
     ) { }
+
+    ngOnInit(): void {
+        this.carregarVersaoDisponivel();
+    }
 
     ngOnDestroy(): void {
         if (this.pollTimer) {

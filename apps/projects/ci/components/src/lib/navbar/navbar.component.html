@@ -61,11 +61,19 @@
     </button>
     }
 
+    @if(resolvedStartMenuItems().length > 0){
+    <div class="navbar-start-menu">
+        @for(item of resolvedStartMenuItems(); track item.id || $index){
+        <ng-container *ngTemplateOutlet="navbarMenuActionItem; context: { $implicit: item }"></ng-container>
+        }
+    </div>
+    }
+
     <!-- Ações Contextuais da Tela Ativa (com quebra em múltiplas linhas se não couber) -->
     <span style="flex:auto"></span>
     @if(!!user()){
     <button mat-icon-button [matMenuTriggerFor]="notificationsMenu" class="nav-icon-btn notif-btn"
-        matTooltip="Notificações">
+        [matTooltip]="latestNotification()?.title ? ('Notificações — ' + latestNotification()?.title) : 'Notificações'">
         <mat-icon [matBadge]="unreadCount$ | async"
             [matBadgeHidden]="!(unreadCount$ | async) || (unreadCount$ | async) === 0" matBadgeColor="warn"
             matBadgeSize="small">
@@ -92,10 +100,13 @@
         </a>
     </div>
     }
-    <!--   @if(!!endMenu){@for(item of endMenu){
-
-    }}
- -->
+    @if(resolvedEndMenuItems().length > 0){
+    <div class="navbar-end-menu">
+        @for(item of resolvedEndMenuItems(); track item.id || $index){
+        <ng-container *ngTemplateOutlet="navbarMenuActionItem; context: { $implicit: item }"></ng-container>
+        }
+    </div>
+    }
     <!-- Menu de Aplicativos -->
     <mat-menu #menuApps="matMenu" class="apps-dropdown-panel">
         <div class="menu-header">
@@ -125,16 +136,21 @@
     </mat-menu>
     <!-- Menu do Perfil do Usuário -->
     <mat-menu #userMenu="matMenu" class="user-dropdown-menu">
-        @if(userMenuList && userMenuList.length > 0){
-        @for(menu_item of userMenuList; track $index){
+        @if(resolvedUserMenuItems().length > 0){
+        @for(menu_item of resolvedUserMenuItems(); track menu_item.id || $index){
         @if(menu_item && menu_item.component !== undefined){
-        <ng-container *ngComponentOutlet="menu_item.component"></ng-container>
+        <ng-container *ngComponentOutlet="menu_item.component; inputs: menu_item.inputs"></ng-container>
         } @else {
-        <button mat-menu-item (click)="itemMenuActionHandler(menu_item, $event)">
+        <button mat-menu-item (click)="itemMenuActionHandler(menu_item, $event)"
+            [disabled]="isMenuItemDisabled(menu_item)">
             @if(menu_item.icon){
+            @if(menu_item.type === 'svg'){
+            <mat-icon [svgIcon]="menu_item.icon"></mat-icon>
+            } @else {
             <mat-icon>{{menu_item.icon}}</mat-icon>
             }
-            <span>{{menu_item.label}}</span>
+            }
+            <span>{{menu_item.label || menu_item.title}}</span>
         </button>
         }
         }
@@ -365,3 +381,86 @@
     </mat-icon>
     <span class="lateral-tab-label">Notificações</span>
 </aside>
+
+<!-- Template reutilizável para recursos injetados na Navbar (startMenu / endMenu) -->
+<ng-template #navbarMenuActionItem let-item>
+    @if(item?.component){
+    <ng-container *ngComponentOutlet="item.component; inputs: item.inputs"></ng-container>
+    }@else if(item?.menuComponent || item?.children?.length){
+    @if(item.label){
+    <button mat-button [matMenuTriggerFor]="dynamicItemMenu" class="nav-dynamic-btn"
+        [matTooltip]="getMenuItemTooltip(item)" [disabled]="isMenuItemDisabled(item)">
+        @if(item.icon){
+        @if(item.type === 'svg'){
+        <mat-icon [svgIcon]="item.icon"></mat-icon>
+        }@else{
+        <mat-icon>{{ item.icon }}</mat-icon>
+        }
+        }
+        <span>{{ item.label }}</span>
+    </button>
+    }@else{
+    <button mat-icon-button [matMenuTriggerFor]="dynamicItemMenu" class="nav-icon-btn nav-dynamic-btn"
+        [matTooltip]="getMenuItemTooltip(item)" [disabled]="isMenuItemDisabled(item)">
+        @if(item.icon){
+        @if(item.type === 'svg'){
+        <mat-icon [svgIcon]="item.icon"></mat-icon>
+        }@else{
+        <mat-icon>{{ item.icon }}</mat-icon>
+        }
+        }@else{
+        <mat-icon>more_horiz</mat-icon>
+        }
+    </button>
+    }
+    <mat-menu #dynamicItemMenu="matMenu" xPosition="before" class="navbar-injected-menu">
+        @if(item.menuComponent){
+        <ng-template matMenuContent>
+            <ng-container *ngComponentOutlet="item.menuComponent; inputs: item.inputs"></ng-container>
+        </ng-template>
+        }
+        @for(child of item.children || []; track child.id || $index){
+        @if(child.component){
+        <ng-container *ngComponentOutlet="child.component; inputs: child.inputs"></ng-container>
+        }@else{
+        <button mat-menu-item (click)="itemMenuActionHandler(child, $event)"
+            [disabled]="isMenuItemDisabled(child)">
+            @if(child.icon){
+            @if(child.type === 'svg'){
+            <mat-icon [svgIcon]="child.icon"></mat-icon>
+            }@else{
+            <mat-icon>{{ child.icon }}</mat-icon>
+            }
+            }
+            <span>{{ child.label || child.title }}</span>
+        </button>
+        }
+        }
+    </mat-menu>
+    }@else if(item?.label){
+    <button mat-button class="nav-dynamic-btn" [matTooltip]="getMenuItemTooltip(item)"
+        [disabled]="isMenuItemDisabled(item)" (click)="itemMenuActionHandler(item, $event)">
+        @if(item.icon){
+        @if(item.type === 'svg'){
+        <mat-icon [svgIcon]="item.icon"></mat-icon>
+        }@else{
+        <mat-icon>{{ item.icon }}</mat-icon>
+        }
+        }
+        <span>{{ item.label }}</span>
+    </button>
+    }@else{
+    <button mat-icon-button class="nav-icon-btn nav-dynamic-btn" [matTooltip]="getMenuItemTooltip(item)"
+        [disabled]="isMenuItemDisabled(item)" (click)="itemMenuActionHandler(item, $event)">
+        @if(item.icon){
+        @if(item.type === 'svg'){
+        <mat-icon [svgIcon]="item.icon"></mat-icon>
+        }@else{
+        <mat-icon>{{ item.icon }}</mat-icon>
+        }
+        }@else{
+        <mat-icon>bolt</mat-icon>
+        }
+    </button>
+    }
+</ng-template>

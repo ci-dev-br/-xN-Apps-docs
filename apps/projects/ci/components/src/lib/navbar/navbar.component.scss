@@ -1081,3 +1081,17 @@
      z-index: 1001;
      backdrop-filter: blur(1px);
  }
+
+ .navbar-start-menu,
+ .navbar-end-menu {
+     display: inline-flex;
+     align-items: center;
+     gap: 4px;
+     flex-shrink: 0;
+ }
+
+ .nav-dynamic-btn {
+     display: inline-flex;
+     align-items: center;
+     gap: 4px;
+ }

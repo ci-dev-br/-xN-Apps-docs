@@ -12,7 +12,6 @@ import { LogoComponent } from "../logo/logo.component";
 import { NavbarComponent } from "./navbar.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatDialogModule } from "@angular/material/dialog";
-import { GruposModalComponent } from "../grupos-modal/grupos-modal.component";
 
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatDividerModule } from "@angular/material/divider";
@@ -43,7 +42,6 @@ import { NavbarService } from "./navbar.service";
         MatDialogModule,
         MatBadgeModule,
         MatDividerModule,
-        GruposModalComponent,
     ],
     exports: [
         NavbarComponent,
@@ -57,4 +55,10 @@ export {
     LogoComponent,
     NavbarService,
 }
-export type { NavbarContextAction, NavbarContextSelectOption, NavbarOrganizationAccessInfo } from "./navbar.service";
+export type {
+    NavbarContextAction,
+    NavbarContextSelectOption,
+    NavbarOrganizationAccessInfo,
+    NavbarRouteResourceConfig,
+} from "./navbar.service";
+export type { INavbarItemMenu, NavbarMenuSlot } from "./i-menu-item";
