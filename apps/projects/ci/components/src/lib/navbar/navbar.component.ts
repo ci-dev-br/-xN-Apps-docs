@@ -8,7 +8,7 @@ import { lastValueFrom } from "rxjs";
 import { Router } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { GruposModalComponent } from "../grupos-modal/grupos-modal.component";
-import { NavbarContextAction, NavbarContextSelectOption, NavbarService } from "./navbar.service";
+import { NavbarContextAction, NavbarContextSelectOption, NavbarOrganizationAccessInfo, NavbarService } from "./navbar.service";
 @Component({
     selector: 'ci-navbar',
     standalone: false,
@@ -26,6 +26,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     public set apps(value: undefined | any[]) {
         if (this._apps() === value) return;
         this._apps.set(value);
+        this.navbarService?.syncAvailableApps(value);
     }
     user = signal<undefined | User>(this.userService.user.value);
     @Input() menuItens?: INavbarItemMenu[];
@@ -99,6 +100,34 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     getContextSelectOptions(action: NavbarContextAction): NavbarContextSelectOption[] {
         return typeof action.options === 'function' ? action.options() : (action.options || []);
+    }
+
+    get organizationAccess(): NavbarOrganizationAccessInfo | null {
+        return this.navbarService?.organizationAccess() || null;
+    }
+
+    getOrganizationAccessTooltip(): string {
+        const info = this.organizationAccess;
+        if (!info) return 'Acesso à Organização';
+        if (!info.organizationName) return 'Nenhuma organização selecionada — clique para gerenciar';
+        const tipo = info.isOwner ? 'Criador' : 'Tenant compartilhado';
+        const roles = info.roles?.length ? ` • Roles: ${info.roles.join(', ')}` : '';
+        return `${info.organizationName} (${tipo}${roles})`;
+    }
+
+    selectOrganizationFromNavbar(orgId?: string | null, event?: Event): void {
+        event?.stopPropagation();
+        if (!orgId) return;
+        this.navbarService?.selectActiveOrganization(orgId);
+    }
+
+    refreshOrganizationFromNavbar(event?: Event): void {
+        event?.stopPropagation();
+        this.navbarService?.refreshOrganizationAccess();
+    }
+
+    abrirOrganizacoes(): void {
+        this.router?.navigate(['/Organizacao']);
     }
 
     get displayMode$() {
@@ -205,8 +234,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
             this.userService.user.subscribe(u => {
                 this.photoError.set(false);
                 this.user.set(u);
-                if (!!this.apps)
+                if (!!this.apps) {
                     this.recentes = localStorage.getItem('NAV(RECENTES)')?.split(',').map(x => this.apps?.find(a => a?.name === x));
+                    this.navbarService?.syncAvailableApps(this.apps);
+                }
             });
             /* this.notifSub = this.notificationService?.notifications$.subscribe((notifs: InternalNotification[]) => {
                 this.latestNotification.set(notifs && notifs.length > 0 ? notifs[0] : undefined);

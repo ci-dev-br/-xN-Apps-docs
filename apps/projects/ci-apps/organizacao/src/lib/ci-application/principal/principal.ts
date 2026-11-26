@@ -16,6 +16,7 @@ import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { UserAuthenticationService } from "@ci/auth";
+import { NavbarService } from "@ci/components";
 import { EditarDetailComponent } from "@ci/components/editar-detail";
 import { WindowModule, WindowService } from "@ci/components/window";
 import { CoreModule } from "@ci/core";
@@ -110,6 +111,7 @@ export class Principal implements OnInit, OnDestroy {
         @Optional() private readonly authService?: AuthService,
         @Optional() private readonly snackBar?: MatSnackBar,
         @Optional() private readonly cdr?: ChangeDetectorRef,
+        @Optional() private readonly navbarService?: NavbarService,
     ) { }
 
     ngOnInit(): void {
@@ -175,6 +177,7 @@ export class Principal implements OnInit, OnDestroy {
                 await this.selecionarOrganizacao(targetId);
             } else {
                 this.selectedOrg = undefined;
+                await this.navbarService?.refreshOrganizationAccess();
             }
         } catch (err: any) {
             this.notificar(err?.error?.message || 'Erro ao carregar organizações.', true);
@@ -200,6 +203,8 @@ export class Principal implements OnInit, OnDestroy {
             };
             const defaultRole = detalhes?.orgRoles?.find(r => r.code === 'ORG_MEMBRO')?.code || detalhes?.orgRoles?.[0]?.code;
             this.shareSelectedRoles = defaultRole ? [defaultRole] : ['ORG_MEMBRO'];
+            await this.navbarService?.refreshOrganizationAccess();
+            this.navbarService?.selectActiveOrganization(organizacaoId);
         } catch (err: any) {
             this.notificar(err?.error?.message || 'Não foi possível carregar os detalhes da organização.', true);
         } finally {

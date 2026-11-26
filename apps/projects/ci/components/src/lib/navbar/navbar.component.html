@@ -37,6 +37,30 @@
         <ci-logo></ci-logo>
     </div>
 
+    @if(!!user() && navbarService?.organizationAppActive()){
+    <button mat-button [matMenuTriggerFor]="orgAccessMenu" class="org-access-btn"
+        [matTooltip]="getOrganizationAccessTooltip()" aria-label="Acesso à organização">
+        <mat-icon class="org-access-icon">corporate_fare</mat-icon>
+        <span class="org-access-name">
+            {{ organizationAccess?.organizationName || 'Sem organização' }}
+        </span>
+        @if(organizationAccess?.organizationId){
+        <span class="org-access-badge" [class.owner]="organizationAccess?.isOwner">
+            {{ organizationAccess?.isOwner ? 'Criador' : 'Tenant' }}
+        </span>
+        }
+        @if(organizationAccess?.roles?.length){
+        <span class="org-access-role-chip">
+            {{ organizationAccess?.roles?.[0] }}
+            @if((organizationAccess?.roles?.length || 0) > 1){
+            <span>+{{ (organizationAccess?.roles?.length || 0) - 1 }}</span>
+            }
+        </span>
+        }
+        <mat-icon class="org-access-caret">expand_more</mat-icon>
+    </button>
+    }
+
     <!-- Ações Contextuais da Tela Ativa (com quebra em múltiplas linhas se não couber) -->
     <span style="flex:auto"></span>
     @if(!!user()){
@@ -150,6 +174,59 @@
             </mat-icon>
             <span>Statusbar Inferior</span>
         </button>
+    </mat-menu>
+    <mat-menu #orgAccessMenu="matMenu" class="org-access-menu-panel">
+        <div class="org-menu-header" (click)="$event.stopPropagation()">
+            <div class="org-menu-title-row">
+                <strong>{{ organizationAccess?.organizationName || 'Nenhuma organização ativa' }}</strong>
+                @if(organizationAccess?.organizationId){
+                <span class="org-access-badge" [class.owner]="organizationAccess?.isOwner">
+                    {{ organizationAccess?.isOwner ? 'Criador' : 'Compartilhada' }}
+                </span>
+                }
+            </div>
+            @if(organizationAccess?.tenantName || organizationAccess?.tenantId){
+            <div class="org-menu-meta">
+                Tenant: {{ organizationAccess?.tenantName || organizationAccess?.tenantId }}
+            </div>
+            }
+            @if(organizationAccess?.roles?.length){
+            <div class="org-menu-roles">
+                @for(role of organizationAccess?.roles || []; track role){
+                <span class="org-role-pill">{{ role }}</span>
+                }
+            </div>
+            }@else if(organizationAccess?.organizationId){
+            <div class="org-menu-meta">Sem roles ORG atribuídos</div>
+            }
+        </div>
+        @if(organizationAccess?.organizations?.length){
+        <mat-divider></mat-divider>
+        <div class="org-menu-section-label">Organizações com acesso</div>
+        @for(org of organizationAccess?.organizations || []; track org.internalId){
+        <button mat-menu-item (click)="selectOrganizationFromNavbar(org.internalId, $event)">
+            <mat-icon [color]="org.internalId === organizationAccess?.organizationId ? 'primary' : null">
+                {{ org.internalId === organizationAccess?.organizationId ? 'radio_button_checked' : 'radio_button_unchecked' }}
+            </mat-icon>
+            <div class="org-menu-item">
+                <div class="org-item-text">
+                    <span>{{ org.organizatioName }}</span>
+                    <small>{{ org.isOwner ? 'Criador' : 'Tenant' }} • {{ (org.myRoles || []).join(', ') || 'Sem roles' }}</small>
+                </div>
+            </div>
+        </button>
+        }
+        }
+        <mat-divider></mat-divider>
+        <div class="org-menu-footer">
+            <button mat-button color="primary" (click)="abrirOrganizacoes()">
+                <mat-icon>settings</mat-icon>
+                <span>Gerenciar Organizações</span>
+            </button>
+            <button mat-icon-button matTooltip="Atualizar acesso" (click)="refreshOrganizationFromNavbar($event)">
+                <mat-icon>refresh</mat-icon>
+            </button>
+        </div>
     </mat-menu>
 </mat-toolbar>
 @if(navbarService?.contextActions()?.length){

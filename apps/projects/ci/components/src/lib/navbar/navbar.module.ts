@@ -57,4 +57,4 @@ export {
     LogoComponent,
     NavbarService,
 }
-export type { NavbarContextAction, NavbarContextSelectOption } from "./navbar.service";
+export type { NavbarContextAction, NavbarContextSelectOption, NavbarOrganizationAccessInfo } from "./navbar.service";
