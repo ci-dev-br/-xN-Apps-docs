@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-26T02:31:27" id="0" hostname="plhx33" tests="4" errors="0" failures="0" time="0.081">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="InternalNotificationService (Preferências do Usuário) deve carregar preferências vindas do perfil do usuário e sincronizar com o backend" time="0.063" classname="Chrome_Headless_158_0_0_0_(Windows_10).InternalNotificationService (Preferências do Usuário)"/>
+  <testcase name="InternalNotificationService (Preferências do Usuário) deve persistir preferência no backend ao alterar displayMode" time="0.006" classname="Chrome_Headless_158_0_0_0_(Windows_10).InternalNotificationService (Preferências do Usuário)"/>
+  <testcase name="InternalNotificationService (Preferências do Usuário) deve bloquear som e push local quando preferências estiverem desabilitadas ou categoria silenciada" time="0.006" classname="Chrome_Headless_158_0_0_0_(Windows_10).InternalNotificationService (Preferências do Usuário)"/>
+  <testcase name="InternalNotificationService (Preferências do Usuário) não deve consultar notificações nem disparar alertas/som quando usuário desativar notificações" time="0.006" classname="Chrome_Headless_158_0_0_0_(Windows_10).InternalNotificationService (Preferências do Usuário)"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>
