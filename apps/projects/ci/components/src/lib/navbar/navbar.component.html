@@ -72,6 +72,26 @@
     <!-- Ações Contextuais da Tela Ativa (com quebra em múltiplas linhas se não couber) -->
     <span style="flex:auto"></span>
     @if(!!user()){
+    @if((notificationsEnabled$ | async) !== false){
+    @if((displayMode$ | async) === 'sidebar'){
+    <button mat-icon-button (click)="toggleSidebar()" class="nav-icon-btn notif-btn"
+        matTooltip="Notificações (Aba Lateral)">
+        <mat-icon [matBadge]="unreadCount$ | async"
+            [matBadgeHidden]="!(unreadCount$ | async) || (unreadCount$ | async) === 0" matBadgeColor="warn"
+            matBadgeSize="small">
+            notifications
+        </mat-icon>
+    </button>
+    }@else if((displayMode$ | async) === 'statusbar'){
+    <button mat-icon-button (click)="toggleStatusbar()" class="nav-icon-btn notif-btn"
+        matTooltip="Notificações (Statusbar)">
+        <mat-icon [matBadge]="unreadCount$ | async"
+            [matBadgeHidden]="!(unreadCount$ | async) || (unreadCount$ | async) === 0" matBadgeColor="warn"
+            matBadgeSize="small">
+            notifications
+        </mat-icon>
+    </button>
+    }@else{
     <button mat-icon-button [matMenuTriggerFor]="notificationsMenu" class="nav-icon-btn notif-btn"
         [matTooltip]="latestNotification()?.title ? ('Notificações — ' + latestNotification()?.title) : 'Notificações'">
         <mat-icon [matBadge]="unreadCount$ | async"
@@ -80,6 +100,8 @@
             notifications
         </mat-icon>
     </button>
+    }
+    }
     <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-btn"
         [matTooltip]="user()?.surname || user()?.fullName || user()?.username || 'Usuário'">
         @if(userPhotoUrl){
@@ -158,7 +180,7 @@
         }
         <button mat-menu-item [matMenuTriggerFor]="notifSettingsSubmenu">
             <mat-icon>tune</mat-icon>
-            <span>Visualização de Notificações</span>
+            <span>Preferências de Notificações</span>
         </button>
         <mat-divider></mat-divider>
         <button mat-menu-item (click)="sair()" class="logout-menu-item">
@@ -172,6 +194,25 @@
     </mat-menu>
     <!-- Submenu para Configuração de Notificações -->
     <mat-menu #notifSettingsSubmenu="matMenu" class="notif-settings-menu">
+        <button mat-menu-item (click)="toggleNotificationsEnabled($event)">
+            <mat-icon [color]="(notificationsEnabled$ | async) !== false ? 'primary' : 'warn'">
+                {{ (notificationsEnabled$ | async) !== false ? 'notifications_active' : 'notifications_off' }}
+            </mat-icon>
+            <span>{{ (notificationsEnabled$ | async) !== false ? 'Notificações Ativas' : 'Notificações Desativadas' }}</span>
+        </button>
+        <button mat-menu-item (click)="togglePushEnabled($event)">
+            <mat-icon [color]="(pushEnabled$ | async) !== false ? 'primary' : null">
+                {{ (pushEnabled$ | async) !== false ? 'check_box' : 'check_box_outline_blank' }}
+            </mat-icon>
+            <span>Push no Navegador</span>
+        </button>
+        <button mat-menu-item (click)="toggleSoundEnabled($event)">
+            <mat-icon [color]="(soundEnabled$ | async) !== false ? 'primary' : null">
+                {{ (soundEnabled$ | async) !== false ? 'volume_up' : 'volume_off' }}
+            </mat-icon>
+            <span>Som de Notificação</span>
+        </button>
+        <mat-divider></mat-divider>
         <button mat-menu-item (click)="setDisplayMode('menu')">
             <mat-icon [color]="(displayMode$ | async) === 'menu' ? 'primary' : null">
                 {{ (displayMode$ | async) === 'menu' ? 'radio_button_checked' : 'radio_button_unchecked' }}
@@ -190,6 +231,15 @@
             </mat-icon>
             <span>Statusbar Inferior</span>
         </button>
+        <mat-divider></mat-divider>
+        @for(nt of notificationTypes; track nt.code){
+        <button mat-menu-item (click)="toggleMutedNotificationType(nt.code, $event)">
+            <mat-icon [color]="!isNotificationTypeMuted(nt.code) ? 'primary' : null">
+                {{ !isNotificationTypeMuted(nt.code) ? 'check_box' : 'check_box_outline_blank' }}
+            </mat-icon>
+            <span>Receber: {{ nt.label }}</span>
+        </button>
+        }
     </mat-menu>
     <mat-menu #orgAccessMenu="matMenu" class="org-access-menu-panel">
         <div class="org-menu-header" (click)="$event.stopPropagation()">
@@ -327,7 +377,7 @@
             </div>
         </div>
         <!-- Banner de Ativação de Push Notification -->
-        @if((pushStatus$ | async) !== 'granted') {
+        @if((pushStatus$ | async) !== 'granted' && (pushEnabled$ | async) !== false) {
         <div class="push-opt-in-banner">
             <mat-icon>cell_tower</mat-icon>
             <div class="push-text">
@@ -373,6 +423,8 @@
         </div>
     </div>
 </ng-template>
+<!-- Aba Lateral e Drawer de Notificações (Modo 'sidebar') -->
+@if(!!user() && (notificationsEnabled$ | async) !== false && (displayMode$ | async) === 'sidebar') {
 <aside class="ci-notif-lateral-tab" (click)="toggleSidebar()" matTooltip="Abrir Notificações">
     <mat-icon [matBadge]="unreadCount$ | async"
         [matBadgeHidden]="!(unreadCount$ | async) || (unreadCount$ | async) === 0" matBadgeColor="warn"
@@ -381,6 +433,55 @@
     </mat-icon>
     <span class="lateral-tab-label">Notificações</span>
 </aside>
+@if(isSidebarOpen$ | async) {
+<div class="ci-notif-sidebar-backdrop" (click)="toggleSidebar(false)"></div>
+}
+<aside class="ci-notif-sidebar-drawer" [class.open]="isSidebarOpen$ | async">
+    <ng-container *ngTemplateOutlet="notificationsListContent"></ng-container>
+</aside>
+}
+
+<!-- Statusbar Inferior e Drawer Expansível (Modo 'statusbar') -->
+@if(!!user() && (notificationsEnabled$ | async) !== false && (displayMode$ | async) === 'statusbar') {
+@if(isStatusbarExpanded$ | async) {
+<div class="ci-notif-statusbar-backdrop" (click)="toggleStatusbar(false)"></div>
+}
+<aside class="ci-notif-statusbar-drawer" [class.expanded]="isStatusbarExpanded$ | async">
+    <ng-container *ngTemplateOutlet="notificationsListContent"></ng-container>
+</aside>
+<footer class="ci-notif-bottom-statusbar">
+    <div class="statusbar-left" (click)="toggleStatusbar()">
+        <mat-icon [matBadge]="unreadCount$ | async"
+            [matBadgeHidden]="!(unreadCount$ | async) || (unreadCount$ | async) === 0" matBadgeColor="warn"
+            matBadgeSize="small">
+            notifications
+        </mat-icon>
+        <span class="statusbar-label">Notificações</span>
+        @if((unreadCount$ | async); as unread) {
+        @if(unread > 0) {
+        <span class="statusbar-badge">{{ unread }}</span>
+        }
+        }
+    </div>
+    <div class="statusbar-center" (click)="toggleStatusbar()">
+        @if(latestNotification(); as latest) {
+        <div class="statusbar-latest" [class.unread]="!latest.read">
+            <mat-icon class="latest-icon">{{ getNotificationIcon(latest.type) }}</mat-icon>
+            <strong class="latest-title">{{ latest.title }}:</strong>
+            <span class="latest-msg">{{ latest.message }}</span>
+        </div>
+        } @else {
+        <span class="statusbar-empty">Nenhuma notificação recente</span>
+        }
+    </div>
+    <div class="statusbar-right">
+        <button mat-icon-button (click)="toggleStatusbar()"
+            [matTooltip]="(isStatusbarExpanded$ | async) ? 'Recolher' : 'Expandir Notificações'">
+            <mat-icon>{{ (isStatusbarExpanded$ | async) ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</mat-icon>
+        </button>
+    </div>
+</footer>
+}
 
 <!-- Template reutilizável para recursos injetados na Navbar (startMenu / endMenu) -->
 <ng-template #navbarMenuActionItem let-item>

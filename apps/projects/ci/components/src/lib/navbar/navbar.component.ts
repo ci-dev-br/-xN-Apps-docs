@@ -187,6 +187,56 @@ export class NavbarComponent implements OnInit, OnDestroy {
         return this.notificationService?.pushPermissionStatus;
     }
 
+    get preferences$() {
+        return this.notificationService?.preferences$;
+    }
+
+    get notificationsEnabled$() {
+        return this.notificationService?.notificationsEnabled$;
+    }
+
+    get pushEnabled$() {
+        return this.notificationService?.pushEnabled$;
+    }
+
+    get soundEnabled$() {
+        return this.notificationService?.soundEnabled$;
+    }
+
+    readonly notificationTypes = [
+        { code: 'MENSAGEM', label: 'Mensagens' },
+        { code: 'GRUPO', label: 'Grupos' },
+        { code: 'SISTEMA', label: 'Sistema' },
+        { code: 'AVISO', label: 'Avisos' },
+    ];
+
+    toggleNotificationsEnabled(event?: Event) {
+        event?.stopPropagation();
+        if (!this.notificationService) return;
+        this.notificationService.setNotificationsEnabled(!this.notificationService.preferences.enabled);
+    }
+
+    togglePushEnabled(event?: Event) {
+        event?.stopPropagation();
+        if (!this.notificationService) return;
+        this.notificationService.setPushEnabled(!this.notificationService.preferences.pushEnabled);
+    }
+
+    toggleSoundEnabled(event?: Event) {
+        event?.stopPropagation();
+        if (!this.notificationService) return;
+        this.notificationService.setSoundEnabled(!this.notificationService.preferences.soundEnabled);
+    }
+
+    toggleMutedNotificationType(type: string, event?: Event) {
+        event?.stopPropagation();
+        this.notificationService?.toggleMutedType(type);
+    }
+
+    isNotificationTypeMuted(type: string): boolean {
+        return this.notificationService?.isTypeMuted(type) ?? false;
+    }
+
     async solicitarPermissaoPush(event?: Event) {
         event?.stopPropagation();
         await this.notificationService?.solicitarPermissaoPush();
