@@ -7,3 +7,44 @@
 mat-form-field {
     width: 100%;
 }
+
+.dyn-boolean-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8px 12px;
+    border: 1px solid rgba(128, 128, 128, 0.28);
+    border-radius: 6px;
+    min-height: 54px;
+    box-sizing: border-box;
+}
+
+.dyn-field-hint {
+    margin-top: 4px;
+    font-size: 11px;
+    opacity: 0.72;
+}
+
+.dyn-type-tag {
+    display: inline-block;
+    padding: 0 6px;
+    border-radius: 4px;
+    background: rgba(37, 99, 235, 0.14);
+    color: #1d4ed8;
+    font-weight: 600;
+}
+
+.dyn-json-textarea {
+    font-family: Consolas, monospace;
+    font-size: 12px;
+}
+
+.dyn-color-swatch {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 4px;
+}

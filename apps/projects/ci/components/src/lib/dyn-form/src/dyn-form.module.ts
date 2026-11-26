@@ -8,6 +8,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { DynFormComponent } from './dyn-form.component';
 import { FORM_OPTIONS, FormOptionsBuilder, IFormOptions } from './i-form-options';
 import { DynInputDateComponent } from './dyn-input/dyn-input-date.component';
@@ -35,6 +37,8 @@ import { NgxCurrencyDirective } from 'ngx-currency';
     MatAutocompleteModule,
     MatButtonModule,
     MatTooltipModule,
+    MatSelectModule,
+    MatSlideToggleModule,
     NgxCurrencyDirective,
   ],
   providers: [

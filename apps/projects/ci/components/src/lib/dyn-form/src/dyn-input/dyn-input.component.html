@@ -1,56 +1,246 @@
-@if(!!formGroup && !!fieldName){<form style="display:contents" [formGroup]="formGroup">
-    @if(type === 'chips-autocomplete' || format === 'chips-autocomplete' || type === 'modules-autocomplete' || format === 'modules-autocomplete' || type === 'modules' || type === 'app-modules' || fieldName === 'modules' || fieldName === 'modulos'){
-    <ci-dyn-input-chips-autocomplete
-        [fieldName]="fieldName"
-        [label]="label"
-        [description]="description"
-        [placeholder]="placeholder"
-        [parentFormGroup]="formGroup"
-        [parentFormControl]="formControl"
-        [enumOptions]="enumOptions">
-    </ci-dyn-input-chips-autocomplete>
-    }
-    @else if(inputComponent !== undefined && !!inputComponent){
-    <ng-container *ngComponentOutlet="inputComponent"></ng-container>
-    }
-    @else{
-    @if(type === 'html'){
-    HTML CONTENT
-    }@else {
-    <mat-form-field appearance="outline" class="ci-dyn-form-field">
-        <mat-label>{{label || placeholder || ''}}</mat-label>
-        @if(!!service){
-        <input matInput type="text" [placeholder]="placeholder || label || ''" [formControlName]="fieldName || ''"
-            [matAutocomplete]="autoc">
-        <mat-autocomplete #autoc="matAutocomplete">
-            @for (option of list; track option) {
-            <mat-option [value]="option">{{option | dao}}</mat-option>
-            }
-        </mat-autocomplete>
-        }@else{
-        <ng-container *ngTemplateOutlet="inputContent"></ng-container>
+@if(!!formGroup && !!fieldName){
+<form style="display:contents" [formGroup]="formGroup">
+    @switch (normalizedType) {
+        @case ('chips-autocomplete') {
+        <ci-dyn-input-chips-autocomplete
+            [fieldName]="fieldName"
+            [label]="label"
+            [description]="description"
+            [placeholder]="placeholder"
+            [parentFormGroup]="formGroup"
+            [parentFormControl]="formControl"
+            [enumOptions]="enumOptions">
+        </ci-dyn-input-chips-autocomplete>
         }
-        @if(!!schemaName){<button mat-icon-button matSuffix type="button">
-            <mat-icon>
-                search
-            </mat-icon>
-        </button>}
-        <ng-template #inputContent>
-            @if(type==='number'){
+
+        @case ('dynamic') {
+            @if(dynamicType?.openInWindow) {
+            <div class="dyn-custom-type-field">
+                <mat-form-field appearance="outline" class="ci-dyn-form-field">
+                    <mat-label>{{label || dynamicType?.label || fieldName}}</mat-label>
+                    <input
+                        matInput
+                        type="text"
+                        [formControlName]="fieldName"
+                        [placeholder]="placeholder || 'Caminho (.ts / .map) ou código'"
+                        [readonly]="readonly">
+                    <button
+                        matSuffix
+                        mat-icon-button
+                        type="button"
+                        (click)="openDynamicWindow($event)"
+                        [matTooltip]="'Abrir ' + (dynamicType?.windowTitle || dynamicType?.label || 'em janela')">
+                        <mat-icon>{{dynamicType?.icon || 'open_in_new'}}</mat-icon>
+                    </button>
+                    <mat-hint>
+                        <span class="dyn-type-tag">{{dynamicType?.label || dynamicType?.type}}</span>
+                        @if(description){ — {{description}} }
+                    </mat-hint>
+                </mat-form-field>
+            </div>
+            } @else if(dynamicType?.component) {
+            <ng-container *ngComponentOutlet="dynamicType!.component; inputs: dynamicComponentInputs"></ng-container>
+            }
+        }
+
+        @case ('boolean') {
+        <div class="dyn-boolean-field">
+            <mat-slide-toggle [formControlName]="fieldName" color="primary" [disabled]="!!readonly">
+                {{label || fieldName}}
+            </mat-slide-toggle>
+            @if(description){
+            <div class="dyn-field-hint">{{description}}</div>
+            }
+        </div>
+        }
+
+        @case ('date') {
+        <ci-dyn-input-date
+            [fieldName]="fieldName"
+            [label]="label"
+            [description]="description"
+            [placeholder]="placeholder"
+            [hint]="hint"
+            [formGroup]="formGroup"
+            [formControl]="formControl"
+            type="date"
+            [format]="format">
+        </ci-dyn-input-date>
+        }
+
+        @case ('date-time') {
+        <ci-dyn-input-date
+            [fieldName]="fieldName"
+            [label]="label"
+            [description]="description"
+            [placeholder]="placeholder"
+            [hint]="hint"
+            [formGroup]="formGroup"
+            [formControl]="formControl"
+            type="date-time"
+            [format]="format">
+        </ci-dyn-input-date>
+        }
+
+        @case ('time') {
+        <ci-dyn-input-date
+            [fieldName]="fieldName"
+            [label]="label"
+            [description]="description"
+            [placeholder]="placeholder"
+            [hint]="hint"
+            [formGroup]="formGroup"
+            [formControl]="formControl"
+            type="time"
+            [format]="format">
+        </ci-dyn-input-date>
+        }
+
+        @case ('option') {
+        <mat-form-field appearance="outline" class="ci-dyn-form-field">
+            <mat-label>{{label || placeholder || fieldName}}</mat-label>
+            <mat-select [formControlName]="fieldName">
+                @for (opt of enumOptions || []; track opt) {
+                <mat-option [value]="opt">{{opt}}</mat-option>
+                }
+            </mat-select>
+            @if(description){<mat-hint>{{description}}</mat-hint>}
+        </mat-form-field>
+        }
+
+        @case ('multi-option') {
+        <mat-form-field appearance="outline" class="ci-dyn-form-field">
+            <mat-label>{{label || placeholder || fieldName}}</mat-label>
+            <mat-select [formControlName]="fieldName" multiple>
+                @for (opt of enumOptions || []; track opt) {
+                <mat-option [value]="opt">{{opt}}</mat-option>
+                }
+            </mat-select>
+            @if(description){<mat-hint>{{description}}</mat-hint>}
+        </mat-form-field>
+        }
+
+        @case ('chips') {
+        <mat-form-field appearance="outline" class="ci-dyn-form-field">
+            <mat-label>{{label || placeholder || fieldName}}</mat-label>
+            <mat-chip-grid #chipGrid>
+                @for (item of arrayChips; track item + $index) {
+                <mat-chip-row (removed)="removeChipItem($index)">
+                    {{item}}
+                    <button matChipRemove type="button" [attr.aria-label]="'Remover ' + item">
+                        <mat-icon>cancel</mat-icon>
+                    </button>
+                </mat-chip-row>
+                }
+            </mat-chip-grid>
+            <input
+                [placeholder]="placeholder || 'Adicionar item...'"
+                [matChipInputFor]="chipGrid"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="addChipItem($event)" />
+            @if(description){<mat-hint>{{description}}</mat-hint>}
+        </mat-form-field>
+        }
+
+        @case ('currency') {
+        <mat-form-field appearance="outline" class="ci-dyn-form-field">
+            <mat-label>{{label || placeholder || fieldName}}</mat-label>
             <input matInput [currencyMask]="{ prefix: '', thousands: '.', decimal: ',' }" style="text-align: right;"
                 type="text" autocomplete="off" [placeholder]="placeholder || label || ''"
                 [formControlName]="fieldName || ''">
-            }@else{
-            <input matInput type="text" autocomplete="off" [placeholder]="placeholder || label || ''"
-                [formControlName]="fieldName || ''">
+            @if(description){<mat-hint>{{description}}</mat-hint>}
+        </mat-form-field>
+        }
+
+        @case ('integer') {
+        <mat-form-field appearance="outline" class="ci-dyn-form-field">
+            <mat-label>{{label || placeholder || fieldName}}</mat-label>
+            <input matInput type="number" step="1" autocomplete="off"
+                [placeholder]="placeholder || label || ''"
+                [formControlName]="fieldName || ''"
+                [readonly]="!!readonly">
+            @if(description){<mat-hint>{{description}}</mat-hint>}
+        </mat-form-field>
+        }
+
+        @case ('number') {
+        <mat-form-field appearance="outline" class="ci-dyn-form-field">
+            <mat-label>{{label || placeholder || fieldName}}</mat-label>
+            <input matInput type="number" step="any" autocomplete="off"
+                [placeholder]="placeholder || label || ''"
+                [formControlName]="fieldName || ''"
+                [readonly]="!!readonly">
+            @if(description){<mat-hint>{{description}}</mat-hint>}
+        </mat-form-field>
+        }
+
+        @case ('textarea') {
+        <mat-form-field appearance="outline" class="ci-dyn-form-field dyn-span-wide">
+            <mat-label>{{label || placeholder || fieldName}}</mat-label>
+            <textarea matInput rows="4" [placeholder]="placeholder || label || ''"
+                [formControlName]="fieldName || ''"
+                [readonly]="!!readonly"></textarea>
+            @if(description){<mat-hint>{{description}}</mat-hint>}
+        </mat-form-field>
+        }
+
+        @case ('json') {
+        <mat-form-field appearance="outline" class="ci-dyn-form-field dyn-span-wide">
+            <mat-label>{{label || placeholder || fieldName}} (JSON)</mat-label>
+            <textarea matInput rows="4" class="dyn-json-textarea"
+                [placeholder]="placeholder || '{}'"
+                [value]="jsonValueText"
+                [readonly]="!!readonly"
+                (input)="onJsonTextChange($any($event.target).value)"></textarea>
+            @if(jsonParseError){
+            <mat-hint style="color:#d32f2f">{{jsonParseError}}</mat-hint>
+            }@else if(description){
+            <mat-hint>{{description}}</mat-hint>
             }
-        </ng-template>
-        @if(!!description){<mat-hint>
-            {{description}}
-        </mat-hint>}
-    </mat-form-field>
-    }
+        </mat-form-field>
+        }
+
+        @case ('color') {
+        <mat-form-field appearance="outline" class="ci-dyn-form-field">
+            <mat-label>{{label || placeholder || fieldName}}</mat-label>
+            <input matInput type="text" autocomplete="off"
+                [placeholder]="placeholder || '#000000'"
+                [formControlName]="fieldName || ''">
+            <input matSuffix type="color" class="dyn-color-swatch"
+                [value]="currentControl?.value || '#000000'"
+                (input)="currentControl?.setValue($any($event.target).value)" />
+            @if(description){<mat-hint>{{description}}</mat-hint>}
+        </mat-form-field>
+        }
+
+        @default {
+            @if(inputComponent) {
+            <ng-container *ngComponentOutlet="inputComponent; inputs: dynamicComponentInputs"></ng-container>
+            } @else {
+            <mat-form-field appearance="outline" class="ci-dyn-form-field">
+                <mat-label>{{label || placeholder || ''}}</mat-label>
+                @if(!!service){
+                <input matInput type="text" [placeholder]="placeholder || label || ''" [formControlName]="fieldName || ''"
+                    [matAutocomplete]="autoc">
+                <mat-autocomplete #autoc="matAutocomplete" [displayWith]="formatRelationOption">
+                    @for (option of list; track option) {
+                    <mat-option [value]="option">{{option | dao}}</mat-option>
+                    }
+                </mat-autocomplete>
+                }@else{
+                <input matInput [type]="normalizedType === 'email' ? 'email' : normalizedType === 'url' ? 'url' : normalizedType === 'password' ? 'password' : 'text'"
+                    autocomplete="off" [placeholder]="placeholder || label || ''"
+                    [formControlName]="fieldName || ''" [readonly]="!!readonly">
+                }
+                @if(!!schemaName){
+                <button mat-icon-button matSuffix type="button" (click)="loadRelationList()" matTooltip="Pesquisar registros">
+                    <mat-icon>search</mat-icon>
+                </button>
+                }
+                @if(!!description){<mat-hint>{{description}}</mat-hint>}
+            </mat-form-field>
+            }
+        }
     }
 </form>
-@if(false){ <ci-dyn-input-date></ci-dyn-input-date>}
 }

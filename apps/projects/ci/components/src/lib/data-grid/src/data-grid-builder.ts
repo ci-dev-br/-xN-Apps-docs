@@ -36,8 +36,28 @@ export class GridBuilder {
                     const prop = properties![property];
                     const headerName = prop?.title || property;
                     const fieldName = property;
-                    const type = prop.type || 'text';
                     const format = prop.format || undefined;
+                    const rawType = (prop.type || 'text').toLowerCase();
+                    const type =
+                        rawType === 'boolean'
+                            ? 'boolean'
+                            : format === 'date-time' || format === 'datetime'
+                                ? 'date-time'
+                                : format === 'date' || rawType === 'date'
+                                    ? 'date'
+                                    : format === 'time'
+                                        ? 'time'
+                                        : rawType === 'integer'
+                                            ? 'integer'
+                                            : rawType === 'number'
+                                                ? 'number'
+                                                : rawType === 'array' || prop.isArray
+                                                    ? 'array'
+                                                    : rawType === 'object' || prop.$ref
+                                                        ? 'object'
+                                                        : rawType === 'string'
+                                                            ? 'text'
+                                                            : rawType;
                     const pipe = prop.format ? this.getPipeOfFormat(prop.format) : undefined;
                     const component = undefined;
                     return {

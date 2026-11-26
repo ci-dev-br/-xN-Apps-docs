@@ -1,11 +1,38 @@
 import { Injectable, InjectionToken, Type } from "@angular/core";
 import { FormBuilder, FormGroup } from "@angular/forms";
+import { IDynamicSchemaType, ISchemaProperty } from "@ci/core";
 
 export abstract class DataServiceBase<T> {
     abstract findByText(text: string): Promise<T[]>;
 }
 
-export type TypeFormField = 'text' | 'number' | 'option' | 'date' | 'date-time' | 'time' | 'multi-option' | 'modules' | 'app-modules' | 'chips-autocomplete' | 'chips';
+export type TypeFormField =
+    | 'text'
+    | 'textarea'
+    | 'number'
+    | 'integer'
+    | 'boolean'
+    | 'checkbox'
+    | 'option'
+    | 'date'
+    | 'date-time'
+    | 'time'
+    | 'multi-option'
+    | 'modules'
+    | 'app-modules'
+    | 'chips-autocomplete'
+    | 'chips'
+    | 'email'
+    | 'url'
+    | 'password'
+    | 'color'
+    | 'json'
+    | 'object'
+    | 'dynamic'
+    | 'ts'
+    | 'typescript'
+    | 'code'
+    | (string & {});
 
 export interface IFormOptions {
     code?: string;
@@ -15,8 +42,8 @@ export interface IFormOptions {
 }
 
 /**
- * # Forn Field Definition 
- * 
+ * # Form Field Definition
+ *
  */
 export interface IFormFieldDefinition<T> {
     /**
@@ -30,6 +57,11 @@ export interface IFormFieldDefinition<T> {
     format?: string;
     enum?: any[];
     schemaName?: string;
+    schemaProperty?: ISchemaProperty;
+    dynamicType?: IDynamicSchemaType;
+    nullable?: boolean;
+    placeholder?: string;
+    value?: any;
     /**
      * Property name of Object to connect field with propertie view and edit data
      */
@@ -47,7 +79,7 @@ export interface IFormFieldDefinition<T> {
      */
     classTypeRef?: Type<T>;
     /**
-     * Define if is Array 
+     * Define if is Array
      */
     isArray?: boolean;
     /**
@@ -55,11 +87,11 @@ export interface IFormFieldDefinition<T> {
      */
     readonly: boolean;
     /**
-     *  Serviço do objeto 
+     * Serviço do objeto
      */
     service?: Type<any>;
     /**
-     * Items type 
+     * Items type
      */
     items?: { [key: string]: string };
 }

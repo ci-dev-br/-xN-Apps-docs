@@ -172,42 +172,103 @@ export class CodeEditorComponent implements OnChanges, OnDestroy {
 
     constructor(
         private readonly fileExplorer: FileExplorerService,
-        private readonly activatedRoute: ActivatedRoute,
-        private readonly router: Router,
         private readonly workspaceService: MonacoWorkspaceService,
         private readonly gitService: GitService,
+        @Optional() private readonly activatedRoute?: ActivatedRoute,
+        @Optional() private readonly router?: Router,
+        @Optional() @Inject(MAT_DIALOG_DATA) public readonly dialogData?: any,
+        @Optional() private readonly dialogRef?: MatDialogRef<any>,
     ) {
         this.gitSub.add(this.gitService.currentBranch$.subscribe(b => this.gitBranch = b));
         this.gitSub.add(this.gitService.branches$.subscribe(branches => this.gitBranches = branches));
         this.gitSub.add(this.gitService.syncStatus$.subscribe(sync => this.gitSyncStatus = sync));
         this.gitSub.add(this.gitService.commits$.subscribe(commits => this.gitCommits = commits));
 
-        this.routeSub = this.activatedRoute.queryParams.subscribe(async (query: any) => {
+        this.routeSub = this.activatedRoute?.queryParams?.subscribe(async (query: any) => {
             if (query.file && query.file !== this.oppenedFile?.path) {
                 await this.abrirArquivo(query.file);
             }
         });
+
+        // Suporte à abertura em janela via WindowService / MatDialog (incluindo .map -> .ts)
+        if (this.dialogData) {
+            const targetFile =
+                this.dialogData.mapFile ||
+                this.dialogData.file ||
+                this.dialogData.filePath ||
+                this.dialogData.path;
+
+            if (typeof targetFile === 'string' && targetFile.trim()) {
+                this.abrirArquivo(targetFile.trim());
+            } else if (this.dialogData.value !== undefined || this.dialogData.code !== undefined) {
+                const rawVal = this.dialogData.value ?? this.dialogData.code;
+                const serialized = typeof rawVal === 'string' ? rawVal : JSON.stringify(rawVal ?? '', null, 2);
+                const virtualPath = this.dialogData.virtualPath || `${this.dialogData.fieldName || this.dialogData.property || 'schema-script'}.ts`;
+                this.value = serialized;
+                this.originalValue = this.dialogData.originalValue !== undefined ? String(this.dialogData.originalValue) : serialized;
+                this.language = this.dialogData.language || 'typescript';
+                this.oppenedFile = {
+                    path: undefined,
+                    name: virtualPath,
+                    data: serialized,
+                } as any;
+                this.carregando = false;
+            }
+        }
     }
 
-    /**
-     * Carrega o arquivo via FileExplorerService e alimenta o Monaco Editor
-     */
-    async abrirArquivo(filePath: string, targetPosition?: { lineNumber: number, column: number }) {
-        if (!filePath) return;
-
-        let cleanPath = filePath.replace(/\\/g, '/');
+    private normalizeWorkspaceFilePath(rawPath: string): string {
+        let cleanPath = (rawPath || '').replace(/\\/g, '/');
         if (/^\/[a-zA-Z]:/.test(cleanPath)) {
             cleanPath = cleanPath.substring(1);
         } else {
             cleanPath = cleanPath.replace(/^\/+/, '');
         }
-
         const normalizedLower = cleanPath.toLowerCase();
         const repoMarker = 'br.dev.ci.apps/';
         const markerIdx = normalizedLower.indexOf(repoMarker);
         if (markerIdx > -1) {
             cleanPath = cleanPath.substring(markerIdx + repoMarker.length);
         }
+        return cleanPath;
+    }
+
+    private resolveRelativeMapSource(mapPath: string, sourceRoot: string | undefined, sourceEntry: string): string {
+        let cleaned = (sourceEntry || '')
+            .replace(/\\/g, '/')
+            .replace(/^webpack:\/\/\/?[^/]*\//i, '')
+            .replace(/^webpack:\/\/\/?/i, '')
+            .replace(/^ng:\/\/\/?/i, '');
+        if (sourceRoot) {
+            const rootClean = sourceRoot.replace(/\\/g, '/').replace(/\/+$/, '');
+            if (rootClean && !cleaned.startsWith(rootClean + '/')) {
+                cleaned = `${rootClean}/${cleaned.replace(/^\/+/, '')}`;
+            }
+        }
+        if (cleaned.startsWith('/') || /^[a-zA-Z]:/.test(cleaned)) {
+            return this.normalizeWorkspaceFilePath(cleaned);
+        }
+        const mapParts = mapPath.replace(/\\/g, '/').split('/');
+        mapParts.pop();
+        for (const seg of cleaned.split('/')) {
+            if (!seg || seg === '.') continue;
+            if (seg === '..') {
+                if (mapParts.length > 0) mapParts.pop();
+            } else {
+                mapParts.push(seg);
+            }
+        }
+        return mapParts.join('/');
+    }
+
+    /**
+     * Carrega o arquivo via FileExplorerService e alimenta o Monaco Editor.
+     * Quando um arquivo `.map` (SourceMap) é informado, localiza o `.ts` original correspondente para edição no CodeX.
+     */
+    async abrirArquivo(filePath: string, targetPosition?: { lineNumber: number, column: number }) {
+        if (!filePath) return;
+
+        let cleanPath = this.normalizeWorkspaceFilePath(filePath);
 
         // Se o arquivo solicitado já está aberto e temos apenas uma posição para pular:
         if (cleanPath === this.oppenedFile?.path && this.editorInstance && targetPosition) {
@@ -223,9 +284,67 @@ export class CodeEditorComponent implements OnChanges, OnDestroy {
         }
 
         try {
-            const file_loaded = await lastValueFrom(this.fileExplorer.readFile({
+            let file_loaded = await lastValueFrom(this.fileExplorer.readFile({
                 body: { path: cleanPath }
             }));
+
+            this.resolvedFromMapPath = undefined;
+            this.mapSources = [];
+
+            if (cleanPath.toLowerCase().endsWith('.map')) {
+                const rawMapStr = typeof file_loaded?.data === 'string'
+                    ? file_loaded.data
+                    : JSON.stringify(file_loaded?.data ?? {});
+                try {
+                    const parsedMap = JSON.parse(rawMapStr);
+                    const sources: string[] = Array.isArray(parsedMap?.sources) ? parsedMap.sources : [];
+                    const tsIndices = sources
+                        .map((src, idx) => ({ src, idx }))
+                        .filter(item => typeof item.src === 'string' && /\.tsx?(\?.*)?$/i.test(item.src) && !item.src.includes('node_modules'));
+                    const candidateIndices = tsIndices.length > 0
+                        ? tsIndices
+                        : sources.map((src, idx) => ({ src, idx })).filter(item => typeof item.src === 'string');
+
+                    this.mapSources = candidateIndices.map(item =>
+                        this.resolveRelativeMapSource(cleanPath, parsedMap?.sourceRoot, item.src.split('?')[0])
+                    );
+
+                    if (candidateIndices.length > 0) {
+                        const primary = candidateIndices[0];
+                        const resolvedTsPath = this.resolveRelativeMapSource(
+                            cleanPath,
+                            parsedMap?.sourceRoot,
+                            primary.src.split('?')[0]
+                        );
+                        this.resolvedFromMapPath = cleanPath;
+
+                        let loadedTsFile: FileDto | undefined;
+                        try {
+                            loadedTsFile = await lastValueFrom(this.fileExplorer.readFile({
+                                body: { path: resolvedTsPath }
+                            }));
+                        } catch {
+                            loadedTsFile = undefined;
+                        }
+
+                        if (loadedTsFile && typeof loadedTsFile.data === 'string') {
+                            cleanPath = resolvedTsPath;
+                            file_loaded = loadedTsFile;
+                        } else if (Array.isArray(parsedMap?.sourcesContent) && typeof parsedMap.sourcesContent[primary.idx] === 'string') {
+                            cleanPath = resolvedTsPath;
+                            file_loaded = {
+                                ...file_loaded,
+                                path: resolvedTsPath,
+                                name: resolvedTsPath.split('/').pop() || 'source.ts',
+                                data: parsedMap.sourcesContent[primary.idx],
+                            } as any;
+                        }
+                    }
+                } catch {
+                    // Caso não seja um JSON SourceMap válido, abre o arquivo como texto
+                }
+            }
+
             this.oppenedFile = file_loaded;
             this.value = (file_loaded.data as string) || '';
             this.originalValue = this.value;
@@ -1198,7 +1317,30 @@ export class CodeEditorComponent implements OnChanges, OnDestroy {
     }
 
     async confirmar() {
-        if (!this.oppenedFile?.path) return;
+        this.valueChange.emit(this.value || '');
+        if (this.dialogData && typeof this.dialogData === 'object') {
+            this.dialogData.value = this.value;
+            this.dialogData.filePath = this.oppenedFile?.path || this.dialogData.filePath;
+            this.dialogData.resolvedFromMap = this.resolvedFromMapPath;
+            if (typeof this.dialogData.onSave === 'function') {
+                await this.dialogData.onSave({
+                    value: this.value,
+                    filePath: this.oppenedFile?.path,
+                    resolvedFromMap: this.resolvedFromMapPath,
+                });
+            }
+        }
+
+        if (!this.oppenedFile?.path) {
+            this.originalValue = this.value;
+            this.isDirty = false;
+            this.saved.emit({
+                path: this.oppenedFile?.name || undefined,
+                value: this.value,
+                resolvedFromMap: this.resolvedFromMapPath,
+            });
+            return;
+        }
 
         try {
             await lastValueFrom(
@@ -1213,6 +1355,11 @@ export class CodeEditorComponent implements OnChanges, OnDestroy {
             this.isDirty = false;
             this.commitDescription = '';
             this.atualizarGitDiff();
+            this.saved.emit({
+                path: this.oppenedFile?.path,
+                value: this.value,
+                resolvedFromMap: this.resolvedFromMapPath,
+            });
         } catch (err) {
             console.error('Falha ao persistir alterações no arquivo:', err);
         }

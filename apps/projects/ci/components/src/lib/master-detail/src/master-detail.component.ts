@@ -111,13 +111,25 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
                 .filter(key => !HIDDEN_AUDIT_FIELDS.includes(key))
                 .map(key => {
                     const prop = this.schemaProperties[key];
-                    const isRelation = prop.type === 'array' || prop.type === 'object' || !!prop.$ref || !!prop.items;
+                    const isRelation = Boolean(
+                        prop.$ref ||
+                        (prop.items as any)?.$ref ||
+                        (prop.type === 'object' && prop.format !== 'json')
+                    );
+                    const normalizedType =
+                        prop?.type === 'boolean'
+                            ? 'boolean'
+                            : prop?.format === 'date-time' || prop?.format === 'datetime'
+                                ? 'date-time'
+                                : prop?.format === 'date' || prop?.type === 'date'
+                                    ? 'date'
+                                    : prop?.type || 'string';
                     return {
                         key,
                         title: prop?.title || key,
-                        type: prop?.type || 'string',
+                        type: normalizedType,
                         format: prop?.format,
-                        enum: prop?.enum,
+                        enum: prop?.enum || (prop?.items as any)?.enum,
                         isRelation,
                         prop,
                     };

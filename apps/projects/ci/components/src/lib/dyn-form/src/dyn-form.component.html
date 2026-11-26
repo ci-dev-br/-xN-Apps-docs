@@ -5,6 +5,7 @@
     <ci-dyn-input
         [label]="(field.label && field.label !== field.property) ? field.label : ((field.property || '') | nomenclatura)"
         [hint]="field.description"
+        [placeholder]="field.placeholder || ''"
         [formGroup]="formGroup"
         [description]="field?.description"
         [fieldName]="field?.property"
@@ -12,6 +13,10 @@
         [format]="field.format"
         [enumOptions]="field.enum"
         [isArray]="field.isArray"
+        [readonly]="field.readonly"
+        [schemaProperty]="field.schemaProperty"
+        [dynamicType]="field.dynamicType"
+        [data]="data"
         [schemaName]="field?.schemaName!">
     </ci-dyn-input>
     }

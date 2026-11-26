@@ -1,5 +1,6 @@
 import { Component, Optional, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Apps, CoreModule, IAppInteractionMatch, IconLoaderSerices, LoadIconsModule } from '@ci/core';
+import { WindowService } from '@ci/components/window';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -40,6 +41,7 @@ const STORAGE_KEYS = {
 
 const FILE_TYPE_LABELS: Record<string, string> = {
   '.ts': 'Arquivo TypeScript',
+  '.map': 'SourceMap (.map -> .ts)',
   '.js': 'Arquivo JavaScript',
   '.mjs': 'Módulo JavaScript',
   '.cjs': 'Módulo CommonJS',
@@ -206,6 +208,7 @@ export class FilesComponent implements OnInit, OnDestroy {
     @Optional() public readonly dialogRef?: MatDialogRef<FilesComponent, IArquivo>,
     @Optional() private readonly activatedRoute?: ActivatedRoute,
     @Optional() private readonly router?: Router,
+    @Optional() private readonly windowService?: WindowService,
   ) {
     iconLoader.load({
       'i8-folder': { url: '/icons8/icons8-folder.svg' },
@@ -834,6 +837,28 @@ export class FilesComponent implements OnInit, OnDestroy {
     if (!app) {
       await this.atualizarAppsCompativeis(alvo);
       app = this.preferredApp;
+    }
+
+    if (app && this.windowService && app.component) {
+      const isMap = caminhoAlvo.toLowerCase().endsWith('.map');
+      const isCodeXWindow = isMap || Boolean((event as MouseEvent | undefined)?.altKey);
+      if (isCodeXWindow) {
+        await this.windowService.open(
+          app.component,
+          {
+            file: caminhoAlvo,
+            filePath: caminhoAlvo,
+            ...(isMap ? { mapFile: caminhoAlvo } : {}),
+            __windowConfig: {
+              width: 'min(92vw, 1100px)',
+              height: '82vh',
+            },
+          },
+          isMap ? `CodeX — Editar .ts (${alvo.name})` : (app.title || alvo.name),
+          event
+        );
+        return;
+      }
     }
 
     if (app && this.appsService) {

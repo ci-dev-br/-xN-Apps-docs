@@ -21,6 +21,17 @@ export class ValueOfPipe implements PipeTransform {
             );
         }
         if (value === null || value === undefined) return '';
+        if (typeof value === 'boolean') return value ? 'Sim' : 'Não';
+        const colType = (this.cell?.column?.type || '').toLowerCase();
+        const colFormat = (this.cell?.column?.format || '').toLowerCase();
+        if (colType === 'date' || colType === 'date-time' || colFormat === 'date' || colFormat === 'date-time' || value instanceof Date) {
+            const d = value instanceof Date ? value : new Date(value);
+            if (!isNaN(d.getTime())) {
+                return (colType === 'date' || colFormat === 'date')
+                    ? d.toLocaleDateString('pt-BR')
+                    : d.toLocaleString('pt-BR');
+            }
+        }
         if (Array.isArray(value)) {
             if (value.length === 0) return '';
             return value.map(item => this.formatObjectItem(item)).filter(Boolean).join(', ');

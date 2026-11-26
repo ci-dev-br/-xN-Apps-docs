@@ -1,7 +1,7 @@
 import { Component, Inject, Input, OnChanges, OnInit, Optional, SimpleChanges } from '@angular/core';
 import { FORM_OPTIONS, IFormFieldDefinition, IFormOptions } from './i-form-options';
 import { FormControl, FormGroup } from '@angular/forms';
-import { DaoBuilder, ISchemaProperty } from '@ci/core';
+import { Apps, DaoBuilder, IDynamicSchemaType, ISchemaProperty } from '@ci/core';
 import { getServiceAsSchema } from '@ci/portal-api';
 import { MatChipInputEvent } from '@angular/material/chips';
 
@@ -41,12 +41,11 @@ export class DynFormComponent implements OnInit, OnChanges {
     @Optional() private readonly daoBuilder?: DaoBuilder,
     @Optional() @Inject(FORM_OPTIONS)
     formOptions?: IFormOptions,
+    @Optional() private readonly appsService?: Apps,
   ) {
     if (formOptions) {
       this.source = formOptions;
       this.hasInjectedOptions = true;
-    }else{
-      console.trace('[off]')
     }
   }
 
@@ -128,41 +127,90 @@ export class DynFormComponent implements OnInit, OnChanges {
 
       const isModulesField = (p === 'modules' || p === 'modulos' || p === 'containedModules' || isChipsAutocomplete || ((name === 'Application' || this.schemaName === 'Application') && p === 'modules'));
       const sampleVal = this.data?.[p] ?? this.formGroup?.get(p)?.value;
+      const schemaTypeRaw = (propInfo?.type || '').toLowerCase();
+      const formatRaw = (propInfo?.format || '').toLowerCase();
+
+      const schema_name =
+        !!(propInfo as any)?.items && (propInfo as any).items['$ref']
+          ? (propInfo as any).items['$ref'].replace('#/components/schemas/', '')
+          : !!(propInfo as any)?.allOf &&
+            !!(propInfo as any).allOf[0] &&
+            !!(propInfo as any).allOf[0]['$ref']
+            ? (propInfo as any).allOf[0]['$ref'].replace('#/components/schemas/', '')
+            : (propInfo as any)?.$ref
+              ? (propInfo as any).$ref.replace('#/components/schemas/', '')
+              : undefined;
+
+      const isArrayField = schemaTypeRaw === 'array' || Boolean(propInfo?.isArray) || Array.isArray(sampleVal) || isModulesField || isChipsAutocomplete;
+      const enumList = propInfo?.enum || (propInfo as any)?.items?.enum;
+
+      const dynamicType: IDynamicSchemaType | undefined = this.appsService
+        ? await this.appsService.resolveDynamicType({
+          type: propInfo?.type,
+          format: propInfo?.format,
+          fieldName: p,
+          value: sampleVal,
+        })
+        : undefined;
+
+      const isIsoDateString = typeof sampleVal === 'string' && /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?/.test(sampleVal);
       const inferredType =
-        isChipsAutocomplete
+        isChipsAutocomplete || isModulesField
           ? 'chips-autocomplete'
-          : isModulesField
-            ? 'modules'
-            : typeof sampleVal === 'number'
-              ? 'number'
-              : typeof sampleVal === 'boolean'
-                ? 'boolean'
-                : Array.isArray(sampleVal)
-                  ? 'array'
-                  : 'text';
+          : dynamicType
+            ? dynamicType.type
+            : schemaTypeRaw === 'boolean' || typeof sampleVal === 'boolean'
+              ? 'boolean'
+              : formatRaw === 'date-time' || formatRaw === 'datetime'
+                ? 'date-time'
+                : formatRaw === 'date' || schemaTypeRaw === 'date' || (isIsoDateString && (p.toLowerCase().includes('data') || p.toLowerCase().includes('date') || p.endsWith('At')))
+                  ? 'date'
+                  : formatRaw === 'time'
+                    ? 'time'
+                    : schemaTypeRaw === 'integer'
+                      ? 'integer'
+                      : schemaTypeRaw === 'number' || typeof sampleVal === 'number'
+                        ? 'number'
+                        : enumList?.length
+                          ? (isArrayField ? 'multi-option' : 'option')
+                          : formatRaw === 'email'
+                            ? 'email'
+                            : formatRaw === 'uri' || formatRaw === 'url'
+                              ? 'url'
+                              : formatRaw === 'password'
+                                ? 'password'
+                                : formatRaw === 'color'
+                                  ? 'color'
+                                  : formatRaw === 'textarea' || formatRaw === 'multiline' || formatRaw === 'markdown' || formatRaw === 'html'
+                                    ? 'textarea'
+                                    : formatRaw === 'json' || (schemaTypeRaw === 'object' && !schema_name)
+                                      ? 'json'
+                                      : (isArrayField && !schema_name)
+                                        ? 'chips'
+                                        : 'text';
 
       const property_info: ISchemaProperty = propInfo || {
         title: isModulesField ? 'Módulos Integrados' : p,
         type: inferredType,
       };
 
-      const finalType = (isChipsAutocomplete || property_info.format === 'chips-autocomplete' || isModulesField)
-        ? 'chips-autocomplete'
-        : (property_info.type || inferredType);
-
-      const schema_name =
-        !!(property_info as any).items && (property_info as any).items['$ref']
-          ? (property_info as any).items['$ref'].replace('#/components/schemas/', '')
-          : !!(property_info as any).allOf &&
-            !!(property_info as any).allOf[0] &&
-            !!(property_info as any).allOf[0]['$ref']
-            ? (property_info as any).allOf[0]['$ref'].replace('#/components/schemas/', '')
-            : (property_info as any).$ref
-              ? (property_info as any).$ref.replace('#/components/schemas/', '')
-              : undefined;
+      const finalType =
+        (isChipsAutocomplete || property_info.format === 'chips-autocomplete' || isModulesField)
+          ? 'chips-autocomplete'
+          : dynamicType
+            ? dynamicType.type
+            : (inferredType !== 'text' || !property_info.type)
+              ? inferredType
+              : (property_info.type === 'string' ? 'text' : property_info.type);
 
       if (this.formGroup && !this.formGroup.get(p)) {
-        const initialVal = this.data?.[p] ?? (isModulesField || isChipsAutocomplete ? [] : null);
+        const initialVal = this.data?.[p] !== undefined
+          ? this.data[p]
+          : finalType === 'boolean'
+            ? false
+            : isArrayField
+              ? []
+              : null;
         const ctrl = new FormControl(initialVal);
         ctrl.valueChanges.subscribe(val => {
           if (this.data && typeof this.data === 'object') {
@@ -173,17 +221,21 @@ export class DynFormComponent implements OnInit, OnChanges {
       }
 
       fields.push({
-        label: property_info.title || (isModulesField ? 'Módulos Integrados' : p),
+        label: property_info.title || dynamicType?.label || (isModulesField ? 'Módulos Integrados' : p),
         property: p,
-        description: property_info.description || (isModulesField ? 'Selecione os módulos e aplicações padrão contidos e combinados nesta aplicação.' : undefined),
+        description: property_info.description || dynamicType?.description || (isModulesField ? 'Selecione os módulos e aplicações padrão contidos e combinados nesta aplicação.' : undefined),
         type: finalType as any,
-        format: property_info.format,
-        enum: property_info.enum,
+        format: property_info.format || dynamicType?.format,
+        enum: enumList,
         items: property_info.items,
         schemaName: schema_name,
-        readonly: property_info.readOnly,
+        schemaProperty: property_info,
+        dynamicType,
+        nullable: property_info.nullable,
+        readonly: Boolean(property_info.readOnly),
+        value: sampleVal,
         dataService: schema_name ? (getServiceAsSchema(schema_name) as any) : undefined,
-        isArray: property_info.type === 'array' || property_info.isArray || isModulesField || isChipsAutocomplete,
+        isArray: isArrayField,
       } as IFormFieldDefinition<any>);
     }
 
