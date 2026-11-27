@@ -1,7 +1,7 @@
-import { HttpErrorResponse, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from "@angular/common/http";
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Inject, Injectable, Injector, Optional } from "@angular/core";
-import { Observable, throwError } from "rxjs";
-import { catchError, switchMap, timeout, finalize, shareReplay } from "rxjs/operators";
+import { from, Observable, of, throwError } from "rxjs";
+import { catchError, finalize, shareReplay, switchMap, timeout } from "rxjs/operators";
 import { StorageService } from "../storage/storage.service";
 import { AuthService } from "@ci/portal-api";
 import { CORE_ENV, ICoreEnvironment } from "../provider";
@@ -10,29 +10,133 @@ import { Message } from "../services/message";
 import { ConsoleService } from "../services/console.service";
 import { GIT_VERSION } from "../version/git-version";
 import { ApplicationCatalogService } from "../apps/application-catalog.service";
-// import { AuthService } from "@ci/portal-api";
+import { AccessKeyCryptoService } from "../auth/access-key-crypto.service";
+import {
+    USER_STORE_KEY,
+    extractChaveAcessoFromSession,
+    getActiveAccessScope,
+    getSecondaryAccountTokens,
+    isJwtExpired,
+    isJwtExpiringSoon,
+    updateAccountTokensInStorage,
+} from "../auth/client-session-storage";
+
+interface RefreshResult {
+    authorization?: string;
+    refreshToken?: string | null;
+    chaveAcesso?: string | null;
+}
+
 /**
- *  Interceptador de requisições HTTP para adicionar o token de autorização e tratar erros.
- * 
- * ## Descrição:
- * Este interceptador é responsável por interceptar todas as requisições HTTP feitas pela aplicação. Ele executa as seguintes tarefas:
-1. **Adição de Token de Autorização:** Antes de cada requisição, verifica se existe um token de autorização (bearer token) armazenado localmente. Se sim, adiciona este token ao cabeçalho `Authorization` da requisição. Isso garante que as requisições autenticadas sejam enviadas com as credenciais necessárias.
-2. **Tratamento de Erros de Rede e API:**
-   - **Timeout:** Aplica um timeout para cada requisição. Se a requisição não for concluída dentro desse tempo, um `HttpErrorResponse` com status 0 (Interceptor Timeout) é gerado.
-   - **Erros de Conexão (status 0 ou 404):** Se a requisição falhar com status 0 (geralmente indicando problemas de rede ou timeout) ou 404 (recurso não encontrado), o interceptador tenta alternar para um gateway de API alternativo, se configurado. Ele mantém uma lista de `alternativeApiGateways` e tenta a próxima URL na lista. Isso visa melhorar a resiliência da aplicação em caso de falhas de um servidor de API. Um contador `_pipocate` é usado para evitar loops infinitos de tentativas.
-   - **Acesso Negado (mensagem específica):** Se a mensagem de erro indicar "Acesso negado. Não corresponde ao nível de acesso necessário.", o usuário é redirecionado para a página `/meus-apps`.
-   - **Erro de Autorização (status 401):** Se a requisição retornar um status 401 (Não Autorizado) e houver um `refreshToken` disponível, o interceptador tenta renovar o token de acesso usando o `AuthService`. Se a renovação for bem-sucedida, o novo token é armazenado, e a requisição original é repetida com o novo token. Se a renovação falhar, o erro é propagado.
-3. **Gerenciamento de `efail`:** A propriedade `efail` é usada para armazenar a URL do gateway de API que está falhando ou sendo testado. Isso permite que o interceptador "lembre" qual gateway tentar em caso de falhas consecutivas. O valor de `efail` é persistido no `localStorage`.  
+ * Interceptador de requisições HTTP responsável por:
+ * 1. Anexar o Bearer Token da conta ativa, tokens secundários (`x-additional-tokens`) e escopo de acesso (`X-Access-Scope`).
+ * 2. Realizar refresh proativo (quando o JWT está próximo de expirar) e reativo (em 401) com single-flight por `chaveAcesso`.
+ * 3. Assinar snapshots de requisições `/Sync` (ou payloads `{ data }`) com a chave privada do acesso armazenada em IndexedDB.
+ * 4. Alternar para gateways alternativos em falhas de rede/404.
  */
 @Injectable()
 export class AuthorizationHttpInterceptor implements HttpInterceptor {
-    private _refreshing = false;
-    private _refreshInFlight$?: Observable<{ authorization?: string }>;
+    private _refreshInFlightByKey = new Map<string, Observable<RefreshResult>>();
     private _pipocate: number = 0;
     private _efail?: string | number | undefined;
-    /**
-     * Executa a requisição HTTP aplicando gateway alternativo quando configurado.
-     */
+
+    constructor(
+        @Optional() private readonly router: Router,
+        @Optional() private readonly storage: StorageService,
+        @Optional() private readonly auth: AuthService,
+        @Optional() private readonly message: Message,
+        private readonly injector: Injector,
+        @Optional() private readonly consoleService?: ConsoleService,
+        @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
+        @Optional() private readonly accessKeyCrypto?: AccessKeyCryptoService,
+    ) {
+        const efail = typeof localStorage !== 'undefined' ? localStorage.getItem('e-fail') : null;
+        if (efail) {
+            try {
+                this.efail = JSON.parse(efail);
+            } catch (error) {
+                console.trace(error);
+            }
+        }
+    }
+
+    public get efail(): string | number | undefined {
+        return this._efail;
+    }
+
+    public set efail(value: string | number | undefined) {
+        if (this._efail === value) return;
+        this._efail = value;
+        if (typeof localStorage !== 'undefined') {
+            if (value) {
+                localStorage.setItem('e-fail', JSON.stringify(value));
+            } else {
+                localStorage.removeItem('e-fail');
+            }
+        }
+    }
+
+    private isApiRequest(url: string): boolean {
+        return (
+            url.startsWith('https://apps.ci.dev.br') ||
+            (!!this.config?.rootApi && url.startsWith(this.config.rootApi)) ||
+            (Array.isArray(this.config?.alternativeApiGateways) && this.config!.alternativeApiGateways.some(gw => url.startsWith(gw))) ||
+            url.startsWith('/')
+        );
+    }
+
+    private isAuthEndpoint(url: string): boolean {
+        return (
+            url.includes('/auth/Acessar') ||
+            url.includes('/auth/Refresh') ||
+            url.includes('/auth/Registrar')
+        );
+    }
+
+    private shouldSignSnapshot(request: HttpRequest<any>): boolean {
+        if (!this.isApiRequest(request.url) || this.isAuthEndpoint(request.url)) return false;
+        if (request.url.includes('/Logger')) return false;
+        if (!['POST', 'PUT', 'PATCH'].includes(request.method.toUpperCase())) return false;
+        if (request.body instanceof FormData) return false;
+        return (
+            request.url.endsWith('/Sync') ||
+            request.url.includes('/Sync?') ||
+            request.headers.has('X-Sign-Snapshot') ||
+            Boolean(request.body && typeof request.body === 'object' && 'data' in request.body)
+        );
+    }
+
+    private prepareSignedRequest(request: HttpRequest<any>): Observable<HttpRequest<any>> {
+        if (!this.accessKeyCrypto?.isSupported || !this.shouldSignSnapshot(request)) {
+            return of(request);
+        }
+        const session = this.storage?.restore(USER_STORE_KEY);
+        const chaveAcesso = extractChaveAcessoFromSession(session);
+        if (!chaveAcesso) {
+            return of(request);
+        }
+        const targetPayload = request.body && typeof request.body === 'object' && 'data' in request.body
+            ? request.body.data
+            : request.body;
+
+        return from(this.accessKeyCrypto.signSnapshot(chaveAcesso, targetPayload)).pipe(
+            switchMap(envelope => {
+                if (!envelope) return of(request);
+                return of(request.clone({
+                    setHeaders: {
+                        'X-Access-Key': envelope.chaveAcesso,
+                        'X-Snapshot-Hash': envelope.hash,
+                        'X-Snapshot-Payload-Hash': envelope.payloadHash,
+                        'X-Snapshot-Signature': envelope.signature,
+                        'X-Snapshot-Timestamp': envelope.signedAt,
+                        'X-Snapshot-Algorithm': envelope.algorithm,
+                    }
+                }));
+            }),
+            catchError(() => of(request)),
+        );
+    }
+
     private _executeRequest(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const { url } = request;
         if (this.config && this.config.alternativeApiGateways && this.config.rootApi) {
@@ -42,216 +146,232 @@ export class AuthorizationHttpInterceptor implements HttpInterceptor {
                 });
             }
         }
-        return this._eTry(request, next) as any;
+        return this._eTry(request, next);
     }
+
     private _eTry(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        return next.handle(this.addBearerToken(request))
-            .pipe(timeout({
-                each: 15000,
-                with: () => { throw new HttpErrorResponse({ status: 0, statusText: 'Interceptor Timeout' }); }
-            }))
-            .pipe(catchError((error) => {
-                if (error) {
-                    if (!request.url.includes('/Logger')) {
-                        const isServerError = error?.status >= 500 || error?.status === 0;
-                        if (isServerError) {
-                            this.consoleService?.error(
-                                `[HTTP Error ${error?.status || 0}] ${request.method} ${request.url}`,
-                                {
-                                    url: request.url,
-                                    method: request.method,
-                                    status: error?.status,
-                                    statusText: error?.statusText,
-                                    error: error?.error || error?.message,
-                                },
-                                true,
-                                error?.status >= 500,
-                            );
-                        }
-                    }
-                    if (error?.error?.error?.options?.message?.indexOf('expirou') > -1) {
-                        this.storage?.clean();
-                        this.router?.navigate(['/']);
-                        return throwError(() => error);
-                    }
-                    if (error?.error?.message?.indexOf('Acesso negado. Não corresponde ao nível de acesso necessário.') > -1) {
-                        setTimeout(() => {
-                            this.router?.navigate(['/']);
-                        });
-                        return throwError(() => undefined);
-                    }
-                    if (error instanceof HttpErrorResponse && (error.status === 0 || error.status === 404)) {
-                        const isAuthEndpoint = request.url.includes('/auth/Acessar') || request.url.includes('/auth/Refresh');
-                        if (!isAuthEndpoint && this.config && Array.isArray(this.config.alternativeApiGateways)) {
-                            const gateways_list = this.config.alternativeApiGateways
-                                .filter(url => url.indexOf('http') === 0);
-                            if (gateways_list.length > 0) {
-                                this.efail = gateways_list['string' === typeof this.efail ? gateways_list.indexOf(this.efail) + 1 : 0];
-                                if (this._pipocate++ < gateways_list.length) {
-                                    return this._executeRequest(request, next);
-                                } else {
-                                    setTimeout(() => {
-                                        this._pipocate = 0;
-                                    }, 1000);
+        return this.prepareSignedRequest(request).pipe(
+            switchMap(signedReq =>
+                next.handle(this.addBearerToken(signedReq))
+                    .pipe(timeout({
+                        each: 15000,
+                        with: () => { throw new HttpErrorResponse({ status: 0, statusText: 'Interceptor Timeout' }); }
+                    }))
+                    .pipe(catchError((error) => {
+                        if (error) {
+                            if (!signedReq.url.includes('/Logger')) {
+                                const isServerError = error?.status >= 500 || error?.status === 0;
+                                if (isServerError) {
+                                    this.consoleService?.error(
+                                        `[HTTP Error ${error?.status || 0}] ${signedReq.method} ${signedReq.url}`,
+                                        {
+                                            url: signedReq.url,
+                                            method: signedReq.method,
+                                            status: error?.status,
+                                            statusText: error?.statusText,
+                                            error: error?.error || error?.message,
+                                        },
+                                        true,
+                                        error?.status >= 500,
+                                    );
                                 }
                             }
+                            if (error?.error?.message?.indexOf('Acesso negado. Não corresponde ao nível de acesso necessário.') > -1) {
+                                setTimeout(() => {
+                                    this.router?.navigate(['/']);
+                                });
+                                return throwError(() => undefined);
+                            }
+                            if (error instanceof HttpErrorResponse && (error.status === 0 || error.status === 404)) {
+                                const skipFallback = signedReq.url.includes('/auth/Acessar');
+                                if (!skipFallback && this.config && Array.isArray(this.config.alternativeApiGateways)) {
+                                    const gateways_list = this.config.alternativeApiGateways
+                                        .filter(url => url.indexOf('http') === 0);
+                                    if (gateways_list.length > 0) {
+                                        this.efail = gateways_list['string' === typeof this.efail ? gateways_list.indexOf(this.efail) + 1 : 0];
+                                        if (this._pipocate++ < gateways_list.length) {
+                                            return this._executeRequest(signedReq, next);
+                                        } else {
+                                            setTimeout(() => {
+                                                this._pipocate = 0;
+                                            }, 1000);
+                                        }
+                                    }
+                                }
+                            } else if (error instanceof HttpErrorResponse) {
+                                return this.handlerUnauthorizedError(error, next, signedReq);
+                            }
                         }
-                    } else if (error instanceof HttpErrorResponse) {
-                        return this.handlerUnauthorizedError(error, next, request);
-                    }
-                }
-                return throwError(() => error);
-            }));
+                        return throwError(() => error);
+                    }))
+            )
+        );
     }
-    private getSecondaryTokens(activeBearer?: string): string[] {
-        if (typeof localStorage === 'undefined') return [];
-        try {
-            const raw = localStorage.getItem('CI_ACCOUNTS');
-            if (!raw) return [];
-            let parsed: any;
-            try {
-                parsed = JSON.parse(decodeURIComponent(escape(atob(raw))));
-            } catch {
-                parsed = JSON.parse(atob(raw));
-            }
-            if (Array.isArray(parsed)) {
-                return parsed
-                    .map(a => a?.authentication?.bearer)
-                    .filter((t): t is string => !!t && t !== activeBearer);
-            }
-        } catch {
-            return [];
-        }
-        return [];
-    }
+
     private addBearerToken(request: HttpRequest<any>): HttpRequest<any> {
         let bearer: string | undefined = undefined;
-        const isApiRequest =
-            request.url.startsWith('https://apps.ci.dev.br') ||
-            (!!this.config?.rootApi && request.url.startsWith(this.config.rootApi)) ||
-            (Array.isArray(this.config?.alternativeApiGateways) && this.config!.alternativeApiGateways.some(gw => request.url.startsWith(gw))) ||
-            request.url.startsWith('/');
-        if (isApiRequest && this.storage) {
-            const user_storage: any = this.storage.restore('apps.ci.dev.br.store.User');
+        let chaveAcesso: string | undefined = undefined;
+
+        if (this.isApiRequest(request.url) && this.storage) {
+            const user_storage: any = this.storage.restore(USER_STORE_KEY);
             if (user_storage?.authentication?.bearer) {
                 bearer = user_storage.authentication.bearer;
             }
+            chaveAcesso = extractChaveAcessoFromSession(user_storage);
         }
-        // Assina a aplicação de origem e o hash da versão segundo o Git
+
         const originApp = ApplicationCatalogService.currentAppKey ||
             ApplicationCatalogService.detectFromUrl(this.router?.url || (typeof window !== 'undefined' ? window.location.pathname : '')) ||
             'Portal';
         const cleanKey = originApp.replace(/^\//, '').trim();
         const appGit = (GIT_VERSION as any).getAppGitInfo?.(cleanKey) || (GIT_VERSION as any).applications?.[cleanKey] || (GIT_VERSION as any).applications?.[cleanKey.toLowerCase()];
         const gitHash = appGit?.shortHash || GIT_VERSION.shortHash;
+
         const headersConfig: { [key: string]: string } = {
             'X-Origin-Application': originApp,
             'X-Application-Git-Hash': gitHash
         };
-        if (bearer) {
+
+        if (chaveAcesso && !request.headers.has('X-Access-Key')) {
+            headersConfig['X-Access-Key'] = chaveAcesso;
+        }
+
+        const accessScope = getActiveAccessScope();
+        if (accessScope && !request.headers.has('X-Access-Scope')) {
+            headersConfig['X-Access-Scope'] = accessScope;
+        }
+
+        if (bearer && !request.headers.has('Authorization')) {
             headersConfig['timeout'] = '10000';
             headersConfig['Authorization'] = `Bearer ${bearer}`;
-            const secondaryTokens = this.getSecondaryTokens(bearer);
+            const secondaryTokens = getSecondaryAccountTokens(bearer);
             if (secondaryTokens.length > 0) {
                 headersConfig['x-additional-tokens'] = secondaryTokens.join(',');
             }
         }
+
         return request.clone({
             setHeaders: headersConfig
         });
     }
+
+    private clearExpiredSession(chaveAcesso?: string): void {
+        this.storage?.clean();
+        if (chaveAcesso) {
+            void this.accessKeyCrypto?.deleteKey(chaveAcesso);
+        } else {
+            void this.accessKeyCrypto?.clearAllKeys();
+        }
+        const currentUrl = this.router?.url;
+        if (currentUrl && !currentUrl.startsWith('/acessar') && !currentUrl.startsWith('/registrar')) {
+            this.router?.navigate(['/acessar'], {
+                queryParams: currentUrl !== '/' ? { redirect: currentUrl } : undefined,
+            });
+        }
+    }
+
+    private performSingleFlightRefresh(chaveAcesso: string | undefined, refreshToken: string): Observable<RefreshResult> {
+        const flightKey = chaveAcesso || '__default__';
+        let inFlight$ = this._refreshInFlightByKey.get(flightKey);
+        if (!inFlight$) {
+            inFlight$ = this.auth.refresh({
+                body: {
+                    refreshToken,
+                    chaveAcesso,
+                } as any
+            }).pipe(
+                switchMap((token: RefreshResult) => {
+                    if (!token?.authorization) {
+                        return throwError(() => new HttpErrorResponse({
+                            status: (token as any)?.status || 401,
+                            statusText: 'Refresh Unauthorized',
+                            error: token,
+                        }));
+                    }
+                    updateAccountTokensInStorage(chaveAcesso, {
+                        bearer: token.authorization,
+                        refreshToken: token.refreshToken || undefined,
+                        chaveAcesso: token.chaveAcesso || chaveAcesso,
+                    });
+                    return of(token);
+                }),
+                finalize(() => {
+                    this._refreshInFlightByKey.delete(flightKey);
+                }),
+                shareReplay(1)
+            );
+            this._refreshInFlightByKey.set(flightKey, inFlight$);
+        }
+        return inFlight$;
+    }
+
     /**
-     * Trata erros 401/408 realizando um único Refresh compartilhado para todas as requisições simultâneas.
+     * Trata erros 401 realizando um único Refresh compartilhado por `chaveAcesso`.
      */
     private handlerUnauthorizedError(
         error: HttpErrorResponse,
         next: HttpHandler,
         request: HttpRequest<any>
     ): Observable<HttpEvent<any>> {
-        // Evita loop infinito se a própria rota de Refresh ou Acessar retornar 401/408
-        if (request.url.includes('/auth/Refresh') || request.url.includes('/auth/Acessar')) {
+        if (this.isAuthEndpoint(request.url)) {
             return throwError(() => error);
         }
-        if (error?.status === 401 || error?.status === 408) {
-            const user: { authentication?: { bearer?: string, refreshToken?: string, chaveAcesso?: string }, chaveAcesso?: string } =
-                this.storage?.restore('apps.ci.dev.br.store.User');
-            const chaveAcesso = user?.authentication?.chaveAcesso || user?.chaveAcesso;
-            if (user?.authentication?.refreshToken && this.auth) {
-                if (!this._refreshInFlight$) {
-                    this._refreshing = true;
-                    this._refreshInFlight$ = this.auth.refresh({
-                        body: {
-                            refreshToken: user.authentication.refreshToken,
-                            chaveAcesso
-                        } as any
-                    }).pipe(
-                        switchMap(async (token: { authorization?: string, chaveAcesso?: string | null }) => {
-                            if (token?.authorization) {
-                                const latestUser = this.storage?.restore('apps.ci.dev.br.store.User') || user;
-                                if (latestUser?.authentication) {
-                                    latestUser.authentication.bearer = token.authorization;
-                                    if (token.chaveAcesso) {
-                                        latestUser.authentication.chaveAcesso = token.chaveAcesso;
-                                    }
-                                    this.storage?.store('apps.ci.dev.br.store.User', latestUser);
-                                }
-                            }
-                            return token;
-                        }),
-                        finalize(() => {
-                            this._refreshing = false;
-                            this._refreshInFlight$ = undefined;
-                        }),
-                        shareReplay(1)
-                    );
+        if (error?.status === 401) {
+            const user: { authentication?: { bearer?: string; refreshToken?: string; chaveAcesso?: string }; chaveAcesso?: string } | undefined =
+                this.storage?.restore(USER_STORE_KEY);
+            const chaveAcesso = extractChaveAcessoFromSession(user);
+            const refreshToken = user?.authentication?.refreshToken;
+
+            if (!refreshToken || isJwtExpired(refreshToken, 0) || !this.auth) {
+                if (user?.authentication?.bearer || refreshToken) {
+                    this.clearExpiredSession(chaveAcesso);
                 }
-                return this._refreshInFlight$.pipe(
-                    switchMap(() => next.handle(this.addBearerToken(request))),
-                    catchError(refreshErr => {
-                        if (refreshErr?.status === 401) {
-                            this.storage?.clean();
-                            this.router?.navigate(['/']);
-                        } else if (refreshErr?.status === 403) {
-                            console.trace(refreshErr, this);
-                        }
-                        return throwError(() => refreshErr);
-                    })
-                );
+                return throwError(() => error);
             }
+
+            return this.performSingleFlightRefresh(chaveAcesso, refreshToken).pipe(
+                catchError(refreshErr => {
+                    if (refreshErr?.status === 401) {
+                        this.clearExpiredSession(chaveAcesso);
+                    } else if (refreshErr?.status === 403) {
+                        console.trace(refreshErr, this);
+                    }
+                    return throwError(() => refreshErr);
+                }),
+                switchMap(() => next.handle(this.addBearerToken(request))),
+            );
         }
         return throwError(() => error);
     }
-    constructor(
-        @Optional() private readonly router: Router,
-        @Optional() private readonly storage: StorageService,
-        @Optional() private readonly auth: AuthService,
-        @Optional() private readonly message: Message,
-        private readonly injector: Injector,
-        @Optional() private readonly consoleService?: ConsoleService,
-        @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
-    ) {
-        let efail = typeof localStorage !== 'undefined' ? localStorage.getItem('e-fail') : null;
-        if (!!efail) {
-            try {
-                this.efail = JSON.parse(efail);
-            } catch (error) {
-                console.trace(error);
+
+    public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        if (this.isApiRequest(request.url) && !this.isAuthEndpoint(request.url) && this.storage) {
+            const user = this.storage.restore(USER_STORE_KEY);
+            const bearer = user?.authentication?.bearer;
+            const refreshToken = user?.authentication?.refreshToken;
+            const chaveAcesso = extractChaveAcessoFromSession(user);
+
+            if (bearer && isJwtExpiringSoon(bearer, 60)) {
+                if (refreshToken && !isJwtExpired(refreshToken, 0) && this.auth) {
+                    return this.performSingleFlightRefresh(chaveAcesso, refreshToken).pipe(
+                        catchError((refreshErr) => {
+                            if (refreshErr?.status === 401) {
+                                this.clearExpiredSession(chaveAcesso);
+                            }
+                            return of(null);
+                        }),
+                        switchMap(() => this._executeRequest(request, next)),
+                    );
+                }
+                if (!refreshToken || isJwtExpired(refreshToken, 0)) {
+                    // Limpa sessão vencida antes de prosseguir para não enviar Bearer inválido em rotas públicas
+                    this.storage.clean();
+                    if (chaveAcesso) {
+                        void this.accessKeyCrypto?.deleteKey(chaveAcesso);
+                    }
+                }
             }
         }
-    }
-    public get efail(): string | number | undefined {
-        return this._efail;
-    }
-    public set efail(value: string | number | undefined) {
-        if (this._efail === value) return;
-        this._efail = value;
-        if (!!value) {
-            localStorage.setItem('e-fail', JSON.stringify(value));
-        } else {
-            localStorage.removeItem('e-fail');
-        }
-    }
-    public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return this._executeRequest(request, next);
     }
 }

@@ -11,6 +11,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { AcessoPayload, AuthService } from "@ci/portal-api";
 import { SHA512 } from "crypto-js";
 import { lastValueFrom } from "rxjs";
+import { AccessKeyCryptoService } from "@ci/core";
 import { UserAuthenticationService } from "../../services/user-authentication-user.service";
 
 /**
@@ -45,6 +46,7 @@ export class AddAccountDialog {
         private snackBar: MatSnackBar,
         @Optional() private authService?: AuthService,
         @Optional() private userService?: UserAuthenticationService,
+        @Optional() private accessKeyCrypto?: AccessKeyCryptoService,
     ) {
         this.form = this.fb.group({
             identification: ['', [Validators.required]],
@@ -111,6 +113,9 @@ export class AddAccountDialog {
             // Preserva a chaveAcesso crua para o cálculo da senha
             identPayload.chaveAcesso = rawChaveAcesso;
 
+            // Gera par de chaves ECDSA P-256 (extractable: false) vinculado a esta chaveAcesso
+            const keyPairInfo = await this.accessKeyCrypto?.ensureKeyPair(rawChaveAcesso);
+
             // Etapa 3: Autenticar senha
             let authResult: AcessoPayload | null = null;
             try {
@@ -124,6 +129,10 @@ export class AddAccountDialog {
                     body: {
                         chaveAcesso: SHA512(rawChaveAcesso).toString(),
                         password: passwordHashed,
+                        ...(keyPairInfo ? {
+                            publicKey: keyPairInfo.publicKey,
+                            publicKeyAlgorithm: keyPairInfo.algorithm,
+                        } : {}),
                     } as any
                 }));
             } catch (err) {
@@ -133,6 +142,7 @@ export class AddAccountDialog {
             }
 
             if (!authResult || !authResult.user || !authResult.user.id) {
+                await this.accessKeyCrypto?.deleteKey(rawChaveAcesso);
                 this.errorMessage = 'Falha ao autenticar: credenciais inválidas ou acesso recusado.';
                 return;
             }

@@ -85,6 +85,24 @@ export class CredencialService {
     ) {
         return await this.credentialRepository.save(chave);
     }
+
+    /**
+     * Registra a chave pública enviada pelo cliente nesta credencial de acesso
+     * e calcula seu fingerprint SHA-256.
+     */
+    registrarChavePublica(
+        chave: Credential,
+        publicKey?: string | null,
+        algorithm?: string | null,
+    ): Credential {
+        if (!chave || !publicKey || typeof publicKey !== 'string') return chave;
+        const normalized = publicKey.trim();
+        if (!normalized) return chave;
+        chave.publicKey = normalized;
+        chave.publicKeyAlgorithm = (algorithm || 'ECDSA-P256-SHA256').trim().slice(0, 64);
+        chave.publicKeyFingerprint = createHash('sha256').update(normalized).digest('hex');
+        return chave;
+    }
     /**
      * 
      * @param user_id 
@@ -172,6 +190,8 @@ export class CredencialService {
                     rawUserAgent: userAgent,
                     valid: chave.valid,
                     alive: chave.alive,
+                    hasPublicKey: Boolean(chave.publicKey),
+                    publicKeyFingerprint: chave.publicKeyFingerprint || undefined,
                 };
             }));
 

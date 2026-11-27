@@ -28,6 +28,8 @@ export interface ConnectedDevice {
   createdAt?: string | Date;
   isCurrent?: boolean;
   isOnline?: boolean;
+  hasPublicKey?: boolean;
+  publicKeyFingerprint?: string;
 }
 
 export interface ParametrosLastroDto {
@@ -248,6 +250,33 @@ declare module '../lib/models/sync-payload-dao' {
   export interface SyncPayloadDao {
     id?: string | null;
     [key: string]: any;
+  }
+}
+
+declare module '../lib/models/acesso-payload' {
+  export interface AcessoPayload {
+    publicKey?: string | null;
+    publicKeyAlgorithm?: string | null;
+  }
+}
+
+declare module '../lib/models/authorization-output' {
+  export interface AuthorizationOutput {
+    refreshToken?: string | null;
+  }
+}
+
+declare module '../lib/models/refresh-payload-input-dto' {
+  export interface RefreshPayloadInputDto {
+    publicKey?: string | null;
+    publicKeyAlgorithm?: string | null;
+  }
+}
+
+declare module '../lib/models/registrar-input-dto' {
+  export interface RegistrarInputDto {
+    publicKey?: string | null;
+    publicKeyAlgorithm?: string | null;
   }
 }
 

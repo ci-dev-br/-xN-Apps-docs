@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, Optional, ViewChild } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,7 +8,7 @@ import { lastValueFrom } from 'rxjs';
 import { AcessoPayload, AuthService } from '@ci/portal-api';
 import { SHA512 } from 'crypto-js';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { CoreModule, StorageService } from '@ci/core';
+import { AccessKeyCryptoService, CoreModule, StorageService, USER_STORE_KEY, WsService } from '@ci/core';
 import { AuthModule, UserAuthenticationService } from '@ci/auth';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -51,6 +51,8 @@ export class AcessarComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
+    @Optional() private readonly accessKeyCrypto?: AccessKeyCryptoService,
+    @Optional() private readonly wsService?: WsService,
   ) {
     if (this.stage) this.criarFormulario(this.stage)
   }
@@ -140,28 +142,47 @@ export class AcessarComponent implements OnInit {
         this.stage === 'authentication' &&
         this.acesso_payload?.chaveAcesso
       ) {
-        this.acesso_payload = await lastValueFrom(this.authService.acessar({
-          body: {
-            chaveAcesso: (SHA512(this.acesso_payload.chaveAcesso).toString()) as string,
-            password: (this.acesso_payload.mode === 'full-text' ?
-              SHA512(
-                SHA512(this.form?.get('password')?.value).toString() +
-                this.acesso_payload?.chaveAcesso
-              ).toString()
-              : this.acesso_payload.mode === 'argon2' ? String(this.form?.get('password')?.value) : undefined) as string,
-          } as any
-        }));
-        if (this.acesso_payload?.user?.id) {
-          this.storageService.store('apps.ci.dev.br.store.User', {
+        const rawChaveAcesso = this.acesso_payload.chaveAcesso;
+        const rawPassword = this.form?.get('password')?.value;
+        const passwordHashed = this.acesso_payload.mode === 'argon2'
+          ? String(rawPassword)
+          : SHA512(SHA512(rawPassword).toString() + rawChaveAcesso).toString();
+
+        const keyPairInfo = await this.accessKeyCrypto?.ensureKeyPair(rawChaveAcesso);
+
+        let authResponse: AcessoPayload | undefined;
+        try {
+          authResponse = await lastValueFrom(this.authService.acessar({
+            body: {
+              chaveAcesso: SHA512(rawChaveAcesso).toString(),
+              password: passwordHashed,
+              ...(keyPairInfo ? {
+                publicKey: keyPairInfo.publicKey,
+                publicKeyAlgorithm: keyPairInfo.algorithm,
+              } : {}),
+            } as any
+          }));
+        } catch (authError) {
+          console.trace(authError);
+          this.snack.open('Senha incorreta ou acesso recusado.', 'Ok', { duration: 4000 });
+          return;
+        }
+
+        if (authResponse?.user?.id) {
+          this.acesso_payload = authResponse;
+          this.storageService.store(USER_STORE_KEY, {
             authentication: {
-              ...this.acesso_payload,
-              user: { ...this.acesso_payload.user, photo: null }
+              ...authResponse,
+              user: { ...authResponse.user, photo: null }
             }
           });
-          await this.userService.identificarUsuario(this.acesso_payload?.user);
-          setTimeout(() => this.router.navigateByUrl(this.getPostLoginRedirectUrl())); // TODO: para que serve isto?
+          await this.userService.identificarUsuario(authResponse.user);
+          if (authResponse.chaveAcesso) {
+            this.wsService?.identifySession(authResponse.chaveAcesso);
+          }
+          setTimeout(() => this.router.navigateByUrl(this.getPostLoginRedirectUrl()));
         } else {
-          this.snack.open('Acesso negado!', 'Ok');
+          this.snack.open('Acesso negado!', 'Ok', { duration: 4000 });
         }
       }
     } catch (error) {

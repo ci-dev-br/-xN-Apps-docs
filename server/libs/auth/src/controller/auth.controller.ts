@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Ip, Optional, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpException, InternalServerErrorException, Ip, Optional, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
 import {
   AcessoPayload,
   AuthorizationOutput,
@@ -114,6 +114,9 @@ export class AuthController {
           chave.identifiedUser = created_user.id;
           chave.valid = true;
           chave.alive = true;
+          if (input?.publicKey) {
+            this.credencialService.registrarChavePublica(chave, input.publicKey, input.publicKeyAlgorithm);
+          }
           chave = await this.credencialService.atualizar(chave);
 
           const permission_uuid = randomUUID();
@@ -188,11 +191,9 @@ export class AuthController {
         roles: (user.roles && user.roles.length > 0) ? user.roles : ['USER'],
       };
     } catch (error) {
+      if (error instanceof HttpException) throw error;
       console.trace(error);
-      return {
-        status: 500,
-        message: 'Falha',
-      }
+      throw new InternalServerErrorException('Falha ao obter perfil do usuário.');
     }
   }
 
@@ -381,6 +382,9 @@ export class AuthController {
           const refreshTokenArg2 = await this.userService.updateRefreshToken(authenticated_user.id, permission_uuid);
           chave.valid = true;
           chave.alive = true;
+          if (payload?.publicKey) {
+            this.credencialService.registrarChavePublica(chave, payload.publicKey, payload.publicKeyAlgorithm);
+          }
           // chave.refreshToken = refreshTokenArg2;
           await this.credencialService.atualizar(chave);
           const { /* photo, */ ...user_payload } = authenticated_user;
@@ -493,16 +497,25 @@ export class AuthController {
   }
   @Post('Logout')
   @ApiOperation({ operationId: 'LogoutAuth' })
-  async logout(@Req() req) {
+  async logout(@Req() req: any) {
     try {
-      return await this.userService.logout(null)
+      const userId = req?.user?.id;
+      const chaveAcesso = req?.chaveAcesso;
+      if (userId && chaveAcesso) {
+        const disconnected = await this.credencialService.desconectarDispositivo(userId, chaveAcesso);
+        if (disconnected) {
+          BusService.disconnectChaveAcesso(chaveAcesso);
+        }
+        return { success: disconnected };
+      }
+      if (userId) {
+        return await this.userService.logout({ id: userId } as any);
+      }
+      return { success: false };
     } catch (error) {
+      if (error instanceof HttpException) throw error;
       console.trace(error);
-      return {
-        status: typeof error === 'object' && typeof (error as any).status === 'number' ?
-          (error as { status: number }).status || 500 : 509,
-        message: 'Falha'
-      } as any
+      throw new InternalServerErrorException('Falha ao encerrar sessão.');
     }
   }
   @Public()
@@ -516,17 +529,20 @@ export class AuthController {
     @Ip() ip,
   ) {
     try {
-      console.info(req.cookies['refresh_token']);
-      res.json((await this.authService.refreshToken(
-        null, payload?.refreshToken, req as any, ip, payload?.chaveAcesso
-      )));
+      const result = await this.authService.refreshToken(
+        null,
+        payload?.refreshToken,
+        req as any,
+        ip,
+        payload?.chaveAcesso,
+        payload?.publicKey,
+        payload?.publicKeyAlgorithm,
+      );
+      res.status(200).json(result);
     } catch (error) {
+      if (error instanceof HttpException) throw error;
       console.trace(error);
-      return {
-        status: typeof error === 'object' && typeof (error as any).status === 'number' ?
-          (error as { status: number }).status || 500 : 509,
-        message: 'Falha'
-      } as any
+      throw new UnauthorizedException('Falha ao renovar autorização.');
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Equal, FindOperator, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, ILike, In, IsNull, Repository } from "typeorm";
+import { Between, Equal, FindOperator, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, ILike, In, IsNull, LessThanOrEqual, MoreThanOrEqual, Repository } from "typeorm";
 import { FullAuditedEntity, SnapshotService } from "./entities";
 import { User } from "@ci/auth/models/user.entity";
 
@@ -71,8 +71,15 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
                 }
             }
         }
-        // console.log(___internal_data);
-        return await this._repo.save(___internal_data);
+        const saved = await this._repo.save(___internal_data);
+        if (
+            saved instanceof FullAuditedEntity &&
+            !data?.internalId &&
+            request?.headers?.['x-snapshot-signature']
+        ) {
+            await this._snap.snapshot(saved, request, this._repo);
+        }
+        return saved;
         /// }
     }
 
@@ -170,6 +177,64 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
         return Array.from(ids);
     }
 
+    private extractAccessScope(options?: any, request?: any): {
+        accessKeyIds: string[];
+        createdAtOperator?: FindOperator<Date>;
+    } {
+        const rawScopeSources = [
+            options?.accessKeyIds,
+            options?.chaveAcesso,
+            options?.filter?.accessKeyIds,
+            options?.filter?.chaveAcesso,
+            options?.filter?.createdById,
+            !Array.isArray(options?.where) ? options?.where?.chaveAcesso : undefined,
+            !Array.isArray(options?.where) ? options?.where?.createdBy?.id : undefined,
+            request?.headers?.['x-access-scope'],
+        ];
+        const ids = new Set<string>();
+        for (const src of rawScopeSources) {
+            if (!src) continue;
+            if (Array.isArray(src)) {
+                src.forEach(item => {
+                    const id = typeof item === 'string' ? item.trim() : item?.id;
+                    if (id === 'current' && request?.chaveAcesso) ids.add(String(request.chaveAcesso));
+                    else if (id) ids.add(String(id));
+                });
+            } else if (typeof src === 'string') {
+                src.split(',').map(s => s.trim()).filter(Boolean).forEach(token => {
+                    if (token === 'current') {
+                        if (request?.chaveAcesso) ids.add(String(request.chaveAcesso));
+                    } else {
+                        ids.add(token);
+                    }
+                });
+            } else if (typeof src === 'object' && src.id) {
+                ids.add(String(src.id));
+            }
+        }
+
+        const rawFrom = options?.createdFrom || options?.filter?.createdFrom || request?.headers?.['x-access-created-from'];
+        const rawTo = options?.createdTo || options?.filter?.createdTo || request?.headers?.['x-access-created-to'];
+        const fromDate = rawFrom ? new Date(rawFrom) : undefined;
+        const toDate = rawTo ? new Date(rawTo) : undefined;
+        const validFrom = fromDate && !Number.isNaN(fromDate.getTime()) ? fromDate : undefined;
+        const validTo = toDate && !Number.isNaN(toDate.getTime()) ? toDate : undefined;
+
+        let createdAtOperator: FindOperator<Date> | undefined;
+        if (validFrom && validTo) {
+            createdAtOperator = Between(validFrom, validTo);
+        } else if (validFrom) {
+            createdAtOperator = MoreThanOrEqual(validFrom);
+        } else if (validTo) {
+            createdAtOperator = LessThanOrEqual(validTo);
+        }
+
+        return {
+            accessKeyIds: Array.from(ids),
+            createdAtOperator,
+        };
+    }
+
     async obterLista(options?: {
         skip?: number,
         take?: number,
@@ -178,9 +243,13 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
         search?: string,
         tenantIds?: string[],
         tenants?: any,
+        accessKeyIds?: string[],
+        chaveAcesso?: string,
+        createdFrom?: string | Date,
+        createdTo?: string | Date,
         relations?: FindOptionsRelations<E> | FindOptionsRelationByString,
         orderBy?: any
-    }, request?: { user: User; headers?: Record<string, any> }) {
+    }, request?: { user: User; chaveAcesso?: string; headers?: Record<string, any> }) {
         const opts = options || {};
         const rawWhere = opts.where;
         const rawFilter = opts.filter;
@@ -220,6 +289,7 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
         }
 
         const requestedTenantIds = this.extractRequestedTenantIds(opts, request);
+        const { accessKeyIds, createdAtOperator } = this.extractAccessScope(opts, request);
         const isElevated = Boolean(
             request?.user?.roles?.includes('ADMIN') ||
             request?.user?.roles?.includes('MASTER') ||
@@ -240,12 +310,34 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
         const finalWhere: FindOptionsWhere<E>[] = [];
 
         for (const fieldFilter of combinedFieldFilters) {
+            const datedFilter = createdAtOperator
+                ? { ...fieldFilter, createdAt: createdAtOperator }
+                : fieldFilter;
+
+            if (accessKeyIds.length > 0) {
+                if (!userId && !isElevated) {
+                    continue;
+                }
+                finalWhere.push({
+                    ...datedFilter,
+                    deleted: IsNull(),
+                    createdBy: {
+                        id: In(accessKeyIds),
+                        ...(!isElevated && userId ? { identifiedUser: Equal(userId) } : {}),
+                    },
+                    ...(effectiveTenantIds.length > 0 && hasTenantsRelation
+                        ? { tenants: { id: In(effectiveTenantIds) } }
+                        : {}),
+                } as any);
+                continue;
+            }
+
             if (requestedTenantIds.length > 0 && hasTenantsRelation) {
                 if (effectiveTenantIds.length === 0) {
                     continue;
                 }
                 finalWhere.push({
-                    ...fieldFilter,
+                    ...datedFilter,
                     deleted: IsNull(),
                     tenants: { id: In(effectiveTenantIds) },
                 } as any);
@@ -254,32 +346,32 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
 
             if (userId) {
                 finalWhere.push({
-                    ...fieldFilter,
+                    ...datedFilter,
                     deleted: IsNull(),
                     createdBy: { identifiedUser: Equal(userId) },
                 } as any);
             }
             if (hasTenantsRelation && userTenantIds.size > 0) {
                 finalWhere.push({
-                    ...fieldFilter,
+                    ...datedFilter,
                     deleted: IsNull(),
                     tenants: { id: In(Array.from(userTenantIds)) },
                 } as any);
             }
             finalWhere.push({
-                ...fieldFilter,
+                ...datedFilter,
                 deleted: IsNull(),
                 createdBy: IsNull(),
             } as any);
             if (isElevated) {
                 finalWhere.push({
-                    ...fieldFilter,
+                    ...datedFilter,
                     deleted: IsNull(),
                 } as any);
             }
         }
 
-        if (requestedTenantIds.length > 0 && finalWhere.length === 0) {
+        if ((requestedTenantIds.length > 0 || accessKeyIds.length > 0) && finalWhere.length === 0) {
             return [];
         }
 

@@ -93,6 +93,16 @@ export class Snapshot extends AuditedEntity {
         nullable: true,
     })
     hash: string;
+    @Column({ type: 'text', nullable: true })
+    signature?: string | null;
+    @Column({ nullable: true, length: 64 })
+    signatureAlgorithm?: string | null;
+    @Column({ nullable: true, length: 64 })
+    clientSignedAt?: string | null;
+    @Column({ nullable: true, length: 128 })
+    payloadHash?: string | null;
+    @Column({ nullable: true })
+    signatureVerified?: boolean | null;
 }
 /***
  * Entidade Auditável vinculada entre Usuário 1:n Tenant . 

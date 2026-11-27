@@ -22,6 +22,10 @@ export class RegistrarInputDto {
     invite?: string;
     @ApiProperty({ required: false, nullable: true, description: 'Alias para invite hash' })
     convite?: string;
+    @ApiProperty({ required: false, nullable: true, description: 'Chave pública do cliente (SPKI base64 ou JWK)' })
+    publicKey?: string;
+    @ApiProperty({ required: false, nullable: true, description: 'Algoritmo da chave pública do cliente' })
+    publicKeyAlgorithm?: string;
 }
 export class AcessoPayload {
     @ApiProperty({ required: false, nullable: true })
@@ -40,6 +44,10 @@ export class AcessoPayload {
     refreshToken?: string;
     @ApiProperty({ required: false, nullable: true })
     mode?: string;
+    @ApiProperty({ required: false, nullable: true, description: 'Chave pública do cliente (SPKI base64 ou JWK)' })
+    publicKey?: string;
+    @ApiProperty({ required: false, nullable: true, description: 'Algoritmo da chave pública do cliente' })
+    publicKeyAlgorithm?: string;
     constructor(chave?: Credential, mode?: string) {
         if (chave instanceof Credential) {
             this.chaveAcesso = chave.id;
@@ -54,10 +62,16 @@ export class RefreshPayloadInputDto {
     refreshToken: string;
     @ApiProperty({ required: false, nullable: true })
     chaveAcesso?: string;
+    @ApiProperty({ required: false, nullable: true })
+    publicKey?: string;
+    @ApiProperty({ required: false, nullable: true })
+    publicKeyAlgorithm?: string;
 }
 export class AuthorizationOutput {
     @ApiProperty({ required: true, nullable: false })
     authorization: string;
+    @ApiProperty({ required: false, nullable: true })
+    refreshToken?: string;
     @ApiProperty({ required: false, nullable: true })
     chaveAcesso?: string;
 }

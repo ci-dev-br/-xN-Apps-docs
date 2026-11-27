@@ -18,6 +18,8 @@ export class AuthService {
         req?: Request,
         ip?: string,
         chaveAcessoParam?: string,
+        publicKey?: string,
+        publicKeyAlgorithm?: string,
     ) {
         if (!refreshToken) {
             throw new UnauthorizedException('Refresh token não fornecido.');
@@ -72,7 +74,7 @@ export class AuthService {
             throw new UnauthorizedException('Chave de acesso inexistente.');
         }
 
-        if (chave_acesso.valid === false) {
+        if (chave_acesso.valid === false || chave_acesso.alive === false) {
             throw new UnauthorizedException('A chave de acesso deste dispositivo foi revogada ou expirou.');
         }
 
@@ -87,9 +89,30 @@ export class AuthService {
             throw new UnauthorizedException('Usuário não localizado.');
         }
 
-        // Mantém a chave de acesso do dispositivo ativa
+        // Permite registrar chave pública apenas se a credencial ainda não possuía uma (migração de sessão)
+        if (publicKey && !chave_acesso.publicKey) {
+            this.credencial.registrarChavePublica(chave_acesso, publicKey, publicKeyAlgorithm);
+        }
+
+        // Mantém a mesma chave de acesso ativa e rotaciona o refresh token mantendo a segmentação da sessão
         chave_acesso.alive = true;
         await this.credencial.atualizar(chave_acesso);
+
+        const nextRefreshToken = await this.jwtService.signAsync(
+            {
+                userId: user.id,
+                chaveAcesso: chave_acesso.id,
+                permission: permission,
+                try: btoa(JSON.stringify({
+                    permission: permission,
+                    chaveAcesso: chave_acesso.id,
+                    userId: user.id
+                }, null, 2))
+            },
+            {
+                expiresIn: '1d',
+            },
+        );
 
         return {
             authorization: await this.jwtService.signAsync({
@@ -98,6 +121,7 @@ export class AuthService {
                 permission: permission,
                 chaveAcesso: chave_acesso.id,
             }),
+            refreshToken: nextRefreshToken,
             chaveAcesso: chave_acesso.id,
         };
     }

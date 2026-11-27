@@ -33,6 +33,24 @@ export class Credential {
     alive?: boolean;
     @Column({ nullable: true })
     refreshToken?: string;
+    /**
+     * Chave pública (SPKI em base64 ou JWK) associada a este acesso para validação de assinaturas de snapshots.
+     */
+    @ApiProperty({ required: false, nullable: true })
+    @Column({ type: 'text', nullable: true })
+    publicKey?: string | null;
+    /**
+     * Algoritmo da chave pública associada à credencial (ex.: ECDSA-P256-SHA256).
+     */
+    @ApiProperty({ required: false, nullable: true })
+    @Column({ nullable: true, length: 64 })
+    publicKeyAlgorithm?: string | null;
+    /**
+     * Impressão digital SHA-256 da chave pública registrada neste acesso.
+     */
+    @ApiProperty({ required: false, nullable: true })
+    @Column({ nullable: true, length: 128 })
+    publicKeyFingerprint?: string | null;
     @ApiProperty({ required: false, nullable: true })
     user?: any;
 }

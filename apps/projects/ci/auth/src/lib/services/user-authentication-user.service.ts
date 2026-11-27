@@ -1,17 +1,36 @@
-import { Inject, Injectable, Optional, PLATFORM_ID } from "@angular/core";
+import { Inject, Injectable, OnDestroy, Optional, PLATFORM_ID } from "@angular/core";
 import { AuthService, ConnectedDevice, Policy, User } from "@ci/portal-api";
-import { BehaviorSubject, lastValueFrom } from "rxjs";
+import { BehaviorSubject, lastValueFrom, Subscription } from "rxjs";
 import { Router } from "@angular/router";
-import { StorageService, NotificationService } from "@ci/core";
+import {
+    ACCOUNTS_STORAGE_KEY,
+    AccessKeyCryptoService,
+    CIUSR_STORAGE_KEY,
+    NotificationService,
+    StorageService,
+    USER_STORE_KEY,
+    WsService,
+    clearAllAuthStorage,
+    decodeBase64Utf8,
+    encodeBase64Utf8,
+    extractChaveAcessoFromJwt,
+    extractChaveAcessoFromSession,
+    getActiveAccessScope,
+    isJwtExpired,
+    isJwtExpiringSoon,
+    readAccountsFromStorage,
+    setActiveAccessScope,
+    sessionStorageUpdated$,
+    updateAccountTokensInStorage,
+    writeAccountsToStorage,
+} from "@ci/core";
 import { isPlatformBrowser } from "@angular/common";
 import { ConnectedAccount } from "../models/connected-account";
 
-const ACCOUNTS_STORAGE_KEY = 'CI_ACCOUNTS';
-const USER_STORE_KEY = 'apps.ci.dev.br.store.User';
-
 @Injectable()
-export class UserAuthenticationService {
+export class UserAuthenticationService implements OnDestroy {
     private isBrowser: boolean;
+    private subscriptions = new Subscription();
 
     /**
      * Lista de contas conectadas simultaneamente na sessão do cliente.
@@ -24,14 +43,10 @@ export class UserAuthenticationService {
      */
     private $user = new BehaviorSubject<User | undefined>((() => {
         if (typeof localStorage !== 'undefined') {
-            const stored = localStorage.getItem('CIUSR');
+            const stored = localStorage.getItem(CIUSR_STORAGE_KEY);
             try {
                 if (stored) {
-                    try {
-                        return JSON.parse(decodeURIComponent(escape(atob(stored))));
-                    } catch {
-                        return JSON.parse(atob(stored));
-                    }
+                    return JSON.parse(decodeBase64Utf8(stored));
                 }
             } catch (error) {
                 console.trace(error);
@@ -46,17 +61,79 @@ export class UserAuthenticationService {
         @Optional() private readonly router?: Router,
         @Optional() private readonly storage?: StorageService,
         @Optional() private readonly notification?: NotificationService,
+        @Optional() private readonly ws?: WsService,
+        @Optional() private readonly accessKeyCrypto?: AccessKeyCryptoService,
     ) {
         this.isBrowser = isPlatformBrowser(this.platformId);
         if (!this.isBrowser) return;
         this.init();
     }
 
+    ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
+    }
+
     /**
-     * Inicializa o gerenciador multi-contas e permissões combinadas.
+     * Inicializa o gerenciador multi-contas, escuta atualizações de refresh/revogação
+     * e mantém as permissões combinadas sincronizadas.
      */
     async init() {
         this.carregarContasDoStorage();
+
+        // Sincroniza estado em memória quando o interceptor renova ou limpa tokens
+        this.subscriptions.add(
+            sessionStorageUpdated$.subscribe((event) => {
+                if (!event) {
+                    if (this.$accounts.value.length > 0 || this.$user.value) {
+                        this.$accounts.next([]);
+                        this.$user.next(undefined);
+                    }
+                    return;
+                }
+                if (event.chaveAcesso && (event.bearer || event.refreshToken)) {
+                    const updated = this.$accounts.value.map(acc => {
+                        const accChave = extractChaveAcessoFromSession(acc);
+                        if (accChave === event.chaveAcesso) {
+                            return {
+                                ...acc,
+                                authentication: {
+                                    ...acc.authentication,
+                                    ...(event.bearer ? { bearer: event.bearer } : {}),
+                                    ...(event.refreshToken ? { refreshToken: event.refreshToken } : {}),
+                                    chaveAcesso: event.chaveAcesso,
+                                },
+                            };
+                        }
+                        return acc;
+                    });
+                    this.$accounts.next(updated);
+                }
+            })
+        );
+
+        // Escuta revogação remota de sessão via WebSocket globalmente (independente de menus abertos)
+        if (this.ws?.sessionRevoked$) {
+            this.subscriptions.add(
+                this.ws.sessionRevoked$.subscribe(async payload => {
+                    if (!payload) return;
+                    if (payload.chaveAcesso) {
+                        const target = this.$accounts.value.find(
+                            a => extractChaveAcessoFromSession(a) === payload.chaveAcesso
+                        );
+                        if (target) {
+                            await this.removerContaLocal(target.id, payload.chaveAcesso);
+                            return;
+                        }
+                        const currentChave = this.ws?.getStoredChaveAcesso();
+                        if (currentChave === payload.chaveAcesso) {
+                            await this.limparSessaoLocal();
+                        }
+                    } else {
+                        await this.limparSessaoLocal();
+                    }
+                })
+            );
+        }
 
         // Atualiza perfil e foto da conta ativa em segundo plano a partir do servidor
         if (this.authService && this.activeAccount?.authentication?.bearer) {
@@ -70,84 +147,73 @@ export class UserAuthenticationService {
             });
         }
 
+        // Renova em segundo plano tokens de contas secundárias que estejam próximos de expirar
+        void this.renovarContasSecundarias();
+
         // Inscreve para persistir e atualizar preferências sempre que o usuário ativo mudar
-        this.$user.subscribe(user => {
-            try {
-                if (!!user) {
-                    const { ...user_info } = user;
-                    if (typeof localStorage !== 'undefined') {
-                        try {
+        this.subscriptions.add(
+            this.$user.subscribe(user => {
+                try {
+                    if (user) {
+                        const { ...user_info } = user;
+                        if (typeof localStorage !== 'undefined') {
                             const serialized = JSON.stringify(user_info, null, 2);
-                            const encoded = btoa(unescape(encodeURIComponent(serialized)));
-                            localStorage.setItem('CIUSR', encoded);
-                        } catch {
-                            localStorage.setItem('CIUSR', btoa(JSON.stringify(user_info)));
+                            localStorage.setItem(CIUSR_STORAGE_KEY, encodeBase64Utf8(serialized));
                         }
-                    }
-                    if (!!user) {
                         this.SetupUserPreferences(user);
                         this.notification?.requestPermission();
                     }
+                } catch (error) {
+                    console.trace(error);
                 }
-            } catch (error) {
-                console.trace(error);
-            }
-        });
-
+            })
+        );
     }
 
-    /** 
-     * Retorna o usuário ativo (com permissões e políticas combinadas) como Observable.
-     */
     get user() {
         return this.$user;
     }
 
-    /**
-     * Retorna o Observable com a lista de contas conectadas simultaneamente.
-     */
     get accounts() {
         return this.$accounts;
     }
 
-    /**
-     * Retorna snapshot da lista de contas conectadas.
-     */
     get accountsList(): ConnectedAccount[] {
         return this.$accounts.value;
     }
 
-    /**
-     * Retorna a conta atualmente ativa.
-     */
     get activeAccount(): ConnectedAccount | undefined {
         return this.$accounts.value.find(acc => acc.isActive) || this.$accounts.value[0];
     }
 
-    /**
-     * Carrega as contas persistidas e unifica políticas e permissões.
-     */
+    getActiveChaveAcesso(): string | undefined {
+        return extractChaveAcessoFromSession(this.activeAccount) || this.storage?.restore(USER_STORE_KEY)?.authentication?.chaveAcesso;
+    }
+
+    getConnectedChaveAcessos(): string[] {
+        return this.$accounts.value
+            .map(a => extractChaveAcessoFromSession(a))
+            .filter((k): k is string => Boolean(k));
+    }
+
+    async hasLocalPrivateKey(chaveAcesso?: string): Promise<boolean> {
+        const target = chaveAcesso || this.getActiveChaveAcesso();
+        if (!target || !this.accessKeyCrypto) return false;
+        return this.accessKeyCrypto.hasPrivateKey(target);
+    }
+
+    setAccessScope(scope?: string | string[] | null): void {
+        setActiveAccessScope(scope);
+    }
+
+    getAccessScope(): string | undefined {
+        return getActiveAccessScope();
+    }
+
     private carregarContasDoStorage() {
         if (typeof localStorage === 'undefined') return;
 
-        let accounts: ConnectedAccount[] = [];
-        const rawAccounts = localStorage.getItem(ACCOUNTS_STORAGE_KEY);
-
-        if (rawAccounts) {
-            try {
-                let parsed: any;
-                try {
-                    parsed = JSON.parse(decodeURIComponent(escape(atob(rawAccounts))));
-                } catch {
-                    parsed = JSON.parse(atob(rawAccounts));
-                }
-                if (Array.isArray(parsed)) {
-                    accounts = parsed;
-                }
-            } catch (e) {
-                console.error('Falha ao restaurar contas conectadas:', e);
-            }
-        }
+        let accounts: ConnectedAccount[] = readAccountsFromStorage();
 
         // Se ainda não existia lista de contas em CI_ACCOUNTS, migra a conta já logada
         if (accounts.length === 0) {
@@ -168,8 +234,7 @@ export class UserAuthenticationService {
         }
 
         if (accounts.length > 0) {
-            // Garante que exatamente uma conta seja a ativa
-            let hasActive = accounts.some(a => a.isActive);
+            const hasActive = accounts.some(a => a.isActive);
             if (!hasActive) {
                 accounts[0].isActive = true;
             }
@@ -179,36 +244,52 @@ export class UserAuthenticationService {
         }
     }
 
-    /**
-     * Salva a lista de contas conectadas no localStorage.
-     */
     private salvarContasNoStorage(accounts: ConnectedAccount[]) {
-        if (typeof localStorage === 'undefined') return;
-        try {
-            const serialized = JSON.stringify(accounts, null, 2);
-            const encoded = btoa(unescape(encodeURIComponent(serialized)));
-            localStorage.setItem(ACCOUNTS_STORAGE_KEY, encoded);
-        } catch {
-            localStorage.setItem(ACCOUNTS_STORAGE_KEY, btoa(JSON.stringify(accounts)));
+        writeAccountsToStorage(accounts);
+    }
+
+    private async renovarContasSecundarias() {
+        if (!this.authService) return;
+        const activeId = this.activeAccount?.id;
+        const secondaryAccounts = this.$accounts.value.filter(a => a.id !== activeId);
+
+        for (const acc of secondaryAccounts) {
+            const bearer = acc.authentication?.bearer;
+            const refreshToken = acc.authentication?.refreshToken;
+            const chaveAcesso = extractChaveAcessoFromSession(acc);
+
+            if (refreshToken && !isJwtExpired(refreshToken, 0) && (!bearer || isJwtExpiringSoon(bearer, 60))) {
+                try {
+                    const res: any = await lastValueFrom(this.authService.refresh({
+                        body: {
+                            refreshToken,
+                            chaveAcesso,
+                        } as any,
+                    }));
+                    if (res?.authorization) {
+                        updateAccountTokensInStorage(chaveAcesso, {
+                            bearer: res.authorization,
+                            refreshToken: res.refreshToken || undefined,
+                            chaveAcesso: res.chaveAcesso || chaveAcesso,
+                        });
+                    }
+                } catch {
+                    // Conta secundária expirada/revogada não derruba a conta ativa
+                }
+            }
         }
     }
 
-    /**
-     * Unifica papéis (roles) e políticas (permission) de todas as contas conectadas,
-     * aplicando-as sobre o usuário ativo selecionado.
-     */
     private combinarPermissoesEPoliticas(baseUser: User, accounts: ConnectedAccount[]): User {
         const rolesSet = new Set<string>();
         const permissionsMap = new Map<string, Policy>();
 
         for (const acc of accounts) {
-            // Unir roles de todas as contas conectadas
             if (acc.user?.roles && Array.isArray(acc.user.roles)) {
                 for (const r of acc.user.roles) {
                     if (r) rolesSet.add(r);
                 }
             }
-            // Unir políticas/permissões de todas as contas conectadas
             if (acc.user?.permission && Array.isArray(acc.user.permission)) {
                 for (const p of acc.user.permission) {
                     if (p && p.code) {
@@ -218,7 +299,6 @@ export class UserAuthenticationService {
             }
         }
 
-        // Garante inclusão das roles e policies do usuário base
         if (baseUser.roles && Array.isArray(baseUser.roles)) {
             for (const r of baseUser.roles) {
                 if (r) rolesSet.add(r);
@@ -239,9 +319,6 @@ export class UserAuthenticationService {
         };
     }
 
-    /**
-     * Atualiza o perfil e foto de uma conta específica na lista de contas.
-     */
     atualizarPerfilConta(profile: User) {
         if (!profile || !profile.id) return;
         const currentAccounts = [...this.$accounts.value];
@@ -269,10 +346,6 @@ export class UserAuthenticationService {
         }
     }
 
-    /**
-     * Atualiza o usuário emitido para a aplicação com permissões combinadas de todas as contas,
-     * mantendo a identidade e sessão da conta ativa selecionada.
-     */
     private atualizarUsuarioAtivoCombinado(accounts: ConnectedAccount[]) {
         const activeAcc = accounts.find(a => a.isActive) || accounts[0];
         if (!activeAcc) {
@@ -280,7 +353,6 @@ export class UserAuthenticationService {
             return;
         }
 
-        // Garante que a foto do usuário seja preservada na conta ativa
         if (!activeAcc.user.photo && this.$user.value?.photo) {
             activeAcc.user.photo = this.$user.value.photo;
         }
@@ -288,7 +360,6 @@ export class UserAuthenticationService {
         const combinedUser = this.combinarPermissoesEPoliticas(activeAcc.user, accounts);
         combinedUser.photo = activeAcc.user.photo || this.$user.value?.photo;
 
-        // Atualiza a chave de sessão ativa consumida por interceptors HTTP e WebSockets
         if (this.storage && activeAcc.authentication) {
             this.storage.store(USER_STORE_KEY, {
                 authentication: {
@@ -301,12 +372,6 @@ export class UserAuthenticationService {
         this.$user.next(combinedUser);
     }
 
-    /**
-     * Alterna a conta ativa: permite ao usuário escolher qual usuário está realizando a ação.
-     * As permissões e políticas de acesso continuam combinadas de todas as contas conectadas.
-     * 
-     * @param userId ID do usuário da conta a ser ativada
-     */
     async selecionarConta(userId: string): Promise<boolean> {
         const currentAccounts = [...this.$accounts.value];
         const targetIndex = currentAccounts.findIndex(a => a.id === userId || a.user.id === userId);
@@ -325,17 +390,14 @@ export class UserAuthenticationService {
         this.salvarContasNoStorage(updatedAccounts);
         this.atualizarUsuarioAtivoCombinado(updatedAccounts);
 
+        const activeChave = extractChaveAcessoFromSession(updatedAccounts[targetIndex]);
+        if (activeChave) {
+            this.ws?.identifySession(activeChave);
+        }
+
         return true;
     }
 
-    /**
-     * Conecta e adiciona uma nova conta simultânea à sessão do cliente.
-     * Suas permissões e políticas serão unificadas com as contas já existentes.
-     * 
-     * @param payload Resposta de autenticação contendo tokens e dados do usuário
-     * @param userProfile Perfil completo do usuário (opcional)
-     * @param setActive Define se a nova conta deve se tornar imediatamente a conta ativa
-     */
     async adicionarConta(payload: any, userProfile?: User, setActive: boolean = false): Promise<ConnectedAccount> {
         const currentAccounts = [...this.$accounts.value];
 
@@ -347,22 +409,25 @@ export class UserAuthenticationService {
         };
 
         const accountId = user.id || payload?.id || `acc_${Date.now()}`;
+        const bearer = payload?.bearer || payload?.authorization || payload?.token;
+        const chaveAcesso = payload?.chaveAcesso || extractChaveAcessoFromJwt(bearer);
 
+        const cleanAuthentication: ConnectedAccount['authentication'] = {
+            ...(bearer ? { bearer } : {}),
+            ...(payload?.refreshToken ? { refreshToken: payload.refreshToken } : {}),
+            ...(chaveAcesso ? { chaveAcesso } : {}),
+            ...(payload?.mode ? { mode: payload.mode } : {}),
+        };
+
+        const shouldBeActive = setActive || currentAccounts.length === 0;
         const newAccount: ConnectedAccount = {
             id: accountId,
             user: { ...user, id: accountId },
-            authentication: {
-                bearer: payload.bearer || payload.authorization || payload.token,
-                refreshToken: payload.refreshToken,
-                chaveAcesso: payload.chaveAcesso,
-                mode: payload.mode,
-                ...payload
-            },
+            authentication: cleanAuthentication,
             connectedAt: new Date().toISOString(),
-            isActive: setActive || currentAccounts.length === 0
+            isActive: shouldBeActive
         };
 
-        // Se a conta já existia na lista, substitui; caso contrário, adiciona
         const existingIdx = currentAccounts.findIndex(a => a.id === accountId || a.user.username === user.username);
         let updatedAccounts: ConnectedAccount[];
 
@@ -389,26 +454,28 @@ export class UserAuthenticationService {
         this.salvarContasNoStorage(updatedAccounts);
         this.atualizarUsuarioAtivoCombinado(updatedAccounts);
 
+        if (shouldBeActive && chaveAcesso) {
+            this.ws?.identifySession(chaveAcesso);
+        }
+
         return newAccount;
     }
 
-    /**
-     * Desconecta e remove uma conta específica da lista de contas conectadas.
-     * Se a conta removida for a conta ativa, seleciona outra conta automaticamente.
-     * 
-     * @param userId ID do usuário a desconectar
-     */
-    async removerConta(userId: string): Promise<boolean> {
+    private async removerContaLocal(userId: string, chaveAcessoToDelete?: string): Promise<boolean> {
         const currentAccounts = [...this.$accounts.value];
-        const remainingAccounts = currentAccounts.filter(a => a.id !== userId && a.user.id !== userId);
+        const target = currentAccounts.find(a => a.id === userId || a.user.id === userId);
+        const chaveToRemove = chaveAcessoToDelete || extractChaveAcessoFromSession(target);
 
+        if (chaveToRemove) {
+            await this.accessKeyCrypto?.deleteKey(chaveToRemove);
+        }
+
+        const remainingAccounts = currentAccounts.filter(a => a.id !== userId && a.user.id !== userId);
         if (remainingAccounts.length === 0) {
-            // Nenhuma conta restante: encerra completamente a sessão
-            await this.sairDeTodasAsContas();
+            await this.limparSessaoLocal();
             return true;
         }
 
-        // Se a conta removida era a ativa, ativa a primeira das contas restantes
         const wasActive = currentAccounts.some(a => (a.id === userId || a.user.id === userId) && a.isActive);
         if (wasActive && remainingAccounts.length > 0) {
             remainingAccounts[0].isActive = true;
@@ -418,12 +485,31 @@ export class UserAuthenticationService {
         this.salvarContasNoStorage(remainingAccounts);
         this.atualizarUsuarioAtivoCombinado(remainingAccounts);
 
+        if (wasActive) {
+            const nextChave = extractChaveAcessoFromSession(remainingAccounts[0]);
+            if (nextChave) {
+                this.ws?.identifySession(nextChave);
+            }
+        }
+
         return true;
     }
 
-    /**
-     * Identifica o usuário atual no sistema (chamado no login inicial da aplicação).
-     */
+    async removerConta(userId: string): Promise<boolean> {
+        const target = this.$accounts.value.find(a => a.id === userId || a.user.id === userId);
+        const chaveAcesso = extractChaveAcessoFromSession(target);
+
+        if (chaveAcesso && this.authService) {
+            try {
+                await lastValueFrom(this.authService.desconectarDispositivo(chaveAcesso as any));
+            } catch {
+                // Melhor esforço: remove localmente mesmo se a rede falhar
+            }
+        }
+
+        return this.removerContaLocal(userId, chaveAcesso);
+    }
+
     async identificarUsuario(user: User) {
         let profile = user;
         if (this.authService) {
@@ -443,21 +529,13 @@ export class UserAuthenticationService {
         }, profile, true);
     }
 
-    /**
-     * Retorna os tokens bearer das contas adicionais conectadas (exceto a conta ativa).
-     * Usado pelo interceptor HTTP para enviar tokens complementares.
-     */
     obterTokensSecundarios(): string[] {
         const activeId = this.activeAccount?.id;
         return this.$accounts.value
-            .filter(a => a.id !== activeId && !!a.authentication?.bearer)
+            .filter(a => a.id !== activeId && !!a.authentication?.bearer && !isJwtExpired(a.authentication.bearer, 0))
             .map(a => a.authentication.bearer as string);
     }
 
-    /**
-     * Encerra a sessão da conta ativa atual.
-     * Se houver outras contas conectadas, transfere o controle para a próxima conta.
-     */
     async sair() {
         const active = this.activeAccount;
         if (active && this.$accounts.value.length > 1) {
@@ -467,23 +545,29 @@ export class UserAuthenticationService {
         }
     }
 
-    /**
-     * Encerra a sessão de todas as contas simultaneamente e redireciona para a página inicial.
-     */
-    async sairDeTodasAsContas() {
-        if (typeof localStorage !== 'undefined') {
-            localStorage.removeItem(ACCOUNTS_STORAGE_KEY);
-            localStorage.removeItem('CIUSR');
-        }
+    private async limparSessaoLocal() {
+        await this.accessKeyCrypto?.clearAllKeys();
+        clearAllAuthStorage();
         this.storage?.clean();
         this.$accounts.next([]);
         this.$user.next(undefined);
         setTimeout(() => this.router?.navigate(['/']));
     }
 
-    /**
-     * Obtém os dispositivos vinculados à conta do usuário.
-     */
+    async sairDeTodasAsContas() {
+        const chaves = this.getConnectedChaveAcessos();
+        if (this.authService && chaves.length > 0) {
+            for (const chaveAcesso of chaves) {
+                try {
+                    await lastValueFrom(this.authService.desconectarDispositivo(chaveAcesso as any));
+                } catch {
+                    // Melhor esforço para revogar cada acesso no servidor
+                }
+            }
+        }
+        await this.limparSessaoLocal();
+    }
+
     async obterDispositivos(): Promise<ConnectedDevice[]> {
         if (!this.authService) return [];
         try {
@@ -494,15 +578,12 @@ export class UserAuthenticationService {
         }
     }
 
-    /**
-     * Desconecta um dispositivo individual pelo ID da chave de acesso.
-     */
     async desconectarDispositivo(chaveAcesso: string): Promise<boolean> {
         if (!this.authService) return false;
         try {
             const res: any = await lastValueFrom(this.authService.desconectarDispositivo(chaveAcesso as any));
             if (res?.isCurrent) {
-                await this.sair();
+                await this.removerContaLocal(this.activeAccount?.id || '', chaveAcesso);
             }
             return !!res?.success;
         } catch (error) {
@@ -511,9 +592,6 @@ export class UserAuthenticationService {
         }
     }
 
-    /**
-     * Desconecta todos os outros dispositivos vinculados, mantendo a sessão atual.
-     */
     async desconectarOutrosDispositivos(): Promise<boolean> {
         if (!this.authService) return false;
         try {

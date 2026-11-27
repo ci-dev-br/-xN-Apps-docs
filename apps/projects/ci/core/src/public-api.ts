@@ -4,6 +4,8 @@
 export * from './lib/core.module';
 export * from './lib/auth/authorization.service';
 export * from './lib/auth/auth.guard';
+export * from './lib/auth/access-key-crypto.service';
+export * from './lib/auth/client-session-storage';
 export * from './lib/icons/load-icons.module';
 export * from './lib/provider';
 

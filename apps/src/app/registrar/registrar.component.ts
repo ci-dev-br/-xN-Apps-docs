@@ -12,7 +12,7 @@ import { AuthService, InviteService, Register, RegisterService } from '@ci/porta
 import { AuthModule, UserAuthenticationService } from '@ci/auth';
 import { provideNgxMask } from 'ngx-mask';
 import { FooterModule } from '@ci/components';
-import { ApplicationCatalogService, CoreModule, IsEmail, IsPhoneNumber, StageModule, StageService, StorageService } from '@ci/core';
+import { AccessKeyCryptoService, ApplicationCatalogService, CoreModule, IsEmail, IsPhoneNumber, StageModule, StageService, StorageService, USER_STORE_KEY, WsService } from '@ci/core';
 
 @Component({
   selector: 'ci-registrar',
@@ -105,6 +105,8 @@ export class RegistrarComponent implements OnInit {
     private readonly route: ActivatedRoute,
     @Optional() private readonly storageService?: StorageService,
     @Optional() private readonly catalogService?: ApplicationCatalogService,
+    @Optional() private readonly accessKeyCrypto?: AccessKeyCryptoService,
+    @Optional() private readonly wsService?: WsService,
   ) {
     stages.host = this;
   }
@@ -220,6 +222,7 @@ export class RegistrarComponent implements OnInit {
     const val = this.inviteForm.getRawValue();
 
     try {
+      const ephemeralKeyPair = await this.accessKeyCrypto?.generateEphemeralKeyPair();
       const response: any = await lastValueFrom(
         this.authService.registrar({
           body: {
@@ -231,20 +234,30 @@ export class RegistrarComponent implements OnInit {
             password: val.password || undefined,
             emailAuthorization: true,
             phoneAuthorization: Boolean(val.phone),
+            ...(ephemeralKeyPair ? {
+              publicKey: ephemeralKeyPair.publicKey,
+              publicKeyAlgorithm: ephemeralKeyPair.algorithm,
+            } : {}),
             ...({ invite: this.inviteHash, convite: this.inviteHash } as any),
           }
         })
       );
 
       this.registeredUser = response?.user || response;
+      if (response?.chaveAcesso && ephemeralKeyPair) {
+        await this.accessKeyCrypto?.bindKeyPair(response.chaveAcesso, ephemeralKeyPair);
+      }
       if (response?.bearer && this.registeredUser?.id) {
-        this.storageService?.store('apps.ci.dev.br.store.User', {
+        this.storageService?.store(USER_STORE_KEY, {
           authentication: {
             ...response,
             user: { ...this.registeredUser, photo: null }
           }
         });
         await this.userService.identificarUsuario(this.registeredUser);
+        if (response?.chaveAcesso) {
+          this.wsService?.identifySession(response.chaveAcesso);
+        }
         this.catalogService?.refreshMyActivations().subscribe({ error: () => { } });
       }
 

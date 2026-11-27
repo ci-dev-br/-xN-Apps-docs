@@ -68,17 +68,6 @@ export class ProfileMenu implements OnInit, OnDestroy {
                     dev.isOnline = status.isOnline;
                 }
             });
-
-        // Escuta revogação de sessão remota
-        this.ws?.sessionRevoked$
-            ?.pipe(takeUntil(this.destroy$))
-            ?.subscribe(async payload => {
-                if (!payload) return;
-                const currentChave = this.ws?.getStoredChaveAcesso();
-                if (!payload.chaveAcesso || payload.chaveAcesso === currentChave) {
-                    await this.users?.sair();
-                }
-            });
     }
 
     ngOnDestroy(): void {

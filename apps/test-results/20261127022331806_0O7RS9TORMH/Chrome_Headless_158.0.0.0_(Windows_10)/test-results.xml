@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-27T02:23:43" id="0" hostname="plhx33" tests="9" errors="0" failures="0" time="0.138">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="AuthorizationHttpInterceptor — Refresh, Chave de Acesso e Assinatura deve sincronizar novo bearer e refreshToken em apps.ci.dev.br.store.User e CI_ACCOUNTS durante refresh proativo" time="0.055" classname="Chrome_Headless_158_0_0_0_(Windows_10).AuthorizationHttpInterceptor — Refresh, Chave de Acesso e Assinatura"/>
+  <testcase name="AuthorizationHttpInterceptor — Refresh, Chave de Acesso e Assinatura deve limpar sessão e redirecionar para /acessar quando /auth/Refresh responder HTTP 200 com status 401" time="0.015" classname="Chrome_Headless_158_0_0_0_(Windows_10).AuthorizationHttpInterceptor — Refresh, Chave de Acesso e Assinatura"/>
+  <testcase name="AuthorizationHttpInterceptor — Refresh, Chave de Acesso e Assinatura deve assinar requisições /Sync com a chave privada do acesso e enviar headers de snapshot" time="0.015" classname="Chrome_Headless_158_0_0_0_(Windows_10).AuthorizationHttpInterceptor — Refresh, Chave de Acesso e Assinatura"/>
+  <testcase name="authGuard deve limpar storage e bloquear quando /auth/Profile falhar com erro HTTP" time="0.012" classname="Chrome_Headless_158_0_0_0_(Windows_10).authGuard"/>
+  <testcase name="authGuard deve bloquear e limpar storage quando não houver token válido" time="0.008" classname="Chrome_Headless_158_0_0_0_(Windows_10).authGuard"/>
+  <testcase name="authGuard should be created" time="0.003" classname="Chrome_Headless_158_0_0_0_(Windows_10).authGuard"/>
+  <testcase name="authGuard deve permitir acesso quando /auth/Profile retornar usuário válido" time="0.006" classname="Chrome_Headless_158_0_0_0_(Windows_10).authGuard"/>
+  <testcase name="authGuard deve bloquear quando /auth/Profile retornar sem id em vez de permitir passagem" time="0.006" classname="Chrome_Headless_158_0_0_0_(Windows_10).authGuard"/>
+  <testcase name="CoreService deve ser criado" time="0.018" classname="Chrome_Headless_158_0_0_0_(Windows_10).CoreService"/>
+  <system-out>
+    <![CDATA[Chrome Headless 158.0.0.0 (Windows 10) WARN: 'authGuard: acesso inválido ou revogado ao retomar aplicação:', Object{status: 401}
+,Chrome Headless 158.0.0.0 (Windows 10) LOG: '[app]'
+
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

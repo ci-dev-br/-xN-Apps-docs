@@ -4,6 +4,7 @@ import { Observable, of } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { StorageService } from "../storage/storage.service";
 import { CORE_ENV, ICoreEnvironment } from "../provider";
+import { USER_STORE_KEY, extractChaveAcessoFromSession } from "../auth/client-session-storage";
 
 export interface ClientLogPayload {
     message?: string;
@@ -100,29 +101,32 @@ export class ConsoleService {
         userEmail?: string;
         userRoles?: string[];
         chaveAcesso?: string;
+        bearer?: string;
         raw?: any;
     } {
         if (!this.storage) return {};
 
         try {
-            const userStore: any = this.storage.restore('apps.ci.dev.br.store.User');
+            const userStore: any = this.storage.restore(USER_STORE_KEY);
             if (!userStore) return {};
 
             const auth = userStore.authentication;
             const bearer = auth?.bearer;
-            const user = userStore.user || userStore;
+            const chaveAcesso = extractChaveAcessoFromSession(userStore);
+            const user = userStore.user || auth?.user || userStore;
 
             return {
                 userId: user?.id || userStore?.id,
                 userEmail: user?.email || userStore?.email,
                 userRoles: user?.roles || userStore?.roles || [],
-                chaveAcesso: bearer,
+                chaveAcesso,
+                bearer,
                 raw: {
                     id: user?.id || userStore?.id,
                     username: user?.username || user?.nome || userStore?.nome,
                     email: user?.email || userStore?.email,
                     roles: user?.roles || userStore?.roles || [],
-                    chaveAcesso: bearer ? bearer.replace('Bearer ', '') : undefined,
+                    chaveAcesso,
                     permissions: user?.permissions || userStore?.permissions,
                 },
             };
@@ -191,10 +195,10 @@ export class ConsoleService {
             'Content-Type': 'application/json',
         });
 
-        if (creds.chaveAcesso) {
-            const token = creds.chaveAcesso.startsWith('Bearer ')
-                ? creds.chaveAcesso
-                : `Bearer ${creds.chaveAcesso}`;
+        if (creds.bearer) {
+            const token = creds.bearer.startsWith('Bearer ')
+                ? creds.bearer
+                : `Bearer ${creds.bearer}`;
             headers = headers.set('Authorization', token);
         }
 
