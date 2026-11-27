@@ -7,6 +7,7 @@ import { CommentMeta } from "./models/comment-meta.entity";
 import { Comment } from "./models/comment.entity";
 import { Links } from "./models/links.entity";
 import { SitePost } from "./models/site-post.entity";
+import { SiteMedia } from "./models/site-media.entity";
 import { Term } from "./models/term.entity";
 import { TermMeta } from "./models/term-meta.entity";
 import { SiteOption } from "./models/site-option.entity";
@@ -16,9 +17,11 @@ import { CommentMetaController } from "./controllers/comment-meta.controller";
 import { LinksController } from "./controllers/links.controller";
 import { SiteOptionController } from "./controllers/site-option.controller";
 import { SitePostController } from "./controllers/site-post.controller";
+import { SiteMediaController } from "./controllers/site-media.controller";
 import { TermController } from "./controllers/term.controller";
 import { TermMetaController } from "./controllers/term-meta.controller";
 import { CommentController } from "./controllers/comment.controller";
+import { CmsController } from "./controllers/cms.controller";
 import { WebsiteService } from "./services/website.service";
 import { SitePageService } from "./services/site-page.service";
 import { CommentMetaService } from "./services/comment-meta.service";
@@ -26,8 +29,11 @@ import { CommentService } from "./services/comment.service";
 import { LinksService } from "./services/links.service";
 import { SiteOptionService } from "./services/site-option.service";
 import { SitePostService } from "./services/site-post.service";
+import { SiteMediaService } from "./services/site-media.service";
 import { TermService } from "./services/term.service";
 import { TermMetaService } from "./services/term-meta.service";
+import { CmsService } from "./cms.service";
+
 export const CmsEntities = [
     Website,
     SitePage,
@@ -36,15 +42,18 @@ export const CmsEntities = [
     Links,
     SiteOption,
     SitePost,
+    SiteMedia,
     Term,
     TermMeta,
 ];
+
 @Module({
     imports: [
         TypeOrmModule.forFeature(CmsEntities),
         CoreModule,
     ],
     controllers: [
+        CmsController,
         WebsiteController,
         SitePageController,
         CommentMetaController,
@@ -52,10 +61,12 @@ export const CmsEntities = [
         LinksController,
         SiteOptionController,
         SitePostController,
+        SiteMediaController,
         TermController,
         TermMetaController,
     ],
     providers: [
+        CmsService,
         WebsiteService,
         SitePageService,
         CommentMetaService,
@@ -63,10 +74,18 @@ export const CmsEntities = [
         LinksService,
         SiteOptionService,
         SitePostService,
+        SiteMediaService,
         TermService,
         TermMetaService,
+        {
+            provide: 'CLIENT.MODEL.EDITABLES',
+            useValue: [
+                ...(CmsEntities.map(e => e.name)),
+            ],
+        },
     ],
     exports: [
+        CmsService,
         WebsiteService,
         SitePageService,
         CommentMetaService,
@@ -74,11 +93,13 @@ export const CmsEntities = [
         LinksService,
         SiteOptionService,
         SitePostService,
+        SiteMediaService,
         TermService,
         TermMetaService,
     ]
 })
 export class CmsModule { }
+
 export {
     Website,
     SitePage,
@@ -86,7 +107,12 @@ export {
     Comment,
     Links,
     SiteOption,
+    SitePost,
     SitePost as Post,
+    SiteMedia,
     Term,
     TermMeta,
-}
+};
+export * from './models/cms-enums';
+export * from './dto/dashboard-cms.dto';
+export * from './cms.service';

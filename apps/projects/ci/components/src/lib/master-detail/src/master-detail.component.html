@@ -49,6 +49,200 @@
     </div>
 </mat-toolbar>
 
+@if(isOrganizationSelected){
+<div class="org-tenant-filter-bar">
+    <div class="tenant-filter-controls">
+        <span class="org-context-badge" matTooltip="Organização selecionada">
+            <mat-icon>corporate_fare</mat-icon>
+            <span>{{ activeOrganizationName || activeOrganizationId }}</span>
+        </span>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="tenant-select-field">
+            <mat-label>Tenants disponíveis</mat-label>
+            <mat-select
+                multiple
+                [ngModel]="selectedTenantIds"
+                (ngModelChange)="onSelectedTenantsChange($event)"
+                [disabled]="loadingTenants">
+                @for (tenant of availableTenants; track tenant.id) {
+                <mat-option [value]="tenant.id">
+                    <span>{{ tenant.name || tenant.id }}</span>
+                    @if(tenant.permissionsSummary; as perms){
+                    <small class="tenant-opt-perms">
+                        ({{ perms.canEditar ? 'Editar' : (perms.canVer ? 'Ver' : 'Visualizar') }}{{ perms.canCompartilhar ? ' · Compartilhar' : '' }})
+                    </small>
+                    }
+                </mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <button
+            mat-stroked-button
+            color="primary"
+            type="button"
+            class="tenant-create-btn"
+            (click)="startCreateTenant()"
+            matTooltip="Criar novo Tenant nesta organização">
+            <mat-icon>add_business</mat-icon>
+            <span>Novo Tenant</span>
+        </button>
+
+        @if(primarySelectedTenant; as selectedTenant){
+        <button
+            mat-stroked-button
+            type="button"
+            class="tenant-edit-btn"
+            [disabled]="selectedTenant.permissionsSummary?.canEditar === false"
+            (click)="startEditSelectedTenant()"
+            matTooltip="Editar Tenant selecionado">
+            <mat-icon>edit</mat-icon>
+            <span>Editar Tenant</span>
+        </button>
+
+        <button
+            mat-stroked-button
+            type="button"
+            class="tenant-perms-btn"
+            [disabled]="!selectedTenant.permissionsSummary?.canCompartilhar && !selectedTenant.permissionsSummary?.canVer"
+            (click)="openTenantPermissionsPanel()"
+            matTooltip="Visualizar e gerenciar permissões do Tenant">
+            <mat-icon>admin_panel_settings</mat-icon>
+            <span>Permissões</span>
+        </button>
+        }
+    </div>
+
+    @if(selectedTenants.length > 0){
+    <div class="selected-tenants-summary">
+        @for (t of selectedTenants; track t.id) {
+        <div class="selected-tenant-card">
+            <mat-icon class="tenant-chip-icon">workspaces</mat-icon>
+            <div class="selected-tenant-meta">
+                <strong>{{ t.name || t.id }}</strong>
+                @if(t.descriptions){
+                <span class="tenant-desc">{{ t.descriptions }}</span>
+                }
+            </div>
+            @if(t.permissionsSummary; as p){
+            <div class="tenant-perm-badges">
+                @if(p.canVisualizar){<span class="perm-badge">Visualizar</span>}
+                @if(p.canVer){<span class="perm-badge">Ver</span>}
+                @if(p.canEditar){<span class="perm-badge perm-edit">Editar</span>}
+                @if(p.canCompartilhar){<span class="perm-badge perm-share">Compartilhar</span>}
+            </div>
+            }
+        </div>
+        }
+    </div>
+    }
+
+    @if(tenantActionFeedback){
+    <div class="tenant-feedback-ok">{{ tenantActionFeedback }}</div>
+    }
+    @if(tenantActionError){
+    <div class="tenant-feedback-err">{{ tenantActionError }}</div>
+    }
+
+    @if(tenantPanelMode === 'create'){
+    <div class="tenant-inline-panel">
+        <div class="tenant-panel-title">Criar novo Tenant na organização</div>
+        <div class="tenant-panel-fields">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Nome do Tenant</mat-label>
+                <input matInput type="text" [(ngModel)]="newTenantForm.name" placeholder="Ex: Financeiro / Unidade Sul" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Descrição</mat-label>
+                <input matInput type="text" [(ngModel)]="newTenantForm.descriptions" placeholder="Finalidade do tenant" />
+            </mat-form-field>
+        </div>
+        <div class="tenant-perm-checks">
+            <mat-checkbox [(ngModel)]="newTenantForm.permissions.canVisualizar">Visualizar</mat-checkbox>
+            <mat-checkbox [(ngModel)]="newTenantForm.permissions.canVer">Ver</mat-checkbox>
+            <mat-checkbox [(ngModel)]="newTenantForm.permissions.canEditar">Editar</mat-checkbox>
+            <mat-checkbox [(ngModel)]="newTenantForm.permissions.canCompartilhar">Compartilhar</mat-checkbox>
+        </div>
+        <div class="tenant-panel-actions">
+            <button mat-button type="button" (click)="tenantPanelMode = 'none'">Cancelar</button>
+            <button mat-flat-button color="primary" type="button" [disabled]="tenantActionBusy" (click)="createTenant()">
+                Criar Tenant
+            </button>
+        </div>
+    </div>
+    }
+
+    @if(tenantPanelMode === 'edit' && primarySelectedTenant){
+    <div class="tenant-inline-panel">
+        <div class="tenant-panel-title">Editar Tenant: {{ primarySelectedTenant.name }}</div>
+        <div class="tenant-panel-fields">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Nome do Tenant</mat-label>
+                <input matInput type="text" [(ngModel)]="editTenantForm.name" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Descrição</mat-label>
+                <input matInput type="text" [(ngModel)]="editTenantForm.descriptions" />
+            </mat-form-field>
+        </div>
+        <div class="tenant-panel-actions">
+            <button mat-button type="button" (click)="tenantPanelMode = 'none'">Cancelar</button>
+            <button mat-flat-button color="primary" type="button" [disabled]="tenantActionBusy" (click)="saveEditedTenant()">
+                Salvar Alterações
+            </button>
+        </div>
+    </div>
+    }
+
+    @if(tenantPanelMode === 'permissions' && primarySelectedTenant){
+    <div class="tenant-inline-panel">
+        <div class="tenant-panel-title">Permissões do Tenant: {{ primarySelectedTenant.name }}</div>
+        @if(primarySelectedTenant.permissionsSummary?.canCompartilhar){
+        <div class="tenant-panel-fields">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Usuário (e-mail ou login)</mat-label>
+                <input matInput type="text" [(ngModel)]="newPermissionForm.emailOrUsername" placeholder="usuario@empresa.com" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Role (opcional)</mat-label>
+                <input matInput type="text" [(ngModel)]="newPermissionForm.role" placeholder="Ex: ORG_FINANCEIRO" />
+            </mat-form-field>
+        </div>
+        <div class="tenant-perm-checks">
+            <mat-checkbox [(ngModel)]="newPermissionForm.canVisualizar">Visualizar</mat-checkbox>
+            <mat-checkbox [(ngModel)]="newPermissionForm.canVer">Ver</mat-checkbox>
+            <mat-checkbox [(ngModel)]="newPermissionForm.canEditar">Editar</mat-checkbox>
+            <mat-checkbox [(ngModel)]="newPermissionForm.canCompartilhar">Compartilhar</mat-checkbox>
+            <button mat-flat-button color="primary" type="button" [disabled]="tenantActionBusy" (click)="saveTenantPermission()">
+                Conceder / Atualizar
+            </button>
+        </div>
+        }
+        @if(tenantPermissionsList.length > 0){
+        <div class="tenant-perms-list">
+            @for (perm of tenantPermissionsList; track perm.id) {
+            <div class="tenant-perm-row">
+                <span class="perm-target">{{ perm.userId || perm.role || perm.organizacaoId || 'Geral' }}</span>
+                <span class="perm-flags">
+                    @if(perm.canVisualizar){<span class="perm-badge">Visualizar</span>}
+                    @if(perm.canVer){<span class="perm-badge">Ver</span>}
+                    @if(perm.canEditar){<span class="perm-badge perm-edit">Editar</span>}
+                    @if(perm.canCompartilhar){<span class="perm-badge perm-share">Compartilhar</span>}
+                </span>
+                @if(primarySelectedTenant.permissionsSummary?.canCompartilhar){
+                <button mat-icon-button color="warn" type="button" matTooltip="Remover permissão" (click)="removeTenantPermission(perm.id)">
+                    <mat-icon>delete_outline</mat-icon>
+                </button>
+                }
+            </div>
+            }
+        </div>
+        }
+    </div>
+    }
+</div>
+}
+
 @if(showColumnFilters && visualizacao !== 'table' && filterableFields.length > 0){
 <div class="schema-filter-bar">
     @for (field of filterableFields; track field.key) {
@@ -104,13 +298,22 @@
     </div>
     }@else{
     @for (item of source; track $index) {
-    <mat-card appearance="outlined" class="list-row-card" (click)="editar(item, $event)" tabindex="0">
+    <mat-card appearance="outlined" class="list-row-card"
+        [class.tenant-owned-item]="hasTenantOwner(item)"
+        [class.tenant-selected-match]="isItemInSelectedTenant(item)"
+        (click)="editar(item, $event)" tabindex="0">
         <div class="list-row-avatar">
             <span>{{getItemInitials(item)}}</span>
         </div>
         <div class="list-row-main">
             <div class="list-row-header">
                 <strong class="list-row-title">{{getItemTitle(item)}}</strong>
+                @if(hasTenantOwner(item)){
+                <span class="tenant-owner-badge" [matTooltip]="'Pertence ao tenant: ' + getItemTenantLabel(item)">
+                    <mat-icon>workspaces</mat-icon>
+                    <span>{{getItemTenantLabel(item)}}</span>
+                </span>
+                }
                 @if(getItemSubtitle(item); as subtitle){
                 <span class="list-row-subtitle">{{subtitle}}</span>
                 }
@@ -151,7 +354,10 @@
     }@else{
     <div class="thumbnails-grid">
         @for (item of source; track $index) {
-        <mat-card appearance="outlined" class="thumbnail-card" (click)="editar(item, $event)" tabindex="0">
+        <mat-card appearance="outlined" class="thumbnail-card"
+            [class.tenant-owned-item]="hasTenantOwner(item)"
+            [class.tenant-selected-match]="isItemInSelectedTenant(item)"
+            (click)="editar(item, $event)" tabindex="0">
             <div class="thumbnail-card-header">
                 <div class="thumbnail-avatar">
                     <mat-icon>{{getEntityIcon()}}</mat-icon>
@@ -159,6 +365,12 @@
                 <div class="thumbnail-titles">
                     <h4 class="thumbnail-title" [title]="getItemTitle(item)">{{getItemTitle(item)}}</h4>
                     <span class="thumbnail-entity-tag">{{schemaName | nomenclatura}}</span>
+                    @if(hasTenantOwner(item)){
+                    <span class="tenant-owner-badge" [matTooltip]="'Pertence ao tenant: ' + getItemTenantLabel(item)">
+                        <mat-icon>workspaces</mat-icon>
+                        <span>{{getItemTenantLabel(item)}}</span>
+                    </span>
+                    }
                 </div>
                 <div class="thumbnail-actions" (click)="$event.stopPropagation()">
                     <button mat-icon-button matTooltip="Editar" (click)="editar(item, $event)">

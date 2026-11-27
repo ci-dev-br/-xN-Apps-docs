@@ -9,6 +9,10 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deleteHistoricoContato } from '../fn/historico-contato/delete-historico-contato';
+import { DeleteHistoricoContato$Params } from '../fn/historico-contato/delete-historico-contato';
+import { getByInternalIdHistoricoContato } from '../fn/historico-contato/get-by-internal-id-historico-contato';
+import { GetByInternalIdHistoricoContato$Params } from '../fn/historico-contato/get-by-internal-id-historico-contato';
 import { getListHistoricoContato } from '../fn/historico-contato/get-list-historico-contato';
 import { GetListHistoricoContato$Params } from '../fn/historico-contato/get-list-historico-contato';
 import { HistoricoContato } from '../models/historico-contato';
@@ -46,6 +50,31 @@ export class HistoricoContatoService extends BaseService {
     );
   }
 
+  /** Path part for operation `getByInternalIdHistoricoContato()` */
+  static readonly GetByInternalIdHistoricoContatoPath = '/HistoricoContato/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdHistoricoContato()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdHistoricoContato$Response(params: GetByInternalIdHistoricoContato$Params, context?: HttpContext): Observable<StrictHttpResponse<HistoricoContato>> {
+    return getByInternalIdHistoricoContato(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdHistoricoContato$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdHistoricoContato$Params, context?: HttpContext): Observable<HistoricoContato> {
+    return this.getByInternalIdHistoricoContato$Response(params, context).pipe(
+      map((r: StrictHttpResponse<HistoricoContato>): HistoricoContato => r.body)
+    );
+  }
+
   /** Path part for operation `getListHistoricoContato()` */
   static readonly GetListHistoricoContatoPath = '/HistoricoContato/GetList';
 
@@ -68,6 +97,31 @@ export class HistoricoContatoService extends BaseService {
   getList(params: GetListHistoricoContato$Params, context?: HttpContext): Observable<Array<HistoricoContato>> {
     return this.getListHistoricoContato$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<HistoricoContato>>): Array<HistoricoContato> => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteHistoricoContato()` */
+  static readonly DeleteHistoricoContatoPath = '/HistoricoContato/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteHistoricoContato()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteHistoricoContato$Response(params: DeleteHistoricoContato$Params, context?: HttpContext): Observable<StrictHttpResponse<HistoricoContato>> {
+    return deleteHistoricoContato(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteHistoricoContato$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteHistoricoContato$Params, context?: HttpContext): Observable<HistoricoContato> {
+    return this.deleteHistoricoContato$Response(params, context).pipe(
+      map((r: StrictHttpResponse<HistoricoContato>): HistoricoContato => r.body)
     );
   }
 

@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Logger, NotFoundException, Param, Post, Query, Req } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Logger, NotFoundException, Optional, Param, Post, Query, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
@@ -6,7 +6,11 @@ import { createHash } from 'crypto';
 import { News } from '../models/news.entity';
 import { Category } from '../models/category.entity';
 import { ScraperService } from '../services/scraper.service';
+import { NewsReaderDigestService } from '../services/news-reader-digest.service';
+import { ReaderNewsDigestDto } from '../dto/reader-digest.dto';
+import { extractSignificantTokens } from '../utils/news-text.utils';
 import { Public } from '@ci/auth/decorators/public.decorator';
+import { Role } from '@ci/auth/decorators/role.decorator';
 import { Policy } from '@ci/core';
 import { NewsVote, TipoVoto } from '../models/news-vote.entity';
 import { NewsComment } from '../models/news-comment.entity';
@@ -44,24 +48,6 @@ export class CorrelatedSearchInputDto {
     limit?: number;
 }
 
-const PT_STOP_WORDS = new Set([
-    'para', 'como', 'mais', 'menos', 'muito', 'muita', 'muitos', 'muitas', 'sobre', 'entre',
-    'apos', 'após', 'antes', 'depois', 'durante', 'contra', 'desde', 'ate', 'até', 'sem',
-    'com', 'por', 'pelo', 'pela', 'pelos', 'pelas', 'num', 'numa', 'nos', 'nas', 'dos', 'das',
-    'que', 'quem', 'qual', 'quais', 'quando', 'onde', 'porque', 'pois', 'mas', 'porem', 'porém',
-    'ainda', 'tambem', 'também', 'apenas', 'mesmo', 'mesma', 'mesmos', 'mesmas', 'outro', 'outra',
-    'outros', 'outras', 'todo', 'toda', 'todos', 'todas', 'cada', 'esse', 'essa', 'esses', 'essas',
-    'este', 'esta', 'estes', 'estas', 'isso', 'isto', 'aquele', 'aquela', 'aquilo', 'seu', 'sua',
-    'seus', 'suas', 'nosso', 'nossa', 'nossos', 'nossas', 'eles', 'elas', 'voce', 'você', 'voces',
-    'vocês', 'foi', 'sao', 'são', 'era', 'eram', 'ser', 'estar', 'esta', 'está', 'estao', 'estão',
-    'tem', 'têm', 'tinha', 'ter', 'teve', 'pode', 'podem', 'podia', 'poder', 'faz', 'fazer', 'fez',
-    'disse', 'afirmou', 'segundo', 'conforme', 'brasil', 'hoje', 'ontem', 'amanha', 'amanhã',
-    'ano', 'anos', 'mes', 'mês', 'meses', 'dia', 'dias', 'hora', 'horas', 'novo', 'nova', 'novos',
-    'novas', 'grande', 'grandes', 'maior', 'menor', 'primeiro', 'primeira', 'ultimo', 'último',
-    'ultima', 'última', 'http', 'https', 'www', 'com', 'html', 'leia', 'veja', 'confira', 'saiba',
-    'nao', 'não', 'sim', 'uma', 'uns', 'umas', 'ele', 'ela', 'aqui', 'ali', 'entao', 'então'
-]);
-
 @ApiTags('News')
 @Controller('News')
 export class NewsController {
@@ -81,6 +67,7 @@ export class NewsController {
         @InjectRepository(User) private userRepo: Repository<User>,
         private readonly service: ScraperService,
         private readonly socialService?: SocialService,
+        @Optional() private readonly readerDigestService?: NewsReaderDigestService,
     ) { }
 
     private isUuid(val?: string): boolean {
@@ -713,37 +700,7 @@ export class NewsController {
     }
 
     private extractCorrelationTokens(text: string, maxTokens = 12): string[] {
-        if (!text) return [];
-        const clean = text
-            .replace(/<[^>]*>/g, ' ')
-            .replace(/&[a-z0-9#]+;/gi, ' ')
-            .replace(/\s+/g, ' ')
-            .trim();
-
-        const rawMatches = clean.match(/[A-Za-zÀ-ÖØ-öø-ÿ0-9]{3,}/g) || [];
-        const freq = new Map<string, { score: number; token: string }>();
-
-        for (const word of rawMatches) {
-            const sanitized = word
-                .toLowerCase()
-                .replace(/[^a-zà-öø-ÿ0-9]/g, '');
-            if (sanitized.length < 3 || /^\d+$/.test(sanitized) || PT_STOP_WORDS.has(sanitized)) {
-                continue;
-            }
-            const isCapitalized = /^[A-ZÀ-ÖØ-Þ]/.test(word);
-            const weight = isCapitalized ? 2.5 : 1;
-            const current = freq.get(sanitized);
-            if (current) {
-                current.score += weight;
-            } else {
-                freq.set(sanitized, { score: weight, token: sanitized });
-            }
-        }
-
-        return Array.from(freq.values())
-            .sort((a, b) => b.score - a.score)
-            .slice(0, maxTokens)
-            .map(item => item.token);
+        return extractSignificantTokens(text, maxTokens);
     }
 
     private buildPostgresTsQuery(phrase?: string, title?: string, content?: string): {
@@ -956,5 +913,26 @@ export class NewsController {
                 r => (r ? r.substring(0, 170) + ' \n\n[...]' : ''),
             ).reading,
         }));
+    }
+
+    /**
+     * Retorna o boletim curado a cada 2h com as notícias mais recentes e mais curtidas,
+     * agrupadas por similaridade e organizadas por tempo de publicação, com autor e link original,
+     * restrito a usuários autenticados com role READER.
+     */
+    @Role('READER')
+    @Get('ReaderDigest')
+    @ApiOperation({
+        operationId: 'getReaderNewsDigest',
+        summary: 'Retorna o boletim de notícias mais curtidas agrupadas por similaridade para usuários READER',
+    })
+    @ApiQuery({ name: 'refresh', type: Boolean, required: false })
+    @ApiResponse({ status: 200, type: ReaderNewsDigestDto })
+    async getReaderDigest(@Query('refresh') refresh?: string): Promise<ReaderNewsDigestDto> {
+        if (!this.readerDigestService) {
+            throw new BadRequestException('Serviço de curadoria para leitores indisponível.');
+        }
+        const shouldRefresh = refresh === 'true' || refresh === '1';
+        return await this.readerDigestService.getLatestDigest({ refresh: shouldRefresh });
     }
 }

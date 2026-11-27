@@ -60,7 +60,8 @@
         }
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky:true" [contextMenu]="headerContextMenu"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowSelectionHandler($event, row)"
-            [tabindex]="1" [class.--selected-item]="selectedItem === row"></tr>
+            [tabindex]="1" [class.--selected-item]="selectedItem === row"
+            [class.--tenant-owned]="hasRowTenant(row)"></tr>
     </table>
     }
     @if(!source || source.length === 0){

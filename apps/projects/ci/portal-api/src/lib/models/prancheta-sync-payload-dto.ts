@@ -9,4 +9,9 @@ export interface PranchetaSyncPayloadDto {
    * Escopo do Board: USER ou TENANT
    */
   scope?: 'USER' | 'TENANT';
+
+  /**
+   * ID opcional do tenant para segmentação do board
+   */
+  tenantId?: string;
 }

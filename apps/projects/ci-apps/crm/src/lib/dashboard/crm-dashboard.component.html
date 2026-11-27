@@ -9,15 +9,19 @@
 
     <div class="actions-section">
       <div class="filter-group">
-        <label>Responsável:</label>
-        <select [(ngModel)]="selectedOwner">
+        <label for="owner-filter">Responsável:</label>
+        <select id="owner-filter" [(ngModel)]="selectedOwner" (ngModelChange)="onOwnerFilterChange()">
           <option value="Todos">Todos os Corretores / Vendedores</option>
-          <option value="Roberto Silva">Roberto Silva</option>
-          <option value="Juliana Costa">Juliana Costa</option>
-          <option value="Lucas Prado">Lucas Prado</option>
-          <option value="Mariana Duarte">Mariana Duarte</option>
+          @for (resp of responsaveis; track resp) {
+            <option [value]="resp">{{ resp }}</option>
+          }
         </select>
       </div>
+
+      <button mat-stroked-button (click)="loadDashboard()" [disabled]="loading" matTooltip="Atualizar dados do backend">
+        <mat-icon>refresh</mat-icon>
+        Atualizar
+      </button>
 
       <button mat-flat-button color="primary" class="new-opp-btn" (click)="openNewOppModal()">
         <mat-icon>add</mat-icon>
@@ -25,6 +29,16 @@
       </button>
     </div>
   </header>
+
+  <ci-tenant-filter-bar
+    [selectedTenantIds]="selectedTenantIds"
+    (selectedTenantIdsChange)="onTenantFilterChange($event)"
+    label="Segmentar CRM por Tenants:">
+  </ci-tenant-filter-bar>
+
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
 
   <!-- KPI Metrics Cards -->
   <section class="kpi-grid">
@@ -34,8 +48,11 @@
       </div>
       <div class="kpi-data">
         <span class="kpi-label">Pipeline Ativo</span>
-        <span class="kpi-value">{{ getTotalPipelineValue() | currency:'BRL':'symbol':'1.0-0':'pt-BR' }}</span>
-        <span class="kpi-trend positive"><mat-icon>trending_up</mat-icon> +18.4% vs mês anterior</span>
+        <span class="kpi-value">{{ (kpis.pipelineAtivo || 0) | currency:'BRL':'symbol':'1.0-0':'pt-BR' }}</span>
+        <span class="kpi-trend neutral">
+          <mat-icon>account_balance_wallet</mat-icon>
+          Ticket médio: {{ (kpis.ticketMedio || 0) | currency:'BRL':'symbol':'1.0-0':'pt-BR' }}
+        </span>
       </div>
     </div>
 
@@ -45,8 +62,11 @@
       </div>
       <div class="kpi-data">
         <span class="kpi-label">Total Fechado / Ganho</span>
-        <span class="kpi-value">{{ getTotalWonValue() | currency:'BRL':'symbol':'1.0-0':'pt-BR' }}</span>
-        <span class="kpi-trend positive"><mat-icon>verified</mat-icon> Meta do mês: 92% atingida</span>
+        <span class="kpi-value">{{ (kpis.totalGanho || 0) | currency:'BRL':'symbol':'1.0-0':'pt-BR' }}</span>
+        <span class="kpi-trend positive">
+          <mat-icon>verified</mat-icon>
+          {{ kpis.oportunidadesGanhas || 0 }} negócios ganhos
+        </span>
       </div>
     </div>
 
@@ -56,8 +76,11 @@
       </div>
       <div class="kpi-data">
         <span class="kpi-label">Oportunidades em Aberto</span>
-        <span class="kpi-value">{{ filteredOpportunities.length }}</span>
-        <span class="kpi-trend neutral"><mat-icon>timelapse</mat-icon> Ciclo médio: 14 dias</span>
+        <span class="kpi-value">{{ kpis.oportunidadesEmAberto || 0 }}</span>
+        <span class="kpi-trend neutral">
+          <mat-icon>timelapse</mat-icon>
+          Ciclo médio: {{ kpis.cicloMedioDias || 0 }} dias
+        </span>
       </div>
     </div>
 
@@ -67,8 +90,11 @@
       </div>
       <div class="kpi-data">
         <span class="kpi-label">Taxa de Conversão</span>
-        <span class="kpi-value">34.8%</span>
-        <span class="kpi-trend positive"><mat-icon>trending_up</mat-icon> +3.2% este trimestre</span>
+        <span class="kpi-value">{{ (kpis.taxaConversao || 0) | number:'1.0-1':'pt-BR' }}%</span>
+        <span class="kpi-trend neutral">
+          <mat-icon>pending_actions</mat-icon>
+          {{ kpis.atividadesPendentes || 0 }} follow-ups pendentes
+        </span>
       </div>
     </div>
   </section>
@@ -99,43 +125,50 @@
 
           <!-- Cards in Column -->
           <div class="column-cards">
-            @for (opp of getStageOpportunities(stage.id); track opp.id) {
-              <div class="opp-card" [class.won]="opp.stageId === 'ganho'">
+            @for (opp of getStageOpportunities(stage.id); track opp.internalId || opp.titulo) {
+              <div class="opp-card" [class.won]="opp.estagio === 'ganho'">
                 <div class="opp-header">
-                  <span class="client-name">{{ opp.client }}</span>
-                  <span class="priority-tag" [ngClass]="opp.priority">{{ opp.priority | uppercase }}</span>
+                  <span class="client-name">{{ opp.clienteNome || 'Cliente não informado' }}</span>
+                  <div class="opp-header-right">
+                    <span class="priority-tag" [ngClass]="opp.prioridade || 'media'">
+                      {{ (opp.prioridade || 'media') | uppercase }}
+                    </span>
+                    <button mat-icon-button class="delete-mini-btn" (click)="deleteOpportunity(opp)" matTooltip="Excluir oportunidade">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
                 </div>
 
-                <div class="opp-title">{{ opp.title }}</div>
+                <div class="opp-title">{{ opp.titulo }}</div>
 
                 <div class="opp-value">
-                  {{ opp.value | currency:'BRL':'symbol':'1.0-0':'pt-BR' }}
+                  {{ (opp.valor || 0) | currency:'BRL':'symbol':'1.0-0':'pt-BR' }}
                 </div>
 
                 <div class="opp-progress">
                   <div class="progress-bar-container">
-                    <div class="progress-bar-fill" [style.width.%]="opp.probability"></div>
+                    <div class="progress-bar-fill" [style.width.%]="opp.probabilidade || 0"></div>
                   </div>
-                  <span class="probability-label">{{ opp.probability }}% prob.</span>
+                  <span class="probability-label">{{ opp.probabilidade || 0 }}% prob.</span>
                 </div>
 
                 <div class="opp-footer">
                   <div class="owner-info">
                     <mat-icon>person</mat-icon>
-                    <span>{{ opp.owner }}</span>
+                    <span>{{ opp.responsavel || 'Sem responsável' }}</span>
                   </div>
-                  <span class="days-in-stage">{{ opp.daysInStage }}d na etapa</span>
+                  <span class="days-in-stage">{{ getDaysInStage(opp) }}d na etapa</span>
                 </div>
 
                 <!-- Actions to advance or backtrack -->
                 <div class="opp-actions">
-                  <button mat-icon-button (click)="moveStage(opp, 'prev')" [disabled]="opp.stageId === 'lead'" matTooltip="Voltar etapa">
+                  <button mat-icon-button (click)="moveStage(opp, 'prev')" [disabled]="opp.estagio === 'lead'" matTooltip="Voltar etapa">
                     <mat-icon>arrow_back</mat-icon>
                   </button>
                   <span class="stage-step-info">
-                    Previsão: {{ opp.expectedClose }}
+                    Previsão: {{ formatExpectedClose(opp) }}
                   </span>
-                  <button mat-icon-button (click)="moveStage(opp, 'next')" [disabled]="opp.stageId === 'ganho'" matTooltip="Avançar etapa">
+                  <button mat-icon-button (click)="moveStage(opp, 'next')" [disabled]="opp.estagio === 'ganho'" matTooltip="Avançar etapa">
                     <mat-icon>arrow_forward</mat-icon>
                   </button>
                 </div>
@@ -158,20 +191,41 @@
   <section class="bottom-grid">
     <!-- Tasks and Follow-ups -->
     <div class="activities-card">
-      <div class="card-title-row">
-        <mat-icon>pending_actions</mat-icon>
-        <h3>Próximos Follow-ups & Tarefas</h3>
+      <div class="card-title-row with-action">
+        <div class="title-left">
+          <mat-icon>pending_actions</mat-icon>
+          <h3>Próximos Follow-ups & Tarefas</h3>
+        </div>
+        <button mat-stroked-button color="primary" class="mini-add-btn" (click)="openNewActivityModal()">
+          <mat-icon>add</mat-icon>
+          Nova Atividade
+        </button>
       </div>
       <div class="activities-list">
-        @for (act of activities; track act.id) {
+        @for (act of activities; track act.internalId || act.titulo) {
           <div class="activity-item" [class.completed]="act.status === 'completed'">
             <button mat-icon-button class="check-btn" (click)="toggleActivity(act)">
               <mat-icon>{{ act.status === 'completed' ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
             </button>
+            <mat-icon class="activity-type-icon">{{ getActivityIcon(act.tipo) }}</mat-icon>
             <div class="activity-details">
-              <span class="activity-title">{{ act.title }}</span>
-              <span class="activity-meta">{{ act.client }} • {{ act.dueTime }}</span>
+              <span class="activity-title">{{ act.titulo }}</span>
+              <span class="activity-meta">
+                {{ act.clienteNome || 'Geral' }}
+                @if (act.prazoTexto) { • {{ act.prazoTexto }} }
+                @if (act.responsavel) { • {{ act.responsavel }} }
+              </span>
             </div>
+            <button mat-icon-button class="delete-mini-btn" (click)="deleteActivity(act)" matTooltip="Remover atividade">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+        }
+
+        @if (activities.length === 0) {
+          <div class="empty-activities-msg">
+            <mat-icon>event_available</mat-icon>
+            <span>Nenhum follow-up cadastrado no momento.</span>
           </div>
         }
       </div>
@@ -187,42 +241,56 @@
         <a routerLink="/CRM/ClienteCrm" class="shortcut-btn">
           <mat-icon>groups</mat-icon>
           <div class="shortcut-text">
-            <strong>Clientes CRM</strong>
+            <strong>Clientes CRM ({{ contadores.clientes }})</strong>
             <small>Base cadastral 360°</small>
+          </div>
+        </a>
+        <a routerLink="/CRM/Oportunidade" class="shortcut-btn">
+          <mat-icon>trending_up</mat-icon>
+          <div class="shortcut-text">
+            <strong>Oportunidades ({{ kpis.totalOportunidades }})</strong>
+            <small>Tabela completa do funil</small>
+          </div>
+        </a>
+        <a routerLink="/CRM/AtividadeCrm" class="shortcut-btn">
+          <mat-icon>task_alt</mat-icon>
+          <div class="shortcut-text">
+            <strong>Atividades ({{ activities.length }})</strong>
+            <small>Agenda de follow-ups</small>
           </div>
         </a>
         <a routerLink="/CRM/Atendimento" class="shortcut-btn">
           <mat-icon>support_agent</mat-icon>
           <div class="shortcut-text">
-            <strong>Atendimentos</strong>
+            <strong>Atendimentos ({{ contadores.atendimentos }})</strong>
             <small>Chamados e suporte</small>
           </div>
         </a>
         <a routerLink="/CRM/Agendamento" class="shortcut-btn">
           <mat-icon>event</mat-icon>
           <div class="shortcut-text">
-            <strong>Agendamentos</strong>
+            <strong>Agendamentos ({{ contadores.agendamentos }})</strong>
             <small>Reuniões e visitas</small>
           </div>
         </a>
         <a routerLink="/CRM/HistoricoContato" class="shortcut-btn">
           <mat-icon>history</mat-icon>
           <div class="shortcut-text">
-            <strong>Histórico de Contatos</strong>
+            <strong>Histórico Contatos ({{ contadores.historicoContatos }})</strong>
             <small>Logs e anotações</small>
           </div>
         </a>
         <a routerLink="/CRM/Produto" class="shortcut-btn">
           <mat-icon>inventory_2</mat-icon>
           <div class="shortcut-text">
-            <strong>Produtos & Serviços</strong>
-            <small>Catálogo e preços</small>
+            <strong>Produtos ({{ contadores.produtos }})</strong>
+            <small>Catálogo e estoque</small>
           </div>
         </a>
-        <a routerLink="/CRM/Promocao" class="shortcut-btn">
+        <a routerLink="/CRM/CampanhaMarketing" class="shortcut-btn">
           <mat-icon>campaign</mat-icon>
           <div class="shortcut-text">
-            <strong>Campanhas & Promoções</strong>
+            <strong>Campanhas ({{ contadores.campanhas }})</strong>
             <small>Segmentação de leads</small>
           </div>
         </a>
@@ -241,38 +309,51 @@
         <div class="modal-body">
           <div class="form-group">
             <label>Título do Negócio *</label>
-            <input type="text" [(ngModel)]="newOpp.title" placeholder="Ex: Licença Enterprise Cloud" />
+            <input type="text" [(ngModel)]="newOpp.titulo" placeholder="Ex: Licença Enterprise Cloud" />
           </div>
+
+          @if (clientes.length > 0) {
+            <div class="form-group">
+              <label>Vincular Cliente Cadastrado (opcional)</label>
+              <select [ngModel]="newOpp.clienteId || ''" (ngModelChange)="onSelectOppCliente($event)">
+                <option value="">Selecionar cliente ou informar abaixo</option>
+                @for (cli of clientes; track cli.internalId) {
+                  <option [value]="cli.internalId">{{ cli.nome }}</option>
+                }
+              </select>
+            </div>
+          }
 
           <div class="form-group">
             <label>Cliente / Empresa *</label>
-            <input type="text" [(ngModel)]="newOpp.client" placeholder="Ex: Organizações Globo" />
+            <input type="text" [(ngModel)]="newOpp.clienteNome" placeholder="Ex: Acme Seguros S.A." />
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label>Valor Estimado (R$)</label>
-              <input type="number" [(ngModel)]="newOpp.value" />
+              <input type="number" [(ngModel)]="newOpp.valor" />
             </div>
             <div class="form-group">
               <label>Probabilidade (%)</label>
-              <input type="number" [(ngModel)]="newOpp.probability" min="0" max="100" />
+              <input type="number" [(ngModel)]="newOpp.probabilidade" min="0" max="100" />
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label>Etapa Inicial</label>
-              <select [(ngModel)]="newOpp.stageId">
+              <select [(ngModel)]="newOpp.estagio">
                 <option value="lead">1. Prospecção</option>
                 <option value="qualificacao">2. Qualificação</option>
                 <option value="proposta">3. Proposta</option>
                 <option value="negociacao">4. Negociação</option>
+                <option value="ganho">5. Fechado / Ganho</option>
               </select>
             </div>
             <div class="form-group">
               <label>Prioridade</label>
-              <select [(ngModel)]="newOpp.priority">
+              <select [(ngModel)]="newOpp.prioridade">
                 <option value="alta">Alta</option>
                 <option value="media">Média</option>
                 <option value="baixa">Baixa</option>
@@ -280,16 +361,91 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label>Responsável</label>
-            <input type="text" [(ngModel)]="newOpp.owner" placeholder="Nome do corretor / vendedor" />
+          <div class="form-row">
+            <div class="form-group">
+              <label>Responsável</label>
+              <input type="text" [(ngModel)]="newOpp.responsavel" placeholder="Nome do corretor / vendedor" list="crm-responsaveis-list" />
+              <datalist id="crm-responsaveis-list">
+                @for (resp of responsaveis; track resp) {
+                  <option [value]="resp"></option>
+                }
+              </datalist>
+            </div>
+            <div class="form-group">
+              <label>Previsão de Fechamento</label>
+              <input type="date" [(ngModel)]="newOpp.previsaoFechamento" />
+            </div>
           </div>
         </div>
 
         <div class="modal-actions">
           <button mat-button (click)="showNewOppModal = false">Cancelar</button>
-          <button mat-flat-button color="primary" [disabled]="!newOpp.title || !newOpp.client" (click)="saveNewOpportunity()">
-            Salvar Oportunidade
+          <button mat-flat-button color="primary" [disabled]="savingOpp || !newOpp.titulo?.trim() || (!newOpp.clienteNome?.trim() && !newOpp.clienteId)" (click)="saveNewOpportunity()">
+            {{ savingOpp ? 'Salvando...' : 'Salvar Oportunidade' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Nova Atividade -->
+  @if (showNewActivityModal) {
+    <div class="modal-backdrop" (click)="showNewActivityModal = false">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Novo Follow-up / Atividade</h3>
+          <button mat-icon-button (click)="showNewActivityModal = false"><mat-icon>close</mat-icon></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Título da Atividade *</label>
+            <input type="text" [(ngModel)]="newActivity.titulo" placeholder="Ex: Apresentação comercial da proposta final" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tipo</label>
+              <select [(ngModel)]="newActivity.tipo">
+                <option value="task">Tarefa</option>
+                <option value="meeting">Reunião</option>
+                <option value="call">Ligação</option>
+                <option value="email">E-mail</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Prazo</label>
+              <input type="text" [(ngModel)]="newActivity.prazoTexto" placeholder="Ex: Hoje às 15:00" />
+            </div>
+          </div>
+
+          @if (clientes.length > 0) {
+            <div class="form-group">
+              <label>Vincular Cliente Cadastrado (opcional)</label>
+              <select [ngModel]="newActivity.clienteId || ''" (ngModelChange)="onSelectActivityCliente($event)">
+                <option value="">Selecionar cliente ou informar abaixo</option>
+                @for (cli of clientes; track cli.internalId) {
+                  <option [value]="cli.internalId">{{ cli.nome }}</option>
+                }
+              </select>
+            </div>
+          }
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Cliente / Empresa</label>
+              <input type="text" [(ngModel)]="newActivity.clienteNome" placeholder="Nome do cliente" />
+            </div>
+            <div class="form-group">
+              <label>Responsável</label>
+              <input type="text" [(ngModel)]="newActivity.responsavel" placeholder="Responsável" list="crm-responsaveis-list" />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button mat-button (click)="showNewActivityModal = false">Cancelar</button>
+          <button mat-flat-button color="primary" [disabled]="savingActivity || !newActivity.titulo?.trim()" (click)="saveNewActivity()">
+            {{ savingActivity ? 'Salvando...' : 'Salvar Atividade' }}
           </button>
         </div>
       </div>

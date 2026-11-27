@@ -45,7 +45,7 @@
 
         @case ('boolean') {
         <div class="dyn-boolean-field">
-            <mat-slide-toggle [formControlName]="fieldName" color="primary" [disabled]="!!readonly">
+            <mat-slide-toggle [formControlName]="fieldName" color="primary">
                 {{label || fieldName}}
             </mat-slide-toggle>
             @if(description){
@@ -62,7 +62,7 @@
             [placeholder]="placeholder"
             [hint]="hint"
             [formGroup]="formGroup"
-            [formControl]="formControl"
+            [parentFormControl]="formControl"
             type="date"
             [format]="format">
         </ci-dyn-input-date>
@@ -76,7 +76,7 @@
             [placeholder]="placeholder"
             [hint]="hint"
             [formGroup]="formGroup"
-            [formControl]="formControl"
+            [parentFormControl]="formControl"
             type="date-time"
             [format]="format">
         </ci-dyn-input-date>
@@ -90,7 +90,7 @@
             [placeholder]="placeholder"
             [hint]="hint"
             [formGroup]="formGroup"
-            [formControl]="formControl"
+            [parentFormControl]="formControl"
             type="time"
             [format]="format">
         </ci-dyn-input-date>

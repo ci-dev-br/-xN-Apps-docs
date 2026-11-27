@@ -65,6 +65,12 @@
                             <span class="badge unverified" matTooltip="Confirmação de e-mail pendente">
                                 <mat-icon>pending</mat-icon> Não verificado
                             </span>
+                            <button mat-stroked-button color="primary" type="button" class="verify-inline-btn"
+                                [disabled]="isSendingVerification || isSaving || form.get('email')?.invalid"
+                                (click)="requestEmailVerification()">
+                                <mat-icon [class.spinning]="isSendingVerification">{{ isSendingVerification ? 'sync' : 'mark_email_unread' }}</mat-icon>
+                                <span>{{ isSendingVerification ? 'Enviando...' : 'Verificar e-mail' }}</span>
+                            </button>
                         }
 
                         @if (user?.roles && user?.roles?.length) {
@@ -181,6 +187,37 @@
                                 }
                             </mat-form-field>
 
+                            <div class="email-verification-box" [class.verified]="form.get('emailVerificado')?.value">
+                                @if (form.get('emailVerificado')?.value) {
+                                    <div class="verification-info">
+                                        <mat-icon>verified_user</mat-icon>
+                                        <div>
+                                            <strong>E-mail verificado</strong>
+                                            <span>Seu endereço está confirmado para segurança e reconhecimento de autoria.</span>
+                                        </div>
+                                    </div>
+                                } @else {
+                                    <div class="verification-info">
+                                        <mat-icon>mark_email_unread</mat-icon>
+                                        <div>
+                                            <strong>Confirmação de e-mail pendente</strong>
+                                            <span>Confirme seu endereço para validar sua conta e habilitar o reconhecimento de autoria.</span>
+                                            @if (verificationSentTo) {
+                                                <span class="verification-sent-hint">
+                                                    Link de confirmação enviado para <strong>{{ verificationSentTo }}</strong>.
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <button mat-flat-button color="primary" type="button" class="verify-action-btn"
+                                        [disabled]="isSendingVerification || isSaving || form.get('email')?.invalid"
+                                        (click)="requestEmailVerification()">
+                                        <mat-icon [class.spinning]="isSendingVerification">{{ isSendingVerification ? 'sync' : 'send' }}</mat-icon>
+                                        <span>{{ isSendingVerification ? 'Enviando...' : (verificationSentTo ? 'Reenviar Confirmação' : 'Verificar E-mail') }}</span>
+                                    </button>
+                                }
+                            </div>
+
                             <mat-form-field appearance="outline" class="w-full">
                                 <mat-label>Telefone / WhatsApp</mat-label>
                                 <input matInput type="tel" formControlName="phone" placeholder="(00) 00000-0000" />
@@ -214,10 +251,16 @@
                                 <div class="meta-item">
                                     <span class="meta-label">Status do E-mail</span>
                                     <div class="meta-value-row">
-                                        @if (user?.emailVerificado) {
+                                        @if (form.get('emailVerificado')?.value) {
                                             <span class="badge verified"><mat-icon>check_circle</mat-icon> Verificado</span>
                                         } @else {
                                             <span class="badge unverified"><mat-icon>warning</mat-icon> Confirmação pendente</span>
+                                            <button mat-stroked-button color="primary" type="button" class="verify-inline-btn"
+                                                [disabled]="isSendingVerification || isSaving || form.get('email')?.invalid"
+                                                (click)="requestEmailVerification()">
+                                                <mat-icon>mark_email_unread</mat-icon>
+                                                <span>{{ isSendingVerification ? 'Enviando...' : 'Verificar agora' }}</span>
+                                            </button>
                                         }
                                     </div>
                                 </div>

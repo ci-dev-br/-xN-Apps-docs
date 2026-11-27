@@ -4,8 +4,11 @@
         Insira o endereço de e-mail do convidado para gerar o <strong>invite-hash</strong> e enviar o link de cadastro por e-mail.
     </p>
     <p>
-        Ao acessar o link, o convidado concluirá seu cadastro recebendo a <strong>ROLE 'USER'</strong> por padrão, com o aplicativo da <strong>Loja</strong> ativo e os aplicativos correspondentes permitidos para assinar.
+        Ao concluir o cadastro pelo link, o convidado receberá os papéis definidos e será vinculado automaticamente aos tenants selecionados.
     </p>
+    @if (errorMessage) {
+      <p style="color: #dc2626; margin: 0 0 8px;">{{ errorMessage }}</p>
+    }
     <mat-form-field>
         <mat-label>Endereço de E-mail</mat-label>
         <input matInput placeholder="Digite o e-mail do convidado" formControlName="email" required>
@@ -13,6 +16,24 @@
     <mat-form-field>
         <mat-label>Nome do Convidado</mat-label>
         <input matInput placeholder="Digite o nome do convidado" formControlName="friendlyName">
+    </mat-form-field>
+    @if (availableTenants.length > 0) {
+      <mat-form-field>
+          <mat-label>Tenants de destino</mat-label>
+          <mat-select formControlName="tenantIds" multiple>
+              @for (tenant of availableTenants; track tenant.id) {
+                  <mat-option [value]="tenant.id">{{ tenant.name || tenant.id }}</mat-option>
+              }
+          </mat-select>
+      </mat-form-field>
+    }
+    <mat-form-field>
+        <mat-label>Papéis atribuídos no convite</mat-label>
+        <mat-select formControlName="roles" multiple>
+            @for (role of roleOptions; track role.value) {
+                <mat-option [value]="role.value">{{ role.label }}</mat-option>
+            }
+        </mat-select>
     </mat-form-field>
     <mat-form-field>
         <mat-label>Mensagem Personalizada</mat-label>

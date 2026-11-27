@@ -1,8 +1,11 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface ObterListaCommentMeta {
-  skip: number;
-  take: number;
-  where: {
+  orderBy?: {
+};
+  search?: string;
+  skip?: number;
+  take?: number;
+  where?: {
 };
 }

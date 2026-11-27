@@ -47,6 +47,14 @@ export const routes: Routes = [
         loadComponent: () => import('./autorizar-pasta/autorizar-pasta.component').then(m => m.AutorizarPastaComponent)
     },
     {
+        path: 'confirmar-email',
+        loadComponent: () => import('./confirmar-email/confirmar-email.component').then(m => m.ConfirmarEmailComponent)
+    },
+    {
+        path: 'confirmar-email/:token',
+        loadComponent: () => import('./confirmar-email/confirmar-email.component').then(m => m.ConfirmarEmailComponent)
+    },
+    {
         path: '',
         canMatch: [authGuard],
         canActivate: [inviteQueryRedirectGuard],

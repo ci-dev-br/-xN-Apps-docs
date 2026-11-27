@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-27T00:45:48" id="0" hostname="plhx33" tests="2" errors="0" failures="0" time="0.984">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="MasterDetailComponent - Filtro, Edição, Criação e Permissões de Tenants por Organização não deve exibir o filtro de tenants quando nenhuma organização estiver selecionada" time="0.819" classname="Chrome_Headless_158_0_0_0_(Windows_10).MasterDetailComponent - Filtro, Edição, Criação e Permissões de Tenants por Organização"/>
+  <testcase name="MasterDetailComponent - Filtro, Edição, Criação e Permissões de Tenants por Organização deve habilitar o filtro com tenants disponíveis ao selecionar organização, filtrar registros, mostrar/editar/criar tenants e gerenciar permissões" time="0.165" classname="Chrome_Headless_158_0_0_0_(Windows_10).MasterDetailComponent - Filtro, Edição, Criação e Permissões de Tenants por Organização"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

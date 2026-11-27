@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface ObterListaPromocao {
-  skip: number;
-  take: number;
-  where: {
+  skip?: number;
+  take?: number;
+  where?: {
 };
 }

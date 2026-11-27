@@ -59,6 +59,11 @@ export interface CriarCarteiraDto {
   simboloMoeda?: string;
 
   /**
+   * IDs de tenants vinculados à carteira
+   */
+  tenantIds?: Array<string>;
+
+  /**
    * Aceite dos termos de uso da carteira
    */
   termosAceitos?: boolean;

@@ -1,3 +1,90 @@
+@if(canEditSource){
+<div class="ci-dyn-form-codex-bar">
+    <button
+        mat-stroked-button
+        type="button"
+        class="codex-edit-trigger"
+        (click)="openSourceInCodeX(defaultSourceCandidate, $event)"
+        [matTooltip]="'Localizar e editar ' + defaultSourceCandidate + ' no CodeX'">
+        <mat-icon>code</mat-icon>
+        <span>Editar Código-Fonte (CodeX)</span>
+    </button>
+    <button
+        mat-button
+        type="button"
+        class="codex-locate-toggle"
+        (click)="toggleSourcePanel($event)">
+        <mat-icon>manage_search</mat-icon>
+        <span>Localizar arquivo</span>
+    </button>
+</div>
+
+@if(isSourcePanelOpen){
+<div class="ci-dyn-form-codex-panel">
+    <div class="codex-search-row">
+        <mat-form-field appearance="outline" class="codex-search-field" subscriptSizing="dynamic">
+            <mat-label>Nome do arquivo no workspace</mat-label>
+            <input
+                matInput
+                type="text"
+                [(ngModel)]="sourceSearchQuery"
+                (keyup.enter)="locateSourceFiles()"
+                placeholder="Ex: dyn-form.component.ts, user.entity.ts">
+            <button
+                matSuffix
+                mat-icon-button
+                type="button"
+                [disabled]="isLocatingSource"
+                (click)="locateSourceFiles()"
+                matTooltip="Localizar arquivo pelo nome">
+                <mat-icon>search</mat-icon>
+            </button>
+        </mat-form-field>
+        <button
+            mat-flat-button
+            color="primary"
+            type="button"
+            [disabled]="isLocatingSource"
+            (click)="openSourceInCodeX(sourceSearchQuery, $event)">
+            <mat-icon>open_in_new</mat-icon>
+            <span>Abrir no CodeX</span>
+        </button>
+    </div>
+
+    <div class="codex-quick-chips">
+        @for (suggestion of quickSourceSuggestions; track suggestion) {
+        <button
+            mat-stroked-button
+            type="button"
+            class="codex-suggestion-chip"
+            (click)="sourceSearchQuery = suggestion; openSourceInCodeX(suggestion, $event)">
+            {{ suggestion }}
+        </button>
+        }
+    </div>
+
+    @if(sourceLocateError){
+    <div class="codex-locate-error">{{ sourceLocateError }}</div>
+    }
+
+    @if(locatedSourceFiles.length > 0){
+    <div class="codex-located-list">
+        @for (file of locatedSourceFiles; track file.path) {
+        <button
+            type="button"
+            class="codex-located-item"
+            (click)="openSourceInCodeX(file, $event)">
+            <mat-icon>description</mat-icon>
+            <span class="codex-located-name">{{ file.name }}</span>
+            <span class="codex-located-path">{{ file.path }}</span>
+        </button>
+        }
+    </div>
+    }
+</div>
+}
+}
+
 @if(!!source && source.fields && formGroup){
 <form [formGroup]="formGroup" class="ci-dyn-form-grid">
     @for (field of source.fields; track field.property || $index) {

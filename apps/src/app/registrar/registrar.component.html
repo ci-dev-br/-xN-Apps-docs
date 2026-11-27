@@ -31,7 +31,7 @@
     <form [formGroup]="inviteForm" (ngSubmit)="concluirCadastroConvite()" class="invite-card">
         <h2>Concluir Cadastro de Convidado</h2>
         <div class="invite-badge-info">
-            <span class="role-chip">ROLE: USER</span>
+            <span class="role-chip">ROLE: {{ (inviteData?.roles || ['USER']).join(', ') }}</span>
             <span class="store-chip">App Loja Ativo</span>
         </div>
         @if(inviteData?.mensagem){

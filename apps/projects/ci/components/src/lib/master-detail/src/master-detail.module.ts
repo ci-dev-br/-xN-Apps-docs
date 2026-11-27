@@ -12,6 +12,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { MatCardModule } from "@angular/material/card";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatBadgeModule } from "@angular/material/badge";
 import { FormsModule } from "@angular/forms";
@@ -36,6 +37,7 @@ import { WindowModule } from "@ci/components/window";
         MatInputModule,
         MatSelectModule,
         MatCardModule,
+        MatCheckboxModule,
         MatChipsModule,
         MatBadgeModule,
         FormsModule,

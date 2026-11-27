@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-26T04:41:17" id="0" hostname="plhx33" tests="3" errors="0" failures="0" time="0.689">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="DynFormComponent &amp; Schema Type Representation deve abrir campo .ts / .map em janela do CodeX via WindowService e atualizar o FormControl com retorno" time="0.526" classname="Chrome_Headless_158_0_0_0_(Windows_10).DynFormComponent &amp; Schema Type Representation"/>
+  <testcase name="DynFormComponent &amp; Schema Type Representation deve resolver o tipo dinâmico de .map via Apps.resolveDynamicType" time="0.01" classname="Chrome_Headless_158_0_0_0_(Windows_10).DynFormComponent &amp; Schema Type Representation"/>
+  <testcase name="DynFormComponent &amp; Schema Type Representation deve construir os campos do schema com tipos representativos e tipos dinâmicos injetados via route.data" time="0.153" classname="Chrome_Headless_158_0_0_0_(Windows_10).DynFormComponent &amp; Schema Type Representation"/>
+  <system-out>
+    <![CDATA[Chrome Headless 158.0.0.0 (Windows 10) WARN: 'Falha ao carregar /api-json em DaoService:', HttpErrorResponse{headers: _HttpHeaders{headers: undefined, normalizedNames: Map{}, lazyInit: () => { ... }, lazyUpdate: null}, status: 404, statusText: 'Not Found', url: 'http://localhost:9876/api-json', ok: false, type: undefined, redirected: undefined, responseType: undefined, name: 'HttpErrorResponse', message: 'Http failure response for http://localhost:9876/api-json: 404 Not Found', error: 'NOT FOUND'}
+,Chrome Headless 158.0.0.0 (Windows 10) WARN: 'Falha ao carregar /api-json em DaoService:', HttpErrorResponse{headers: _HttpHeaders{headers: undefined, normalizedNames: Map{}, lazyInit: () => { ... }, lazyUpdate: null}, status: 404, statusText: 'Not Found', url: 'http://localhost:9876/api-json', ok: false, type: undefined, redirected: undefined, responseType: undefined, name: 'HttpErrorResponse', message: 'Http failure response for http://localhost:9876/api-json: 404 Not Found', error: 'NOT FOUND'}
+
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

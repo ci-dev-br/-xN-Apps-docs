@@ -19,6 +19,12 @@ export class PranchetaSyncPayloadDto {
         description: 'Escopo do Board: USER ou TENANT'
     })
     scope?: 'USER' | 'TENANT';
+
+    @ApiProperty({
+        required: false,
+        description: 'ID opcional do tenant para segmentação do board',
+    })
+    tenantId?: string;
 }
 
 @ApiTags('Prancheta')
@@ -37,7 +43,7 @@ export class PranchetaController {
         @Req() req: any,
         @Body() input: PranchetaSyncPayloadDto
     ) {
-        const tenant = req.user?.tenants?.[0]?.id || req.user?.tenantId || req.headers?.['x-tenant-id'];
+        const tenant = input?.tenantId || req.headers?.['x-tenant-id'] || req.user?.tenants?.[0]?.id || req.user?.tenantId;
         return await this.service.sincronize(
             this.audt.doSync(input.prancheta, req, !!input?.prancheta?.internalId),
             { req, tenant }
@@ -52,7 +58,7 @@ export class PranchetaController {
         @Req() req: any,
         @Body() input: PranchetaSyncPayloadDto
     ) {
-        const tenant = req.user?.tenants?.[0]?.id || req.user?.tenantId || req.headers?.['x-tenant-id'];
+        const tenant = input?.tenantId || req.headers?.['x-tenant-id'] || req.user?.tenants?.[0]?.id || req.user?.tenantId;
         if (input.defaultGlobalCode) {
             return await this.service.Get({
                 globalCode: input.defaultGlobalCode,

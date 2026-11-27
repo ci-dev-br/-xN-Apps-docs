@@ -1,8 +1,7 @@
-import { Equal, Repository } from "typeorm";
+import { Equal, IsNull, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DaoFullAuditedServiceBase, SnapshotService } from "@ci/core";
 import { SitePage } from "../models/site-page.entity";
-import { DaoServiceBase } from "@ci/manager/dao/dao-service-base";
 
 export class SitePageService extends DaoFullAuditedServiceBase<SitePage> {
     constructor(
@@ -13,15 +12,15 @@ export class SitePageService extends DaoFullAuditedServiceBase<SitePage> {
         super(snap, repository);
     }
 
-
     async getPage(domain: string, path: string) {
         return await this._repo.findOne({
             where: {
                 urlMatch: Equal(path),
+                deleted: IsNull(),
                 website: {
                     domain: Equal(domain),
                 }
             }
-        })
+        });
     }
 }

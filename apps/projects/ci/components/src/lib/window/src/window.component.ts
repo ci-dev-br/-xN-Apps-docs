@@ -97,6 +97,29 @@ export class WindowComponent implements OnInit, OnDestroy {
     this.showing = false;
     this.ref?.close((this.data as any)?.data);
   }
+  isItemVisible(item?: IMenuItem): boolean {
+    if (!item) return false;
+    return typeof item.visible === 'function' ? Boolean(item.visible()) : true;
+  }
+  isItemDisabled(item?: IMenuItem): boolean {
+    if (!item) return false;
+    return typeof item.disabled === 'function' ? Boolean(item.disabled()) : Boolean(item.disabled);
+  }
+  isItemChecked(item?: IMenuItem): boolean {
+    if (!item) return false;
+    return typeof item.checked === 'function' ? Boolean(item.checked()) : Boolean(item.checked);
+  }
+  hasMenuChildren(item?: IMenuItem): boolean {
+    return Array.isArray(item?.children) && item!.children!.length > 0;
+  }
+  getVisibleChildren(item?: IMenuItem): IMenuItem[] {
+    if (!Array.isArray(item?.children)) return [];
+    return item!.children!.filter(child => this.isItemVisible(child));
+  }
+  onMenuItemClick(item: IMenuItem, event: Event): void {
+    if (!item || this.isItemDisabled(item)) return;
+    item.onClick?.(event);
+  }
   @HostListener('keydown', ['$event'])
   protected async keydownHandler(event: KeyboardEvent) {
     if ((!!event.shiftKey && (event.code === 'Enter' || event.code === 'NumpadEnter')) ||

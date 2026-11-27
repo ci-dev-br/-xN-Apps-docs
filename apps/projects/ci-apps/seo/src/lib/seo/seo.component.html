@@ -1,0 +1,51 @@
+<mat-toolbar class="seo-top-toolbar">
+  <button mat-icon-button (click)="sideMenu.toggle()" matTooltip="Alternar menu lateral" aria-label="Alternar menu lateral">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <div class="toolbar-brand">
+    <mat-icon class="brand-icon">travel_explore</mat-icon>
+    <span class="brand-title">SEO & Marketing — Presença Orgânica</span>
+  </div>
+  <span class="spacer"></span>
+  <button mat-button routerLink="/SEO" routerLinkActive="active-nav-link" [routerLinkActiveOptions]="{ exact: true }">
+    <mat-icon>dashboard</mat-icon>
+    <span>Painel SEO</span>
+  </button>
+  <button mat-button routerLink="/SEO/board" routerLinkActive="active-nav-link">
+    <mat-icon>space_dashboard</mat-icon>
+    <span>Board</span>
+  </button>
+</mat-toolbar>
+
+<mat-drawer-container class="seo-drawer-container">
+  <mat-drawer #sideMenu mode="side" opened class="seo-side-drawer">
+    <div class="drawer-header">
+      <mat-icon>insights</mat-icon>
+      <span>Otimização & Auditoria</span>
+    </div>
+
+    <nav class="drawer-nav" aria-label="Navegação SEO">
+      <a mat-list-item routerLink="/SEO" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="drawer-link">
+        <mat-icon>dashboard</mat-icon>
+        <span>Dashboard & Auditoria</span>
+      </a>
+      <a mat-list-item routerLink="/SEO/board" routerLinkActive="active" class="drawer-link">
+        <mat-icon>space_dashboard</mat-icon>
+        <span>Board Customizável</span>
+      </a>
+
+      <div class="drawer-section-heading">Tabelas & Modelos SEO</div>
+
+      @for (entidade of entidades; track entidade) {
+        <a mat-list-item [routerLink]="'./' + entidade" routerLinkActive="active" class="drawer-link">
+          <mat-icon>table_chart</mat-icon>
+          <span>{{ entidade | nomenclatura }}</span>
+        </a>
+      }
+    </nav>
+  </mat-drawer>
+
+  <mat-drawer-content class="seo-content">
+    <router-outlet></router-outlet>
+  </mat-drawer-content>
+</mat-drawer-container>

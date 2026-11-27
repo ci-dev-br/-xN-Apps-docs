@@ -11,6 +11,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { deleteSitePost } from '../fn/site-post/delete-site-post';
 import { DeleteSitePost$Params } from '../fn/site-post/delete-site-post';
+import { getByInternalIdSitePost } from '../fn/site-post/get-by-internal-id-site-post';
+import { GetByInternalIdSitePost$Params } from '../fn/site-post/get-by-internal-id-site-post';
 import { getListSitePost } from '../fn/site-post/get-list-site-post';
 import { GetListSitePost$Params } from '../fn/site-post/get-list-site-post';
 import { SitePost } from '../models/site-post';
@@ -44,6 +46,31 @@ export class SitePostService extends BaseService {
    */
   sync(params: SyncSitePost$Params, context?: HttpContext): Observable<SitePost> {
     return this.syncSitePost$Response(params, context).pipe(
+      map((r: StrictHttpResponse<SitePost>): SitePost => r.body)
+    );
+  }
+
+  /** Path part for operation `getByInternalIdSitePost()` */
+  static readonly GetByInternalIdSitePostPath = '/SitePost/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdSitePost()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdSitePost$Response(params: GetByInternalIdSitePost$Params, context?: HttpContext): Observable<StrictHttpResponse<SitePost>> {
+    return getByInternalIdSitePost(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdSitePost$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdSitePost$Params, context?: HttpContext): Observable<SitePost> {
+    return this.getByInternalIdSitePost$Response(params, context).pipe(
       map((r: StrictHttpResponse<SitePost>): SitePost => r.body)
     );
   }
@@ -82,7 +109,7 @@ export class SitePostService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  deleteSitePost$Response(params: DeleteSitePost$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<SitePost>>> {
+  deleteSitePost$Response(params: DeleteSitePost$Params, context?: HttpContext): Observable<StrictHttpResponse<SitePost>> {
     return deleteSitePost(this.http, this.rootUrl, params, context);
   }
 
@@ -92,9 +119,9 @@ export class SitePostService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  delete(params: DeleteSitePost$Params, context?: HttpContext): Observable<Array<SitePost>> {
+  delete(params: DeleteSitePost$Params, context?: HttpContext): Observable<SitePost> {
     return this.deleteSitePost$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<SitePost>>): Array<SitePost> => r.body)
+      map((r: StrictHttpResponse<SitePost>): SitePost => r.body)
     );
   }
 

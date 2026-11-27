@@ -11,6 +11,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { quotesControllerGetRecent } from '../fn/cotacoes-b-3/quotes-controller-get-recent';
 import { QuotesControllerGetRecent$Params } from '../fn/cotacoes-b-3/quotes-controller-get-recent';
+import { quotesControllerTriggerSync } from '../fn/cotacoes-b-3/quotes-controller-trigger-sync';
+import { QuotesControllerTriggerSync$Params } from '../fn/cotacoes-b-3/quotes-controller-trigger-sync';
 
 @Injectable()
 export class CotacoesB3Service extends BaseService {
@@ -47,6 +49,39 @@ export class CotacoesB3Service extends BaseService {
    */
   quotesControllerGetRecent(params: QuotesControllerGetRecent$Params, context?: HttpContext): Observable<void> {
     return this.quotesControllerGetRecent$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `quotesControllerTriggerSync()` */
+  static readonly QuotesControllerTriggerSyncPath = '/api/quotes/sync';
+
+  /**
+   * Força a sincronização das cotações da B3.
+   *
+   * Aciona manualmente a coleta atualizada dos ativos e índices da B3.
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `quotesControllerTriggerSync()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  quotesControllerTriggerSync$Response(params?: QuotesControllerTriggerSync$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return quotesControllerTriggerSync(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Força a sincronização das cotações da B3.
+   *
+   * Aciona manualmente a coleta atualizada dos ativos e índices da B3.
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `quotesControllerTriggerSync$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  quotesControllerTriggerSync(params?: QuotesControllerTriggerSync$Params, context?: HttpContext): Observable<void> {
+    return this.quotesControllerTriggerSync$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }

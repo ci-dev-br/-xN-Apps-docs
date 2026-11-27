@@ -1,6 +1,16 @@
 import { Body, Controller, Get, Param, Post, Query, Req, UnauthorizedException } from "@nestjs/common";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { CompartilharAtivoDto, CriarGrupoDto, CriarTopicoDto, TenantService } from "../service/tenant.service";
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {
+    AtualizarTenantDto,
+    CompartilharAtivoDto,
+    CriarGrupoDto,
+    CriarTenantDto,
+    CriarTopicoDto,
+    DefinirPermissaoTenantDto,
+    TenantService,
+} from "../service/tenant.service";
+import { Tenant } from "../models/tenant.entity";
+import { TenantPermission } from "../models/tenant-permission.entity";
 import { Grupo } from "../models/grupo.entity";
 import { GrupoTopico } from "../models/grupo-topico.entity";
 import { GrupoTopicoMensagem } from "../models/grupo-topico-mensagem.entity";
@@ -208,5 +218,90 @@ export class TenantController {
             throw new UnauthorizedException('É necessário estar autenticado para compartilhar um ativo.');
         }
         return await this.tenantService.compartilharAtivo(grupoId, body, currentUser);
+    }
+
+    // =========================================================================
+    // ENDPOINTS DE GESTÃO DE TENANTS E PERMISSÕES GRANULARES
+    // =========================================================================
+
+    @Get('Available')
+    @ApiOperation({ operationId: 'TenantListAvailable' })
+    @ApiQuery({ name: 'organizacaoId', type: String, required: false })
+    @ApiResponse({ type: [Tenant] })
+    async listarTenantsDisponiveis(
+        @Query('organizacaoId') organizacaoId?: string,
+        @Req() req?: any,
+    ) {
+        if (!req?.user?.id) {
+            throw new UnauthorizedException('É necessário estar autenticado para listar tenants disponíveis.');
+        }
+        return await this.tenantService.listarTenantsDisponiveis(req.user, organizacaoId);
+    }
+
+    @Post()
+    @ApiOperation({ operationId: 'TenantCreate' })
+    @ApiResponse({ type: Tenant })
+    async criarTenant(
+        @Body() body: CriarTenantDto,
+        @Req() req: any,
+    ) {
+        if (!req?.user?.id) {
+            throw new UnauthorizedException('É necessário estar autenticado para criar um tenant.');
+        }
+        return await this.tenantService.criarTenant(body, req.user);
+    }
+
+    @Post(':id/Update')
+    @ApiOperation({ operationId: 'TenantUpdate' })
+    @ApiResponse({ type: Tenant })
+    async atualizarTenant(
+        @Param('id') tenantId: string,
+        @Body() body: AtualizarTenantDto,
+        @Req() req: any,
+    ) {
+        if (!req?.user?.id) {
+            throw new UnauthorizedException('É necessário estar autenticado para editar um tenant.');
+        }
+        return await this.tenantService.atualizarTenant(tenantId, body, req.user);
+    }
+
+    @Get(':id/Permissions')
+    @ApiOperation({ operationId: 'TenantListPermissions' })
+    @ApiResponse({ type: [TenantPermission] })
+    async listarPermissoesTenant(
+        @Param('id') tenantId: string,
+        @Req() req: any,
+    ) {
+        if (!req?.user?.id) {
+            throw new UnauthorizedException('É necessário estar autenticado para consultar permissões do tenant.');
+        }
+        return await this.tenantService.listarPermissoesTenant(tenantId, req.user);
+    }
+
+    @Post(':id/Permissions')
+    @ApiOperation({ operationId: 'TenantUpsertPermission' })
+    @ApiResponse({ type: TenantPermission })
+    async definirPermissaoTenant(
+        @Param('id') tenantId: string,
+        @Body() body: DefinirPermissaoTenantDto,
+        @Req() req: any,
+    ) {
+        if (!req?.user?.id) {
+            throw new UnauthorizedException('É necessário estar autenticado para gerenciar permissões do tenant.');
+        }
+        return await this.tenantService.definirPermissaoTenant(tenantId, body, req.user);
+    }
+
+    @Post(':id/Permissions/:permissionId/Delete')
+    @ApiOperation({ operationId: 'TenantDeletePermission' })
+    async removerPermissaoTenant(
+        @Param('id') tenantId: string,
+        @Param('permissionId') permissionId: string,
+        @Req() req: any,
+    ) {
+        if (!req?.user?.id) {
+            throw new UnauthorizedException('É necessário estar autenticado para remover permissões do tenant.');
+        }
+        return await this.tenantService.removerPermissaoTenant(tenantId, permissionId, req.user);
     }
 }

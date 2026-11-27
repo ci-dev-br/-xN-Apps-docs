@@ -46,6 +46,35 @@
     color: var(--mat-sys-on-surface-variant, #64748b);
   }
 
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--mat-sys-on-surface-variant, #475569);
+      }
+
+      select {
+        padding: 7px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--mat-sys-outline, #cbd5e1);
+        background: var(--mat-sys-surface, #ffffff);
+        color: var(--mat-sys-on-surface, #1e293b);
+        font-size: 13px;
+        outline: none;
+      }
+    }
+  }
+
   .create-btn {
     border-radius: 8px;
     font-weight: 600;
@@ -246,6 +275,12 @@
           color: var(--mat-sys-primary, #0284c7);
           font-family: monospace;
           margin-top: 2px;
+
+          .site-badge {
+            color: var(--mat-sys-on-surface-variant, #64748b);
+            font-family: inherit;
+            margin-left: 4px;
+          }
         }
 
         .item-excerpt {
@@ -332,6 +367,18 @@
     padding: 20px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.03);
 
+    .card-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+
+      .card-header {
+        margin-bottom: 0;
+      }
+    }
+
     .card-header {
       display: flex;
       align-items: center;
@@ -398,6 +445,17 @@
           color: var(--mat-sys-on-surface-variant, #64748b);
         }
       }
+    }
+
+    .empty-media {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 24px 12px;
+      color: var(--mat-sys-on-surface-variant, #94a3b8);
+      font-size: 13px;
     }
   }
 
@@ -487,6 +545,8 @@
       display: flex;
       flex-direction: column;
       gap: 14px;
+      max-height: 75vh;
+      overflow-y: auto;
 
       .form-group {
         display: flex;

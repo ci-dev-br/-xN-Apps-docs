@@ -1,87 +1,146 @@
-import { Component, Inject, Injector, Input, OnInit, Optional } from "@angular/core";
-import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { ActivatedRoute } from "@angular/router";
-import { DynFormModule } from "@ci/components/dyn-form";
-import { CORE_ENV, CoreModule, DaoBuilder, DaoService, IChangeable, ICoreEnvironment, IHaveSync, ISchemaPreset } from "@ci/core";
-import { FormsService, getServiceAsSchema } from "@ci/portal-api";
-import { lastValueFrom } from "rxjs";
+import { CommonModule } from '@angular/common';
+import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { Tenant, TenantWithPermissionsDto, User, UserService } from '@ci/portal-api';
+import { lastValueFrom } from 'rxjs';
+
 export interface IDataEditar {
-    data: any;
-    schemaName: string;
+  data: User;
+  schemaName?: string;
+  availableTenants?: TenantWithPermissionsDto[];
+  preselectedTenantIds?: string[];
+  isMaster?: boolean;
+  isAdmin?: boolean;
 }
+
 @Component({
-    standalone: true,
-    imports: [
-        CoreModule,
-        ReactiveFormsModule,
-        DynFormModule,
-    ],
-    selector: 'ci-master-datail--editar',
-    templateUrl: 'editar.component.html',
-    styleUrl: 'editar.component.scss'
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
+  selector: 'ci-master-datail--editar',
+  templateUrl: 'editar.component.html',
+  styleUrl: 'editar.component.scss',
 })
 export class EditarComponent implements OnInit {
-    form?: FormGroup<any>;
-    @Input()
-    schemaName?: string;
-    service?: any;
-    preset?: ISchemaPreset<any, any>;
-    constructor(
-        private readonly dao: DaoService,
-        private readonly daoBuilder: DaoBuilder,
-        private readonly fb: FormBuilder,
-        private readonly formsService: FormsService,
-        private readonly route: ActivatedRoute,
-        private readonly injector: Injector,
-        @Inject(MAT_DIALOG_DATA)
-        public readonly data?: IDataEditar,
-        @Optional() @Inject(CORE_ENV) private readonly config?: ICoreEnvironment,
-    ) {
-        if (data && data.schemaName) this.schemaName = data.schemaName;
+  @Input() schemaName?: string;
+
+  form!: FormGroup;
+  saving = false;
+  errorMessage?: string;
+  isNew = true;
+  availableTenants: TenantWithPermissionsDto[] = [];
+  selectableRoles: { value: string; label: string }[] = [
+    { value: 'USER', label: 'Usuário (USER)' },
+    { value: 'ADMIN', label: 'Administrador do Tenant (ADMIN)' },
+  ];
+
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly userService: UserService,
+    @Optional() private readonly dialogRef?: MatDialogRef<EditarComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public readonly dialogData?: IDataEditar,
+  ) {
+    if (this.dialogData?.schemaName) {
+      this.schemaName = this.dialogData.schemaName;
     }
-    ngOnInit() {
-        this.loadFormFromDaoBuilder();
+  }
+
+  ngOnInit(): void {
+    const user: User = this.dialogData?.data || {};
+    this.isNew = !user.id;
+    this.availableTenants = this.dialogData?.availableTenants || [];
+
+    if (this.dialogData?.isMaster) {
+      this.selectableRoles = [
+        { value: 'USER', label: 'Usuário (USER)' },
+        { value: 'ADMIN', label: 'Administrador do Tenant (ADMIN)' },
+        { value: 'MASTER', label: 'Master Global (MASTER)' },
+        { value: 'GOODNESS', label: 'Goodness (GOODNESS)' },
+      ];
     }
-    private async loadService() {
-        if (this.schemaName) {
-            this.preset = this.config?.servicesCommons?.find(s => s.schemaName === this.schemaName);
-            if (!!this.preset?.service)
-                this.service = this.injector.get(this.preset.service);
-            if (!this.preset) {
-                const service_by_schema = getServiceAsSchema(this.schemaName);
-                if (service_by_schema) this.service = this.injector.get(service_by_schema);
-            }
-        }
+
+    const existingRoles = Array.isArray(user.roles) && user.roles.length > 0
+      ? user.roles.map(r => (r || '').toUpperCase())
+      : ['USER'];
+
+    const existingTenantIds = Array.isArray(user.tenants) && user.tenants.length > 0
+      ? user.tenants.map(t => t?.id).filter((id): id is string => Boolean(id))
+      : (this.isNew ? (this.dialogData?.preselectedTenantIds || []) : []);
+
+    this.form = this.fb.group({
+      fullName: [user.fullName || '', [Validators.required]],
+      surname: [user.surname || ''],
+      username: [user.username || '', [Validators.required]],
+      email: [user.email || '', [Validators.email]],
+      phone: [user.phone || ''],
+      password: [''],
+      roles: [existingRoles],
+      tenantIds: [existingTenantIds],
+    });
+  }
+
+  get showTenantWarning(): boolean {
+    return !this.dialogData?.isMaster && this.availableTenants.length === 0;
+  }
+
+  async salvar(): Promise<void> {
+    if (!this.form || this.form.invalid || this.saving) {
+      this.form?.markAllAsTouched();
+      return;
     }
-    private async loadFormFromDaoBuilder() {
-        if (this.schemaName) {
-            await this.loadService();
-            const dao = this.dao;
-            const _data = this.data?.data;
-            this.form = await this.daoBuilder.getForm(this.schemaName);
-            const form = this.form;
-            this.dao.prepareToEdit(this.data?.data, { schemaName: this.schemaName });
-            if (this.form) this.dao.bindDataForm(this.data?.data, this.form);
-            this.dao.confirmation(this.data?.data)?.subscribe(async data => {
-                try {
-                    if (this.data?.data && data) {
-                        if (!!this.preset?.sync) {
-                            Object.assign(this.data?.data,
-                                await this.preset.sync(this.service, this.data?.data)
-                            );
-                        } else if (this.service && this.service.sync) {
-                            let r = await lastValueFrom((this.service as IHaveSync<any>).sync({ body: { data: this.data?.data } }))
-                            r = r;
-                        }
-                        delete (_data as IChangeable).__pre;
-                        dao.prepareToEdit(_data);
-                        if (form) dao.bindDataForm(_data, form);
-                    }
-                } catch (error) {
-                    console.trace(error);
-                }
-            });
-        }
+
+    this.saving = true;
+    this.errorMessage = undefined;
+
+    try {
+      const value = this.form.getRawValue();
+      const rawRoles: string[] = Array.isArray(value.roles) ? value.roles : ['USER'];
+      const normalizedRoles = Array.from(new Set(['USER', ...rawRoles.filter(Boolean)]));
+      const selectedTenantIds: string[] = Array.isArray(value.tenantIds)
+        ? value.tenantIds.filter((id: string) => Boolean(id))
+        : [];
+
+      const payload: User & { password?: string } = {
+        ...(this.dialogData?.data?.id ? { id: this.dialogData.data.id } : {}),
+        fullName: (value.fullName || '').trim(),
+        surname: (value.surname || '').trim() || undefined,
+        username: (value.username || '').trim(),
+        email: (value.email || '').trim() || undefined,
+        phone: (value.phone || '').trim() || undefined,
+        roles: normalizedRoles,
+        tenants: selectedTenantIds.map(id => ({ id } as Tenant)),
+      };
+
+      if (typeof value.password === 'string' && value.password.trim().length > 0) {
+        payload.password = value.password.trim();
+      }
+
+      const saved = await lastValueFrom(this.userService.sync({ body: payload }));
+      this.saving = false;
+      this.dialogRef?.close(saved || payload);
+    } catch (error: any) {
+      this.saving = false;
+      this.errorMessage =
+        error?.error?.message ||
+        error?.message ||
+        'Não foi possível salvar os dados do usuário.';
     }
+  }
+
+  cancelar(): void {
+    this.dialogRef?.close(undefined);
+  }
 }

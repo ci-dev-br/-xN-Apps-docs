@@ -1,13 +1,19 @@
-import { Component, Injector, Input, OnChanges, Optional, SimpleChanges, Type } from "@angular/core";
+import { Component, Injector, Input, OnChanges, Optional, reflectComponentType, SimpleChanges, Type } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { Apps, DaoBuilder, DaoService, IAmSchematization, IDynamicSchemaType, ISchemaProperty } from "@ci/core";
-import { getServiceAsSchema } from "@ci/portal-api";
+import { CodexService, getServiceAsSchema } from "@ci/portal-api";
 import { WindowService } from "@ci/components/window";
 import { lastValueFrom } from "rxjs";
 import { DynInputModulesComponent } from "./dyn-input-modules.component";
 import { DynInputChipsAutocompleteComponent } from "./dyn-input-chips-autocomplete.component";
+import {
+    inferCodeLanguage,
+    isBareFileName,
+    locateWorkspaceFileByName,
+    looksLikeSourceFile,
+} from "../codex-source.helper";
 
 const types: Record<string, Type<any>> = {
     'modules': DynInputModulesComponent,
@@ -100,6 +106,7 @@ export class DynInputComponent implements IAmSchematization, OnChanges {
         @Optional() private readonly daos?: DaoService,
         @Optional() private readonly appsService?: Apps,
         @Optional() private readonly windowService?: WindowService,
+        @Optional() private readonly codexService?: CodexService,
     ) { }
 
     async ngOnChanges(changes: SimpleChanges): Promise<void> {
@@ -159,7 +166,8 @@ export class DynInputComponent implements IAmSchematization, OnChanges {
     }
 
     get dynamicComponentInputs(): Record<string, any> {
-        return {
+        const targetComp = this.dynamicType?.component || this.inputComponent;
+        const candidateInputs: Record<string, any> = {
             ...(this.dynamicType?.inputs || {}),
             fieldName: this.fieldName,
             label: this.label,
@@ -176,6 +184,27 @@ export class DynInputComponent implements IAmSchematization, OnChanges {
             readonly: this.readonly,
             data: this.data,
         };
+
+        if (!targetComp) {
+            return {};
+        }
+
+        try {
+            const mirror = reflectComponentType(targetComp);
+            if (!mirror?.inputs) {
+                return this.dynamicType?.inputs || {};
+            }
+            const allowedNames = new Set(mirror.inputs.map((i) => i.templateName));
+            const filtered: Record<string, any> = {};
+            for (const [k, v] of Object.entries(candidateInputs)) {
+                if (allowedNames.has(k)) {
+                    filtered[k] = v;
+                }
+            }
+            return filtered;
+        } catch {
+            return this.dynamicType?.inputs || {};
+        }
     }
 
     get dynamicDisplayValue(): string {
@@ -283,22 +312,33 @@ export class DynInputComponent implements IAmSchematization, OnChanges {
 
         const ctrl = this.currentControl;
         const currentVal = ctrl?.value;
+        let resolvedFilePath = typeof currentVal === 'string' ? currentVal.trim() : '';
+
+        if (isBareFileName(resolvedFilePath) && this.codexService) {
+            try {
+                const located = await locateWorkspaceFileByName(this.codexService, resolvedFilePath, 1);
+                if (located?.primaryFile?.path) {
+                    resolvedFilePath = located.primaryFile.path;
+                }
+            } catch {
+                // Mantém o valor original se a localização falhar
+            }
+        }
+
+        const isPathLike = looksLikeSourceFile(resolvedFilePath);
         const ctx = {
             fieldName: this.fieldName,
             label: this.label,
             description: this.description,
             type: this.type,
             format: this.format,
-            value: currentVal,
+            value: resolvedFilePath || currentVal,
             schemaName: this.schemaName,
             schemaProperty: this.schemaProperty,
             formGroup: this.formGroup,
             formControl: ctrl,
             data: this.data,
         };
-
-        const isPathLike = typeof currentVal === 'string' &&
-            (currentVal.endsWith('.ts') || currentVal.endsWith('.tsx') || currentVal.endsWith('.map') || currentVal.includes('/'));
 
         const defaultPayload: Record<string, any> = {
             fieldName: this.fieldName,
@@ -308,12 +348,14 @@ export class DynInputComponent implements IAmSchematization, OnChanges {
             schemaProperty: this.schemaProperty,
             language: dyn.format === 'typescript' || dyn.type === 'ts' || dyn.type === 'typescript' || dyn.type === 'map'
                 ? 'typescript'
-                : dyn.format || 'typescript',
+                : isPathLike
+                    ? inferCodeLanguage(resolvedFilePath)
+                    : (dyn.format || 'typescript'),
             ...(isPathLike
                 ? {
-                    file: currentVal,
-                    filePath: currentVal,
-                    ...(String(currentVal).toLowerCase().endsWith('.map') ? { mapFile: currentVal } : {}),
+                    file: resolvedFilePath,
+                    filePath: resolvedFilePath,
+                    ...(resolvedFilePath.toLowerCase().endsWith('.map') ? { mapFile: resolvedFilePath } : {}),
                 }
                 : {
                     value: currentVal ?? '',

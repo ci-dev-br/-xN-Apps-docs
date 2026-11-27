@@ -1,6 +1,8 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Tenant } from "./models/tenant.entity";
+import { TenantMembership } from "./models/tenant-membership.entity";
+import { TenantPermission } from "./models/tenant-permission.entity";
 import { Grupo } from "./models/grupo.entity";
 import { GrupoMembership } from "./models/grupo-membership.entity";
 import { GrupoTopico } from "./models/grupo-topico.entity";
@@ -12,6 +14,8 @@ import { TenantController } from "./controller/tenant.controller";
 
 export const TenantEntities = [
     Tenant,
+    TenantMembership,
+    TenantPermission,
     Grupo,
     GrupoMembership,
     GrupoTopico,

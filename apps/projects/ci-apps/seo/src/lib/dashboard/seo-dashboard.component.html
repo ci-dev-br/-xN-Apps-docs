@@ -1,0 +1,694 @@
+<div class="seo-dashboard">
+  <!-- Header -->
+  <header class="seo-header">
+    <div class="header-titles">
+      <div class="badge">SEO & Marketing</div>
+      <h1>Presença Orgânica & Auditoria Técnica</h1>
+      <p class="subtitle">Audite páginas on-page, monitore palavras-chave, backlinks, campanhas e backlog técnico segmentados por tenant.</p>
+    </div>
+
+    <div class="header-actions">
+      <div class="filter-group">
+        <label for="seo-domain-filter">Domínio:</label>
+        <select id="seo-domain-filter" [(ngModel)]="selectedDominioId" (ngModelChange)="onDominioFilterChange()">
+          <option value="todos">Todos os Domínios ({{ dominios.length }})</option>
+          @for (dom of dominios; track dom.internalId) {
+            <option [value]="dom.internalId">{{ dom.nome || dom.hostname || 'Domínio' }}</option>
+          }
+        </select>
+      </div>
+
+      <button mat-stroked-button (click)="loadDashboard()" [disabled]="loading" matTooltip="Atualizar dados do backend">
+        <mat-icon>refresh</mat-icon>
+        Atualizar
+      </button>
+
+      <button mat-stroked-button (click)="openDialog('domain')">
+        <mat-icon>dns</mat-icon>
+        Novo Domínio
+      </button>
+
+      <button mat-flat-button color="primary" class="create-btn" (click)="openDialog('page')">
+        <mat-icon>add_circle</mat-icon>
+        Nova Página
+      </button>
+    </div>
+  </header>
+
+  <!-- Segmentação por Tenants -->
+  <ci-tenant-filter-bar
+    [selectedTenantIds]="selectedTenantIds"
+    (selectedTenantIdsChange)="onTenantFilterChange($event)"
+    label="Segmentar SEO por Tenants:">
+  </ci-tenant-filter-bar>
+
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+
+  <!-- KPI Metrics Grid -->
+  <section class="kpi-grid" aria-label="Indicadores de SEO">
+    <div class="kpi-card">
+      <div class="icon-wrap cyan"><mat-icon>speed</mat-icon></div>
+      <div class="kpi-details">
+        <span class="label">Score Médio On-Page</span>
+        <span class="value">{{ kpis.scoreMedio ?? '—' }}</span>
+        <span class="trend positive"><mat-icon>verified</mat-icon> {{ kpis.paginasIndexaveis }}/{{ kpis.totalPaginas }} páginas indexáveis</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="icon-wrap blue"><mat-icon>language</mat-icon></div>
+      <div class="kpi-details">
+        <span class="label">Domínios Monitorados</span>
+        <span class="value">{{ kpis.totalDominios }}</span>
+        <span class="trend positive"><mat-icon>check_circle</mat-icon> {{ kpis.dominiosVerificados }} verificados</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="icon-wrap purple"><mat-icon>key</mat-icon></div>
+      <div class="kpi-details">
+        <span class="label">Palavras-chave (SERP)</span>
+        <span class="value">{{ kpis.totalPalavrasChave }}</span>
+        <span class="trend positive"><mat-icon>trending_up</mat-icon> {{ kpis.palavrasTop10 }} no Top 10</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="icon-wrap emerald"><mat-icon>link</mat-icon></div>
+      <div class="kpi-details">
+        <span class="label">Backlinks & Campanhas</span>
+        <span class="value">{{ kpis.totalBacklinks }}</span>
+        <span class="trend neutral"><mat-icon>campaign</mat-icon> {{ kpis.campanhasAtivas }} campanhas ativas</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="icon-wrap amber"><mat-icon>task_alt</mat-icon></div>
+      <div class="kpi-details">
+        <span class="label">Backlog de Tarefas</span>
+        <span class="value">{{ kpis.tarefasAbertas + kpis.tarefasEmAndamento }}</span>
+        <span class="trend neutral"><mat-icon>done_all</mat-icon> {{ kpis.tarefasConcluidas }} concluídas</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Tabs + Search -->
+  <section class="seo-workspace-card">
+    <div class="toolbar-row">
+      <div class="tablist" role="tablist" aria-label="Seções do módulo SEO">
+        <button
+          type="button"
+          id="seo-tab-paginas"
+          role="tab"
+          [attr.aria-selected]="activeTab === 'paginas'"
+          (click)="selectTab('paginas')">
+          Páginas & Auditoria ({{ filteredPaginas.length }})
+        </button>
+        <button
+          type="button"
+          id="seo-tab-palavras"
+          role="tab"
+          [attr.aria-selected]="activeTab === 'palavras'"
+          (click)="selectTab('palavras')">
+          Palavras-chave ({{ filteredPalavras.length }})
+        </button>
+        <button
+          type="button"
+          id="seo-tab-backlinks"
+          role="tab"
+          [attr.aria-selected]="activeTab === 'backlinks'"
+          (click)="selectTab('backlinks')">
+          Backlinks ({{ filteredBacklinks.length }})
+        </button>
+        <button
+          type="button"
+          id="seo-tab-campanhas"
+          role="tab"
+          [attr.aria-selected]="activeTab === 'campanhas'"
+          (click)="selectTab('campanhas')">
+          Campanhas ({{ filteredCampanhas.length }})
+        </button>
+        <button
+          type="button"
+          id="seo-tab-tarefas"
+          role="tab"
+          [attr.aria-selected]="activeTab === 'tarefas'"
+          (click)="selectTab('tarefas')">
+          Tarefas SEO ({{ filteredTarefas.length }})
+        </button>
+        <button
+          type="button"
+          id="seo-tab-tendencias"
+          role="tab"
+          [attr.aria-selected]="activeTab === 'tendencias'"
+          (click)="selectTab('tendencias')">
+          Fontes & Tendências
+        </button>
+      </div>
+
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          placeholder="Buscar URL, palavra-chave, âncora ou tarefa..."
+          aria-label="Buscar no módulo SEO" />
+      </div>
+    </div>
+
+    <!-- Tab 1: Páginas & Auditoria -->
+    <div role="tabpanel" aria-labelledby="seo-tab-paginas" [hidden]="activeTab !== 'paginas'">
+      <div class="panel-inner">
+        <div class="panel-actions-bar">
+          @if (pioresPaginas.length > 0) {
+            <div class="worst-pages-strip">
+              <span class="strip-label"><mat-icon>warning_amber</mat-icon> Menor Score:</span>
+              @for (wp of pioresPaginas; track wp.internalId) {
+                <span class="worst-pill">{{ wp.url }} ({{ wp.score ?? 0 }})</span>
+              }
+            </div>
+          }
+          <button mat-stroked-button color="primary" (click)="openDialog('page')">
+            <mat-icon>add</mat-icon>
+            Adicionar Página
+          </button>
+        </div>
+
+        <div tabindex="0" role="region" aria-label="Tabela de Páginas SEO" class="table-wrapper">
+          <table class="seo-table">
+            <thead>
+              <tr>
+                <th>URL & Título</th>
+                <th>Domínio</th>
+                <th>Score</th>
+                <th>HTTP</th>
+                <th>Indexável</th>
+                <th>Issues</th>
+                <th class="actions-col">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (page of filteredPaginas; track page.internalId || page.url) {
+                <tr>
+                  <th scope="row" class="primary-cell">
+                    <div class="item-title">{{ page.titulo || page.url || 'Página sem URL' }}</div>
+                    <div class="item-sub">{{ page.url }}</div>
+                  </th>
+                  <td>{{ page.dominio?.hostname || page.dominio?.nome || '—' }}</td>
+                  <td>
+                    <span class="score-pill" [ngClass]="getScoreClass(page.score)">
+                      {{ page.score ?? '—' }}
+                    </span>
+                  </td>
+                  <td>{{ page.statusHttp || '—' }}</td>
+                  <td>
+                    <span class="status-pill" [class.ok]="page.indexavel !== false" [class.bad]="page.indexavel === false">
+                      {{ page.indexavel === false ? 'NOINDEX' : 'INDEXÁVEL' }}
+                    </span>
+                  </td>
+                  <td>{{ page.issues?.length || 0 }}</td>
+                  <td class="actions-col">
+                    <button
+                      mat-stroked-button
+                      color="primary"
+                      (click)="auditarPagina(page)"
+                      [disabled]="auditingPageId === page.internalId"
+                      matTooltip="Executar auditoria técnica on-page">
+                      <mat-icon>fact_check</mat-icon>
+                      {{ auditingPageId === page.internalId ? 'Auditando...' : 'Auditar' }}
+                    </button>
+                    <button mat-icon-button color="warn" (click)="deletePage(page)" matTooltip="Excluir página" aria-label="Excluir página">
+                      <mat-icon>delete_outline</mat-icon>
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="empty-cell">Nenhuma página SEO encontrada para o filtro atual.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Palavras-chave -->
+    <div role="tabpanel" aria-labelledby="seo-tab-palavras" [hidden]="activeTab !== 'palavras'">
+      <div class="panel-inner">
+        <div class="panel-actions-bar">
+          <span>Monitoramento de termos estratégicos e variação no SERP.</span>
+          <button mat-stroked-button color="primary" (click)="openDialog('keyword')">
+            <mat-icon>add</mat-icon>
+            Nova Palavra-chave
+          </button>
+        </div>
+
+        <div tabindex="0" role="region" aria-label="Tabela de Palavras-chave SEO" class="table-wrapper">
+          <table class="seo-table">
+            <thead>
+              <tr>
+                <th>Termo</th>
+                <th>Domínio</th>
+                <th>Volume</th>
+                <th>Dificuldade (KD)</th>
+                <th>Posição SERP</th>
+                <th>Variação</th>
+                <th class="actions-col">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (kw of filteredPalavras; track kw.internalId || kw.termo) {
+                <tr>
+                  <th scope="row" class="primary-cell">{{ kw.termo }}</th>
+                  <td>{{ kw.dominio?.hostname || kw.dominio?.nome || '—' }}</td>
+                  <td>{{ kw.voulePesquisa ?? 0 | number }}</td>
+                  <td>{{ kw.dificuldadeClassificacao ?? '—' }}</td>
+                  <td><strong>{{ kw.posicaoAtual ? ('#' + kw.posicaoAtual) : '—' }}</strong></td>
+                  <td>
+                    @if (getKeywordDelta(kw); as delta) {
+                      <span class="delta-pill" [class.up]="delta > 0" [class.down]="delta < 0">
+                        {{ delta > 0 ? ('+' + delta) : delta }}
+                      </span>
+                    } @else {
+                      <span>—</span>
+                    }
+                  </td>
+                  <td class="actions-col">
+                    <button mat-icon-button color="warn" (click)="deleteKeyword(kw)" matTooltip="Excluir palavra-chave" aria-label="Excluir palavra-chave">
+                      <mat-icon>delete_outline</mat-icon>
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="empty-cell">Nenhuma palavra-chave cadastrada.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Backlinks -->
+    <div role="tabpanel" aria-labelledby="seo-tab-backlinks" [hidden]="activeTab !== 'backlinks'">
+      <div class="panel-inner">
+        <div class="panel-actions-bar">
+          <span>Links externos apontando para as páginas monitoradas.</span>
+          <button mat-stroked-button color="primary" (click)="openDialog('backlink')">
+            <mat-icon>add</mat-icon>
+            Novo Backlink
+          </button>
+        </div>
+
+        <div tabindex="0" role="region" aria-label="Tabela de Backlinks SEO" class="table-wrapper">
+          <table class="seo-table">
+            <thead>
+              <tr>
+                <th>URL de Origem</th>
+                <th>Destino</th>
+                <th>Âncora</th>
+                <th>Rel</th>
+                <th>Status</th>
+                <th class="actions-col">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (bl of filteredBacklinks; track bl.internalId || bl.origemUrl) {
+                <tr>
+                  <th scope="row" class="primary-cell">{{ bl.origemUrl }}</th>
+                  <td>{{ bl.enderecoRetorno || bl.pagina?.url || '—' }}</td>
+                  <td>{{ bl.ancora || '—' }}</td>
+                  <td><span class="type-pill">{{ bl.rel || 'dofollow' }}</span></td>
+                  <td>
+                    <span class="status-pill" [class.ok]="bl.ativo !== false" [class.bad]="bl.ativo === false">
+                      {{ bl.ativo === false ? 'INATIVO' : 'ATIVO' }}
+                    </span>
+                  </td>
+                  <td class="actions-col">
+                    <button mat-icon-button color="warn" (click)="deleteBacklink(bl)" matTooltip="Excluir backlink" aria-label="Excluir backlink">
+                      <mat-icon>delete_outline</mat-icon>
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="empty-cell">Nenhum backlink registrado.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Campanhas -->
+    <div role="tabpanel" aria-labelledby="seo-tab-campanhas" [hidden]="activeTab !== 'campanhas'">
+      <div class="panel-inner">
+        <div class="panel-actions-bar">
+          <span>Campanhas orgânicas por domínio e tenant.</span>
+          <button mat-stroked-button color="primary" (click)="openDialog('campanha')">
+            <mat-icon>add</mat-icon>
+            Nova Campanha
+          </button>
+        </div>
+
+        <div class="campaigns-grid">
+          @for (camp of filteredCampanhas; track camp.internalId || camp.nome) {
+            <div class="campaign-card">
+              <div class="camp-head">
+                <strong>{{ camp.nome }}</strong>
+                <span class="type-pill">{{ camp.status || 'PLANEJADA' }}</span>
+              </div>
+              <p class="camp-goal">{{ camp.objetivo || 'Sem objetivo descrito.' }}</p>
+              <div class="camp-meta">
+                <span><mat-icon>language</mat-icon> {{ camp.dominio?.hostname || camp.dominio?.nome || 'Geral' }}</span>
+              </div>
+            </div>
+          } @empty {
+            <div class="empty-cell">Nenhuma campanha SEO encontrada.</div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 5: Tarefas SEO (Kanban) -->
+    <div role="tabpanel" aria-labelledby="seo-tab-tarefas" [hidden]="activeTab !== 'tarefas'">
+      <div class="panel-inner">
+        <div class="panel-actions-bar">
+          <span>Backlog técnico gerado por auditorias e demandas manuais.</span>
+          <button mat-stroked-button color="primary" (click)="openDialog('tarefa')">
+            <mat-icon>add</mat-icon>
+            Nova Tarefa
+          </button>
+        </div>
+
+        <div class="kanban-grid">
+          <div class="kanban-col">
+            <div class="col-header aberta">
+              <span>Abertas</span>
+              <span class="count">{{ getTarefasPorStatus('ABERTA').length }}</span>
+            </div>
+            @for (t of getTarefasPorStatus('ABERTA'); track t.internalId || t.titulo) {
+              <div class="task-card">
+                <div class="task-top">
+                  <span class="priority-pill" [ngClass]="(t.prioridade || 'MEDIA').toLowerCase()">{{ t.prioridade || 'MEDIA' }}</span>
+                  <button mat-icon-button (click)="deleteTarefa(t)" aria-label="Excluir tarefa"><mat-icon>close</mat-icon></button>
+                </div>
+                <div class="task-title">{{ t.titulo }}</div>
+                @if (t.descricao) {
+                  <p class="task-desc">{{ t.descricao }}</p>
+                }
+                <div class="task-actions">
+                  <button mat-stroked-button (click)="moverTarefa(t, 'EM_ANDAMENTO')">Iniciar</button>
+                  <button mat-stroked-button color="primary" (click)="moverTarefa(t, 'CONCLUIDA')">Concluir</button>
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="kanban-col">
+            <div class="col-header andamento">
+              <span>Em Andamento</span>
+              <span class="count">{{ getTarefasPorStatus('EM_ANDAMENTO').length }}</span>
+            </div>
+            @for (t of getTarefasPorStatus('EM_ANDAMENTO'); track t.internalId || t.titulo) {
+              <div class="task-card">
+                <div class="task-top">
+                  <span class="priority-pill" [ngClass]="(t.prioridade || 'MEDIA').toLowerCase()">{{ t.prioridade || 'MEDIA' }}</span>
+                  <button mat-icon-button (click)="deleteTarefa(t)" aria-label="Excluir tarefa"><mat-icon>close</mat-icon></button>
+                </div>
+                <div class="task-title">{{ t.titulo }}</div>
+                @if (t.descricao) {
+                  <p class="task-desc">{{ t.descricao }}</p>
+                }
+                <div class="task-actions">
+                  <button mat-stroked-button (click)="moverTarefa(t, 'ABERTA')">Voltar</button>
+                  <button mat-stroked-button color="primary" (click)="moverTarefa(t, 'CONCLUIDA')">Concluir</button>
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="kanban-col">
+            <div class="col-header concluida">
+              <span>Concluídas</span>
+              <span class="count">{{ getTarefasPorStatus('CONCLUIDA').length }}</span>
+            </div>
+            @for (t of getTarefasPorStatus('CONCLUIDA'); track t.internalId || t.titulo) {
+              <div class="task-card done">
+                <div class="task-top">
+                  <span class="priority-pill" [ngClass]="(t.prioridade || 'MEDIA').toLowerCase()">{{ t.prioridade || 'MEDIA' }}</span>
+                  <button mat-icon-button (click)="deleteTarefa(t)" aria-label="Excluir tarefa"><mat-icon>close</mat-icon></button>
+                </div>
+                <div class="task-title">{{ t.titulo }}</div>
+                @if (t.descricao) {
+                  <p class="task-desc">{{ t.descricao }}</p>
+                }
+                <div class="task-actions">
+                  <button mat-stroked-button (click)="moverTarefa(t, 'EM_ANDAMENTO')">Reabrir</button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 6: Fontes & Tendências -->
+    <div role="tabpanel" aria-labelledby="seo-tab-tendencias" [hidden]="activeTab !== 'tendencias'">
+      <div class="panel-inner trends-layout">
+        <div class="subpanel">
+          <h3>Tendências de Busca ({{ tendencias.length }})</h3>
+          <div class="chips-wrap">
+            @for (cat of tendencias; track cat.id || cat.name) {
+              <span class="trend-chip">
+                <strong>{{ cat.name }}</strong>
+                <small>{{ cat.trendVolume | number }}</small>
+              </span>
+            } @empty {
+              <span class="empty-cell">Nenhuma tendência em alta capturada.</span>
+            }
+          </div>
+        </div>
+
+        <div class="subpanel">
+          <h3>Fontes & Crawlers ({{ fontes.length }})</h3>
+          <div tabindex="0" role="region" aria-label="Fontes monitoradas" class="table-wrapper">
+            <table class="seo-table">
+              <thead>
+                <tr>
+                  <th>Nome / Domínio</th>
+                  <th>Status</th>
+                  <th>Requisições</th>
+                  <th>Erros Consecutivos</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (src of fontes; track src.id || src.searchUrlTemplate) {
+                  <tr>
+                    <th scope="row" class="primary-cell">{{ src.name || src.domain || src.searchUrlTemplate }}</th>
+                    <td>{{ src.status || 'ACTIVE' }}</td>
+                    <td>{{ src.totalRequests || 0 }}</td>
+                    <td>{{ src.consecutiveErrors || 0 }}</td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="4" class="empty-cell">Nenhuma fonte registrada.</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Native Modal Dialog for Creating SEO Entities -->
+<dialog
+  #entityDialog
+  class="seo-native-dialog"
+  closedby="any"
+  aria-labelledby="seo-dialog-title"
+  (close)="onDialogClosed()">
+  <div class="dialog-shell">
+    <header class="dialog-header">
+      <h1 id="seo-dialog-title">{{ dialogTitle }}</h1>
+      <button mat-icon-button type="button" (click)="closeDialog()" aria-label="Fechar janela">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+
+    <div class="dialog-body">
+      @if (dialogKind === 'domain') {
+        <label class="field-block">
+          <span>Nome do Projeto / Domínio</span>
+          <input type="text" [(ngModel)]="domainForm.nome" placeholder="Ex.: Portal Corporativo" autofocus />
+        </label>
+        <label class="field-block">
+          <span>Hostname *</span>
+          <input type="text" [(ngModel)]="domainForm.hostname" placeholder="Ex.: apps.ci.dev.br" />
+        </label>
+        <label class="field-block">
+          <span>URL do Sitemap</span>
+          <input type="url" [(ngModel)]="domainForm.sitemapUrl" placeholder="https://apps.ci.dev.br/sitemap.xml" />
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox" [(ngModel)]="domainForm.verificado" />
+          <span>Propriedade verificada no Search Console</span>
+        </label>
+      }
+
+      @if (dialogKind === 'page') {
+        <label class="field-block">
+          <span>URL da Página *</span>
+          <input type="url" [(ngModel)]="pageForm.url" placeholder="https://apps.ci.dev.br/sobre" autofocus />
+        </label>
+        <label class="field-block">
+          <span>Título (&lt;title&gt;)</span>
+          <input type="text" [(ngModel)]="pageForm.titulo" placeholder="Título esperado" />
+        </label>
+        <label class="field-block">
+          <span>Meta Description</span>
+          <textarea rows="3" [(ngModel)]="pageForm.metaDescription" placeholder="Descrição resumida para mecanismos de busca"></textarea>
+        </label>
+        <label class="field-block">
+          <span>Domínio</span>
+          <select [(ngModel)]="pageForm.dominioId">
+            <option value="">Sem vínculo</option>
+            @for (dom of dominios; track dom.internalId) {
+              <option [value]="dom.internalId">{{ dom.nome || dom.hostname }}</option>
+            }
+          </select>
+        </label>
+      }
+
+      @if (dialogKind === 'keyword') {
+        <label class="field-block">
+          <span>Termo / Palavra-chave *</span>
+          <input type="text" [(ngModel)]="keywordForm.termo" placeholder="Ex.: plataforma multi-tenant" autofocus />
+        </label>
+        <div class="two-cols">
+          <label class="field-block">
+            <span>Volume de Pesquisa</span>
+            <input type="number" [(ngModel)]="keywordForm.voulePesquisa" />
+          </label>
+          <label class="field-block">
+            <span>Dificuldade (0–100)</span>
+            <input type="number" [(ngModel)]="keywordForm.dificuldadeClassificacao" />
+          </label>
+        </div>
+        <div class="two-cols">
+          <label class="field-block">
+            <span>Posição Atual (SERP)</span>
+            <input type="number" [(ngModel)]="keywordForm.posicaoAtual" />
+          </label>
+          <label class="field-block">
+            <span>Domínio</span>
+            <select [(ngModel)]="keywordForm.dominioId">
+              <option value="">Sem vínculo</option>
+              @for (dom of dominios; track dom.internalId) {
+                <option [value]="dom.internalId">{{ dom.nome || dom.hostname }}</option>
+              }
+            </select>
+          </label>
+        </div>
+      }
+
+      @if (dialogKind === 'backlink') {
+        <label class="field-block">
+          <span>URL de Origem *</span>
+          <input type="url" [(ngModel)]="backlinkForm.origemUrl" placeholder="https://parceiro.com/artigo" autofocus />
+        </label>
+        <label class="field-block">
+          <span>URL de Destino</span>
+          <input type="url" [(ngModel)]="backlinkForm.enderecoRetorno" placeholder="https://apps.ci.dev.br/" />
+        </label>
+        <div class="two-cols">
+          <label class="field-block">
+            <span>Texto Âncora</span>
+            <input type="text" [(ngModel)]="backlinkForm.ancora" placeholder="Plataforma CI" />
+          </label>
+          <label class="field-block">
+            <span>Rel</span>
+            <select [(ngModel)]="backlinkForm.rel">
+              <option value="dofollow">dofollow</option>
+              <option value="nofollow">nofollow</option>
+              <option value="ugc">ugc</option>
+              <option value="sponsored">sponsored</option>
+            </select>
+          </label>
+        </div>
+      }
+
+      @if (dialogKind === 'campanha') {
+        <label class="field-block">
+          <span>Nome da Campanha *</span>
+          <input type="text" [(ngModel)]="campanhaForm.nome" placeholder="Ex.: Crescimento Orgânico Q4" autofocus />
+        </label>
+        <label class="field-block">
+          <span>Objetivo</span>
+          <input type="text" [(ngModel)]="campanhaForm.objetivo" placeholder="Ex.: Aumentar tráfego em 30%" />
+        </label>
+        <div class="two-cols">
+          <label class="field-block">
+            <span>Status</span>
+            <select [(ngModel)]="campanhaForm.status">
+              <option value="PLANEJADA">Planejada</option>
+              <option value="ATIVA">Ativa</option>
+              <option value="PAUSADA">Pausada</option>
+              <option value="CONCLUIDA">Concluída</option>
+            </select>
+          </label>
+          <label class="field-block">
+            <span>Domínio</span>
+            <select [(ngModel)]="campanhaForm.dominioId">
+              <option value="">Sem vínculo</option>
+              @for (dom of dominios; track dom.internalId) {
+                <option [value]="dom.internalId">{{ dom.nome || dom.hostname }}</option>
+              }
+            </select>
+          </label>
+        </div>
+      }
+
+      @if (dialogKind === 'tarefa') {
+        <label class="field-block">
+          <span>Título da Tarefa *</span>
+          <input type="text" [(ngModel)]="tarefaForm.titulo" placeholder="Ex.: Corrigir canonical da página inicial" autofocus />
+        </label>
+        <label class="field-block">
+          <span>Descrição</span>
+          <textarea rows="3" [(ngModel)]="tarefaForm.descricao" placeholder="Detalhes da correção técnica"></textarea>
+        </label>
+        <div class="two-cols">
+          <label class="field-block">
+            <span>Prioridade</span>
+            <select [(ngModel)]="tarefaForm.prioridade">
+              <option value="BAIXA">Baixa</option>
+              <option value="MEDIA">Média</option>
+              <option value="ALTA">Alta</option>
+              <option value="CRITICA">Crítica</option>
+            </select>
+          </label>
+          <label class="field-block">
+            <span>Responsável</span>
+            <input type="text" [(ngModel)]="tarefaForm.responsavel" placeholder="Nome do responsável" />
+          </label>
+        </div>
+      }
+    </div>
+
+    <footer class="dialog-footer">
+      <button mat-stroked-button type="button" (click)="closeDialog()">Cancelar</button>
+      <button mat-flat-button color="primary" type="button" (click)="saveDialog()" [disabled]="saving">
+        {{ saving ? 'Salvando...' : 'Salvar' }}
+      </button>
+    </footer>
+  </div>
+</dialog>

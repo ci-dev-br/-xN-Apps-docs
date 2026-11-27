@@ -11,6 +11,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { deleteSitePage } from '../fn/site-page/delete-site-page';
 import { DeleteSitePage$Params } from '../fn/site-page/delete-site-page';
+import { getByInternalIdSitePage } from '../fn/site-page/get-by-internal-id-site-page';
+import { GetByInternalIdSitePage$Params } from '../fn/site-page/get-by-internal-id-site-page';
 import { getListSitePage } from '../fn/site-page/get-list-site-page';
 import { GetListSitePage$Params } from '../fn/site-page/get-list-site-page';
 import { SitePage } from '../models/site-page';
@@ -44,6 +46,31 @@ export class SitePageService extends BaseService {
    */
   sync(params: SyncSitePage$Params, context?: HttpContext): Observable<SitePage> {
     return this.syncSitePage$Response(params, context).pipe(
+      map((r: StrictHttpResponse<SitePage>): SitePage => r.body)
+    );
+  }
+
+  /** Path part for operation `getByInternalIdSitePage()` */
+  static readonly GetByInternalIdSitePagePath = '/SitePage/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdSitePage()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdSitePage$Response(params: GetByInternalIdSitePage$Params, context?: HttpContext): Observable<StrictHttpResponse<SitePage>> {
+    return getByInternalIdSitePage(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdSitePage$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdSitePage$Params, context?: HttpContext): Observable<SitePage> {
+    return this.getByInternalIdSitePage$Response(params, context).pipe(
       map((r: StrictHttpResponse<SitePage>): SitePage => r.body)
     );
   }

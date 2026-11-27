@@ -10,6 +10,10 @@ import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
 import { CommentMeta } from '../models/comment-meta';
+import { deleteCommentMeta } from '../fn/comment-meta/delete-comment-meta';
+import { DeleteCommentMeta$Params } from '../fn/comment-meta/delete-comment-meta';
+import { getByInternalIdCommentMeta } from '../fn/comment-meta/get-by-internal-id-comment-meta';
+import { GetByInternalIdCommentMeta$Params } from '../fn/comment-meta/get-by-internal-id-comment-meta';
 import { getListCommentMeta } from '../fn/comment-meta/get-list-comment-meta';
 import { GetListCommentMeta$Params } from '../fn/comment-meta/get-list-comment-meta';
 import { syncCommentMeta } from '../fn/comment-meta/sync-comment-meta';
@@ -46,6 +50,31 @@ export class CommentMetaService extends BaseService {
     );
   }
 
+  /** Path part for operation `getByInternalIdCommentMeta()` */
+  static readonly GetByInternalIdCommentMetaPath = '/CommentMeta/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdCommentMeta()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdCommentMeta$Response(params: GetByInternalIdCommentMeta$Params, context?: HttpContext): Observable<StrictHttpResponse<CommentMeta>> {
+    return getByInternalIdCommentMeta(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdCommentMeta$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdCommentMeta$Params, context?: HttpContext): Observable<CommentMeta> {
+    return this.getByInternalIdCommentMeta$Response(params, context).pipe(
+      map((r: StrictHttpResponse<CommentMeta>): CommentMeta => r.body)
+    );
+  }
+
   /** Path part for operation `getListCommentMeta()` */
   static readonly GetListCommentMetaPath = '/CommentMeta/GetList';
 
@@ -68,6 +97,31 @@ export class CommentMetaService extends BaseService {
   getList(params: GetListCommentMeta$Params, context?: HttpContext): Observable<Array<CommentMeta>> {
     return this.getListCommentMeta$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<CommentMeta>>): Array<CommentMeta> => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteCommentMeta()` */
+  static readonly DeleteCommentMetaPath = '/CommentMeta/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteCommentMeta()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteCommentMeta$Response(params: DeleteCommentMeta$Params, context?: HttpContext): Observable<StrictHttpResponse<CommentMeta>> {
+    return deleteCommentMeta(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteCommentMeta$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteCommentMeta$Params, context?: HttpContext): Observable<CommentMeta> {
+    return this.deleteCommentMeta$Response(params, context).pipe(
+      map((r: StrictHttpResponse<CommentMeta>): CommentMeta => r.body)
     );
   }
 

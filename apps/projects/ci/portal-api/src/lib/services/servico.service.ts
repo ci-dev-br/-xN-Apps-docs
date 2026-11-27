@@ -9,6 +9,10 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deleteServico } from '../fn/servico/delete-servico';
+import { DeleteServico$Params } from '../fn/servico/delete-servico';
+import { getByInternalIdServico } from '../fn/servico/get-by-internal-id-servico';
+import { GetByInternalIdServico$Params } from '../fn/servico/get-by-internal-id-servico';
 import { getListServico } from '../fn/servico/get-list-servico';
 import { GetListServico$Params } from '../fn/servico/get-list-servico';
 import { Servico } from '../models/servico';
@@ -46,6 +50,31 @@ export class ServicoService extends BaseService {
     );
   }
 
+  /** Path part for operation `getByInternalIdServico()` */
+  static readonly GetByInternalIdServicoPath = '/Servico/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdServico()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdServico$Response(params: GetByInternalIdServico$Params, context?: HttpContext): Observable<StrictHttpResponse<Servico>> {
+    return getByInternalIdServico(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdServico$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdServico$Params, context?: HttpContext): Observable<Servico> {
+    return this.getByInternalIdServico$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Servico>): Servico => r.body)
+    );
+  }
+
   /** Path part for operation `getListServico()` */
   static readonly GetListServicoPath = '/Servico/GetList';
 
@@ -68,6 +97,31 @@ export class ServicoService extends BaseService {
   getList(params: GetListServico$Params, context?: HttpContext): Observable<Array<Servico>> {
     return this.getListServico$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Servico>>): Array<Servico> => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteServico()` */
+  static readonly DeleteServicoPath = '/Servico/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteServico()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteServico$Response(params: DeleteServico$Params, context?: HttpContext): Observable<StrictHttpResponse<Servico>> {
+    return deleteServico(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteServico$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteServico$Params, context?: HttpContext): Observable<Servico> {
+    return this.deleteServico$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Servico>): Servico => r.body)
     );
   }
 

@@ -143,6 +143,11 @@ export class DataGridComponent<I> {
         event?.stopPropagation();
         this.onColumnFilterChange(fieldName, '', true);
     }
+    hasRowTenant(row: any): boolean {
+        if (!row || typeof row !== 'object') return false;
+        if (row.tenantId) return true;
+        return Array.isArray(row.tenants) && row.tenants.length > 0;
+    }
     rowSelectionHandler(event: MouseEvent, row: I) {
         if (this.selectionMode === 'row') {
             if (event.ctrlKey) {

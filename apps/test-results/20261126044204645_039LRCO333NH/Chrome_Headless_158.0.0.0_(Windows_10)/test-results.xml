@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-26T04:42:18" id="0" hostname="plhx33" tests="2" errors="0" failures="0" time="0.759">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="Àpps Codex deve resolver arquivo .map (SourceMap) para o .ts correspondente quando aberto via janela com CodeX" time="0.747" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps Codex"/>
+  <testcase name="Àpps Codex Componente criado com sucesso" time="0.012" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps Codex"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

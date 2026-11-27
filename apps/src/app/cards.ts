@@ -1,6 +1,8 @@
 import { ImplCard, organizeCardMetadata, createGenericAppCard } from "@ci/components";
 import { Cards as CardsCrm } from "@ci-apps/crm";
 import { Cards as CardsBlog } from "@ci-apps/blog";
+import { Cards as CardsCms } from "@ci-apps/cms";
+import { Cards as CardsSeo } from "@ci-apps/SEO";
 import { Cards as CardsTerminal } from "@ci/components/terminal";
 import { Cards as CardsAIO } from "@ci/components/aio";
 import { Cards as CardsFinanceiro } from "@ci-apps/Financeiro";
@@ -9,6 +11,8 @@ import { CI_STATIC_APPS } from "./painel/apps/apps";
 const CardModule = [
     CardsCrm,
     CardsBlog,
+    CardsCms,
+    CardsSeo,
     CardsTerminal,
     CardsAIO,
     CardsFinanceiro,

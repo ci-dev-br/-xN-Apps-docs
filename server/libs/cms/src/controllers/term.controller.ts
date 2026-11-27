@@ -1,82 +1,75 @@
-import { Body, Controller, Post, Request } from "@nestjs/common";
+import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Term } from "../models/term.entity";
-import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
+import { ControllerDaoBase, GetByInternalIdInputDto, SyncPayloadDao } from "@ci/manager";
 import { FindOptionsWhere } from "typeorm";
 import { TermService } from "../services/term.service";
+
 export class SyncPayloadDaoTerm extends SyncPayloadDao<Term> {
     @ApiProperty({ type: Term })
     override data?: Term;
 }
+
 export class ObterListaTerm {
-    // override data?: Term;
-    @ApiProperty({})
+    @ApiProperty({ required: false })
     skip?: number;
-    @ApiProperty({})
+    @ApiProperty({ required: false })
     take?: number;
-    @ApiProperty({})
+    @ApiProperty({ required: false })
     where?: FindOptionsWhere<Term>[] | FindOptionsWhere<Term>;
+    @ApiProperty({ required: false })
+    search?: string;
+    @ApiProperty({ required: false })
+    orderBy?: any;
 }
-export class PessoaCotrollerGetInputDto {
-    @ApiProperty({ nullable: true, required: false })
-    query?: string;
-    @ApiProperty({ nullable: true, required: false })
-    limit?: number;
-}
+
 @ApiTags('Term')
 @Controller('Term')
 export class TermController extends ControllerDaoBase<TermService, Term> {
-    constructor(
-        service: TermService
-    ) {
+    constructor(service: TermService) {
         super(service);
     }
+
     @Post('Sync')
-    @ApiResponse({
-        type: Term,
-    })
-    @ApiOperation({
-        operationId: 'SyncTerm'
-    })
+    @ApiResponse({ type: Term })
+    @ApiOperation({ operationId: 'SyncTerm' })
     override async Sync(
         @Body() body: SyncPayloadDaoTerm,
-        @Request() req: Request,
+        @Req() req?: any,
     ) {
-        try {
-            return await super.Sync(body, req)
-        } catch (error) {
-            return {
-                status: 500,
-                message: 'Falha',
-                detahes: error.message,
-                stack: error.stack
-            } as any
-        }
+        return await super.Sync(body, req);
     }
+
+    @Post('GetByInternalId')
+    @ApiResponse({ type: Term })
+    @ApiOperation({ operationId: 'GetByInternalIdTerm' })
+    override async GetByInternalId(
+        @Body() input: GetByInternalIdInputDto,
+        @Req() req?: any,
+    ) {
+        return await super.GetByInternalId(input, req);
+    }
+
     @Post('GetList')
-    @ApiResponse({
-        type: Term, isArray: true
-    })
-    @ApiOperation({
-        operationId: 'GetListTerm'
-    })
+    @ApiResponse({ type: Term, isArray: true })
+    @ApiOperation({ operationId: 'GetListTerm' })
     override async GetList(
         @Body() input: ObterListaTerm,
-        @Request() req: Request,
+        @Req() req?: any,
     ) {
-        return super.GetList(input, req);
+        return await super.GetList({
+            ...input,
+            relations: { website: true },
+        }, req);
     }
+
     @Post('Delete')
-    @ApiResponse({
-        type: Term, isArray: true
-    })
-    @ApiOperation({
-        operationId: 'DeleteTerm'
-    })
+    @ApiResponse({ type: Term })
+    @ApiOperation({ operationId: 'DeleteTerm' })
     override async Delete(
         @Body() input: Term,
-        @Request() req: Request,
+        @Req() req?: any,
     ) {
-        return super.Delete(input, req);
+        return await super.Delete(input, req);
     }
 }

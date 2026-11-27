@@ -1,6 +1,6 @@
 import { InvitationPayload } from "@ci/user/dto/i-send-invitation.payload";
-import { Body, Controller, Post, Req } from "@nestjs/common";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Post, Query, Req } from "@nestjs/common";
+import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { InviteService } from "../service/invite.service";
 import { User } from "../models/user.entity";
 import { Invite } from "../models/invite.entity";
@@ -31,6 +31,8 @@ export class InviteController {
                 email: payload.email!,
                 friendlyName: payload.friendlyName!,
                 mensagem: payload.mensagem!,
+                roles: payload.roles,
+                tenantIds: payload.tenantIds,
             },
             (req as any).user as User,
             originUrl,
@@ -68,12 +70,25 @@ export class InviteController {
     @Public()
     @Post('GetInvite')
     @ApiOperation({ operationId: 'GetInvite' })
+    @ApiBody({ type: InvitationPayload, required: false })
+    @ApiQuery({ name: 'invite', required: false, type: String })
+    @ApiQuery({ name: 'convite', required: false, type: String })
+    @ApiQuery({ name: 'inviteHash', required: false, type: String })
     @ApiResponse({ type: Invite })
     async GetInvite(
-        @Body() payload: InvitationPayload & { invite?: string; inviteHash?: string },
-        @Req() req: Request
+        @Body() payload?: InvitationPayload,
+        @Req() req?: Request,
+        @Query('invite') queryInvite?: string,
+        @Query('convite') queryConvite?: string,
+        @Query('inviteHash') queryInviteHash?: string,
     ) {
-        const code = payload?.convite || payload?.invite || payload?.inviteHash;
+        const code =
+            payload?.convite ||
+            payload?.invite ||
+            payload?.inviteHash ||
+            queryConvite ||
+            queryInvite ||
+            queryInviteHash;
         return await this.invite.getInvite(code!);
     }
 }

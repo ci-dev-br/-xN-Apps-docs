@@ -1,13 +1,49 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from "@nestjs/common";
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException, Optional } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, ILike, In } from "typeorm";
+import { DataSource, Equal, Repository, ILike, In } from "typeorm";
 import { Tenant } from "../models/tenant.entity";
+import { TenantPermission } from "../models/tenant-permission.entity";
 import { Grupo } from "../models/grupo.entity";
 import { GrupoMembership } from "../models/grupo-membership.entity";
 import { GrupoTopico } from "../models/grupo-topico.entity";
 import { GrupoTopicoMensagem } from "../models/grupo-topico-mensagem.entity";
 import { GrupoAtivoCompartilhado } from "../models/grupo-ativo-compartilhado.entity";
 import { User } from "@ci/auth/models/user.entity";
+
+export interface TenantPermissionFlags {
+    canVisualizar: boolean;
+    canVer: boolean;
+    canEditar: boolean;
+    canCompartilhar: boolean;
+}
+
+export interface TenantComPermissoesDto extends Tenant {
+    permissionsSummary: TenantPermissionFlags;
+}
+
+export interface CriarTenantDto {
+    name: string;
+    descriptions?: string;
+    organizacaoId?: string;
+    permissions?: Partial<TenantPermissionFlags>;
+}
+
+export interface AtualizarTenantDto {
+    name?: string;
+    descriptions?: string;
+    organizacaoId?: string;
+}
+
+export interface DefinirPermissaoTenantDto {
+    userId?: string;
+    emailOrUsername?: string;
+    organizacaoId?: string;
+    role?: string;
+    canVisualizar?: boolean;
+    canVer?: boolean;
+    canEditar?: boolean;
+    canCompartilhar?: boolean;
+}
 
 export interface CriarGrupoDto {
     name: string;
@@ -48,6 +84,11 @@ export class TenantService {
         private readonly ativoRepo: Repository<GrupoAtivoCompartilhado>,
         @InjectRepository(User)
         private readonly userRepo: Repository<User>,
+        @Optional()
+        @InjectRepository(TenantPermission)
+        private readonly permissionRepo?: Repository<TenantPermission>,
+        @Optional()
+        private readonly dataSource?: DataSource,
     ) {}
 
     /**
@@ -552,5 +593,443 @@ export class TenantService {
         } catch (e) {
             console.error(`Erro ao remover tenant ${tenantId} do usuário ${userId}:`, e);
         }
+    }
+
+    // =========================================================================
+    // GESTÃO DE TENANTS DISPONÍVEIS E PERMISSÕES (TenantPermission)
+    // =========================================================================
+
+    private async loadOrganizacaoContext(
+        organizacaoId: string | undefined,
+        userId: string,
+    ): Promise<{ orgTenantId?: string; isOrgAdmin: boolean; isOrgMember: boolean }> {
+        if (!organizacaoId || !this.dataSource) {
+            return { isOrgAdmin: false, isOrgMember: false };
+        }
+        try {
+            const orgRepo = this.dataSource.getRepository('Organizacao');
+            const org: any = await orgRepo.findOne({
+                where: { internalId: Equal(organizacaoId) } as any,
+                relations: ['createdBy'],
+            });
+            if (!org) {
+                return { isOrgAdmin: false, isOrgMember: false };
+            }
+            const orgTenantId: string | undefined = org.tenantId || org.tenant?.id;
+            const isOwner = org.ownerUserId === userId || org.createdBy?.identifiedUser === userId;
+
+            let isOrgMember = isOwner;
+            let isOrgAdmin = isOwner;
+            try {
+                const membroRepo = this.dataSource.getRepository('OrganizacaoMembro');
+                const member: any = await membroRepo.findOne({
+                    where: {
+                        organizacaoId: Equal(organizacaoId),
+                        userId: Equal(userId),
+                        status: Equal('ACTIVE'),
+                    } as any,
+                });
+                if (member) {
+                    isOrgMember = true;
+                    if (member.isOwner || (Array.isArray(member.roles) && member.roles.includes('ORG_ADMIN'))) {
+                        isOrgAdmin = true;
+                    }
+                }
+            } catch {
+                // OrganizacaoMembro pode não estar carregado em testes unitários isolados
+            }
+            return { orgTenantId, isOrgAdmin, isOrgMember };
+        } catch {
+            return { isOrgAdmin: false, isOrgMember: false };
+        }
+    }
+
+    private resolverPermissoesEfetivas(
+        tenant: Tenant,
+        user: User,
+        permsForTenant: TenantPermission[],
+        options?: { isOrgAdmin?: boolean; isOrgMember?: boolean; isUserTenantLinked?: boolean; orgTenantId?: string },
+    ): TenantPermissionFlags {
+        const userRoles = Array.isArray(user?.roles) ? user.roles : [];
+        const isPlatformAdmin = userRoles.includes('MASTER') || userRoles.includes('ADMIN');
+        const isCreator = Boolean(user?.id && tenant.createdBy === user.id);
+        const isOrgAdmin = Boolean(options?.isOrgAdmin);
+
+        if (isPlatformAdmin || isCreator || isOrgAdmin) {
+            return {
+                canVisualizar: true,
+                canVer: true,
+                canEditar: true,
+                canCompartilhar: true,
+            };
+        }
+
+        const matchingPerms = (permsForTenant || []).filter(p => {
+            const matchesUser = Boolean(p.userId && user?.id && p.userId === user.id);
+            const matchesRole = Boolean(p.role && userRoles.includes(p.role));
+            const matchesOrgGeneral = Boolean(!p.userId && !p.role && p.organizacaoId && options?.isOrgMember);
+            return matchesUser || matchesRole || matchesOrgGeneral;
+        });
+
+        if (matchingPerms.length > 0) {
+            return matchingPerms.reduce<TenantPermissionFlags>(
+                (acc, curr) => ({
+                    canVisualizar: acc.canVisualizar || Boolean(curr.canVisualizar),
+                    canVer: acc.canVer || Boolean(curr.canVer),
+                    canEditar: acc.canEditar || Boolean(curr.canEditar),
+                    canCompartilhar: acc.canCompartilhar || Boolean(curr.canCompartilhar),
+                }),
+                { canVisualizar: false, canVer: false, canEditar: false, canCompartilhar: false },
+            );
+        }
+
+        if (options?.isUserTenantLinked || (options?.orgTenantId && options.orgTenantId === tenant.id && options?.isOrgMember)) {
+            return {
+                canVisualizar: true,
+                canVer: true,
+                canEditar: false,
+                canCompartilhar: false,
+            };
+        }
+
+        return {
+            canVisualizar: false,
+            canVer: false,
+            canEditar: false,
+            canCompartilhar: false,
+        };
+    }
+
+    /**
+     * Lista todos os Tenants disponíveis para o usuário (opcionalmente filtrados por Organização),
+     * já incluindo as permissões efetivas (visualizar, ver, editar e compartilhar).
+     */
+    async listarTenantsDisponiveis(
+        user: User,
+        organizacaoId?: string,
+    ): Promise<TenantComPermissoesDto[]> {
+        if (!user?.id) {
+            throw new BadRequestException('Usuário autenticado não identificado.');
+        }
+
+        const dbUser = await this.userRepo.findOne({
+            where: { id: user.id },
+            relations: ['tenants'],
+        });
+        const userTenants = dbUser?.tenants || user.tenants || [];
+        const userTenantIds = new Set(userTenants.map(t => t.id).filter(Boolean) as string[]);
+
+        const orgCtx = await this.loadOrganizacaoContext(organizacaoId, user.id);
+
+        const permissionRows = this.permissionRepo
+            ? await this.permissionRepo.find({
+                where: organizacaoId
+                    ? [
+                        { userId: Equal(user.id) },
+                        { organizacaoId: Equal(organizacaoId) },
+                    ]
+                    : [{ userId: Equal(user.id) }],
+            })
+            : [];
+
+        const permTenantIds = new Set(permissionRows.map(p => p.tenantId).filter(Boolean));
+        const tenantMap = new Map<string, Tenant>();
+
+        for (const t of userTenants) {
+            if (t?.id) tenantMap.set(t.id, t);
+        }
+
+        const queryClauses: any[] = [{ createdBy: Equal(user.id) }];
+        if (organizacaoId) {
+            queryClauses.push({ organizacaoId: Equal(organizacaoId) });
+        }
+        if (orgCtx.orgTenantId) {
+            queryClauses.push({ id: Equal(orgCtx.orgTenantId) });
+        }
+        if (permTenantIds.size > 0) {
+            queryClauses.push({ id: In(Array.from(permTenantIds)) });
+        }
+
+        const queriedTenants = await this.tenantRepo.find({ where: queryClauses });
+        for (const t of queriedTenants) {
+            if (t?.id) tenantMap.set(t.id, t);
+        }
+
+        const result: TenantComPermissoesDto[] = [];
+        for (const tenant of tenantMap.values()) {
+            if (!tenant.id) continue;
+            const permsForTenant = permissionRows.filter(p => p.tenantId === tenant.id);
+
+            if (organizacaoId) {
+                const belongsToOrg =
+                    tenant.organizacaoId === organizacaoId ||
+                    (orgCtx.orgTenantId && tenant.id === orgCtx.orgTenantId) ||
+                    permsForTenant.some(p => p.organizacaoId === organizacaoId);
+                if (!belongsToOrg) {
+                    continue;
+                }
+            }
+
+            const permissionsSummary = this.resolverPermissoesEfetivas(tenant, dbUser || user, permsForTenant, {
+                isOrgAdmin: orgCtx.isOrgAdmin,
+                isOrgMember: orgCtx.isOrgMember,
+                isUserTenantLinked: userTenantIds.has(tenant.id),
+                orgTenantId: orgCtx.orgTenantId,
+            });
+
+            if (!permissionsSummary.canVisualizar && !permissionsSummary.canVer) {
+                continue;
+            }
+
+            result.push({
+                ...tenant,
+                permissionsSummary,
+            });
+        }
+
+        result.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        return result;
+    }
+
+    /**
+     * Cria um novo Tenant e atribui permissão integral (visualizar, ver, editar, compartilhar) ao criador.
+     */
+    async criarTenant(dados: CriarTenantDto, user: User): Promise<TenantComPermissoesDto> {
+        if (!user?.id) {
+            throw new BadRequestException('Usuário autenticado não identificado.');
+        }
+        const cleanName = (dados?.name || '').trim();
+        if (!cleanName) {
+            throw new BadRequestException('O nome do Tenant é obrigatório.');
+        }
+
+        const created = this.tenantRepo.create({
+            name: cleanName,
+            descriptions: dados?.descriptions?.trim() || '',
+            organizacaoId: dados?.organizacaoId?.trim() || undefined,
+            createdBy: user.id,
+        });
+        const savedTenant = await this.tenantRepo.save(created);
+        await this.adicionarTenantAoUsuario(user.id, savedTenant);
+
+        const defaultPerms: TenantPermissionFlags = {
+            canVisualizar: dados?.permissions?.canVisualizar ?? true,
+            canVer: dados?.permissions?.canVer ?? true,
+            canEditar: dados?.permissions?.canEditar ?? true,
+            canCompartilhar: dados?.permissions?.canCompartilhar ?? true,
+        };
+
+        if (this.permissionRepo && savedTenant.id) {
+            const perm = this.permissionRepo.create({
+                tenantId: savedTenant.id,
+                userId: user.id,
+                organizacaoId: savedTenant.organizacaoId,
+                ...defaultPerms,
+                grantedBy: user.id,
+            });
+            await this.permissionRepo.save(perm);
+        }
+
+        return {
+            ...savedTenant,
+            permissionsSummary: defaultPerms,
+        };
+    }
+
+    private async resolveTenantAccessForUser(
+        tenantId: string,
+        user: User,
+        organizacaoIdOverride?: string,
+    ): Promise<{
+        tenant: Tenant;
+        permsForTenant: TenantPermission[];
+        summary: TenantPermissionFlags;
+    }> {
+        if (!user?.id) {
+            throw new BadRequestException('Usuário autenticado não identificado.');
+        }
+        const tenant = await this.tenantRepo.findOne({ where: { id: tenantId } });
+        if (!tenant) {
+            throw new NotFoundException('Tenant não encontrado.');
+        }
+
+        const effectiveOrgId = organizacaoIdOverride || tenant.organizacaoId;
+        const orgCtx = await this.loadOrganizacaoContext(effectiveOrgId, user.id);
+        const permsForTenant = this.permissionRepo
+            ? await this.permissionRepo.find({ where: { tenantId } })
+            : [];
+        const dbUser = await this.userRepo.findOne({ where: { id: user.id }, relations: ['tenants'] });
+        const userTenantIds = new Set((dbUser?.tenants || []).map(t => t.id).filter(Boolean) as string[]);
+
+        const summary = this.resolverPermissoesEfetivas(tenant, dbUser || user, permsForTenant, {
+            isOrgAdmin: orgCtx.isOrgAdmin,
+            isOrgMember: orgCtx.isOrgMember,
+            isUserTenantLinked: userTenantIds.has(tenantId),
+            orgTenantId: orgCtx.orgTenantId,
+        });
+
+        return { tenant, permsForTenant, summary };
+    }
+
+    /**
+     * Atualiza dados de um Tenant existente quando o usuário possui permissão de edição (`canEditar`).
+     */
+    async atualizarTenant(
+        tenantId: string,
+        dados: AtualizarTenantDto,
+        user: User,
+    ): Promise<TenantComPermissoesDto> {
+        const { tenant, summary: permissionsSummary } = await this.resolveTenantAccessForUser(
+            tenantId,
+            user,
+            dados?.organizacaoId,
+        );
+
+        if (!permissionsSummary.canEditar) {
+            throw new ForbiddenException('Você não possui permissão de edição para este Tenant.');
+        }
+
+        if (dados?.name !== undefined) {
+            const cleanName = dados.name.trim();
+            if (!cleanName) {
+                throw new BadRequestException('O nome do Tenant não pode ser vazio.');
+            }
+            tenant.name = cleanName;
+        }
+        if (dados?.descriptions !== undefined) {
+            tenant.descriptions = dados.descriptions.trim();
+        }
+        if (dados?.organizacaoId !== undefined) {
+            tenant.organizacaoId = dados.organizacaoId?.trim() || undefined;
+        }
+
+        const saved = await this.tenantRepo.save(tenant);
+        return {
+            ...saved,
+            permissionsSummary,
+        };
+    }
+
+    /**
+     * Lista todas as permissões cadastradas para um Tenant.
+     */
+    async listarPermissoesTenant(tenantId: string, user: User): Promise<TenantPermission[]> {
+        const { permsForTenant, summary } = await this.resolveTenantAccessForUser(tenantId, user);
+
+        if (!summary.canVisualizar && !summary.canVer && !summary.canCompartilhar) {
+            throw new ForbiddenException('Sem permissão para visualizar permissões deste Tenant.');
+        }
+
+        return permsForTenant;
+    }
+
+    /**
+     * Define ou atualiza permissões (`canVisualizar`, `canVer`, `canEditar`, `canCompartilhar`) em um Tenant.
+     */
+    async definirPermissaoTenant(
+        tenantId: string,
+        dados: DefinirPermissaoTenantDto,
+        user: User,
+    ): Promise<TenantPermission> {
+        if (!this.permissionRepo) {
+            throw new BadRequestException('Repositório de permissões de Tenant indisponível.');
+        }
+        const { tenant, permsForTenant, summary } = await this.resolveTenantAccessForUser(
+            tenantId,
+            user,
+            dados?.organizacaoId,
+        );
+
+        if (!summary.canCompartilhar) {
+            throw new ForbiddenException('Você não possui permissão para compartilhar ou gerenciar permissões deste Tenant.');
+        }
+
+        let targetUser: User | null = null;
+        if (dados?.userId) {
+            targetUser = await this.userRepo.findOne({ where: { id: dados.userId } });
+        } else if (dados?.emailOrUsername?.trim()) {
+            const term = dados.emailOrUsername.trim();
+            targetUser = await this.userRepo.findOne({
+                where: [{ email: term }, { username: term }],
+            });
+        }
+
+        if ((dados?.userId || dados?.emailOrUsername) && !targetUser) {
+            throw new NotFoundException('Usuário destino não encontrado para concessão de permissão.');
+        }
+
+        const targetUserId = targetUser?.id || dados?.userId || undefined;
+        const targetOrgId = dados?.organizacaoId?.trim() || tenant.organizacaoId || undefined;
+        const targetRole = dados?.role?.trim() || undefined;
+
+        if (!targetUserId && !targetOrgId && !targetRole) {
+            throw new BadRequestException('Informe um usuário, organização ou role para atribuir permissão no Tenant.');
+        }
+
+        const existing = permsForTenant.find(p =>
+            (targetUserId ? p.userId === targetUserId : !p.userId) &&
+            (targetOrgId ? p.organizacaoId === targetOrgId : !p.organizacaoId) &&
+            (targetRole ? p.role === targetRole : !p.role),
+        );
+
+        const nextFlags: TenantPermissionFlags = {
+            canVisualizar: dados?.canVisualizar !== undefined ? Boolean(dados.canVisualizar) : (existing?.canVisualizar ?? true),
+            canVer: dados?.canVer !== undefined ? Boolean(dados.canVer) : (existing?.canVer ?? true),
+            canEditar: dados?.canEditar !== undefined ? Boolean(dados.canEditar) : (existing?.canEditar ?? false),
+            canCompartilhar: dados?.canCompartilhar !== undefined ? Boolean(dados.canCompartilhar) : (existing?.canCompartilhar ?? false),
+        };
+
+        const entity = existing
+            ? Object.assign(existing, {
+                ...nextFlags,
+                grantedBy: user.id,
+            })
+            : this.permissionRepo.create({
+                tenantId,
+                userId: targetUserId,
+                organizacaoId: targetOrgId,
+                role: targetRole,
+                ...nextFlags,
+                grantedBy: user.id,
+            });
+
+        const savedPerm = await this.permissionRepo.save(entity);
+
+        if (targetUserId) {
+            if (nextFlags.canVisualizar || nextFlags.canVer) {
+                await this.adicionarTenantAoUsuario(targetUserId, tenant);
+            } else {
+                await this.removerTenantDoUsuario(targetUserId, tenantId);
+            }
+        }
+
+        return savedPerm;
+    }
+
+    /**
+     * Remove uma permissão específica de um Tenant.
+     */
+    async removerPermissaoTenant(
+        tenantId: string,
+        permissionId: string,
+        user: User,
+    ): Promise<{ removed: boolean }> {
+        if (!this.permissionRepo) {
+            throw new BadRequestException('Repositório de permissões de Tenant indisponível.');
+        }
+
+        const { permsForTenant, summary } = await this.resolveTenantAccessForUser(tenantId, user);
+
+        if (!summary.canCompartilhar) {
+            throw new ForbiddenException('Sem permissão para remover acessos deste Tenant.');
+        }
+
+        const targetPerm = permsForTenant.find(p => p.id === permissionId);
+        if (!targetPerm) {
+            throw new NotFoundException('Permissão não encontrada.');
+        }
+
+        await this.permissionRepo.delete({ id: permissionId } as any);
+        return { removed: true };
     }
 }

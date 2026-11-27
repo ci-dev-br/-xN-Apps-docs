@@ -11,6 +11,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { notificationGetMy } from '../fn/notification/notification-get-my';
 import { NotificationGetMy$Params } from '../fn/notification/notification-get-my';
+import { notificationGetPreferences } from '../fn/notification/notification-get-preferences';
+import { NotificationGetPreferences$Params } from '../fn/notification/notification-get-preferences';
 import { notificationMarkAllAsRead } from '../fn/notification/notification-mark-all-as-read';
 import { NotificationMarkAllAsRead$Params } from '../fn/notification/notification-mark-all-as-read';
 import { notificationMarkAsRead } from '../fn/notification/notification-mark-as-read';
@@ -19,6 +21,8 @@ import { notificationPushSubscribe } from '../fn/notification/notification-push-
 import { NotificationPushSubscribe$Params } from '../fn/notification/notification-push-subscribe';
 import { notificationSendTest } from '../fn/notification/notification-send-test';
 import { NotificationSendTest$Params } from '../fn/notification/notification-send-test';
+import { notificationSetPreferences } from '../fn/notification/notification-set-preferences';
+import { NotificationSetPreferences$Params } from '../fn/notification/notification-set-preferences';
 
 @Injectable()
 export class NotificationService extends BaseService {
@@ -47,6 +51,56 @@ export class NotificationService extends BaseService {
    */
   notificationGetMy(params?: NotificationGetMy$Params, context?: HttpContext): Observable<void> {
     return this.notificationGetMy$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `notificationGetPreferences()` */
+  static readonly NotificationGetPreferencesPath = '/Notification/Preferences';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `notificationGetPreferences()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  notificationGetPreferences$Response(params?: NotificationGetPreferences$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return notificationGetPreferences(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `notificationGetPreferences$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  notificationGetPreferences(params?: NotificationGetPreferences$Params, context?: HttpContext): Observable<void> {
+    return this.notificationGetPreferences$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `notificationSetPreferences()` */
+  static readonly NotificationSetPreferencesPath = '/Notification/Preferences';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `notificationSetPreferences()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  notificationSetPreferences$Response(params?: NotificationSetPreferences$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return notificationSetPreferences(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `notificationSetPreferences$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  notificationSetPreferences(params?: NotificationSetPreferences$Params, context?: HttpContext): Observable<void> {
+    return this.notificationSetPreferences$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }

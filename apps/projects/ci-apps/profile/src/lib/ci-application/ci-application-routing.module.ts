@@ -53,6 +53,16 @@ const routes: Routes = [
       },
     },
   },
+  {
+    path: 'confirmar-email',
+    component: HomeComponent,
+    title: 'Confirmar E-mail',
+  },
+  {
+    path: 'confirmar-email/:token',
+    component: HomeComponent,
+    title: 'Confirmar E-mail',
+  },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

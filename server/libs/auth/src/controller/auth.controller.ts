@@ -1,5 +1,14 @@
-import { Body, Controller, Get, Ip, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
-import { AcessoPayload, AuthorizationOutput, RefreshPayloadInputDto, RegistrarInputDto } from './dto/dto';
+import { BadRequestException, Body, Controller, Get, Ip, Optional, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
+import {
+  AcessoPayload,
+  AuthorizationOutput,
+  ConfirmarEmailInputDto,
+  ConfirmarEmailOutputDto,
+  RefreshPayloadInputDto,
+  RegistrarInputDto,
+  SolicitarVerificacaoEmailInputDto,
+  SolicitarVerificacaoEmailOutputDto,
+} from './dto/dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../service/user.service';
 import { User } from '../models/user.entity';
@@ -12,8 +21,10 @@ import { Request, Response } from 'express';
 import { TwoFactorAuthenticationService } from '../service/two-factors.service';
 import { InviteService } from '../service/invite.service';
 import { BusService } from '@ci/core';
+import { templateHtml } from '@ci/core/template/load-template.fn';
+import { MailService } from '@ci/notification/services/mail.service';
+import { jwtConstants } from '../constants';
 import * as argon2 from 'argon2';
-import { BadRequestException } from '@nestjs/common';
 const sharp = require('sharp');
 
 @Controller('auth')
@@ -26,6 +37,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     private readonly inviteService: InviteService,
+    @Optional() private readonly mailService?: MailService,
   ) { }
   @Public()
   @Post('Registrar')
@@ -81,6 +93,9 @@ export class AuthController {
         phone,
         passwordMode: 'argon2',
         roles: assignedRoles,
+        tenants: Array.isArray(inviteData?.tenantIds) && inviteData.tenantIds.length > 0
+          ? inviteData.tenantIds.map((id: string) => ({ id } as any))
+          : undefined,
       });
 
       // Marca o convite como aceito
@@ -160,12 +175,16 @@ export class AuthController {
         id: user.id,
         username: user.username,
         email: user.email,
+        emailVerificado: Boolean(user.emailVerificado),
+        phone: user.phone,
         fullName: user.fullName,
         surname: user.surname || user.fullName || user.username || user.email,
         photo: {
           /*   originalFile: user.photo.originalFile,
             format: user.photo.format */
         },
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
         roles: (user.roles && user.roles.length > 0) ? user.roles : ['USER'],
       };
     } catch (error) {
@@ -175,6 +194,142 @@ export class AuthController {
         message: 'Falha',
       }
     }
+  }
+
+  /**
+   * Solicita o envio de e-mail de verificação para o usuário autenticado.
+   */
+  @Post('SolicitarVerificacaoEmail')
+  @ApiOperation({ operationId: 'SolicitarVerificacaoEmailAuth' })
+  @ApiResponse({ type: SolicitarVerificacaoEmailOutputDto })
+  async solicitarVerificacaoEmail(
+    @Req() req: Request,
+    @Body() input?: SolicitarVerificacaoEmailInputDto,
+  ): Promise<SolicitarVerificacaoEmailOutputDto> {
+    const userId = (req as any)?.user?.id;
+    if (!userId) {
+      throw new UnauthorizedException('Usuário não autenticado.');
+    }
+
+    const user = await this.userService.findById(userId);
+    if (!user) {
+      throw new UnauthorizedException('Usuário não encontrado.');
+    }
+
+    const targetEmail = (user.email || '').trim().toLowerCase();
+    if (!targetEmail) {
+      throw new BadRequestException('Nenhum endereço de e-mail cadastrado no perfil.');
+    }
+
+    if (user.emailVerificado) {
+      return {
+        sent: false,
+        alreadyVerified: true,
+        email: targetEmail,
+        message: 'Este endereço de e-mail já está verificado.',
+      };
+    }
+
+    const secret = process.env.MASTER_PASSWORD_AUTHORYTHY || jwtConstants.secret;
+    const verificationToken = await this.jwtService.signAsync(
+      {
+        purpose: 'email-verification',
+        userId: user.id,
+        email: targetEmail,
+      },
+      {
+        secret,
+        expiresIn: '24h',
+      },
+    );
+
+    const originHeader = (req as any)?.headers?.origin;
+    const refererHeader = (req as any)?.headers?.referer;
+    let refererOrigin: string | undefined;
+    if (refererHeader) {
+      try {
+        refererOrigin = new URL(refererHeader).origin;
+      } catch {
+        refererOrigin = undefined;
+      }
+    }
+    const baseUrl = (input?.originUrl || originHeader || refererOrigin || 'https://apps.ci.dev.br')
+      .trim()
+      .replace(/\/+$/, '');
+    const verificationLink = `${baseUrl}/confirmar-email/${encodeURIComponent(verificationToken)}`;
+    const displayName = user.fullName || user.surname || user.username || targetEmail;
+    const ano = String(new Date().getFullYear());
+
+    const html = templateHtml('email-verificacao-template', {
+      nome: displayName,
+      email: targetEmail,
+      verification_link: verificationLink,
+      expiracao_horas: '24 horas',
+      mail_sender_status: 'Verificação oficial de e-mail — apps.ci.dev.br',
+      new_report_link: `${baseUrl}/suporte/novo?assunto=Problema%20na%20verificacao%20de%20e-mail`,
+      ano,
+      footer_assinatura: 'ci.dev.br',
+      footer_message: 'Apps, seus aplicativos',
+    });
+
+    if (this.mailService) {
+      await this.mailService.requestSendMessageToMail({
+        to: targetEmail,
+        subject: 'Confirme seu endereço de e-mail — apps.ci.dev.br',
+        template_html: html,
+        message_text: `Olá ${displayName}, confirme seu endereço de e-mail (${targetEmail}) acessando: ${verificationLink}`,
+      });
+    }
+
+    return {
+      sent: true,
+      alreadyVerified: false,
+      email: targetEmail,
+      message: `E-mail de confirmação enviado para ${targetEmail}.`,
+    };
+  }
+
+  /**
+   * Valida o token de verificação e marca o e-mail do usuário como verificado.
+   */
+  @Public()
+  @Post('ConfirmarEmail')
+  @ApiOperation({ operationId: 'ConfirmarEmailAuth' })
+  @ApiResponse({ type: ConfirmarEmailOutputDto })
+  async confirmarEmail(
+    @Body() input: ConfirmarEmailInputDto,
+  ): Promise<ConfirmarEmailOutputDto> {
+    const rawToken = (input?.token || '').trim();
+    if (!rawToken) {
+      throw new BadRequestException('Token de confirmação de e-mail não informado.');
+    }
+
+    const secret = process.env.MASTER_PASSWORD_AUTHORYTHY || jwtConstants.secret;
+    let payload: any;
+    try {
+      payload = await this.jwtService.verifyAsync(rawToken, { secret });
+    } catch {
+      throw new BadRequestException('Link de confirmação inválido ou expirado. Solicite um novo e-mail em /Profile.');
+    }
+
+    if (payload?.purpose !== 'email-verification' || !payload?.userId || !payload?.email) {
+      throw new BadRequestException('Token de verificação inválido.');
+    }
+
+    const { user, alreadyVerified } = await this.userService.confirmarEmailVerificado(
+      payload.userId,
+      payload.email,
+    );
+
+    return {
+      verified: true,
+      alreadyVerified,
+      email: user.email,
+      userId: user.id,
+      message: alreadyVerified
+        ? 'Este endereço de e-mail já foi confirmado anteriormente.'
+        : 'E-mail confirmado e marcado como verificado com sucesso!',
+    };
   }
   /**
    * Solicitação de Acesso

@@ -207,6 +207,80 @@
     }
 }
 
+.verify-inline-btn {
+    height: 28px !important;
+    line-height: 26px !important;
+    padding: 0 10px !important;
+    border-radius: 14px !important;
+    font-size: 12px !important;
+    font-weight: 600;
+
+    mat-icon {
+        font-size: 15px;
+        width: 15px;
+        height: 15px;
+        margin-right: 4px;
+    }
+}
+
+.email-verification-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+
+    &.verified {
+        background: #e8f5e9;
+        border-color: #c8e6c9;
+
+        .verification-info mat-icon {
+            color: #2e7d32;
+        }
+    }
+
+    .verification-info {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        flex: 1;
+        min-width: 200px;
+
+        mat-icon {
+            color: #ef6c00;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        > div {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            font-size: 13px;
+            color: #37474f;
+
+            strong {
+                color: #1e293b;
+            }
+        }
+    }
+
+    .verification-sent-hint {
+        margin-top: 4px;
+        color: #1b5e20;
+    }
+
+    .verify-action-btn {
+        border-radius: 8px;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+}
+
 .role-badge {
     display: inline-block;
     padding: 3px 10px;

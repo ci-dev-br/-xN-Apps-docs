@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-26T18:46:48" id="0" hostname="plhx33" tests="2" errors="0" failures="1" time="1.596">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="MasterDetailComponent - Filtro, Edição, Criação e Permissões de Tenants por Organização deve habilitar o filtro com tenants disponíveis ao selecionar organização, filtrar registros, mostrar/editar/criar tenants e gerenciar permissões" time="1.547" classname="Chrome_Headless_158_0_0_0_(Windows_10).MasterDetailComponent - Filtro, Edição, Criação e Permissões de Tenants por Organização">
+    <failure type="">ɵNotFound: NG0201: No provider found for `Handlers2`. Source: DynamicTestModule. Find more at https://v21.angular.dev/errors/NG0201
+error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `Handlers2`.', ngTokenPath: [ 'Handlers2' ] })
+ɵNotFound: NG0201: No provider found for `Handlers2`. Source: DynamicTestModule. Find more at https://v21.angular.dev/errors/NG0201
+    at createRuntimeError (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:602:17)
+    at NullInjector.get (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:883:21)
+    at R3Injector.get (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:1208:27)
+    at R3Injector.get (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:1208:27)
+    at ChainedInjector.get (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:7779:32)
+    at lookupTokenUsingModuleInjector (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:890:31)
+    at getOrCreateInjectable (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:913:10)
+    at ɵɵdirectiveInject (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:7813:17)
+    at NodeInjectorFactory.DataGridComponent2_Factory [as factory] (ng:///DataGridComponent2/ɵfac.js:5:7)
+    at getNodeInjectable (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+</failure>
+  </testcase>
+  <testcase name="MasterDetailComponent - Filtro, Edição, Criação e Permissões de Tenants por Organização não deve exibir o filtro de tenants quando nenhuma organização estiver selecionada" time="0.049" classname="Chrome_Headless_158_0_0_0_(Windows_10).MasterDetailComponent - Filtro, Edição, Criação e Permissões de Tenants por Organização"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

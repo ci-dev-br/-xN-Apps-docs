@@ -94,12 +94,12 @@ export interface AvailableVersionInfoDto {
   shortCommit: string;
 
   /**
-   * Versão atual da aplicação definida no package.json
-   */
-  version: string;
-
-  /**
    * Quantidade de arquivos atualmente em cache de memória no AppController
    */
   staticCacheFilesCount?: number;
+
+  /**
+   * Versão atual da aplicação definida no package.json
+   */
+  version: string;
 }

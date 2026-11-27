@@ -9,11 +9,17 @@ import { RequestBuilder } from '../../request-builder';
 import { MacroIndicator } from '../../models/macro-indicator';
 
 export interface MacroIndicatorsControllerGetLatest$Params {
+
+/**
+ * Quando true, inclui índices e cotações de criptomoedas.
+ */
+  includeCrypto?: boolean;
 }
 
 export function macroIndicatorsControllerGetLatest(http: HttpClient, rootUrl: string, params?: MacroIndicatorsControllerGetLatest$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<MacroIndicator>>> {
   const rb = new RequestBuilder(rootUrl, macroIndicatorsControllerGetLatest.PATH, 'get');
   if (params) {
+    rb.query('includeCrypto', params.includeCrypto, {});
   }
 
   return http.request(

@@ -487,7 +487,7 @@ export class CodeEditorComponent implements OnChanges, OnDestroy {
 
             await this.abrirArquivo(cleanPath, pos);
 
-            this.router.navigate([], {
+            this.router?.navigate([], {
                 relativeTo: this.activatedRoute,
                 queryParams: { file: cleanPath },
                 queryParamsHandling: 'merge'
@@ -1335,7 +1335,7 @@ export class CodeEditorComponent implements OnChanges, OnDestroy {
             this.originalValue = this.value;
             this.isDirty = false;
             this.saved.emit({
-                path: this.oppenedFile?.name || undefined,
+                path: (this.oppenedFile as any)?.name || undefined,
                 value: this.value,
                 resolvedFromMap: this.resolvedFromMapPath,
             });

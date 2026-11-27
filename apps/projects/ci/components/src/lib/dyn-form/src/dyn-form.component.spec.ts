@@ -5,7 +5,10 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, Routes } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Apps, CoreModule, DaoBuilder } from '@ci/core';
+import { CodexService } from '@ci/portal-api';
+import { UserAuthenticationService } from '@ci/auth';
 import { WindowService } from '@ci/components/window';
+import { BehaviorSubject, of } from 'rxjs';
 import { DynFormComponent } from './dyn-form.component';
 import { DynFormModule } from './dyn-form.module';
 
@@ -32,6 +35,8 @@ describe('DynFormComponent & Schema Type Representation', () => {
   let fixture: ComponentFixture<DynFormComponent>;
   let fb: FormBuilder;
   let windowSpy: jasmine.SpyObj<WindowService>;
+  let codexSpy: jasmine.SpyObj<CodexService>;
+  let user$: BehaviorSubject<any>;
 
   const mockSchema = {
     type: 'object',
@@ -102,6 +107,33 @@ describe('DynFormComponent & Schema Type Representation', () => {
   beforeEach(async () => {
     windowSpy = jasmine.createSpyObj<WindowService>('WindowService', ['open']);
     windowSpy.open.and.resolveTo({ value: 'export const updated = true;' });
+    user$ = new BehaviorSubject<any>({ id: 'u-1', roles: ['USER'] });
+    codexSpy = jasmine.createSpyObj<CodexService>('CodexService', ['locateFiles']);
+    codexSpy.locateFiles.and.callFake(({ name }: any) =>
+      of({
+        query: name,
+        found: true,
+        total: 1,
+        primaryFile: {
+          name,
+          path: `apps/projects/ci/components/src/lib/dyn-form/src/${name}`,
+          directory: 'apps/projects/ci/components/src/lib/dyn-form/src',
+          extension: '.ts',
+          size: 1024,
+          score: 100,
+        },
+        files: [
+          {
+            name,
+            path: `apps/projects/ci/components/src/lib/dyn-form/src/${name}`,
+            directory: 'apps/projects/ci/components/src/lib/dyn-form/src',
+            extension: '.ts',
+            size: 1024,
+            score: 100,
+          },
+        ],
+      })
+    );
 
     await TestBed.configureTestingModule({
       imports: [
@@ -120,6 +152,8 @@ describe('DynFormComponent & Schema Type Representation', () => {
           },
         },
         { provide: WindowService, useValue: windowSpy },
+        { provide: CodexService, useValue: codexSpy },
+        { provide: UserAuthenticationService, useValue: { user: user$ } },
       ],
     }).compileComponents();
 
@@ -215,5 +249,61 @@ describe('DynFormComponent & Schema Type Representation', () => {
     expect(matchMap).toBeDefined();
     expect(matchMap?.component).toBe(TestCodexWindowStubComponent);
     expect(matchMap?.openInWindow).toBeTrue();
+  });
+
+  it('deve exibir barra de edição CodeX na camada dyn-form apenas para DEVELOPER/SYSADMIN e localizar arquivo pelo nome', async () => {
+    await component.ngOnInit();
+    fixture.detectChanges();
+
+    expect(component.canEditSource).toBeFalse();
+    expect(fixture.nativeElement.querySelector('.ci-dyn-form-codex-bar')).toBeNull();
+
+    user$.next({ id: 'dev-1', roles: ['USER', 'DEVELOPER'] });
+    fixture.detectChanges();
+
+    expect(component.canEditSource).toBeTrue();
+    const editBtn: HTMLButtonElement | null = fixture.nativeElement.querySelector('.codex-edit-trigger');
+    expect(editBtn).not.toBeNull();
+
+    await component.openSourceInCodeX('dyn-form.component.ts');
+    expect(codexSpy.locateFiles).toHaveBeenCalledWith(
+      jasmine.objectContaining({ name: 'dyn-form.component.ts' })
+    );
+    expect(windowSpy.open).toHaveBeenCalledWith(
+      TestCodexWindowStubComponent,
+      jasmine.objectContaining({
+        file: 'apps/projects/ci/components/src/lib/dyn-form/src/dyn-form.component.ts',
+        filePath: 'apps/projects/ci/components/src/lib/dyn-form/src/dyn-form.component.ts',
+        language: 'typescript',
+      }),
+      'CodeX — dyn-form.component.ts',
+      undefined
+    );
+  });
+
+  it('deve localizar nome simples de arquivo no DynInputComponent antes de abrir no CodeX', async () => {
+    component.formGroup?.get('scriptTs')?.setValue('user.entity.ts');
+    await component.ngOnInit();
+    fixture.detectChanges();
+
+    const triggerBtn: HTMLButtonElement | null = fixture.nativeElement.querySelector('.dyn-custom-type-field button');
+    expect(triggerBtn).not.toBeNull();
+    triggerBtn!.click();
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(codexSpy.locateFiles).toHaveBeenCalledWith(
+      jasmine.objectContaining({ name: 'user.entity.ts', limit: 1 })
+    );
+    expect(windowSpy.open).toHaveBeenCalledWith(
+      TestCodexWindowStubComponent,
+      jasmine.objectContaining({
+        file: 'apps/projects/ci/components/src/lib/dyn-form/src/user.entity.ts',
+        filePath: 'apps/projects/ci/components/src/lib/dyn-form/src/user.entity.ts',
+      }),
+      'CodeX — Editor TypeScript',
+      jasmine.anything()
+    );
   });
 });

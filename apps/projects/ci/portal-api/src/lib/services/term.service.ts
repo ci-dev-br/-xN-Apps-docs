@@ -11,6 +11,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { deleteTerm } from '../fn/term/delete-term';
 import { DeleteTerm$Params } from '../fn/term/delete-term';
+import { getByInternalIdTerm } from '../fn/term/get-by-internal-id-term';
+import { GetByInternalIdTerm$Params } from '../fn/term/get-by-internal-id-term';
 import { getListTerm } from '../fn/term/get-list-term';
 import { GetListTerm$Params } from '../fn/term/get-list-term';
 import { syncTerm } from '../fn/term/sync-term';
@@ -44,6 +46,31 @@ export class TermService extends BaseService {
    */
   sync(params: SyncTerm$Params, context?: HttpContext): Observable<Term> {
     return this.syncTerm$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Term>): Term => r.body)
+    );
+  }
+
+  /** Path part for operation `getByInternalIdTerm()` */
+  static readonly GetByInternalIdTermPath = '/Term/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdTerm()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdTerm$Response(params: GetByInternalIdTerm$Params, context?: HttpContext): Observable<StrictHttpResponse<Term>> {
+    return getByInternalIdTerm(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdTerm$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdTerm$Params, context?: HttpContext): Observable<Term> {
+    return this.getByInternalIdTerm$Response(params, context).pipe(
       map((r: StrictHttpResponse<Term>): Term => r.body)
     );
   }
@@ -82,7 +109,7 @@ export class TermService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  deleteTerm$Response(params: DeleteTerm$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Term>>> {
+  deleteTerm$Response(params: DeleteTerm$Params, context?: HttpContext): Observable<StrictHttpResponse<Term>> {
     return deleteTerm(this.http, this.rootUrl, params, context);
   }
 
@@ -92,9 +119,9 @@ export class TermService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  delete(params: DeleteTerm$Params, context?: HttpContext): Observable<Array<Term>> {
+  delete(params: DeleteTerm$Params, context?: HttpContext): Observable<Term> {
     return this.deleteTerm$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<Term>>): Array<Term> => r.body)
+      map((r: StrictHttpResponse<Term>): Term => r.body)
     );
   }
 

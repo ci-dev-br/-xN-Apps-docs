@@ -36,7 +36,6 @@ export class VendaProduto extends FullAuditedEntity {
     @Column({ type: 'decimal', precision: 10, scale: 2 })
     precoUnitario: number;
     @ApiProperty({ type: Pagamento })
-    @ApiProperty({ type: Pagamento })
     @OneToOne(() => Pagamento, (pagamento) => pagamento.vendaProduto)
     pagamento?: Pagamento;
 }

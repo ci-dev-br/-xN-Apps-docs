@@ -9,6 +9,10 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deleteLinks } from '../fn/links/delete-links';
+import { DeleteLinks$Params } from '../fn/links/delete-links';
+import { getByInternalIdLinks } from '../fn/links/get-by-internal-id-links';
+import { GetByInternalIdLinks$Params } from '../fn/links/get-by-internal-id-links';
 import { getListLinks } from '../fn/links/get-list-links';
 import { GetListLinks$Params } from '../fn/links/get-list-links';
 import { Links } from '../models/links';
@@ -46,6 +50,31 @@ export class LinksService extends BaseService {
     );
   }
 
+  /** Path part for operation `getByInternalIdLinks()` */
+  static readonly GetByInternalIdLinksPath = '/Links/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdLinks()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdLinks$Response(params: GetByInternalIdLinks$Params, context?: HttpContext): Observable<StrictHttpResponse<Links>> {
+    return getByInternalIdLinks(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdLinks$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdLinks$Params, context?: HttpContext): Observable<Links> {
+    return this.getByInternalIdLinks$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Links>): Links => r.body)
+    );
+  }
+
   /** Path part for operation `getListLinks()` */
   static readonly GetListLinksPath = '/Links/GetList';
 
@@ -68,6 +97,31 @@ export class LinksService extends BaseService {
   getList(params: GetListLinks$Params, context?: HttpContext): Observable<Array<Links>> {
     return this.getListLinks$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Links>>): Array<Links> => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteLinks()` */
+  static readonly DeleteLinksPath = '/Links/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteLinks()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteLinks$Response(params: DeleteLinks$Params, context?: HttpContext): Observable<StrictHttpResponse<Links>> {
+    return deleteLinks(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteLinks$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteLinks$Params, context?: HttpContext): Observable<Links> {
+    return this.deleteLinks$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Links>): Links => r.body)
     );
   }
 

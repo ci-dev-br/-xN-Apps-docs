@@ -47,6 +47,12 @@
         </div>
     </header>
 
+    <ci-tenant-filter-bar
+        [selectedTenantIds]="selectedTenantIds"
+        (selectedTenantIdsChange)="onTenantFilterChange($event)"
+        label="Segmentar Carteiras por Tenants:">
+    </ci-tenant-filter-bar>
+
     @if (loading && !possuiCarteira) {
         <div class="loading-state">
             <mat-spinner diameter="44"></mat-spinner>

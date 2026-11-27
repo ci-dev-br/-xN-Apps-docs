@@ -13,6 +13,9 @@ import { acessarAuth } from '../fn/auth/acessar-auth';
 import { AcessarAuth$Params } from '../fn/auth/acessar-auth';
 import { AcessoPayload } from '../models/acesso-payload';
 import { AuthorizationOutput } from '../models/authorization-output';
+import { confirmarEmailAuth } from '../fn/auth/confirmar-email-auth';
+import { ConfirmarEmailAuth$Params } from '../fn/auth/confirmar-email-auth';
+import { ConfirmarEmailOutputDto } from '../models/confirmar-email-output-dto';
 import { desconectarDispositivoAuth } from '../fn/auth/desconectar-dispositivo-auth';
 import { DesconectarDispositivoAuth$Params } from '../fn/auth/desconectar-dispositivo-auth';
 import { desconectarOutrosDispositivosAuth } from '../fn/auth/desconectar-outros-dispositivos-auth';
@@ -27,6 +30,9 @@ import { refreshAuth } from '../fn/auth/refresh-auth';
 import { RefreshAuth$Params } from '../fn/auth/refresh-auth';
 import { registrarAuth } from '../fn/auth/registrar-auth';
 import { RegistrarAuth$Params } from '../fn/auth/registrar-auth';
+import { solicitarVerificacaoEmailAuth } from '../fn/auth/solicitar-verificacao-email-auth';
+import { SolicitarVerificacaoEmailAuth$Params } from '../fn/auth/solicitar-verificacao-email-auth';
+import { SolicitarVerificacaoEmailOutputDto } from '../models/solicitar-verificacao-email-output-dto';
 import { User } from '../models/user';
 
 @Injectable()
@@ -82,6 +88,56 @@ export class AuthService extends BaseService {
   profile(params?: ProfileAuth$Params, context?: HttpContext): Observable<User> {
     return this.profileAuth$Response(params, context).pipe(
       map((r: StrictHttpResponse<User>): User => r.body)
+    );
+  }
+
+  /** Path part for operation `solicitarVerificacaoEmailAuth()` */
+  static readonly SolicitarVerificacaoEmailAuthPath = '/auth/SolicitarVerificacaoEmail';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `solicitarVerificacaoEmailAuth()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  solicitarVerificacaoEmailAuth$Response(params: SolicitarVerificacaoEmailAuth$Params, context?: HttpContext): Observable<StrictHttpResponse<SolicitarVerificacaoEmailOutputDto>> {
+    return solicitarVerificacaoEmailAuth(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `solicitarVerificacaoEmailAuth$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  solicitarVerificacaoEmail(params: SolicitarVerificacaoEmailAuth$Params, context?: HttpContext): Observable<SolicitarVerificacaoEmailOutputDto> {
+    return this.solicitarVerificacaoEmailAuth$Response(params, context).pipe(
+      map((r: StrictHttpResponse<SolicitarVerificacaoEmailOutputDto>): SolicitarVerificacaoEmailOutputDto => r.body)
+    );
+  }
+
+  /** Path part for operation `confirmarEmailAuth()` */
+  static readonly ConfirmarEmailAuthPath = '/auth/ConfirmarEmail';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `confirmarEmailAuth()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  confirmarEmailAuth$Response(params: ConfirmarEmailAuth$Params, context?: HttpContext): Observable<StrictHttpResponse<ConfirmarEmailOutputDto>> {
+    return confirmarEmailAuth(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `confirmarEmailAuth$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  confirmarEmail(params: ConfirmarEmailAuth$Params, context?: HttpContext): Observable<ConfirmarEmailOutputDto> {
+    return this.confirmarEmailAuth$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ConfirmarEmailOutputDto>): ConfirmarEmailOutputDto => r.body)
     );
   }
 

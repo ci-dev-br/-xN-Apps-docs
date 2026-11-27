@@ -1,33 +1,56 @@
-:host {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 12px;
-    padding: 12px;
-    flex-wrap: wrap;
-    max-width: 80vw;
-    max-height: 80vh;
-    overflow: unset;
-
-    ::ng-deep>* {
-        flex: unset;
-        min-width: 10px;
-        display: contents;
-    }
+.user-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  min-inline-size: min(580px, 86vw);
+  max-inline-size: 720px;
 }
 
-:host ::ng-deep ci-dyn-form {
-    & {
-        display: contents;
-    }
+.edit-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
 
-    form {
-        flex-direction: row;
-        flex-wrap: wrap;
+.edit-subtitle {
+  margin: 4px 0 0;
+  font-size: 0.875rem;
+  opacity: 0.78;
+}
 
-        >* {
-            flex: 1 1 200px;
-        }
-    }
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.error-banner,
+.info-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.error-banner {
+  background: color-mix(in srgb, #ef4444 12%, transparent);
+  color: #dc2626;
+  border: 1px solid color-mix(in srgb, #ef4444 35%, transparent);
+}
+
+.info-banner {
+  background: color-mix(in srgb, #3b82f6 10%, transparent);
+  color: #2563eb;
+  border: 1px solid color-mix(in srgb, #3b82f6 30%, transparent);
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--mat-sys-outline-variant, rgba(148, 163, 184, 0.25));
 }

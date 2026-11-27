@@ -12,6 +12,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 import { ActionResponseDto } from '../models/action-response-dto';
 import { AppStatusResponseDto } from '../models/app-status-response-dto';
 import { AvailableVersionInfoDto } from '../models/available-version-info-dto';
+import { clearCacheDeployer } from '../fn/deployer/clear-cache-deployer';
+import { ClearCacheDeployer$Params } from '../fn/deployer/clear-cache-deployer';
 import { deployerControllerExecuteCommit } from '../fn/deployer/deployer-controller-execute-commit';
 import { DeployerControllerExecuteCommit$Params } from '../fn/deployer/deployer-controller-execute-commit';
 import { deployerControllerGetAppStatus } from '../fn/deployer/deployer-controller-get-app-status';
@@ -29,6 +31,10 @@ import { getVersionDeployer } from '../fn/deployer/get-version-deployer';
 import { GetVersionDeployer$Params } from '../fn/deployer/get-version-deployer';
 import { publishDeployer } from '../fn/deployer/publish-deployer';
 import { PublishDeployer$Params } from '../fn/deployer/publish-deployer';
+import { restartServiceDeployer } from '../fn/deployer/restart-service-deployer';
+import { RestartServiceDeployer$Params } from '../fn/deployer/restart-service-deployer';
+import { syncPublicDeployer } from '../fn/deployer/sync-public-deployer';
+import { SyncPublicDeployer$Params } from '../fn/deployer/sync-public-deployer';
 
 @Injectable()
 export class DeployerService extends BaseService {
@@ -98,7 +104,7 @@ export class DeployerService extends BaseService {
   static readonly PublishDeployerPath = '/Deployer/publish';
 
   /**
-   * Executa ações de publicação (geração de versão em produção do cliente via Gulp em /gulp e/ou compilação do backend).
+   * Executa ações de publicação para DEVELOPER + SYSADMIN (atualização de apps/dist/apps/browser em server/public, build de produção, cache de AppController e reinício do serviço).
    *
    *
    *
@@ -112,7 +118,7 @@ export class DeployerService extends BaseService {
   }
 
   /**
-   * Executa ações de publicação (geração de versão em produção do cliente via Gulp em /gulp e/ou compilação do backend).
+   * Executa ações de publicação para DEVELOPER + SYSADMIN (atualização de apps/dist/apps/browser em server/public, build de produção, cache de AppController e reinício do serviço).
    *
    *
    *
@@ -123,6 +129,105 @@ export class DeployerService extends BaseService {
    */
   publish(params: PublishDeployer$Params, context?: HttpContext): Observable<ActionResponseDto> {
     return this.publishDeployer$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ActionResponseDto>): ActionResponseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `syncPublicDeployer()` */
+  static readonly SyncPublicDeployerPath = '/Deployer/sync-public';
+
+  /**
+   * Atualiza server/public a partir de apps/dist/apps/browser e limpa caches do AppController (DEVELOPER + SYSADMIN).
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `syncPublicDeployer()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  syncPublicDeployer$Response(params?: SyncPublicDeployer$Params, context?: HttpContext): Observable<StrictHttpResponse<ActionResponseDto>> {
+    return syncPublicDeployer(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Atualiza server/public a partir de apps/dist/apps/browser e limpa caches do AppController (DEVELOPER + SYSADMIN).
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `syncPublicDeployer$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  syncPublic(params?: SyncPublicDeployer$Params, context?: HttpContext): Observable<ActionResponseDto> {
+    return this.syncPublicDeployer$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ActionResponseDto>): ActionResponseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `clearCacheDeployer()` */
+  static readonly ClearCacheDeployerPath = '/Deployer/cache/clear';
+
+  /**
+   * Limpa os caches de arquivos estáticos em memória no AppController (DEVELOPER + SYSADMIN).
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `clearCacheDeployer()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  clearCacheDeployer$Response(params?: ClearCacheDeployer$Params, context?: HttpContext): Observable<StrictHttpResponse<ActionResponseDto>> {
+    return clearCacheDeployer(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Limpa os caches de arquivos estáticos em memória no AppController (DEVELOPER + SYSADMIN).
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `clearCacheDeployer$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  clearCache(params?: ClearCacheDeployer$Params, context?: HttpContext): Observable<ActionResponseDto> {
+    return this.clearCacheDeployer$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ActionResponseDto>): ActionResponseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `restartServiceDeployer()` */
+  static readonly RestartServiceDeployerPath = '/Deployer/restart';
+
+  /**
+   * Limpa o cache do AppController e reinicia o serviço backend em produção (DEVELOPER + SYSADMIN).
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `restartServiceDeployer()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  restartServiceDeployer$Response(params?: RestartServiceDeployer$Params, context?: HttpContext): Observable<StrictHttpResponse<ActionResponseDto>> {
+    return restartServiceDeployer(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Limpa o cache do AppController e reinicia o serviço backend em produção (DEVELOPER + SYSADMIN).
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `restartServiceDeployer$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  restartService(params?: RestartServiceDeployer$Params, context?: HttpContext): Observable<ActionResponseDto> {
+    return this.restartServiceDeployer$Response(params, context).pipe(
       map((r: StrictHttpResponse<ActionResponseDto>): ActionResponseDto => r.body)
     );
   }

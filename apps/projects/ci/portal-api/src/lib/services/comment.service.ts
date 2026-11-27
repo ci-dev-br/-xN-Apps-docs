@@ -10,6 +10,10 @@ import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
 import { Comment } from '../models/comment';
+import { deleteComment } from '../fn/comment/delete-comment';
+import { DeleteComment$Params } from '../fn/comment/delete-comment';
+import { getByInternalIdComment } from '../fn/comment/get-by-internal-id-comment';
+import { GetByInternalIdComment$Params } from '../fn/comment/get-by-internal-id-comment';
 import { getListComment } from '../fn/comment/get-list-comment';
 import { GetListComment$Params } from '../fn/comment/get-list-comment';
 import { syncComment } from '../fn/comment/sync-comment';
@@ -46,6 +50,31 @@ export class CommentService extends BaseService {
     );
   }
 
+  /** Path part for operation `getByInternalIdComment()` */
+  static readonly GetByInternalIdCommentPath = '/Comment/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdComment()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdComment$Response(params: GetByInternalIdComment$Params, context?: HttpContext): Observable<StrictHttpResponse<Comment>> {
+    return getByInternalIdComment(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdComment$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdComment$Params, context?: HttpContext): Observable<Comment> {
+    return this.getByInternalIdComment$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Comment>): Comment => r.body)
+    );
+  }
+
   /** Path part for operation `getListComment()` */
   static readonly GetListCommentPath = '/Comment/GetList';
 
@@ -68,6 +97,31 @@ export class CommentService extends BaseService {
   getList(params: GetListComment$Params, context?: HttpContext): Observable<Array<Comment>> {
     return this.getListComment$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Comment>>): Array<Comment> => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteComment()` */
+  static readonly DeleteCommentPath = '/Comment/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteComment()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteComment$Response(params: DeleteComment$Params, context?: HttpContext): Observable<StrictHttpResponse<Comment>> {
+    return deleteComment(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteComment$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteComment$Params, context?: HttpContext): Observable<Comment> {
+    return this.deleteComment$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Comment>): Comment => r.body)
     );
   }
 

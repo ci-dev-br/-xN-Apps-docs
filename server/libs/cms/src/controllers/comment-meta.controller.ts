@@ -1,67 +1,75 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CommentMeta } from "../models/comment-meta.entity";
-import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
+import { ControllerDaoBase, GetByInternalIdInputDto, SyncPayloadDao } from "@ci/manager";
 import { FindOptionsWhere } from "typeorm";
 import { CommentMetaService } from "../services/comment-meta.service";
+
 export class SyncPayloadDaoCommentMeta extends SyncPayloadDao<CommentMeta> {
     @ApiProperty({ type: CommentMeta })
     override data?: CommentMeta;
 }
+
 export class ObterListaCommentMeta {
-    // override data?: CommentMeta;
-    @ApiProperty({})
+    @ApiProperty({ required: false })
     skip?: number;
-    @ApiProperty({})
+    @ApiProperty({ required: false })
     take?: number;
-    @ApiProperty({})
+    @ApiProperty({ required: false })
     where?: FindOptionsWhere<CommentMeta>[] | FindOptionsWhere<CommentMeta>;
+    @ApiProperty({ required: false })
+    search?: string;
+    @ApiProperty({ required: false })
+    orderBy?: any;
 }
-export class PessoaCotrollerGetInputDto {
-    @ApiProperty({ nullable: true, required: false })
-    query?: string;
-    @ApiProperty({ nullable: true, required: false })
-    limit?: number;
-}
+
 @ApiTags('CommentMeta')
 @Controller('CommentMeta')
 export class CommentMetaController extends ControllerDaoBase<CommentMetaService, CommentMeta> {
-    constructor(
-        service: CommentMetaService
-    ) {
+    constructor(service: CommentMetaService) {
         super(service);
     }
+
     @Post('Sync')
-    @ApiResponse({
-        type: CommentMeta,
-    })
-    @ApiOperation({
-        operationId: 'SyncCommentMeta'
-    })
+    @ApiResponse({ type: CommentMeta })
+    @ApiOperation({ operationId: 'SyncCommentMeta' })
     override async Sync(
         @Body() body: SyncPayloadDaoCommentMeta,
+        @Req() req?: any,
     ) {
-        try {
-            return await super.Sync(body)
-        } catch (error) {
-            return {
-                status: 500,
-                message: 'Falha',
-                detahes: error.message,
-                stack: error.stack
-            } as any
-        }
+        return await super.Sync(body, req);
     }
+
+    @Post('GetByInternalId')
+    @ApiResponse({ type: CommentMeta })
+    @ApiOperation({ operationId: 'GetByInternalIdCommentMeta' })
+    override async GetByInternalId(
+        @Body() input: GetByInternalIdInputDto,
+        @Req() req?: any,
+    ) {
+        return await super.GetByInternalId(input, req);
+    }
+
     @Post('GetList')
-    @ApiResponse({
-        type: CommentMeta, isArray: true
-    })
-    @ApiOperation({
-        operationId: 'GetListCommentMeta'
-    })
+    @ApiResponse({ type: CommentMeta, isArray: true })
+    @ApiOperation({ operationId: 'GetListCommentMeta' })
     override async GetList(
         @Body() input: ObterListaCommentMeta,
+        @Req() req?: any,
     ) {
-        return super.GetList(input);
+        return await super.GetList({
+            ...input,
+            relations: { comment: true },
+        }, req);
+    }
+
+    @Post('Delete')
+    @ApiResponse({ type: CommentMeta })
+    @ApiOperation({ operationId: 'DeleteCommentMeta' })
+    override async Delete(
+        @Body() input: CommentMeta,
+        @Req() req?: any,
+    ) {
+        return await super.Delete(input, req);
     }
 }

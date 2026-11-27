@@ -10,6 +10,10 @@ import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
 import { Atendimento } from '../models/atendimento';
+import { deleteAtendimento } from '../fn/atendimento/delete-atendimento';
+import { DeleteAtendimento$Params } from '../fn/atendimento/delete-atendimento';
+import { getByInternalIdAtendimento } from '../fn/atendimento/get-by-internal-id-atendimento';
+import { GetByInternalIdAtendimento$Params } from '../fn/atendimento/get-by-internal-id-atendimento';
 import { getListAtendimento } from '../fn/atendimento/get-list-atendimento';
 import { GetListAtendimento$Params } from '../fn/atendimento/get-list-atendimento';
 import { syncAtendimento } from '../fn/atendimento/sync-atendimento';
@@ -46,6 +50,31 @@ export class AtendimentoService extends BaseService {
     );
   }
 
+  /** Path part for operation `getByInternalIdAtendimento()` */
+  static readonly GetByInternalIdAtendimentoPath = '/Atendimento/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdAtendimento()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdAtendimento$Response(params: GetByInternalIdAtendimento$Params, context?: HttpContext): Observable<StrictHttpResponse<Atendimento>> {
+    return getByInternalIdAtendimento(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdAtendimento$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdAtendimento$Params, context?: HttpContext): Observable<Atendimento> {
+    return this.getByInternalIdAtendimento$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Atendimento>): Atendimento => r.body)
+    );
+  }
+
   /** Path part for operation `getListAtendimento()` */
   static readonly GetListAtendimentoPath = '/Atendimento/GetList';
 
@@ -68,6 +97,31 @@ export class AtendimentoService extends BaseService {
   getList(params: GetListAtendimento$Params, context?: HttpContext): Observable<Array<Atendimento>> {
     return this.getListAtendimento$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Atendimento>>): Array<Atendimento> => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteAtendimento()` */
+  static readonly DeleteAtendimentoPath = '/Atendimento/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteAtendimento()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteAtendimento$Response(params: DeleteAtendimento$Params, context?: HttpContext): Observable<StrictHttpResponse<Atendimento>> {
+    return deleteAtendimento(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteAtendimento$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteAtendimento$Params, context?: HttpContext): Observable<Atendimento> {
+    return this.deleteAtendimento$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Atendimento>): Atendimento => r.body)
     );
   }
 

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-26T04:38:13" id="0" hostname="plhx33" tests="1" errors="0" failures="1" time="0.727">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="RegistrarComponent &amp; InviteService (getInvite) deve enviar convite/invite/inviteHash no body de POST /Invite/GetInvite e avançar para invite-registration" time="0.727" classname="Chrome_Headless_158_0_0_0_(Windows_10).RegistrarComponent &amp; InviteService (getInvite)">
+    <failure type="">Error: Expected no open requests, found 1: POST https://apps.ci.dev.br/Application/RecordUsage
+    at _HttpClientTestingBackend.verify (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/common/http/testing/src/backend.ts:147:13)
+    at UserContext.&lt;anonymous&gt; (src/app/registrar/registrar.component.spec.ts:50:14)
+    at _ZoneDelegate.invoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone.js:398:28)
+    at _ProxyZoneSpec.onInvoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone-testing.js:2132:39)
+    at _ZoneDelegate.invoke (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone.js:397:34)
+    at ZoneImpl.run (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone.js:113:43)
+    at runInTestZone (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone-testing.js:216:38)
+    at UserContext.&lt;anonymous&gt; (node_modules/.pnpm/zone.js@0.15.1/node_modules/zone.js/fesm2015/zone-testing.js:234:32)
+    at &lt;Jasmine&gt;
+</failure>
+  </testcase>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

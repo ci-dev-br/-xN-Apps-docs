@@ -55,6 +55,12 @@ export class Invite extends FullAuditedEntity {
      */
     @ApiProperty({ nullable: true, required: false }) @Column({ nullable: true })
     phoneWhatsApp?: string;
+    /**
+     * IDs dos Tenants de destino associados ao convite.
+     */
+    @ApiProperty({ nullable: true, required: false, isArray: true, type: String, title: 'Tenants de destino' })
+    @Column({ nullable: true, type: 'varchar', array: true })
+    tenantIds?: string[];
 
     @BeforeInsert()
     ensureInviteDefaults() {

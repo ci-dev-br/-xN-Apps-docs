@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface UserPreference {
-  code?: string | null;
+  code: string;
   user: {
 };
   userId: string;

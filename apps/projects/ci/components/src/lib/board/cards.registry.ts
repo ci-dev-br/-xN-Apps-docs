@@ -228,6 +228,22 @@ const KNOWN_CARD_METADATA: Record<string, {
         tags: ['Blogs', 'RSS', 'Notícias', 'Feed'],
         cols: 2,
     },
+    CmsResumoCard: {
+        title: 'Resumo Editorial (CMS)',
+        descricao: 'Métricas rápidas de posts, páginas, mídias e visualizações do CMS.',
+        icon: 'auto_stories',
+        category: 'Conteúdo',
+        tags: ['CMS', 'Conteúdo', 'Blog', 'Páginas'],
+        cols: 2,
+    },
+    SeoResumoCard: {
+        title: 'Resumo SEO & Marketing',
+        descricao: 'Métricas rápidas de score on-page, páginas, palavras-chave no Top 10 e tarefas abertas.',
+        icon: 'travel_explore',
+        category: 'Marketing',
+        tags: ['SEO', 'Marketing', 'SERP', 'Auditoria'],
+        cols: 2,
+    },
 };
 
 /**

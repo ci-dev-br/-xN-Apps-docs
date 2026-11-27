@@ -1,67 +1,78 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Comment } from "../models/comment.entity";
-import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
+import { ControllerDaoBase, GetByInternalIdInputDto, SyncPayloadDao } from "@ci/manager";
 import { FindOptionsWhere } from "typeorm";
 import { CommentService } from "../services/comment.service";
+
 export class SyncPayloadDaoComment extends SyncPayloadDao<Comment> {
     @ApiProperty({ type: Comment })
     override data?: Comment;
 }
+
 export class ObterListaComment {
-    // override data?: Comment;
-    @ApiProperty({})
+    @ApiProperty({ required: false })
     skip?: number;
-    @ApiProperty({})
+    @ApiProperty({ required: false })
     take?: number;
-    @ApiProperty({})
+    @ApiProperty({ required: false })
     where?: FindOptionsWhere<Comment>[] | FindOptionsWhere<Comment>;
+    @ApiProperty({ required: false })
+    search?: string;
+    @ApiProperty({ required: false })
+    orderBy?: any;
 }
-export class PessoaCotrollerGetInputDto {
-    @ApiProperty({ nullable: true, required: false })
-    query?: string;
-    @ApiProperty({ nullable: true, required: false })
-    limit?: number;
-}
+
 @ApiTags('Comment')
 @Controller('Comment')
 export class CommentController extends ControllerDaoBase<CommentService, Comment> {
-    constructor(
-        service: CommentService
-    ) {
+    constructor(service: CommentService) {
         super(service);
     }
+
     @Post('Sync')
-    @ApiResponse({
-        type: Comment,
-    })
-    @ApiOperation({
-        operationId: 'SyncComment'
-    })
+    @ApiResponse({ type: Comment })
+    @ApiOperation({ operationId: 'SyncComment' })
     override async Sync(
         @Body() body: SyncPayloadDaoComment,
+        @Req() req?: any,
     ) {
-        try {
-            return await super.Sync(body)
-        } catch (error) {
-            return {
-                status: 500,
-                message: 'Falha',
-                detahes: error.message,
-                stack: error.stack
-            } as any
-        }
+        return await super.Sync(body, req);
     }
+
+    @Post('GetByInternalId')
+    @ApiResponse({ type: Comment })
+    @ApiOperation({ operationId: 'GetByInternalIdComment' })
+    override async GetByInternalId(
+        @Body() input: GetByInternalIdInputDto,
+        @Req() req?: any,
+    ) {
+        return await super.GetByInternalId(input, req);
+    }
+
     @Post('GetList')
-    @ApiResponse({
-        type: Comment, isArray: true
-    })
-    @ApiOperation({
-        operationId: 'GetListComment'
-    })
+    @ApiResponse({ type: Comment, isArray: true })
+    @ApiOperation({ operationId: 'GetListComment' })
     override async GetList(
         @Body() input: ObterListaComment,
+        @Req() req?: any,
     ) {
-        return super.GetList(input);
+        return await super.GetList({
+            ...input,
+            relations: {
+                post: true,
+                website: true,
+            },
+        }, req);
+    }
+
+    @Post('Delete')
+    @ApiResponse({ type: Comment })
+    @ApiOperation({ operationId: 'DeleteComment' })
+    override async Delete(
+        @Body() input: Comment,
+        @Req() req?: any,
+    ) {
+        return await super.Delete(input, req);
     }
 }

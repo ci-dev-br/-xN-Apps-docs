@@ -11,6 +11,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { deleteWebsite } from '../fn/website/delete-website';
 import { DeleteWebsite$Params } from '../fn/website/delete-website';
+import { getByInternalIdWebsite } from '../fn/website/get-by-internal-id-website';
+import { GetByInternalIdWebsite$Params } from '../fn/website/get-by-internal-id-website';
 import { getListWebsite } from '../fn/website/get-list-website';
 import { GetListWebsite$Params } from '../fn/website/get-list-website';
 import { syncWebsite } from '../fn/website/sync-website';
@@ -48,6 +50,31 @@ export class WebsiteService extends BaseService {
     );
   }
 
+  /** Path part for operation `getByInternalIdWebsite()` */
+  static readonly GetByInternalIdWebsitePath = '/Website/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdWebsite()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdWebsite$Response(params: GetByInternalIdWebsite$Params, context?: HttpContext): Observable<StrictHttpResponse<Website>> {
+    return getByInternalIdWebsite(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdWebsite$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdWebsite$Params, context?: HttpContext): Observable<Website> {
+    return this.getByInternalIdWebsite$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Website>): Website => r.body)
+    );
+  }
+
   /** Path part for operation `getListWebsite()` */
   static readonly GetListWebsitePath = '/Website/GetList';
 
@@ -74,7 +101,7 @@ export class WebsiteService extends BaseService {
   }
 
   /** Path part for operation `deleteWebsite()` */
-  static readonly DeleteWebsitePath = '/Website/DeleteWebsite';
+  static readonly DeleteWebsitePath = '/Website/Delete';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

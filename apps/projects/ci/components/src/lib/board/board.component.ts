@@ -46,6 +46,7 @@ export class BoardComponent implements OnInit {
     synchronizing?: boolean;
     isCustomizingLayout: boolean = false;
     edittingCard?: Card;
+    selectedTenantIds: string[] = [];
 
     constructor(
         @Optional() private readonly window?: WindowService,
@@ -137,7 +138,10 @@ export class BoardComponent implements OnInit {
                     this.pranchetas.pranchetaControllerGet({
                         body: {
                             defaultGlobalCode: this.default,
-                            scope: this.scope
+                            scope: this.scope,
+                            ...(this.boardScope === 'TENANT' && this.selectedTenantIds[0]
+                                ? { tenantId: this.selectedTenantIds[0] }
+                                : {}),
                         }
                     })
                 );
@@ -246,7 +250,15 @@ export class BoardComponent implements OnInit {
                 const pranchetaToSend: any = { ...this.prancheta };
                 delete pranchetaToSend.__confirmation_subject;
                 const synced = await lastValueFrom(
-                    this.pranchetas.pranchetaControllerSync({ body: { prancheta: pranchetaToSend } })
+                    this.pranchetas.pranchetaControllerSync({
+                        body: {
+                            prancheta: pranchetaToSend,
+                            scope: this.boardScope,
+                            ...(this.boardScope === 'TENANT' && this.selectedTenantIds[0]
+                                ? { tenantId: this.selectedTenantIds[0] }
+                                : {}),
+                        }
+                    })
                 );
                 if (synced?.internalId) {
                     this.prancheta.internalId = synced.internalId;
@@ -292,6 +304,13 @@ export class BoardComponent implements OnInit {
         this.prancheta.scope = newScope;
         this.scope = newScope;
         this.syncPrancheta();
+    }
+
+    onTenantFilterChange(tenantIds: string[]): void {
+        this.selectedTenantIds = Array.isArray(tenantIds) ? tenantIds : [];
+        if (this.boardScope === 'TENANT') {
+            this.loadBoard();
+        }
     }
 
     toggleCustomizingLayout(): void {

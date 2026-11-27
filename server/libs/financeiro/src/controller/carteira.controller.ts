@@ -84,6 +84,9 @@ export class CriarCarteiraDto {
 
     @ApiProperty({ description: 'Aceite dos termos de uso da carteira', default: true, required: false })
     termosAceitos?: boolean;
+
+    @ApiProperty({ description: 'IDs de tenants vinculados à carteira', type: String, isArray: true, required: false })
+    tenantIds?: string[];
 }
 
 export class LancamentoPosicaoCarteiraDto {
@@ -140,6 +143,15 @@ export class CarteiraController {
         return userId;
     }
 
+    private parseTenantIds(tenantIdsQuery?: string, req?: any): string[] {
+        const raw = tenantIdsQuery || req?.headers?.['x-tenant-id'];
+        if (!raw) return [];
+        return String(raw)
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean);
+    }
+
     /**
      * Retorna a visão geral da carteira do usuário atual (saldo, lista de todas as carteiras, patrimônio consolidado, dashboard de ganhos/perdas e movimentações).
      */
@@ -149,11 +161,13 @@ export class CarteiraController {
         @Req() req: any,
         @Query('autoCreate') autoCreate?: string,
         @Query('carteiraId') carteiraId?: string,
-        @Query('periodo') periodo?: '7D' | '30D' | '90D' | '12M' | 'TUDO'
+        @Query('periodo') periodo?: '7D' | '30D' | '90D' | '12M' | 'TUDO',
+        @Query('tenantIds') tenantIdsQuery?: string,
     ) {
         const userId = this.getUserId(req);
         const deveCriar = autoCreate === 'true';
-        return await this.carteiraService.obterVisaoGeralCarteira(userId, deveCriar, carteiraId, periodo || '30D');
+        const tenantIds = this.parseTenantIds(tenantIdsQuery, req);
+        return await this.carteiraService.obterVisaoGeralCarteira(userId, deveCriar, carteiraId, periodo || '30D', tenantIds);
     }
 
     /**
@@ -164,12 +178,15 @@ export class CarteiraController {
     async getDashboardCarteiras(
         @Req() req: any,
         @Query('periodo') periodo?: '7D' | '30D' | '90D' | '12M' | 'TUDO',
-        @Query('carteiraId') carteiraId?: string
+        @Query('carteiraId') carteiraId?: string,
+        @Query('tenantIds') tenantIdsQuery?: string,
     ) {
         const userId = this.getUserId(req);
+        const tenantIds = this.parseTenantIds(tenantIdsQuery, req);
         return await this.carteiraService.obterDashboardCarteiras(userId, {
             periodo: periodo || '30D',
             carteiraId,
+            tenantIds,
         });
     }
 
@@ -178,9 +195,13 @@ export class CarteiraController {
      */
     @Get('Listar')
     @ApiOperation({ operationId: 'CarteiraListar', summary: 'Lista todas as carteiras digitais do usuário' })
-    async listarCarteiras(@Req() req: any) {
+    async listarCarteiras(
+        @Req() req: any,
+        @Query('tenantIds') tenantIdsQuery?: string,
+    ) {
         const userId = this.getUserId(req);
-        const carteiras = await this.carteiraService.listarCarteirasUsuario(userId);
+        const tenantIds = this.parseTenantIds(tenantIdsQuery, req);
+        const carteiras = await this.carteiraService.listarCarteirasUsuario(userId, tenantIds);
         return {
             possuiCarteira: carteiras.length > 0,
             carteiras,

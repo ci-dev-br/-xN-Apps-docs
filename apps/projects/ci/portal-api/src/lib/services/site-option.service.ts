@@ -11,6 +11,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { deleteSiteOption } from '../fn/site-option/delete-site-option';
 import { DeleteSiteOption$Params } from '../fn/site-option/delete-site-option';
+import { getByInternalIdSiteOption } from '../fn/site-option/get-by-internal-id-site-option';
+import { GetByInternalIdSiteOption$Params } from '../fn/site-option/get-by-internal-id-site-option';
 import { getListSiteOption } from '../fn/site-option/get-list-site-option';
 import { GetListSiteOption$Params } from '../fn/site-option/get-list-site-option';
 import { SiteOption } from '../models/site-option';
@@ -44,6 +46,31 @@ export class SiteOptionService extends BaseService {
    */
   sync(params: SyncSiteOption$Params, context?: HttpContext): Observable<SiteOption> {
     return this.syncSiteOption$Response(params, context).pipe(
+      map((r: StrictHttpResponse<SiteOption>): SiteOption => r.body)
+    );
+  }
+
+  /** Path part for operation `getByInternalIdSiteOption()` */
+  static readonly GetByInternalIdSiteOptionPath = '/SiteOption/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdSiteOption()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdSiteOption$Response(params: GetByInternalIdSiteOption$Params, context?: HttpContext): Observable<StrictHttpResponse<SiteOption>> {
+    return getByInternalIdSiteOption(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdSiteOption$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdSiteOption$Params, context?: HttpContext): Observable<SiteOption> {
+    return this.getByInternalIdSiteOption$Response(params, context).pipe(
       map((r: StrictHttpResponse<SiteOption>): SiteOption => r.body)
     );
   }
@@ -82,7 +109,7 @@ export class SiteOptionService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  deleteSiteOption$Response(params: DeleteSiteOption$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<SiteOption>>> {
+  deleteSiteOption$Response(params: DeleteSiteOption$Params, context?: HttpContext): Observable<StrictHttpResponse<SiteOption>> {
     return deleteSiteOption(this.http, this.rootUrl, params, context);
   }
 
@@ -92,9 +119,9 @@ export class SiteOptionService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  delete(params: DeleteSiteOption$Params, context?: HttpContext): Observable<Array<SiteOption>> {
+  delete(params: DeleteSiteOption$Params, context?: HttpContext): Observable<SiteOption> {
     return this.deleteSiteOption$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<SiteOption>>): Array<SiteOption> => r.body)
+      map((r: StrictHttpResponse<SiteOption>): SiteOption => r.body)
     );
   }
 

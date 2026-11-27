@@ -9,6 +9,10 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deleteProfissional } from '../fn/profissional/delete-profissional';
+import { DeleteProfissional$Params } from '../fn/profissional/delete-profissional';
+import { getByInternalIdProfissional } from '../fn/profissional/get-by-internal-id-profissional';
+import { GetByInternalIdProfissional$Params } from '../fn/profissional/get-by-internal-id-profissional';
 import { getListProfissional } from '../fn/profissional/get-list-profissional';
 import { GetListProfissional$Params } from '../fn/profissional/get-list-profissional';
 import { Profissional } from '../models/profissional';
@@ -46,6 +50,31 @@ export class ProfissionalService extends BaseService {
     );
   }
 
+  /** Path part for operation `getByInternalIdProfissional()` */
+  static readonly GetByInternalIdProfissionalPath = '/Profissional/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdProfissional()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdProfissional$Response(params: GetByInternalIdProfissional$Params, context?: HttpContext): Observable<StrictHttpResponse<Profissional>> {
+    return getByInternalIdProfissional(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdProfissional$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdProfissional$Params, context?: HttpContext): Observable<Profissional> {
+    return this.getByInternalIdProfissional$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Profissional>): Profissional => r.body)
+    );
+  }
+
   /** Path part for operation `getListProfissional()` */
   static readonly GetListProfissionalPath = '/Profissional/GetList';
 
@@ -68,6 +97,31 @@ export class ProfissionalService extends BaseService {
   getList(params: GetListProfissional$Params, context?: HttpContext): Observable<Array<Profissional>> {
     return this.getListProfissional$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Profissional>>): Array<Profissional> => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteProfissional()` */
+  static readonly DeleteProfissionalPath = '/Profissional/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteProfissional()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteProfissional$Response(params: DeleteProfissional$Params, context?: HttpContext): Observable<StrictHttpResponse<Profissional>> {
+    return deleteProfissional(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteProfissional$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteProfissional$Params, context?: HttpContext): Observable<Profissional> {
+    return this.deleteProfissional$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Profissional>): Profissional => r.body)
     );
   }
 

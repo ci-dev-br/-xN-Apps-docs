@@ -77,4 +77,12 @@
         background-color: var(--mat-option-selected-state-layer-color, var(--mat-sys-secondary-container));
         color: var(--mat-sys-on-secondary-container, var(--mat-app-text-color));
     }
+
+    tr.--tenant-owned {
+        background-color: rgba(37, 99, 235, 0.04);
+
+        td:first-child {
+            box-shadow: inset 3px 0 0 var(--mat-sys-primary, #2563eb);
+        }
+    }
 }

@@ -25,7 +25,7 @@ export class SeoAuditService {
     ) { }
 
     async auditar(internalId: string): Promise<SeoPage> {
-        const page = await this.pages.findOne({ where: { internalId }, relations: ['dominio'] });
+        const page = await this.pages.findOne({ where: { internalId }, relations: ['dominio', 'tenants'] });
         if (!page?.url) throw new Error('Página sem URL para auditoria.');
         const issues: SeoIssue[] = [];
         const add = (codigo: string, severidade: SeoIssue['severidade'], mensagem: string) =>
@@ -104,6 +104,7 @@ export class SeoAuditService {
                 status: SeoTarefaStatus.ABERTA,
                 pagina: page,
                 dominio: page.dominio,
+                tenants: page.tenants,
             }));
         }
     }

@@ -8,11 +8,13 @@ import { RequestBuilder } from '../../request-builder';
 
 
 export interface CarteiraListar$Params {
+  tenantIds: string;
 }
 
-export function carteiraListar(http: HttpClient, rootUrl: string, params?: CarteiraListar$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+export function carteiraListar(http: HttpClient, rootUrl: string, params: CarteiraListar$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
   const rb = new RequestBuilder(rootUrl, carteiraListar.PATH, 'get');
   if (params) {
+    rb.query('tenantIds', params.tenantIds, {});
   }
 
   return http.request(

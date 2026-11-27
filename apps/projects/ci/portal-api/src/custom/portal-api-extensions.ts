@@ -10,7 +10,12 @@ import { CarteiraService } from '../lib/services/carteira.service';
 import { FileExplorerService } from '../lib/services/file-explorer.service';
 import { OrganizacaoService } from '../lib/services/organizacao.service';
 import { DeployerService } from '../lib/services/deployer.service';
+import { CodexService } from '../lib/services/codex.service';
+import { TenantService } from '../lib/services/tenant.service';
+import { UserService } from '../lib/services/user.service';
+import { InviteService } from '../lib/services/invite.service';
 import { ActionResponseDto } from '../lib/models/action-response-dto';
+import { LocatedSourceFileDto } from '../lib/models/located-source-file-dto';
 import { Organizacao } from '../lib/models/organizacao';
 import { GetMarketNews$Params } from '../lib/fn/news/get-market-news';
 
@@ -183,6 +188,7 @@ export interface CriarCarteiraPayloadDto {
   corTema?: string;
   parametrosLastro?: ParametrosLastroDto;
   termosAceitos?: boolean;
+  tenantIds?: string[];
 }
 
 export interface LancamentoPosicaoPayloadDto {
@@ -414,9 +420,9 @@ declare module '../lib/services/organizacao.service' {
 
 declare module '../lib/services/carteira.service' {
   export interface CarteiraService {
-    obterMinhaCarteira(autoCreate?: boolean, carteiraId?: string, periodo?: PeriodoDashboardCarteira): Observable<VisaoGeralCarteiraDto>;
-    obterDashboardCarteiras(periodo?: PeriodoDashboardCarteira, carteiraId?: string): Observable<DashboardCarteirasDto>;
-    listarCarteiras(): Observable<{ possuiCarteira: boolean; carteiras: CarteiraDto[] }>;
+    obterMinhaCarteira(autoCreate?: boolean, carteiraId?: string, periodo?: PeriodoDashboardCarteira, tenantIds?: string[]): Observable<VisaoGeralCarteiraDto>;
+    obterDashboardCarteiras(periodo?: PeriodoDashboardCarteira, carteiraId?: string, tenantIds?: string[]): Observable<DashboardCarteirasDto>;
+    listarCarteiras(tenantIds?: string[]): Observable<{ possuiCarteira: boolean; carteiras: CarteiraDto[] }>;
     criarCarteira(dados?: CriarCarteiraPayloadDto): Observable<{
       possuiCarteira: boolean;
       carteira: CarteiraDto;
@@ -466,6 +472,95 @@ declare module '../lib/services/deployer.service' {
     syncPublic(context?: HttpContext): Observable<ActionResponseDto>;
     clearCache(context?: HttpContext): Observable<ActionResponseDto>;
     restartService(context?: HttpContext): Observable<ActionResponseDto>;
+  }
+}
+
+export interface LocateSourceFileInput {
+  name: string;
+  extensions?: string[];
+  directory?: string;
+  limit?: number;
+}
+
+export interface LocateSourceFileOutput {
+  query: string;
+  found: boolean;
+  total: number;
+  primaryFile: LocatedSourceFileDto | null;
+  files: LocatedSourceFileDto[];
+}
+
+declare module '../lib/services/codex.service' {
+  export interface CodexService {
+    locateFiles(params: LocateSourceFileInput, context?: HttpContext): Observable<LocateSourceFileOutput>;
+  }
+}
+
+export interface TenantPermissionFlagsDto {
+  canVisualizar: boolean;
+  canVer: boolean;
+  canEditar: boolean;
+  canCompartilhar: boolean;
+}
+
+export interface TenantWithPermissionsDto {
+  id: string;
+  name?: string;
+  descriptions?: string;
+  organizacaoId?: string;
+  createdBy?: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+  permissionsSummary?: TenantPermissionFlagsDto;
+}
+
+export interface TenantPermissionItemDto {
+  id: string;
+  tenantId: string;
+  userId?: string;
+  organizacaoId?: string;
+  role?: string;
+  canVisualizar: boolean;
+  canVer: boolean;
+  canEditar: boolean;
+  canCompartilhar: boolean;
+  grantedBy?: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+}
+
+export interface CriarTenantInputDto {
+  name: string;
+  descriptions?: string;
+  organizacaoId?: string;
+  permissions?: Partial<TenantPermissionFlagsDto>;
+}
+
+export interface AtualizarTenantInputDto {
+  name?: string;
+  descriptions?: string;
+  organizacaoId?: string;
+}
+
+export interface DefinirPermissaoTenantInputDto {
+  userId?: string;
+  emailOrUsername?: string;
+  organizacaoId?: string;
+  role?: string;
+  canVisualizar?: boolean;
+  canVer?: boolean;
+  canEditar?: boolean;
+  canCompartilhar?: boolean;
+}
+
+declare module '../lib/services/tenant.service' {
+  export interface TenantService {
+    listarTenantsDisponiveis(organizacaoId?: string, context?: HttpContext): Observable<TenantWithPermissionsDto[]>;
+    criarTenant(payload: CriarTenantInputDto, context?: HttpContext): Observable<TenantWithPermissionsDto>;
+    atualizarTenant(tenantId: string, payload: AtualizarTenantInputDto, context?: HttpContext): Observable<TenantWithPermissionsDto>;
+    listarPermissoesTenant(tenantId: string, context?: HttpContext): Observable<TenantPermissionItemDto[]>;
+    definirPermissaoTenant(tenantId: string, payload: DefinirPermissaoTenantInputDto, context?: HttpContext): Observable<TenantPermissionItemDto>;
+    removerPermissaoTenant(tenantId: string, permissionId: string, context?: HttpContext): Observable<{ removed: boolean }>;
   }
 }
 
@@ -638,12 +733,16 @@ CarteiraService.prototype.obterMinhaCarteira = function (
   this: ServiceCtx,
   autoCreate?: boolean,
   carteiraId?: string,
-  periodo?: PeriodoDashboardCarteira
+  periodo?: PeriodoDashboardCarteira,
+  tenantIds?: string[]
 ): Observable<VisaoGeralCarteiraDto> {
   const params: string[] = [];
   if (autoCreate) params.push('autoCreate=true');
   if (carteiraId) params.push(`carteiraId=${encodeURIComponent(carteiraId)}`);
   if (periodo) params.push(`periodo=${encodeURIComponent(periodo)}`);
+  if (Array.isArray(tenantIds) && tenantIds.length > 0) {
+    params.push(`tenantIds=${encodeURIComponent(tenantIds.join(','))}`);
+  }
   const qs = params.length ? `?${params.join('&')}` : '';
   return this.http.get<VisaoGeralCarteiraDto>(`${this.rootUrl}/Financeiro/Carteira/Minha${qs}`);
 };
@@ -651,17 +750,27 @@ CarteiraService.prototype.obterMinhaCarteira = function (
 CarteiraService.prototype.obterDashboardCarteiras = function (
   this: ServiceCtx,
   periodo?: PeriodoDashboardCarteira,
-  carteiraId?: string
+  carteiraId?: string,
+  tenantIds?: string[]
 ): Observable<DashboardCarteirasDto> {
   const params: string[] = [];
   if (periodo) params.push(`periodo=${encodeURIComponent(periodo)}`);
   if (carteiraId) params.push(`carteiraId=${encodeURIComponent(carteiraId)}`);
+  if (Array.isArray(tenantIds) && tenantIds.length > 0) {
+    params.push(`tenantIds=${encodeURIComponent(tenantIds.join(','))}`);
+  }
   const qs = params.length ? `?${params.join('&')}` : '';
   return this.http.get<DashboardCarteirasDto>(`${this.rootUrl}/Financeiro/Carteira/Dashboard${qs}`);
 };
 
-CarteiraService.prototype.listarCarteiras = function (this: ServiceCtx): Observable<{ possuiCarteira: boolean; carteiras: CarteiraDto[] }> {
-  return this.http.get<{ possuiCarteira: boolean; carteiras: CarteiraDto[] }>(`${this.rootUrl}/Financeiro/Carteira/Listar`);
+CarteiraService.prototype.listarCarteiras = function (
+  this: ServiceCtx,
+  tenantIds?: string[]
+): Observable<{ possuiCarteira: boolean; carteiras: CarteiraDto[] }> {
+  const qs = Array.isArray(tenantIds) && tenantIds.length > 0
+    ? `?tenantIds=${encodeURIComponent(tenantIds.join(','))}`
+    : '';
+  return this.http.get<{ possuiCarteira: boolean; carteiras: CarteiraDto[] }>(`${this.rootUrl}/Financeiro/Carteira/Listar${qs}`);
 };
 
 CarteiraService.prototype.criarCarteira = function (
@@ -948,6 +1057,161 @@ DeployerService.prototype.restartService = function (
   context?: HttpContext
 ): Observable<ActionResponseDto> {
   return this.http.post<ActionResponseDto>(`${this.rootUrl}/Deployer/restart`, {}, { context });
+};
+
+CodexService.prototype.locateFiles = function (
+  this: ServiceCtx,
+  params: LocateSourceFileInput,
+  context?: HttpContext
+): Observable<LocateSourceFileOutput> {
+  return this.http.post<LocateSourceFileOutput>(
+    `${this.rootUrl}/Codex/Files/Locate`,
+    params,
+    { context }
+  );
+};
+
+TenantService.prototype.listarTenantsDisponiveis = function (
+  this: ServiceCtx,
+  organizacaoId?: string,
+  context?: HttpContext
+): Observable<TenantWithPermissionsDto[]> {
+  let params = new HttpParams();
+  if (organizacaoId && organizacaoId.trim()) {
+    params = params.set('organizacaoId', organizacaoId.trim());
+  }
+  return this.http.get<TenantWithPermissionsDto[]>(`${this.rootUrl}/Tenant/Available`, { params, context });
+};
+
+TenantService.prototype.criarTenant = function (
+  this: ServiceCtx,
+  payload: CriarTenantInputDto,
+  context?: HttpContext
+): Observable<TenantWithPermissionsDto> {
+  return this.http.post<TenantWithPermissionsDto>(`${this.rootUrl}/Tenant`, payload, { context });
+};
+
+TenantService.prototype.atualizarTenant = function (
+  this: ServiceCtx,
+  tenantId: string,
+  payload: AtualizarTenantInputDto,
+  context?: HttpContext
+): Observable<TenantWithPermissionsDto> {
+  return this.http.post<TenantWithPermissionsDto>(
+    `${this.rootUrl}/Tenant/${encodeURIComponent(tenantId)}/Update`,
+    payload,
+    { context }
+  );
+};
+
+TenantService.prototype.listarPermissoesTenant = function (
+  this: ServiceCtx,
+  tenantId: string,
+  context?: HttpContext
+): Observable<TenantPermissionItemDto[]> {
+  return this.http.get<TenantPermissionItemDto[]>(
+    `${this.rootUrl}/Tenant/${encodeURIComponent(tenantId)}/Permissions`,
+    { context }
+  );
+};
+
+TenantService.prototype.definirPermissaoTenant = function (
+  this: ServiceCtx,
+  tenantId: string,
+  payload: DefinirPermissaoTenantInputDto,
+  context?: HttpContext
+): Observable<TenantPermissionItemDto> {
+  return this.http.post<TenantPermissionItemDto>(
+    `${this.rootUrl}/Tenant/${encodeURIComponent(tenantId)}/Permissions`,
+    payload,
+    { context }
+  );
+};
+
+TenantService.prototype.removerPermissaoTenant = function (
+  this: ServiceCtx,
+  tenantId: string,
+  permissionId: string,
+  context?: HttpContext
+): Observable<{ removed: boolean }> {
+  return this.http.post<{ removed: boolean }>(
+    `${this.rootUrl}/Tenant/${encodeURIComponent(tenantId)}/Permissions/${encodeURIComponent(permissionId)}/Delete`,
+    {},
+    { context }
+  );
+};
+
+export interface GetListUserInput {
+  tenantIds?: string[];
+  tenantId?: string;
+  role?: string;
+  search?: string;
+}
+
+export interface UserTenantAddInput {
+  tenantId: string;
+  userId?: string;
+  emailOrUsername?: string;
+  roles?: string[];
+}
+
+export interface UserTenantRemoveInput {
+  tenantId: string;
+  userId: string;
+}
+
+export interface TenantInvitationInput {
+  email: string;
+  friendlyName?: string;
+  mensagem?: string;
+  roles?: string[];
+  tenantIds?: string[];
+}
+
+declare module '../lib/services/user.service' {
+  export interface UserService {
+    getListByFilter(filter?: GetListUserInput, context?: HttpContext): Observable<Array<User>>;
+    addToTenant(payload: UserTenantAddInput, context?: HttpContext): Observable<User>;
+    removeFromTenant(payload: UserTenantRemoveInput, context?: HttpContext): Observable<User>;
+  }
+}
+
+declare module '../lib/services/invite.service' {
+  export interface InviteService {
+    sendTenantInvitation(payload: TenantInvitationInput, context?: HttpContext): Observable<any>;
+  }
+}
+
+UserService.prototype.getListByFilter = function (
+  this: ServiceCtx,
+  filter?: GetListUserInput,
+  context?: HttpContext
+): Observable<Array<User>> {
+  return this.http.post<Array<User>>(`${this.rootUrl}/User/GetList`, filter || {}, { context });
+};
+
+UserService.prototype.addToTenant = function (
+  this: ServiceCtx,
+  payload: UserTenantAddInput,
+  context?: HttpContext
+): Observable<User> {
+  return this.http.post<User>(`${this.rootUrl}/User/AddToTenant`, payload, { context });
+};
+
+UserService.prototype.removeFromTenant = function (
+  this: ServiceCtx,
+  payload: UserTenantRemoveInput,
+  context?: HttpContext
+): Observable<User> {
+  return this.http.post<User>(`${this.rootUrl}/User/RemoveFromTenant`, payload, { context });
+};
+
+InviteService.prototype.sendTenantInvitation = function (
+  this: ServiceCtx,
+  payload: TenantInvitationInput,
+  context?: HttpContext
+): Observable<any> {
+  return this.http.post<any>(`${this.rootUrl}/Invite/SendInvitation`, payload, { context });
 };
 
 export const PORTAL_API_EXTENSIONS_LOADED = true;

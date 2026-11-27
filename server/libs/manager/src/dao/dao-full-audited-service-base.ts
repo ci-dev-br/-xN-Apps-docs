@@ -1,4 +1,4 @@
-import { Equal, FindOperator, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, ILike, IsNull, Repository } from "typeorm";
+import { Equal, FindOperator, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, ILike, In, IsNull, Repository } from "typeorm";
 import { FullAuditedEntity, SnapshotService } from "./entities";
 import { User } from "@ci/auth/models/user.entity";
 
@@ -8,9 +8,26 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
         protected readonly _repo?: Repository<E>,
     ) {
     }
+    private normalizeTenantsPayload(rawTenants: any): Array<{ id: string }> | undefined {
+        if (!Array.isArray(rawTenants)) return undefined;
+        const normalized = rawTenants
+            .map((t: any) => (typeof t === 'string' ? t.trim() : t?.id))
+            .filter((id: any) => typeof id === 'string' && id.trim().length > 0)
+            .map((id: string) => ({ id: id.trim() }));
+        return normalized;
+    }
+
     async sincronizar(data: E, request?: any) {
         let ___receipt_data = data;
         let ___internal_data: E = null;
+        if (___receipt_data && Array.isArray((___receipt_data as any).tenants)) {
+            (___receipt_data as any).tenants = this.normalizeTenantsPayload((___receipt_data as any).tenants);
+        } else if (___receipt_data && !___receipt_data.internalId && request?.headers?.['x-tenant-id']) {
+            const headerTenant = String(request.headers['x-tenant-id']).trim();
+            if (headerTenant) {
+                (___receipt_data as any).tenants = [{ id: headerTenant }];
+            }
+        }
         /*  if ('at' in data && 'what' in data) {
  
              return await { status: 'fail' };
@@ -125,15 +142,45 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
         }));
     }
 
+    private extractRequestedTenantIds(options?: any, request?: any): string[] {
+        const rawSources = [
+            options?.tenantIds,
+            options?.tenants,
+            options?.filter?.tenantIds,
+            options?.filter?.tenants,
+            options?.filter?.tenantId,
+            !Array.isArray(options?.where) ? options?.where?.tenants : undefined,
+            !Array.isArray(options?.where) ? options?.where?.tenantId : undefined,
+            request?.headers?.['x-tenant-id'],
+        ];
+        const ids = new Set<string>();
+        for (const src of rawSources) {
+            if (!src) continue;
+            if (Array.isArray(src)) {
+                src.forEach(item => {
+                    const id = typeof item === 'string' ? item.trim() : item?.id;
+                    if (id) ids.add(String(id));
+                });
+            } else if (typeof src === 'string') {
+                src.split(',').map(s => s.trim()).filter(Boolean).forEach(id => ids.add(id));
+            } else if (typeof src === 'object' && src.id) {
+                ids.add(String(src.id));
+            }
+        }
+        return Array.from(ids);
+    }
+
     async obterLista(options?: {
         skip?: number,
         take?: number,
         where?: FindOptionsWhere<E>[] | FindOptionsWhere<E>,
         filter?: Partial<E> | Record<string, any>,
         search?: string,
+        tenantIds?: string[],
+        tenants?: any,
         relations?: FindOptionsRelations<E> | FindOptionsRelationByString,
         orderBy?: any
-    }, request?: { user: User }) {
+    }, request?: { user: User; headers?: Record<string, any> }) {
         const opts = options || {};
         const rawWhere = opts.where;
         const rawFilter = opts.filter;
@@ -172,10 +219,39 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
             combinedFieldFilters.push({});
         }
 
+        const requestedTenantIds = this.extractRequestedTenantIds(opts, request);
+        const isElevated = Boolean(
+            request?.user?.roles?.includes('ADMIN') ||
+            request?.user?.roles?.includes('MASTER') ||
+            request?.user?.roles?.includes('DEVELOPER'),
+        );
+        const userTenantIds = new Set(
+            ((request?.user as any)?.tenants || []).map((t: any) => t?.id).filter(Boolean) as string[],
+        );
+        const effectiveTenantIds = requestedTenantIds.length > 0
+            ? (isElevated || userTenantIds.size === 0
+                ? requestedTenantIds
+                : requestedTenantIds.filter(id => userTenantIds.has(id)))
+            : [];
+
+        const hasTenantsRelation = this.hasTenantsRelation();
+
         const userId = request?.user?.id;
         const finalWhere: FindOptionsWhere<E>[] = [];
 
         for (const fieldFilter of combinedFieldFilters) {
+            if (requestedTenantIds.length > 0 && hasTenantsRelation) {
+                if (effectiveTenantIds.length === 0) {
+                    continue;
+                }
+                finalWhere.push({
+                    ...fieldFilter,
+                    deleted: IsNull(),
+                    tenants: { id: In(effectiveTenantIds) },
+                } as any);
+                continue;
+            }
+
             if (userId) {
                 finalWhere.push({
                     ...fieldFilter,
@@ -183,12 +259,19 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
                     createdBy: { identifiedUser: Equal(userId) },
                 } as any);
             }
+            if (hasTenantsRelation && userTenantIds.size > 0) {
+                finalWhere.push({
+                    ...fieldFilter,
+                    deleted: IsNull(),
+                    tenants: { id: In(Array.from(userTenantIds)) },
+                } as any);
+            }
             finalWhere.push({
                 ...fieldFilter,
                 deleted: IsNull(),
                 createdBy: IsNull(),
             } as any);
-            if (request?.user?.roles?.includes('ADMIN') || request?.user?.roles?.includes('MASTER') || request?.user?.roles?.includes('DEVELOPER')) {
+            if (isElevated) {
                 finalWhere.push({
                     ...fieldFilter,
                     deleted: IsNull(),
@@ -196,27 +279,66 @@ export abstract class DaoFullAuditedServiceBase<E extends FullAuditedEntity> {
             }
         }
 
+        if (requestedTenantIds.length > 0 && finalWhere.length === 0) {
+            return [];
+        }
+
+        const baseRelations: Record<string, any> = {
+            createdBy: true,
+            lastModifiedBy: true,
+            ...(hasTenantsRelation ? { tenants: true } : {}),
+            ...(opts.relations as any),
+        };
+
         return (await this._repo.find({
             skip: opts.skip,
             take: opts.take,
             where: finalWhere,
-            relations: { createdBy: true, lastModifiedBy: true, ...(opts.relations as any) } as any,
+            relations: baseRelations as any,
             order: opts.orderBy,
         })) || [];
     }
+    private hasTenantsRelation(): boolean {
+        return Boolean(
+            this._repo?.metadata?.relations?.some(r => r.propertyName === 'tenants'),
+        );
+    }
     async getByInternalId(internalId: string, request?: any) {
-        let where/* : FindOptionsWhere<E> */ = [{
-            internalId: Equal(internalId),
-            deleted: IsNull(),
-            createdBy: { identifiedUser: Equal(request.user.id) }
-        },
-        {
+        const hasTenantsRelation = this.hasTenantsRelation();
+        const userId = request?.user?.id;
+        const userTenantIds = Array.from(
+            new Set(
+                ((request?.user as any)?.tenants || []).map((t: any) => t?.id).filter(Boolean) as string[],
+            ),
+        );
+        const where: FindOptionsWhere<E>[] = [];
+        if (userId) {
+            where.push({
+                internalId: Equal(internalId),
+                deleted: IsNull(),
+                createdBy: { identifiedUser: Equal(userId) }
+            } as any);
+        }
+        if (hasTenantsRelation && userTenantIds.length > 0) {
+            where.push({
+                internalId: Equal(internalId),
+                deleted: IsNull(),
+                tenants: { id: In(userTenantIds) },
+            } as any);
+        }
+        where.push({
             internalId: Equal(internalId),
             deleted: IsNull(),
             createdBy: IsNull()
-        }
-        ] as FindOptionsWhere<E>[];
-        const objeto_retorno = await this._repo.findOne({ where, relations: { createdBy: true, lastModifiedBy: true } as any });
+        } as any);
+        const objeto_retorno = await this._repo.findOne({
+            where,
+            relations: {
+                createdBy: true,
+                lastModifiedBy: true,
+                ...(hasTenantsRelation ? { tenants: true } : {}),
+            } as any
+        });
         if (objeto_retorno) {
             (objeto_retorno as any).__name = objeto_retorno.constructor.name;
         }

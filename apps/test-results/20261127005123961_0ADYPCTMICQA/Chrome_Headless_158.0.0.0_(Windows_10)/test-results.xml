@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-27T00:51:33" id="0" hostname="plhx33" tests="4" errors="0" failures="1" time="2.29">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="MasterDetailComponent - Filtro, Edição, Criação e Permissões de Tenants por Organização deve marcar objetos que pertencem a um tenant específico nas visões tabela, lista e miniaturas e repassar tenants ao EditarDetailComponent" time="0.9" classname="Chrome_Headless_158_0_0_0_(Windows_10).MasterDetailComponent - Filtro, Edição, Criação e Permissões de Tenants por Organização"/>
+  <testcase name="MasterDetailComponent - Filtro, Edição, Criação e Permissões de Tenants por Organização deve habilitar o filtro com tenants disponíveis ao selecionar organização, filtrar registros, mostrar/editar/criar tenants e gerenciar permissões" time="0.136" classname="Chrome_Headless_158_0_0_0_(Windows_10).MasterDetailComponent - Filtro, Edição, Criação e Permissões de Tenants por Organização"/>
+  <testcase name="MasterDetailComponent - Filtro, Edição, Criação e Permissões de Tenants por Organização não deve exibir o filtro de tenants quando nenhuma organização estiver selecionada" time="0.027" classname="Chrome_Headless_158_0_0_0_(Windows_10).MasterDetailComponent - Filtro, Edição, Criação e Permissões de Tenants por Organização"/>
+  <testcase name="EditarDetailComponent &amp; WindowComponent - Menu agrupado mat-menu e transferência de Tenant deve renderizar menu agrupado com mat-menu na janela, transferir objeto do usuário para tenant proprietário e marcar objeto" time="1.227" classname="Chrome_Headless_158_0_0_0_(Windows_10).EditarDetailComponent &amp; WindowComponent - Menu agrupado mat-menu e transferência de Tenant">
+    <failure type="">Error: NG0100: ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked. Previous value: '-1'. Current value: '5'. Expression location: WindowComponent2 component. Find more at https://v21.angular.dev/errors/NG0100
+error properties: Object({ code: -100 })
+    at throwErrorIfNoChangesMode (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:3557:9)
+    at bindingUpdated (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8204:9)
+    at ɵɵconditional (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:13932:7)
+    at WindowComponent2_ng_container_0_Template (ng:///WindowComponent2.js:400:5)
+    at executeTemplate (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5104:5)
+    at refreshView (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5775:7)
+    at detectChangesInView (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5915:5)
+    at detectChangesInViewIfAttached (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5898:3)
+    at detectChangesInEmbeddedViews (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5869:7)
+    at refreshView (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5796:5)
+</failure>
+  </testcase>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

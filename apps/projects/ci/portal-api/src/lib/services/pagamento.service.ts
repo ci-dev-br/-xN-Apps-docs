@@ -9,6 +9,10 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deletePagamento } from '../fn/pagamento/delete-pagamento';
+import { DeletePagamento$Params } from '../fn/pagamento/delete-pagamento';
+import { getByInternalIdPagamento } from '../fn/pagamento/get-by-internal-id-pagamento';
+import { GetByInternalIdPagamento$Params } from '../fn/pagamento/get-by-internal-id-pagamento';
 import { getListPagamento } from '../fn/pagamento/get-list-pagamento';
 import { GetListPagamento$Params } from '../fn/pagamento/get-list-pagamento';
 import { Pagamento } from '../models/pagamento';
@@ -46,6 +50,31 @@ export class PagamentoService extends BaseService {
     );
   }
 
+  /** Path part for operation `getByInternalIdPagamento()` */
+  static readonly GetByInternalIdPagamentoPath = '/Pagamento/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdPagamento()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdPagamento$Response(params: GetByInternalIdPagamento$Params, context?: HttpContext): Observable<StrictHttpResponse<Pagamento>> {
+    return getByInternalIdPagamento(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdPagamento$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdPagamento$Params, context?: HttpContext): Observable<Pagamento> {
+    return this.getByInternalIdPagamento$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Pagamento>): Pagamento => r.body)
+    );
+  }
+
   /** Path part for operation `getListPagamento()` */
   static readonly GetListPagamentoPath = '/Pagamento/GetList';
 
@@ -68,6 +97,31 @@ export class PagamentoService extends BaseService {
   getList(params: GetListPagamento$Params, context?: HttpContext): Observable<Array<Pagamento>> {
     return this.getListPagamento$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Pagamento>>): Array<Pagamento> => r.body)
+    );
+  }
+
+  /** Path part for operation `deletePagamento()` */
+  static readonly DeletePagamentoPath = '/Pagamento/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deletePagamento()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deletePagamento$Response(params: DeletePagamento$Params, context?: HttpContext): Observable<StrictHttpResponse<Pagamento>> {
+    return deletePagamento(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deletePagamento$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeletePagamento$Params, context?: HttpContext): Observable<Pagamento> {
+    return this.deletePagamento$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Pagamento>): Pagamento => r.body)
     );
   }
 

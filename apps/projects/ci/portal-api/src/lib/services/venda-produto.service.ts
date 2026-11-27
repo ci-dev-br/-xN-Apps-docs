@@ -9,6 +9,10 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deleteVendaProduto } from '../fn/venda-produto/delete-venda-produto';
+import { DeleteVendaProduto$Params } from '../fn/venda-produto/delete-venda-produto';
+import { getByInternalIdVendaProduto } from '../fn/venda-produto/get-by-internal-id-venda-produto';
+import { GetByInternalIdVendaProduto$Params } from '../fn/venda-produto/get-by-internal-id-venda-produto';
 import { getListVendaProduto } from '../fn/venda-produto/get-list-venda-produto';
 import { GetListVendaProduto$Params } from '../fn/venda-produto/get-list-venda-produto';
 import { syncVendaProduto } from '../fn/venda-produto/sync-venda-produto';
@@ -46,6 +50,31 @@ export class VendaProdutoService extends BaseService {
     );
   }
 
+  /** Path part for operation `getByInternalIdVendaProduto()` */
+  static readonly GetByInternalIdVendaProdutoPath = '/VendaProduto/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdVendaProduto()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdVendaProduto$Response(params: GetByInternalIdVendaProduto$Params, context?: HttpContext): Observable<StrictHttpResponse<VendaProduto>> {
+    return getByInternalIdVendaProduto(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdVendaProduto$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdVendaProduto$Params, context?: HttpContext): Observable<VendaProduto> {
+    return this.getByInternalIdVendaProduto$Response(params, context).pipe(
+      map((r: StrictHttpResponse<VendaProduto>): VendaProduto => r.body)
+    );
+  }
+
   /** Path part for operation `getListVendaProduto()` */
   static readonly GetListVendaProdutoPath = '/VendaProduto/GetList';
 
@@ -68,6 +97,31 @@ export class VendaProdutoService extends BaseService {
   getList(params: GetListVendaProduto$Params, context?: HttpContext): Observable<Array<VendaProduto>> {
     return this.getListVendaProduto$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<VendaProduto>>): Array<VendaProduto> => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteVendaProduto()` */
+  static readonly DeleteVendaProdutoPath = '/VendaProduto/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteVendaProduto()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteVendaProduto$Response(params: DeleteVendaProduto$Params, context?: HttpContext): Observable<StrictHttpResponse<VendaProduto>> {
+    return deleteVendaProduto(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteVendaProduto$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeleteVendaProduto$Params, context?: HttpContext): Observable<VendaProduto> {
+    return this.deleteVendaProduto$Response(params, context).pipe(
+      map((r: StrictHttpResponse<VendaProduto>): VendaProduto => r.body)
     );
   }
 

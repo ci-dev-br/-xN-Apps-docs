@@ -1,13 +1,15 @@
-
-
 export const models = [
     'Agendamento',
     'Atendimento',
+    'AtividadeCrm',
+    'CampanhaMarketing',
     'ClienteCrm',
     'HistoricoContato',
+    'Oportunidade',
+    'Pagamento',
     'Produto',
     'Profissional',
     'Promocao',
     'Servico',
     'VendaProduto',
-]
+];

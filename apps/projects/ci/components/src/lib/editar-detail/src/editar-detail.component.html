@@ -1,2 +1,75 @@
+@if(editor_data?.data){
+<div class="editar-tenant-status-bar" [class.tenant-owned]="hasOwnerTenant" [class.user-owned]="!hasOwnerTenant">
+    <div class="tenant-status-info">
+        <mat-icon class="tenant-status-icon">{{ hasOwnerTenant ? 'workspaces' : 'person_outline' }}</mat-icon>
+        @if(hasOwnerTenant){
+        <span class="tenant-status-label">Pertence ao Tenant:</span>
+        <mat-chip-set class="tenant-owner-chips" aria-label="Tenants proprietários">
+            @for(tenant of objectTenants; track tenant.id){
+            <mat-chip class="tenant-owner-chip" [disableRipple]="true" [matTooltip]="tenant.descriptions || tenant.id">
+                {{ tenant.name || tenant.id }}
+            </mat-chip>
+            }
+        </mat-chip-set>
+        }@else{
+        <span class="tenant-status-label">Objeto do usuário (sem tenant proprietário)</span>
+        }
+    </div>
+
+    @if(!hasWindowActions){
+    <button mat-stroked-button type="button" class="standalone-actions-trigger" [matMenuTriggerFor]="standaloneActionsMenu">
+        <mat-icon>more_vert</mat-icon>
+        <span>Opções</span>
+    </button>
+    <mat-menu #standaloneActionsMenu="matMenu">
+        <button mat-menu-item type="button" [matMenuTriggerFor]="standaloneTenantSubmenu">
+            <mat-icon>workspaces</mat-icon>
+            <span>Transferir para Tenant Proprietário</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item type="button" [disabled]="!service?.delete || transferringTenant" (click)="removeRecord()">
+            <mat-icon color="warn">delete</mat-icon>
+            <span>Remover Registro</span>
+        </button>
+    </mat-menu>
+    <mat-menu #standaloneTenantSubmenu="matMenu">
+        @if(availableTenants.length === 0){
+        <button mat-menu-item type="button" disabled>
+            <mat-icon>info_outline</mat-icon>
+            <span>{{ loadingTenants ? 'Carregando tenants...' : 'Nenhum tenant disponível' }}</span>
+        </button>
+        }@else{
+        @for(tenant of availableTenants; track tenant.id){
+        <button mat-menu-item
+            type="button"
+            [disabled]="transferringTenant || !canTransferToTenant(tenant)"
+            [class.tenant-option-active]="isOwnedByTenant(tenant.id)"
+            (click)="transferToTenant(tenant)">
+            @if(isOwnedByTenant(tenant.id)){
+            <mat-icon color="primary">check_circle</mat-icon>
+            }@else{
+            <mat-icon>workspaces</mat-icon>
+            }
+            <span>{{ tenant.name || tenant.id }}</span>
+        </button>
+        }
+        }
+        @if(hasOwnerTenant){
+        <mat-divider></mat-divider>
+        <button mat-menu-item type="button" [disabled]="transferringTenant" (click)="transferToTenant(null)">
+            <mat-icon>person_outline</mat-icon>
+            <span>Devolver para Usuário (Remover Tenant)</span>
+        </button>
+        }
+    </mat-menu>
+    }
+</div>
+@if(tenantTransferFeedback){
+<div class="tenant-transfer-feedback ok">{{ tenantTransferFeedback }}</div>
+}
+@if(tenantTransferError){
+<div class="tenant-transfer-feedback err">{{ tenantTransferError }}</div>
+}
+}
 @if(form){<ci-dyn-form [formGroup]="form" [schemaName]="schemaName" [data]="editor_data?.data" [schemaProperties]="editor_data?.schemaProperties">
 </ci-dyn-form>}

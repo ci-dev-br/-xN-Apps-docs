@@ -126,8 +126,16 @@ export class RegistrarComponent implements OnInit {
           hash = decodeURIComponent(cookieMatch[1]);
         }
       }
-      if (hash && String(hash).trim() !== this.inviteHash) {
-        this.carregarConvite(String(hash).trim());
+      if (hash) {
+        let normalizedHash = String(hash).trim();
+        try {
+          normalizedHash = decodeURIComponent(normalizedHash).trim();
+        } catch {
+          // mantém hash bruto
+        }
+        if (normalizedHash && normalizedHash !== this.inviteHash) {
+          this.carregarConvite(normalizedHash);
+        }
       }
     });
 

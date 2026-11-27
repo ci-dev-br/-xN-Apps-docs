@@ -15,3 +15,4 @@ export * from './lib/navbar/navbar.module';
 export * from './lib/pesquisar/pesquisar.module';
 export * from './lib/status-bar/status-bar';
 export * from './lib/grupos-modal/grupos-modal.component';
+export * from './lib/tenant-filter/tenant-filter-bar.component';

@@ -127,6 +127,165 @@ mat-toolbar.master-toolbar {
     color: var(--mat-sys-on-secondary-container, var(--mat-app-text-color));
 }
 
+.org-tenant-filter-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1px solid var(--mat-sys-outline-variant, var(--mat-divider-color));
+    border-radius: 10px;
+    background: var(--mat-sys-surface-container-low, rgba(128, 128, 128, 0.04));
+
+    .tenant-filter-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .org-context-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        background: rgba(37, 99, 235, 0.12);
+        color: #1d4ed8;
+    }
+
+    .tenant-select-field {
+        flex: 1 1 260px;
+        min-width: 220px;
+    }
+
+    .selected-tenants-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .selected-tenant-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(37, 99, 235, 0.25);
+        background: rgba(37, 99, 235, 0.05);
+
+        .selected-tenant-meta {
+            display: flex;
+            flex-direction: column;
+            font-size: 13px;
+
+            .tenant-desc {
+                font-size: 12px;
+                opacity: 0.72;
+            }
+        }
+    }
+
+    .tenant-perm-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .perm-badge {
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        background: rgba(100, 116, 139, 0.15);
+
+        &.perm-edit {
+            background: rgba(22, 163, 74, 0.15);
+            color: #15803d;
+        }
+
+        &.perm-share {
+            background: rgba(147, 51, 234, 0.15);
+            color: #7e22ce;
+        }
+    }
+
+    .tenant-inline-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px dashed var(--mat-sys-outline-variant, rgba(128, 128, 128, 0.35));
+
+        .tenant-panel-title {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .tenant-panel-fields {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+
+            mat-form-field {
+                flex: 1 1 220px;
+            }
+        }
+
+        .tenant-perm-checks {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tenant-panel-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+    }
+
+    .tenant-perms-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .tenant-perm-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid rgba(128, 128, 128, 0.2);
+
+        .perm-target {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .perm-flags {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+    }
+
+    .tenant-feedback-ok {
+        font-size: 12px;
+        color: #15803d;
+    }
+
+    .tenant-feedback-err {
+        font-size: 12px;
+        color: #dc2626;
+    }
+}
+
 /* Responsividade para telas médias e pequenas */
 @media (max-width: 960px) {
     .toolbar-actions {
@@ -401,5 +560,33 @@ mat-card.thumbnail-card {
             text-overflow: ellipsis;
             max-width: 65%;
         }
+    }
+}
+
+.tenant-owned-item {
+    border-color: rgba(37, 99, 235, 0.4) !important;
+    box-shadow: inset 3px 0 0 var(--mat-sys-primary, #2563eb);
+
+    &.tenant-selected-match {
+        background: rgba(37, 99, 235, 0.05);
+    }
+}
+
+.tenant-owner-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(37, 99, 235, 0.12);
+    color: #1d4ed8;
+    width: fit-content;
+
+    mat-icon {
+        font-size: 13px;
+        width: 13px;
+        height: 13px;
     }
 }

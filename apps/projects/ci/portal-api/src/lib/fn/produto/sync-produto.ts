@@ -6,13 +6,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { Produto } from '../../models/produto';
 import { SyncPayloadDaoProduto } from '../../models/sync-payload-dao-produto';
 
 export interface SyncProduto$Params {
       body: SyncPayloadDaoProduto
 }
 
-export function syncProduto(http: HttpClient, rootUrl: string, params: SyncProduto$Params, context?: HttpContext): Observable<StrictHttpResponse<SyncPayloadDaoProduto>> {
+export function syncProduto(http: HttpClient, rootUrl: string, params: SyncProduto$Params, context?: HttpContext): Observable<StrictHttpResponse<Produto>> {
   const rb = new RequestBuilder(rootUrl, syncProduto.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -23,7 +24,7 @@ export function syncProduto(http: HttpClient, rootUrl: string, params: SyncProdu
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SyncPayloadDaoProduto>;
+      return r as StrictHttpResponse<Produto>;
     })
   );
 }

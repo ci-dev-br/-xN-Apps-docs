@@ -10,6 +10,7 @@ import { RequestBuilder } from '../../request-builder';
 export interface CarteiraGetDashboard$Params {
   periodo: string;
   carteiraId: string;
+  tenantIds: string;
 }
 
 export function carteiraGetDashboard(http: HttpClient, rootUrl: string, params: CarteiraGetDashboard$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
@@ -17,6 +18,7 @@ export function carteiraGetDashboard(http: HttpClient, rootUrl: string, params: 
   if (params) {
     rb.query('periodo', params.periodo, {});
     rb.query('carteiraId', params.carteiraId, {});
+    rb.query('tenantIds', params.tenantIds, {});
   }
 
   return http.request(

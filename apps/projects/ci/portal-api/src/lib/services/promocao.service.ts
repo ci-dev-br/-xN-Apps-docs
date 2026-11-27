@@ -9,6 +9,10 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deletePromocao } from '../fn/promocao/delete-promocao';
+import { DeletePromocao$Params } from '../fn/promocao/delete-promocao';
+import { getByInternalIdPromocao } from '../fn/promocao/get-by-internal-id-promocao';
+import { GetByInternalIdPromocao$Params } from '../fn/promocao/get-by-internal-id-promocao';
 import { getListPromocao } from '../fn/promocao/get-list-promocao';
 import { GetListPromocao$Params } from '../fn/promocao/get-list-promocao';
 import { Promocao } from '../models/promocao';
@@ -46,6 +50,31 @@ export class PromocaoService extends BaseService {
     );
   }
 
+  /** Path part for operation `getByInternalIdPromocao()` */
+  static readonly GetByInternalIdPromocaoPath = '/Promocao/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdPromocao()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdPromocao$Response(params: GetByInternalIdPromocao$Params, context?: HttpContext): Observable<StrictHttpResponse<Promocao>> {
+    return getByInternalIdPromocao(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdPromocao$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdPromocao$Params, context?: HttpContext): Observable<Promocao> {
+    return this.getByInternalIdPromocao$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Promocao>): Promocao => r.body)
+    );
+  }
+
   /** Path part for operation `getListPromocao()` */
   static readonly GetListPromocaoPath = '/Promocao/GetList';
 
@@ -68,6 +97,31 @@ export class PromocaoService extends BaseService {
   getList(params: GetListPromocao$Params, context?: HttpContext): Observable<Array<Promocao>> {
     return this.getListPromocao$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Promocao>>): Array<Promocao> => r.body)
+    );
+  }
+
+  /** Path part for operation `deletePromocao()` */
+  static readonly DeletePromocaoPath = '/Promocao/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deletePromocao()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deletePromocao$Response(params: DeletePromocao$Params, context?: HttpContext): Observable<StrictHttpResponse<Promocao>> {
+    return deletePromocao(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deletePromocao$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  delete(params: DeletePromocao$Params, context?: HttpContext): Observable<Promocao> {
+    return this.deletePromocao$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Promocao>): Promocao => r.body)
     );
   }
 

@@ -5,29 +5,105 @@
             @if(title){ {{title}} }
         </span>
         <span style="flex: auto;"></span>
-        @if(!!(acts|async)){<ng-container *ngFor="let item of acts|async">
+        @if(acts | async; as windowActs){
+            @for(item of windowActs; track $index){
+                <ng-container *ngTemplateOutlet="itemMenu; context: {item: item}"></ng-container>
+            }
+        }
+        @for(item of menu; track $index){
             <ng-container *ngTemplateOutlet="itemMenu; context: {item: item}"></ng-container>
-        </ng-container>}
-        <ng-container *ngFor="let item of menu">
-            <ng-container *ngTemplateOutlet="itemMenu; context: {item: item}"></ng-container>
-        </ng-container>
+        }
         <ng-template #itemMenu let-item="item">
-            <ng-container *ngIf="!item.visible || (!!item.visible && item.visible())">
-                <ng-container *ngIf="!!item.onClick">
-                    <button mat-icon-button (click)="item.onClick($event)">
-                        <ng-container *ngTemplateOutlet="contentTmpl"></ng-container>
+            @if(isItemVisible(item)){
+                @if(hasMenuChildren(item)){
+                    <button mat-icon-button
+                        type="button"
+                        class="ci-window--grouped-menu-trigger"
+                        [matMenuTriggerFor]="groupMenu"
+                        [disabled]="isItemDisabled(item)"
+                        [matTooltip]="item.tooltip || item.label || 'Opções'"
+                        [attr.aria-label]="item.label || item.tooltip || 'Opções'">
+                        <mat-icon [color]="item.color || undefined">{{item.icon || 'more_vert'}}</mat-icon>
                     </button>
-                </ng-container>
-                <ng-container *ngIf="!item.onClick">
-                    <button mat-icon-button>
-                        <ng-container *ngTemplateOutlet="contentTmpl">
-                        </ng-container>
+                    <mat-menu #groupMenu="matMenu" class="ci-window--grouped-menu">
+                        @for(child of getVisibleChildren(item); track $index){
+                            @if(child.divider){
+                                <mat-divider></mat-divider>
+                            }@else if(hasMenuChildren(child)){
+                                <button mat-menu-item
+                                    type="button"
+                                    [matMenuTriggerFor]="subMenu"
+                                    [disabled]="isItemDisabled(child)"
+                                    [class.ci-menu-item-checked]="isItemChecked(child)">
+                                    @if(isItemChecked(child)){
+                                        <mat-icon color="primary">check_circle</mat-icon>
+                                    }@else if(child.icon){
+                                        <mat-icon [color]="child.color || undefined">{{child.icon}}</mat-icon>
+                                    }
+                                    <span class="ci-menu-item-content">
+                                        <span>{{child.label}}</span>
+                                        @if(child.description){
+                                            <small class="ci-menu-item-description">{{child.description}}</small>
+                                        }
+                                    </span>
+                                </button>
+                                <mat-menu #subMenu="matMenu" class="ci-window--grouped-submenu">
+                                    @for(sub of getVisibleChildren(child); track $index){
+                                        @if(sub.divider){
+                                            <mat-divider></mat-divider>
+                                        }@else{
+                                            <button mat-menu-item
+                                                type="button"
+                                                [disabled]="isItemDisabled(sub)"
+                                                [class.ci-menu-item-checked]="isItemChecked(sub)"
+                                                (click)="onMenuItemClick(sub, $event)">
+                                                @if(isItemChecked(sub)){
+                                                    <mat-icon color="primary">check_circle</mat-icon>
+                                                }@else if(sub.icon){
+                                                    <mat-icon [color]="sub.color || undefined">{{sub.icon}}</mat-icon>
+                                                }
+                                                <span class="ci-menu-item-content">
+                                                    <span>{{sub.label}}</span>
+                                                    @if(sub.description){
+                                                        <small class="ci-menu-item-description">{{sub.description}}</small>
+                                                    }
+                                                </span>
+                                            </button>
+                                        }
+                                    }
+                                </mat-menu>
+                            }@else{
+                                <button mat-menu-item
+                                    type="button"
+                                    [disabled]="isItemDisabled(child)"
+                                    [class.ci-menu-item-checked]="isItemChecked(child)"
+                                    (click)="onMenuItemClick(child, $event)">
+                                    @if(isItemChecked(child)){
+                                        <mat-icon color="primary">check_circle</mat-icon>
+                                    }@else if(child.icon){
+                                        <mat-icon [color]="child.color || undefined">{{child.icon}}</mat-icon>
+                                    }
+                                    <span class="ci-menu-item-content">
+                                        <span>{{child.label}}</span>
+                                        @if(child.description){
+                                            <small class="ci-menu-item-description">{{child.description}}</small>
+                                        }
+                                    </span>
+                                </button>
+                            }
+                        }
+                    </mat-menu>
+                }@else{
+                    <button mat-icon-button
+                        type="button"
+                        [disabled]="isItemDisabled(item)"
+                        [matTooltip]="item.tooltip || item.label || ''"
+                        [attr.aria-label]="item.label || item.tooltip || ''"
+                        (click)="onMenuItemClick(item, $event)">
+                        <mat-icon [color]="item.color || undefined">{{item.icon}}</mat-icon>
                     </button>
-                </ng-container>
-            </ng-container>
-            <ng-template #contentTmpl>
-                <mat-icon>{{item.icon}}</mat-icon>
-            </ng-template>
+                }
+            }
         </ng-template>
     </mat-toolbar>
     <mat-progress-bar></mat-progress-bar>

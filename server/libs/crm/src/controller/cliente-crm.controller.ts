@@ -1,69 +1,68 @@
 import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ClienteCrm } from "../models/cliente";
-import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
+import { ControllerDaoBase, GetByInternalIdInputDto, SyncPayloadDao } from "@ci/manager";
 import { FindOptionsWhere } from "typeorm";
 import { ClienteCrmService } from "../service/cliente-crm.service";
+
 export class SyncPayloadDaoClienteCrm extends SyncPayloadDao<ClienteCrm> {
     @ApiProperty({ type: ClienteCrm })
     override data?: ClienteCrm;
 }
+
 export class ObterListaClienteCrm {
-    // override data?: ClienteCrm;
-    @ApiProperty({})
+    @ApiProperty({ required: false })
     skip?: number;
-    @ApiProperty({})
+    @ApiProperty({ required: false })
     take?: number;
-    @ApiProperty({})
+    @ApiProperty({ required: false })
     where?: FindOptionsWhere<ClienteCrm>[] | FindOptionsWhere<ClienteCrm>;
 }
-export class PessoaCotrollerGetInputDto {
-    @ApiProperty({ nullable: true, required: false })
-    query?: string;
-    @ApiProperty({ nullable: true, required: false })
-    limit?: number;
-}
+
 @ApiTags('ClienteCrm')
 @Controller('ClienteCrm')
 export class ClienteCrmController extends ControllerDaoBase<ClienteCrmService, ClienteCrm> {
-    constructor(
-        service: ClienteCrmService
-    ) {
+    constructor(service: ClienteCrmService) {
         super(service);
     }
+
     @Post('Sync')
-    @ApiResponse({
-        type: ClienteCrm,
-    })
-    @ApiOperation({
-        operationId: 'SyncClienteCrm'
-    })
+    @ApiResponse({ type: ClienteCrm })
+    @ApiOperation({ operationId: 'SyncClienteCrm' })
     override async Sync(
         @Body() body: SyncPayloadDaoClienteCrm,
-        @Req() req,
+        @Req() req?: any,
     ) {
-        try {
-            return await super.Sync(body, req)
-        } catch (error) {
-            return {
-                status: 500,
-                message: 'Falha',
-                detahes: error.message,
-                stack: error.stack
-            } as any
-        }
+        return await super.Sync(body, req);
     }
+
+    @Post('GetByInternalId')
+    @ApiResponse({ type: ClienteCrm })
+    @ApiOperation({ operationId: 'GetByInternalIdClienteCrm' })
+    override async GetByInternalId(
+        @Body() input: GetByInternalIdInputDto,
+        @Req() req?: any,
+    ) {
+        return await super.GetByInternalId(input, req);
+    }
+
     @Post('GetList')
-    @ApiResponse({
-        type: ClienteCrm, isArray: true
-    })
-    @ApiOperation({
-        operationId: 'GetListClienteCrm'
-    })
+    @ApiResponse({ type: ClienteCrm, isArray: true })
+    @ApiOperation({ operationId: 'GetListClienteCrm' })
     override async GetList(
         @Body() input: ObterListaClienteCrm,
-        @Req() req,
+        @Req() req?: any,
     ) {
-        return super.GetList(input, req);
+        return await super.GetList(input, req);
+    }
+
+    @Post('Delete')
+    @ApiResponse({ type: ClienteCrm })
+    @ApiOperation({ operationId: 'DeleteClienteCrm' })
+    override async Delete(
+        @Body() body: ClienteCrm,
+        @Req() req?: any,
+    ) {
+        return await super.Delete(body, req);
     }
 }

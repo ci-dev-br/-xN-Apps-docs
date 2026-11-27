@@ -1,67 +1,68 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Servico } from "../models/servico";
-import { ControllerDaoBase, SyncPayloadDao } from "@ci/manager";
+import { ControllerDaoBase, GetByInternalIdInputDto, SyncPayloadDao } from "@ci/manager";
 import { FindOptionsWhere } from "typeorm";
 import { ServicoService } from "../service/servico.service";
+
 export class SyncPayloadDaoServico extends SyncPayloadDao<Servico> {
     @ApiProperty({ type: Servico })
     override data?: Servico;
 }
+
 export class ObterListaServico {
-    // override data?: Servico;
-    @ApiProperty({})
+    @ApiProperty({ required: false })
     skip?: number;
-    @ApiProperty({})
+    @ApiProperty({ required: false })
     take?: number;
-    @ApiProperty({})
+    @ApiProperty({ required: false })
     where?: FindOptionsWhere<Servico>[] | FindOptionsWhere<Servico>;
 }
-export class PessoaCotrollerGetInputDto {
-    @ApiProperty({ nullable: true, required: false })
-    query?: string;
-    @ApiProperty({ nullable: true, required: false })
-    limit?: number;
-}
+
 @ApiTags('Servico')
 @Controller('Servico')
 export class ServicoController extends ControllerDaoBase<ServicoService, Servico> {
-    constructor(
-        service: ServicoService
-    ) {
+    constructor(service: ServicoService) {
         super(service);
     }
+
     @Post('Sync')
-    @ApiResponse({
-        type: Servico,
-    })
-    @ApiOperation({
-        operationId: 'SyncServico'
-    })
+    @ApiResponse({ type: Servico })
+    @ApiOperation({ operationId: 'SyncServico' })
     override async Sync(
         @Body() body: SyncPayloadDaoServico,
+        @Req() req?: any,
     ) {
-        try {
-            return await super.Sync(body)
-        } catch (error) {
-            return {
-                status: 500,
-                message: 'Falha',
-                detahes: error.message,
-                stack: error.stack
-            } as any
-        }
+        return await super.Sync(body, req);
     }
+
+    @Post('GetByInternalId')
+    @ApiResponse({ type: Servico })
+    @ApiOperation({ operationId: 'GetByInternalIdServico' })
+    override async GetByInternalId(
+        @Body() input: GetByInternalIdInputDto,
+        @Req() req?: any,
+    ) {
+        return await super.GetByInternalId(input, req);
+    }
+
     @Post('GetList')
-    @ApiResponse({
-        type: Servico, isArray: true
-    })
-    @ApiOperation({
-        operationId: 'GetListServico'
-    })
+    @ApiResponse({ type: Servico, isArray: true })
+    @ApiOperation({ operationId: 'GetListServico' })
     override async GetList(
         @Body() input: ObterListaServico,
+        @Req() req?: any,
     ) {
-        return super.GetList(input);
+        return await super.GetList(input, req);
+    }
+
+    @Post('Delete')
+    @ApiResponse({ type: Servico })
+    @ApiOperation({ operationId: 'DeleteServico' })
+    override async Delete(
+        @Body() body: Servico,
+        @Req() req?: any,
+    ) {
+        return await super.Delete(body, req);
     }
 }

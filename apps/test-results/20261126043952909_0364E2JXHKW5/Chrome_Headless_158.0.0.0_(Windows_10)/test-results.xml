@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-26T04:40:02" id="0" hostname="plhx33" tests="3" errors="0" failures="2" time="1.282">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="DynFormComponent &amp; Schema Type Representation deve construir os campos do schema com tipos representativos e tipos dinâmicos injetados via route.data" time="1.193" classname="Chrome_Headless_158_0_0_0_(Windows_10).DynFormComponent &amp; Schema Type Representation">
+    <failure type="">Error: NG0303: Can't set value of the 'description' input on the 'TestInlineDynWidgetComponent' component. Make sure that the 'description' property is declared as an input using the input() or model() function or the @Input() decorator.
+error properties: Object({ code: 303 })
+    at reportUnknownPropertyError (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:2848:11)
+    at ComponentRef2.setInput (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8911:7)
+    at _NgComponentOutlet._applyInputStateDiff (node_modules/.pnpm/@angular+common@21.2.26_@an_60e8ef926092452782e119b691e13da9/node_modules/@angular/common/fesm2022/_common_module-chunk.mjs:1587:22)
+    at _NgComponentOutlet.ngDoCheck (node_modules/.pnpm/@angular+common@21.2.26_@an_60e8ef926092452782e119b691e13da9/node_modules/@angular/common/fesm2022/_common_module-chunk.mjs:1575:12)
+    at callHookInternal (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:555:10)
+    at callHook (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:573:5)
+    at callHooks (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:544:9)
+    at executeInitAndCheckHooks (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:513:5)
+    at refreshView (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5787:11)
+    at detectChangesInView (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5915:5)
+</failure>
+  </testcase>
+  <testcase name="DynFormComponent &amp; Schema Type Representation deve abrir campo .ts / .map em janela do CodeX via WindowService e atualizar o FormControl com retorno" time="0.079" classname="Chrome_Headless_158_0_0_0_(Windows_10).DynFormComponent &amp; Schema Type Representation">
+    <failure type="">Error: NG0303: Can't set value of the 'description' input on the 'TestInlineDynWidgetComponent' component. Make sure that the 'description' property is declared as an input using the input() or model() function or the @Input() decorator.
+error properties: Object({ code: 303 })
+    at reportUnknownPropertyError (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:2848:11)
+    at ComponentRef2.setInput (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8911:7)
+    at _NgComponentOutlet._applyInputStateDiff (node_modules/.pnpm/@angular+common@21.2.26_@an_60e8ef926092452782e119b691e13da9/node_modules/@angular/common/fesm2022/_common_module-chunk.mjs:1587:22)
+    at _NgComponentOutlet.ngDoCheck (node_modules/.pnpm/@angular+common@21.2.26_@an_60e8ef926092452782e119b691e13da9/node_modules/@angular/common/fesm2022/_common_module-chunk.mjs:1575:12)
+    at callHookInternal (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:555:10)
+    at callHook (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:573:5)
+    at callHooks (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:544:9)
+    at executeInitAndCheckHooks (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:513:5)
+    at refreshView (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5787:11)
+    at detectChangesInView (node_modules/.pnpm/@angular+core@21.2.26_@angu_4b5b79490d67889dd92ed02ebca27283/node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5915:5)
+</failure>
+  </testcase>
+  <testcase name="DynFormComponent &amp; Schema Type Representation deve resolver o tipo dinâmico de .map via Apps.resolveDynamicType" time="0.01" classname="Chrome_Headless_158_0_0_0_(Windows_10).DynFormComponent &amp; Schema Type Representation"/>
+  <system-out>
+    <![CDATA[Chrome Headless 158.0.0.0 (Windows 10) WARN: '
+  It looks like you're using the disabled attribute with a reactive form directive. If you set disabled to true
+  when you set up this control in your component class, the disabled attribute will actually be set in the DOM for
+  you. We recommend using this approach to avoid 'changed after checked' errors.
+
+  Example:
+  // Specify the `disabled` property at control creation time:
+  form = new FormGroup({
+    first: new FormControl({value: 'Nancy', disabled: true}, Validators.required),
+    last: new FormControl('Drew', Validators.required)
+  });
+
+  // Controls can also be enabled/disabled after creation:
+  form.get('first')?.enable();
+  form.get('last')?.disable();
+'
+,Chrome Headless 158.0.0.0 (Windows 10) WARN: 'Falha ao carregar /api-json em DaoService:', HttpErrorResponse{headers: _HttpHeaders{headers: undefined, normalizedNames: Map{}, lazyInit: () => { ... }, lazyUpdate: null}, status: 404, statusText: 'Not Found', url: 'http://localhost:9876/api-json', ok: false, type: undefined, redirected: undefined, responseType: undefined, name: 'HttpErrorResponse', message: 'Http failure response for http://localhost:9876/api-json: 404 Not Found', error: 'NOT FOUND'}
+,Chrome Headless 158.0.0.0 (Windows 10) WARN: '
+  It looks like you're using the disabled attribute with a reactive form directive. If you set disabled to true
+  when you set up this control in your component class, the disabled attribute will actually be set in the DOM for
+  you. We recommend using this approach to avoid 'changed after checked' errors.
+
+  Example:
+  // Specify the `disabled` property at control creation time:
+  form = new FormGroup({
+    first: new FormControl({value: 'Nancy', disabled: true}, Validators.required),
+    last: new FormControl('Drew', Validators.required)
+  });
+
+  // Controls can also be enabled/disabled after creation:
+  form.get('first')?.enable();
+  form.get('last')?.disable();
+'
+,Chrome Headless 158.0.0.0 (Windows 10) WARN: 'Falha ao carregar /api-json em DaoService:', HttpErrorResponse{headers: _HttpHeaders{headers: undefined, normalizedNames: Map{}, lazyInit: () => { ... }, lazyUpdate: null}, status: 404, statusText: 'Not Found', url: 'http://localhost:9876/api-json', ok: false, type: undefined, redirected: undefined, responseType: undefined, name: 'HttpErrorResponse', message: 'Http failure response for http://localhost:9876/api-json: 404 Not Found', error: 'NOT FOUND'}
+
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

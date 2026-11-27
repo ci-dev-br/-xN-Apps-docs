@@ -15,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
+import { TenantFilterBarComponent } from '@ci/components';
 import { Subscription } from 'rxjs';
 import {
     CarteiraService,
@@ -84,11 +85,13 @@ export interface MoedaPresetItem {
         CarteiraEvolucaoTemporalCard,
         CarteiraAlocacaoLastroCard,
         CarteiraDesempenhoComparativoCard,
+        TenantFilterBarComponent,
     ],
     templateUrl: './carteira.component.html',
     styleUrls: ['./carteira.component.scss']
 })
 export class CarteiraComponent implements OnInit, OnDestroy {
+    selectedTenantIds: string[] = [];
     carteira?: CarteiraDto;
     carteiras: CarteiraDto[] = [];
     patrimonioTotalBrl = 0;
@@ -253,12 +256,22 @@ export class CarteiraComponent implements OnInit, OnDestroy {
         this.nomeNovaCarteira = `Carteira ${preset.nome}`;
     }
 
+    onTenantFilterChange(tenantIds: string[]): void {
+        this.selectedTenantIds = Array.isArray(tenantIds) ? tenantIds : [];
+        this.carregarDadosCarteira();
+    }
+
     carregarDadosCarteira(carteiraId?: string): void {
         const targetId = carteiraId || this.carteira?.internalId;
         this.loading = true;
         this.sub?.unsubscribe();
         try {
-            this.sub = this.carteiraService.obterMinhaCarteira(false, targetId, this.periodoDashboard).subscribe({
+            this.sub = this.carteiraService.obterMinhaCarteira(
+                false,
+                targetId,
+                this.periodoDashboard,
+                this.selectedTenantIds.length > 0 ? this.selectedTenantIds : undefined,
+            ).subscribe({
                 next: (res: any) => {
                     this.loading = false;
                     const listaCarteiras = Array.isArray(res?.carteiras) ? res.carteiras : (res?.carteira ? [res.carteira] : []);
@@ -427,6 +440,7 @@ export class CarteiraComponent implements OnInit, OnDestroy {
                 metaPosicao: this.metaPosicaoNovaCarteira !== null && this.metaPosicaoNovaCarteira !== undefined ? Number(this.metaPosicaoNovaCarteira) : undefined,
             },
             termosAceitos: this.termosAceitos,
+            ...(this.selectedTenantIds.length > 0 ? { tenantIds: [...this.selectedTenantIds] } : {}),
         }).subscribe({
             next: (res) => {
                 this.criandoCarteira = false;
@@ -687,7 +701,11 @@ export class CarteiraComponent implements OnInit, OnDestroy {
         }
         this.carregandoDashboard = true;
         const carteiraFiltro = this.escopoDashboard === 'TODAS' ? undefined : this.escopoDashboard;
-        this.carteiraService.obterDashboardCarteiras(this.periodoDashboard, carteiraFiltro).subscribe({
+        this.carteiraService.obterDashboardCarteiras(
+            this.periodoDashboard,
+            carteiraFiltro,
+            this.selectedTenantIds.length > 0 ? this.selectedTenantIds : undefined,
+        ).subscribe({
             next: (dash) => {
                 this.carregandoDashboard = false;
                 this.dashboard = dash || this.construirDashboardLocal();

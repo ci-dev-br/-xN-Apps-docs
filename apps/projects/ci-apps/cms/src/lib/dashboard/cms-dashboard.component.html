@@ -8,12 +8,37 @@
     </div>
 
     <div class="header-actions">
+      <div class="filter-group">
+        <label for="website-filter">Website:</label>
+        <select id="website-filter" [(ngModel)]="selectedWebsiteId" (ngModelChange)="onWebsiteFilterChange()">
+          <option value="todos">Todos os Portais ({{ kpis.totalWebsites || websites.length }})</option>
+          @for (site of websites; track site.internalId) {
+            <option [value]="site.internalId">{{ site.name || site.domain || 'Portal' }}</option>
+          }
+        </select>
+      </div>
+
+      <button mat-stroked-button (click)="loadDashboard()" [disabled]="loading" matTooltip="Atualizar dados do backend">
+        <mat-icon>refresh</mat-icon>
+        Atualizar
+      </button>
+
       <button mat-flat-button color="primary" class="create-btn" (click)="openNewModal()">
         <mat-icon>add_circle</mat-icon>
         Novo Conteúdo
       </button>
     </div>
   </header>
+
+  <ci-tenant-filter-bar
+    [selectedTenantIds]="selectedTenantIds"
+    (selectedTenantIdsChange)="onTenantFilterChange($event)"
+    label="Segmentar CMS por Tenants:">
+  </ci-tenant-filter-bar>
+
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
 
   <!-- Metrics Grid -->
   <section class="kpi-grid">
@@ -22,7 +47,7 @@
       <div class="kpi-details">
         <span class="label">Posts / Artigos</span>
         <span class="value">{{ totalPosts }}</span>
-        <span class="trend positive"><mat-icon>check</mat-icon> Publicações ativas</span>
+        <span class="trend positive"><mat-icon>check</mat-icon> {{ kpis.totalPublished }} publicações ativas</span>
       </div>
     </div>
 
@@ -31,7 +56,7 @@
       <div class="kpi-details">
         <span class="label">Páginas Institucionais</span>
         <span class="value">{{ totalPages }}</span>
-        <span class="trend positive"><mat-icon>insights</mat-icon> Rotas indexadas</span>
+        <span class="trend positive"><mat-icon>insights</mat-icon> {{ kpis.totalWebsites }} portais configurados</span>
       </div>
     </div>
 
@@ -40,7 +65,7 @@
       <div class="kpi-details">
         <span class="label">Visualizações de Conteúdo</span>
         <span class="value">{{ totalViews | number:'1.0-0':'pt-BR' }}</span>
-        <span class="trend positive"><mat-icon>trending_up</mat-icon> Engajamento contínuo</span>
+        <span class="trend positive"><mat-icon>trending_up</mat-icon> {{ kpis.totalComments }} comentários</span>
       </div>
     </div>
 
@@ -48,8 +73,8 @@
       <div class="icon-wrap amber"><mat-icon>perm_media</mat-icon></div>
       <div class="kpi-details">
         <span class="label">Arquivos de Mídia</span>
-        <span class="value">{{ recentMedia.length }}</span>
-        <span class="trend neutral"><mat-icon>storage</mat-icon> Otimizados para CDN</span>
+        <span class="value">{{ totalMediaCount }}</span>
+        <span class="trend neutral"><mat-icon>storage</mat-icon> {{ kpis.totalDrafts }} em rascunho/revisão</span>
       </div>
     </div>
   </section>
@@ -61,7 +86,7 @@
         <button [class.active]="selectedFilter === 'todos'" (click)="selectedFilter = 'todos'">Todos ({{ contents.length }})</button>
         <button [class.active]="selectedFilter === 'post'" (click)="selectedFilter = 'post'">Posts / Artigos ({{ totalPosts }})</button>
         <button [class.active]="selectedFilter === 'page'" (click)="selectedFilter = 'page'">Páginas ({{ totalPages }})</button>
-        <button [class.active]="selectedFilter === 'notice'" (click)="selectedFilter = 'notice'">Comunicados</button>
+        <button [class.active]="selectedFilter === 'notice'" (click)="selectedFilter = 'notice'">Comunicados ({{ totalNotices }})</button>
       </div>
 
       <div class="search-box">
@@ -70,7 +95,7 @@
       </div>
     </div>
 
-    <!-- Articles Table / Cards -->
+    <!-- Articles Table -->
     <div class="table-container">
       <table class="cms-table">
         <thead>
@@ -86,12 +111,19 @@
           </tr>
         </thead>
         <tbody>
-          @for (item of filteredContents; track item.id) {
+          @for (item of filteredContents; track item.sourceEntity + '-' + item.internalId) {
             <tr>
               <td class="title-cell">
                 <div class="item-title">{{ item.title }}</div>
-                <div class="item-slug">/{{ item.slug }}</div>
-                <div class="item-excerpt">{{ item.excerpt }}</div>
+                <div class="item-slug">
+                  /{{ item.slug }}
+                  @if (item.websiteName) {
+                    <span class="site-badge">• {{ item.websiteName }}</span>
+                  }
+                </div>
+                @if (item.excerpt) {
+                  <div class="item-excerpt">{{ item.excerpt }}</div>
+                }
               </td>
               <td>
                 <span class="type-pill" [ngClass]="item.type">{{ item.type | uppercase }}</span>
@@ -117,12 +149,15 @@
                 </span>
               </td>
               <td class="actions-col">
+                <button mat-icon-button (click)="openEditModal(item)" matTooltip="Editar conteúdo">
+                  <mat-icon>edit</mat-icon>
+                </button>
                 <button mat-icon-button (click)="togglePublish(item)" [matTooltip]="item.status === 'publicado' ? 'Despublicar' : 'Publicar'">
                   <mat-icon [color]="item.status === 'publicado' ? 'primary' : ''">
                     {{ item.status === 'publicado' ? 'check_circle' : 'publish' }}
                   </mat-icon>
                 </button>
-                <button mat-icon-button color="warn" (click)="deleteContent(item.id)" matTooltip="Excluir">
+                <button mat-icon-button color="warn" (click)="deleteContent(item)" matTooltip="Excluir">
                   <mat-icon>delete_outline</mat-icon>
                 </button>
               </td>
@@ -146,21 +181,35 @@
   <section class="bottom-grid">
     <!-- Media Library Snapshot -->
     <div class="media-card">
-      <div class="card-header">
-        <mat-icon>perm_media</mat-icon>
-        <h3>Biblioteca de Mídias Recentes</h3>
+      <div class="card-header-row">
+        <div class="card-header">
+          <mat-icon>perm_media</mat-icon>
+          <h3>Biblioteca de Mídias Recentes</h3>
+        </div>
+        <button mat-stroked-button color="primary" type="button" (click)="openNewMediaModal()">
+          <mat-icon>add_photo_alternate</mat-icon>
+          Nova Mídia
+        </button>
       </div>
       <div class="media-list">
-        @for (m of recentMedia; track m.id) {
+        @for (m of recentMedia; track m.internalId || m.filename) {
           <div class="media-item">
             <div class="media-icon">
-              <mat-icon>{{ m.type === 'image' ? 'image' : m.type === 'pdf' ? 'picture_as_pdf' : 'videocam' }}</mat-icon>
+              <mat-icon>{{ m.mediaType === 'image' ? 'image' : m.mediaType === 'pdf' ? 'picture_as_pdf' : m.mediaType === 'video' ? 'videocam' : 'insert_drive_file' }}</mat-icon>
             </div>
             <div class="media-details">
-              <span class="media-name">{{ m.filename }}</span>
-              <span class="media-meta">{{ m.size }} • {{ m.uploadedAt }}</span>
+              <span class="media-name">{{ m.filename || m.url }}</span>
+              <span class="media-meta">{{ formatMediaSize(m) }} • {{ formatMediaDate(m) }}</span>
             </div>
-            <button mat-icon-button matTooltip="Copiar Link"><mat-icon>link</mat-icon></button>
+            <button mat-icon-button type="button" (click)="copyMediaUrl(m)" matTooltip="Copiar Link"><mat-icon>link</mat-icon></button>
+            <button mat-icon-button color="warn" type="button" (click)="deleteMedia(m)" matTooltip="Excluir Mídia"><mat-icon>delete_outline</mat-icon></button>
+          </div>
+        }
+
+        @if (recentMedia.length === 0) {
+          <div class="empty-media">
+            <mat-icon>perm_media</mat-icon>
+            <span>Nenhuma mídia cadastrada ainda.</span>
           </div>
         }
       </div>
@@ -176,108 +225,209 @@
         <a routerLink="/CMS/SitePage" class="cms-shortcut">
           <mat-icon>web</mat-icon>
           <div>
-            <strong>SitePage</strong>
+            <strong>SitePage ({{ totalPages }})</strong>
             <small>Páginas fixas do portal</small>
           </div>
         </a>
         <a routerLink="/CMS/SitePost" class="cms-shortcut">
           <mat-icon>newspaper</mat-icon>
           <div>
-            <strong>SitePost</strong>
-            <small>Artigos de blog e notícias</small>
+            <strong>SitePost ({{ totalPosts + totalNotices }})</strong>
+            <small>Artigos de blog e comunicados</small>
+          </div>
+        </a>
+        <a routerLink="/CMS/SiteMedia" class="cms-shortcut">
+          <mat-icon>perm_media</mat-icon>
+          <div>
+            <strong>SiteMedia ({{ totalMediaCount }})</strong>
+            <small>Biblioteca de arquivos e imagens</small>
           </div>
         </a>
         <a routerLink="/CMS/Comment" class="cms-shortcut">
           <mat-icon>forum</mat-icon>
           <div>
-            <strong>Comment</strong>
+            <strong>Comment ({{ kpis.totalComments }})</strong>
             <small>Comentários de leitores</small>
           </div>
         </a>
         <a routerLink="/CMS/Links" class="cms-shortcut">
           <mat-icon>link</mat-icon>
           <div>
-            <strong>Links</strong>
+            <strong>Links ({{ kpis.totalLinks }})</strong>
             <small>Redirecionamentos e URLs</small>
           </div>
         </a>
         <a routerLink="/CMS/Website" class="cms-shortcut">
           <mat-icon>language</mat-icon>
           <div>
-            <strong>Website</strong>
+            <strong>Website ({{ kpis.totalWebsites }})</strong>
             <small>Configurações de domínios</small>
           </div>
         </a>
         <a routerLink="/CMS/Term" class="cms-shortcut">
           <mat-icon>label</mat-icon>
           <div>
-            <strong>Term (Tags & Categorias)</strong>
-            <small>Taxonomias do conteúdo</small>
+            <strong>Term ({{ kpis.totalTerms }})</strong>
+            <small>Taxonomias e categorias</small>
+          </div>
+        </a>
+        <a routerLink="/CMS/SiteOption" class="cms-shortcut">
+          <mat-icon>tune</mat-icon>
+          <div>
+            <strong>SiteOption</strong>
+            <small>Parâmetros e configurações</small>
           </div>
         </a>
       </div>
     </div>
   </section>
 
-  <!-- Modal Novo Conteúdo -->
-  @if (showNewContentModal) {
-    <div class="modal-backdrop" (click)="showNewContentModal = false">
+  <!-- Modal Novo / Editar Conteúdo -->
+  @if (showContentModal) {
+    <div class="modal-backdrop" (click)="showContentModal = false">
       <div class="modal-card" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h3>Criar Novo Conteúdo CMS</h3>
-          <button mat-icon-button (click)="showNewContentModal = false"><mat-icon>close</mat-icon></button>
+          <h3>{{ isEditingContent ? 'Editar Conteúdo CMS' : 'Criar Novo Conteúdo CMS' }}</h3>
+          <button mat-icon-button (click)="showContentModal = false"><mat-icon>close</mat-icon></button>
         </div>
         <div class="modal-body">
           <div class="form-group">
             <label>Título *</label>
-            <input type="text" [(ngModel)]="newContent.title" (input)="generateSlug()" placeholder="Ex: Guia de Boas Práticas de Segurança" />
+            <input type="text" [(ngModel)]="contentForm.title" (input)="generateSlug()" placeholder="Ex: Guia de Boas Práticas de Segurança" />
           </div>
 
-          <div class="form-group">
-            <label>Slug / URL Amigável</label>
-            <input type="text" [(ngModel)]="newContent.slug" placeholder="guia-boas-praticas-seguranca" />
+          <div class="form-row">
+            <div class="form-group">
+              <label>Slug / URL Amigável</label>
+              <input type="text" [(ngModel)]="contentForm.slug" placeholder="guia-boas-praticas-seguranca" />
+            </div>
+            @if (contentForm.type === 'page') {
+              <div class="form-group">
+                <label>Rota Pública (urlMatch)</label>
+                <input type="text" [(ngModel)]="contentForm.urlMatch" placeholder="/sobre-nos" />
+              </div>
+            }
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label>Tipo de Conteúdo</label>
-              <select [(ngModel)]="newContent.type">
+              <select [(ngModel)]="contentForm.type" [disabled]="isEditingContent">
                 <option value="post">Post de Notícia / Blog</option>
                 <option value="page">Página Institucional</option>
                 <option value="notice">Comunicado Interno</option>
               </select>
             </div>
             <div class="form-group">
-              <label>Categoria</label>
-              <input type="text" [(ngModel)]="newContent.category" placeholder="Ex: Tecnologia, Corporativo" />
+              <label>Website</label>
+              <select [(ngModel)]="contentForm.websiteId">
+                <option value="">Portal Padrão / Global</option>
+                @for (site of websites; track site.internalId) {
+                  <option [value]="site.internalId">{{ site.name || site.domain }}</option>
+                }
+              </select>
             </div>
-          </div>
-
-          <div class="form-group">
-            <label>Resumo / Descrição Rápida</label>
-            <textarea [(ngModel)]="newContent.excerpt" rows="2" placeholder="Breve introdução que aparecerá na listagem"></textarea>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label>Autor Responsável</label>
-              <input type="text" [(ngModel)]="newContent.author" placeholder="Nome do autor ou departamento" />
+              <label>Categoria</label>
+              <input type="text" [(ngModel)]="contentForm.category" placeholder="Ex: Tecnologia, Corporativo" />
             </div>
             <div class="form-group">
-              <label>Status Inicial</label>
-              <select [(ngModel)]="newContent.status">
-                <option value="publicado">Publicado Imediatamente</option>
-                <option value="rascunho">Rascunho</option>
-                <option value="agendado">Agendado</option>
+              <label>Autor Responsável</label>
+              <input type="text" [(ngModel)]="contentForm.author" placeholder="Nome do autor ou departamento" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Status Editorial</label>
+            <select [(ngModel)]="contentForm.status">
+              <option value="publicado">Publicado Imediatamente</option>
+              <option value="rascunho">Rascunho</option>
+              <option value="revisao">Em Revisão</option>
+              <option value="agendado">Agendado</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Resumo / Descrição Rápida</label>
+            <textarea [(ngModel)]="contentForm.excerpt" rows="2" placeholder="Breve introdução que aparecerá na listagem"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Conteúdo (HTML / Texto)</label>
+            <textarea [(ngModel)]="contentForm.contentHtml" rows="4" placeholder="<p>Conteúdo da publicação...</p>"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button mat-button (click)="showContentModal = false" [disabled]="savingContent">Cancelar</button>
+          <button mat-flat-button color="primary" [disabled]="!contentForm.title || savingContent" (click)="saveContent()">
+            {{ savingContent ? 'Salvando...' : (isEditingContent ? 'Salvar Alterações' : 'Publicar Conteúdo') }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Nova Mídia -->
+  @if (showMediaModal) {
+    <div class="modal-backdrop" (click)="showMediaModal = false">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Registrar Arquivo de Mídia</h3>
+          <button mat-icon-button (click)="showMediaModal = false"><mat-icon>close</mat-icon></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Nome do Arquivo *</label>
+            <input type="text" [(ngModel)]="mediaForm.filename" placeholder="Ex: banner-portal-v3.png" />
+          </div>
+
+          <div class="form-group">
+            <label>URL Pública / Caminho *</label>
+            <input type="text" [(ngModel)]="mediaForm.url" placeholder="https://cdn.ci.dev.br/assets/banner-portal-v3.png" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tipo de Mídia</label>
+              <select [(ngModel)]="mediaForm.mediaType">
+                <option value="image">Imagem</option>
+                <option value="pdf">PDF</option>
+                <option value="video">Vídeo</option>
+                <option value="audio">Áudio</option>
+                <option value="document">Documento</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tamanho (Rótulo)</label>
+              <input type="text" [(ngModel)]="mediaForm.sizeLabel" placeholder="Ex: 1.2 MB" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Texto Alternativo (SEO)</label>
+              <input type="text" [(ngModel)]="mediaForm.altText" placeholder="Descrição acessível da mídia" />
+            </div>
+            <div class="form-group">
+              <label>Website</label>
+              <select [(ngModel)]="mediaForm.websiteId">
+                <option value="">Global</option>
+                @for (site of websites; track site.internalId) {
+                  <option [value]="site.internalId">{{ site.name || site.domain }}</option>
+                }
               </select>
             </div>
           </div>
         </div>
 
         <div class="modal-actions">
-          <button mat-button (click)="showNewContentModal = false">Cancelar</button>
-          <button mat-flat-button color="primary" [disabled]="!newContent.title" (click)="saveContent()">
-            Publicar Conteúdo
+          <button mat-button (click)="showMediaModal = false" [disabled]="savingMedia">Cancelar</button>
+          <button mat-flat-button color="primary" [disabled]="(!mediaForm.filename && !mediaForm.url) || savingMedia" (click)="saveMedia()">
+            {{ savingMedia ? 'Salvando...' : 'Salvar Mídia' }}
           </button>
         </div>
       </div>

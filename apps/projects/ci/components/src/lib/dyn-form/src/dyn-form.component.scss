@@ -3,6 +3,91 @@
     width: 100%;
 }
 
+.ci-dyn-form-codex-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.ci-dyn-form-codex-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(37, 99, 235, 0.24);
+    background: rgba(37, 99, 235, 0.04);
+
+    .codex-search-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+
+        .codex-search-field {
+            flex: 1 1 260px;
+        }
+    }
+
+    .codex-quick-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+
+        .codex-suggestion-chip {
+            font-size: 12px;
+            line-height: 26px;
+            height: 28px;
+        }
+    }
+
+    .codex-locate-error {
+        font-size: 12px;
+        color: #dc2626;
+    }
+
+    .codex-located-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        max-height: 180px;
+        overflow-y: auto;
+    }
+
+    .codex-located-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border: 1px solid rgba(128, 128, 128, 0.2);
+        border-radius: 6px;
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+        text-align: left;
+
+        &:hover {
+            background: rgba(37, 99, 235, 0.08);
+        }
+
+        .codex-located-name {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .codex-located-path {
+            font-size: 12px;
+            opacity: 0.72;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}
+
 form.ci-dyn-form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));

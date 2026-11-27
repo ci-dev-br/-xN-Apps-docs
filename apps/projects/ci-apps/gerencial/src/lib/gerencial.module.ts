@@ -37,12 +37,12 @@ const routes: Routes = [
         path: '', component: GerencialComponent,
         data: {
             name: 'Gerenciador de Aplicações e Usuários',
-            role: 'MASTER',
+            role: ['MASTER', 'ADMIN'],
         },
         children: [
             {
                 path: 'loja', component: LojaComponent,
-                data: { title: 'Loja', icon: 'storefront' }
+                data: { title: 'Loja', icon: 'storefront', roles: ['MASTER', 'ADMIN', 'USER'] }
             },
             {
                 path: 'home', component: HomeComponent,
@@ -58,6 +58,7 @@ const routes: Routes = [
                     title: 'Apps',
                     icon: 'apps',
                     schema: 'Application',
+                    roles: ['MASTER'],
                     search: {
                         all: true
                     }
@@ -65,7 +66,7 @@ const routes: Routes = [
             },
             {
                 path: 'user-manager', component: UsersComponent,
-                data: { title: 'Gestão de Usuários', icon: 'badge' }
+                data: { title: 'Gestão de Usuários', icon: 'badge', roles: ['MASTER', 'ADMIN'] }
             },
         ]
     },

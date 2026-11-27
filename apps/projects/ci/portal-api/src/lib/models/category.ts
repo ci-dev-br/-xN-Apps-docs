@@ -1,14 +1,16 @@
 /* tslint:disable */
 /* eslint-disable */
-import { Credential } from '../models/credential';
 export interface Category {
-  createdAt?: Date | null;
-  createdBy?: Credential | null;
-  deleted?: boolean | null;
-  description?: string | null;
-  internalId?: string | null;
-  lastModifiedAt?: Date | null;
-  lastModifiedBy?: Credential | null;
-  name?: string | null;
-  tenants?: Array<string> | null;
+  id: string;
+
+  /**
+   * Se o assunto está em alta no momento
+   */
+  isTrending: boolean;
+  name: string;
+
+  /**
+   * Volume aproximado de buscas que tornou o assunto tendência
+   */
+  trendVolume: number;
 }

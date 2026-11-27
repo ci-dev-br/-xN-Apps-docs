@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-26T04:37:05" id="0" hostname="plhx33" tests="1" errors="0" failures="1" time="1.367">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="RegistrarComponent &amp; InviteService (getInvite) deve enviar convite/invite/inviteHash no body de POST /Invite/GetInvite e avançar para invite-registration" time="1.367" classname="Chrome_Headless_158_0_0_0_(Windows_10).RegistrarComponent &amp; InviteService (getInvite)">
+    <failure type="">ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[RegistrarComponent2]. Find more at https://v21.angular.dev/errors/NG0201
+error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `AuthService2`.', ngTokenPath: [ 'AuthService2' ] })
+ɵNotFound: NG0201: No provider found for `AuthService2`. Source: Standalone[RegistrarComponent2]. Find more at https://v21.angular.dev/errors/NG0201
+    at createRuntimeError (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors_di.ts:130:17)
+    at NullInjector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/null_injector.ts:20:21)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at R3Injector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:27)
+    at ChainedInjector.get (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/chained_injector.ts:43:32)
+    at lookupTokenUsingModuleInjector (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/di.ts:426:64)
+    at getOrCreateInjectable (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/di.ts:493:10)
+    at ɵɵdirectiveInject (node_modules/.pnpm/darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/di.ts:58:17)
+    at NodeInjectorFactory.RegistrarComponent2_Factory [as factory] (ng:///RegistrarComponent2/ɵfac.js:5:7)
+</failure>
+  </testcase>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

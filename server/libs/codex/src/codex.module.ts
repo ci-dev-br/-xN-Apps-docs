@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { CodexService } from "./service/codex.service";
 import { CodexController } from "./controller/codex.controller";
+import { CodexFilesController } from "./controller/codex-files.controller";
 import { CoreModule } from "@ci/core/core.module";
 import { CodigoFonte } from "./models/codigo-fonte.entity";
 import { File } from "./models/file.entity";
@@ -27,6 +28,7 @@ export const CodeXEntities = [
     ],
     controllers: [
         CodexController,
+        CodexFilesController,
         BlockController,
     ],
     providers: [

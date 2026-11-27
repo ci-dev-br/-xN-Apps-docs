@@ -61,3 +61,33 @@ export class AuthorizationOutput {
     @ApiProperty({ required: false, nullable: true })
     chaveAcesso?: string;
 }
+export class SolicitarVerificacaoEmailInputDto {
+    @ApiProperty({ required: false, nullable: true, description: 'URL de origem para compor o link de confirmação' })
+    originUrl?: string;
+}
+export class SolicitarVerificacaoEmailOutputDto {
+    @ApiProperty({ required: true, description: 'Indica se o e-mail de verificação foi enviado' })
+    sent: boolean;
+    @ApiProperty({ required: false, nullable: true, description: 'Indica se o e-mail já estava verificado' })
+    alreadyVerified?: boolean;
+    @ApiProperty({ required: false, nullable: true, description: 'Endereço de e-mail destinatário' })
+    email?: string;
+    @ApiProperty({ required: false, nullable: true, description: 'Mensagem informativa do resultado' })
+    message?: string;
+}
+export class ConfirmarEmailInputDto {
+    @ApiProperty({ required: true, nullable: false, description: 'Token de verificação recebido por e-mail' })
+    token: string;
+}
+export class ConfirmarEmailOutputDto {
+    @ApiProperty({ required: true, description: 'Indica se o e-mail foi confirmado com sucesso' })
+    verified: boolean;
+    @ApiProperty({ required: false, nullable: true, description: 'Indica se o e-mail já estava confirmado anteriormente' })
+    alreadyVerified?: boolean;
+    @ApiProperty({ required: false, nullable: true, description: 'Endereço de e-mail confirmado' })
+    email?: string;
+    @ApiProperty({ required: false, nullable: true, description: 'Identificador do usuário verificado' })
+    userId?: string;
+    @ApiProperty({ required: false, nullable: true, description: 'Mensagem informativa do resultado' })
+    message?: string;
+}

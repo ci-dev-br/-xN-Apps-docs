@@ -1,3 +1,3 @@
 export interface IHaveRequiredToSearch {
-    requiredToSearch;
+    requiredToSearch?: any;
 }

@@ -12,11 +12,11 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthModule, UserAuthenticationService } from '@ci/auth';
 import { CoreModule, DaoService, ApplicationCatalogService } from '@ci/core';
-import { Application, ApplicationService, User, UserService } from '@ci/portal-api';
-import { lastValueFrom, Subscription } from 'rxjs';
+import { Application, ApplicationService, AuthService, User, UserService } from '@ci/portal-api';
+import { combineLatest, lastValueFrom, Subscription } from 'rxjs';
 
 export interface IAppItem {
     id?: string;
@@ -73,6 +73,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     protected user?: User;
     protected profileImage?: string;
     protected isSaving = false;
+    protected isSendingVerification = false;
+    protected isConfirmingEmail = false;
+    protected verificationSentTo?: string;
     protected feedbackMessage?: { text: string; type: 'success' | 'error' | 'info' };
 
     // Formulário de perfil
@@ -112,14 +115,18 @@ export class HomeComponent implements OnInit, OnDestroy {
     protected loadingApps = false;
 
     private authSubscription?: Subscription;
+    private routeSubscription?: Subscription;
+    private lastConfirmedToken?: string;
 
     constructor(
         private readonly formBuilder: FormBuilder,
         @Optional() private readonly daos?: DaoService,
         @Optional() private readonly userService?: UserService,
+        @Optional() private readonly authService?: AuthService,
         @Optional() private readonly authUserService?: UserAuthenticationService,
         @Optional() private readonly applicationService?: ApplicationService,
         @Optional() private readonly catalogService?: ApplicationCatalogService,
+        @Optional() private readonly route?: ActivatedRoute,
     ) { }
 
     ngOnInit(): void {
@@ -129,12 +136,25 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.handleUserLoaded(user || undefined);
         });
 
+        if (this.route) {
+            this.routeSubscription = combineLatest([
+                this.route.params,
+                this.route.queryParams,
+            ]).subscribe(([params, query]) => {
+                const token = (params?.['token'] || query?.['token'] || query?.['verificarEmail'] || '').trim();
+                if (token && token !== this.lastConfirmedToken) {
+                    this.confirmEmailToken(token);
+                }
+            });
+        }
+
         this.loadAvailableApps();
     }
 
     ngOnDestroy(): void {
         this.stopCamera();
         this.authSubscription?.unsubscribe();
+        this.routeSubscription?.unsubscribe();
     }
 
     /**
@@ -230,16 +250,28 @@ export class HomeComponent implements OnInit, OnDestroy {
                 photo: raw.photo !== undefined ? raw.photo : (this.user?.photo || null),
             };
 
+            const emailChanged = (targetUser.email || '').trim().toLowerCase() !== (this.user?.email || '').trim().toLowerCase();
+
             let responseUser: User | undefined;
             if (this.userService) {
                 responseUser = await lastValueFrom(this.userService.sync({ body: targetUser }));
             }
 
             const mergedUser = responseUser ? Object.assign({}, this.user, responseUser) : targetUser;
+            if (emailChanged && !responseUser) {
+                mergedUser.emailVerificado = false;
+            }
+            if (emailChanged) {
+                this.verificationSentTo = undefined;
+            }
             this.user = mergedUser;
 
             // Atualiza o estado reativo de autenticação global e o armazenamento local
-            this.authUserService?.user.next(mergedUser);
+            if (mergedUser?.id && this.authUserService) {
+                this.authUserService.atualizarPerfilConta(mergedUser);
+            } else {
+                this.authUserService?.user.next(mergedUser);
+            }
 
             // Atualiza preview da imagem
             this.profileImage = this.extractPhotoUrl(mergedUser.photo);
@@ -248,6 +280,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.daos?.prepareToEdit(mergedUser);
             if (this.form) {
                 this.daos?.bindDataForm(mergedUser, this.form);
+                this.form.get('emailVerificado')?.setValue(Boolean(mergedUser.emailVerificado), { emitEvent: false });
                 this.form.markAsPristine();
                 this.form.markAsUntouched();
             }
@@ -258,6 +291,108 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.showFeedback('Erro ao salvar dados de perfil. Tente novamente.', 'error');
         } finally {
             this.isSaving = false;
+        }
+    }
+
+    /**
+     * Solicita o envio do e-mail de verificação para o endereço cadastrado no perfil.
+     */
+    async requestEmailVerification(): Promise<void> {
+        const emailCtrl = this.form.get('email');
+        const emailValue = (emailCtrl?.value || '').trim();
+        if (!emailCtrl || emailCtrl.invalid || !emailValue) {
+            emailCtrl?.markAsTouched();
+            this.showFeedback('Informe um endereço de e-mail válido antes de solicitar a verificação.', 'error');
+            return;
+        }
+
+        if (emailCtrl.dirty) {
+            await this.saveProfile();
+            if (this.form.get('email')?.dirty) {
+                return;
+            }
+        }
+
+        if (this.user?.emailVerificado) {
+            this.showFeedback('Seu endereço de e-mail já está verificado.', 'info');
+            return;
+        }
+
+        if (!this.authService) {
+            this.showFeedback('Serviço de autenticação indisponível no momento.', 'error');
+            return;
+        }
+
+        this.isSendingVerification = true;
+        this.feedbackMessage = undefined;
+
+        try {
+            const originUrl = typeof window !== 'undefined' ? window.location.origin : undefined;
+            const res = await lastValueFrom(
+                this.authService.solicitarVerificacaoEmail({
+                    body: { originUrl }
+                })
+            );
+
+            if (res?.alreadyVerified) {
+                if (this.user) {
+                    const updatedUser: User = { ...this.user, emailVerificado: true };
+                    this.user = updatedUser;
+                    this.form.get('emailVerificado')?.setValue(true, { emitEvent: false });
+                    this.authUserService?.atualizarPerfilConta(updatedUser);
+                }
+                this.showFeedback(res.message || 'Este endereço de e-mail já está verificado.', 'success');
+            } else {
+                this.verificationSentTo = res?.email || emailValue;
+                this.showFeedback(
+                    res?.message || `E-mail de confirmação enviado para ${this.verificationSentTo}. Verifique sua caixa de entrada.`,
+                    'success'
+                );
+            }
+        } catch (error: any) {
+            console.error('Falha ao solicitar verificação de e-mail:', error);
+            this.showFeedback(
+                error?.error?.message || error?.message || 'Não foi possível enviar o e-mail de verificação. Tente novamente.',
+                'error'
+            );
+        } finally {
+            this.isSendingVerification = false;
+        }
+    }
+
+    /**
+     * Confirma o token de verificação de e-mail quando acessado diretamente via /Profile.
+     */
+    async confirmEmailToken(token: string): Promise<void> {
+        if (!token || !this.authService || this.isConfirmingEmail) return;
+
+        this.lastConfirmedToken = token;
+        this.isConfirmingEmail = true;
+
+        try {
+            const res = await lastValueFrom(this.authService.confirmarEmail({ body: { token } }));
+            if (res?.verified) {
+                this.verificationSentTo = undefined;
+                if (this.user) {
+                    const updatedUser: User = {
+                        ...this.user,
+                        email: res.email || this.user.email,
+                        emailVerificado: true,
+                    };
+                    this.user = updatedUser;
+                    this.form.get('emailVerificado')?.setValue(true, { emitEvent: false });
+                    this.authUserService?.atualizarPerfilConta(updatedUser);
+                }
+                this.showFeedback(res.message || 'E-mail confirmado e verificado com sucesso!', 'success');
+            }
+        } catch (error: any) {
+            console.error('Falha ao confirmar e-mail:', error);
+            this.showFeedback(
+                error?.error?.message || error?.message || 'Não foi possível confirmar o e-mail. Solicite um novo link.',
+                'error'
+            );
+        } finally {
+            this.isConfirmingEmail = false;
         }
     }
 

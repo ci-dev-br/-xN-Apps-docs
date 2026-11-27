@@ -21,6 +21,7 @@ import { CardFinderModule } from "../card-finder/card-finder.module";
 import { SettingsComponent } from "@ci/components/settings";
 import { AppQuickCardComponent } from "./app-quick-card.component";
 import { organizeCardMetadata, createGenericAppCard } from "./cards.registry";
+import { TenantFilterBarComponent } from "../tenant-filter/tenant-filter-bar.component";
 
 @NgModule({
     imports: [
@@ -44,6 +45,7 @@ import { organizeCardMetadata, createGenericAppCard } from "./cards.registry";
         CardboardModule,
         CardFinderModule,
         AppQuickCardComponent,
+        TenantFilterBarComponent,
     ],
     declarations: [
         BoardComponent,

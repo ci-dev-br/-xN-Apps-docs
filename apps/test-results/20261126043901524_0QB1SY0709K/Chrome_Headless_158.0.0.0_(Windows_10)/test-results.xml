@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-26T04:39:12" id="0" hostname="plhx33" tests="1" errors="0" failures="0" time="0.845">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="RegistrarComponent &amp; InviteService (getInvite) deve enviar convite/invite/inviteHash no body de POST /Invite/GetInvite e avançar para invite-registration" time="0.845" classname="Chrome_Headless_158_0_0_0_(Windows_10).RegistrarComponent &amp; InviteService (getInvite)"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

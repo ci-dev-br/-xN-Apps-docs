@@ -1,11 +1,18 @@
-import { AfterViewInit, Component, Injector, Input, OnChanges, OnDestroy, OnInit, Optional, SimpleChanges } from "@angular/core";
+import { AfterViewInit, Component, effect, Injector, Input, OnChanges, OnDestroy, OnInit, Optional, SimpleChanges } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ActionsService } from "@ci/components/action";
 import { GridBuilder, IColumnOption } from "@ci/components/data-grid";
 import { EditarDetailComponent } from "@ci/components/editar-detail";
+import { NavbarService } from "@ci/components";
 import { WindowService } from "@ci/components/window";
 import { DaoBuilder, DaoService, IAmSchematization, ISchema, ISchemaProperty } from "@ci/core";
-import { getServiceAsSchema } from "@ci/portal-api";
+import {
+    getServiceAsSchema,
+    TenantPermissionFlagsDto,
+    TenantPermissionItemDto,
+    TenantService,
+    TenantWithPermissionsDto,
+} from "@ci/portal-api";
 import { lastValueFrom } from "rxjs";
 
 export interface ISchemaFieldMeta {
@@ -51,6 +58,55 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
     schemaName?: string;
     @Input()
     gridOptions?: { columns: IColumnOption<any>[] };
+    @Input()
+    organizacaoId?: string;
+
+    // Estado do filtro e gestão de Tenants quando uma Organização está selecionada
+    availableTenants: TenantWithPermissionsDto[] = [];
+    selectedTenantIds: string[] = [];
+    loadingTenants = false;
+    tenantPanelMode: 'none' | 'create' | 'edit' | 'permissions' = 'none';
+    tenantActionBusy = false;
+    tenantActionFeedback?: string;
+    tenantActionError?: string;
+    newTenantForm: {
+        name: string;
+        descriptions: string;
+        permissions: TenantPermissionFlagsDto;
+    } = {
+        name: '',
+        descriptions: '',
+        permissions: {
+            canVisualizar: true,
+            canVer: true,
+            canEditar: true,
+            canCompartilhar: true,
+        },
+    };
+    editTenantForm: {
+        name: string;
+        descriptions: string;
+    } = {
+        name: '',
+        descriptions: '',
+    };
+    tenantPermissionsList: TenantPermissionItemDto[] = [];
+    newPermissionForm: {
+        emailOrUsername: string;
+        role: string;
+        canVisualizar: boolean;
+        canVer: boolean;
+        canEditar: boolean;
+        canCompartilhar: boolean;
+    } = {
+        emailOrUsername: '',
+        role: '',
+        canVisualizar: true,
+        canVer: true,
+        canEditar: false,
+        canCompartilhar: false,
+    };
+    private lastLoadedOrgId?: string;
 
     service?: any;
     schema?: ISchema;
@@ -81,18 +137,62 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
         @Optional() private injector?: Injector,
         @Optional() private gridb?: GridBuilder,
         @Optional() private actions?: ActionsService,
-    ) { }
+        @Optional() private navbarService?: NavbarService,
+        @Optional() private tenantService?: TenantService,
+    ) {
+        if (this.navbarService?.organizationAccess) {
+            effect(() => {
+                const access = this.navbarService?.organizationAccess();
+                const orgId = this.organizacaoId || access?.organizationId;
+                if (orgId && orgId !== this.lastLoadedOrgId) {
+                    this.loadAvailableTenants(orgId);
+                } else if (!orgId && this.lastLoadedOrgId) {
+                    this.resetTenantSelectionState();
+                }
+            });
+        }
+    }
+
+    get activeOrganizationId(): string | undefined {
+        return this.organizacaoId || this.navbarService?.organizationAccess()?.organizationId || undefined;
+    }
+
+    get activeOrganizationName(): string | undefined {
+        return this.navbarService?.organizationAccess()?.organizationName || undefined;
+    }
+
+    get isOrganizationSelected(): boolean {
+        return Boolean(this.activeOrganizationId);
+    }
+
+    get selectedTenants(): TenantWithPermissionsDto[] {
+        const set = new Set(this.selectedTenantIds || []);
+        return (this.availableTenants || []).filter(t => set.has(t.id));
+    }
+
+    get primarySelectedTenant(): TenantWithPermissionsDto | undefined {
+        return this.selectedTenants[0];
+    }
 
     get activeFilterCount(): number {
-        return Object.keys(this.columnFilters || {}).filter(k => {
+        const colCount = Object.keys(this.columnFilters || {}).filter(k => {
             const v = this.columnFilters[k];
             return v !== undefined && v !== null && String(v).trim() !== '';
         }).length;
+        return colCount + (this.selectedTenantIds?.length || 0);
     }
 
     async ngOnChanges(changes: SimpleChanges) {
         if (changes['schemaName'] && !changes['schemaName'].firstChange && this.schemaName) {
             await this.prepareSchema();
+        }
+        if (changes['organizacaoId']) {
+            const orgId = this.activeOrganizationId;
+            if (orgId) {
+                await this.loadAvailableTenants(orgId);
+            } else {
+                this.resetTenantSelectionState();
+            }
         }
     }
 
@@ -151,6 +251,7 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
                     }))
                 };
             }
+            this.ensureTenantColumnInGrid();
         } else {
             this.gridOptions = { columns: [] };
         }
@@ -243,6 +344,9 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
                 // reservado para abertura direta de edição via query param
             }
         });
+        if (this.activeOrganizationId) {
+            await this.loadAvailableTenants(this.activeOrganizationId);
+        }
     }
 
     async prepareSchema() {
@@ -262,7 +366,10 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
 
             if (!!this.schemaName) {
                 const serviceType = getServiceAsSchema(this.schemaName);
-                this.service = serviceType ? this.injector?.get(serviceType, null) : undefined;
+                const resolved = serviceType ? this.injector?.get(serviceType, null) : undefined;
+                if (resolved) {
+                    this.service = resolved;
+                }
             }
 
             await this.search();
@@ -309,7 +416,285 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
     clearAllFilters() {
         this.columnFilters = {};
         this.searchText = '';
+        this.selectedTenantIds = [];
+        this.tenantPanelMode = 'none';
         this.search();
+    }
+
+    onSelectedTenantsChange(tenantIds: string[]): void {
+        this.selectedTenantIds = Array.isArray(tenantIds) ? tenantIds.filter(Boolean) : [];
+        this.tenantActionFeedback = undefined;
+        this.tenantActionError = undefined;
+
+        const primary = this.primarySelectedTenant;
+        if (!primary) {
+            if (this.tenantPanelMode === 'edit' || this.tenantPanelMode === 'permissions') {
+                this.tenantPanelMode = 'none';
+            }
+            this.tenantPermissionsList = [];
+        } else {
+            if (this.tenantPanelMode === 'edit') {
+                this.editTenantForm = {
+                    name: primary.name || '',
+                    descriptions: primary.descriptions || '',
+                };
+            } else if (this.tenantPanelMode === 'permissions') {
+                this.loadTenantPermissions(primary.id);
+            }
+        }
+
+        this.search();
+    }
+
+    private resetTenantSelectionState(): void {
+        this.lastLoadedOrgId = undefined;
+        this.availableTenants = [];
+        this.selectedTenantIds = [];
+        this.tenantPanelMode = 'none';
+        this.tenantPermissionsList = [];
+        this.tenantActionFeedback = undefined;
+        this.tenantActionError = undefined;
+    }
+
+    async loadAvailableTenants(orgId?: string): Promise<TenantWithPermissionsDto[]> {
+        const targetOrgId = orgId || this.activeOrganizationId;
+        if (!targetOrgId) {
+            this.resetTenantSelectionState();
+            return [];
+        }
+
+        this.lastLoadedOrgId = targetOrgId;
+        this.loadingTenants = true;
+        this.tenantActionError = undefined;
+
+        try {
+            let loaded: TenantWithPermissionsDto[] = [];
+            if (this.tenantService && typeof this.tenantService.listarTenantsDisponiveis === 'function') {
+                loaded = (await lastValueFrom(this.tenantService.listarTenantsDisponiveis(targetOrgId))) || [];
+            }
+
+            if (loaded.length === 0) {
+                const access = this.navbarService?.organizationAccess?.();
+                if (access?.tenantId && (!this.organizacaoId || access.organizationId === targetOrgId)) {
+                    loaded = [{
+                        id: access.tenantId,
+                        name: access.tenantName || `ORG: ${access.organizationName || 'Organização'}`,
+                        organizacaoId: targetOrgId,
+                        permissionsSummary: {
+                            canVisualizar: true,
+                            canVer: true,
+                            canEditar: Boolean(access.isOwner || access.roles?.includes('ORG_ADMIN')),
+                            canCompartilhar: Boolean(access.isOwner || access.roles?.includes('ORG_ADMIN')),
+                        },
+                    }];
+                }
+            }
+
+            this.availableTenants = loaded.filter(
+                t => t.permissionsSummary?.canVisualizar !== false || t.permissionsSummary?.canVer !== false,
+            );
+
+            const validIds = new Set(this.availableTenants.map(t => t.id));
+            this.selectedTenantIds = this.selectedTenantIds.filter(id => validIds.has(id));
+            this.hydrateItemsTenants(this.allSource);
+            return this.availableTenants;
+        } catch (err: any) {
+            this.tenantActionError = err?.error?.message || err?.message || 'Erro ao carregar tenants disponíveis.';
+            return [];
+        } finally {
+            this.loadingTenants = false;
+        }
+    }
+
+    startCreateTenant(): void {
+        this.tenantActionFeedback = undefined;
+        this.tenantActionError = undefined;
+        this.newTenantForm = {
+            name: '',
+            descriptions: '',
+            permissions: {
+                canVisualizar: true,
+                canVer: true,
+                canEditar: true,
+                canCompartilhar: true,
+            },
+        };
+        this.tenantPanelMode = this.tenantPanelMode === 'create' ? 'none' : 'create';
+    }
+
+    startEditSelectedTenant(): void {
+        const selected = this.primarySelectedTenant;
+        if (!selected) return;
+        this.tenantActionFeedback = undefined;
+        this.tenantActionError = undefined;
+        this.editTenantForm = {
+            name: selected.name || '',
+            descriptions: selected.descriptions || '',
+        };
+        this.tenantPanelMode = this.tenantPanelMode === 'edit' ? 'none' : 'edit';
+    }
+
+    async openTenantPermissionsPanel(): Promise<void> {
+        const selected = this.primarySelectedTenant;
+        if (!selected) return;
+        this.tenantActionFeedback = undefined;
+        this.tenantActionError = undefined;
+        this.tenantPanelMode = this.tenantPanelMode === 'permissions' ? 'none' : 'permissions';
+        if (this.tenantPanelMode === 'permissions') {
+            await this.loadTenantPermissions(selected.id);
+        }
+    }
+
+    async createTenant(): Promise<TenantWithPermissionsDto | null> {
+        const orgId = this.activeOrganizationId;
+        const cleanName = (this.newTenantForm.name || '').trim();
+        if (!orgId) {
+            this.tenantActionError = 'Selecione uma organização antes de criar um tenant.';
+            return null;
+        }
+        if (!cleanName) {
+            this.tenantActionError = 'Informe o nome do novo tenant.';
+            return null;
+        }
+        if (!this.tenantService || typeof this.tenantService.criarTenant !== 'function') {
+            this.tenantActionError = 'Serviço de Tenant indisponível.';
+            return null;
+        }
+
+        this.tenantActionBusy = true;
+        this.tenantActionError = undefined;
+        this.tenantActionFeedback = undefined;
+
+        try {
+            const created = await lastValueFrom(
+                this.tenantService.criarTenant({
+                    name: cleanName,
+                    descriptions: (this.newTenantForm.descriptions || '').trim(),
+                    organizacaoId: orgId,
+                    permissions: { ...this.newTenantForm.permissions },
+                }),
+            );
+            await this.loadAvailableTenants(orgId);
+            if (created?.id) {
+                this.selectedTenantIds = [created.id];
+            }
+            this.tenantPanelMode = 'none';
+            this.tenantActionFeedback = `Tenant "${created?.name || cleanName}" criado com sucesso.`;
+            await this.search();
+            return created;
+        } catch (err: any) {
+            this.tenantActionError = err?.error?.message || err?.message || 'Erro ao criar tenant.';
+            return null;
+        } finally {
+            this.tenantActionBusy = false;
+        }
+    }
+
+    async saveEditedTenant(): Promise<TenantWithPermissionsDto | null> {
+        const selected = this.primarySelectedTenant;
+        if (!selected) return null;
+        const cleanName = (this.editTenantForm.name || '').trim();
+        if (!cleanName) {
+            this.tenantActionError = 'O nome do tenant não pode ser vazio.';
+            return null;
+        }
+        if (!this.tenantService || typeof this.tenantService.atualizarTenant !== 'function') {
+            this.tenantActionError = 'Serviço de Tenant indisponível.';
+            return null;
+        }
+
+        this.tenantActionBusy = true;
+        this.tenantActionError = undefined;
+        this.tenantActionFeedback = undefined;
+
+        try {
+            const updated = await lastValueFrom(
+                this.tenantService.atualizarTenant(selected.id, {
+                    name: cleanName,
+                    descriptions: (this.editTenantForm.descriptions || '').trim(),
+                    organizacaoId: this.activeOrganizationId,
+                }),
+            );
+            await this.loadAvailableTenants(this.activeOrganizationId);
+            this.tenantPanelMode = 'none';
+            this.tenantActionFeedback = `Tenant "${updated?.name || cleanName}" atualizado.`;
+            return updated;
+        } catch (err: any) {
+            this.tenantActionError = err?.error?.message || err?.message || 'Erro ao atualizar tenant.';
+            return null;
+        } finally {
+            this.tenantActionBusy = false;
+        }
+    }
+
+    async loadTenantPermissions(tenantId: string): Promise<TenantPermissionItemDto[]> {
+        if (!this.tenantService || typeof this.tenantService.listarPermissoesTenant !== 'function') {
+            this.tenantPermissionsList = [];
+            return [];
+        }
+        this.tenantActionBusy = true;
+        try {
+            this.tenantPermissionsList = (await lastValueFrom(
+                this.tenantService.listarPermissoesTenant(tenantId),
+            )) || [];
+            return this.tenantPermissionsList;
+        } catch (err: any) {
+            this.tenantActionError = err?.error?.message || err?.message || 'Erro ao carregar permissões do tenant.';
+            return [];
+        } finally {
+            this.tenantActionBusy = false;
+        }
+    }
+
+    async saveTenantPermission(): Promise<TenantPermissionItemDto | null> {
+        const selected = this.primarySelectedTenant;
+        if (!selected || !this.tenantService || typeof this.tenantService.definirPermissaoTenant !== 'function') {
+            return null;
+        }
+        this.tenantActionBusy = true;
+        this.tenantActionError = undefined;
+        this.tenantActionFeedback = undefined;
+
+        try {
+            const saved = await lastValueFrom(
+                this.tenantService.definirPermissaoTenant(selected.id, {
+                    emailOrUsername: this.newPermissionForm.emailOrUsername?.trim() || undefined,
+                    role: this.newPermissionForm.role?.trim() || undefined,
+                    organizacaoId: this.activeOrganizationId,
+                    canVisualizar: this.newPermissionForm.canVisualizar,
+                    canVer: this.newPermissionForm.canVer,
+                    canEditar: this.newPermissionForm.canEditar,
+                    canCompartilhar: this.newPermissionForm.canCompartilhar,
+                }),
+            );
+            await this.loadTenantPermissions(selected.id);
+            this.newPermissionForm.emailOrUsername = '';
+            this.newPermissionForm.role = '';
+            this.tenantActionFeedback = 'Permissão do tenant salva com sucesso.';
+            return saved;
+        } catch (err: any) {
+            this.tenantActionError = err?.error?.message || err?.message || 'Erro ao salvar permissão do tenant.';
+            return null;
+        } finally {
+            this.tenantActionBusy = false;
+        }
+    }
+
+    async removeTenantPermission(permissionId: string): Promise<void> {
+        const selected = this.primarySelectedTenant;
+        if (!selected || !this.tenantService || typeof this.tenantService.removerPermissaoTenant !== 'function') {
+            return;
+        }
+        this.tenantActionBusy = true;
+        this.tenantActionError = undefined;
+        try {
+            await lastValueFrom(this.tenantService.removerPermissaoTenant(selected.id, permissionId));
+            await this.loadTenantPermissions(selected.id);
+        } catch (err: any) {
+            this.tenantActionError = err?.error?.message || err?.message || 'Erro ao remover permissão do tenant.';
+        } finally {
+            this.tenantActionBusy = false;
+        }
     }
 
     async search() {
@@ -330,6 +715,7 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
             const hasFilter = Object.keys(cleanFilter).length > 0;
             const hasSearch = !!this.searchText && this.searchText.trim().length > 0;
             const hasOrder = !!this.order && Object.keys(this.order).length > 0;
+            const hasTenantsFilter = (this.selectedTenantIds?.length || 0) > 0;
 
             const body: any = {
                 ...(this.searchDefault || {}),
@@ -337,6 +723,10 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
             if (hasFilter) {
                 body.where = cleanFilter;
                 body.filter = cleanFilter;
+            }
+            if (hasTenantsFilter) {
+                body.tenantIds = [...this.selectedTenantIds];
+                body.tenants = this.selectedTenantIds.map(id => ({ id }));
             }
             if (hasSearch) {
                 body.search = this.searchText.trim();
@@ -353,7 +743,9 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
             const daos = this.daos || this.injector?.get(DaoService, null);
             const readItems = (await daos?.read(rawItems, this.schemaName)) || rawItems || [];
             this.allSource = Array.isArray(readItems) ? readItems : [];
+            this.hydrateItemsTenants(this.allSource);
             this.ensureFieldsFromData(this.allSource);
+            this.ensureTenantColumnInGrid(this.allSource);
             this.source = this.applyLocalFilterAndSort(this.allSource, cleanFilter, this.searchText, this.order);
         } catch (error) {
             console.trace(error);
@@ -369,6 +761,25 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
         orderBy?: Record<string, 'ASC' | 'DESC'>
     ): T[] {
         let result = [...(items || [])];
+
+        if ((this.selectedTenantIds?.length || 0) > 0) {
+            const selectedSet = new Set(this.selectedTenantIds);
+            const hasAnyTenantMetadata = result.some((item: any) => Array.isArray(item?.tenants) || Boolean(item?.tenantId));
+            if (hasAnyTenantMetadata) {
+                result = result.filter((item: any) => {
+                    if (item?.tenantId && selectedSet.has(String(item.tenantId))) {
+                        return true;
+                    }
+                    if (Array.isArray(item?.tenants)) {
+                        return item.tenants.some((t: any) => {
+                            const tid = typeof t === 'string' ? t : t?.id;
+                            return Boolean(tid && selectedSet.has(String(tid)));
+                        });
+                    }
+                    return false;
+                });
+            }
+        }
 
         const filterKeys = Object.keys(filters || {});
         if (filterKeys.length > 0) {
@@ -440,6 +851,8 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
                 data,
                 schemaProperties: effectiveSchemaProperties,
                 service: this.service,
+                availableTenants: this.availableTenants,
+                organizacaoId: this.activeOrganizationId,
             },
             this.schemaName,
             event
@@ -466,11 +879,18 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
 
     async createNew() {
         if (this.service) {
+            const initialData: Record<string, any> = {};
+            if (this.selectedTenantIds.length > 0) {
+                initialData['tenants'] = this.selectedTenantIds.map(id => ({ id }));
+            }
             let instance: any = await lastValueFrom(this.service.sync({
-                body: { data: {} }
+                body: { data: initialData }
             }));
             if (instance && typeof instance === 'object' && 'data' in instance && instance.data) {
                 instance = instance.data;
+            }
+            if (this.selectedTenantIds.length > 0 && instance && typeof instance === 'object' && !Array.isArray(instance.tenants)) {
+                instance.tenants = this.selectedTenantIds.map(id => ({ id }));
             }
             if (this.daos) {
                 instance = await this.daos.read(instance, this.schemaName);
@@ -562,5 +982,88 @@ export class MasterDetailComponent<T = any> implements OnInit, AfterViewInit, On
             return val.nome || val.name || val.title || val.description || val.logradouro || val.address || val.numeroDocumento || val.code || val.internationalCode || val.ibgeCode || '';
         }
         return String(val);
+    }
+
+    getItemTenants(item: any): Array<{ id: string; name?: string }> {
+        if (!item || typeof item !== 'object') return [];
+        const raw: any[] = [];
+        if (Array.isArray(item.tenants)) {
+            raw.push(...item.tenants);
+        }
+        if (item.tenantId && !raw.some(t => (typeof t === 'string' ? t : t?.id) === item.tenantId)) {
+            raw.push({ id: item.tenantId, name: item.tenant?.name });
+        }
+        const seen = new Set<string>();
+        const out: Array<{ id: string; name?: string }> = [];
+        for (const entry of raw) {
+            const id = typeof entry === 'string' ? entry.trim() : String(entry?.id || '').trim();
+            if (!id || seen.has(id)) continue;
+            seen.add(id);
+            const matched = (this.availableTenants || []).find(t => t.id === id);
+            out.push({
+                id,
+                name: (typeof entry === 'object' ? entry?.name : undefined) || matched?.name || id,
+            });
+        }
+        return out;
+    }
+
+    hasTenantOwner(item: any): boolean {
+        return this.getItemTenants(item).length > 0;
+    }
+
+    getItemTenantLabel(item: any): string {
+        return this.getItemTenants(item).map(t => t.name || t.id).join(', ');
+    }
+
+    isItemInSelectedTenant(item: any): boolean {
+        if (!this.selectedTenantIds?.length) return false;
+        const selected = new Set(this.selectedTenantIds);
+        return this.getItemTenants(item).some(t => selected.has(t.id));
+    }
+
+    private hydrateItemsTenants(items: T[]): void {
+        if (!Array.isArray(items) || items.length === 0) return;
+        for (const item of items as any[]) {
+            if (!item || typeof item !== 'object') continue;
+            if (Array.isArray(item.tenants) && item.tenants.length > 0) {
+                item.tenants = item.tenants.map((t: any) => {
+                    const id = typeof t === 'string' ? t.trim() : String(t?.id || '').trim();
+                    if (!id) return t;
+                    const matched = (this.availableTenants || []).find(at => at.id === id);
+                    if (typeof t === 'object') {
+                        return matched && !t.name ? { ...t, name: matched.name, descriptions: matched.descriptions } : t;
+                    }
+                    return matched ? { id, name: matched.name, descriptions: matched.descriptions } : { id };
+                });
+            }
+        }
+    }
+
+    private ensureTenantColumnInGrid(items?: T[]): void {
+        if (!this.gridOptions) return;
+        const cols = this.gridOptions.columns || [];
+        const hasTenantData = Array.isArray(items) && items.some(it => this.hasTenantOwner(it));
+        const hasTenantSchemaProp = Boolean(this.schemaProperties?.['tenants']);
+        if (!hasTenantData && !hasTenantSchemaProp) return;
+
+        const existingCol = cols.find(c => c.fieldName === 'tenants');
+        if (existingCol) {
+            existingCol.headerName = 'Tenant Proprietário';
+            existingCol.hide = false;
+        } else {
+            this.gridOptions = {
+                ...this.gridOptions,
+                columns: [
+                    ...cols,
+                    {
+                        headerName: 'Tenant Proprietário',
+                        fieldName: 'tenants',
+                        type: 'array',
+                        hide: false,
+                    },
+                ],
+            };
+        }
     }
 }

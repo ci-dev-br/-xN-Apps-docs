@@ -107,7 +107,7 @@ export class InviteService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `getInvite()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
   getInvite$Response(params?: GetInvite$Params, context?: HttpContext): Observable<StrictHttpResponse<Invite>> {
     return getInvite(this.http, this.rootUrl, params, context);
@@ -117,7 +117,7 @@ export class InviteService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `getInvite$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
   get(params?: GetInvite$Params, context?: HttpContext): Observable<Invite> {
     return this.getInvite$Response(params, context).pipe(

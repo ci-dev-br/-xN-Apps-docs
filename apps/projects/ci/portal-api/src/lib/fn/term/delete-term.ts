@@ -12,7 +12,7 @@ export interface DeleteTerm$Params {
       body: Term
 }
 
-export function deleteTerm(http: HttpClient, rootUrl: string, params: DeleteTerm$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Term>>> {
+export function deleteTerm(http: HttpClient, rootUrl: string, params: DeleteTerm$Params, context?: HttpContext): Observable<StrictHttpResponse<Term>> {
   const rb = new RequestBuilder(rootUrl, deleteTerm.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -23,7 +23,7 @@ export function deleteTerm(http: HttpClient, rootUrl: string, params: DeleteTerm
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<Term>>;
+      return r as StrictHttpResponse<Term>;
     })
   );
 }

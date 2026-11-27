@@ -13,18 +13,27 @@ import { Grupo } from '../models/grupo';
 import { GrupoAtivoCompartilhado } from '../models/grupo-ativo-compartilhado';
 import { GrupoTopico } from '../models/grupo-topico';
 import { GrupoTopicoMensagem } from '../models/grupo-topico-mensagem';
+import { Tenant } from '../models/tenant';
+import { tenantCreate } from '../fn/tenant/tenant-create';
+import { TenantCreate$Params } from '../fn/tenant/tenant-create';
 import { tenantCreateGroup } from '../fn/tenant/tenant-create-group';
 import { TenantCreateGroup$Params } from '../fn/tenant/tenant-create-group';
 import { tenantCreateTopic } from '../fn/tenant/tenant-create-topic';
 import { TenantCreateTopic$Params } from '../fn/tenant/tenant-create-topic';
+import { tenantDeletePermission } from '../fn/tenant/tenant-delete-permission';
+import { TenantDeletePermission$Params } from '../fn/tenant/tenant-delete-permission';
 import { tenantGetGroup } from '../fn/tenant/tenant-get-group';
 import { TenantGetGroup$Params } from '../fn/tenant/tenant-get-group';
 import { tenantJoinGroup } from '../fn/tenant/tenant-join-group';
 import { TenantJoinGroup$Params } from '../fn/tenant/tenant-join-group';
 import { tenantLeaveGroup } from '../fn/tenant/tenant-leave-group';
 import { TenantLeaveGroup$Params } from '../fn/tenant/tenant-leave-group';
+import { tenantListAvailable } from '../fn/tenant/tenant-list-available';
+import { TenantListAvailable$Params } from '../fn/tenant/tenant-list-available';
 import { tenantListGroups } from '../fn/tenant/tenant-list-groups';
 import { TenantListGroups$Params } from '../fn/tenant/tenant-list-groups';
+import { tenantListPermissions } from '../fn/tenant/tenant-list-permissions';
+import { TenantListPermissions$Params } from '../fn/tenant/tenant-list-permissions';
 import { tenantListRequests } from '../fn/tenant/tenant-list-requests';
 import { TenantListRequests$Params } from '../fn/tenant/tenant-list-requests';
 import { tenantListSharedAssets } from '../fn/tenant/tenant-list-shared-assets';
@@ -35,12 +44,17 @@ import { tenantListTopics } from '../fn/tenant/tenant-list-topics';
 import { TenantListTopics$Params } from '../fn/tenant/tenant-list-topics';
 import { tenantMyGroups } from '../fn/tenant/tenant-my-groups';
 import { TenantMyGroups$Params } from '../fn/tenant/tenant-my-groups';
+import { TenantPermission } from '../models/tenant-permission';
 import { tenantReplyTopic } from '../fn/tenant/tenant-reply-topic';
 import { TenantReplyTopic$Params } from '../fn/tenant/tenant-reply-topic';
 import { tenantRespondRequest } from '../fn/tenant/tenant-respond-request';
 import { TenantRespondRequest$Params } from '../fn/tenant/tenant-respond-request';
 import { tenantShareAsset } from '../fn/tenant/tenant-share-asset';
 import { TenantShareAsset$Params } from '../fn/tenant/tenant-share-asset';
+import { tenantUpdate } from '../fn/tenant/tenant-update';
+import { TenantUpdate$Params } from '../fn/tenant/tenant-update';
+import { tenantUpsertPermission } from '../fn/tenant/tenant-upsert-permission';
+import { TenantUpsertPermission$Params } from '../fn/tenant/tenant-upsert-permission';
 
 @Injectable()
 export class TenantService extends BaseService {
@@ -395,6 +409,156 @@ export class TenantService extends BaseService {
   tenantShareAsset(params: TenantShareAsset$Params, context?: HttpContext): Observable<GrupoAtivoCompartilhado> {
     return this.tenantShareAsset$Response(params, context).pipe(
       map((r: StrictHttpResponse<GrupoAtivoCompartilhado>): GrupoAtivoCompartilhado => r.body)
+    );
+  }
+
+  /** Path part for operation `tenantListAvailable()` */
+  static readonly TenantListAvailablePath = '/Tenant/Available';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `tenantListAvailable()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  tenantListAvailable$Response(params?: TenantListAvailable$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Tenant>>> {
+    return tenantListAvailable(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `tenantListAvailable$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  tenantListAvailable(params?: TenantListAvailable$Params, context?: HttpContext): Observable<Array<Tenant>> {
+    return this.tenantListAvailable$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<Tenant>>): Array<Tenant> => r.body)
+    );
+  }
+
+  /** Path part for operation `tenantCreate()` */
+  static readonly TenantCreatePath = '/Tenant';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `tenantCreate()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  tenantCreate$Response(params?: TenantCreate$Params, context?: HttpContext): Observable<StrictHttpResponse<Tenant>> {
+    return tenantCreate(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `tenantCreate$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  tenantCreate(params?: TenantCreate$Params, context?: HttpContext): Observable<Tenant> {
+    return this.tenantCreate$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Tenant>): Tenant => r.body)
+    );
+  }
+
+  /** Path part for operation `tenantUpdate()` */
+  static readonly TenantUpdatePath = '/Tenant/{id}/Update';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `tenantUpdate()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  tenantUpdate$Response(params: TenantUpdate$Params, context?: HttpContext): Observable<StrictHttpResponse<Tenant>> {
+    return tenantUpdate(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `tenantUpdate$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  tenantUpdate(params: TenantUpdate$Params, context?: HttpContext): Observable<Tenant> {
+    return this.tenantUpdate$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Tenant>): Tenant => r.body)
+    );
+  }
+
+  /** Path part for operation `tenantListPermissions()` */
+  static readonly TenantListPermissionsPath = '/Tenant/{id}/Permissions';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `tenantListPermissions()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  tenantListPermissions$Response(params: TenantListPermissions$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<TenantPermission>>> {
+    return tenantListPermissions(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `tenantListPermissions$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  tenantListPermissions(params: TenantListPermissions$Params, context?: HttpContext): Observable<Array<TenantPermission>> {
+    return this.tenantListPermissions$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<TenantPermission>>): Array<TenantPermission> => r.body)
+    );
+  }
+
+  /** Path part for operation `tenantUpsertPermission()` */
+  static readonly TenantUpsertPermissionPath = '/Tenant/{id}/Permissions';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `tenantUpsertPermission()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  tenantUpsertPermission$Response(params: TenantUpsertPermission$Params, context?: HttpContext): Observable<StrictHttpResponse<TenantPermission>> {
+    return tenantUpsertPermission(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `tenantUpsertPermission$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  tenantUpsertPermission(params: TenantUpsertPermission$Params, context?: HttpContext): Observable<TenantPermission> {
+    return this.tenantUpsertPermission$Response(params, context).pipe(
+      map((r: StrictHttpResponse<TenantPermission>): TenantPermission => r.body)
+    );
+  }
+
+  /** Path part for operation `tenantDeletePermission()` */
+  static readonly TenantDeletePermissionPath = '/Tenant/{id}/Permissions/{permissionId}/Delete';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `tenantDeletePermission()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  tenantDeletePermission$Response(params: TenantDeletePermission$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return tenantDeletePermission(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `tenantDeletePermission$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  tenantDeletePermission(params: TenantDeletePermission$Params, context?: HttpContext): Observable<void> {
+    return this.tenantDeletePermission$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 

@@ -24,4 +24,16 @@ export class InvitationPayload {
      */
     @ApiProperty({ required: false, title: 'Convite' })
     convite?: string;
+
+    @ApiProperty({ required: false, title: 'Código de Convite (Invite)' })
+    invite?: string;
+
+    @ApiProperty({ required: false, title: 'Hash do Convite (Invite Hash)' })
+    inviteHash?: string;
+
+    @ApiProperty({ required: false, nullable: true, isArray: true, type: String, title: 'Tenants de destino' })
+    tenantIds?: string[];
+
+    @ApiProperty({ required: false, nullable: true, isArray: true, type: String, title: 'Papéis iniciais do convidado' })
+    roles?: string[];
 }

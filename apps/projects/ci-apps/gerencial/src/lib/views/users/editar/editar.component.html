@@ -1,3 +1,87 @@
-@if(form){
-<ci-dyn-form [formGroup]="form" [schemaName]="schemaName"></ci-dyn-form>
+@if (form) {
+  <form [formGroup]="form" (ngSubmit)="salvar()" class="user-edit-form">
+    <div class="edit-header">
+      <div>
+        <h2>{{ isNew ? 'Novo Usuário' : 'Editar Usuário' }}</h2>
+        <p class="edit-subtitle">
+          {{ dialogData?.isMaster
+            ? 'Gerenciamento global de usuário, papéis e tenants.'
+            : 'Gerenciamento escopado aos tenants disponíveis para o seu perfil ADMIN.' }}
+        </p>
+      </div>
+    </div>
+
+    @if (errorMessage) {
+      <div class="error-banner" role="alert">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorMessage }}</span>
+      </div>
+    }
+
+    @if (showTenantWarning) {
+      <div class="info-banner">
+        <mat-icon>info</mat-icon>
+        <span>Nenhum tenant disponível encontrado para o seu perfil.</span>
+      </div>
+    }
+
+    <div class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Nome Completo</mat-label>
+        <input matInput formControlName="fullName" required placeholder="Ex: Maria Oliveira">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Nome de Tratamento</mat-label>
+        <input matInput formControlName="surname" placeholder="Ex: Maria">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Usuário (Login)</mat-label>
+        <input matInput formControlName="username" required placeholder="Ex: maria.oliveira">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>E-mail</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="maria@empresa.com">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Telefone</mat-label>
+        <input matInput formControlName="phone" placeholder="+55 (11) 99999-9999">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ isNew ? 'Senha inicial (opcional)' : 'Nova senha (opcional)' }}</mat-label>
+        <input matInput type="password" formControlName="password" autocomplete="new-password"
+          placeholder="Deixe vazio para manter">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Papéis (Roles)</mat-label>
+        <mat-select formControlName="roles" multiple>
+          @for (role of selectableRoles; track role.value) {
+            <mat-option [value]="role.value">{{ role.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Tenants Vinculados</mat-label>
+        <mat-select formControlName="tenantIds" multiple [disabled]="availableTenants.length === 0">
+          @for (tenant of availableTenants; track tenant.id) {
+            <mat-option [value]="tenant.id">{{ tenant.name || tenant.id }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="edit-actions">
+      <button mat-button type="button" (click)="cancelar()" [disabled]="saving">Cancelar</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="saving || form.invalid">
+        <mat-icon>save</mat-icon>
+        {{ saving ? 'Salvando...' : (isNew ? 'Criar Usuário' : 'Salvar Alterações') }}
+      </button>
+    </div>
+  </form>
 }

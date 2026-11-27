@@ -2,8 +2,15 @@ import { Component, Inject, Input, OnChanges, OnInit, Optional, SimpleChanges } 
 import { FORM_OPTIONS, IFormFieldDefinition, IFormOptions } from './i-form-options';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Apps, DaoBuilder, IDynamicSchemaType, ISchemaProperty } from '@ci/core';
-import { getServiceAsSchema } from '@ci/portal-api';
+import { CodexService, getServiceAsSchema, LocatedSourceFileDto } from '@ci/portal-api';
+import { UserAuthenticationService } from '@ci/auth';
+import { WindowService } from '@ci/components/window';
 import { MatChipInputEvent } from '@angular/material/chips';
+import {
+  inferCodeLanguage,
+  locateWorkspaceFileByName,
+  resolveCodeXDynamicType,
+} from './codex-source.helper';
 
 const HIDDEN_AUDIT_FIELDS = [
   'internalId',
@@ -34,6 +41,16 @@ export class DynFormComponent implements OnInit, OnChanges {
   data?: any;
   @Input()
   schemaProperties?: { [key: string]: ISchemaProperty };
+  @Input()
+  enableSourceEdit?: boolean;
+  @Input()
+  sourceFileName?: string;
+
+  isSourcePanelOpen = false;
+  sourceSearchQuery = '';
+  isLocatingSource = false;
+  sourceLocateError?: string;
+  locatedSourceFiles: LocatedSourceFileDto[] = [];
 
   private hasInjectedOptions = false;
 
@@ -42,6 +59,9 @@ export class DynFormComponent implements OnInit, OnChanges {
     @Optional() @Inject(FORM_OPTIONS)
     formOptions?: IFormOptions,
     @Optional() private readonly appsService?: Apps,
+    @Optional() private readonly codexService?: CodexService,
+    @Optional() private readonly windowService?: WindowService,
+    @Optional() private readonly userAuth?: UserAuthenticationService,
   ) {
     if (formOptions) {
       this.source = formOptions;
@@ -258,5 +278,128 @@ export class DynFormComponent implements OnInit, OnChanges {
       this.formGroup?.controls[prop]?.value.push(value);
     }
     event.chipInput.inputElement.value = '';
+  }
+
+  get canEditSource(): boolean {
+    if (this.enableSourceEdit === false) return false;
+    if (this.enableSourceEdit === true) return true;
+    const roles = this.userAuth?.user?.value?.roles;
+    return Array.isArray(roles) && (roles.includes('DEVELOPER') || roles.includes('SYSADMIN'));
+  }
+
+  get defaultSourceCandidate(): string {
+    if (this.sourceFileName?.trim()) {
+      return this.sourceFileName.trim();
+    }
+    if (this.schemaName?.trim()) {
+      const kebab = this.schemaName
+        .trim()
+        .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+        .toLowerCase();
+      return `${kebab}.entity.ts`;
+    }
+    return 'dyn-form.component.ts';
+  }
+
+  get quickSourceSuggestions(): string[] {
+    const base = ['dyn-form.component.ts', 'dyn-form.component.html', 'dyn-input.component.ts'];
+    const candidate = this.defaultSourceCandidate;
+    if (candidate && !base.includes(candidate)) {
+      return [candidate, ...base];
+    }
+    return base;
+  }
+
+  toggleSourcePanel(event?: Event): void {
+    event?.stopPropagation();
+    this.isSourcePanelOpen = !this.isSourcePanelOpen;
+    if (this.isSourcePanelOpen && !this.sourceSearchQuery.trim()) {
+      this.sourceSearchQuery = this.defaultSourceCandidate;
+    }
+  }
+
+  async locateSourceFiles(query?: string): Promise<LocatedSourceFileDto[]> {
+    const targetName = (query ?? this.sourceSearchQuery ?? '').trim() || this.defaultSourceCandidate;
+    this.sourceLocateError = undefined;
+    this.isLocatingSource = true;
+
+    try {
+      const result = await locateWorkspaceFileByName(this.codexService, targetName, 15);
+      this.locatedSourceFiles = result?.files || [];
+      if (!result?.found) {
+        this.sourceLocateError = `Nenhum arquivo encontrado para "${targetName}".`;
+      }
+      return this.locatedSourceFiles;
+    } catch (err: any) {
+      this.locatedSourceFiles = [];
+      this.sourceLocateError = err?.error?.message || err?.message || 'Erro ao localizar arquivo no workspace.';
+      return [];
+    } finally {
+      this.isLocatingSource = false;
+    }
+  }
+
+  async openSourceInCodeX(target?: string | LocatedSourceFileDto, event?: Event): Promise<void> {
+    event?.stopPropagation();
+    this.sourceLocateError = undefined;
+
+    let resolvedPath = '';
+    if (target && typeof target === 'object' && target.path) {
+      resolvedPath = target.path;
+    } else {
+      const requestedName =
+        (typeof target === 'string' && target.trim()) ||
+        this.sourceSearchQuery.trim() ||
+        this.defaultSourceCandidate;
+
+      if (this.codexService && typeof this.codexService.locateFiles === 'function') {
+        this.isLocatingSource = true;
+        try {
+          const located = await locateWorkspaceFileByName(this.codexService, requestedName, 15);
+          if (located?.files?.length) {
+            this.locatedSourceFiles = located.files;
+          }
+          resolvedPath = located?.primaryFile?.path || (requestedName.includes('/') ? requestedName : '');
+          if (!resolvedPath) {
+            this.sourceLocateError = `Arquivo "${requestedName}" não localizado no workspace.`;
+            return;
+          }
+        } catch (err: any) {
+          this.sourceLocateError = err?.error?.message || err?.message || 'Erro ao localizar arquivo para edição no CodeX.';
+          return;
+        } finally {
+          this.isLocatingSource = false;
+        }
+      } else {
+        resolvedPath = requestedName;
+      }
+    }
+
+    const codexType = await resolveCodeXDynamicType(this.appsService, resolvedPath);
+    if (!codexType?.component || !this.windowService) {
+      this.sourceLocateError = 'Editor CodeX ou serviço de janela indisponível neste contexto.';
+      return;
+    }
+
+    const fileName = resolvedPath.split('/').pop() || resolvedPath;
+    const isMap = resolvedPath.toLowerCase().endsWith('.map');
+    const title = `CodeX — ${fileName}`;
+
+    await this.windowService.open(
+      codexType.component,
+      {
+        file: resolvedPath,
+        filePath: resolvedPath,
+        ...(isMap ? { mapFile: resolvedPath } : {}),
+        language: inferCodeLanguage(resolvedPath),
+        schemaName: this.schemaName,
+        __windowConfig: {
+          width: 'min(94vw, 1200px)',
+          height: '86vh',
+        },
+      },
+      title,
+      event,
+    );
   }
 }

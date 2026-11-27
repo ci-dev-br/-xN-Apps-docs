@@ -1,11 +1,205 @@
-@if (stage==='damned') {
-<img src="imagens\bg_damned.png" alt="">
-}@else{
-<mat-toolbar>
-    <button mat-raised-button (click)="createNew()">Novo</button>
-    <!--  <button mat-raised-button (click)="localizarUsuario()">Localizar Usuário</button> -->
-    <button mat-raised-button (click)="enviarConvite()">Enviar Convite</button>
-</mat-toolbar>
-<ci-container>
-    <ci-data-grid [options]="gridOptions" (select)="editar($event.value, $event.event)" [source]="users"></ci-data-grid>
-</ci-container>}
+@if (stage === 'damned') {
+  <div class="damned-state">
+    <img src="imagens/bg_damned.png" alt="Acesso indisponível">
+  </div>
+} @else {
+  <div class="user-manager-shell">
+    <header class="user-manager-header">
+      <div class="header-copy">
+        <h1>Gestão de Usuários</h1>
+        <p class="header-subtitle">
+          @if (isMaster) {
+            Visão Global (MASTER) — gerencie usuários, papéis e vínculos em todos os tenants.
+          } @else {
+            Visão por Tenants Disponíveis (ADMIN) — gerencie usuários vinculados aos tenants sob sua administração.
+          }
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <button mat-raised-button color="primary" type="button" (click)="createNew()"
+          [disabled]="!isMaster && availableTenants.length === 0">
+          <mat-icon>person_add</mat-icon>
+          Novo Usuário
+        </button>
+        <button mat-stroked-button type="button" (click)="openLinkDialog()"
+          [disabled]="availableTenants.length === 0">
+          <mat-icon>group_add</mat-icon>
+          Vincular Existente
+        </button>
+        <button mat-stroked-button type="button" (click)="enviarConvite()">
+          <mat-icon>mail</mat-icon>
+          Enviar Convite
+        </button>
+      </div>
+    </header>
+
+    <ci-tenant-filter-bar
+      label="Tenants disponíveis:"
+      [multiple]="true"
+      [selectedTenantIds]="selectedTenantIds"
+      (selectedTenantIdsChange)="onTenantFilterChange($event)"
+      (availableTenantsChange)="onTenantsLoaded($event)">
+    </ci-tenant-filter-bar>
+
+    <section class="filters-bar" aria-label="Filtros de usuários">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search-field">
+        <mat-label>Buscar usuário</mat-label>
+        <input matInput [(ngModel)]="searchQuery" (keyup.enter)="find()"
+          placeholder="Nome, username ou e-mail">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="role-field">
+        <mat-label>Filtrar por Papel</mat-label>
+        <mat-select [(ngModel)]="filtrarPapel" (selectionChange)="find()">
+          <mat-option value="">Todos os papéis</mat-option>
+          @for (papel of availableRolesFilter; track papel) {
+            <mat-option [value]="papel">{{ papel }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-stroked-button type="button" (click)="find()" [disabled]="loading">
+        <mat-icon>sync</mat-icon>
+        Atualizar
+      </button>
+
+      <span class="users-count">{{ filteredUsers.length }} usuário(s)</span>
+    </section>
+
+    @if (loading) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+
+    <ci-container>
+      <div class="table-scroll-container">
+        <table class="ci-users-table">
+          <caption class="sr-only">Lista de usuários gerenciados nos tenants disponíveis</caption>
+          <thead>
+            <tr>
+              <th scope="col">Usuário</th>
+              <th scope="col">E-mail & Contato</th>
+              <th scope="col">Papéis</th>
+              <th scope="col">Tenants</th>
+              <th scope="col" class="actions-col">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (u of filteredUsers; track u.id || u.username || $index) {
+              <tr>
+                <th scope="row" class="user-identity-cell">
+                  <div class="user-name">{{ u.fullName || u.surname || u.username || 'Sem nome' }}</div>
+                  <div class="user-handle">&#64;{{ u.username || '-' }}</div>
+                </th>
+                <td>
+                  <div class="user-email">
+                    <span>{{ u.email || '—' }}</span>
+                    @if (u.emailVerificado) {
+                      <mat-icon class="verified-icon" matTooltip="E-mail verificado">verified</mat-icon>
+                    }
+                  </div>
+                  @if (u.phone) {
+                    <div class="user-phone">{{ u.phone }}</div>
+                  }
+                </td>
+                <td>
+                  <div class="chip-group">
+                    @for (role of (u.roles || ['USER']); track role) {
+                      <span class="role-badge" [attr.data-role]="role">{{ role }}</span>
+                    }
+                  </div>
+                </td>
+                <td>
+                  <div class="chip-group">
+                    @for (t of (u.tenants || []); track t.id) {
+                      <span class="tenant-chip">
+                        <span>{{ t.name || t.id }}</span>
+                        @if (canEditUser(u)) {
+                          <button type="button" class="tenant-remove-btn"
+                            (click)="removeFromTenant(u, t)"
+                            [attr.aria-label]="'Desvincular ' + (u.fullName || u.username) + ' do tenant ' + (t.name || t.id)"
+                            matTooltip="Desvincular deste tenant">
+                            <mat-icon>close</mat-icon>
+                          </button>
+                        }
+                      </span>
+                    } @empty {
+                      <span class="muted-text">Sem tenant</span>
+                    }
+                  </div>
+                </td>
+                <td class="actions-col">
+                  <button mat-stroked-button type="button" (click)="editar(u, $event)"
+                    [disabled]="!canEditUser(u)"
+                    [matTooltip]="canEditUser(u) ? 'Editar usuário, papéis e tenants' : 'Contas MASTER só podem ser editadas por MASTER'">
+                    <mat-icon>edit</mat-icon>
+                    Editar
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="empty-cell">
+                  @if (!isMaster && availableTenants.length === 0) {
+                    Nenhum tenant disponível foi encontrado para o seu usuário ADMIN.
+                  } @else {
+                    Nenhum usuário encontrado para os filtros aplicados.
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </ci-container>
+  </div>
+
+  <dialog #linkDialog class="ci-link-dialog" aria-labelledby="linkDialogTitle">
+    <div class="dialog-head">
+      <h2 id="linkDialogTitle">Vincular Usuário Existente ao Tenant</h2>
+      <button mat-icon-button type="button" (click)="closeLinkDialog()" aria-label="Fechar diálogo">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="dialog-body">
+      <p class="dialog-hint">
+        Adicione uma conta já cadastrada na plataforma a um dos seus tenants disponíveis.
+      </p>
+
+      @if (linkError) {
+        <div class="dialog-error" role="alert">{{ linkError }}</div>
+      }
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>E-mail ou Username do Usuário</mat-label>
+        <input matInput [(ngModel)]="linkForm.emailOrUsername" placeholder="usuario@empresa.com ou username">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Tenant de Destino</mat-label>
+        <mat-select [(ngModel)]="linkForm.tenantId">
+          @for (t of availableTenants; track t.id) {
+            <mat-option [value]="t.id">{{ t.name || t.id }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Papel no Acesso</mat-label>
+        <mat-select [(ngModel)]="linkForm.role">
+          <mat-option value="USER">Usuário (USER)</mat-option>
+          <mat-option value="ADMIN">Administrador do Tenant (ADMIN)</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="dialog-footer">
+      <button mat-button type="button" (click)="closeLinkDialog()" [disabled]="savingLink">Cancelar</button>
+      <button mat-raised-button color="primary" type="button" (click)="confirmLinkExistingUser()" [disabled]="savingLink">
+        {{ savingLink ? 'Vinculando...' : 'Vincular ao Tenant' }}
+      </button>
+    </div>
+  </dialog>
+}

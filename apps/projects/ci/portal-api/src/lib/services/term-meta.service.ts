@@ -11,6 +11,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { deleteTermMeta } from '../fn/term-meta/delete-term-meta';
 import { DeleteTermMeta$Params } from '../fn/term-meta/delete-term-meta';
+import { getByInternalIdTermMeta } from '../fn/term-meta/get-by-internal-id-term-meta';
+import { GetByInternalIdTermMeta$Params } from '../fn/term-meta/get-by-internal-id-term-meta';
 import { getListTermMeta } from '../fn/term-meta/get-list-term-meta';
 import { GetListTermMeta$Params } from '../fn/term-meta/get-list-term-meta';
 import { syncTermMeta } from '../fn/term-meta/sync-term-meta';
@@ -44,6 +46,31 @@ export class TermMetaService extends BaseService {
    */
   sync(params: SyncTermMeta$Params, context?: HttpContext): Observable<TermMeta> {
     return this.syncTermMeta$Response(params, context).pipe(
+      map((r: StrictHttpResponse<TermMeta>): TermMeta => r.body)
+    );
+  }
+
+  /** Path part for operation `getByInternalIdTermMeta()` */
+  static readonly GetByInternalIdTermMetaPath = '/TermMeta/GetByInternalId';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getByInternalIdTermMeta()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalIdTermMeta$Response(params: GetByInternalIdTermMeta$Params, context?: HttpContext): Observable<StrictHttpResponse<TermMeta>> {
+    return getByInternalIdTermMeta(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getByInternalIdTermMeta$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  getByInternalId(params: GetByInternalIdTermMeta$Params, context?: HttpContext): Observable<TermMeta> {
+    return this.getByInternalIdTermMeta$Response(params, context).pipe(
       map((r: StrictHttpResponse<TermMeta>): TermMeta => r.body)
     );
   }

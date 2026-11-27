@@ -28,4 +28,4 @@ export function deleteWebsite(http: HttpClient, rootUrl: string, params: DeleteW
   );
 }
 
-deleteWebsite.PATH = '/Website/DeleteWebsite';
+deleteWebsite.PATH = '/Website/Delete';

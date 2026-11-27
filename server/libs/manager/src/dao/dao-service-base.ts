@@ -1,4 +1,4 @@
-import { DataSource, Equal, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, IsNull, Repository } from "typeorm";
+import { DataSource, Equal, FindOptionsRelationByString, FindOptionsRelations, FindOptionsWhere, In, IsNull, Repository } from "typeorm";
 import { FullAuditedEntity, SnapshotService } from "./entities";
 // import { UserService } from "@ci/user/service/user.service";
 // import { forwardRef, Inject } from "@nestjs/common";
@@ -61,22 +61,37 @@ export abstract class DaoServiceBase<E> {
         return await this._repo.save(___internal_data);
         /// }
     }
-    async obterLista(options?: { skip?: number, take?: number, where?: FindOptionsWhere<E>[] | FindOptionsWhere<E>, relations?: FindOptionsRelations<E> | FindOptionsRelationByString, orderBy?: any }, request?: any) {
-        let _where: FindOptionsWhere<E>[] | FindOptionsWhere<E> = options.where || {};
-        if (_where)
-            (Array.isArray(_where) ? _where : [_where]).forEach((w: any) => {
-                w.createdBy = {
-                    identifiedUser: Equal(request?.user?.id)
-                };
-                w.deleted = IsNull();
-                if (!Array.isArray(_where)) _where = [_where];
-                if (Array.isArray(_where)) _where.push({ ...w, deleted: IsNull() })
-            });
+    async obterLista(options?: { skip?: number, take?: number, where?: FindOptionsWhere<E>[] | FindOptionsWhere<E>, tenantIds?: string[], relations?: FindOptionsRelations<E> | FindOptionsRelationByString, orderBy?: any }, request?: any) {
+        let _where: FindOptionsWhere<E>[] | FindOptionsWhere<E> = options?.where || {};
+        const tenantIds = Array.isArray(options?.tenantIds)
+            ? options.tenantIds.map(id => String(id || '').trim()).filter(Boolean)
+            : [];
+        const hasTenantsRelation = Boolean(
+            this._repo?.metadata?.relations?.some(r => r.propertyName === 'tenants'),
+        );
+        if (_where) {
+            const list = Array.isArray(_where) ? _where : [_where];
+            _where = list.map((w: any) => ({
+                ...w,
+                deleted: IsNull(),
+                ...(tenantIds.length > 0 && hasTenantsRelation
+                    ? { tenants: { id: In(tenantIds) } }
+                    : request?.user?.id
+                        ? { createdBy: { identifiedUser: Equal(request.user.id) } }
+                        : {}),
+            }));
+        }
         const result = ((await this._repo.find({
-            skip: options.skip,
-            take: options.take,
+            skip: options?.skip,
+            take: options?.take,
             where: _where,
-            relations: { createdBy: true, lastModifiedBy: true } as any, order: options.orderBy
+            relations: {
+                createdBy: true,
+                lastModifiedBy: true,
+                ...(hasTenantsRelation ? { tenants: true } : {}),
+                ...(options?.relations as any),
+            } as any,
+            order: options?.orderBy
         })) || []);
 
         for (let r of result as any[]) {

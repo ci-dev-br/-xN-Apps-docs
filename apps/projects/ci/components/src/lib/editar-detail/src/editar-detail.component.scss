@@ -17,4 +17,78 @@
         flex: 1 1 auto;
         min-width: 0;
     }
+
+    > .editar-tenant-status-bar,
+    > .tenant-transfer-feedback {
+        flex: 0 0 auto;
+    }
+}
+
+.editar-tenant-status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--mat-sys-outline-variant, rgba(128, 128, 128, 0.25));
+    background: var(--mat-sys-surface-container-low, rgba(128, 128, 128, 0.05));
+    font-size: 13px;
+
+    &.tenant-owned {
+        border-color: rgba(37, 99, 235, 0.45);
+        background: rgba(37, 99, 235, 0.08);
+    }
+
+    .tenant-status-info {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .tenant-status-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: var(--mat-sys-on-surface-variant, #64748b);
+    }
+
+    &.tenant-owned .tenant-status-icon {
+        color: #1d4ed8;
+    }
+
+    .tenant-status-label {
+        font-weight: 600;
+    }
+
+    .tenant-owner-chips {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .tenant-owner-chip {
+        --mdc-chip-elevated-container-color: rgba(37, 99, 235, 0.16);
+        --mdc-chip-label-text-color: #1e40af;
+        font-weight: 600;
+        height: 26px;
+    }
+}
+
+.tenant-transfer-feedback {
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 8px;
+
+    &.ok {
+        background: rgba(22, 163, 74, 0.1);
+        color: #15803d;
+    }
+
+    &.err {
+        background: rgba(220, 38, 38, 0.1);
+        color: #dc2626;
+    }
 }

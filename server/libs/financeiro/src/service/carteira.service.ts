@@ -44,6 +44,7 @@ export interface CriarCarteiraPayload {
         observacoesLastro?: string;
         metaPosicao?: number;
     };
+    tenantIds?: string[];
 }
 
 export interface LancamentoPosicaoDto {
@@ -201,20 +202,29 @@ export class CarteiraService {
     }
 
     /**
-     * Lista todas as carteiras ativas/existentes do usuário
+     * Lista todas as carteiras ativas/existentes do usuário (opcionalmente segmentadas por tenants)
      */
-    async listarCarteirasUsuario(userId: string): Promise<Carteira[]> {
+    async listarCarteirasUsuario(userId: string, tenantIds?: string[]): Promise<Carteira[]> {
         if (!userId) {
             throw new BadRequestException('ID do usuário é obrigatório.');
         }
 
+        const cleanTenantIds = Array.isArray(tenantIds)
+            ? tenantIds.map(id => String(id || '').trim()).filter(Boolean)
+            : [];
+
         const carteiras = await this.carteiraRepo.find({
             where: { userId },
+            relations: cleanTenantIds.length > 0 ? ['tenants'] : undefined,
             order: { createdAt: 'ASC' },
         });
 
         const normalizadas = carteiras
             .filter(c => !c.deleted)
+            .filter(c => {
+                if (cleanTenantIds.length === 0) return true;
+                return Array.isArray(c.tenants) && c.tenants.some(t => Boolean(t?.id && cleanTenantIds.includes(t.id)));
+            })
             .map(c => this.normalizarCarteira(c));
 
         normalizadas.sort((a, b) => {
@@ -273,6 +283,10 @@ export class CarteiraService {
             ? Number(Number(dados.saldoInicial).toFixed(4))
             : 0;
 
+        const tenantRefs = Array.isArray(dados?.tenantIds)
+            ? dados.tenantIds.map(id => String(id || '').trim()).filter(Boolean).map(id => ({ id } as any))
+            : undefined;
+
         let carteira = this.carteiraRepo.create({
             userId,
             nome: nomePadrao,
@@ -293,6 +307,7 @@ export class CarteiraService {
             corTema: meta.corTema,
             status: 'ATIVA',
             limiteDiario: dados?.limiteDiario || 10000.00,
+            ...(tenantRefs && tenantRefs.length > 0 ? { tenants: tenantRefs } : {}),
         });
 
         carteira = await this.carteiraRepo.save(carteira);
@@ -351,12 +366,12 @@ export class CarteiraService {
      */
     async obterDashboardCarteiras(
         userId: string,
-        opcoes?: { periodo?: PeriodoDashboardCarteira; carteiraId?: string }
+        opcoes?: { periodo?: PeriodoDashboardCarteira; carteiraId?: string; tenantIds?: string[] }
     ): Promise<DashboardCarteirasDto> {
         const periodo: PeriodoDashboardCarteira = opcoes?.periodo || '30D';
         const escopoCarteiraId = opcoes?.carteiraId && opcoes.carteiraId !== 'TODAS' ? opcoes.carteiraId : 'TODAS';
 
-        const todasCarteiras = await this.listarCarteirasUsuario(userId);
+        const todasCarteiras = await this.listarCarteirasUsuario(userId, opcoes?.tenantIds);
         const carteirasEscopo = escopoCarteiraId === 'TODAS'
             ? todasCarteiras
             : todasCarteiras.filter(c => c.internalId === escopoCarteiraId || c.numeroCarteira === escopoCarteiraId);
@@ -685,7 +700,8 @@ export class CarteiraService {
         userId: string,
         autoCriar: boolean = false,
         carteiraId?: string,
-        periodoDashboard: PeriodoDashboardCarteira = '30D'
+        periodoDashboard: PeriodoDashboardCarteira = '30D',
+        tenantIds?: string[]
     ): Promise<{
         possuiCarteira: boolean;
         carteira: Carteira | null;
@@ -694,11 +710,11 @@ export class CarteiraService {
         transacoesRecentes: TransacaoCarteira[];
         dashboard: DashboardCarteirasDto;
     }> {
-        let carteiras = await this.listarCarteirasUsuario(userId);
+        let carteiras = await this.listarCarteirasUsuario(userId, tenantIds);
 
         if (carteiras.length === 0) {
-            if (!autoCriar) {
-                const emptyDashboard = await this.obterDashboardCarteiras(userId, { periodo: periodoDashboard });
+            if (!autoCriar || (Array.isArray(tenantIds) && tenantIds.length > 0)) {
+                const emptyDashboard = await this.obterDashboardCarteiras(userId, { periodo: periodoDashboard, tenantIds });
                 return {
                     possuiCarteira: false,
                     carteira: null,
@@ -708,7 +724,7 @@ export class CarteiraService {
                     dashboard: emptyDashboard,
                 };
             }
-            const res = await this.criarCarteira(userId, { moeda: 'BRL' });
+            const res = await this.criarCarteira(userId, { moeda: 'BRL', tenantIds });
             carteiras = res.carteiras;
         }
 
@@ -733,7 +749,7 @@ export class CarteiraService {
         }
 
         const patrimonioTotalBrl = this.calcularPatrimonioTotalBrl(carteiras);
-        const dashboard = await this.obterDashboardCarteiras(userId, { periodo: periodoDashboard });
+        const dashboard = await this.obterDashboardCarteiras(userId, { periodo: periodoDashboard, tenantIds });
 
         // Avalia em segundo plano concessão de cortesia da ROLE DEVELOPER se patrimônio >= 50
         if (patrimonioTotalBrl >= 50 && userId && userId !== 'guest_user_demo') {

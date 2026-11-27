@@ -1,11 +1,16 @@
-import { Injectable, Optional } from "@nestjs/common";
+import { BadRequestException, Injectable, Optional } from "@nestjs/common";
 import { CodeBlock } from "../models/code-block.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DaoFullAuditedServiceBase, SnapshotService } from "@ci/core";
 import * as ts from 'typescript';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { dirname, isAbsolute, join, resolve, basename } from 'node:path';
+import { dirname, extname, isAbsolute, join, relative, resolve, basename } from 'node:path';
+import {
+    LocateSourceFileInputDto,
+    LocateSourceFileOutputDto,
+    LocatedSourceFileDto,
+} from "../controller/dto/locate-file.dto";
 import {
     TypeScriptDefinitionInputDto,
     TypeScriptDefinitionOutputDto,
@@ -1281,5 +1286,151 @@ export class CodexService extends DaoFullAuditedServiceBase<CodeBlock> {
         }
 
         return null;
+    }
+
+    public getWorkspaceRoot(): string {
+        const cwd = resolve(process.cwd());
+        const normalizedCwd = cwd.replace(/\\/g, '/');
+        if (normalizedCwd.endsWith('/server') && existsSync(resolve(cwd, '..', 'apps'))) {
+            return resolve(cwd, '..');
+        }
+        return cwd;
+    }
+
+    /**
+     * Localiza arquivos de código-fonte no workspace a partir do nome (ou trecho do nome/caminho).
+     */
+    public locateFilesByName(input: LocateSourceFileInputDto): LocateSourceFileOutputDto {
+        const rawQuery = (input?.name || '').trim().replace(/\\/g, '/').replace(/^\/+/, '');
+        if (!rawQuery) {
+            throw new BadRequestException('Informe o nome do arquivo para localização.');
+        }
+        if (rawQuery.includes('..')) {
+            throw new BadRequestException('Caminho de busca inválido.');
+        }
+
+        const workspaceRoot = this.getWorkspaceRoot();
+        let searchRoot = workspaceRoot;
+        if (input?.directory && input.directory.trim()) {
+            const cleanDir = input.directory.trim().replace(/\\/g, '/').replace(/^\/+/, '');
+            const candidateDir = resolve(workspaceRoot, cleanDir);
+            const relCheck = relative(workspaceRoot, candidateDir).replace(/\\/g, '/');
+            if (relCheck.startsWith('..') || isAbsolute(relCheck)) {
+                throw new BadRequestException('Diretório de busca fora do workspace.');
+            }
+            if (!existsSync(candidateDir) || !statSync(candidateDir).isDirectory()) {
+                return {
+                    query: rawQuery,
+                    found: false,
+                    total: 0,
+                    primaryFile: null,
+                    files: [],
+                };
+            }
+            searchRoot = candidateDir;
+        }
+
+        const normalizedExts = Array.isArray(input?.extensions) && input.extensions.length > 0
+            ? new Set(
+                input.extensions
+                    .map(ext => ext.trim().toLowerCase())
+                    .filter(Boolean)
+                    .map(ext => (ext.startsWith('.') ? ext : `.${ext}`)),
+            )
+            : null;
+        const limit = Math.min(Math.max(Number(input?.limit) || 25, 1), 100);
+        const queryLower = rawQuery.toLowerCase();
+        const isPathQuery = queryLower.includes('/');
+        const ignoredDirs = new Set([
+            'node_modules',
+            '.git',
+            'dist',
+            '.angular',
+            'coverage',
+            'tmp',
+            '.nx',
+            'test-results',
+            'public',
+        ]);
+
+        const matches: LocatedSourceFileDto[] = [];
+
+        const walk = (dir: string, depth: number) => {
+            if (depth > 16) return;
+            let entries: any[] = [];
+            try {
+                entries = readdirSync(dir, { withFileTypes: true });
+            } catch {
+                return;
+            }
+
+            for (const entry of entries) {
+                const entryName = entry.name;
+                if (entry.isDirectory()) {
+                    if (ignoredDirs.has(entryName) || entryName.startsWith('.')) {
+                        continue;
+                    }
+                    walk(join(dir, entryName), depth + 1);
+                    continue;
+                }
+                if (!entry.isFile()) continue;
+
+                const fullPath = join(dir, entryName);
+                const relPath = relative(workspaceRoot, fullPath).replace(/\\/g, '/');
+                const extension = extname(entryName).toLowerCase();
+                if (normalizedExts && !normalizedExts.has(extension)) {
+                    continue;
+                }
+
+                const nameLower = entryName.toLowerCase();
+                const relLower = relPath.toLowerCase();
+                const stemLower = extension ? nameLower.slice(0, -extension.length) : nameLower;
+
+                let score = 0;
+                if (isPathQuery) {
+                    if (relLower === queryLower) score = 100;
+                    else if (relLower.endsWith(`/${queryLower}`)) score = 95;
+                    else if (relLower.includes(queryLower)) score = 60;
+                } else {
+                    if (nameLower === queryLower) score = 100;
+                    else if (stemLower === queryLower || nameLower.startsWith(`${queryLower}.`)) score = 85;
+                    else if (nameLower.includes(queryLower)) score = 60;
+                    else if (relLower.includes(queryLower)) score = 40;
+                }
+
+                if (score === 0) continue;
+
+                let size = 0;
+                try {
+                    size = statSync(fullPath).size;
+                } catch { }
+
+                matches.push({
+                    name: entryName,
+                    path: relPath,
+                    directory: dirname(relPath).replace(/\\/g, '/'),
+                    extension,
+                    size,
+                    score,
+                });
+            }
+        };
+
+        walk(searchRoot, 0);
+
+        matches.sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            if (a.path.length !== b.path.length) return a.path.length - b.path.length;
+            return a.path.localeCompare(b.path);
+        });
+
+        const files = matches.slice(0, limit);
+        return {
+            query: rawQuery,
+            found: files.length > 0,
+            total: matches.length,
+            primaryFile: files[0] || null,
+            files,
+        };
     }
 }

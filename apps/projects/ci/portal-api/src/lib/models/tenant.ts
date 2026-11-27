@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+import { TenantPermission } from '../models/tenant-permission';
 export interface Tenant {
   createdAt: string | null;
 
@@ -18,5 +19,11 @@ export interface Tenant {
    * Identificador / Nome do Tenant
    */
   name: string | null;
+
+  /**
+   * ID da organização proprietária/vinculada
+   */
+  organizacaoId?: string | null;
+  permissions?: Array<TenantPermission> | null;
   updatedAt: string | null;
 }

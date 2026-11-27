@@ -13,7 +13,7 @@ export class DynInputDateComponent {
     @Input() description?: string;
     @Input() placeholder?: string;
     @Input() hint?: string;
-    @Input() formControl?: FormControl;
+    @Input() parentFormControl?: FormControl;
     @Input() formGroup?: FormGroup;
     @Input() inputComponent?: Type<any>;
     @Input() type?: string;
@@ -32,7 +32,7 @@ export class DynInputDateComponent {
     }
 
     get formattedControlValue(): string {
-        const ctrl = this.formControl || (this.fieldName ? this.formGroup?.get(this.fieldName) : null);
+        const ctrl = this.parentFormControl || (this.fieldName ? this.formGroup?.get(this.fieldName) : null);
         const val = ctrl?.value;
         if (!val) return '';
         if (val instanceof Date && !isNaN(val.getTime())) {
@@ -52,7 +52,7 @@ export class DynInputDateComponent {
     }
 
     onDateInputChange(rawValue: string): void {
-        const ctrl = this.formControl || (this.fieldName ? this.formGroup?.get(this.fieldName) : null);
+        const ctrl = this.parentFormControl || (this.fieldName ? this.formGroup?.get(this.fieldName) : null);
         if (!ctrl) return;
         ctrl.setValue(rawValue || null);
         ctrl.markAsDirty();

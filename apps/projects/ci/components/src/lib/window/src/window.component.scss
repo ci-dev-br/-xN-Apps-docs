@@ -23,3 +23,19 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.ci-menu-item-content {
+    display: inline-flex;
+    flex-direction: column;
+    line-height: 1.25;
+}
+
+.ci-menu-item-description {
+    font-size: 11px;
+    opacity: 0.7;
+}
+
+::ng-deep .ci-menu-item-checked {
+    font-weight: 600;
+    background: color-mix(in srgb, var(--mat-sys-primary, #2563eb) 10%, transparent);
+}

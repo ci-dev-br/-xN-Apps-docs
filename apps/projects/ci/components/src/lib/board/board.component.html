@@ -81,6 +81,18 @@
                 </button>
             </div>
 
+            @if (boardScope === 'TENANT') {
+                <div class="panel-section">
+                    <ci-tenant-filter-bar
+                        [multiple]="false"
+                        [compact]="true"
+                        [selectedTenantIds]="selectedTenantIds"
+                        (selectedTenantIdsChange)="onTenantFilterChange($event)"
+                        label="Tenant do Board:">
+                    </ci-tenant-filter-bar>
+                </div>
+            }
+
             <div class="panel-section-end">
                 <button mat-button class="btn-reset-layout" (click)="resetDefaultBoard()" matTooltip="Restaurar layout inicial">
                     <mat-icon>restart_alt</mat-icon> Restaurar Padrão
