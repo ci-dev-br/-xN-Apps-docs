@@ -5,8 +5,8 @@ const PIECE_VALUES: { [key: string]: number } = {
     n: 30,
     b: 30,
     r: 50,
-    q: 90,
-    k: 900
+    q: 900,
+    k: 1900
 };
 /**
  * # Chess Services
