@@ -13,6 +13,8 @@ import { DeployerService } from '../lib/services/deployer.service';
 import { CodexService } from '../lib/services/codex.service';
 import { TenantService } from '../lib/services/tenant.service';
 import { UserService } from '../lib/services/user.service';
+import { AddUserToTenant$Params } from '../lib/fn/user/add-user-to-tenant';
+import { RemoveUserFromTenant$Params } from '../lib/fn/user/remove-user-from-tenant';
 import { InviteService } from '../lib/services/invite.service';
 import { ActionResponseDto } from '../lib/models/action-response-dto';
 import { LocatedSourceFileDto } from '../lib/models/located-source-file-dto';
@@ -1200,8 +1202,8 @@ export interface TenantInvitationInput {
 declare module '../lib/services/user.service' {
   export interface UserService {
     getListByFilter(filter?: GetListUserInput, context?: HttpContext): Observable<Array<User>>;
-    addToTenant(payload: UserTenantAddInput, context?: HttpContext): Observable<User>;
-    removeFromTenant(payload: UserTenantRemoveInput, context?: HttpContext): Observable<User>;
+    addToTenant(payload: UserTenantAddInput | AddUserToTenant$Params, context?: HttpContext): Observable<User>;
+    removeFromTenant(payload: UserTenantRemoveInput | RemoveUserFromTenant$Params, context?: HttpContext): Observable<User>;
   }
 }
 
@@ -1221,18 +1223,20 @@ UserService.prototype.getListByFilter = function (
 
 UserService.prototype.addToTenant = function (
   this: ServiceCtx,
-  payload: UserTenantAddInput,
+  payload: UserTenantAddInput | AddUserToTenant$Params,
   context?: HttpContext
 ): Observable<User> {
-  return this.http.post<User>(`${this.rootUrl}/User/AddToTenant`, payload, { context });
+  const body = payload && 'body' in payload ? payload.body : payload;
+  return this.http.post<User>(`${this.rootUrl}/User/AddToTenant`, body, { context });
 };
 
 UserService.prototype.removeFromTenant = function (
   this: ServiceCtx,
-  payload: UserTenantRemoveInput,
+  payload: UserTenantRemoveInput | RemoveUserFromTenant$Params,
   context?: HttpContext
 ): Observable<User> {
-  return this.http.post<User>(`${this.rootUrl}/User/RemoveFromTenant`, payload, { context });
+  const body = payload && 'body' in payload ? payload.body : payload;
+  return this.http.post<User>(`${this.rootUrl}/User/RemoveFromTenant`, body, { context });
 };
 
 InviteService.prototype.sendTenantInvitation = function (

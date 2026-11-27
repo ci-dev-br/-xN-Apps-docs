@@ -6,23 +6,25 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { AvailableUserResponseDto } from '../../models/available-user-response-dto';
+import { ListUsersDto } from '../../models/list-users-dto';
 
 export interface MessagerListUsers$Params {
-  search: string;
+      body: ListUsersDto
 }
 
-export function messagerListUsers(http: HttpClient, rootUrl: string, params: MessagerListUsers$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, messagerListUsers.PATH, 'get');
+export function messagerListUsers(http: HttpClient, rootUrl: string, params: MessagerListUsers$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<AvailableUserResponseDto>>> {
+  const rb = new RequestBuilder(rootUrl, messagerListUsers.PATH, 'post');
   if (params) {
-    rb.query('search', params.search, {});
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return r as StrictHttpResponse<Array<AvailableUserResponseDto>>;
     })
   );
 }

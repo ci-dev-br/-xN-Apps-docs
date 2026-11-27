@@ -7,6 +7,9 @@ export interface Credential {
   createdFromIp?: string;
   id?: string;
   identifiedUser?: string;
+  publicKey?: string | null;
+  publicKeyAlgorithm?: string | null;
+  publicKeyFingerprint?: string | null;
   user?: {
 } | null;
 }

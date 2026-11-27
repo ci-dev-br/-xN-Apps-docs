@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, Optional, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDrawer } from '@angular/material/sidenav';
@@ -10,7 +11,10 @@ import {
   EncryptedMessagerService,
   AvailableUserItem,
 } from '@ci/portal-api';
+import { NavbarContextAction, NavbarService } from '@ci/components';
 import { NovaConversaDialogComponent } from '../../dialogs/nova-conversa-dialog.component';
+
+const MAX_ATTACHMENT_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB por anexo
 
 @Component({
   selector: 'ci-mensagens-home',
@@ -48,14 +52,19 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private pollingSub?: Subscription;
   private responsiveSub?: Subscription;
+  private routeQuerySub?: Subscription;
   private shieldTimeout?: any;
+  private pendingConversationId?: string;
+  private messagesEpoch = 0;
 
   constructor(
     private messagerService: EncryptedMessagerService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private breakpointObserver: BreakpointObserver,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    @Optional() private navbarService?: NavbarService,
+    @Optional() private route?: ActivatedRoute,
   ) {}
 
   @HostListener('window:keyup', ['$event'])
@@ -102,10 +111,23 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     this.shieldTimeout = setTimeout(() => {
       this.antiPrintAtivo = false;
+      this.cdr.markForCheck();
     }, 1200);
   }
 
   ngOnInit() {
+    this.registrarAcoesNavbar();
+
+    if (this.route?.queryParamMap) {
+      this.routeQuerySub = this.route.queryParamMap.subscribe((params) => {
+        const targetConvId = params.get('conversationId')?.trim();
+        if (targetConvId) {
+          this.pendingConversationId = targetConvId;
+          this.selecionarConversaPorIdSeDisponivel(targetConvId);
+        }
+      });
+    }
+
     this.carregarConversas();
 
     // Observa mudanças de tela para alternar o modo do drawer
@@ -113,26 +135,74 @@ export class HomeComponent implements OnInit, OnDestroy {
       .observe(['(max-width: 768px)'])
       .subscribe((state) => {
         this.isSmallScreen = state.matches;
+        this.cdr.markForCheck();
       });
 
     // Inicia verificação periódica de novas mensagens
     this.pollingSub = interval(5000).subscribe(() => {
       this.atualizarConversasSilencioso();
-      if (this.conversaAtiva) {
+      if (this.conversaAtiva && !this.enviando) {
         this.carregarMensagensSilencioso(this.conversaAtiva.id);
       }
     });
   }
 
   ngOnDestroy() {
+    this.navbarService?.clearContextActions();
     if (this.pollingSub) {
       this.pollingSub.unsubscribe();
     }
     if (this.responsiveSub) {
       this.responsiveSub.unsubscribe();
     }
+    if (this.routeQuerySub) {
+      this.routeQuerySub.unsubscribe();
+    }
+    if (this.shieldTimeout) {
+      clearTimeout(this.shieldTimeout);
+    }
     if (this.messageObserver) {
       this.messageObserver.disconnect();
+    }
+  }
+
+  private registrarAcoesNavbar() {
+    if (!this.navbarService) return;
+    const actions: NavbarContextAction[] = [
+      {
+        id: 'mensagens-nova-conversa',
+        label: 'Nova Conversa',
+        icon: 'chat',
+        variant: 'flat',
+        color: 'primary',
+        tooltip: 'Iniciar nova conversa criptografada',
+        onClick: () => this.abrirNovaConversaDialog(),
+      },
+      {
+        id: 'mensagens-atualizar',
+        label: 'Atualizar',
+        icon: 'refresh',
+        variant: 'stroked',
+        tooltip: 'Atualizar conversas e mensagens',
+        onClick: () => {
+          this.carregarConversas();
+          if (this.conversaAtiva) {
+            this.carregarMensagens(this.conversaAtiva.id);
+          }
+        },
+      },
+    ];
+    this.navbarService.setContextActions(actions, 'Mensagens');
+  }
+
+  private selecionarConversaPorIdSeDisponivel(conversationId?: string) {
+    if (!conversationId || this.conversas.length === 0) return;
+    const found = this.conversas.find(
+      (c) => c.id === conversationId || c.channelHash === conversationId
+    );
+    if (found && this.conversaAtiva?.id !== found.id) {
+      this.pendingConversationId = undefined;
+      this.selecionarConversa(found);
     }
   }
 
@@ -143,9 +213,15 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.conversas = res || [];
         this.aplicarFiltroConversas();
         this.loadingConversas = false;
+        if (this.pendingConversationId) {
+          this.selecionarConversaPorIdSeDisponivel(this.pendingConversationId);
+        }
+        this.cdr.markForCheck();
       },
-      error: () => {
+      error: (err) => {
         this.loadingConversas = false;
+        this.snackBar.open(this.extrairMensagemErro(err, 'Erro ao carregar conversas'), 'Ok', { duration: 3500 });
+        this.cdr.markForCheck();
       }
     });
   }
@@ -155,10 +231,22 @@ export class HomeComponent implements OnInit, OnDestroy {
       next: (res) => {
         const novasConversas = res || [];
         const mudou = novasConversas.length !== this.conversas.length ||
-          novasConversas.some((c, i) => c.lastMessageAt !== this.conversas[i]?.lastMessageAt || c.unreadCount !== this.conversas[i]?.unreadCount);
+          novasConversas.some((c, i) =>
+            c.id !== this.conversas[i]?.id ||
+            c.lastMessageAt !== this.conversas[i]?.lastMessageAt ||
+            c.unreadCount !== this.conversas[i]?.unreadCount
+          );
         if (mudou) {
           this.conversas = novasConversas;
+          if (this.conversaAtiva) {
+            const updatedActive = this.conversas.find((c) => c.id === this.conversaAtiva?.id);
+            if (updatedActive) {
+              updatedActive.unreadCount = 0;
+              this.conversaAtiva = updatedActive;
+            }
+          }
           this.aplicarFiltroConversas();
+          this.cdr.markForCheck();
         }
       }
     });
@@ -177,6 +265,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   selecionarConversa(conversa: ConversationItem) {
+    this.messagesEpoch++;
     this.conversaAtiva = conversa;
     conversa.unreadCount = 0;
     this.mensagens = [];
@@ -263,25 +352,38 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   carregarMensagens(conversationId: string) {
+    const requestEpoch = ++this.messagesEpoch;
     this.loadingMensagens = true;
     this.visibleMessageIds.clear();
     this.messagerService.listarMensagens(conversationId).subscribe({
       next: (res) => {
+        if (requestEpoch !== this.messagesEpoch || this.conversaAtiva?.id !== conversationId) {
+          return;
+        }
         this.mensagens = res || [];
         this.loadingMensagens = false;
         this.scrollToBottom();
         this.configurarIntersectionObserver();
+        this.cdr.markForCheck();
       },
-      error: () => {
+      error: (err) => {
+        if (requestEpoch !== this.messagesEpoch) return;
         this.loadingMensagens = false;
+        this.snackBar.open(this.extrairMensagemErro(err, 'Erro ao carregar mensagens'), 'Ok', { duration: 3500 });
+        this.cdr.markForCheck();
       }
     });
   }
 
   carregarMensagensSilencioso(conversationId: string) {
     if (this.enviando) return;
+    const requestEpoch = this.messagesEpoch;
     this.messagerService.listarMensagens(conversationId).subscribe({
       next: (res) => {
+        // Ignora resposta de polling se houve envio ou troca de conversa enquanto a requisição estava em voo
+        if (this.enviando || requestEpoch !== this.messagesEpoch || this.conversaAtiva?.id !== conversationId) {
+          return;
+        }
         const novasMensagens = res || [];
         const countAnterior = this.mensagens.length;
         const ultimaAnterior = countAnterior > 0 ? this.mensagens[countAnterior - 1]?.id : null;
@@ -294,6 +396,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.scrollToBottom();
           }
           setTimeout(() => this.observarElementosMensagens(), 80);
+          this.cdr.markForCheck();
         }
       }
     });
@@ -319,8 +422,9 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.selecionarConversa(conv);
       },
       error: (err) => {
-        this.snackBar.open(err.error?.message || 'Erro ao iniciar conversa', 'Ok', { duration: 3500 });
+        this.snackBar.open(this.extrairMensagemErro(err, 'Erro ao iniciar conversa'), 'Ok', { duration: 3500 });
         this.loadingMensagens = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -336,6 +440,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     for (let i = 0; i < input.files.length; i++) {
       const file = input.files[i];
+      if (file.size > MAX_ATTACHMENT_SIZE_BYTES) {
+        this.snackBar.open(`O arquivo "${file.name}" excede o limite de 10 MB.`, 'Ok', { duration: 3500 });
+        continue;
+      }
       const reader = new FileReader();
       reader.onload = () => {
         this.anexosPendentes.push({
@@ -344,6 +452,10 @@ export class HomeComponent implements OnInit, OnDestroy {
           type: file.type,
           data: reader.result as string,
         });
+        this.cdr.markForCheck();
+      };
+      reader.onerror = () => {
+        this.snackBar.open(`Não foi possível ler o arquivo "${file.name}".`, 'Ok', { duration: 3500 });
       };
       reader.readAsDataURL(file);
     }
@@ -386,28 +498,70 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     this.enviando = true;
+    this.messagesEpoch++;
     const conversationId = this.conversaAtiva.id;
     const anexosParaEnviar = [...this.anexosPendentes];
 
     this.messagerService.enviarMensagem(conversationId, texto, anexosParaEnviar).subscribe({
       next: (novaMsg) => {
-        this.mensagens.push(novaMsg);
+        this.messagesEpoch++;
+        if (!this.mensagens.some((m) => m.id === novaMsg.id)) {
+          this.mensagens.push(novaMsg);
+        }
         this.visibleMessageIds.add(novaMsg.id);
         this.textoMensagem = '';
         this.anexosPendentes = [];
         this.enviando = false;
+
+        const nowIso = novaMsg.createdAt || new Date().toISOString();
+        const previewText = texto || (anexosParaEnviar.length === 1 ? `[Anexo: ${anexosParaEnviar[0].name}]` : `[${anexosParaEnviar.length} Anexos]`);
         if (this.conversaAtiva) {
-          this.conversaAtiva.lastMessage = texto || '[Anexo enviado]';
-          this.conversaAtiva.lastMessageAt = new Date().toISOString();
+          this.conversaAtiva.lastMessage = previewText;
+          this.conversaAtiva.lastMessageAt = nowIso;
+          this.atualizarResumoConversaNaLista(this.conversaAtiva.id, previewText, nowIso);
         }
+
         this.scrollToBottom();
         setTimeout(() => this.observarElementosMensagens(), 80);
+        this.cdr.markForCheck();
       },
       error: (err) => {
-        this.snackBar.open(err.error?.message || 'Erro ao enviar mensagem criptografada', 'Fechar', { duration: 3500 });
+        this.snackBar.open(this.extrairMensagemErro(err, 'Erro ao enviar mensagem criptografada'), 'Fechar', { duration: 4000 });
         this.enviando = false;
+        this.cdr.markForCheck();
       }
     });
+  }
+
+  private atualizarResumoConversaNaLista(conversationId: string, lastMessage: string, lastMessageAt: string) {
+    const idx = this.conversas.findIndex((c) => c.id === conversationId);
+    if (idx === -1) return;
+    const updated: ConversationItem = {
+      ...this.conversas[idx],
+      lastMessage,
+      lastMessageAt,
+      unreadCount: 0,
+    };
+    const nextList = [updated, ...this.conversas.filter((_, i) => i !== idx)];
+    this.conversas = nextList;
+    if (this.conversaAtiva?.id === conversationId) {
+      this.conversaAtiva = updated;
+    }
+    this.aplicarFiltroConversas();
+  }
+
+  private extrairMensagemErro(err: any, fallback: string): string {
+    const apiMsg = err?.error?.message;
+    if (Array.isArray(apiMsg) && apiMsg.length > 0) {
+      return apiMsg.join(', ');
+    }
+    if (typeof apiMsg === 'string' && apiMsg.trim()) {
+      return apiMsg;
+    }
+    if (typeof err?.message === 'string' && err.message.trim()) {
+      return err.message;
+    }
+    return fallback;
   }
 
   baixarAnexo(anexo: any) {

@@ -7,4 +7,6 @@ export interface InvitationPayload {
   invite?: string;
   inviteHash?: string;
   mensagem?: string;
+  roles?: Array<string> | null;
+  tenantIds?: Array<string> | null;
 }

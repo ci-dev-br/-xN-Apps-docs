@@ -18,5 +18,15 @@ export interface RegistrarInputDto {
   password?: string | null;
   phone?: string | null;
   phoneAuthorization?: boolean | null;
+
+  /**
+   * Chave pública do cliente (SPKI base64 ou JWK)
+   */
+  publicKey?: string | null;
+
+  /**
+   * Algoritmo da chave pública do cliente
+   */
+  publicKeyAlgorithm?: string | null;
   surname?: string | null;
 }

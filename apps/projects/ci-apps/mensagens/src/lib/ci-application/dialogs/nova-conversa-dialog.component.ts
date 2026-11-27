@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { AvailableUserItem, EncryptedMessagerService } from '@ci/portal-api';
+import { Subject, Subscription, of } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'ci-nova-conversa-dialog',
@@ -159,18 +161,46 @@ import { AvailableUserItem, EncryptedMessagerService } from '@ci/portal-api';
     }
   `]
 })
-export class NovaConversaDialogComponent implements OnInit {
+export class NovaConversaDialogComponent implements OnInit, OnDestroy {
   termoBusca = '';
   usuarios: AvailableUserItem[] = [];
   carregando = false;
+  private search$ = new Subject<string>();
+  private searchSub?: Subscription;
 
   constructor(
     private dialogRef: MatDialogRef<NovaConversaDialogComponent>,
-    private messagerService: EncryptedMessagerService
+    private messagerService: EncryptedMessagerService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
+    this.searchSub = this.search$
+      .pipe(
+        debounceTime(250),
+        distinctUntilChanged(),
+        tap(() => {
+          this.carregando = true;
+          this.cdr.markForCheck();
+        }),
+        switchMap((term) =>
+          this.messagerService.listarUsuarios(term).pipe(
+            catchError(() => of([] as AvailableUserItem[]))
+          )
+        )
+      )
+      .subscribe((res) => {
+        this.usuarios = res || [];
+        this.carregando = false;
+        this.cdr.markForCheck();
+      });
+
     this.carregarUsuarios();
+  }
+
+  ngOnDestroy() {
+    this.searchSub?.unsubscribe();
+    this.search$.complete();
   }
 
   carregarUsuarios() {
@@ -179,15 +209,17 @@ export class NovaConversaDialogComponent implements OnInit {
       next: (res) => {
         this.usuarios = res || [];
         this.carregando = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.carregando = false;
+        this.cdr.markForCheck();
       }
     });
   }
 
   onBuscar() {
-    this.carregarUsuarios();
+    this.search$.next(this.termoBusca.trim());
   }
 
   selecionarUsuario(user: AvailableUserItem) {

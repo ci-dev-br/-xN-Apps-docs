@@ -3,4 +3,5 @@
 export interface AuthorizationOutput {
   authorization: string;
   chaveAcesso?: string | null;
+  refreshToken?: string | null;
 }

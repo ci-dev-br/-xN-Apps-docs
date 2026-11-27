@@ -1,7 +1,14 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UnauthorizedException } from "@nestjs/common";
+import { Body, Controller, Param, Post, Req, UnauthorizedException } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { MessageService } from "../service/message.service";
-import { ConversationResponseDto, SendMessageDto, StartConversationDto } from "./dto/messager.dto";
+import {
+    AvailableUserResponseDto,
+    ConversationResponseDto,
+    DirectMessageResponseDto,
+    ListUsersDto,
+    SendMessageDto,
+    StartConversationDto,
+} from "./dto/messager.dto";
 
 @ApiTags('Messager')
 @Controller('Messager')
@@ -13,7 +20,7 @@ export class MessagerController {
     /**
      * Retorna lista de conversas do usuário conectado
      */
-    @Get('Conversations')
+    @Post('Conversations/List')
     @ApiOperation({ operationId: 'MessagerGetConversations' })
     @ApiResponse({
         type: ConversationResponseDto,
@@ -48,8 +55,13 @@ export class MessagerController {
     /**
      * Retorna histórico de mensagens de uma conversa (mensagens criptografadas)
      */
-    @Get('Conversations/:id/Messages')
+    @Post('Conversations/:id/Messages/List')
     @ApiOperation({ operationId: 'MessagerGetMessages' })
+    @ApiResponse({
+        type: DirectMessageResponseDto,
+        isArray: true,
+        description: 'Histórico de mensagens cifradas da conversa',
+    })
     async getMessages(@Param('id') conversationId: string, @Req() req: any) {
         const userId = req.user?.id;
         if (!userId) {
@@ -63,6 +75,10 @@ export class MessagerController {
      */
     @Post('Conversations/:id/Messages')
     @ApiOperation({ operationId: 'MessagerSendMessage' })
+    @ApiResponse({
+        type: DirectMessageResponseDto,
+        description: 'Mensagem cifrada registrada e encadeada na conversa',
+    })
     async sendMessage(
         @Param('id') conversationId: string,
         @Body() body: SendMessageDto,
@@ -74,29 +90,36 @@ export class MessagerController {
         }
 
         const senderName = user.surname || user.fullName || user.username || 'Usuário';
-        const senderPhoto = user.photo?.uri || user.photo?.url;
+        const senderPhoto = user.photo?.internalId
+            ? `/Storage/Photo/${user.photo.internalId}`
+            : (user.photo?.uri || user.photo?.url);
 
         return await this.messageService.enviarMensagem({
             conversationId,
             senderId: user.id,
             senderName,
             senderPhoto,
-            encryptedContent: body.encryptedContent,
-            attachments: body.attachments,
-            iv: body.iv,
+            encryptedContent: body?.encryptedContent,
+            attachments: body?.attachments,
+            iv: body?.iv,
         });
     }
 
     /**
      * Lista usuários disponíveis para iniciar novas conversas
      */
-    @Get('Users')
+    @Post('Users')
     @ApiOperation({ operationId: 'MessagerListUsers' })
-    async listUsers(@Query('search') search: string, @Req() req: any) {
+    @ApiResponse({
+        type: AvailableUserResponseDto,
+        isArray: true,
+        description: 'Lista de usuários disponíveis para conversa',
+    })
+    async listUsers(@Body() body: ListUsersDto, @Req() req: any) {
         const userId = req.user?.id;
         if (!userId) {
             throw new UnauthorizedException('É necessário estar autenticado.');
         }
-        return await this.messageService.listarUsuarios(userId, search);
+        return await this.messageService.listarUsuarios(userId, body?.search);
     }
 }

@@ -38,6 +38,16 @@ export interface ConversationResponseDto {
   lastMessageEncrypted?: string | null;
 
   /**
+   * Hash da última mensagem
+   */
+  lastMessageHash?: string;
+
+  /**
+   * Título da conversa
+   */
+  title?: string;
+
+  /**
    * Contador de mensagens não lidas
    */
   unreadCount?: number;

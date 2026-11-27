@@ -12,7 +12,7 @@ export interface MessagerGetConversations$Params {
 }
 
 export function messagerGetConversations(http: HttpClient, rootUrl: string, params?: MessagerGetConversations$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<ConversationResponseDto>>> {
-  const rb = new RequestBuilder(rootUrl, messagerGetConversations.PATH, 'get');
+  const rb = new RequestBuilder(rootUrl, messagerGetConversations.PATH, 'post');
   if (params) {
   }
 
@@ -26,4 +26,4 @@ export function messagerGetConversations(http: HttpClient, rootUrl: string, para
   );
 }
 
-messagerGetConversations.PATH = '/Messager/Conversations';
+messagerGetConversations.PATH = '/Messager/Conversations/List';

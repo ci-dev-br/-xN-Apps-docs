@@ -6,7 +6,11 @@ const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    title: 'Mensagens'
+    title: 'Mensagens',
+    data: {
+      title: 'Mensagens',
+      icon: 'chat',
+    },
   }
 ];
 

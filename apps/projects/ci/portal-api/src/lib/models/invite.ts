@@ -17,5 +17,6 @@ export interface Invite {
   phoneSMS?: string | null;
   phoneWhatsApp?: string | null;
   roles?: Array<string> | null;
+  tenantIds?: Array<string> | null;
   tenants?: Array<string> | null;
 }

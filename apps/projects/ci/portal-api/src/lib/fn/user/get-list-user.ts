@@ -6,14 +6,17 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { GetListUserDto } from '../../models/get-list-user-dto';
 import { User } from '../../models/user';
 
 export interface GetListUser$Params {
+      body?: GetListUserDto
 }
 
 export function getListUser(http: HttpClient, rootUrl: string, params?: GetListUser$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<User>>> {
   const rb = new RequestBuilder(rootUrl, getListUser.PATH, 'post');
   if (params) {
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(

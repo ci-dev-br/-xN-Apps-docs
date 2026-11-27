@@ -9,7 +9,9 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { AvailableUserResponseDto } from '../models/available-user-response-dto';
 import { ConversationResponseDto } from '../models/conversation-response-dto';
+import { DirectMessageResponseDto } from '../models/direct-message-response-dto';
 import { messagerGetConversations } from '../fn/messager/messager-get-conversations';
 import { MessagerGetConversations$Params } from '../fn/messager/messager-get-conversations';
 import { messagerGetMessages } from '../fn/messager/messager-get-messages';
@@ -28,7 +30,7 @@ export class MessagerService extends BaseService {
   }
 
   /** Path part for operation `messagerGetConversations()` */
-  static readonly MessagerGetConversationsPath = '/Messager/Conversations';
+  static readonly MessagerGetConversationsPath = '/Messager/Conversations/List';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -78,7 +80,7 @@ export class MessagerService extends BaseService {
   }
 
   /** Path part for operation `messagerGetMessages()` */
-  static readonly MessagerGetMessagesPath = '/Messager/Conversations/{id}/Messages';
+  static readonly MessagerGetMessagesPath = '/Messager/Conversations/{id}/Messages/List';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -86,7 +88,7 @@ export class MessagerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  messagerGetMessages$Response(params: MessagerGetMessages$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  messagerGetMessages$Response(params: MessagerGetMessages$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<DirectMessageResponseDto>>> {
     return messagerGetMessages(this.http, this.rootUrl, params, context);
   }
 
@@ -96,9 +98,9 @@ export class MessagerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  messagerGetMessages(params: MessagerGetMessages$Params, context?: HttpContext): Observable<void> {
+  messagerGetMessages(params: MessagerGetMessages$Params, context?: HttpContext): Observable<Array<DirectMessageResponseDto>> {
     return this.messagerGetMessages$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<Array<DirectMessageResponseDto>>): Array<DirectMessageResponseDto> => r.body)
     );
   }
 
@@ -111,7 +113,7 @@ export class MessagerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  messagerSendMessage$Response(params: MessagerSendMessage$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  messagerSendMessage$Response(params: MessagerSendMessage$Params, context?: HttpContext): Observable<StrictHttpResponse<DirectMessageResponseDto>> {
     return messagerSendMessage(this.http, this.rootUrl, params, context);
   }
 
@@ -121,9 +123,9 @@ export class MessagerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  messagerSendMessage(params: MessagerSendMessage$Params, context?: HttpContext): Observable<void> {
+  messagerSendMessage(params: MessagerSendMessage$Params, context?: HttpContext): Observable<DirectMessageResponseDto> {
     return this.messagerSendMessage$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<DirectMessageResponseDto>): DirectMessageResponseDto => r.body)
     );
   }
 
@@ -134,9 +136,9 @@ export class MessagerService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `messagerListUsers()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  messagerListUsers$Response(params: MessagerListUsers$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  messagerListUsers$Response(params: MessagerListUsers$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<AvailableUserResponseDto>>> {
     return messagerListUsers(this.http, this.rootUrl, params, context);
   }
 
@@ -144,11 +146,11 @@ export class MessagerService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `messagerListUsers$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  messagerListUsers(params: MessagerListUsers$Params, context?: HttpContext): Observable<void> {
+  messagerListUsers(params: MessagerListUsers$Params, context?: HttpContext): Observable<Array<AvailableUserResponseDto>> {
     return this.messagerListUsers$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<Array<AvailableUserResponseDto>>): Array<AvailableUserResponseDto> => r.body)
     );
   }
 

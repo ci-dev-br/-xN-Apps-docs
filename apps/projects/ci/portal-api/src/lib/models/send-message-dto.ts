@@ -1,12 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
+import { MessageAttachmentDto } from '../models/message-attachment-dto';
 export interface SendMessageDto {
 
   /**
    * Lista de anexos da mensagem
    */
-  attachments?: Array<{
-}>;
+  attachments?: Array<MessageAttachmentDto>;
 
   /**
    * Conteúdo criptografado no cliente via AES-256

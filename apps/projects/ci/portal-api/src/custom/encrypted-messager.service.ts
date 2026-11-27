@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import * as CryptoJS from 'crypto-js';
 import { BaseService } from '../lib/base-service';
 import { ApiConfiguration } from '../lib/api-configuration';
+import { MessagerService } from '../lib/services/messager.service';
 import { UserAuthenticationService } from '@ci/auth';
 
 export type SecurePhase = 'p0' | 'p1' | 'p2';
@@ -66,7 +67,8 @@ export class EncryptedMessagerService extends BaseService {
   constructor(
     config: ApiConfiguration,
     http: HttpClient,
-    @Optional() private userService?: UserAuthenticationService
+    @Optional() private userService?: UserAuthenticationService,
+    @Optional() private messagerApi?: MessagerService
   ) {
     super(config, http);
   }
@@ -83,13 +85,25 @@ export class EncryptedMessagerService extends BaseService {
       if (stored) {
         try {
           const userObj = JSON.parse(decodeURIComponent(escape(atob(stored))));
-          return userObj?.id;
+          if (userObj?.id) return userObj.id;
         } catch {
           try {
             const userObj = JSON.parse(atob(stored));
-            return userObj?.id;
+            if (userObj?.id) return userObj.id;
           } catch {}
         }
+      }
+      const accountsRaw = localStorage.getItem('CI_ACCOUNTS');
+      if (accountsRaw) {
+        try {
+          const accounts = JSON.parse(accountsRaw);
+          if (Array.isArray(accounts)) {
+            const active = accounts.find((a: any) => a?.isActive) || accounts[0];
+            if (active?.user?.id || active?.id) {
+              return active.user?.id || active.id;
+            }
+          }
+        } catch {}
       }
     }
     return undefined;
@@ -182,10 +196,15 @@ export class EncryptedMessagerService extends BaseService {
    * Lista conversas do usuário autenticado e descriptografa a prévia da última mensagem
    */
   listarConversas(): Observable<ConversationItem[]> {
-    return this.http.get<any[]>(`${this.rootUrl}/Messager/Conversations`).pipe(
+    const request$ = this.messagerApi
+      ? (this.messagerApi.messagerGetConversations() as Observable<any[]>)
+      : this.http.post<any[]>(`${this.rootUrl}/Messager/Conversations/List`, {});
+
+    return request$.pipe(
       map((conversas) => {
         return (conversas || []).map((c) => ({
           ...c,
+          unreadCount: c.unreadCount ?? 0,
           lastMessage: this.decryptText(c.lastMessageEncrypted, c.id, c.contactId),
         }));
       })
@@ -196,10 +215,15 @@ export class EncryptedMessagerService extends BaseService {
    * Inicia ou retorna uma conversa existente com o usuário especificado
    */
   obterOuCriarConversa(targetUserId: string): Observable<ConversationItem> {
-    return this.http.post<any>(`${this.rootUrl}/Messager/Conversations`, { targetUserId }).pipe(
+    const request$ = this.messagerApi
+      ? (this.messagerApi.messagerStartConversation({ body: { targetUserId } }) as Observable<any>)
+      : this.http.post<any>(`${this.rootUrl}/Messager/Conversations`, { targetUserId });
+
+    return request$.pipe(
       map((c) => ({
         ...c,
-        lastMessage: this.decryptText(c.lastMessageEncrypted, c.id, c.contactId),
+        unreadCount: c?.unreadCount ?? 0,
+        lastMessage: this.decryptText(c?.lastMessageEncrypted, c?.id, c?.contactId),
       }))
     );
   }
@@ -237,27 +261,30 @@ export class EncryptedMessagerService extends BaseService {
    */
   listarMensagens(conversationId: string): Observable<DecryptedMessage[]> {
     const currentUserId = this.getCurrentUserId();
+    const request$ = this.messagerApi
+      ? (this.messagerApi.messagerGetMessages({ id: conversationId }) as unknown as Observable<any[]>)
+      : this.http.post<any[]>(`${this.rootUrl}/Messager/Conversations/${encodeURIComponent(conversationId)}/Messages/List`, {});
 
-    return this.http.get<any[]>(`${this.rootUrl}/Messager/Conversations/${conversationId}/Messages`).pipe(
+    return request$.pipe(
       map((mensagens) => {
         return (mensagens || []).map((m) => {
-          const decrypted = this.decryptText(m.encryptedContent, conversationId, m.senderId);
+          const decrypted = this.decryptText(m?.encryptedContent, conversationId, m?.senderId);
           return {
-            id: m.internalId || m.id || m.messageHash,
-            conversationId: m.conversationId,
-            messageHash: m.messageHash,
-            previousMessageHash: m.previousMessageHash,
-            senderId: m.senderId,
-            senderName: m.senderName,
-            senderPhoto: m.senderPhoto,
-            recipientId: m.recipientId,
+            id: m?.internalId || m?.id || m?.messageHash,
+            conversationId: m?.conversationId || conversationId,
+            messageHash: m?.messageHash,
+            previousMessageHash: m?.previousMessageHash,
+            senderId: m?.senderId,
+            senderName: m?.senderName,
+            senderPhoto: m?.senderPhoto,
+            recipientId: m?.recipientId,
             content: decrypted,
             secureChars: this.toSecureChars(decrypted),
-            rawEncryptedContent: m.encryptedContent,
-            attachments: m.attachments || [],
-            read: m.read,
-            createdAt: m.createdAt,
-            isMyMessage: m.senderId === currentUserId,
+            rawEncryptedContent: m?.encryptedContent,
+            attachments: m?.attachments || [],
+            read: Boolean(m?.read),
+            createdAt: m?.createdAt,
+            isMyMessage: Boolean(currentUserId && m?.senderId === currentUserId),
           };
         });
       })
@@ -274,28 +301,33 @@ export class EncryptedMessagerService extends BaseService {
   ): Observable<DecryptedMessage> {
     const textToEncrypt = plainText || (attachments && attachments.length > 0 ? (attachments.length === 1 ? `[Anexo: ${attachments[0].name}]` : `[${attachments.length} Anexos]`) : '');
     const encryptedContent = this.encryptText(textToEncrypt, conversationId);
-
-    return this.http.post<any>(`${this.rootUrl}/Messager/Conversations/${conversationId}/Messages`, {
+    const body = {
       encryptedContent,
       attachments,
-    }).pipe(
+    };
+
+    const request$ = this.messagerApi
+      ? (this.messagerApi.messagerSendMessage({ id: conversationId, body }) as unknown as Observable<any>)
+      : this.http.post<any>(`${this.rootUrl}/Messager/Conversations/${encodeURIComponent(conversationId)}/Messages`, body);
+
+    return request$.pipe(
       map((m) => {
         const finalText = plainText || textToEncrypt;
         return {
-          id: m.internalId || m.id || m.messageHash,
-          conversationId: m.conversationId,
-          messageHash: m.messageHash,
-          previousMessageHash: m.previousMessageHash,
-          senderId: m.senderId,
-          senderName: m.senderName,
-          senderPhoto: m.senderPhoto,
-          recipientId: m.recipientId,
+          id: m?.internalId || m?.id || m?.messageHash || `msg-${Date.now()}`,
+          conversationId: m?.conversationId || conversationId,
+          messageHash: m?.messageHash,
+          previousMessageHash: m?.previousMessageHash,
+          senderId: m?.senderId || this.getCurrentUserId() || '',
+          senderName: m?.senderName || 'Você',
+          senderPhoto: m?.senderPhoto,
+          recipientId: m?.recipientId || '',
           content: finalText,
           secureChars: this.toSecureChars(finalText),
           rawEncryptedContent: encryptedContent,
-          attachments: m.attachments || attachments,
-          read: m.read,
-          createdAt: m.createdAt,
+          attachments: m?.attachments || attachments,
+          read: Boolean(m?.read),
+          createdAt: m?.createdAt || new Date().toISOString(),
           isMyMessage: true,
         };
       })
@@ -306,7 +338,20 @@ export class EncryptedMessagerService extends BaseService {
    * Busca lista de usuários cadastrados para iniciar nova conversa
    */
   listarUsuarios(search?: string): Observable<AvailableUserItem[]> {
-    const query = search ? `?search=${encodeURIComponent(search)}` : '';
-    return this.http.get<AvailableUserItem[]>(`${this.rootUrl}/Messager/Users${query}`);
+    if (this.messagerApi) {
+      return this.messagerApi.messagerListUsers({
+        body: search ? { search } : {},
+      }).pipe(
+        map((users) =>
+          (users || []).map((u) => ({
+            id: u.id,
+            username: u.username,
+            name: u.name,
+            photoUrl: u.photoUrl ?? undefined,
+          }))
+        )
+      );
+    }
+    return this.http.post<AvailableUserItem[]>(`${this.rootUrl}/Messager/Users`, search ? { search } : {});
   }
 }

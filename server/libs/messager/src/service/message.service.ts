@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, FindOptionsWhere, Repository } from "typeorm";
 import { DirectMessage } from "../model/direct-message.entity";
 import { Conversation } from "../model/conversation.entity";
 import { NotificationService } from "@ci/notification";
@@ -12,6 +12,8 @@ import {
     encryptMetadata,
     decryptMetadata,
 } from "../util/crypto-hash.util";
+
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export interface EnviarMensagemDto {
     conversationId: string;
@@ -41,6 +43,26 @@ export class MessageService {
         private readonly notificationService: NotificationService,
         private readonly dataSource: DataSource,
     ) {}
+
+    private isUuid(value?: string): boolean {
+        return typeof value === 'string' && UUID_REGEX.test(value.trim());
+    }
+
+    /**
+     * Localiza conversa por `channelHash` ou `internalId`, evitando passar hashes não-UUID
+     * em colunas `uuid` do PostgreSQL (causa de `invalid input syntax for type uuid`).
+     */
+    private async findConversationByIdentifier(conversationId: string): Promise<Conversation | null> {
+        const cleanId = (conversationId || '').trim();
+        if (!cleanId) return null;
+
+        const where: FindOptionsWhere<Conversation>[] = [{ channelHash: cleanId }];
+        if (this.isUuid(cleanId)) {
+            where.push({ internalId: cleanId });
+        }
+
+        return await this.convRepo.findOne({ where });
+    }
 
     /**
      * Lista conversas do usuário ordenadas pela data da última mensagem.
@@ -142,11 +164,14 @@ export class MessageService {
             return {
                 id: conv.channelHash || conv.internalId,
                 channelHash: conv.channelHash,
+                title: contactMeta?.name || conv.title || 'Conversa',
                 contactId: contactMeta?.id || targetUserId,
                 contactName: contactMeta?.name || 'Usuário',
                 contactPhoto: contactMeta?.photo,
                 lastMessageEncrypted: conv.lastMessageEncrypted,
+                lastMessageHash: conv.lastMessageHash,
                 lastMessageAt: conv.lastMessageAt || conv.createdAt,
+                unreadCount: isUser1 ? (conv.unreadCountUser1 || 0) : (conv.unreadCountUser2 || 0),
             };
         }
 
@@ -192,11 +217,13 @@ export class MessageService {
         return {
             id: saved.channelHash || saved.internalId,
             channelHash: saved.channelHash,
+            title: targetName,
             contactId: targetUserId,
             contactName: targetName,
             contactPhoto: targetPhoto,
             lastMessageEncrypted: null,
             lastMessageAt: saved.createdAt,
+            unreadCount: 0,
         };
     }
 
@@ -205,12 +232,7 @@ export class MessageService {
      * Encadeia e descriptografa metadados dos remetentes em memória.
      */
     async listarMensagens(conversationId: string, currentUserId: string): Promise<DirectMessage[]> {
-        const conv = await this.convRepo.findOne({
-            where: [
-                { channelHash: conversationId },
-                { internalId: conversationId },
-            ],
-        });
+        const conv = await this.findConversationByIdentifier(conversationId);
 
         if (!conv) {
             throw new NotFoundException('Conversa não encontrada.');
@@ -224,26 +246,31 @@ export class MessageService {
             throw new ForbiddenException('Acesso não autorizado a esta conversa.');
         }
 
-        // Busca mensagens associadas ao canal da conversa
+        // Busca as 100 mensagens mais recentes associadas ao canal da conversa em ordem cronológica
         const targetChannelHash = conv.channelHash || conversationId;
-        const mensagens = await this.msgRepo.find({
-            where: [
-                { channelHash: targetChannelHash },
-                { conversationId: conv.internalId },
-                { conversationId: targetChannelHash },
-            ],
-            order: { createdAt: 'ASC' },
+        const msgWhere: FindOptionsWhere<DirectMessage>[] = [
+            { channelHash: targetChannelHash },
+            { conversationId: targetChannelHash },
+        ];
+        if (conv.internalId) {
+            msgWhere.push({ conversationId: conv.internalId });
+        }
+
+        const mensagensDesc = await this.msgRepo.find({
+            where: msgWhere,
+            order: { createdAt: 'DESC' },
             take: 100,
         });
+        const mensagens = mensagensDesc.reverse();
 
         // Marca mensagens não lidas destinadas ao usuário atual como lidas
-        await this.msgRepo.update(
-            [
-                { channelHash: targetChannelHash, recipientHash: currentPartHash, read: false },
-                { conversationId: conv.internalId, recipientId: currentUserId, read: false },
-            ],
-            { read: true }
-        );
+        const readUpdateWhere: FindOptionsWhere<DirectMessage>[] = [
+            { channelHash: targetChannelHash, recipientHash: currentPartHash, read: false },
+        ];
+        if (conv.internalId) {
+            readUpdateWhere.push({ conversationId: conv.internalId, recipientId: currentUserId, read: false });
+        }
+        await this.msgRepo.update(readUpdateWhere, { read: true });
 
         // Zera contador de não lidas na conversa
         if (isUser1 && (conv.unreadCountUser1 || 0) > 0) {
@@ -279,12 +306,17 @@ export class MessageService {
      * - Identidades em texto plano não são gravadas no banco
      */
     async enviarMensagem(dados: EnviarMensagemDto): Promise<DirectMessage> {
-        const conv = await this.convRepo.findOne({
-            where: [
-                { channelHash: dados.conversationId },
-                { internalId: dados.conversationId },
-            ],
-        });
+        if (!dados?.conversationId?.trim()) {
+            throw new BadRequestException('Conversa não informada.');
+        }
+
+        const attachments = Array.isArray(dados.attachments) ? dados.attachments : [];
+        const encryptedContent = typeof dados.encryptedContent === 'string' ? dados.encryptedContent.trim() : '';
+        if (!encryptedContent && attachments.length === 0) {
+            throw new BadRequestException('Informe o conteúdo da mensagem ou ao menos um anexo.');
+        }
+
+        const conv = await this.findConversationByIdentifier(dados.conversationId);
 
         if (!conv) {
             throw new NotFoundException('Conversa não encontrada.');
@@ -308,21 +340,22 @@ export class MessageService {
             throw new BadRequestException('Destinatário da conversa indefinido.');
         }
 
-        const recipientPartHash = isUser1 ? conv.participant2Hash : conv.participant1Hash;
+        const recipientPartHash = (isUser1 ? conv.participant2Hash : conv.participant1Hash) || computeParticipantHash(recipientId);
         const channelHash = conv.channelHash || computeChannelHash(dados.senderId, recipientId);
 
         // Busca última mensagem para encadeamento criptográfico por hashes (hash chain)
+        const lastMsgWhere: FindOptionsWhere<DirectMessage>[] = [{ channelHash }];
+        if (conv.internalId) {
+            lastMsgWhere.push({ conversationId: conv.internalId });
+        }
         const lastMsg = await this.msgRepo.findOne({
-            where: [
-                { channelHash },
-                { conversationId: conv.internalId },
-            ],
+            where: lastMsgWhere,
             order: { createdAt: 'DESC' },
         });
 
         const previousMessageHash = lastMsg?.messageHash || conv.lastMessageHash || 'GENESIS';
         const timestamp = Date.now();
-        const messageHash = computeMessageHash(channelHash, previousMessageHash, timestamp, dados.encryptedContent);
+        const messageHash = computeMessageHash(channelHash, previousMessageHash, timestamp, encryptedContent);
 
         // Metadados do remetente e destinatário cifrados no banco
         const encryptedMetadata = encryptMetadata({
@@ -339,10 +372,10 @@ export class MessageService {
             previousMessageHash,
             senderHash: senderPartHash,
             recipientHash: recipientPartHash,
-            encryptedContent: dados.encryptedContent,
+            encryptedContent,
             encryptedMetadata,
             iv: dados.iv,
-            attachments: dados.attachments || [],
+            attachments,
             read: false,
             // Mantém colunas em texto plano como indefinidas/nulas no banco
             senderId: undefined,
@@ -355,16 +388,19 @@ export class MessageService {
         const savedMsg = await this.msgRepo.save(msg);
 
         // Atualiza a conversa com o elo mais recente da hash chain
-        conv.lastMessageEncrypted = dados.encryptedContent;
+        conv.lastMessageEncrypted = encryptedContent;
         conv.lastMessageHash = messageHash;
         conv.lastMessageAt = new Date(timestamp);
         if (conv.channelHash !== channelHash) {
             conv.channelHash = channelHash;
         }
-
         if (isUser1) {
+            if (!conv.participant1Hash) conv.participant1Hash = senderPartHash;
+            if (!conv.participant2Hash) conv.participant2Hash = recipientPartHash;
             conv.unreadCountUser2 = (conv.unreadCountUser2 || 0) + 1;
         } else {
+            if (!conv.participant2Hash) conv.participant2Hash = senderPartHash;
+            if (!conv.participant1Hash) conv.participant1Hash = recipientPartHash;
             conv.unreadCountUser1 = (conv.unreadCountUser1 || 0) + 1;
         }
         await this.convRepo.save(conv);
@@ -376,7 +412,7 @@ export class MessageService {
                 title: `Nova mensagem de ${dados.senderName || 'um contato'}`,
                 message: 'Você recebeu uma nova mensagem criptografada ponta-a-ponta.',
                 type: 'MENSAGEM',
-                actionUrl: '/Mensagens',
+                actionUrl: `/Mensagens?conversationId=${channelHash}`,
                 metadata: {
                     conversationId: channelHash,
                     messageHash,
