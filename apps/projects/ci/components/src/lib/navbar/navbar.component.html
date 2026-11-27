@@ -315,28 +315,40 @@
     <button mat-flat-button [color]="action.color" [disabled]="isContextActionDisabled(action)"
         [class.context-action-active]="isContextActionActive(action)" [matTooltip]="action.tooltip || action.label"
         (click)="action.onClick?.($event)">
-        @if(action.icon){ <mat-icon>{{ action.icon }}</mat-icon> }
+        @if(action.icon){
+        @if(action.iconType === 'svg'){ <mat-icon [svgIcon]="action.icon"></mat-icon> }
+        @else{ <mat-icon>{{ action.icon }}</mat-icon> }
+        }
         <span>{{ action.label }}</span>
     </button>
     } @else if(action.variant === 'raised'){
     <button mat-raised-button [color]="action.color" [disabled]="isContextActionDisabled(action)"
         [class.context-action-active]="isContextActionActive(action)" [matTooltip]="action.tooltip || action.label"
         (click)="action.onClick?.($event)">
-        @if(action.icon){ <mat-icon>{{ action.icon }}</mat-icon> }
+        @if(action.icon){
+        @if(action.iconType === 'svg'){ <mat-icon [svgIcon]="action.icon"></mat-icon> }
+        @else{ <mat-icon>{{ action.icon }}</mat-icon> }
+        }
         <span>{{ action.label }}</span>
     </button>
     } @else if(action.variant === 'stroked'){
     <button mat-stroked-button [color]="action.color" [disabled]="isContextActionDisabled(action)"
         [class.context-action-active]="isContextActionActive(action)" [matTooltip]="action.tooltip || action.label"
         (click)="action.onClick?.($event)">
-        @if(action.icon){ <mat-icon>{{ action.icon }}</mat-icon> }
+        @if(action.icon){
+        @if(action.iconType === 'svg'){ <mat-icon [svgIcon]="action.icon"></mat-icon> }
+        @else{ <mat-icon>{{ action.icon }}</mat-icon> }
+        }
         <span>{{ action.label }}</span>
     </button>
     } @else {
     <button mat-button [color]="action.color" [disabled]="isContextActionDisabled(action)"
         [class.context-action-active]="isContextActionActive(action)" [matTooltip]="action.tooltip || action.label"
         (click)="action.onClick?.($event)">
-        @if(action.icon){ <mat-icon>{{ action.icon }}</mat-icon> }
+        @if(action.icon){
+        @if(action.iconType === 'svg'){ <mat-icon [svgIcon]="action.icon"></mat-icon> }
+        @else{ <mat-icon>{{ action.icon }}</mat-icon> }
+        }
         <span>{{ action.label }}</span>
     </button>
     }

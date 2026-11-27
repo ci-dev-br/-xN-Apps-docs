@@ -1,86 +1,422 @@
-<div class="col">
-    <ci-actions>
-        <!-- TODO: Implementar ações de Icons Builder -->
-        <!-- <button mat-stroked-button>
-            <mat-icon>edit</mat-icon>
-            Arquivo
-        </button>
-        <button mat-stroked-button>
-            <mat-icon>edit</mat-icon>
-            Página Inicial
-        </button>
-        <button mat-stroked-button>
-            <mat-icon>edit</mat-icon>
-            Inserir
-        </button>
-        <button mat-stroked-button>
-            <mat-icon>edit</mat-icon>
-            Design
-        </button>
-        <button mat-stroked-button>
-            <mat-icon>edit</mat-icon>
-            Layout
-        </button>
-        <button mat-stroked-button>
-            <mat-icon>edit</mat-icon>
-            Referências
-        </button>
-        <button mat-stroked-button>
-            <mat-icon>edit</mat-icon>
-            Correspondências
-        </button>
-        <button mat-stroked-button>
-            <mat-icon>edit</mat-icon>
-            Revisão
-        </button>
-        <button mat-stroked-button>
-            <mat-icon>edit</mat-icon>
-            Exibir
-        </button>
-        <button mat-stroked-button>
-            <mat-icon>edit</mat-icon>
-            Ajuda
-        </button>
-        <button mat-stroked-button>
-            <mat-icon>edit</mat-icon>
-            Acrobat
-        </button> -->
-    </ci-actions>
-    <div class="row">
-        <div class="toolbar">
-            <button mat-icon-button [matMenuTriggerFor]="menuN">Menu</button>
-            <mat-menu #menuN>
-                <button (click)="saveSvg()">Export</button>
-                {{selectedTool}}
-                <button (click)="selectedTool = 'rect'">Retângulo</button>
-                <button (click)="selectedTool = 'circle'">Círculo</button>
-                <button (click)="selectedTool = 'ellipse'">Elipse</button>
-                <button (click)="selectedTool = 'polygon'">Polígono</button>
-                <button (click)="selectedTool = 'pencil'">Lápis</button>
-                <input type="color" [(ngModel)]="fillColor">
-                <input type="color" [(ngModel)]="strokeColor">
-                <button (click)="addCircle()">Adicionar Círculo</button>
-                <button (click)="addRectangle()">Adicionar Retângulo</button>
-                <input type="file" (change)="addImage($event)">
-                <button (click)="saveSvg()">Salvar</button>
-            </mat-menu>
-            <!-- TODO: Controles -->
+<div class="svg-studio-shell">
+    <!-- Barra de Ferramentas Superior -->
+    <header class="editor-topbar" role="toolbar" aria-label="Ações do Editor SVG" aria-controls="svg-artboard">
+        <div class="topbar-group" role="group" aria-label="Arquivo e Histórico">
+            <button type="button" mat-stroked-button (click)="triggerImportSvg()" title="Importar arquivo .svg">
+                <mat-icon>upload_file</mat-icon>
+                <span>Importar SVG</span>
+            </button>
+            <input #svgFileInput type="file" accept=".svg,image/svg+xml" hidden (change)="onSvgFileSelected($event)" />
+            <button type="button" mat-icon-button aria-label="Desfazer" title="Desfazer (Ctrl+Z)"
+                [attr.aria-disabled]="undoStack.length === 0" (click)="undoStack.length && undo()">
+                <mat-icon>undo</mat-icon>
+            </button>
+            <button type="button" mat-icon-button aria-label="Refazer" title="Refazer (Ctrl+Y)"
+                [attr.aria-disabled]="redoStack.length === 0" (click)="redoStack.length && redo()">
+                <mat-icon>redo</mat-icon>
+            </button>
         </div>
-        <div class="svg-editor"><!-- [attr.width]="width" [attr.height]="height" -->
-            <svg #svgContainer><!-- (click)="addShape($event)" -->
-                @for(artboard of artboards; track artboard){
-                {{artboard | json}}
-                <rect [attr.x]="artboard.x" [attr.y]="artboard.y" [attr.width]="artboard.width"
-                    [attr.height]="artboard.height" [attr.fill]="artboard.fill">
-                </rect>
+
+        <span role="separator" aria-orientation="vertical" class="tb-sep"></span>
+
+        <div class="topbar-group" role="group" aria-label="ViewBox e Grade">
+            <label class="vb-select-label" for="vb-preset">ViewBox</label>
+            <select id="vb-preset" class="vb-select" [ngModel]="doc.viewBox" (ngModelChange)="onViewBoxChange($event)">
+                @for(preset of viewBoxPresets; track preset.value){
+                <option [value]="preset.value">{{ preset.label }}</option>
                 }
-            </svg>
+                @if(!viewBoxPresets.some(p => p.value === doc.viewBox)){
+                <option [value]="doc.viewBox">{{ doc.viewBox }} (Personalizado)</option>
+                }
+            </select>
+            <button type="button" mat-icon-button [attr.aria-pressed]="showGrid" (click)="showGrid = !showGrid"
+                aria-label="Alternar Grade" title="Exibir Grade">
+                <mat-icon>grid_on</mat-icon>
+            </button>
+            <button type="button" mat-icon-button [attr.aria-pressed]="snapToGrid" (click)="snapToGrid = !snapToGrid"
+                aria-label="Alinhar à Grade" title="Snap à Grade">
+                <mat-icon>grid_4x4</mat-icon>
+            </button>
         </div>
+
+        <span role="separator" aria-orientation="vertical" class="tb-sep"></span>
+
+        <div class="topbar-group" role="group" aria-label="Fundo e Zoom">
+            <button type="button" mat-button [attr.aria-pressed]="artboardBg === 'checker'" (click)="artboardBg = 'checker'">Xadrez</button>
+            <button type="button" mat-button [attr.aria-pressed]="artboardBg === 'light'" (click)="artboardBg = 'light'">Claro</button>
+            <button type="button" mat-button [attr.aria-pressed]="artboardBg === 'dark'" (click)="artboardBg = 'dark'">Escuro</button>
+            <button type="button" mat-icon-button aria-label="Diminuir zoom" title="Diminuir Zoom" (click)="changeZoom(-25)">
+                <mat-icon>zoom_out</mat-icon>
+            </button>
+            <span class="zoom-readout">{{ zoom }}%</span>
+            <button type="button" mat-icon-button aria-label="Aumentar zoom" title="Aumentar Zoom" (click)="changeZoom(25)">
+                <mat-icon>zoom_in</mat-icon>
+            </button>
+        </div>
+
+        <span role="separator" aria-orientation="vertical" class="tb-sep"></span>
+
+        <div class="topbar-group" role="group" aria-label="Otimização e Modo de Visualização">
+            <button type="button" mat-stroked-button (click)="optimizeCurrentSvg(false)" title="Remover metadados e comentários XML">
+                <mat-icon>cleaning_services</mat-icon>
+                <span>Otimizar</span>
+            </button>
+            <button type="button" mat-stroked-button (click)="optimizeCurrentSvg(true)" title="Converter preenchimentos para currentColor (ideal para ações)">
+                <mat-icon>palette</mat-icon>
+                <span>currentColor</span>
+            </button>
+            <button type="button" mat-stroked-button [attr.aria-pressed]="viewMode === 'visual'" (click)="viewMode = 'visual'">Canvas</button>
+            <button type="button" mat-stroked-button [attr.aria-pressed]="viewMode === 'split'" (click)="viewMode = 'split'">Dividido</button>
+            <button type="button" mat-stroked-button [attr.aria-pressed]="viewMode === 'code'" (click)="viewMode = 'code'">Código XML</button>
+        </div>
+
+        <div class="topbar-actions-end">
+            <button type="button" mat-stroked-button (click)="copyText(doc.rawXml, 'Código SVG')">
+                <mat-icon>content_copy</mat-icon>
+                <span>Copiar SVG</span>
+            </button>
+            <button type="button" mat-stroked-button (click)="downloadSvg()">
+                <mat-icon>download</mat-icon>
+                <span>.SVG</span>
+            </button>
+            <button type="button" mat-flat-button color="primary" (click)="saveCurrent()">
+                <mat-icon>save</mat-icon>
+                <span>{{ embedded ? 'Aplicar / Salvar' : 'Salvar' }}</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Área Principal -->
+    <div class="editor-workspace">
+        <!-- Paleta Vertical de Ferramentas -->
+        <aside class="tools-palette" role="toolbar" aria-orientation="vertical" aria-label="Ferramentas de Desenho Vetorial">
+            @for(tool of toolItems; track tool.id){
+            <button type="button" mat-icon-button class="tool-btn" [attr.aria-pressed]="selectedTool === tool.id"
+                [attr.aria-label]="tool.label" [title]="tool.label" (click)="setTool(tool.id)">
+                <mat-icon>{{ tool.icon }}</mat-icon>
+            </button>
+            }
+            <span role="separator" aria-orientation="horizontal" class="palette-sep"></span>
+            <button type="button" mat-icon-button aria-label="Inserir Retângulo Rápido" title="Inserir Retângulo" (click)="addQuickShape('rect')">
+                <mat-icon>add_box</mat-icon>
+            </button>
+            <button type="button" mat-icon-button aria-label="Inserir Círculo Rápido" title="Inserir Círculo" (click)="addQuickShape('circle')">
+                <mat-icon>add_circle_outline</mat-icon>
+            </button>
+            <button type="button" mat-icon-button aria-label="Inserir Seta de Ação" title="Inserir Seta de Ação" (click)="addQuickShape('path')">
+                <mat-icon>arrow_forward</mat-icon>
+            </button>
+        </aside>
+
+        <!-- Canvas + Editor XML -->
+        <div class="canvas-and-code">
+            @if(openedRasterDataUrl){
+            <div class="raster-notice">
+                <img [src]="openedRasterDataUrl" [alt]="openedFilePath || 'Imagem'" />
+                <p>Visualizando imagem raster ({{ openedFilePath }}). Use o editor SVG ao lado para vetorizar ou criar um ícone substituto.</p>
+            </div>
+            }
+
+            @if(viewMode === 'visual' || viewMode === 'split'){
+            <div class="canvas-stage" [class.tool-draw]="selectedTool !== 'select'">
+                <div class="artboard-frame" [class.bg-checker]="artboardBg === 'checker'"
+                    [class.bg-light]="artboardBg === 'light'" [class.bg-dark]="artboardBg === 'dark'"
+                    [style.width.px]="artboardPixelSize" [style.height.px]="artboardPixelSize">
+                    <svg #canvasSvg id="svg-artboard" class="editor-svg" [attr.viewBox]="doc.viewBox"
+                        (pointerdown)="onCanvasPointerDown($event)" (pointermove)="onCanvasPointerMove($event)"
+                        (pointerup)="onCanvasPointerUp($event)">
+                        @if(showGrid){
+                        <defs>
+                            <pattern id="ci-svg-minor-grid" [attr.width]="gridMinorStep" [attr.height]="gridMinorStep" patternUnits="userSpaceOnUse">
+                                <path [attr.d]="'M ' + gridMinorStep + ' 0 L 0 0 0 ' + gridMinorStep" fill="none" stroke="rgba(120,130,155,0.22)" stroke-width="0.4" />
+                            </pattern>
+                            <pattern id="ci-svg-major-grid" [attr.width]="gridMajorStep" [attr.height]="gridMajorStep" patternUnits="userSpaceOnUse">
+                                <rect [attr.width]="gridMajorStep" [attr.height]="gridMajorStep" fill="url(#ci-svg-minor-grid)" />
+                                <path [attr.d]="'M ' + gridMajorStep + ' 0 L 0 0 0 ' + gridMajorStep" fill="none" stroke="rgba(120,130,155,0.42)" stroke-width="0.7" />
+                            </pattern>
+                        </defs>
+                        <rect [attr.x]="doc.vbX" [attr.y]="doc.vbY" [attr.width]="doc.vbWidth" [attr.height]="doc.vbHeight"
+                            fill="url(#ci-svg-major-grid)" pointer-events="none" />
+                        }
+
+                        @for(layer of doc.layers; track layer.id){
+                            @if(layer.visible){
+                                @if(layer.tag === 'rect'){
+                                <rect class="svg-shape" [class.selected]="layer.id === selectedLayerId"
+                                    [attr.x]="layer.x" [attr.y]="layer.y" [attr.width]="layer.width" [attr.height]="layer.height"
+                                    [attr.rx]="layer.rx" [attr.fill]="layer.fill" [attr.stroke]="layer.stroke"
+                                    [attr.stroke-width]="layer.strokeWidth" [attr.opacity]="layer.opacity" [attr.transform]="layer.transform"
+                                    (pointerdown)="onLayerPointerDown($event, layer)" />
+                                } @else if(layer.tag === 'circle'){
+                                <circle class="svg-shape" [class.selected]="layer.id === selectedLayerId"
+                                    [attr.cx]="layer.cx" [attr.cy]="layer.cy" [attr.r]="layer.r"
+                                    [attr.fill]="layer.fill" [attr.stroke]="layer.stroke"
+                                    [attr.stroke-width]="layer.strokeWidth" [attr.opacity]="layer.opacity" [attr.transform]="layer.transform"
+                                    (pointerdown)="onLayerPointerDown($event, layer)" />
+                                } @else if(layer.tag === 'ellipse'){
+                                <ellipse class="svg-shape" [class.selected]="layer.id === selectedLayerId"
+                                    [attr.cx]="layer.cx" [attr.cy]="layer.cy" [attr.rx]="layer.rx" [attr.ry]="layer.ry"
+                                    [attr.fill]="layer.fill" [attr.stroke]="layer.stroke"
+                                    [attr.stroke-width]="layer.strokeWidth" [attr.opacity]="layer.opacity" [attr.transform]="layer.transform"
+                                    (pointerdown)="onLayerPointerDown($event, layer)" />
+                                } @else if(layer.tag === 'line'){
+                                <line class="svg-shape" [class.selected]="layer.id === selectedLayerId"
+                                    [attr.x1]="layer.x1" [attr.y1]="layer.y1" [attr.x2]="layer.x2" [attr.y2]="layer.y2"
+                                    [attr.stroke]="layer.stroke" [attr.stroke-width]="layer.strokeWidth || 2"
+                                    [attr.stroke-linecap]="layer.strokeLinecap" [attr.opacity]="layer.opacity" [attr.transform]="layer.transform"
+                                    (pointerdown)="onLayerPointerDown($event, layer)" />
+                                } @else if(layer.tag === 'polygon'){
+                                <polygon class="svg-shape" [class.selected]="layer.id === selectedLayerId"
+                                    [attr.points]="layer.points" [attr.fill]="layer.fill" [attr.stroke]="layer.stroke"
+                                    [attr.stroke-width]="layer.strokeWidth" [attr.stroke-linejoin]="layer.strokeLinejoin"
+                                    [attr.opacity]="layer.opacity" [attr.transform]="layer.transform"
+                                    (pointerdown)="onLayerPointerDown($event, layer)" />
+                                } @else if(layer.tag === 'polyline'){
+                                <polyline class="svg-shape" [class.selected]="layer.id === selectedLayerId"
+                                    [attr.points]="layer.points" [attr.fill]="layer.fill || 'none'" [attr.stroke]="layer.stroke"
+                                    [attr.stroke-width]="layer.strokeWidth" [attr.stroke-linecap]="layer.strokeLinecap"
+                                    [attr.opacity]="layer.opacity" [attr.transform]="layer.transform"
+                                    (pointerdown)="onLayerPointerDown($event, layer)" />
+                                } @else if(layer.tag === 'path'){
+                                <path class="svg-shape" [class.selected]="layer.id === selectedLayerId"
+                                    [attr.d]="layer.d" [attr.fill]="layer.fill" [attr.stroke]="layer.stroke"
+                                    [attr.stroke-width]="layer.strokeWidth" [attr.stroke-linecap]="layer.strokeLinecap"
+                                    [attr.stroke-linejoin]="layer.strokeLinejoin" [attr.opacity]="layer.opacity" [attr.transform]="layer.transform"
+                                    (pointerdown)="onLayerPointerDown($event, layer)" />
+                                } @else if(layer.tag === 'text'){
+                                <text class="svg-shape" [class.selected]="layer.id === selectedLayerId"
+                                    [attr.x]="layer.x" [attr.y]="layer.y" [attr.font-size]="layer.fontSize"
+                                    [attr.fill]="layer.fill" [attr.stroke]="layer.stroke" [attr.opacity]="layer.opacity"
+                                    [attr.transform]="layer.transform"
+                                    (pointerdown)="onLayerPointerDown($event, layer)">{{ layer.textContent }}</text>
+                                } @else if(layer.tag === 'g'){
+                                <g class="svg-shape" [class.selected]="layer.id === selectedLayerId"
+                                    [attr.fill]="layer.fill" [attr.stroke]="layer.stroke" [attr.opacity]="layer.opacity"
+                                    [attr.transform]="layer.transform" [innerHTML]="trustLayerHtml(layer.rawInnerHtml)"
+                                    (pointerdown)="onLayerPointerDown($event, layer)"></g>
+                                }
+                            }
+                        }
+
+                        <!-- Preview ao vivo durante o desenho -->
+                        @if(drawPreview){
+                            @if(drawPreview.tool === 'rect'){
+                            <rect class="draw-preview" [attr.x]="drawPreview.startX < drawPreview.currentX ? drawPreview.startX : drawPreview.currentX"
+                                [attr.y]="drawPreview.startY < drawPreview.currentY ? drawPreview.startY : drawPreview.currentY"
+                                [attr.width]="drawPreview.currentX > drawPreview.startX ? drawPreview.currentX - drawPreview.startX : drawPreview.startX - drawPreview.currentX"
+                                [attr.height]="drawPreview.currentY > drawPreview.startY ? drawPreview.currentY - drawPreview.startY : drawPreview.startY - drawPreview.currentY"
+                                fill="rgba(47, 75, 255, 0.25)" stroke="#2f4bff" stroke-width="1.5" stroke-dasharray="3 2" />
+                            } @else if(drawPreview.tool === 'circle'){
+                            <circle class="draw-preview" [attr.cx]="drawPreview.startX" [attr.cy]="drawPreview.startY"
+                                [attr.r]="((drawPreview.currentX - drawPreview.startX) ** 2 + (drawPreview.currentY - drawPreview.startY) ** 2) ** 0.5"
+                                fill="rgba(47, 75, 255, 0.25)" stroke="#2f4bff" stroke-width="1.5" stroke-dasharray="3 2" />
+                            } @else if(drawPreview.tool === 'ellipse'){
+                            <ellipse class="draw-preview"
+                                [attr.cx]="(drawPreview.startX + drawPreview.currentX) / 2"
+                                [attr.cy]="(drawPreview.startY + drawPreview.currentY) / 2"
+                                [attr.rx]="(drawPreview.currentX > drawPreview.startX ? drawPreview.currentX - drawPreview.startX : drawPreview.startX - drawPreview.currentX) / 2"
+                                [attr.ry]="(drawPreview.currentY > drawPreview.startY ? drawPreview.currentY - drawPreview.startY : drawPreview.startY - drawPreview.currentY) / 2"
+                                fill="rgba(47, 75, 255, 0.25)" stroke="#2f4bff" stroke-width="1.5" stroke-dasharray="3 2" />
+                            } @else if(drawPreview.tool === 'line'){
+                            <line class="draw-preview" [attr.x1]="drawPreview.startX" [attr.y1]="drawPreview.startY"
+                                [attr.x2]="drawPreview.currentX" [attr.y2]="drawPreview.currentY"
+                                stroke="#2f4bff" stroke-width="2" stroke-dasharray="3 2" />
+                            } @else if(drawPreview.tool === 'polygon' || drawPreview.tool === 'star'){
+                            <polygon class="draw-preview" [attr.points]="previewPolygonPoints"
+                                fill="rgba(47, 75, 255, 0.25)" stroke="#2f4bff" stroke-width="1.5" stroke-dasharray="3 2" />
+                            } @else if(drawPreview.tool === 'pen'){
+                            <path class="draw-preview" [attr.d]="previewPathD" fill="none" stroke="#2f4bff" stroke-width="2" />
+                            }
+                        }
+                    </svg>
+                </div>
+
+                <!-- Mini Previews em múltiplos tamanhos -->
+                <div class="multi-size-strip">
+                    <span class="strip-label">Preview real:</span>
+                    @for(sz of [16, 24, 36, 48]; track sz){
+                    <div class="preview-chip" [title]="sz + 'px'">
+                        <span class="preview-svg-box" [style.width.px]="sz" [style.height.px]="sz" [innerHTML]="previewSvgTrusted"></span>
+                        <small>{{ sz }}px</small>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+
+            @if(viewMode === 'code' || viewMode === 'split'){
+            <div class="code-pane">
+                <div class="code-pane-header">
+                    <span>Código XML/SVG</span>
+                    <button type="button" mat-flat-button color="primary" (click)="applyCodeChanges()">Aplicar ao Canvas</button>
+                </div>
+                @if(codeError){
+                <div class="code-error" role="alert">{{ codeError }}</div>
+                }
+                <textarea class="svg-code-textarea" aria-label="Código XML SVG" [(ngModel)]="codeDraft" spellcheck="false"></textarea>
+            </div>
+            }
+        </div>
+
+        <!-- Inspetor Direito: Cores, Camadas e Propriedades -->
+        <aside class="inspector-panel">
+            <section class="inspector-card">
+                <h3>Estilo de Criação</h3>
+                <div class="prop-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" [(ngModel)]="fillEnabled" />
+                        <span>Preenchimento</span>
+                    </label>
+                    <input type="color" aria-label="Cor de preenchimento" [(ngModel)]="fillColor" [disabled]="!fillEnabled || useCurrentColorFill" />
+                    <label class="checkbox-label">
+                        <input type="checkbox" [(ngModel)]="useCurrentColorFill" [disabled]="!fillEnabled" />
+                        <span>currentColor</span>
+                    </label>
+                </div>
+                <div class="prop-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" [(ngModel)]="strokeEnabled" />
+                        <span>Contorno</span>
+                    </label>
+                    <input type="color" aria-label="Cor de contorno" [(ngModel)]="strokeColor" [disabled]="!strokeEnabled || useCurrentColorStroke" />
+                    <label class="checkbox-label">
+                        <input type="checkbox" [(ngModel)]="useCurrentColorStroke" [disabled]="!strokeEnabled" />
+                        <span>currentColor</span>
+                    </label>
+                </div>
+                <div class="prop-row">
+                    <label for="tool-stroke-w">Espessura</label>
+                    <input id="tool-stroke-w" type="number" min="0.5" max="40" step="0.5" [(ngModel)]="strokeWidth" />
+                </div>
+            </section>
+
+            @if(selectedLayer; as layer){
+            <section class="inspector-card">
+                <div class="card-head-row">
+                    <h3>Propriedades ({{ layer.tag }})</h3>
+                    <div class="mini-actions">
+                        <button type="button" mat-icon-button aria-label="Duplicar camada" title="Duplicar" (click)="duplicateSelectedLayer()">
+                            <mat-icon>content_copy</mat-icon>
+                        </button>
+                        <button type="button" mat-icon-button color="warn" aria-label="Excluir camada" title="Excluir (Delete)" (click)="deleteSelectedLayer()">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="prop-grid">
+                    <label>Fill
+                        <input type="text" [(ngModel)]="layer.fill" (change)="updateSelectedLayer()" placeholder="#2f4bff | currentColor | none" />
+                    </label>
+                    <label>Stroke
+                        <input type="text" [(ngModel)]="layer.stroke" (change)="updateSelectedLayer()" placeholder="#050d42 | currentColor | none" />
+                    </label>
+                    <label>Stroke W
+                        <input type="number" step="0.5" [(ngModel)]="layer.strokeWidth" (change)="updateSelectedLayer()" />
+                    </label>
+                    <label>Opacidade
+                        <input type="number" min="0" max="1" step="0.05" [(ngModel)]="layer.opacity" (change)="updateSelectedLayer()" />
+                    </label>
+                </div>
+
+                <div class="quick-swatches">
+                    <button type="button" class="swatch-btn" (click)="applyQuickFill('currentColor')">currentColor</button>
+                    <button type="button" class="swatch-btn" (click)="applyQuickFill('none')">sem fill</button>
+                    <button type="button" class="swatch-btn" (click)="applyQuickStroke('currentColor')">stroke currentColor</button>
+                </div>
+
+                @if(layer.tag === 'rect'){
+                <div class="prop-grid">
+                    <label>X <input type="number" [(ngModel)]="layer.x" (change)="updateSelectedLayer()" /></label>
+                    <label>Y <input type="number" [(ngModel)]="layer.y" (change)="updateSelectedLayer()" /></label>
+                    <label>Largura <input type="number" [(ngModel)]="layer.width" (change)="updateSelectedLayer()" /></label>
+                    <label>Altura <input type="number" [(ngModel)]="layer.height" (change)="updateSelectedLayer()" /></label>
+                    <label>Raio (rx) <input type="number" [(ngModel)]="layer.rx" (change)="updateSelectedLayer()" /></label>
+                </div>
+                } @else if(layer.tag === 'circle'){
+                <div class="prop-grid">
+                    <label>CX <input type="number" [(ngModel)]="layer.cx" (change)="updateSelectedLayer()" /></label>
+                    <label>CY <input type="number" [(ngModel)]="layer.cy" (change)="updateSelectedLayer()" /></label>
+                    <label>Raio <input type="number" [(ngModel)]="layer.r" (change)="updateSelectedLayer()" /></label>
+                </div>
+                } @else if(layer.tag === 'ellipse'){
+                <div class="prop-grid">
+                    <label>CX <input type="number" [(ngModel)]="layer.cx" (change)="updateSelectedLayer()" /></label>
+                    <label>CY <input type="number" [(ngModel)]="layer.cy" (change)="updateSelectedLayer()" /></label>
+                    <label>RX <input type="number" [(ngModel)]="layer.rx" (change)="updateSelectedLayer()" /></label>
+                    <label>RY <input type="number" [(ngModel)]="layer.ry" (change)="updateSelectedLayer()" /></label>
+                </div>
+                } @else if(layer.tag === 'line'){
+                <div class="prop-grid">
+                    <label>X1 <input type="number" [(ngModel)]="layer.x1" (change)="updateSelectedLayer()" /></label>
+                    <label>Y1 <input type="number" [(ngModel)]="layer.y1" (change)="updateSelectedLayer()" /></label>
+                    <label>X2 <input type="number" [(ngModel)]="layer.x2" (change)="updateSelectedLayer()" /></label>
+                    <label>Y2 <input type="number" [(ngModel)]="layer.y2" (change)="updateSelectedLayer()" /></label>
+                </div>
+                } @else if(layer.tag === 'text'){
+                <div class="prop-grid">
+                    <label>Texto <input type="text" [(ngModel)]="layer.textContent" (change)="updateSelectedLayer()" /></label>
+                    <label>Fonte px <input type="number" [(ngModel)]="layer.fontSize" (change)="updateSelectedLayer()" /></label>
+                    <label>X <input type="number" [(ngModel)]="layer.x" (change)="updateSelectedLayer()" /></label>
+                    <label>Y <input type="number" [(ngModel)]="layer.y" (change)="updateSelectedLayer()" /></label>
+                </div>
+                } @else if(layer.tag === 'path'){
+                <label class="full-label">Path (d)
+                    <textarea rows="3" [(ngModel)]="layer.d" (change)="updateSelectedLayer()"></textarea>
+                </label>
+                } @else if(layer.tag === 'polygon' || layer.tag === 'polyline'){
+                <label class="full-label">Pontos
+                    <textarea rows="2" [(ngModel)]="layer.points" (change)="updateSelectedLayer()"></textarea>
+                </label>
+                }
+
+                <label class="full-label">Transform
+                    <input type="text" [(ngModel)]="layer.transform" (change)="updateSelectedLayer()" placeholder="translate(0, 0) rotate(0)" />
+                </label>
+            </section>
+            }
+
+            <!-- Painel de Camadas -->
+            <section class="inspector-card layers-card">
+                <div class="card-head-row">
+                    <h3>Camadas ({{ doc.layers.length }})</h3>
+                </div>
+                <ul class="layers-list">
+                    @for(layer of doc.layers; track layer.id; let i = $index){
+                    <li class="layer-item" [class.active]="layer.id === selectedLayerId">
+                        <button type="button" class="layer-select-btn" (click)="selectLayer(layer.id, $event)">
+                            <span class="layer-tag">&lt;{{ layer.tag }}&gt;</span>
+                            <span class="layer-name">{{ layer.label }}</span>
+                        </button>
+                        <button type="button" mat-icon-button aria-label="Alternar visibilidade" (click)="toggleLayerVisibility(layer, $event)">
+                            <mat-icon>{{ layer.visible ? 'visibility' : 'visibility_off' }}</mat-icon>
+                        </button>
+                        <button type="button" mat-icon-button aria-label="Subir camada" [attr.aria-disabled]="i === doc.layers.length - 1"
+                            (click)="i < doc.layers.length - 1 && moveLayerOrder(i, 1, $event)">
+                            <mat-icon>arrow_upward</mat-icon>
+                        </button>
+                        <button type="button" mat-icon-button aria-label="Descer camada" [attr.aria-disabled]="i === 0"
+                            (click)="i > 0 && moveLayerOrder(i, -1, $event)">
+                            <mat-icon>arrow_downward</mat-icon>
+                        </button>
+                    </li>
+                    }
+                    @empty {
+                    <li class="empty-layers">Nenhuma camada vetorial. Escolha uma ferramenta à esquerda para desenhar.</li>
+                    }
+                </ul>
+            </section>
+        </aside>
     </div>
-    <!-- TODO: status-bar -->
-    <svg #cursor class="cursor" [style.left]="mouseX" [style.top]="mouseY" viewBox="0 0 25 25" width="25" heigh="25"
-        xmlns="https://www.w3.org/2000/svg">
-        <path d="M 0,0 
-            10,25 14,13 25,10 z" fill="white" stroke="black" />
-    </svg>
+
+    <!-- Barra de Status e Live Region -->
+    <footer class="editor-statusbar">
+        <span>ViewBox: {{ doc.viewBox }}</span>
+        <span>Cursor: ({{ pointerCoords.x }}, {{ pointerCoords.y }})</span>
+        <span>Camadas: {{ doc.layers.length }}</span>
+        @if(openedFilePath){
+        <span>Arquivo: {{ openedFilePath }}</span>
+        }
+        <span class="status-feedback" role="status">{{ statusMessage }}</span>
+    </footer>
 </div>

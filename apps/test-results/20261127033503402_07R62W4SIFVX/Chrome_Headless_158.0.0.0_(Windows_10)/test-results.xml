@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-27T03:35:12" id="0" hostname="plhx33" tests="3" errors="0" failures="0" time="0.82">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="Àpps Icons Deve sanitizar scripts e otimizar metadados / currentColor" time="0.745" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps Icons"/>
+  <testcase name="Àpps Icons Componente criado com sucesso" time="0.04" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps Icons"/>
+  <testcase name="Àpps Icons Deve fazer parse, movimentação de camada e serialização SVG corretamente" time="0.035" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps Icons"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

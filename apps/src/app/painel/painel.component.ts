@@ -12,6 +12,7 @@ import { ActivatedRoute, Router, RouterModule, NavigationEnd } from '@angular/ro
 import { filter } from 'rxjs/operators';
 import { CI_STATIC_APPS, IApp } from './apps/apps';
 import { AuthModule, USER_MENU, UserAuthenticationService } from '@ci/auth';
+import { IconsService } from '@ci/portal-api';
 import { IconModule, NavbarModule } from '@ci/components';
 import { IItemMenu } from '@ci/components/window';
 import { BehaviorSubject } from 'rxjs';
@@ -47,8 +48,9 @@ export class PainelComponent implements OnInit {
     @Optional() private readonly router?: Router,
     @Optional() private readonly userAuthenticationInstanceService?: UserAuthenticationService,
     // @Optional() private readonly route: ActivatedRoute,
-    @Optional() iconLoader?: IconLoaderSerices,
+    @Optional() private readonly iconLoader?: IconLoaderSerices,
     @Optional() private readonly catalogService?: ApplicationCatalogService,
+    @Optional() private readonly iconsApiService?: IconsService,
   ) {
     iconLoader?.load({ /// TODO: mover para fora
       'devtools': { url: 'icons/dev-tools-icon.svg' },
@@ -94,6 +96,14 @@ export class PainelComponent implements OnInit {
       USER: { url: 'icons/extras/user mode.svg' },
       MASTER: { url: 'icons/extras/master mode.svg' },
       GOD: { url: 'icons/extras/god mode.svg' },
+    });
+    this.iconsApiService?.getManifest().subscribe({
+      next: (manifest) => {
+        if (manifest?.icons) {
+          this.iconLoader?.registerFromManifest(manifest.icons as any);
+        }
+      },
+      error: () => { }
     });
     this.userAuthenticationInstanceService?.user.subscribe(user => {
       if (!!user) {

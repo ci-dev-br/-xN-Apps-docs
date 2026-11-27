@@ -1,11 +1,459 @@
-<h1>Adicione seus ícones a suas Aplicações</h1>
-<h2>Com ferramentas que simplificam sistemas</h2>
-<p>Os ícones de projeto normalmente são arquivos .ico que contêm vários tamanhos1. Para especificar um ícone do
-    aplicativo no Gerenciador de Soluções, escolha um nó do projeto (não o nó Solução) e, na barra de menus, escolha
-    Projeto > Propriedades. Quando o Designer de Projeto for exibido, escolha a guia Aplicativo. Na lista Ícone, escolha
-    um arquivo de ícone (.ico)2. Há vários sites que oferecem ícones gratuitos para qualquer projeto, como o Uicons3e o
-    banco de dados de ícones gratuitos Ícones4.</p>
+<div class="icons-studio-layout" (drop)="onDropFiles($event)" (dragover)="onDragOver($event)">
+    <!-- Barra Superior do Studio -->
+    <header class="studio-header">
+        <div class="studio-title-block">
+            <mat-icon svgIcon="icones" class="studio-brand-icon"></mat-icon>
+            <div>
+                <h1>Icons Studio</h1>
+                <p>Editor vetorial SVG e gerenciador de pacotes de ícones para Apps e Ações vinculadas</p>
+            </div>
+        </div>
 
-<button mat-raised-button (click)="importFromFile()">Importar de Arquivo</button>
-<!-- TODO: isso não pode estar aqui -->
-<!-- <button mat-raised-button [routerLink]="'./Home'">Criar novo Projeto de Ícone</button>   -->
+        <nav class="studio-tabs" aria-label="Seções do Icons Studio">
+            <button type="button" mat-button [class.active-tab]="activeTab === 'catalog'" (click)="activeTab = 'catalog'">
+                <mat-icon>grid_view</mat-icon>
+                <span>Catálogo &amp; Pacotes</span>
+            </button>
+            <button type="button" mat-button [class.active-tab]="activeTab === 'editor'" (click)="activeTab = 'editor'">
+                <mat-icon>draw</mat-icon>
+                <span>Editor SVG</span>
+            </button>
+            <button type="button" mat-button [class.active-tab]="activeTab === 'links'" (click)="activeTab = 'links'">
+                <mat-icon>hub</mat-icon>
+                <span>Apps &amp; Ações Vinculadas</span>
+            </button>
+        </nav>
+
+        <div class="studio-header-actions">
+            <span class="sync-pill" [class.online]="fromServer">
+                {{ fromServer ? 'Sincronizado c/ Servidor' : 'Modo Local' }}
+            </span>
+            <button type="button" mat-stroked-button (click)="refreshPacks()" title="Recarregar pacotes">
+                <mat-icon>refresh</mat-icon>
+                <span>Atualizar</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="studio-body">
+        <!-- Sidebar de Pacotes -->
+        <aside class="packs-sidebar" aria-label="Pacotes de Ícones">
+            <div class="packs-sidebar-header">
+                <h2>Pacotes ({{ packs.length }})</h2>
+                <button type="button" mat-flat-button color="primary" (click)="openPackDialog(false)">
+                    <mat-icon>add</mat-icon>
+                    <span>Pacote</span>
+                </button>
+            </div>
+
+            <ul class="packs-list">
+                @for(pack of packs; track pack.code){
+                <li>
+                    <button type="button" class="pack-item-btn" [class.active]="pack.code === selectedPackCode"
+                        (click)="selectPack(pack)">
+                        <div class="pack-item-top">
+                            <strong>{{ pack.name || pack.code }}</strong>
+                            <span class="pack-count">{{ pack.iconCount || pack.icons?.length || 0 }}</span>
+                        </div>
+                        <div class="pack-item-meta">
+                            <code>{{ pack.code }}</code>
+                            <span>v{{ pack.version || '1.0.0' }}</span>
+                            @if(pack.isDefault){
+                            <span class="badge-default">Padrão</span>
+                            }
+                        </div>
+                    </button>
+                </li>
+                }
+            </ul>
+
+            @if(activePack; as pack){
+            <div class="pack-detail-actions">
+                <button type="button" mat-stroked-button (click)="openPackDialog(true)">
+                    <mat-icon>edit</mat-icon>
+                    <span>Configurar Pacote</span>
+                </button>
+                <button type="button" mat-stroked-button (click)="triggerBatchImport()">
+                    <mat-icon>upload_file</mat-icon>
+                    <span>Importar .SVGs</span>
+                </button>
+                <button type="button" mat-stroked-button (click)="exportActivePack()">
+                    <mat-icon>download</mat-icon>
+                    <span>Exportar Pacote</span>
+                </button>
+                <input #batchSvgInput type="file" accept=".svg,image/svg+xml" multiple hidden (change)="onBatchFilesSelected($event)" />
+            </div>
+            }
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="studio-main">
+            @if(statusMessage){
+            <div class="studio-toast" role="status">{{ statusMessage }}</div>
+            }
+
+            <!-- TAB 1: CATÁLOGO DO PACOTE -->
+            @if(activeTab === 'catalog'){
+            <section class="catalog-view">
+                <div class="catalog-toolbar">
+                    <div class="search-box">
+                        <mat-icon aria-hidden="true">search</mat-icon>
+                        <input type="search" [(ngModel)]="searchTerm" placeholder="Buscar ícone, código, tag, app ou ação..."
+                            aria-label="Buscar ícones no pacote" />
+                    </div>
+
+                    <div class="filter-pills" role="group" aria-label="Filtrar por tipo de uso">
+                        <button type="button" mat-button [attr.aria-pressed]="usageFilter === 'all'" (click)="usageFilter = 'all'">Todos</button>
+                        <button type="button" mat-button [attr.aria-pressed]="usageFilter === 'app'" (click)="usageFilter = 'app'">Apps</button>
+                        <button type="button" mat-button [attr.aria-pressed]="usageFilter === 'action'" (click)="usageFilter = 'action'">Ações</button>
+                        <button type="button" mat-button [attr.aria-pressed]="usageFilter === 'ui'" (click)="usageFilter = 'ui'">UI</button>
+                    </div>
+
+                    <div class="preview-controls">
+                        <label for="preview-size-sel">Tamanho</label>
+                        <select id="preview-size-sel" [(ngModel)]="previewSize">
+                            <option [ngValue]="24">24px</option>
+                            <option [ngValue]="32">32px</option>
+                            <option [ngValue]="40">40px</option>
+                            <option [ngValue]="56">56px</option>
+                        </select>
+                        <button type="button" mat-stroked-button (click)="previewBg = previewBg === 'dark' ? 'checker' : (previewBg === 'checker' ? 'light' : 'dark')">
+                            Fundo: {{ previewBg === 'dark' ? 'Escuro' : (previewBg === 'light' ? 'Claro' : 'Xadrez') }}
+                        </button>
+                    </div>
+
+                    <button type="button" mat-flat-button color="primary" (click)="openNewIconDialog()">
+                        <mat-icon>add_circle</mat-icon>
+                        <span>Novo Ícone SVG</span>
+                    </button>
+                </div>
+
+                @if(loading){
+                <div class="empty-state">Carregando pacotes e ícones SVG...</div>
+                } @else {
+                <div class="icons-grid">
+                    @for(icon of filteredIcons; track icon.packCode + '::' + icon.code){
+                    <article class="icon-card" [class.selected]="selectedIcon?.code === icon.code && selectedIcon?.packCode === icon.packCode"
+                        (click)="selectIcon(icon, false)">
+                        <div class="icon-preview-box" [class.bg-checker]="previewBg === 'checker'"
+                            [class.bg-light]="previewBg === 'light'" [class.bg-dark]="previewBg === 'dark'">
+                            @if(icon.svgContent){
+                            <div class="svg-thumb" [style.width.px]="previewSize" [style.height.px]="previewSize"
+                                [innerHTML]="trustSvg(icon.svgContent)"></div>
+                            } @else {
+                            <mat-icon [svgIcon]="icon.code"></mat-icon>
+                            }
+                        </div>
+
+                        <div class="icon-card-info">
+                            <div class="icon-card-title">
+                                <strong>{{ icon.code }}</strong>
+                                <span class="usage-badge">{{ icon.usageType || 'app' }}</span>
+                            </div>
+                            <small class="icon-sub">{{ icon.viewBox || '0 0 160 160' }}</small>
+
+                            @if((icon.linkedApps?.length || 0) > 0 || (icon.linkedActions?.length || 0) > 0){
+                            <div class="linked-chips">
+                                @for(app of icon.linkedApps || []; track app){
+                                <span class="chip chip-app">{{ app }}</span>
+                                }
+                                @for(act of icon.linkedActions || []; track act){
+                                <span class="chip chip-action">{{ act }}</span>
+                                }
+                            </div>
+                            }
+                        </div>
+
+                        <div class="icon-card-actions">
+                            <button type="button" mat-icon-button title="Editar no Editor SVG" aria-label="Editar SVG"
+                                (click)="selectIcon(icon, 'editor'); $event.stopPropagation()">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button type="button" mat-icon-button title="Vincular a Apps e Ações" aria-label="Vincular a Apps e Ações"
+                                (click)="selectIcon(icon, 'links'); $event.stopPropagation()">
+                                <mat-icon>hub</mat-icon>
+                            </button>
+                            <button type="button" mat-icon-button title="Copiar tag <mat-icon>" aria-label="Copiar snippet"
+                                (click)="copySnippet(getMatIconSnippet(icon.code), 'Snippet <mat-icon>', $event)">
+                                <mat-icon>content_copy</mat-icon>
+                            </button>
+                            <button type="button" mat-icon-button title="Baixar arquivo .svg" aria-label="Baixar SVG"
+                                (click)="downloadIcon(icon, $event)">
+                                <mat-icon>download</mat-icon>
+                            </button>
+                            <button type="button" mat-icon-button color="warn" title="Excluir ícone" aria-label="Excluir ícone"
+                                (click)="deleteIconItem(icon, $event)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </article>
+                    }
+                    @empty {
+                    <div class="empty-state">
+                        <p>Nenhum ícone encontrado neste filtro. Arraste arquivos <code>.svg</code> para cá ou clique em <strong>Novo Ícone SVG</strong>.</p>
+                    </div>
+                    }
+                </div>
+                }
+            </section>
+            }
+
+            <!-- TAB 2: EDITOR SVG -->
+            @if(activeTab === 'editor'){
+            <section class="editor-tab-view">
+                <div class="icon-meta-bar">
+                    <label>Código
+                        <input type="text" [(ngModel)]="editingForm.code" placeholder="meu-icone" />
+                    </label>
+                    <label>Nome
+                        <input type="text" [(ngModel)]="editingForm.name" placeholder="Nome legível" />
+                    </label>
+                    <label>Pacote
+                        <select [(ngModel)]="editingForm.packCode">
+                            @for(pack of packs; track pack.code){
+                            <option [value]="pack.code">{{ pack.name || pack.code }} ({{ pack.code }})</option>
+                            }
+                        </select>
+                    </label>
+                    <label>Uso Principal
+                        <select [(ngModel)]="editingForm.usageType">
+                            <option value="app">Aplicativo (App)</option>
+                            <option value="action">Ação Vinculada</option>
+                            <option value="both">App + Ação</option>
+                            <option value="ui">Componente UI</option>
+                        </select>
+                    </label>
+                    <label>Tags
+                        <input type="text" [(ngModel)]="editingForm.tagsText" placeholder="financeiro, ação, criar" />
+                    </label>
+                    <button type="button" mat-flat-button color="primary" [disabled]="saving" (click)="saveCurrentIcon()">
+                        <mat-icon>save</mat-icon>
+                        <span>{{ saving ? 'Salvando...' : 'Salvar no Pacote' }}</span>
+                    </button>
+                </div>
+
+                <ci-svg-editor
+                    [embedded]="true"
+                    [svgContent]="editingSvg"
+                    [iconCode]="editingForm.code"
+                    [packCode]="editingForm.packCode"
+                    (svgContentChange)="onEditorSvgChange($event)"
+                    (saveRequested)="saveCurrentIcon($event)">
+                </ci-svg-editor>
+            </section>
+            }
+
+            <!-- TAB 3: VÍNCULOS COM APPS E AÇÕES -->
+            @if(activeTab === 'links'){
+            <section class="links-view">
+                <div class="links-grid">
+                    <!-- Coluna 1: Prévia ao Vivo em Contextos Reais -->
+                    <div class="links-panel">
+                        <h3>Prévia em Contexto Real ({{ editingForm.code }})</h3>
+                        <div class="context-previews">
+                            <div class="ctx-preview-row">
+                                <span class="ctx-label">Botão de App (Launcher / Sidebar):</span>
+                                <button type="button" mat-icon-button class="app-preview-btn" [matTooltip]="editingForm.name">
+                                    <span class="inline-svg-24" [innerHTML]="previewTrustedSvg"></span>
+                                </button>
+                            </div>
+                            <div class="ctx-preview-row">
+                                <span class="ctx-label">Ação na Navbar (NavbarContextAction):</span>
+                                <button type="button" mat-stroked-button color="primary">
+                                    <span class="inline-svg-18" [innerHTML]="previewTrustedSvg"></span>
+                                    <span>{{ editingForm.name }}</span>
+                                </button>
+                            </div>
+                            <div class="ctx-preview-row">
+                                <span class="ctx-label">Item de Ação (mat-icon [svgIcon]):</span>
+                                <button type="button" mat-flat-button>
+                                    <mat-icon [svgIcon]="editingForm.code"></mat-icon>
+                                    <span>{{ editingForm.code }}</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="snippets-box">
+                            <h4>Snippets de Uso</h4>
+                            <div class="snippet-row">
+                                <code>{{ getMatIconSnippet() }}</code>
+                                <button type="button" mat-icon-button aria-label="Copiar mat-icon"
+                                    (click)="copySnippet(getMatIconSnippet(), 'mat-icon')">
+                                    <mat-icon>content_copy</mat-icon>
+                                </button>
+                            </div>
+                            <div class="snippet-row">
+                                <code>{{ getCiActionSnippet() }}</code>
+                                <button type="button" mat-icon-button aria-label="Copiar ci-action"
+                                    (click)="copySnippet(getCiActionSnippet(), 'ci-action')">
+                                    <mat-icon>content_copy</mat-icon>
+                                </button>
+                            </div>
+                            <div class="snippet-row">
+                                <code>{{ getNavbarActionSnippet() }}</code>
+                                <button type="button" mat-icon-button aria-label="Copiar NavbarContextAction"
+                                    (click)="copySnippet(getNavbarActionSnippet(), 'NavbarContextAction')">
+                                    <mat-icon>content_copy</mat-icon>
+                                </button>
+                            </div>
+                            <div class="snippet-row">
+                                <code>{{ getIconLoaderSnippet(selectedIcon) }}</code>
+                                <button type="button" mat-icon-button aria-label="Copiar IconLoader"
+                                    (click)="copySnippet(getIconLoaderSnippet(selectedIcon), 'IconLoader')">
+                                    <mat-icon>content_copy</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="link-save-footer">
+                            <label class="checkbox-inline">
+                                <input type="checkbox" [(ngModel)]="updateAppEntityIcon" />
+                                <span>Atualizar campo <code>Application.icon</code> no catálogo dos Apps selecionados</span>
+                            </label>
+                            <button type="button" mat-flat-button color="primary" [disabled]="saving" (click)="saveTargetsLink()">
+                                <mat-icon>link</mat-icon>
+                                <span>{{ saving ? 'Aplicando...' : 'Salvar Vínculos & Aplicar em Runtime' }}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Coluna 2: Apps da Plataforma -->
+                    <div class="links-panel">
+                        <div class="panel-head">
+                            <h3>Aplicativos ({{ selectedLinkedApps.size }} selecionado(s))</h3>
+                            <input type="search" [(ngModel)]="appSearchTerm" placeholder="Filtrar apps..." aria-label="Filtrar aplicativos" />
+                        </div>
+                        <ul class="target-checklist">
+                            @for(app of filteredApps; track app.appKey){
+                            <li>
+                                <label class="check-item" [class.checked]="selectedLinkedApps.has(app.appKey)">
+                                    <input type="checkbox" [checked]="selectedLinkedApps.has(app.appKey)"
+                                        (change)="toggleLinkedApp(app.appKey)" />
+                                    <div class="check-item-text">
+                                        <strong>{{ app.name }}</strong>
+                                        <small>{{ app.routePath }} · ícone atual: <code>{{ app.currentIcon || 'nenhum' }}</code></small>
+                                    </div>
+                                </label>
+                            </li>
+                            }
+                        </ul>
+                    </div>
+
+                    <!-- Coluna 3: Ações Vinculadas -->
+                    <div class="links-panel">
+                        <div class="panel-head">
+                            <h3>Ações Vinculadas ({{ selectedLinkedActions.size }} selecionada(s))</h3>
+                            <input type="search" [(ngModel)]="actionSearchTerm" placeholder="Filtrar ações..." aria-label="Filtrar ações" />
+                        </div>
+
+                        <div class="custom-action-add">
+                            <input type="text" [(ngModel)]="customActionInput" placeholder="Nova chave de ação (ex: vendas:fechar)"
+                                (keyup.enter)="addCustomActionBinding()" aria-label="Nova chave de ação" />
+                            <button type="button" mat-stroked-button (click)="addCustomActionBinding()">Adicionar</button>
+                        </div>
+
+                        <ul class="target-checklist">
+                            @for(act of filteredActions; track act.actionId){
+                            <li>
+                                <label class="check-item" [class.checked]="selectedLinkedActions.has(act.actionId)">
+                                    <input type="checkbox" [checked]="selectedLinkedActions.has(act.actionId)"
+                                        (change)="toggleLinkedAction(act.actionId)" />
+                                    <div class="check-item-text">
+                                        <strong>{{ act.label }}</strong>
+                                        <small><code>{{ act.actionId }}</code> · {{ act.source }}</small>
+                                    </div>
+                                </label>
+                            </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            }
+        </main>
+    </div>
+
+    <!-- Modal Nativo: Criar / Editar Pacote de Ícones -->
+    <dialog #packDialog aria-labelledby="pack-dialog-title">
+        <h1 id="pack-dialog-title">{{ packForm.isEdit ? 'Configurar Pacote de Ícones' : 'Novo Pacote de Ícones' }}</h1>
+        <form (ngSubmit)="submitPackDialog()" class="dialog-form">
+            <label>Código do Pacote (pasta)
+                <input type="text" [(ngModel)]="packForm.code" name="packCode" required placeholder="ex: v4, crm-acoes" />
+            </label>
+            <label>Nome do Pacote
+                <input type="text" [(ngModel)]="packForm.name" name="packName" required placeholder="ex: Pacote de Ações CRM" />
+            </label>
+            <div class="dialog-row-2">
+                <label>Versão
+                    <input type="text" [(ngModel)]="packForm.version" name="packVersion" placeholder="1.0.0" />
+                </label>
+                <label>Apps Destino (separados por vírgula)
+                    <input type="text" [(ngModel)]="packForm.targetAppsText" name="targetApps" placeholder="CRM, Vendas" />
+                </label>
+            </div>
+            <label>Descrição
+                <textarea rows="2" [(ngModel)]="packForm.description" name="packDescription"></textarea>
+            </label>
+            <div class="dialog-checks">
+                <label><input type="checkbox" [(ngModel)]="packForm.isActive" name="isActive" /> Pacote Ativo</label>
+                <label><input type="checkbox" [(ngModel)]="packForm.isDefault" name="isDefault" /> Pacote Padrão</label>
+            </div>
+            <div class="dialog-actions">
+                <button type="button" mat-button (click)="closeDialog(packDialog)">Cancelar</button>
+                <button type="submit" mat-flat-button color="primary">Salvar Pacote</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- Modal Nativo: Novo Ícone SVG -->
+    <dialog #newIconDialog aria-labelledby="new-icon-dialog-title">
+        <h1 id="new-icon-dialog-title">Novo Ícone SVG</h1>
+        <form (ngSubmit)="createIconFromDialog()" class="dialog-form">
+            <div class="dialog-row-2">
+                <label>Código do Ícone
+                    <input type="text" [(ngModel)]="newIconForm.code" name="iconCode" required autofocus placeholder="ex: meu-app" />
+                </label>
+                <label>Nome Legível
+                    <input type="text" [(ngModel)]="newIconForm.name" name="iconName" placeholder="Meu App" />
+                </label>
+            </div>
+            <div class="dialog-row-2">
+                <label>Pacote
+                    <select [(ngModel)]="newIconForm.packCode" name="iconPack">
+                        @for(pack of packs; track pack.code){
+                        <option [value]="pack.code">{{ pack.name || pack.code }}</option>
+                        }
+                    </select>
+                </label>
+                <label>Uso
+                    <select [(ngModel)]="newIconForm.usageType" name="usageType">
+                        <option value="app">App</option>
+                        <option value="action">Ação Vinculada</option>
+                        <option value="both">App + Ação</option>
+                        <option value="ui">Componente UI</option>
+                    </select>
+                </label>
+            </div>
+            <div class="dialog-row-2">
+                <label>ViewBox
+                    <select [(ngModel)]="newIconForm.viewBox" name="viewBox">
+                        <option value="0 0 160 160">160 × 160 (Apps)</option>
+                        <option value="0 0 24 24">24 × 24 (Ações / Material)</option>
+                        <option value="0 0 48 48">48 × 48 (Médio)</option>
+                    </select>
+                </label>
+                <label>Template Inicial
+                    <select [(ngModel)]="newIconForm.template" name="template">
+                        @for(tpl of iconTemplates; track tpl.id){
+                        <option [value]="tpl.id">{{ tpl.label }}</option>
+                        }
+                    </select>
+                </label>
+            </div>
+            <div class="dialog-actions">
+                <button type="button" mat-button (click)="closeDialog(newIconDialog)">Cancelar</button>
+                <button type="submit" mat-flat-button color="primary">Abrir no Editor</button>
+            </div>
+        </form>
+    </dialog>
+</div>

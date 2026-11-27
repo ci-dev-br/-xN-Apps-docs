@@ -15,6 +15,7 @@ export interface NavbarContextAction {
     id: string;
     label: string;
     icon?: string;
+    iconType?: 'material' | 'svg';
     tooltip?: string;
     variant?: 'basic' | 'stroked' | 'flat' | 'raised' | 'select';
     color?: 'primary' | 'accent' | 'warn';

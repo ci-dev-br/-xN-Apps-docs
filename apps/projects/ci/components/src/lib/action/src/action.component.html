@@ -1,4 +1,7 @@
 <button mat-menu-item (click)="click.emit($event)">
-    @if(icon){<mat-icon>{{icon}}</mat-icon>}
+    @if(icon){
+        @if(type === 'svg'){<mat-icon [svgIcon]="icon"></mat-icon>}
+        @else{<mat-icon>{{icon}}</mat-icon>}
+    }
     @if(label){{{label}}}
 </button>

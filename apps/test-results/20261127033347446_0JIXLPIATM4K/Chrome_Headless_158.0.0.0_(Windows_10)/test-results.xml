@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-27T03:33:56" id="0" hostname="plhx33" tests="3" errors="0" failures="0" time="1.596">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="Àpps Icons Deve fazer parse, movimentação de camada e serialização SVG corretamente" time="1.515" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps Icons"/>
+  <testcase name="Àpps Icons Componente criado com sucesso" time="0.041" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps Icons"/>
+  <testcase name="Àpps Icons Deve sanitizar scripts e otimizar metadados / currentColor" time="0.04" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps Icons"/>
+  <system-out>
+    <![CDATA[Chrome Headless 158.0.0.0 (Windows 10) ERROR: 'ERROR', Error: Error retrieving icon :icones! Unable to find icon with the name ":icones"
+Error: Error retrieving icon :icones! Unable to find icon with the name ":icones"
+    at Object.error (http://localhost:9876/base/node_modules/.pnpm/@angular+material@21.2.14_bdac4862418e0c826efa7f8e7be847c2/node_modules/@angular/material/fesm2022/icon.mjs:227:40)
+    at ConsumerObserver.error (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Subscriber.js:102:33)
+    at SafeSubscriber._error (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Subscriber.js:64:30)
+    at SafeSubscriber.error (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Subscriber.js:40:18)
+    at OperatorSubscriber._error (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Subscriber.js:64:30)
+    at OperatorSubscriber.error (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Subscriber.js:40:18)
+    at _Observable.init [as _subscribe] (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/observable/throwError.js:5:45)
+    at _Observable._trySubscribe (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Observable.js:37:25)
+    at http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Observable.js:31:30
+    at errorContext (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/util/errorContext.js:19:9)
+,Chrome Headless 158.0.0.0 (Windows 10) ERROR: 'ERROR', Error: Error retrieving icon :icones! Unable to find icon with the name ":icones"
+Error: Error retrieving icon :icones! Unable to find icon with the name ":icones"
+    at Object.error (http://localhost:9876/base/node_modules/.pnpm/@angular+material@21.2.14_bdac4862418e0c826efa7f8e7be847c2/node_modules/@angular/material/fesm2022/icon.mjs:227:40)
+    at ConsumerObserver.error (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Subscriber.js:102:33)
+    at SafeSubscriber._error (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Subscriber.js:64:30)
+    at SafeSubscriber.error (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Subscriber.js:40:18)
+    at OperatorSubscriber._error (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Subscriber.js:64:30)
+    at OperatorSubscriber.error (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Subscriber.js:40:18)
+    at _Observable.init [as _subscribe] (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/observable/throwError.js:5:45)
+    at _Observable._trySubscribe (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Observable.js:37:25)
+    at http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Observable.js:31:30
+    at errorContext (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/util/errorContext.js:19:9)
+,Chrome Headless 158.0.0.0 (Windows 10) ERROR: 'ERROR', Error: Error retrieving icon :icones! Unable to find icon with the name ":icones"
+Error: Error retrieving icon :icones! Unable to find icon with the name ":icones"
+    at Object.error (http://localhost:9876/base/node_modules/.pnpm/@angular+material@21.2.14_bdac4862418e0c826efa7f8e7be847c2/node_modules/@angular/material/fesm2022/icon.mjs:227:40)
+    at ConsumerObserver.error (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Subscriber.js:102:33)
+    at SafeSubscriber._error (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Subscriber.js:64:30)
+    at SafeSubscriber.error (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Subscriber.js:40:18)
+    at OperatorSubscriber._error (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Subscriber.js:64:30)
+    at OperatorSubscriber.error (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Subscriber.js:40:18)
+    at _Observable.init [as _subscribe] (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/observable/throwError.js:5:45)
+    at _Observable._trySubscribe (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Observable.js:37:25)
+    at http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/Observable.js:31:30
+    at errorContext (http://localhost:9876/base/node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/dist/esm/internal/util/errorContext.js:19:9)
+
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

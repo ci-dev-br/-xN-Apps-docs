@@ -3,8 +3,24 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'Home', loadChildren: () => import('./../views/home/home.module').then(m => m.HomeModule) },
+  {
+    path: '',
+    component: HomeComponent,
+    data: {
+      appName: 'Icons',
+      title: 'Icons Studio — Pacotes e Editor SVG',
+      icon: 'icones',
+      description: 'Gerenciador de pacotes de ícones e editor vetorial SVG para Apps e Ações vinculadas',
+      manifest: {
+        'event:open:iconpack.json': {
+          label: 'Abrir Pacote de Ícones no Icons Studio',
+          icon: 'folder_special',
+          queryParam: 'packFile',
+        },
+      },
+    },
+  },
+  { path: 'Home', redirectTo: '', pathMatch: 'full' },
   {
     path: 'Editor',
     loadChildren: () => import('./../views/svg-editor/svg-editor.module').then(m => m.SvgEditorModule),
@@ -26,13 +42,13 @@ const routes: Routes = [
           icon: 'image',
           queryParam: 'file',
         },
-      }
-    }
+      },
+    },
   },
 ];
+
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class CiApplicationRoutingModule { }
-

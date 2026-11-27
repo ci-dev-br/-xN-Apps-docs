@@ -9,5 +9,6 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class ActionComponent {
   @Input() label?: string;
   @Input() icon?: string;
+  @Input() type?: 'material' | 'svg' = 'material';
   @Output() click = new EventEmitter<MouseEvent>();
 }
