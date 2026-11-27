@@ -54,6 +54,6 @@ export class ChessService {
         else if (bad_moves.length > 0)
             return bad_moves[0];
         else
-            return null;
+            return { code: -1 };
     }
 }

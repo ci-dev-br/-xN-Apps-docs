@@ -1,13 +1,22 @@
 {
   "icons": {
     "arquivos": "arquivos.png",
-    "financeiro": "financeiro.svg"
+    "financeiro": "financeiro.svg",
+    "seo": "seo.svg"
   },
   "entries": {
     "financeiro": {
       "file": "financeiro.svg",
       "linkedApps": [
         "Financeiro"
+      ],
+      "linkedActions": [],
+      "usageType": "app"
+    },
+    "seo": {
+      "file": "seo.svg",
+      "linkedApps": [
+        "SEO"
       ],
       "linkedActions": [],
       "usageType": "app"

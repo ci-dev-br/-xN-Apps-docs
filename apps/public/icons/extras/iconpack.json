@@ -1,0 +1,15 @@
+{
+  "icons": {
+    "marketplace": "marketplace.svg"
+  },
+  "entries": {
+    "marketplace": {
+      "file": "marketplace.svg",
+      "linkedApps": [
+        "Loja"
+      ],
+      "linkedActions": [],
+      "usageType": "app"
+    }
+  }
+}
