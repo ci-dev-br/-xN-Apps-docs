@@ -13,6 +13,7 @@ import * as cookieParser from 'cookie-parser';
 import { existsSync, readFileSync, writeFileSync, renameSync, watch, FSWatcher } from 'fs';
 import * as http from 'http';
 import * as inspector from 'inspector';
+import { Client } from 'pg';
 
 // Captura se o DEBUG veio explicitamente por linha de comando/ambiente do processo ANTES do .env
 const ENV_DEBUG_BEFORE_DOTENV = process.env.DEBUG;
@@ -1117,7 +1118,29 @@ async function startApplication(app: NestExpressApplication, warmupPort: number)
 /**
  * Função principal de inicialização (Bootstrap) da aplicação NestJS.
  */
+async function ensurePostgresSchemas() {
+  if ((process.env.DB_TYPE || 'postgres') !== 'postgres') return;
+  const client = new Client({
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT || 5432),
+    user: process.env.DB_USERNAME,
+    password: String(process.env.DB_PASSWORD || ''),
+    database: process.env.DB_DATABASE,
+  });
+  try {
+    await client.connect();
+    for (const schemaName of ['Treinamento', 'Storage']) {
+      await client.query(`CREATE SCHEMA IF NOT EXISTS "${schemaName}"`);
+    }
+  } catch (err: any) {
+    console.warn('[Bootstrap] Aviso ao verificar schemas PostgreSQL:', err?.message || err);
+  } finally {
+    await client.end().catch(() => { });
+  }
+}
+
 async function bootstrap() {
+  await ensurePostgresSchemas();
   const server = express();
 
   // Endpoint leve de Health/Warmup usado para testar via HTTP se a aplicação já está pronta e aquecida

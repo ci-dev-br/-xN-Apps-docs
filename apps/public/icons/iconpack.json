@@ -1,0 +1,27 @@
+{
+  "icons": {
+    "anotacoes": "anotacoes.svg",
+    "agenda": "agenda.svg"
+  },
+  "entries": {
+    "anotacoes": {
+      "file": "anotacoes.svg",
+      "linkedApps": [
+        "Formularios"
+      ],
+      "linkedActions": [],
+      "usageType": "app"
+    },
+    "agenda": {
+      "file": "agenda.svg",
+      "name": "agenda",
+      "description": null,
+      "category": "App",
+      "usageType": "app",
+      "tags": [],
+      "linkedApps": [],
+      "linkedActions": [],
+      "viewBox": "0 0 252.92 254.79"
+    }
+  }
+}

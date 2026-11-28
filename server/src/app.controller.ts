@@ -63,7 +63,8 @@ export class AppController implements OnModuleDestroy {
       '/message', '/messager', '/directmessage', '/conversation', '/notification',
       '/storage', '/fiscal', '/financeiro', '/organizacao', '/produto',
       '/payment', '/cms', '/projetos', '/codex', '/notificacao', '/inpi', '/crm',
-      '/dym', '/deployer', '/espazio', '/tasking', '/forms', '/api', '/indicators', '/__orchestration'
+      '/dym', '/deployer', '/espazio', '/tasking', '/forms', '/api', '/indicators', '/__orchestration',
+      '/storagemedia', '/instrutor', '/curso', '/aula', '/turma', '/matricula', '/anotacaoestudo', '/video', '/file'
     ].some(prefix => reqPath === prefix || reqPath.startsWith(prefix + '/'));
 
     if (isApiRoute) {

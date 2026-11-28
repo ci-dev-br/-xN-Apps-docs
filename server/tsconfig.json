@@ -216,6 +216,12 @@
       ],
       "@ci/tasking/*": [
         "libs/tasking/src/*"
+      ],
+      "@ci/treinamento": [
+        "libs/treinamento/src"
+      ],
+      "@ci/treinamento/*": [
+        "libs/treinamento/src/*"
       ]
     }
   }

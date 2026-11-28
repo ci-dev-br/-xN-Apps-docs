@@ -2,16 +2,20 @@
   <!-- Top Header -->
   <header class="estudos-header">
     <div class="header-titles">
-      <div class="badge">Portal do Estudante & Pesquisa</div>
-      <h1>Espaço de Estudos & Memorização</h1>
-      <p class="subtitle">Acompanhe seu ciclo de foco (Pomodoro), treine com flashcards ativos e participe de grupos de estudo.</p>
+      <div class="badge">Portal do Estudante &amp; Pesquisa</div>
+      <h1>Espaço de Estudos, Aulas &amp; Memorização</h1>
+      <p class="subtitle">Acompanhe as aulas dos seus treinamentos com player integrado, faça anotações com minutagem exata, controle seu ciclo Pomodoro e revise flashcards.</p>
     </div>
 
     <!-- Navigation Tabs -->
     <div class="nav-tabs">
+      <button [class.active]="activeTab === 'aulas'" (click)="activeTab = 'aulas'">
+        <mat-icon>ondemand_video</mat-icon>
+        <span>Minhas Aulas ({{ cursos.length }})</span>
+      </button>
       <button [class.active]="activeTab === 'metas'" (click)="activeTab = 'metas'">
         <mat-icon>timer</mat-icon>
-        <span>Foco & Metas</span>
+        <span>Foco &amp; Metas</span>
       </button>
       <button [class.active]="activeTab === 'flashcards'" (click)="activeTab = 'flashcards'">
         <mat-icon>style</mat-icon>
@@ -19,14 +23,231 @@
       </button>
       <button [class.active]="activeTab === 'turmas'" (click)="activeTab = 'turmas'">
         <mat-icon>groups</mat-icon>
-        <span>Turmas & Grupos</span>
+        <span>Turmas &amp; Grupos</span>
       </button>
       <button [class.active]="activeTab === 'caderno'" (click)="activeTab = 'caderno'">
         <mat-icon>menu_book</mat-icon>
-        <span>Caderno & Resumos</span>
+        <span>Caderno &amp; Resumos ({{ notes.length }})</span>
       </button>
     </div>
   </header>
+
+  @if (estudosStatus) {
+    <div class="estudos-banner success">
+      <mat-icon>check_circle</mat-icon>
+      <span>{{ estudosStatus }}</span>
+      <button mat-icon-button (click)="estudosStatus = ''"><mat-icon>close</mat-icon></button>
+    </div>
+  }
+  @if (estudosError) {
+    <div class="estudos-banner error">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ estudosError }}</span>
+      <button mat-icon-button (click)="estudosError = ''"><mat-icon>close</mat-icon></button>
+    </div>
+  }
+
+  <!-- TAB 0: MINHAS AULAS & ANOTAÇÕES SINCRONIZADAS -->
+  @if (activeTab === 'aulas') {
+    <div class="tab-content aulas-workspace">
+      @if (loadingCursos) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      }
+
+      @if (cursos.length > 0) {
+        <!-- Barra de Seleção de Treinamento + Mini Pomodoro -->
+        <div class="aulas-topbar">
+          <div class="cursos-chips">
+            @for (c of cursos; track c.internalId) {
+              <button class="curso-pill"
+                      [class.active]="cursoSelecionado?.internalId === c.internalId"
+                      (click)="selecionarCurso(c)">
+                <mat-icon>{{ c.icone || 'school' }}</mat-icon>
+                <span>{{ c.titulo }}</span>
+                <small>{{ getProgressoCurso(c) }}%</small>
+              </button>
+            }
+          </div>
+
+          <div class="mini-pomodoro-bar">
+            <mat-icon>timer</mat-icon>
+            <strong class="mono">{{ formatTimer() }}</strong>
+            <button mat-stroked-button (click)="toggleTimer()">
+              {{ isTimerRunning ? 'Pausar Foco' : 'Iniciar Foco' }}
+            </button>
+            <button mat-stroked-button (click)="abrirTreinamentoNoPortal(cursoSelecionado?.internalId)">
+              <mat-icon>open_in_new</mat-icon> Treinamento
+            </button>
+          </div>
+        </div>
+
+        @if (cursoSelecionado) {
+          <div class="aulas-split-grid">
+            <!-- Player + Materiais -->
+            <div class="aula-player-pane">
+              <div class="aula-player-card">
+                @if (aulaSelecionada?.videoAssetId) {
+                  <div class="video-frame">
+                    @if (videoLoading) {
+                      <div class="video-buffering">
+                        @if (aulaSelecionada?.thumbnailDataUrl) {
+                          <img class="poster-bg" [src]="aulaSelecionada?.thumbnailDataUrl" alt="Miniatura da aula" />
+                        }
+                        <div class="buffer-box">
+                          <mat-progress-bar mode="determinate" [value]="videoLoadProgress"></mat-progress-bar>
+                          <span>Carregando aula do Storage ({{ videoLoadProgress }}%)...</span>
+                        </div>
+                      </div>
+                    } @else if (activeVideoUrl) {
+                      <video #estudosVideoRef
+                             class="estudos-video"
+                             controls
+                             playsinline
+                             [poster]="aulaSelecionada?.thumbnailDataUrl || ''"
+                             [src]="activeVideoUrl"
+                             (loadedmetadata)="onEstudosVideoLoadedMetadata()"
+                             (timeupdate)="onEstudosVideoTimeUpdate()"
+                             (pause)="salvarTempoVideo(true)"
+                             (ended)="onEstudosVideoEnded()">
+                      </video>
+                    }
+                  </div>
+                } @else {
+                  <div class="video-placeholder">
+                    <mat-icon>smart_display</mat-icon>
+                    <span>{{ aulaSelecionada?.titulo || 'Selecione uma aula para iniciar' }}</span>
+                    <small>Esta aula ainda não possui vídeo enviado pelo instrutor.</small>
+                  </div>
+                }
+
+                <div class="aula-controls-row">
+                  <div class="aula-title-info">
+                    <span class="curso-label">{{ cursoSelecionado.titulo }} • {{ getProgressoCurso(cursoSelecionado) }}% concluído</span>
+                    <h2>{{ aulaSelecionada?.titulo || 'Selecione uma aula' }}</h2>
+                  </div>
+
+                  <div class="aula-btn-group">
+                    @if (aulaSelecionada?.videoAssetId) {
+                      <button mat-stroked-button color="primary" (click)="capturarMinutagemAtual()">
+                        <mat-icon>bookmark_add</mat-icon> Anotar neste momento
+                      </button>
+                    }
+                    @if (aulaSelecionada) {
+                      <button mat-flat-button [color]="isAulaConcluida(aulaSelecionada) ? 'primary' : 'accent'" (click)="alternarConclusaoAula(aulaSelecionada)">
+                        <mat-icon>{{ isAulaConcluida(aulaSelecionada) ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                        {{ isAulaConcluida(aulaSelecionada) ? 'Aula Concluída' : 'Concluir Aula' }}
+                      </button>
+                    }
+                  </div>
+                </div>
+
+                @if (aulaSelecionada?.descricao) {
+                  <p class="aula-desc">{{ aulaSelecionada?.descricao }}</p>
+                }
+
+                @if (aulaSelecionada?.materiaisApoio?.length) {
+                  <div class="materiais-strip">
+                    <span class="strip-label"><mat-icon>attach_file</mat-icon> Materiais de Apoio:</span>
+                    @for (mat of aulaSelecionada?.materiaisApoio || []; track mat.assetId) {
+                      <button mat-stroked-button (click)="baixarMaterialApoio(mat)">
+                        <mat-icon>download</mat-icon> {{ mat.nome }} ({{ formatBytes(mat.sizeBytes) }})
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Sidebar: Anotações com Minutagem + Lista de Aulas -->
+            <aside class="aula-study-sidebar">
+              <div class="sidebar-tabs">
+                <button [class.active]="aulasSidebarTab === 'notas'" (click)="aulasSidebarTab = 'notas'">
+                  <mat-icon>edit_note</mat-icon> Anotações ({{ notasDaAulaAtual.length }})
+                </button>
+                <button [class.active]="aulasSidebarTab === 'roteiro'" (click)="aulasSidebarTab = 'roteiro'">
+                  <mat-icon>playlist_play</mat-icon> Aulas ({{ getAulasDoCurso(cursoSelecionado).length }})
+                </button>
+              </div>
+
+              @if (aulasSidebarTab === 'notas') {
+                <div class="quick-note-composer">
+                  <div class="composer-header">
+                    <strong>Nova Anotação da Aula</strong>
+                    @if (capturedTimestampSec !== undefined) {
+                      <span class="ts-badge"><mat-icon>schedule</mat-icon> {{ formatSeconds(capturedTimestampSec) }}</span>
+                    }
+                  </div>
+                  <input type="text" [(ngModel)]="quickNoteTitle" placeholder="Título curto (opcional)" />
+                  <textarea [(ngModel)]="quickNoteContent" rows="3" placeholder="Registre ideias-chave, comandos ou dúvidas desta aula..."></textarea>
+                  <div class="composer-footer">
+                    <input type="text" [(ngModel)]="quickNoteTagsInput" placeholder="Tags separadas por vírgula" />
+                    <button mat-flat-button color="primary" [disabled]="savingQuickNote || !quickNoteContent.trim()" (click)="salvarAnotacaoDaAula()">
+                      <mat-icon>save</mat-icon> {{ savingQuickNote ? 'Salvando...' : 'Salvar' }}
+                    </button>
+                  </div>
+                </div>
+
+                <div class="aula-notes-list">
+                  @for (note of notasDaAulaAtual; track note.id) {
+                    <div class="aula-note-item">
+                      <div class="note-item-head">
+                        <strong>{{ note.title }}</strong>
+                        @if (note.timestampLabel) {
+                          <button class="ts-jump-btn" matTooltip="Ir para este momento no vídeo" (click)="irParaMinutagemNota(note)">
+                            <mat-icon>play_arrow</mat-icon> {{ note.timestampLabel }}
+                          </button>
+                        }
+                      </div>
+                      <p>{{ note.content }}</p>
+                      <div class="note-item-foot">
+                        <div class="note-tags-inline">
+                          @for (tag of note.tags; track tag) {
+                            <span>#{{ tag }}</span>
+                          }
+                        </div>
+                        <button mat-icon-button color="warn" (click)="deleteNote(note)"><mat-icon>delete_outline</mat-icon></button>
+                      </div>
+                    </div>
+                  }
+                  @if (notasDaAulaAtual.length === 0) {
+                    <div class="empty-inline-hint">Nenhuma anotação nesta aula ainda. Clique em "Anotar neste momento" durante o vídeo!</div>
+                  }
+                </div>
+              }
+
+              @if (aulasSidebarTab === 'roteiro') {
+                <div class="sidebar-lessons-list">
+                  @for (a of getAulasDoCurso(cursoSelecionado); track a.internalId; let idx = $index) {
+                    <div class="s-lesson-row"
+                         [class.selected]="aulaSelecionada?.internalId === a.internalId"
+                         (click)="selecionarAula(a)">
+                      <span class="s-idx">{{ idx + 1 }}</span>
+                      <div class="s-meta">
+                        <strong>{{ a.titulo }}</strong>
+                        <small>{{ a.duracaoLabel || '00:00' }} @if (a.materiaisApoio?.length) { • {{ a.materiaisApoio?.length }} anexo(s) }</small>
+                      </div>
+                      <mat-icon class="s-check" [class.done]="isAulaConcluida(a)">
+                        {{ isAulaConcluida(a) ? 'check_circle' : 'radio_button_unchecked' }}
+                      </mat-icon>
+                    </div>
+                  }
+                </div>
+              }
+            </aside>
+          </div>
+        }
+      } @else if (!loadingCursos) {
+        <div class="empty-aulas-card">
+          <mat-icon>school</mat-icon>
+          <h3>Nenhum treinamento encontrado</h3>
+          <p>Crie um treinamento com vídeos e materiais no app <strong>Treinamento</strong> para acompanhar as aulas e fazer anotações por aqui.</p>
+          <button mat-flat-button color="primary" (click)="abrirTreinamentoNoPortal()">
+            <mat-icon>open_in_new</mat-icon> Ir para Treinamento
+          </button>
+        </div>
+      }
+    </div>
+  }
 
   <!-- TAB 1: METAS & POMODORO -->
   @if (activeTab === 'metas') {
@@ -90,23 +311,23 @@
 
             <div class="goal-item">
               <div class="goal-info">
-                <strong>Tempo de Leitura & Artigos</strong>
-                <span>45m de 60m planejados</span>
+                <strong>Anotações &amp; Resumos de Aulas</strong>
+                <span>{{ notes.length }} registros no caderno</span>
               </div>
               <div class="goal-progress-wrap">
-                <mat-progress-bar mode="determinate" [value]="75"></mat-progress-bar>
-                <span>75%</span>
+                <mat-progress-bar mode="determinate" [value]="notes.length > 0 ? 100 : 25"></mat-progress-bar>
+                <span>{{ notes.length > 0 ? '100%' : '25%' }}</span>
               </div>
             </div>
 
             <div class="goal-item">
               <div class="goal-info">
-                <strong>Prática de Código & Exercícios</strong>
-                <span>2 exercícios concluídos</span>
+                <strong>Treinamentos Ativos</strong>
+                <span>{{ cursos.length }} curso(s) disponíveis</span>
               </div>
               <div class="goal-progress-wrap">
-                <mat-progress-bar mode="determinate" [value]="100"></mat-progress-bar>
-                <span>100%</span>
+                <mat-progress-bar mode="determinate" [value]="getProgressoCurso(cursoSelecionado)"></mat-progress-bar>
+                <span>{{ getProgressoCurso(cursoSelecionado) }}%</span>
               </div>
             </div>
           </div>
@@ -114,7 +335,7 @@
           <!-- Shortcuts -->
           <div class="quick-banner">
             <mat-icon>lightbulb</mat-icon>
-            <span>Dica: A repetição espaçada aumenta a retenção de conceitos em até 84% a longo prazo.</span>
+            <span>Dica: A repetição espaçada aliada às anotações por minutagem da aula aumenta a retenção em até 84%.</span>
           </div>
         </div>
       </div>
@@ -199,7 +420,7 @@
     <div class="tab-content">
       <div class="groups-header">
         <div>
-          <h2>Grupos & Turmas de Estudo Colaborativo</h2>
+          <h2>Grupos &amp; Turmas de Estudo Colaborativo</h2>
           <p class="sub">Participe de discussões técnicas, tire dúvidas com pares e participe de encontros semanais.</p>
         </div>
       </div>
@@ -244,21 +465,43 @@
     <div class="tab-content">
       <div class="notes-header">
         <div>
-          <h2>Meu Caderno de Anotações & Resumos</h2>
-          <p class="sub">Guarde referências, snippets de código e apontamentos importantes dos seus estudos.</p>
+          <h2>Meu Caderno de Anotações &amp; Resumos</h2>
+          <p class="sub">Visualize suas anotações sincronizadas às aulas dos treinamentos e registros livres.</p>
         </div>
-        <button mat-flat-button color="primary" (click)="openNewNoteModal()">
-          <mat-icon>edit_note</mat-icon> Nova Anotação
-        </button>
+        <div class="notes-header-actions">
+          @if (cursos.length > 0) {
+            <select [(ngModel)]="noteCursoFilter" class="note-filter-select">
+              <option value="">Todos os cursos</option>
+              @for (c of cursos; track c.internalId) {
+                <option [value]="c.internalId">{{ c.titulo }}</option>
+              }
+            </select>
+          }
+          <button mat-flat-button color="primary" (click)="openNewNoteModal()">
+            <mat-icon>edit_note</mat-icon> Nova Anotação
+          </button>
+        </div>
       </div>
 
       <div class="notes-grid">
-        @for (note of notes; track note.id) {
+        @for (note of filteredNotebookNotes; track note.id) {
           <div class="note-card">
             <div class="note-header">
               <span class="note-subject">{{ note.subject }}</span>
               <span class="note-date">{{ note.updatedAt }}</span>
             </div>
+
+            @if (note.cursoTitulo || note.aulaTitulo) {
+              <div class="note-lesson-ref">
+                <mat-icon>ondemand_video</mat-icon>
+                <span>{{ note.cursoTitulo }} @if (note.aulaTitulo) { • {{ note.aulaTitulo }} }</span>
+                @if (note.timestampLabel) {
+                  <button class="ts-jump-btn" (click)="irParaMinutagemNota(note)">
+                    <mat-icon>play_arrow</mat-icon> {{ note.timestampLabel }}
+                  </button>
+                }
+              </div>
+            }
 
             <h3 class="note-title">{{ note.title }}</h3>
             <p class="note-content">{{ note.content }}</p>
@@ -270,7 +513,7 @@
             </div>
 
             <div class="note-footer">
-              <button mat-icon-button color="warn" (click)="deleteNote(note.id)" matTooltip="Excluir">
+              <button mat-icon-button color="warn" (click)="deleteNote(note)" matTooltip="Excluir">
                 <mat-icon>delete_outline</mat-icon>
               </button>
             </div>

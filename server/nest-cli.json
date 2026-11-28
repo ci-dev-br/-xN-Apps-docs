@@ -303,6 +303,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/tasking/tsconfig.lib.json"
       }
+    },
+    "treinamento": {
+      "type": "library",
+      "root": "libs/treinamento",
+      "entryFile": "index",
+      "sourceRoot": "libs/treinamento/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/treinamento/tsconfig.lib.json"
+      }
     }
   }
 }

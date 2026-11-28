@@ -18,11 +18,16 @@ import { FileController } from "./controller/file.controller";
 import { FileExplorerService } from "./models/file-explorer.service";
 import { GitService } from "./service/git.service";
 import { StorageCollection } from "./models/storage-collection.entity";
+import { StorageAsset } from "./models/storage-asset.entity";
+import { StorageMediaController } from "./controller/storage-media.controller";
+import { StorageMediaService } from "./service/storage-media.service";
+import { FfmpegMediaService } from "./service/ffmpeg-media.service";
 export const StorageEntities = [
     Photo,
     FilePermission,
     File,
     StorageCollection,
+    StorageAsset,
 ];
 @Module({
     imports: [
@@ -38,6 +43,7 @@ export const StorageEntities = [
         FileController,
         FileExplorerController,
         VideoController,
+        StorageMediaController,
     ],
     providers: [
         PhotoService,
@@ -45,12 +51,16 @@ export const StorageEntities = [
         FilePermissionService,
         FileExplorerService,
         GitService,
+        FfmpegMediaService,
+        StorageMediaService,
     ],
     exports: [
         PhotoService,
         FilePermissionService,
         FileExplorerService,
         GitService,
+        FfmpegMediaService,
+        StorageMediaService,
     ]
 })
 export class StorageModule { }

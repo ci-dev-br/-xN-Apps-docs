@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-28T01:12:41" id="0" hostname="plhx33" tests="6" errors="0" failures="0" time="0.757">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="Àpps Gerencial Componente criado com sucesso" time="0.634" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps Gerencial"/>
+  <testcase name="GerencialComponent (Tabs por papel ADMIN vs MASTER) deve exibir Loja e Gestão de Usuários para ADMIN e incluir Apps apenas para MASTER" time="0.02" classname="Chrome_Headless_158_0_0_0_(Windows_10).GerencialComponent (Tabs por papel ADMIN vs MASTER)"/>
+  <testcase name="HomeComponent should create" time="0.01" classname="Chrome_Headless_158_0_0_0_(Windows_10).HomeComponent"/>
+  <testcase name="UsersComponent (/Gerencial/Painel/user-manager) deve filtrar usuários ao alterar seleção de tenants" time="0.055" classname="Chrome_Headless_158_0_0_0_(Windows_10).UsersComponent (/Gerencial/Painel/user-manager)"/>
+  <testcase name="UsersComponent (/Gerencial/Painel/user-manager) deve carregar tenants disponíveis e impedir ADMIN de editar conta MASTER" time="0.009" classname="Chrome_Headless_158_0_0_0_(Windows_10).UsersComponent (/Gerencial/Painel/user-manager)"/>
+  <testcase name="UsersComponent (/Gerencial/Painel/user-manager) deve vincular e desvincular usuário do tenant disponível" time="0.029" classname="Chrome_Headless_158_0_0_0_(Windows_10).UsersComponent (/Gerencial/Painel/user-manager)"/>
+  <system-out>
+    <![CDATA[Chrome Headless 158.0.0.0 (Windows 10) WARN: 'Falha ao carregar /api-json em DaoService:', HttpErrorResponse{headers: _HttpHeaders{headers: undefined, normalizedNames: Map{}, lazyInit: () => { ... }, lazyUpdate: null}, status: 404, statusText: 'Not Found', url: 'http://localhost:9876/api-json', ok: false, type: undefined, redirected: undefined, responseType: undefined, name: 'HttpErrorResponse', message: 'Http failure response for http://localhost:9876/api-json: 404 Not Found', error: 'NOT FOUND'}
+,Chrome Headless 158.0.0.0 (Windows 10) WARN: 'Falha ao carregar /api-json em DaoBuilder:', HttpErrorResponse{headers: _HttpHeaders{headers: undefined, normalizedNames: Map{}, lazyInit: () => { ... }, lazyUpdate: null}, status: 404, statusText: 'Not Found', url: 'http://localhost:9876/api-json', ok: false, type: undefined, redirected: undefined, responseType: undefined, name: 'HttpErrorResponse', message: 'Http failure response for http://localhost:9876/api-json: 404 Not Found', error: 'NOT FOUND'}
+,Chrome Headless 158.0.0.0 (Windows 10) WARN: 'Falha ao carregar /api-json em DaoService:', HttpErrorResponse{headers: _HttpHeaders{headers: undefined, normalizedNames: Map{}, lazyInit: () => { ... }, lazyUpdate: null}, status: 404, statusText: 'Not Found', url: 'http://localhost:9876/api-json', ok: false, type: undefined, redirected: undefined, responseType: undefined, name: 'HttpErrorResponse', message: 'Http failure response for http://localhost:9876/api-json: 404 Not Found', error: 'NOT FOUND'}
+
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

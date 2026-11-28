@@ -2,12 +2,23 @@
   <!-- Top Banner / Header -->
   <header class="hub-header">
     <div class="header-content">
-      <div class="badge">Universidade Corporativa</div>
-      <h1>Portal de Treinamento & Desenvolvimento</h1>
-      <p class="subtitle">Aprimore suas competências, acompanhe trilhas corporativas e obtenha certificados oficiais.</p>
+      <div class="badge">Universidade Corporativa &amp; LMS</div>
+      <h1>Portal de Treinamento &amp; Desenvolvimento</h1>
+      <p class="subtitle">Crie treinamentos com vídeos processados via FFmpeg, disponibilize materiais de apoio e estude de forma integrada.</p>
     </div>
 
     <div class="header-actions">
+      <div class="view-switcher">
+        <button [class.active]="activeView === 'catalog'" (click)="switchView('catalog')">
+          <mat-icon>menu_book</mat-icon>
+          <span>Catálogo &amp; Aulas</span>
+        </button>
+        <button [class.active]="activeView === 'instrutor'" (click)="switchView('instrutor')">
+          <mat-icon>video_settings</mat-icon>
+          <span>Painel do Instrutor</span>
+        </button>
+      </div>
+
       <button mat-flat-button color="primary" class="create-btn" (click)="openCreateCourseModal()">
         <mat-icon>add_circle</mat-icon>
         Novo Treinamento
@@ -15,183 +26,599 @@
     </div>
   </header>
 
-  <!-- Metrics Overview Cards -->
-  <section class="kpi-grid">
-    <div class="kpi-card">
-      <div class="icon-wrap blue"><mat-icon>school</mat-icon></div>
-      <div class="kpi-details">
-        <span class="label">Cursos no Catálogo</span>
-        <span class="value">{{ courses.length }}</span>
-        <span class="trend neutral">Disponíveis na organização</span>
-      </div>
+  @if (statusMessage) {
+    <div class="feedback-banner success">
+      <mat-icon>check_circle</mat-icon>
+      <span>{{ statusMessage }}</span>
+      <button mat-icon-button (click)="statusMessage = ''"><mat-icon>close</mat-icon></button>
     </div>
-
-    <div class="kpi-card">
-      <div class="icon-wrap emerald"><mat-icon>task_alt</mat-icon></div>
-      <div class="kpi-details">
-        <span class="label">Concluídos</span>
-        <span class="value">{{ completedCoursesCount }}</span>
-        <span class="trend positive"><mat-icon>verified</mat-icon> 100% de aproveitamento</span>
-      </div>
+  }
+  @if (errorMessage) {
+    <div class="feedback-banner error">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ errorMessage }}</span>
+      <button mat-icon-button (click)="errorMessage = ''"><mat-icon>close</mat-icon></button>
     </div>
+  }
 
-    <div class="kpi-card">
-      <div class="icon-wrap amber"><mat-icon>timer</mat-icon></div>
-      <div class="kpi-details">
-        <span class="label">Horas Cumpridas</span>
-        <span class="value">{{ totalHoursCompleted }}h</span>
-        <span class="trend positive"><mat-icon>trending_up</mat-icon> Carga horária validada</span>
-      </div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="icon-wrap purple"><mat-icon>workspace_premium</mat-icon></div>
-      <div class="kpi-details">
-        <span class="label">Certificados Conquistados</span>
-        <span class="value">{{ certificates.length }}</span>
-        <span class="trend positive"><mat-icon>military_tech</mat-icon> Emitidos com hash</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Filter & Search Bar -->
-  <section class="catalog-controls">
-    <div class="track-pills">
-      @for (track of tracks; track track) {
-        <button [class.active]="selectedTrack === track" (click)="selectedTrack = track">
-          {{ track }}
-        </button>
-      }
-    </div>
-
-    <div class="search-bar">
-      <mat-icon>search</mat-icon>
-      <input type="text" [(ngModel)]="searchQuery" placeholder="Buscar treinamentos por nome ou instrutor..." />
-    </div>
-  </section>
-
-  <!-- Courses Grid -->
-  <section class="courses-grid">
-    @for (course of filteredCourses; track course.id) {
-      <div class="course-card" (click)="openCourse(course)">
-        <div class="course-thumb" [style.background-color]="course.thumbnailColor">
-          <mat-icon class="thumb-icon">{{ course.icon }}</mat-icon>
-          <span class="track-tag">{{ course.track }}</span>
-          <span class="level-tag">{{ course.level }}</span>
+  <!-- ==================== VIEW 1: CATÁLOGO & ALUNO ==================== -->
+  @if (activeView === 'catalog') {
+    <!-- Metrics Overview Cards -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="icon-wrap blue"><mat-icon>school</mat-icon></div>
+        <div class="kpi-details">
+          <span class="label">Cursos no Catálogo</span>
+          <span class="value">{{ courses.length }}</span>
+          <span class="trend neutral">Disponíveis na organização</span>
         </div>
+      </div>
 
-        <div class="course-body">
-          <h3 class="course-title">{{ course.title }}</h3>
-          <p class="course-desc">{{ course.description }}</p>
-
-          <div class="course-meta">
-            <span class="meta-item"><mat-icon>schedule</mat-icon> {{ course.hours }}h de conteúdo</span>
-            <span class="meta-item"><mat-icon>video_library</mat-icon> {{ course.lessons.length }} aulas</span>
-            <span class="meta-item rating"><mat-icon>star</mat-icon> {{ course.rating }}</span>
-          </div>
-
-          <div class="course-instructor">
-            <mat-icon>person</mat-icon>
-            <span>Instrutor(a): {{ course.instructor }}</span>
-          </div>
-
-          <!-- Progress Bar -->
-          <div class="progress-section">
-            <div class="progress-header">
-              <span>Progresso</span>
-              <strong>{{ course.progress }}%</strong>
-            </div>
-            <div class="progress-track">
-              <div class="progress-fill" [style.width.%]="course.progress" [class.done]="course.progress === 100"></div>
-            </div>
-          </div>
+      <div class="kpi-card">
+        <div class="icon-wrap emerald"><mat-icon>task_alt</mat-icon></div>
+        <div class="kpi-details">
+          <span class="label">Concluídos</span>
+          <span class="value">{{ completedCoursesCount }}</span>
+          <span class="trend positive"><mat-icon>verified</mat-icon> 100% de aproveitamento</span>
         </div>
+      </div>
 
-        <div class="course-footer">
-          <button mat-flat-button color="primary" class="action-btn" (click)="$event.stopPropagation(); openCourse(course)">
-            <mat-icon>{{ course.progress === 100 ? 'replay' : course.progress > 0 ? 'play_arrow' : 'login' }}</mat-icon>
-            {{ course.progress === 100 ? 'Revisar Treinamento' : course.progress > 0 ? 'Continuar Aula' : 'Iniciar Treinamento' }}
+      <div class="kpi-card">
+        <div class="icon-wrap amber"><mat-icon>timer</mat-icon></div>
+        <div class="kpi-details">
+          <span class="label">Horas Cumpridas</span>
+          <span class="value">{{ totalHoursCompleted }}h</span>
+          <span class="trend positive"><mat-icon>trending_up</mat-icon> Carga horária validada</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="icon-wrap purple"><mat-icon>workspace_premium</mat-icon></div>
+        <div class="kpi-details">
+          <span class="label">Certificados Conquistados</span>
+          <span class="value">{{ certificates.length }}</span>
+          <span class="trend positive"><mat-icon>military_tech</mat-icon> Emitidos com hash</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filter & Search Bar -->
+    <section class="catalog-controls">
+      <div class="track-pills">
+        @for (track of tracks; track track) {
+          <button [class.active]="selectedTrack === track" (click)="selectedTrack = track">
+            {{ track }}
           </button>
-        </div>
+        }
       </div>
+
+      <div class="search-bar">
+        <mat-icon>search</mat-icon>
+        <input type="text" [(ngModel)]="searchQuery" placeholder="Buscar treinamentos por nome ou instrutor..." />
+      </div>
+    </section>
+
+    @if (isLoading) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     }
 
-    @if (filteredCourses.length === 0) {
-      <div class="empty-courses">
-        <mat-icon>search_off</mat-icon>
-        <h3>Nenhum curso encontrado</h3>
-        <p>Tente ajustar os filtros de trilha ou o termo digitado na busca.</p>
-      </div>
-    }
-  </section>
-
-  <!-- Certificates Section -->
-  <section class="certificates-section">
-    <div class="section-title-row">
-      <mat-icon>military_tech</mat-icon>
-      <h2>Meus Certificados Oficiais</h2>
-    </div>
-
-    <div class="certs-grid">
-      @for (cert of certificates; track cert.id) {
-        <div class="cert-card">
-          <div class="cert-ribbon"><mat-icon>verified</mat-icon></div>
-          <div class="cert-info">
-            <div class="cert-course">{{ cert.courseTitle }}</div>
-            <div class="cert-meta">
-              <span>Emitido em: {{ cert.issuedAt }}</span>
-              <span>Carga horária: {{ cert.hours }} horas</span>
-            </div>
-            <div class="cert-code">Cód. Autenticidade: <code>{{ cert.code }}</code></div>
+    <!-- Courses Grid -->
+    <section class="courses-grid">
+      @for (course of filteredCourses; track course.id) {
+        <div class="course-card" (click)="openCourse(course)">
+          <div class="course-thumb" [style.background-color]="course.thumbnailColor">
+            @if (course.posterDataUrl) {
+              <img class="thumb-poster" [src]="course.posterDataUrl" [alt]="course.title" />
+            } @else {
+              <mat-icon class="thumb-icon">{{ course.icon }}</mat-icon>
+            }
+            <span class="track-tag">{{ course.track }}</span>
+            <span class="level-tag">{{ course.level }}</span>
           </div>
-          <button mat-stroked-button color="primary" (click)="viewCertificate(cert)">
-            <mat-icon>visibility</mat-icon> Ver Certificado
+
+          <div class="course-body">
+            <h3 class="course-title">{{ course.title }}</h3>
+            <p class="course-desc">{{ course.description }}</p>
+
+            <div class="course-meta">
+              <span class="meta-item"><mat-icon>schedule</mat-icon> {{ course.hours }}h de conteúdo</span>
+              <span class="meta-item"><mat-icon>video_library</mat-icon> {{ course.lessons.length }} aulas</span>
+              <span class="meta-item rating"><mat-icon>star</mat-icon> {{ course.rating }}</span>
+            </div>
+
+            <div class="course-instructor">
+              <mat-icon>person</mat-icon>
+              <span>Instrutor(a): {{ course.instructor }}</span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-section">
+              <div class="progress-header">
+                <span>Progresso</span>
+                <strong>{{ course.progress }}%</strong>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" [style.width.%]="course.progress" [class.done]="course.progress === 100"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="course-footer dual-actions">
+            <button mat-flat-button color="primary" class="action-btn" (click)="$event.stopPropagation(); openCourse(course)">
+              <mat-icon>{{ course.progress === 100 ? 'replay' : course.progress > 0 ? 'play_arrow' : 'login' }}</mat-icon>
+              {{ course.progress === 100 ? 'Revisar' : course.progress > 0 ? 'Continuar' : 'Assistir Aulas' }}
+            </button>
+            <button mat-stroked-button color="accent" class="study-link-btn" matTooltip="Acompanhar no app Estudos e fazer anotações" (click)="$event.stopPropagation(); abrirNosEstudos(course)">
+              <mat-icon>menu_book</mat-icon>
+              Estudar
+            </button>
+          </div>
+        </div>
+      }
+
+      @if (!isLoading && filteredCourses.length === 0) {
+        <div class="empty-courses">
+          <mat-icon>school</mat-icon>
+          <h3>Nenhum treinamento disponível no catálogo</h3>
+          <p>Acesse o <strong>Painel do Instrutor</strong> ou clique em <strong>Novo Treinamento</strong> para criar seu primeiro curso com vídeo e materiais.</p>
+          <button mat-flat-button color="primary" class="empty-cta" (click)="switchView('instrutor')">
+            <mat-icon>video_call</mat-icon> Ir para o Painel do Instrutor
           </button>
         </div>
       }
-    </div>
-  </section>
+    </section>
 
-  <!-- Modal Player de Curso & Aulas -->
+    <!-- Certificates Section -->
+    @if (certificates.length > 0) {
+      <section class="certificates-section">
+        <div class="section-title-row">
+          <mat-icon>military_tech</mat-icon>
+          <h2>Meus Certificados Oficiais</h2>
+        </div>
+
+        <div class="certs-grid">
+          @for (cert of certificates; track cert.id) {
+            <div class="cert-card">
+              <div class="cert-ribbon"><mat-icon>verified</mat-icon></div>
+              <div class="cert-info">
+                <div class="cert-course">{{ cert.courseTitle }}</div>
+                <div class="cert-meta">
+                  <span>Emitido em: {{ cert.issuedAt }}</span>
+                  <span>Carga horária: {{ cert.hours }} horas</span>
+                </div>
+                <div class="cert-code">Cód. Autenticidade: <code>{{ cert.code }}</code></div>
+              </div>
+              <button mat-stroked-button color="primary" (click)="viewCertificate(cert)">
+                <mat-icon>visibility</mat-icon> Ver Certificado
+              </button>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  }
+
+  <!-- ==================== VIEW 2: PAINEL DO INSTRUTOR ==================== -->
+  @if (activeView === 'instrutor') {
+    <section class="instructor-workspace">
+      <!-- Perfil do Instrutor -->
+      <div class="instructor-profile-card">
+        <div class="section-head">
+          <div class="head-title">
+            <mat-icon>badge</mat-icon>
+            <div>
+              <h2>Perfil do Instrutor</h2>
+              <small>Configure seus dados de apresentação exibidos nos treinamentos</small>
+            </div>
+          </div>
+          <button mat-flat-button color="primary" [disabled]="savingInstrutor" (click)="salvarPerfilInstrutor()">
+            <mat-icon>save</mat-icon> {{ savingInstrutor ? 'Salvando...' : 'Salvar Perfil' }}
+          </button>
+        </div>
+
+        <div class="profile-grid">
+          <div class="form-group">
+            <label>Nome do Instrutor</label>
+            <input type="text" [(ngModel)]="instrutorPerfil.nome" placeholder="Nome completo" />
+          </div>
+          <div class="form-group">
+            <label>E-mail</label>
+            <input type="email" [(ngModel)]="instrutorPerfil.email" placeholder="instrutor@empresa.com" />
+          </div>
+          <div class="form-group">
+            <label>Telefone</label>
+            <input type="text" [(ngModel)]="instrutorPerfil.telefone" placeholder="(00) 00000-0000" />
+          </div>
+          <div class="form-group">
+            <label>Especialidade</label>
+            <input type="text" [(ngModel)]="instrutorPerfil.especialidade" placeholder="Ex: Arquitetura Cloud & DevOps" />
+          </div>
+          <div class="form-group full-span">
+            <label>Biografia</label>
+            <textarea [(ngModel)]="instrutorPerfil.biografia" rows="2" placeholder="Breve resumo da sua experiência..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Studio Split: Lista de Cursos do Instrutor + Editor de Aulas/Vídeos/Materiais -->
+      <div class="studio-layout">
+        <aside class="studio-sidebar">
+          <div class="sidebar-head">
+            <h3>Meus Treinamentos ({{ instructorCourses.length }})</h3>
+            <button mat-icon-button color="primary" matTooltip="Criar Novo Treinamento" (click)="openCreateCourseModal()">
+              <mat-icon>add_circle</mat-icon>
+            </button>
+          </div>
+
+          <div class="studio-course-list">
+            @for (c of instructorCourses; track c.id) {
+              <div class="studio-course-item"
+                   [class.selected]="selectedInstructorCourse?.id === c.id"
+                   (click)="selectInstructorCourse(c)">
+                <div class="item-color-dot" [style.background-color]="c.thumbnailColor"></div>
+                <div class="item-text">
+                  <strong>{{ c.title }}</strong>
+                  <small>{{ c.lessons.length }} aula(s) • {{ c.publicado ? 'Publicado' : 'Rascunho' }}</small>
+                </div>
+                <button mat-icon-button color="warn" matTooltip="Excluir curso" (click)="$event.stopPropagation(); excluirCursoInstrutor(c)">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            }
+
+            @if (instructorCourses.length === 0) {
+              <div class="empty-studio-list">
+                <p>Você ainda não criou treinamentos.</p>
+                <button mat-stroked-button color="primary" (click)="openCreateCourseModal()">
+                  <mat-icon>add</mat-icon> Criar Primeiro Curso
+                </button>
+              </div>
+            }
+          </div>
+        </aside>
+
+        <div class="studio-main">
+          @if (selectedInstructorCourse) {
+            <!-- Dados do Curso -->
+            <div class="studio-card">
+              <div class="section-head">
+                <div class="head-title">
+                  <mat-icon>edit_square</mat-icon>
+                  <div>
+                    <h3>Configurações do Treinamento</h3>
+                    <small>{{ selectedInstructorCourse.title }}</small>
+                  </div>
+                </div>
+                <div class="head-actions">
+                  <button mat-stroked-button (click)="openCourse(selectedInstructorCourse)">
+                    <mat-icon>visibility</mat-icon> Pré-visualizar Player
+                  </button>
+                  <button mat-flat-button color="primary" [disabled]="savingCourse" (click)="salvarEdicaoCurso()">
+                    <mat-icon>save</mat-icon> {{ savingCourse ? 'Salvando...' : 'Salvar Alterações' }}
+                  </button>
+                </div>
+              </div>
+
+              <div class="profile-grid">
+                <div class="form-group">
+                  <label>Título</label>
+                  <input type="text" [(ngModel)]="editingCourseForm.titulo" />
+                </div>
+                <div class="form-group">
+                  <label>Trilha</label>
+                  <select [(ngModel)]="editingCourseForm.trilha">
+                    @for (tr of tracks; track tr) {
+                      @if (tr !== 'Todos') {
+                        <option [value]="tr">{{ tr }}</option>
+                      }
+                    }
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Nível</label>
+                  <select [(ngModel)]="editingCourseForm.nivel">
+                    <option value="Iniciante">Iniciante</option>
+                    <option value="Intermediário">Intermediário</option>
+                    <option value="Avançado">Avançado</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Carga Horária (h)</label>
+                  <input type="number" min="1" [(ngModel)]="editingCourseForm.cargaHoraria" />
+                </div>
+                <div class="form-group">
+                  <label>Preço Base (R$)</label>
+                  <input type="number" min="0" step="0.01" [(ngModel)]="editingCourseForm.precoBase" />
+                </div>
+                <div class="form-group">
+                  <label>Visibilidade</label>
+                  <select [(ngModel)]="editingCourseForm.publicado">
+                    <option [ngValue]="true">Publicado no Catálogo</option>
+                    <option [ngValue]="false">Rascunho (Somente Instrutor)</option>
+                  </select>
+                </div>
+                <div class="form-group full-span">
+                  <label>Descrição Resumida</label>
+                  <textarea [(ngModel)]="editingCourseForm.descricao" rows="2"></textarea>
+                </div>
+                <div class="form-group full-span">
+                  <label>Ementa / Conteúdo Programático</label>
+                  <textarea [(ngModel)]="editingCourseForm.ementa" rows="2" placeholder="Tópicos abordados..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Aulas: Upload de Vídeos (FFmpeg) e Materiais de Apoio (Storage) -->
+            <div class="studio-card">
+              <div class="section-head">
+                <div class="head-title">
+                  <mat-icon>ondemand_video</mat-icon>
+                  <div>
+                    <h3>Aulas, Vídeos (FFmpeg) &amp; Materiais de Apoio</h3>
+                    <small>Envie vídeos em MP4/MOV/WebM/MKV — o servidor otimiza para H.264/AAC e gera miniatura automaticamente via FFmpeg</small>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Formulário Nova Aula -->
+              <div class="new-lesson-box">
+                <input type="text" [(ngModel)]="newLessonTitle" placeholder="Título da nova aula (ex: Aula 1 - Introdução)" />
+                <input type="text" [(ngModel)]="newLessonDescription" placeholder="Descrição ou resumo da aula (opcional)" />
+                <button mat-flat-button color="primary" [disabled]="creatingLesson || !newLessonTitle.trim()" (click)="adicionarAula()">
+                  <mat-icon>add</mat-icon> {{ creatingLesson ? 'Criando...' : 'Adicionar Aula' }}
+                </button>
+              </div>
+
+              <!-- Lista de Aulas do Curso -->
+              <div class="instructor-lessons-list">
+                @for (lesson of selectedInstructorCourse.lessons; track lesson.id; let idx = $index) {
+                  <div class="instructor-lesson-card">
+                    <div class="lesson-top-row">
+                      <div class="lesson-badge-title">
+                        <span class="idx-circle">{{ idx + 1 }}</span>
+                        <div>
+                          <strong>{{ lesson.title }}</strong>
+                          @if (lesson.description) {
+                            <p class="l-desc">{{ lesson.description }}</p>
+                          }
+                        </div>
+                      </div>
+                      <button mat-icon-button color="warn" matTooltip="Excluir aula" (click)="excluirAula(lesson)">
+                        <mat-icon>delete_outline</mat-icon>
+                      </button>
+                    </div>
+
+                    <div class="lesson-assets-grid">
+                      <!-- Bloco Vídeo FFmpeg -->
+                      <div class="asset-box video-box">
+                        <div class="box-label"><mat-icon>movie</mat-icon> Vídeo da Aula (Storage + FFmpeg)</div>
+                        @if (lesson.thumbnailDataUrl) {
+                          <div class="video-preview-row">
+                            <img class="ffmpeg-thumb" [src]="lesson.thumbnailDataUrl" alt="Thumbnail FFmpeg" />
+                            <div class="video-tech-info">
+                              <span class="file-name">{{ lesson.videoFileName || 'video.mp4' }}</span>
+                              <div class="tech-chips">
+                                <span class="tech-chip"><mat-icon>schedule</mat-icon> {{ lesson.duration }}</span>
+                                @if (lesson.videoMetadata?.width) {
+                                  <span class="tech-chip">{{ lesson.videoMetadata.width }}x{{ lesson.videoMetadata.height }}</span>
+                                }
+                                @if (lesson.videoMetadata?.videoCodec) {
+                                  <span class="tech-chip">{{ lesson.videoMetadata.videoCodec | uppercase }}</span>
+                                }
+                                @if (lesson.videoMetadata?.sizeBytes) {
+                                  <span class="tech-chip">{{ formatBytes(lesson.videoMetadata.sizeBytes) }}</span>
+                                }
+                              </div>
+                            </div>
+                          </div>
+                        } @else if (lesson.videoAssetId) {
+                          <div class="video-ready-text">
+                            <mat-icon>check_circle</mat-icon> Vídeo vinculado ({{ lesson.duration }})
+                          </div>
+                        } @else {
+                          <div class="no-asset-hint">Nenhum vídeo enviado para esta aula ainda.</div>
+                        }
+
+                        @if (uploadingVideoLessonId === lesson.id) {
+                          <div class="upload-progress-wrap">
+                            <mat-progress-bar mode="determinate" [value]="videoUploadProgress"></mat-progress-bar>
+                            <small>{{ videoUploadProgress }}% — {{ videoUploadStage }}</small>
+                          </div>
+                        }
+
+                        <label class="upload-btn-label">
+                          <input type="file" accept="video/*" hidden [disabled]="uploadingVideoLessonId === lesson.id" (change)="onVideoSelected($event, lesson)" />
+                          <span class="btn-like primary">
+                            <mat-icon>cloud_upload</mat-icon>
+                            {{ lesson.videoAssetId ? 'Substituir Vídeo' : 'Enviar Vídeo (FFmpeg)' }}
+                          </span>
+                        </label>
+                      </div>
+
+                      <!-- Bloco Materiais de Apoio -->
+                      <div class="asset-box material-box">
+                        <div class="box-label"><mat-icon>attach_file</mat-icon> Material de Apoio (Storage)</div>
+
+                        <div class="materials-list">
+                          @for (mat of lesson.materiaisApoio; track mat.assetId) {
+                            <div class="material-chip-row">
+                              <mat-icon>description</mat-icon>
+                              <div class="mat-meta">
+                                <strong>{{ mat.nome }}</strong>
+                                <small>{{ formatBytes(mat.sizeBytes) }} @if (mat.descricao) { • {{ mat.descricao }} }</small>
+                              </div>
+                              <button mat-icon-button matTooltip="Baixar" (click)="baixarMaterialApoio(mat)">
+                                <mat-icon>download</mat-icon>
+                              </button>
+                              <button mat-icon-button color="warn" matTooltip="Remover" (click)="removerMaterial(lesson, mat.assetId)">
+                                <mat-icon>close</mat-icon>
+                              </button>
+                            </div>
+                          }
+                          @if (lesson.materiaisApoio.length === 0) {
+                            <div class="no-asset-hint">Sem PDFs, slides ou anexos vinculados.</div>
+                          }
+                        </div>
+
+                        @if (uploadingMaterialLessonId === lesson.id) {
+                          <div class="upload-progress-wrap">
+                            <mat-progress-bar mode="determinate" [value]="materialUploadProgress"></mat-progress-bar>
+                            <small>{{ materialUploadProgress }}% — {{ materialUploadStage }}</small>
+                          </div>
+                        }
+
+                        <div class="material-upload-controls">
+                          <input type="text" [(ngModel)]="materialDescriptionByLesson[lesson.id]" placeholder="Descrição (ex: Slides da Aula)" />
+                          <label class="upload-btn-label">
+                            <input type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.md,.zip,.csv,.png,.jpg,.jpeg" hidden [disabled]="uploadingMaterialLessonId === lesson.id" (change)="onMaterialSelected($event, lesson)" />
+                            <span class="btn-like stroked">
+                              <mat-icon>upload_file</mat-icon> Anexar Material
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+
+                @if (selectedInstructorCourse.lessons.length === 0) {
+                  <div class="no-asset-hint">Adicione a primeira aula acima para enviar vídeos e materiais de apoio.</div>
+                }
+              </div>
+            </div>
+
+            <!-- Turmas (Sessões / Eventos) -->
+            <div class="studio-card">
+              <div class="section-head">
+                <div class="head-title">
+                  <mat-icon>groups</mat-icon>
+                  <div>
+                    <h3>Turmas &amp; Sessões Agendadas</h3>
+                    <small>Gerencie turmas abertas, datas e links conforme /docs/terinamento.md</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="turma-form-row">
+                <input type="text" [(ngModel)]="newTurma.nome" placeholder="Nome da turma (ex: Turma Dezembro)" />
+                <input type="datetime-local" [(ngModel)]="newTurmaInicioStr" title="Data de início" />
+                <input type="text" [(ngModel)]="newTurma.localOuLink" placeholder="Local ou Link da sala" />
+                <input type="number" [(ngModel)]="newTurma.vagasDisponiveis" min="1" placeholder="Vagas" class="w-small" />
+                <button mat-flat-button color="primary" [disabled]="savingTurma || !newTurma.nome" (click)="adicionarTurma()">
+                  <mat-icon>event_available</mat-icon> Agendar Turma
+                </button>
+              </div>
+
+              <div class="turmas-list">
+                @for (t of selectedInstructorCourse.turmas; track t.internalId) {
+                  <div class="turma-row">
+                    <div>
+                      <strong>{{ t.nome }}</strong>
+                      <small>{{ t.localOuLink || 'Online' }} • {{ t.vagasDisponiveis }} vagas • Status: {{ t.status }}</small>
+                    </div>
+                    <button mat-icon-button color="warn" (click)="excluirTurma(t)"><mat-icon>delete_outline</mat-icon></button>
+                  </div>
+                }
+              </div>
+            </div>
+          } @else {
+            <div class="empty-courses">
+              <mat-icon>video_settings</mat-icon>
+              <h3>Selecione ou crie um treinamento</h3>
+              <p>Escolha um curso na barra lateral ou clique em "Novo Treinamento" para começar.</p>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- ==================== MODAL PLAYER DE CURSO & AULAS ==================== -->
   @if (showCoursePlayerModal && activeCourse) {
-    <div class="modal-backdrop" (click)="showCoursePlayerModal = false">
+    <div class="modal-backdrop" (click)="closeCoursePlayer()">
       <div class="modal-dialog player-dialog" (click)="$event.stopPropagation()">
         <div class="dialog-header">
           <div class="header-left">
-            <span class="track-crumb">{{ activeCourse.track }}</span>
+            <span class="track-crumb">{{ activeCourse.track }} • {{ activeCourse.progress }}% concluído</span>
             <h3>{{ activeCourse.title }}</h3>
           </div>
-          <button mat-icon-button (click)="showCoursePlayerModal = false"><mat-icon>close</mat-icon></button>
+          <div class="header-right-actions">
+            <button mat-stroked-button color="primary" (click)="abrirNosEstudos(activeCourse, activeLesson)">
+              <mat-icon>edit_note</mat-icon> Anotar no Estudos
+            </button>
+            <button mat-icon-button (click)="closeCoursePlayer()"><mat-icon>close</mat-icon></button>
+          </div>
         </div>
 
         <div class="dialog-content player-layout">
-          <!-- Video Screen Mockup -->
           <div class="player-main">
-            <div class="video-mockup">
-              <mat-icon class="play-overlay">play_circle_outline</mat-icon>
-              <div class="video-info-overlay">
-                <span>{{ activeLesson?.title }}</span>
-                <span class="dur">{{ activeLesson?.duration }}</span>
+            @if (activeLesson?.videoAssetId) {
+              <div class="video-player-container">
+                @if (videoLoading) {
+                  <div class="video-loading-overlay">
+                    @if (activeLesson?.thumbnailDataUrl) {
+                      <img class="loading-poster" [src]="activeLesson?.thumbnailDataUrl" alt="Carregando aula" />
+                    }
+                    <div class="loading-status">
+                      <mat-progress-bar mode="determinate" [value]="videoLoadProgress"></mat-progress-bar>
+                      <span>Carregando vídeo do Storage ({{ videoLoadProgress }}%)...</span>
+                    </div>
+                  </div>
+                } @else if (activeVideoUrl) {
+                  <video #lessonVideoRef
+                         class="lesson-html-video"
+                         controls
+                         playsinline
+                         [poster]="activeLesson?.thumbnailDataUrl || ''"
+                         [src]="activeVideoUrl"
+                         (loadedmetadata)="onVideoLoadedMetadata()"
+                         (timeupdate)="onVideoTimeUpdate()"
+                         (pause)="salvarTempoAtualDoVideo(true)"
+                         (ended)="onVideoEnded()">
+                  </video>
+                }
               </div>
-            </div>
+            } @else {
+              <div class="video-mockup">
+                <mat-icon class="play-overlay">smart_display</mat-icon>
+                <div class="video-info-overlay">
+                  <span>{{ activeLesson?.title || 'Selecione uma aula' }}</span>
+                  <span class="dur">{{ activeLesson?.duration || 'Sem vídeo' }}</span>
+                </div>
+              </div>
+            }
 
             <div class="lesson-actions-bar">
               <div class="instructor-note">
                 <mat-icon>school</mat-icon>
                 <span>Ministrado por: <strong>{{ activeCourse.instructor }}</strong></span>
+                @if (activeLesson?.videoMetadata?.width) {
+                  <span class="meta-pill">{{ activeLesson?.videoMetadata?.width }}x{{ activeLesson?.videoMetadata?.height }} • {{ activeLesson?.videoMetadata?.videoCodec }}</span>
+                }
               </div>
 
               @if (activeLesson) {
-                <button mat-flat-button color="accent" (click)="toggleLessonComplete(activeLesson)">
+                <button mat-flat-button [color]="activeLesson.completed ? 'primary' : 'accent'" (click)="toggleLessonComplete(activeLesson)">
                   <mat-icon>{{ activeLesson.completed ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
-                  {{ activeLesson.completed ? 'Marcar como Pendente' : 'Marcar Aula como Concluída' }}
+                  {{ activeLesson.completed ? 'Aula Concluída' : 'Marcar Aula como Concluída' }}
                 </button>
               }
             </div>
 
             <div class="lesson-notes">
-              <h4>Resumo da Aula & Material de Apoio</h4>
-              <p>Esta aula aborda os conceitos fundamentais para a correta aplicação dos padrões corporativos. Certifique-se de revisar os tópicos e concluir as atividades propostas ao final de cada módulo.</p>
+              <h4>Resumo da Aula &amp; Material de Apoio</h4>
+              <p>{{ activeLesson?.description || activeCourse.description || 'Acompanhe o vídeo desta aula e utilize os materiais de apoio abaixo para aprofundar seu aprendizado.' }}</p>
+
+              @if (activeLesson && activeLesson.materiaisApoio.length > 0) {
+                <div class="player-materials-list">
+                  @for (mat of activeLesson.materiaisApoio; track mat.assetId) {
+                    <button mat-stroked-button (click)="baixarMaterialApoio(mat)">
+                      <mat-icon>download</mat-icon>
+                      <span>{{ mat.nome }} ({{ formatBytes(mat.sizeBytes) }})</span>
+                    </button>
+                  }
+                </div>
+              }
             </div>
           </div>
 
@@ -208,7 +635,10 @@
                   <div class="lesson-idx">{{ idx + 1 }}</div>
                   <div class="lesson-text">
                     <span class="l-title">{{ lesson.title }}</span>
-                    <span class="l-dur">{{ lesson.duration }}</span>
+                    <span class="l-dur">
+                      {{ lesson.duration }}
+                      @if (lesson.materiaisApoio.length > 0) { • {{ lesson.materiaisApoio.length }} anexo(s) }
+                    </span>
                   </div>
                   <mat-icon class="check-icon" [class.checked]="lesson.completed">
                     {{ lesson.completed ? 'check_circle' : 'radio_button_unchecked' }}
@@ -222,7 +652,7 @@
     </div>
   }
 
-  <!-- Modal Certificado Oficial -->
+  <!-- ==================== MODAL CERTIFICADO OFICIAL ==================== -->
   @if (showCertModal && selectedCertificate) {
     <div class="modal-backdrop" (click)="showCertModal = false">
       <div class="modal-dialog cert-dialog" (click)="$event.stopPropagation()">
@@ -245,7 +675,7 @@
             <div class="cert-signatures">
               <div class="sig-block">
                 <div class="sig-line"></div>
-                <span>Diretoria de Treinamento & DHO</span>
+                <span>Diretoria de Treinamento &amp; DHO</span>
               </div>
               <div class="sig-block">
                 <div class="sig-line"></div>
@@ -262,7 +692,7 @@
 
         <div class="cert-modal-actions">
           <button mat-button (click)="showCertModal = false">Fechar</button>
-          <button mat-flat-button color="primary" (click)="showCertModal = false">
+          <button mat-flat-button color="primary" (click)="printCertificate()">
             <mat-icon>download</mat-icon> Imprimir / Baixar PDF
           </button>
         </div>
@@ -270,19 +700,19 @@
     </div>
   }
 
-  <!-- Modal Criar Treinamento -->
+  <!-- ==================== MODAL CRIAR TREINAMENTO ==================== -->
   @if (showNewCourseModal) {
     <div class="modal-backdrop" (click)="showNewCourseModal = false">
       <div class="modal-dialog form-dialog" (click)="$event.stopPropagation()">
         <div class="dialog-header">
-          <h3>Cadastrar Novo Treinamento Corporativo</h3>
+          <h3>Cadastrar Novo Treinamento</h3>
           <button mat-icon-button (click)="showNewCourseModal = false"><mat-icon>close</mat-icon></button>
         </div>
 
         <div class="form-body">
           <div class="form-group">
             <label>Nome do Treinamento *</label>
-            <input type="text" [(ngModel)]="newCourse.title" placeholder="Ex: Gestão Financeira Avançada" />
+            <input type="text" [(ngModel)]="newCourse.title" placeholder="Ex: Arquitetura FFmpeg e Streaming" />
           </div>
 
           <div class="form-row">
@@ -309,11 +739,22 @@
           <div class="form-row">
             <div class="form-group">
               <label>Instrutor Responsável *</label>
-              <input type="text" [(ngModel)]="newCourse.instructor" placeholder="Nome do especialista ou setor" />
+              <input type="text" [(ngModel)]="newCourse.instructor" placeholder="Nome do especialista" />
             </div>
             <div class="form-group">
               <label>Carga Horária (Horas)</label>
               <input type="number" [(ngModel)]="newCourse.hours" min="1" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Cor da Capa</label>
+              <input type="color" [(ngModel)]="newCourse.thumbnailColor" />
+            </div>
+            <div class="form-group">
+              <label>Preço Base (R$)</label>
+              <input type="number" [(ngModel)]="newCourse.precoBase" min="0" step="0.01" />
             </div>
           </div>
 
@@ -325,8 +766,8 @@
 
         <div class="dialog-footer">
           <button mat-button (click)="showNewCourseModal = false">Cancelar</button>
-          <button mat-flat-button color="primary" [disabled]="!newCourse.title || !newCourse.instructor" (click)="saveNewCourse()">
-            Criar Treinamento
+          <button mat-flat-button color="primary" [disabled]="savingCourse || !newCourse.title || !newCourse.instructor" (click)="saveNewCourse()">
+            {{ savingCourse ? 'Salvando...' : 'Criar Treinamento' }}
           </button>
         </div>
       </div>

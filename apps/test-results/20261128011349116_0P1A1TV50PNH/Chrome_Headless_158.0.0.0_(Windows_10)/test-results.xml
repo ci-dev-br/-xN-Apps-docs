@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-28T01:13:57" id="0" hostname="plhx33" tests="7" errors="0" failures="0" time="0.891">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="Àpps CMS Componente criado com sucesso (bypass)" time="0.438" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps CMS"/>
+  <testcase name="CmsDashboardComponent deve carregar visão geral do dashboard CMS a partir do backend" time="0.226" classname="Chrome_Headless_158_0_0_0_(Windows_10).CmsDashboardComponent"/>
+  <testcase name="CmsDashboardComponent deve segmentar dashboard CMS por tenants selecionados" time="0.049" classname="Chrome_Headless_158_0_0_0_(Windows_10).CmsDashboardComponent"/>
+  <testcase name="CmsDashboardComponent deve persistir criação de nova página via SitePageService.sync" time="0.059" classname="Chrome_Headless_158_0_0_0_(Windows_10).CmsDashboardComponent"/>
+  <testcase name="CmsDashboardComponent deve alternar status de publicação persistindo na entidade correspondente" time="0.048" classname="Chrome_Headless_158_0_0_0_(Windows_10).CmsDashboardComponent"/>
+  <testcase name="CmsDashboardComponent deve cadastrar nova mídia via SiteMediaService.sync" time="0.036" classname="Chrome_Headless_158_0_0_0_(Windows_10).CmsDashboardComponent"/>
+  <testcase name="CmsDashboardComponent deve persistir criação de novo post via SitePostService.sync" time="0.035" classname="Chrome_Headless_158_0_0_0_(Windows_10).CmsDashboardComponent"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

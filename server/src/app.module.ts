@@ -37,6 +37,7 @@ import { CrmModule } from '@ci/crm';
 import { DyMEntities, DyMModule } from '@ci/mlms';
 import { EspazioModule, Entities as EspazioEntities } from '@ci/espazio/espazio.module';
 import { TaskingModule, Entities as TaskingEntities } from '@ci/tasking/tasking.module';
+import { TreinamentoModule, TreinamentoEntities } from '@ci/treinamento';
 
 /**
  * Adicione os módulos que podem ser carregados pela configfuração do environment;
@@ -86,6 +87,7 @@ const _entities_name = {
   DyM: DyMEntities,
   Espazio: EspazioEntities,
   Tasking: TaskingEntities,
+  Treinamento: TreinamentoEntities,
   Users: UserEntities,
 };
 
@@ -120,6 +122,7 @@ const _modules_name = {
   DyM: DyMModule,
   Espazio: EspazioModule,
   Tasking: TaskingModule,
+  Treinamento: TreinamentoModule,
   Logger: LoggerModule,
   Core: CoreModule,
 };

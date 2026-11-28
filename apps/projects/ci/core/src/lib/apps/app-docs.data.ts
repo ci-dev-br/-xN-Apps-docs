@@ -123,6 +123,23 @@ export const APP_DOCUMENTATION_REGISTRY: Record<string, IAppDocumentation> = {
             'Clique no botão de visualização interativa para testar a navegabilidade.'
         ]
     },
+    Estudos: {
+        appKey: 'Estudos',
+        title: 'Estudos & Acompanhamento de Aulas',
+        category: 'Produtividade',
+        icon: 'menu_book',
+        summary: 'Ambiente completo para acompanhar aulas dos treinamentos, gerenciar foco Pomodoro, revisar flashcards e registrar anotações vinculadas ao vídeo.',
+        features: [
+            'Acompanhamento de aulas dos treinamentos matriculados com reprodução em vídeo e retomada de posição',
+            'Anotações sincronizadas à minutagem exata do vídeo (clique no tempo para voltar ao ponto da aula)',
+            'Temporizador Pomodoro, flashcards de repetição espaçada e download de materiais de apoio'
+        ],
+        quickStart: [
+            'Acesse a aba "Minhas Aulas" para assistir aos treinamentos matriculados.',
+            'Use "Anotar neste momento" durante o vídeo para registrar apontamentos com timestamp.',
+            'Revise suas notas na aba "Caderno & Resumos" ou pratique com os flashcards.'
+        ]
+    },
     Financeiro: {
         appKey: 'Financeiro',
         title: 'Financeiro',

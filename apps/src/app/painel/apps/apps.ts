@@ -226,8 +226,8 @@ export const CI_STATIC_APPS: IApp[] = [
         type: 'svg'
     },
     {
-        shortDescription: 'Ambiente de estudos com temporizador Pomodoro, flashcards ativos e grupos colaborativos.',
-        description: 'O módulo Estudos oferece um ambiente focado e estruturado para o aprendizado contínuo. Conta com temporizador Pomodoro para gerenciamento de ciclos de foco, sistema interativo de flashcards com repetição espaçada, grupos de estudo colaborativos e caderno integrado para anotações rápidas e sínteses conceituais.',
+        shortDescription: 'Ambiente de estudos com temporizador Pomodoro, aulas integradas, flashcards ativos, caderno com minutagem e grupos colaborativos.',
+        description: 'O módulo Estudos oferece um ambiente focado e estruturado para o aprendizado contínuo. Conta com temporizador Pomodoro integrado às aulas dos seus treinamentos, reprodutor de vídeo com retomada automática, material de apoio, caderno de anotações vinculado à minutagem da aula, sistema interativo de flashcards com repetição espaçada e grupos de estudo colaborativos.',
         color: getColor(),
         url: '/Estudos',
         name: 'Estudos',
@@ -236,12 +236,12 @@ export const CI_STATIC_APPS: IApp[] = [
         type: 'svg'
     },
     {
-        shortDescription: 'Plataforma completa de educação corporativa. Crie cursos, distribua conteúdo e avalie o desempenho dos colaboradores para promover o crescimento contínuo.',
-        description: 'O módulo Treinamento funciona como uma Universidade Corporativa digital (LMS). Ele permite a criação e gestão de catálogos de cursos, desde treinamentos de compliance obrigatórios até workshops de desenvolvimento de soft skills. Suportando vídeos, apresentações interativas e avaliações, o sistema gerencia matrículas, frequências e emissão de certificados automaticamente. Relatórios detalhados permitem ao RH medir o ROI dos treinamentos e identificar talentos internos. A plataforma promove uma cultura de aprendizado contínuo, garantindo que a força de trabalho esteja sempre atualizada com as melhores práticas de mercado e as inovações da empresa, aumentando a competitividade e a retenção de talentos.',
+        shortDescription: 'Plataforma completa de educação corporativa com painel do instrutor, processamento de vídeos via FFmpeg e integração com Estudos.',
+        description: 'O módulo Treinamento funciona como uma Universidade Corporativa digital (LMS). Permite a criação e gestão de cursos no Painel do Instrutor com upload em partes de vídeos processados automaticamente via FFmpeg no serviço de Storage, gerenciamento de turmas, materiais de apoio, controle de progresso, emissão de certificados e acompanhamento integrado pelo app Estudos.',
         color: getColor(),
         url: '/Treinamento',
         name: 'Treinamento',
-        roles: ['MASTER'],
+        roles: ['USER', 'ADMIN', 'MASTER'],
         icon: 'treinamento',
         type: 'svg'
     },

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 158.0.0.0 (Windows 10)" package="" timestamp="2026-11-28T01:13:23" id="0" hostname="plhx33" tests="4" errors="0" failures="0" time="0.988">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="SeoDashboardComponent deve acionar auditoria on-page e movimentação de tarefa via SeoService" time="0.828" classname="Chrome_Headless_158_0_0_0_(Windows_10).SeoDashboardComponent"/>
+  <testcase name="SeoDashboardComponent deve segmentar dashboard por tenants selecionados e repassar tenantIds ao backend" time="0.045" classname="Chrome_Headless_158_0_0_0_(Windows_10).SeoDashboardComponent"/>
+  <testcase name="SeoDashboardComponent deve carregar visão geral do dashboard SEO a partir do backend" time="0.033" classname="Chrome_Headless_158_0_0_0_(Windows_10).SeoDashboardComponent"/>
+  <testcase name="Àpps SEO Componente criado com sucesso" time="0.082" classname="Chrome_Headless_158_0_0_0_(Windows_10).Àpps SEO"/>
+  <system-out>
+    <![CDATA[Chrome Headless 158.0.0.0 (Windows 10) WARN: 'Falha ao carregar /api-json em DaoService:', HttpErrorResponse{headers: _HttpHeaders{headers: undefined, normalizedNames: Map{}, lazyInit: () => { ... }, lazyUpdate: null}, status: 404, statusText: 'Not Found', url: 'http://localhost:9876/api-json', ok: false, type: undefined, redirected: undefined, responseType: undefined, name: 'HttpErrorResponse', message: 'Http failure response for http://localhost:9876/api-json: 404 Not Found', error: 'NOT FOUND'}
+,Chrome Headless 158.0.0.0 (Windows 10) WARN: 'Falha ao carregar /api-json em DaoBuilder:', HttpErrorResponse{headers: _HttpHeaders{headers: undefined, normalizedNames: Map{}, lazyInit: () => { ... }, lazyUpdate: null}, status: 404, statusText: 'Not Found', url: 'http://localhost:9876/api-json', ok: false, type: undefined, redirected: undefined, responseType: undefined, name: 'HttpErrorResponse', message: 'Http failure response for http://localhost:9876/api-json: 404 Not Found', error: 'NOT FOUND'}
+
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>
